@@ -18,18 +18,17 @@ The following table describes the various states of MeshSync and Meshery Broker 
 
 **MeshSync:**
 
-- **NOT ACTIVE:** Custom Resource not present.
 - **ENABLED:** Custom Resource present. MeshSync Controller is not connected to Broker.
-- **DEPLOYED:** Custom Resource present. MeshSync Controller present and healthy (what does healthy mean)?
+- **DEPLOYED:** Custom Resource present. MeshSync Controller is present but the state is not RUNNING or ERRDISABLE, though
 - **RUNNING:** MeshSync pod present and in a running state.
 - **CONNECTED:** Deployed and connected to Broker.
-- **NOT ACTIVE:** Custom Resource not deployed or no NATS connection.
 - **UNDEPLOYED:** Custom Resource not present.
 
 **Meshery Broker:**
 
-- **DEPLOYED:** Custom Resource deployed, External IP exposed.
-- **UNDEPLOYED:** Custom Resource deployed or External IP not exposed.
+- **DEPLOYED:** External IP not exposed OR External IP exposed but Meshery Server is not connected as a client to Broker hence data is not being published.
+
+- **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
 ## Meshery Operator Deployment Scenarios
@@ -53,7 +52,7 @@ Common failure situations that Meshery users might face are described below.
 1. No deployment of Meshery Operator, MeshSync, and Broker.
     1. Probable cause: Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
 1. Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
-    1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not expoerting external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
+    1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
     2. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
 1. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
 
