@@ -1,23 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  TableCell,
-  Tooltip,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
-  TableSortLabel,
-} from '@material-ui/core';
+import { TableCell, Tooltip, TableContainer, Table, Grid, TableRow } from '@material-ui/core';
 import Moment from 'react-moment';
-import dataFetch from '../../lib/data-fetch';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
+import dataFetch from '../../../lib/data-fetch';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
-import useStyles from '../../assets/styles/general/tool.styles';
-import SearchBar from '../../utils/custom-search';
-import { MeshSyncDataFormatter } from './metadata';
-import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
+import CustomColumnVisibilityControl from '../../../utils/custom-column';
+import useStyles from '../../../assets/styles/general/tool.styles';
+import SearchBar from '../../../utils/custom-search';
+import { MeshSyncDataFormatter } from '../metadata';
+import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
+import { DefaultTableCell, SortableTableCell } from '../common';
+import { camelcaseToSnakecase } from '../../../utils/utils';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -48,18 +42,12 @@ export default function MeshSyncTable(props) {
 
   const columns = [
     {
-      name: 'id',
-      label: 'ID',
-      options: {
-        display: false,
-      },
-    },
-    {
       name: 'metadata.name',
       label: 'Name',
       options: {
-        sort: false,
-        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
+        },
         customBodyRender: (value) => {
           const maxCharLength = 30;
           const shouldTruncate = value?.length > maxCharLength;
@@ -84,7 +72,8 @@ export default function MeshSyncTable(props) {
       name: 'apiVersion',
       label: 'API version',
       options: {
-        display: true,
+        sort: true,
+        sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -174,17 +163,8 @@ export default function MeshSyncTable(props) {
       name: 'metadata.creationTimestamp',
       label: 'Discovered At',
       options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
           return (
@@ -244,8 +224,9 @@ export default function MeshSyncTable(props) {
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
+        const columnName = camelcaseToSnakecase(columns[tableState.activeColumn]?.name);
         if (tableState.activeColumn) {
-          order = `${columns[tableState.activeColumn].name} desc`;
+          order = `${columnName} desc`;
         }
         switch (action) {
           case 'changePage':
@@ -257,9 +238,9 @@ export default function MeshSyncTable(props) {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${columns[tableState.activeColumn].name} asc`;
+                order = `${columnName} asc`;
               } else {
-                order = `${columns[tableState.activeColumn].name} desc`;
+                order = `${columnName} desc`;
               }
             }
             if (order !== sortOrder) {
@@ -411,16 +392,3 @@ export default function MeshSyncTable(props) {
     </>
   );
 }
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel
-        active={columnMeta.name === columnData.name}
-        // direction={columnMeta.direction || 'asc'}
-      >
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
-  );
-};

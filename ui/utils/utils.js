@@ -307,3 +307,14 @@ export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) =
 
   scrollRef.current = div.scrollTop;
 };
+
+/**
+ * Add underscore to camal case variable name.
+ *
+ * @param {string} value - An array of column definitions.
+ *
+ */
+
+export const camelcaseToSnakecase = (value) => {
+  return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+};
