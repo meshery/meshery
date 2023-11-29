@@ -174,7 +174,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterName(clusterName, k8sConfig);
+              let connectionId = getConnectionIdFromClusterName(val, k8sConfig);
               return (
                 <>
                   <ConnectionChip
