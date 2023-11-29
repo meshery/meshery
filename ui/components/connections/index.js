@@ -19,6 +19,7 @@ import {
   Tab,
   MenuItem,
   Box,
+  Chip,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -46,22 +47,22 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
-// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
-// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-// import ExploreIcon from '@mui/icons-material/Explore';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
-import { ConnectionChip, ConnectionStateChip } from './ConnectionChip';
+import { ConnectionChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
 import { SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
-// import HandymanIcon from '@mui/icons-material/Handyman';
-// import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
-// import DisconnectIcon from '../../assets/icons/disconnect';
+import HandymanIcon from '@mui/icons-material/Handyman';
+import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
+import DisconnectIcon from '../../assets/icons/disconnect';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -176,18 +177,18 @@ function Connections({
   const StyleClass = useStyles();
   const url = `https://docs.meshery.io/concepts/connections`;
 
-  // const icons = {
-  //   [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
-  //   [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
-  //   [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
-  //   [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
-  //   [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
-  //   [CONNECTION_STATES.MAINTENANCE]: () => <HandymanIcon />,
-  //   [CONNECTION_STATES.DISCONNECTED]: () => (
-  //     <DisconnectIcon fill="#E75225" width={24} height={24} />
-  //   ),
-  //   [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
-  // };
+  const icons = {
+    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+    [CONNECTION_STATES.MAINTENANCE]: () => <HandymanIcon />,
+    [CONNECTION_STATES.DISCONNECTED]: () => (
+      <DisconnectIcon fill="#E75225" width={24} height={24} />
+    ),
+    [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
+  };
 
   const columns = [
     {
@@ -458,9 +459,10 @@ function Connections({
                         key={status}
                         style={{ padding: '0' }}
                       >
-                        <ConnectionStateChip
-                          status={status}
-                          // title={status}
+                        <Chip
+                          className={classNames(classes.statusChip, classes[status])}
+                          avatar={icons[status] ? icons[status]() : ''}
+                          label={status}
                         />
                       </MenuItem>
                     ))}
