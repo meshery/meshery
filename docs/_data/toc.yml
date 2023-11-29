@@ -212,7 +212,7 @@
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
-        - title: Upgrading Meshery CLI
+        - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
 - title: ⚙️ Tasks (all)
   url: tasks
