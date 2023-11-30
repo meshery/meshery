@@ -2,6 +2,8 @@ import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
+import { Title } from '../../view';
+
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
 export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfig) => {
@@ -24,19 +26,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -121,19 +119,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -237,19 +231,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -346,19 +336,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -456,19 +442,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -602,19 +584,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -712,19 +690,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -870,19 +844,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -980,19 +950,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -1090,19 +1056,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -1212,19 +1174,15 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },

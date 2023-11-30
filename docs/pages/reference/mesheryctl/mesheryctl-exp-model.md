@@ -30,7 +30,7 @@ mesheryctl exp model [flags]
 To view list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system model list
+mesheryctl exp model list
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl system model list
 To view a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system model view [model-name]
+mesheryctl exp model view [model-name]
 
 </div>
 </pre> 

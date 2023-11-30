@@ -30,7 +30,7 @@ mesheryctl exp model view [flags]
 View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system model view [model-name]
+mesheryctl exp model view [model-name]
 
 </div>
 </pre> 

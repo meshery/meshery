@@ -4,12 +4,17 @@ package handlers
 import (
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshkit/models/events"
 
 	"github.com/sirupsen/logrus"
 )
@@ -41,27 +46,23 @@ func init() {
 
 // GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+	sysID := h.SystemID
+	userUUID := uuid.FromStringOrNil(user.ID)
 
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if req.Method == http.MethodGet {
-		err := json.NewEncoder(w).Encode(prefObj.Grafana)
-		if err != nil {
-			obj := "Grafana config"
-			h.log.Error(models.ErrMarshal(err, obj))
-			http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-			return
-		}
-
+		req = mux.SetURLVars(req, map[string]string{"connectionKind": "grafana"})
+		h.GetConnectionsByKind(w, req, prefObj, user, p)
 		return
 	}
 
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
-
+		credName := req.FormValue("grafanaCredentialName")
+		connName := req.FormValue("grafanaConnectioncName")
 		u, err := url.Parse(grafanaURL)
 		if err != nil {
 			return
@@ -70,30 +71,69 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			grafanaURL = strings.TrimSuffix(grafanaURL, u.RequestURI())
 		}
 
-		prefObj.Grafana = &models.Grafana{
-			GrafanaURL:    grafanaURL,
-			GrafanaAPIKey: grafanaAPIKey,
+		grafanaConn := map[string]interface{}{
+			"url": grafanaURL,
+		}
+		grafanaCred := map[string]interface{}{
+			"credential": grafanaAPIKey,
 		}
 
 		if err := h.config.GrafanaClient.Validate(req.Context(), grafanaURL, grafanaAPIKey); err != nil {
-			h.log.Error(ErrGrafanaScan(err))
-			http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrGrafanaScan(err))
+			http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
+
+		userUUID := uuid.FromStringOrNil(user.ID)
+		credential, err := p.SaveUserCredential(token, &models.Credential{
+			UserID: &userUUID,
+			Type:   "grafana",
+			Secret: grafanaCred,
+			Name:   credName,
+		})
+		if err != nil {
+			_err := models.ErrPersistCredential(err)
+			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
+				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
+			_ = p.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			return
+		}
+		connection, err := p.SaveConnection(&models.ConnectionPayload{
+			Kind:             "grafana",
+			Type:             "observability",
+			SubType:          "monitoring",
+			Status:           connections.CONNECTED,
+			MetaData:         grafanaConn,
+			CredentialSecret: grafanaCred,
+			Name:             connName,
+			CredentialID:     &credential.ID,
+		}, token, false)
+
+		if err != nil {
+			_err := models.ErrPersistConnection(err)
+			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
+			_ = p.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			return
+		}
+		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with grafana created at %s", connName, grafanaURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
+		_ = p.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+
 		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
+
+		_ = json.NewEncoder(w).Encode(connection)
 	} else if req.Method == http.MethodDelete {
-		prefObj.Grafana = nil
-	}
-	err := p.RecordPreferences(req, user.UserID, prefObj)
-	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
-		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return
 	}
-	_, _ = w.Write([]byte("{}"))
+
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/ping GrafanaAPI idGetGrafanaPing
+// swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing
 // Handle GET request for Grafana ping
 //
 // Used to initiate a Grafana ping
@@ -101,28 +141,33 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 // 	200:
 
 // GrafanaPingHandler - used to initiate a Grafana ping
-func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
-		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
 		return
 	}
 
-	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+	url, _ := connection.Metadata["url"].(string)
+	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
+	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w,models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	_, _ = w.Write([]byte("{}"))
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/boards GrafanaAPI idGetGrafanaBoards
+// swagger:route GET /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idGetGrafanaBoards
 // Handle GET request for Grafana boards
 //
 // Used for fetching Grafana boards and panels
@@ -131,29 +176,33 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	// if req.Method != http.MethodGet && req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
 	if req.Method == http.MethodPost {
 		h.SaveSelectedGrafanaBoardsHandler(w, req, prefObj, user, p)
 		return
 	}
-
-	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
-		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
 		return
 	}
 
-	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+	url, _ := connection.Metadata["url"].(string)
+	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
+	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
-	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, dashboardSearch)
+	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), url, apiKeyOrBasicAuth, dashboardSearch)
 	if err != nil {
 		h.log.Error(models.ErrGrafanaBoards(err))
 		http.Error(w, models.ErrGrafanaBoards(err).Error(), http.StatusInternalServerError)
@@ -168,7 +217,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/query GrafanaAPI idGetGrafanaQuery
+// swagger:route GET /api/telemetry/metrics/grafana/query/{connectionID} GrafanaAPI idGetGrafanaQuery
 // Handle GET request for Grafana queries
 //
 // Used for handling Grafana queries
@@ -176,22 +225,31 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 // 	200:
 
 // GrafanaQueryHandler is used for handling Grafana queries
-func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 
 	reqQuery := req.URL.Query()
-
-	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		err := ErrGrafanaConfig
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
 		return
 	}
 
-	data, err := h.config.GrafanaClientForQuery.GrafanaQuery(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, &reqQuery)
+	url, _ := connection.Metadata["url"].(string)
+	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
+	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := h.config.GrafanaClientForQuery.GrafanaQuery(req.Context(), url, apiKeyOrBasicAuth, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrGrafanaQuery(err))
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
@@ -201,15 +259,31 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
-func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
+func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	reqQuery := req.URL.Query()
 
-	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), reqQuery.Get("url"), reqQuery.Get("api-key"), &reqQuery)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID, "grafana")
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
+		return
+	}
+
+	url, _ := connection.Metadata["url"].(string)
+	cred, statusCode, err := provider.GetCredentialByID(token, connection.CredentialID)
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
+	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), url, apiKeyOrBasicAuth, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrGrafanaQuery(err))
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
@@ -218,7 +292,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	_, _ = w.Write(data)
 }
 
-// swagger:route POST /api/telemetry/metrics/grafana/boards GrafanaAPI idPostGrafanaBoards
+// swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards
 // Handle POST request for Grafana boards
 //
 // Used for persist Grafana boards and panel selections
@@ -231,16 +305,6 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
-	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
-		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// if prefObj.Grafana.GrafanaBoards == nil {
-	// 	prefObj.Grafana.GrafanaBoards = []*models.SelectedGrafanaConfig{}
-	// }
 
 	defer func() {
 		_ = req.Body.Close()
@@ -259,17 +323,27 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
-	if len(boards) > 0 {
-		prefObj.Grafana.GrafanaBoards = boards
-	} else {
-		prefObj.Grafana.GrafanaBoards = nil
-	}
-	err = p.RecordPreferences(req, user.UserID, prefObj)
+
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
-		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), statusCode)
 		return
 	}
-	h.log.Info("Board selection updated")
+
+	if len(boards) > 0 {
+		connection.Metadata["grafana_boards"] = boards
+	} else {
+		delete(connection.Metadata, "grafana_boards")
+	}
+
+	updatedConnection, err := p.UpdateConnection(req, connection)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Debug("Board selection updated", updatedConnection.Metadata)
 	_, _ = w.Write([]byte("{}"))
 }

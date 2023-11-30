@@ -32,6 +32,7 @@ import SearchBar from '../../utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import { ConditionalTooltip } from '../../utils/utils';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -41,6 +42,12 @@ const styles = (theme) => ({
     padding: '10px',
     color: '#fff',
     flexGrow: 1,
+  },
+  btnText: {
+    display: 'block',
+    '@media (max-width: 1450px)': {
+      display: 'none',
+    },
   },
   dialogHeader: {
     backgroundColor:
@@ -124,6 +131,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [profileForModal, setProfileForModal] = useState();
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
@@ -291,6 +299,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </TableCell>
           );
         },
+        customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={20} />,
       },
     },
     {
@@ -381,7 +390,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <div>
+            <div style={{ display: 'flex' }}>
               <ReusableTooltip title="Edit">
                 <IconButton
                   style={iconMedium}
@@ -531,19 +540,23 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     <>
       <div className={classes.pageContainer}>
         <div className={StyleClass.toolWrapper}>
-          {(testProfiles.length > 0 || viewType == 'table') && (
-            <div className={classes.addButton}>
-              <Button
-                aria-label="Add Performance Profile"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => setProfileForModal({})}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                Add Performance Profile
-              </Button>
-            </div>
+          {width < 550 && isSearchExpanded ? null : (
+            <>
+              {(testProfiles.length > 0 || viewType == 'table') && (
+                <div className={classes.addButton}>
+                  <Button
+                    aria-label="Add Performance Profile"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => setProfileForModal({})}
+                  >
+                    <AddIcon style={iconMedium} className={classes.addIcon} />
+                    <span className={classes.btnText}> Add Performance Profile </span>
+                  </Button>
+                </div>
+              )}
+            </>
           )}
           <div className={classes.viewSwitchButton}>
             <SearchBar
@@ -551,13 +564,17 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                 setSearch(value);
                 fetchTestProfiles(page, pageSize, value, sortOrder);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search Profiles..."
             />
-            <CustomColumnVisibilityControl
-              classes={classes}
-              columns={columns}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
+            {viewType === 'table' && (
+              <CustomColumnVisibilityControl
+                classes={classes}
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            )}
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
