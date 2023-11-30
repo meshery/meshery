@@ -2488,6 +2488,10 @@ enum MesheryControllerStatus {
     NOTDEPLOYED
     DEPLOYING
     UNKOWN
+    UNDEPLOYED
+    ENABLED
+    RUNNING
+    CONNECTED
   }
 
 type MesheryControllersStatusListItem {
@@ -2849,7 +2853,7 @@ type PatternResult {
   visibility: String!
   catalog_data: Map
   canSupport: Boolean!
-  errmsg: String,
+  errmsg: String
   created_at: String
   updated_at: String
 }

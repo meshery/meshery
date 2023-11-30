@@ -68,6 +68,10 @@ enum MesheryControllerStatus {
     NOTDEPLOYED
     DEPLOYING
     UNKOWN
+    UNDEPLOYED
+    ENABLED
+    RUNNING
+    CONNECTED
   }
 
 type MesheryControllersStatusListItem {
