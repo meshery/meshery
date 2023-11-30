@@ -1,11 +1,18 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
+import {
+  getClusterNameFromClusterId,
+  getConnectionIdFromClusterId,
+} from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
+import { Title } from '../../view';
+
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import { ConditionalTooltip } from '../../../../utils/utils';
+import useKubernetesHook from '../../../hooks/useKubernetesHook';
 
 export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+  const ping = useKubernetesHook();
   return {
     PODS: {
       name: 'Pod',
@@ -25,20 +32,17 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
+              console.log(meshSyncResources, value, ';;;;;pp');
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -131,9 +135,14 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <ConnectionChip
+                    title={clusterName}
+                    iconSrc="/static/img/kubernetes.svg"
+                    handlePing={() => ping(clusterName, val, connectionId)}
+                  />
                 </>
               );
             },
@@ -171,19 +180,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -254,9 +259,17 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <ConnectionChip
+                    title={clusterName}
+                    iconSrc="/static/img/kubernetes.svg"
+                    handlePing={(event) => {
+                      event.preventDefault();
+                      ping(clusterName, val, connectionId);
+                    }}
+                  />
                 </>
               );
             },
@@ -294,19 +307,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -417,19 +426,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -538,19 +543,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -683,19 +684,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -816,19 +813,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -925,19 +918,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },

@@ -1,4 +1,5 @@
 {
+	"model": "kubernetes",
 	"primaryColor": "#326CE5",
 	"secondaryColor": "#7aa1f0",
 	"shape": "circle",

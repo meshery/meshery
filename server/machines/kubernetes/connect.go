@@ -5,19 +5,19 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 )
 
 type ConnectAction struct{}
 
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
-func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
 
-func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
@@ -38,6 +38,6 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	return machines.NoOp, nil, nil
 }
 
-func (ca *ConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (ca *ConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

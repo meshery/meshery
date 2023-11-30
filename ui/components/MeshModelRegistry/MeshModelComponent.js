@@ -28,6 +28,8 @@ import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
 import { DisableButton } from './MeshModel.style';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Colors } from '../../themes/app';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -94,20 +96,25 @@ const MeshModelComponent = ({
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
+  // const [loading, setLoading] = useState(false);
 
   const getModels = async (page) => {
     try {
-      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
-      const componentPromises = models.map(async (model) => {
-        const { components } = await getComponentFromModelApi(model.name);
-        const { relationships } = await getRelationshipFromModelApi(model.name);
-        model.components = components;
-        model.relationships = relationships;
-      });
-      await Promise.all(componentPromises);
+      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage);
+
       if (!isRequestCancelled && models) {
+        const updatedModels = [];
+
+        for (const model of models) {
+          const { components } = await getComponentFromModelApi(model.name);
+          const { relationships } = await getRelationshipFromModelApi(model.name);
+          model.components = components;
+          model.relationships = relationships;
+          updatedModels.push(model);
+        }
+
         setResourcesDetail((prev) =>
-          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
+          [...prev, ...updatedModels].sort((a, b) => a.displayName.localeCompare(b.displayName)),
         );
       }
     } catch (error) {
@@ -189,37 +196,44 @@ const MeshModelComponent = ({
         page?.Registrants + 1,
         rowsPerPage,
       );
-      let tempRegistrants = [];
-      let registrantPromise = registrants.map(async (registrant) => {
-        let hostname = toLower(registrant?.hostname);
-        const { models } = await getMeshModelsByRegistrants(
-          page?.Models + 1,
-          rowsPerPage,
-          hostname,
-        ); // page+1 due to server side indexing starting from 1
-        if (models) {
-          const componentPromises = models.map(async (model) => {
-            const { components } = await getComponentFromModelApi(model.name);
-            const { relationships } = await getRelationshipFromModelApi(model.name);
-            model.components = components;
-            model.relationships = relationships;
-          });
 
-          await Promise.all(componentPromises);
-          registrant.models = models;
-          tempRegistrants.push(registrant);
-        } else {
-          tempRegistrants.push(registrant);
-        }
-      });
-      await Promise.all(registrantPromise);
-      setCount(total_count);
       if (!isRequestCancelled && registrants) {
+        let tempRegistrants = [];
+
+        for (const registrant of registrants) {
+          let hostname = toLower(registrant?.hostname);
+          const { models } = await getMeshModelsByRegistrants(
+            page?.Models + 1,
+            rowsPerPage,
+            hostname,
+          ); // page+1 due to server side indexing starting from 1
+
+          if (models) {
+            const updatedModels = [];
+
+            for (const model of models) {
+              const { components } = await getComponentFromModelApi(model.name);
+              const { relationships } = await getRelationshipFromModelApi(model.name);
+              model.components = components;
+              model.relationships = relationships;
+              updatedModels.push(model);
+            }
+
+            registrant.models = updatedModels;
+            tempRegistrants.push(registrant);
+          } else {
+            tempRegistrants.push(registrant);
+          }
+        }
+
+        setCount(total_count);
+
         let tempResourcesDetail = [];
-        tempRegistrants.map((registrant) => {
+        tempRegistrants.forEach((registrant) => {
           let oldRegistrant = resourcesDetail.find(
             (resource) => resource?.hostname === registrant?.hostname,
           );
+
           if (oldRegistrant !== undefined) {
             let newModels = [...oldRegistrant.models, ...registrant.models];
             registrant.models = newModels;
@@ -267,6 +281,7 @@ const MeshModelComponent = ({
 
   useEffect(() => {
     setRequestCancelled(false);
+    // setLoading(true);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -280,6 +295,10 @@ const MeshModelComponent = ({
       getSearchedComponents(searchText);
     } else if (view === REGISTRANTS && searchText === null) {
       getRegistrants(page);
+    } else if (view === MODELS && searchText === '') {
+      getModels(page);
+    } else if (view === COMPONENTS && searchText === '') {
+      getComponents(page, sortOrder);
     }
 
     return () => {
@@ -464,23 +483,32 @@ const MeshModelComponent = ({
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
-            <div style={{ height: '30rem', width: '50%', margin: '1rem' }}>
-              <MesheryTreeView
-                data={filteredData}
-                view={view}
-                show={show}
-                setShow={setShow}
-                comp={comp}
-                setComp={setComp}
-                rela={rela}
-                setRela={setRela}
-                regi={regi}
-                setRegi={setRegi}
-                setSearchText={setSearchText}
-                setPage={setPage}
-                checked={checked}
-                setChecked={setChecked}
-              />
+            <div
+              className={StyleClass.treeContainer}
+              style={{
+                alignItems: filteredData.length === 0 ? 'center' : '',
+              }}
+            >
+              {filteredData.length === 0 ? (
+                <CircularProgress sx={{ color: Colors.keppelGreen }} />
+              ) : (
+                <MesheryTreeView
+                  data={filteredData}
+                  view={view}
+                  show={show}
+                  setShow={setShow}
+                  comp={comp}
+                  setComp={setComp}
+                  rela={rela}
+                  setRela={setRela}
+                  regi={regi}
+                  setRegi={setRegi}
+                  setSearchText={setSearchText}
+                  setPage={setPage}
+                  checked={checked}
+                  setChecked={setChecked}
+                />
+              )}
             </div>
             <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} />
           </div>
