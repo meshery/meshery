@@ -14,6 +14,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
   return {
     ServiceAccount: {
       name: 'ServiceAccount',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -95,6 +102,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     ClusterRole: {
       name: 'ClusterRole',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -194,6 +208,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     Role: {
       name: 'Role',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -275,6 +296,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     ClusterRoleBinding: {
       name: 'ClusterRoleBinding',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -356,6 +384,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     RoleBinding: {
       name: 'RoleBinding',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',

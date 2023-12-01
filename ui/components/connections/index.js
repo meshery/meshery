@@ -63,6 +63,8 @@ import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -168,6 +170,7 @@ function Connections({
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
+  const { width } = useWindowDimensions();
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -189,6 +192,17 @@ function Connections({
     ),
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
+
+  let colViews = [
+    ['name', 'xs'],
+    ['kind', 'm'],
+    ['type', 's'],
+    ['sub_type', 'm'],
+    ['updated_at', 'l'],
+    ['created_at', 'na'],
+    ['status', 'xs'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -854,10 +868,11 @@ function Connections({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });

@@ -16,6 +16,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
   return {
     PODS: {
       name: 'Pod',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['status.attribute', 's'],
+        ['status.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['spec.attribute', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -164,6 +176,16 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     DEPLOYMENT: {
       name: 'Deployment',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['status.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -291,6 +313,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     DAEMONSETS: {
       name: 'DaemonSet',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -410,6 +441,15 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     STATEFULSETS: {
       name: 'StatefulSet',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['status.attribute', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -527,6 +567,17 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     REPLICASETS: {
       name: 'ReplicaSet',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -668,6 +719,16 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     REPLICATIONCONTROLLERS: {
       name: 'ReplicationController',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -797,6 +858,14 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     JOBS: {
       name: 'Job',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -902,6 +971,16 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     CRONJOBS: {
       name: 'CronJob',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
