@@ -6,8 +6,7 @@ namespace_Keys[namespace_key] {
   namespace_key = service.namespace
 }
 
-namespaces = { namespace_map: ns |
-print("ppppp")
+parent_relationship = { namespace_map: ns |
 	some namespace_map
 	namespace_Keys[namespace_map]
     service := input.services[key]
