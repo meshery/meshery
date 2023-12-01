@@ -10,6 +10,7 @@ import { Title } from '../../view';
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import { ConditionalTooltip } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
+import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 
 export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   const ping = useKubernetesHook();
@@ -30,7 +31,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               console.log(meshSyncResources, value, ';;;;;pp');
               return (
@@ -51,7 +54,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -59,6 +73,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Phase',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let phase = attribute?.phase;
@@ -71,6 +88,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Host IP',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let hostIP = attribute?.hostIP;
@@ -83,6 +103,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Pod IP',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let podIP = attribute?.podIP;
@@ -95,7 +118,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -120,6 +145,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Node',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let nodeName = attribute?.nodeName;
@@ -131,8 +159,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
@@ -153,7 +191,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -177,7 +217,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -197,7 +239,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -205,6 +258,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -217,6 +273,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Restart Policy',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let template = attribute?.template;
@@ -231,7 +290,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -255,8 +316,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
@@ -280,7 +351,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -304,7 +377,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -324,7 +399,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -332,6 +418,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Node Selector',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let template = attribute?.template;
@@ -346,7 +435,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -370,8 +461,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -399,7 +500,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -423,7 +526,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -443,7 +548,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -451,6 +567,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -463,7 +582,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -487,8 +608,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -516,7 +647,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -540,7 +673,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -560,7 +695,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -568,6 +714,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Desired Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -580,6 +729,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Current Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -592,6 +744,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Ready Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let readyReplicas = attribute?.readyReplicas;
@@ -604,6 +759,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -628,8 +786,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -657,7 +825,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -681,7 +851,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -701,7 +873,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -709,6 +892,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Desired Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -721,6 +907,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Current Replicas',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let replicas = attribute?.replicas;
@@ -733,7 +922,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -757,8 +948,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -786,7 +987,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -810,7 +1013,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -830,7 +1035,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -838,7 +1054,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -862,8 +1080,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -891,7 +1119,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -915,7 +1145,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -935,7 +1167,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -943,6 +1186,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Schedule',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let schedule = attribute?.schedule;
@@ -955,6 +1201,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Suspend',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let suspend = attribute?.suspend;
@@ -967,7 +1216,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -991,8 +1242,18 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -1020,7 +1281,9 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;

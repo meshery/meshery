@@ -11,6 +11,7 @@ import { Title } from '../../view';
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import { ConditionalTooltip } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
+import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 
 export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   const ping = useKubernetesHook();
@@ -30,7 +31,9 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
         label: 'Name',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(value, tableMeta) {
             return (
               <Title
@@ -50,15 +53,36 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
         name: 'apiVersion',
         label: 'API version',
         options: {
-          sort: false,
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
         },
       },
       {
         name: 'cluster_id',
         label: 'Cluster',
         options: {
-          sort: false,
+          sort: true,
           sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
           customBodyRender: function CustomBody(val) {
             let clusterName = getClusterNameFromClusterId(val, k8sConfig);
             let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
@@ -79,7 +103,9 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
         label: 'Age',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;
