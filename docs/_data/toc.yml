@@ -28,14 +28,14 @@
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or macOS ↆ
+        - title: Linux or macOS
           url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
               url: installation/linux-mac/bash
             - title: "- Brew"
               url: installation/linux-mac/brew
-        - title: Windows ↆ
+        - title: Windows
           url: installation/windows 
           grandchildren: 
             - title: "- Scoop"
@@ -52,38 +52,39 @@
   links:
     - title: Community
       url: project/community
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
-      url: project/security-vulnerabilities
     - title: Contributing ↆ
       url: project/contributing
       children:
-        - title: "Build & Release (CI) ↆ"
+        - title: Build & Release (CI)
           url: project/contributing/build-and-release
           grandchildren:
           - title: "- End-to-End Testing"
             url: project/contributing/contributing-cypress
         - title: Adapters
           url: project/contributing/contributing-adapters
-        - title: CLI ↆ
+        - title: CLI
           url: project/contributing/contributing-cli
           grandchildren:
           - title: "- Design Principles"
             url: project/contributing/contributing-cli-guide
         - title: Docs
           url: project/contributing/contributing-docs
-        - title: Server ↆ
+        - title: Server
           url: project/contributing/contributing-server
           grandchildren:
           - title: "- Server Events"
-            url: project/contributing-server-events
+            url: project/contributing/contributing-server-events
           - title: "- Server Errors"
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
+        
+    - title: Releases
+      url: project/releases
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -94,7 +95,7 @@
           url: concepts/architecture/adapters
         - title: Database
           url: concepts/architecture/database  
-        - title: "Operator ↆ"
+        - title: "Operator"
           url: concepts/architecture/operator
           grandchildren:
           - title: "- Broker"
@@ -107,10 +108,8 @@
         - title: "Designs"
           url: concepts/designs
         - title: "Environments"
-          url: concepts/environments
-        - title: "Filters"
-          url: concepts/filters          
-        - title: "Models ↆ"
+          url: concepts/environments          
+        - title: "Models"
           url: concepts/models
           grandchildren: 
           - title: "- Components"
@@ -125,6 +124,19 @@
             url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
+- title: ⚙️ Tasks (all)
+  url: tasks
+  links:
+    - title: Application Management
+      url: tasks/application-management
+    - title: Filter Management
+      url: tasks/filter-management
+    - title: Lifecycle Management
+      url: tasks/lifecycle-management
+    - title: Pattern Management
+      url: tasks/pattern-management
+    - title: Performance Management
+      url: tasks/performance-management
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -173,23 +185,19 @@
       # url: guides/smi-conformance
     - title: Configuring Kubernetes Infrastructure
       url: guides/configuration-management
-      children:
-      - title: Creating a Meshery Design
-        url: guides/creating-a-meshery-design
-      - title: Importing Applications
-        url: guides/importing-apps
-    - title: Managing Events with Notification Center
-      url: guides/events-management
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
+    - title: Integrating Prometheus and Grafana
+      url: guides/meshery-metrics
+    - title: Importing Applications
+      url: guides/importing-apps
     - title: Pipelining service mesh specifications
       url: guides/pipelining-service-mesh-specifications
-    - title: Using Metrics in Meshery ↆ
+    - title: Performance Management with Meshery
       url: guides/performance-management
-      children:
-        - title: Integrating Prometheus and Grafana
-          url: guides/meshery-metrics
-    - title: Meshery CLI Guides ↆ
+    - title: Troubleshooting Guide
+      url: guides/troubleshooting
+    - title: Upgrading Meshery
+      url: guides/upgrade
+    - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
@@ -198,35 +206,12 @@
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: Authenticate via Meshery CLI
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
+        - title: Upgrading Meshery CLI
+          url: guides/upgrade#upgrading-meshery-cli
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
-    - title: Troubleshooting Guides ↆ
-      url: guides/troubleshooting
-      children:
-        - title: Installation
-          url: guides/troubleshooting/installation
-        - title: Meshery Operator 
-          url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Meshery Server 
-          url: guides/troubleshooting/meshery-server
-    - title: Upgrading Meshery ↆ
-      url: guides/upgrade
-      children:
-        - title: Meshery CLI
-          url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks (all)
-  url: tasks
-  links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Lifecycle Management
-      url: tasks/lifecycle-management
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance-management
+    - title: Using Multiple Meshery Adapters
+      url: guides/multiple-adapters
 - title: 🛠 Extensibility
   url: extensibility
   links:
@@ -234,7 +219,7 @@
       url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
-    - title: "Providers ↆ"
+    - title: "Providers"
       url: extensibility/providers
       children:
       - title: Building a Remote Provider
@@ -246,10 +231,8 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: "Meshery CLI"
+    - title: Meshery CLI
       url: reference/mesheryctl
-    - title: "Meshery Operator CRDs"
-      url: reference/reference/meshery-operator-crds
     - title: Error Codes
       url: reference/error-codes
     - title: "REST & GraphQL APIs ↆ"
