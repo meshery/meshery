@@ -11,6 +11,7 @@ import { ALL_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
+import { camelcaseToSnakecase } from '../../../utils/utils';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -125,9 +126,11 @@ const ResourcesTable = (props) => {
       enableNestedDataAccess: '.',
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+        const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
+
         let order = '';
         if (tableState.activeColumn) {
-          order = `${tableConfig.columns[tableState.activeColumn].name} desc`;
+          order = `${columnName} desc`;
         }
         switch (action) {
           case 'changePage':
@@ -139,9 +142,9 @@ const ResourcesTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${tableConfig.columns[tableState.activeColumn].name} asc`;
+                order = `${columnName} asc`;
               } else {
-                order = `${tableConfig.columns[tableState.activeColumn].name} desc`;
+                order = `${columnName} desc`;
               }
             }
             if (order !== sortOrder) {

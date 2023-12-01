@@ -262,8 +262,11 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
+              l={console.log(getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon)}
               iconSrc={
-                getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon.split('public')[1]
+                localStorage.getItem('Theme') === 'light'
+                  ? getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon
+                  : getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon
               }
               style={{ maxWidth: '120px' }}
             />
@@ -706,7 +709,7 @@ function Connections({
     e.stopPropagation();
     let response = await modalRef.current.show({
       title: `Connection status transition`,
-      subtitle: `Are you sure that you want to transform the connection status to ${e.target.value.toUpperCase()}?`,
+      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       options: ['Confirm', 'No'],
       variant: PROMPT_VARIANTS.CONFIRMATION,
     });

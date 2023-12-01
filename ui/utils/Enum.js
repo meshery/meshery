@@ -55,6 +55,6 @@ export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 
 export const CONNECTION_KINDS = {
-  MESHERY: 'meshery',
+  MESHERY: 'meshery-core',
   KUBERNETES: 'kubernetes',
 };
