@@ -30,13 +30,13 @@ image: /assets/img/integrations/clusterpedia.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Invite anyone to review and make changes to your private designs.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

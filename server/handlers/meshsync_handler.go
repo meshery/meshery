@@ -33,13 +33,13 @@ import (
 //
 // ```?status={status}``` status is a boolean value. If true then status is returned
 //
-// ```?clusterId={clusterId}``` clusterId is a string value. If specified then resources for that cluster are returned
+// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
 //
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
 
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-  rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	var resources []model.KubernetesResource
@@ -65,26 +65,46 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
 	apiVersion := r.URL.Query().Get("apiVersion")
-	clusterId := r.URL.Query().Get("clusterId")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
-	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotation"))
+	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
+	kind := r.URL.Query().Get("kind")
+
+	filter := struct {
+		ClusterIds []string `json:"clusterIds"`
+	}{}
+
+	clusterIds := r.URL.Query().Get("clusterIds")
+	if clusterIds != "" {
+		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+		if err != nil {
+			h.log.Error(ErrFetchPattern(err))
+			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		filter.ClusterIds = []string{}
+	}
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-	Preload("KubernetesResourceMeta")
+		Preload("KubernetesResourceMeta").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+
+	if kind != "" {
+		result = result.Where(&model.KubernetesResource{Kind: kind})
+	}
 
 	if apiVersion != "" {
 		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
 	}
 
 	if isLabels {
-	 result = result.Preload("KubernetesResourceMeta.Labels")
+		result = result.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
 	}
 	if isAnnotaion {
-		result = result.Preload("KubernetesResourceMeta.Annotations")
+		result = result.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
 	}
-
 
 	if spec {
 		result = result.Preload("Spec")
@@ -94,13 +114,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		result = result.Preload("Status")
 	}
 
-
-	if clusterId != "" {
-		result = result.Where(&model.KubernetesResource{ClusterID: clusterId})
-	}
-		
 	if search != "" {
-		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%`+search+`%`})
+		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
 	}
 
 	result.Count(&totalCount)
@@ -136,14 +151,14 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
-		Page:     page,
-		PageSize: pgSize,
+		Page:       page,
+		PageSize:   pgSize,
 		TotalCount: totalCount,
-		Resources:   resources,
+		Resources:  resources,
 	}
 
 	if err := enc.Encode(response); err != nil {
-	 h.log.Error(ErrFetchMeshSyncResources(err))
+		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 	}
 }

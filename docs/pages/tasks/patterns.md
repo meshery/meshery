@@ -6,11 +6,12 @@ redirect_from: tasks/pattern-management/
 type: tasks
 language: en
 list: include
+abstract: 'Meshery applies DRY principle when managing the configuration of cloud native infrastructure .'
 ---
 
-{% include alert.html 
-    type="warning" 
-    title="What are Cloud Native Patterns?" 
+{% include alert.html
+    type="warning"
+    title="What are Cloud Native Patterns?"
     content='This feature area is under active development. Until additional documentation is published,see the <a href="https://docs.google.com/document/d/1B2N78EdRiZF-yVo1-HY3syppwBBDumgMuYg6seD-AJ4/edit#">Meshery and cloud native patterns</a> design specification for further details.' %}
 
 ## Use Meshery to Deploy a Cloud Native Pattern
@@ -42,6 +43,7 @@ $ mesheryctl pattern import -f <path to the pattern>
 Importing pattern…
 Pattern successfully imported.
 ```
+
 ### Using Meshery UI:
 
 From Meshery UI, patterns can be imported from your local filesystem or imported from a remote URL.

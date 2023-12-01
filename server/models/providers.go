@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -204,13 +205,16 @@ type K8sContextPersistResponse struct {
 }
 
 type ConnectionPayload struct {
-	Kind             string                 `json:"kind,omitempty"`
-	SubType          string                 `json:"sub_type,omitempty"`
-	Type             string                 `json:"type,omitempty"`
-	MetaData         map[string]interface{} `json:"metadata,omitempty"`
-	Status           ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
-	Name             string                 `json:"name,omitempty"`
+	ID               uuid.UUID                    `json:"id,omitempty"`
+	Kind             string                       `json:"kind,omitempty"`
+	SubType          string                       `json:"sub_type,omitempty"`
+	Type             string                       `json:"type,omitempty"`
+	MetaData         map[string]interface{}       `json:"metadata,omitempty"`
+	Status           connections.ConnectionStatus `json:"status,omitempty"`
+	CredentialSecret map[string]interface{}       `json:"credential_secret,omitempty"`
+	Name             string                       `json:"name,omitempty"`
+	CredentialID     *uuid.UUID                   `json:"credential_id,omitempty"`
+	Model            string                       `json:"model,omitempty"`
 }
 
 type EnvironmentPayload struct {
@@ -306,6 +310,7 @@ const (
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
 	HandlerKey               ContextKey = "handlerkey"
+	SystemIDKey              ContextKey = "systemidKey"
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
@@ -378,8 +383,8 @@ type Provider interface {
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
-	GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error)
+	SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error)
+	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
@@ -444,17 +449,20 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error)
+	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error)
+	GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
-	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
-	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
-	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
-	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
+	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
+	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
+	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*connections.Connection, error)
+	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
+	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 
-	SaveUserCredential(req *http.Request, credential *Credential) error
+	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 

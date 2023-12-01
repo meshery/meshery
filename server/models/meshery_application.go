@@ -31,7 +31,6 @@ func GetApplicationTypes() (r []DesignTypeResponse) {
 	return
 }
 
-
 // MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {
 	ID *uuid.UUID `json:"id,omitempty"`

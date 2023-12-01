@@ -13,6 +13,9 @@ As an cloud native management platform, Meshery has built-in support infastructu
 
 Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
 
+[![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
+)]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
+
 ## Creating a Meshery Design
 
 You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
@@ -23,17 +26,17 @@ Use Meshery UI or mesheryctl to manage [designs](../tasks/patterns.md).
 
 Meshery also comes with seed patterns when users start Meshery for the first time. These patterns cover common use cases and examples for you as you explore Meshery.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-patterns.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-patterns.png" width="50%" />
 
 Users can also import these patterns to their remote provider from this [sample repository](https://github.com/service-mesh-patterns/service-mesh-patterns/tree/master/samples).
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-import.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-import.png" width="50%" />
 
 Once these patterns are imported, you can then edit these patterns or use the pattern configurator to configure them according to your requirements.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-configure-button.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-configure-button.png" width="50%" />
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-configure.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-configure.png" width="50%" />
 
 ## Pattern Management Through Meshery CLI
 
@@ -65,7 +68,7 @@ Meshery can be used for managing WebAssembly Filters through the UI or the CLI.
 
 Like patterns, Meshery also comes with some sample WebAssembly Filters for you to experiment.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-filters.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-filters.png" width="50%" />
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/layer5io/wasm-filters) repo.
 
@@ -73,7 +76,7 @@ Meshery's sample application [ImageHub](./deploying-sample-apps.md#imagehub) wil
 
 You can onboard ImageHub to an installed service mesh as shown below.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/image-hub.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/image-hub.png" width="50%" />
 
 ### Filter Management Through Meshery CLI
 
@@ -95,21 +98,25 @@ mesheryctl exp filter apply metrics_collector_bg
 
 ## Applications
 
-Meshery can also manage your Kubernetes applications and can onboard/offboard them of deployed service meshes.
+Meshery can also manage your Kubernetes applications and deploy them to any of your connected kubernetes cluster.
 
 ### Managing Applications Through Meshery UI
 
 Meshery has a set of [sample applications](./deploying-sample-apps.md) which you can use to quickly test out your deployment.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications-seeded.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications-seeded.png" width="50%" />
 
 You can also bring in your own applications by uploading it from filesystem or importing it from a URL.
 
-<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications.png" />
+<img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications.png" width="50%" />
 
-The application files can be described in Kubernetes manifest format or pattern format.
+The application files can be described in following formats:
+- Kubernetes manifest
+- Meshery Design
+- Helm charts
+- Docker Compose Apps
 
-You can also run the same application on different service meshes and compare the performance. See [Performance Management with Meshery](performance-management.md) for more details.
+You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery](performance-management.md) for more details.
 
 ### Managing Applications Through Meshery CLI
 

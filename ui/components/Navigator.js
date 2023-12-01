@@ -338,7 +338,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     title: 'Dashboard',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link: true,
-    submenu: false,
+    submenu: true,
   },
   {
     id: LIFECYCLE,
@@ -346,7 +346,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     hovericon: <LifecycleHover style={drawerIconsStyle} />,
     title: 'Lifecycle',
     link: true,
-    href: '/management',
+    href: '/management/connections',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     submenu: true,
     children: [

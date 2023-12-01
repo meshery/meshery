@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Extensibility: MesheryAdapters"
+title: "Extensibility: Meshery Adapters"
 permalink: extensibility/adapters
 type: Extensibility
 abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'

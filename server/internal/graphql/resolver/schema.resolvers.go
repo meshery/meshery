@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/generated"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
@@ -170,7 +171,8 @@ func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selecto
 // SubscribeMesheryControllersStatus is the resolver for the subscribeMesheryControllersStatus field.
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
-	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	controllerHandlersPerContext := handler.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
 		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("controller handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
@@ -232,8 +234,9 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	isSubscriptionFlushed := false
 	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
-	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
-	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
+	handler, _ := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	meshSyncDataHandlers := handler.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+	if len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
 		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("meshsync data handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
 		return nil, er
@@ -287,10 +290,10 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 }
 
 // SubscribeConfiguration is the resolver for the subscribeConfiguration field.
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.subscribeConfiguration(ctx, provider, *user, applicationSelector, patternSelector, filterSelector)
+	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
 }
 
 // SubscribeClusterResources is the resolver for the subscribeClusterResources field.

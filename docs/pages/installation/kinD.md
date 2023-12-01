@@ -4,6 +4,8 @@ title: kinD
 permalink: installation/kubernetes/kind
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/kind
 display-title: "false"
 language: en
 list: include

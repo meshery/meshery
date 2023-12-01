@@ -8,8 +8,15 @@ language: en
 list: include
 ---
 
-## Managed and Unmanaged Connections
+![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
 
+## Managed and Unmanaged Connections
+Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
+
+Connections can be:
+
+1) a ConnectionDefinition based Meshery's Connection Schema with hand-curated Connection attributes. 
+2) a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
 
 ### Managed Connections
 
