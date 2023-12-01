@@ -31,7 +31,7 @@
   "dependencies": {
     "@casl/ability": "^6.5.0",
     "@casl/react": "^3.1.0",
-    "@date-io/moment": "^2.11.0",
+    "@date-io/moment": "^2.17.0",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
