@@ -96,6 +96,10 @@ const MeshModelComponent = ({
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
+
+  // indicates the first time we've searched something
+  // entries will be appended to previous state if we've searched same term before
+  const [firstSearch, setFirstSearch] = useState(true);
   // const [loading, setLoading] = useState(false);
 
   const getModels = async (page) => {
@@ -158,9 +162,13 @@ const MeshModelComponent = ({
     }
   };
 
-  const getSearchedModels = async (searchText) => {
+  const getSearchedModels = async (page, searchText) => {
     try {
-      const { total_count, models } = await searchModels(searchText);
+      const { total_count, models } = await searchModels(searchText, {
+        page: page?.Models + 1,
+        pageSize: rowsPerPage,
+        paginated: true,
+      });
       const componentPromises = models.map(async (model) => {
         const { components } = await getComponentFromModelApi(model.name);
         const { relationships } = await getRelationshipFromModelApi(model.name);
@@ -171,7 +179,13 @@ const MeshModelComponent = ({
       await Promise.all(componentPromises);
       setCount(total_count);
       if (!isRequestCancelled) {
-        setResourcesDetail(models ? models : []);
+        setResourcesDetail((prev) => {
+          if (firstSearch) {
+            setFirstSearch(false);
+            return models;
+          }
+          return [...prev, ...models];
+        });
       }
     } catch (error) {
       console.error('Failed to fetch components:', error);
@@ -280,6 +294,16 @@ const MeshModelComponent = ({
   );
 
   useEffect(() => {
+    setFirstSearch(true);
+    setPage({
+      Models: 0,
+      Components: 0,
+      Relationships: 0,
+      Registrants: 0,
+    });
+  }, [view, searchText, rowsPerPage]);
+
+  useEffect(() => {
     setRequestCancelled(false);
     // setLoading(true);
 
@@ -290,7 +314,7 @@ const MeshModelComponent = ({
     } else if (view === RELATIONSHIPS) {
       getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
-      getSearchedModels(searchText);
+      getSearchedModels(page, searchText);
     } else if (view === COMPONENTS && searchText) {
       getSearchedComponents(searchText);
     } else if (view === REGISTRANTS && searchText === null) {
@@ -349,12 +373,6 @@ const MeshModelComponent = ({
             }`}
             onClick={() => {
               setView(MODELS);
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
               if (view !== MODELS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -383,12 +401,6 @@ const MeshModelComponent = ({
             }`}
             onClick={() => {
               setView(COMPONENTS);
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
               if (view !== COMPONENTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -417,12 +429,6 @@ const MeshModelComponent = ({
             }`}
             onClick={() => {
               setView(RELATIONSHIPS);
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
               if (view !== RELATIONSHIPS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -451,12 +457,6 @@ const MeshModelComponent = ({
             }`}
             onClick={() => {
               setView(REGISTRANTS);
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
               if (view !== REGISTRANTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
