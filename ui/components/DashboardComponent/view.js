@@ -238,7 +238,6 @@ export const Title = ({ onClick, data, value }) => {
     <div
       style={{
         color: 'inherit',
-        textDecorationLine: 'underline',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',

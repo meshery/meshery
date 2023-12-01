@@ -60,10 +60,10 @@ Helpers to provide common UI or API level actions across our different cypress i
 
 Our [Fixture Files](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Fixture-Files) which are used by our tests as:
 
-- external pieces of static data to [Stub](https://docs.cypress.io/guides/guides/network-requests#Stubbing) response data in integration tests **(i.e. [/integration/integration/configuration_filters_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/integration/integration/configuration_filters_spec.js))**
-- or reuse data as test input in end-to-end tests **(i.e. [/integration/e2e/service_mesh_configuration_management_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/integration/e2e/service_mesh_configuration_management_spec.js))**.
+- external pieces of static data to [Stub](https://docs.cypress.io/guides/guides/network-requests#Stubbing) response data in integration tests **(i.e. [/integration/integration/configuration_filters_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/e2e/integration/configuration_filters_spec.js))**
+- or reuse data as test input in end-to-end tests **(i.e. [/integration/e2e/service_mesh_configuration_management_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/e2e/e2e/service_mesh_configuration_management_spec.js))**.
 
-### Directory: `./integration/integration/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/integration))
+### Directory: `./integration/integration/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/e2e/integration))
 
 Integration tests for Meshery UI that stub server requests to:
 
@@ -73,7 +73,7 @@ Integration tests for Meshery UI that stub server requests to:
 
 Follow [this guidance](https://docs.cypress.io/guides/getting-started/testing-your-app#Stubbing-the-server) regarding when it's a good idea to stub the server versus allowing the frontend to reach out the actual server and its underlying resources.
 
-### Directory: `./integration/e2e/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/e2e))
+### Directory: `./integration/e2e/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/e2e/e2e))
 
 End-to-end tests for both Meshery UI and Meshery Server where its usually necessary to [seed data](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data), occasionally [bypass our UI](https://docs.cypress.io/guides/getting-started/testing-your-app#Bypassing-your-UI), use [actual server responses](https://docs.cypress.io/guides/guides/network-requests#Use-Server-Responses) and define cypress [routes](https://docs.cypress.io/guides/guides/network-requests#Routing) to [wait](https://docs.cypress.io/guides/guides/network-requests#Waiting) and [assert](https://docs.cypress.io/guides/guides/network-requests#Assertions) on requests and/or their responses.
 

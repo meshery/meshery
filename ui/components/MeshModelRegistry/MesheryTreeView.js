@@ -352,7 +352,11 @@ const MesheryTreeView = ({
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
+          <div
+            id="scrollElement"
+            style={{ overflowY: 'auto', height: '27rem' }}
+            onScroll={handleScroll(MODELS)}
+          >
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -391,7 +395,7 @@ const MesheryTreeView = ({
                             });
                           }}
                         >
-                          <div onScroll={handleScroll(COMPONENTS)}>
+                          <div id="scrollElement" onScroll={handleScroll(COMPONENTS)}>
                             <StyledTreeItem
                               nodeId={`${index}.1`}
                               labelText={`Components (${
@@ -435,7 +439,7 @@ const MesheryTreeView = ({
                             </StyledTreeItem>
                           </div>
 
-                          <div onScroll={handleScroll(RELATIONSHIPS)}>
+                          <div id="scrollElement" onScroll={handleScroll(RELATIONSHIPS)}>
                             <StyledTreeItem
                               nodeId={`${index}.2`}
                               labelText={`Relationships (${
@@ -514,7 +518,11 @@ const MesheryTreeView = ({
               setSelected([]);
             }}
           >
-            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(COMPONENTS)}>
+            <div
+              id="scrollElement"
+              style={{ overflowY: 'auto', height: '27rem' }}
+              onScroll={handleScroll(COMPONENTS)}
+            >
               {data.map((component, index) => (
                 <StyledTreeItem
                   key={index}
@@ -558,6 +566,7 @@ const MesheryTreeView = ({
             }}
           >
             <div
+              id="scrollElement"
               style={{ overflowY: 'auto', maxHeight: '27rem' }}
               onScroll={handleScroll(RELATIONSHIPS)}
             >
