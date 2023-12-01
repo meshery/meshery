@@ -228,8 +228,8 @@ class MesheryApp extends App {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
           icon: {
-            colorIcon: res?.components[0].model.metadata.svgColor.split('public')[1],
-            whiteIcon: res?.components[0].model.metadata.svgWhite.split('public')[1],
+            colorIcon: res?.components[0].model.metadata.svgColor,
+            whiteIcon: res?.components[0].model.metadata.svgWhite,
           },
         };
       }
