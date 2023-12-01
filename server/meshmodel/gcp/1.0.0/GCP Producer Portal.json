@@ -1,0 +1,39 @@
+{
+    "kind":"Producer Portal",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "Producer Portal",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "TRUE",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "meshery-shapes",
+        "modelDisplayName": "GCP Producer Portal",
+        "primaryColor": "#5C85DE",
+        "published": "TRUE",
+        "secondaryColor": "",
+        "shape": "circle",
+        "styleOverrides": "",
+        "subCategory": "Cloud Provider",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+    },
+    "model": {
+        "name": "meshery-shapes",
+        "version": "1.0.0",
+        "displayName": "GCP Producer Portal",
+        "category": {
+            "name": "gcp",
+            "metadata": {
+        },
+        "metadata": {
+            "svgColor": "",
+            "svgWhite": "",
+            "isAnnotation": "TRUE",
+        }
+    },
+        "schema": "{\"properties\": { \"title\": \"Label\", \"type\": \"String\", \"description\": \"Phrase displayed as a caption to the component.\" },\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+
+}
