@@ -248,7 +248,12 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon}
+              l={console.log(getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon)}
+              iconSrc={
+                localStorage.getItem('Theme') === 'light'
+                  ? getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon
+                  : getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon
+              }
               style={{ maxWidth: '120px' }}
             />
           );
