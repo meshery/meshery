@@ -41,7 +41,7 @@
     "eslint": "^8.48.0",
     "eslint-config-next": "^14.0.3",
     "eslint-plugin-cypress": "^2.15.1",
-    "start-server-and-test": "^2.0.0"
+    "start-server-and-test": "^2.0.3"
   },
   "engines": {
     "node": "^16 || ^18"
