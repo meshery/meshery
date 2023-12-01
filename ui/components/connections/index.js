@@ -248,11 +248,10 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              l={console.log(getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon)}
               iconSrc={
                 localStorage.getItem('Theme') === 'light'
-                  ? getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon
-                  : getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon
+                  ? `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon}`
+                  : `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon}`
               }
               style={{ maxWidth: '120px' }}
             />
