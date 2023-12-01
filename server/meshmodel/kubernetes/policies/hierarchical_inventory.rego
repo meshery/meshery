@@ -7,7 +7,7 @@ import data.common.contains
 import data.common.get_array_pos
 import data.common.get_path
 
-parent_child_relationship = updated_design {
+inventory_relationship = updated_design {
     from_selectors := data.inventory.selectors.allow.from
     to_selectors := data.inventory.selectors.allow.to
 
