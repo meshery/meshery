@@ -120,7 +120,7 @@
     "@babel/core": "^7.21.3",
     "@babel/eslint-parser": "^7.22.11",
     "@babel/traverse": "^7.23.2",
-    "@babel/types": "^7.22.5",
+    "@babel/types": "^7.23.5",
     "@cypress/code-coverage": "^3.12.5",
     "@next/eslint-plugin-next": "^13.1.2",
     "@storybook/addon-interactions": "^6.5.16",
