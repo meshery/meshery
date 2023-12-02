@@ -348,13 +348,13 @@ func GetInternalControllerStatus(status controllers.MesheryControllerStatus) Mes
 
 	case controllers.Undeployed:
 		return MesheryControllerStatusUndeployed
-	
+
 	case controllers.Enabled:
 		return MesheryControllerStatusEnabled
 
 	case controllers.Running:
 		return MesheryControllerStatusRunning
-	
+
 	case controllers.Connected:
 		return MesheryControllerStatusConnected
 	}
