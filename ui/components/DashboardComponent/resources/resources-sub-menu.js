@@ -138,12 +138,12 @@ const ResourcesSubMenu = (props) => {
                         key={index}
                         label={
                           <div className={classes.iconText}>
-                            {resource.tableConfig()[key].name}
                             <FontAwesomeIcon
                               icon={faMendeley}
                               style={iconSmall}
                               className={classes.icon}
                             />
+                            {resource.tableConfig()[key].name}
                           </div>
                         }
                       />
