@@ -17,6 +17,13 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
   const ping = useKubernetesHook();
   return {
     name: 'Namespace',
+    colViews: [
+      ['id', 'xs'],
+      ['metadata.name', 'm'],
+      ['apiVersion', 'm'],
+      ['cluster_id', 'xs'],
+      ['metadata.creationTimestamp', 'l'],
+    ],
     columns: [
       {
         name: 'id',

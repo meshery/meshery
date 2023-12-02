@@ -121,7 +121,7 @@ const ResourcesSubMenu = (props) => {
       <div className={classes.wrapperClss}>
         <Paper className={classes.wrapperClss}>
           <div className={classes.subMenuTab}>
-            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880 } }}>
+            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880, md: 1200 } }}>
               <Tabs
                 value={tabVal}
                 className={classes.tabs}
@@ -129,6 +129,7 @@ const ResourcesSubMenu = (props) => {
                 variant="scrollable"
                 indicatorColor="primary"
                 textColor="primary"
+                centered
               >
                 {Object.keys(resource.tableConfig()).map((key, index) => {
                   return (
@@ -137,12 +138,12 @@ const ResourcesSubMenu = (props) => {
                         key={index}
                         label={
                           <div className={classes.iconText}>
-                            {resource.tableConfig()[key].name}
                             <FontAwesomeIcon
                               icon={faMendeley}
                               style={iconSmall}
                               className={classes.icon}
                             />
+                            {resource.tableConfig()[key].name}
                           </div>
                         }
                       />
