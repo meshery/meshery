@@ -44,7 +44,7 @@ In order to pull in these environment metrics, you can also manually configure M
     
   <section id="content3">
     <p>
-      Static Boards capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performance tests. Static Boards Queries Prometheus SDK directly.
+      Static Boards capture the Cloud Native Performance. Certain protos are defined and tracked as a part of performance tests. Static Boards Queries Prometheus SDK directly.
     </p>
   </section>
     

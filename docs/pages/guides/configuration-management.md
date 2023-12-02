@@ -40,7 +40,7 @@ Once these patterns are imported, you can then edit these patterns or use the pa
 
 ## Pattern Management Through Meshery CLI
 
-You can also manage service mesh patterns through Meshery's CLI, mesheryctl.
+You can also manage cloud native patterns through Meshery's CLI, mesheryctl.
 
 The `mesheryctl pattern` subcommand lets you import and apply patterns to your cluster.
 
@@ -82,7 +82,7 @@ You can onboard ImageHub to an installed service mesh as shown below.
 
 You can also manage WASM filters through Meshery's CLI, mesheryctl.
 
-The `mesheryctl exp filter` subcommand lets you import and configure filters in your service meshes.
+The `mesheryctl exp filter` subcommand lets you import and configure filters.
 
 For example,
 
