@@ -3619,7 +3619,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connection := &connections.Connection{}
 		_ = json.Unmarshal(bdr, connection)
-		fmt.Println("connections, ", connection)
+		l.Log.Debug("connections, ", connection)
 		return connection, nil
 	}
 
