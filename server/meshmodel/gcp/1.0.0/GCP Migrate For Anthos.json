@@ -8,24 +8,24 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Migrate For Anthos",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#4285F4",
         "published": "TRUE",
         "secondaryColor": "",
         "shape": "circle",
         "styleOverrides": "",
-        "subCategory": "Cloud Provider",
+        "subCategory": "Cloud Native Network",
         "svgColor": "",
         "svgComplete": "",
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Migrate For Anthos",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Cloud Native Network",
             "metadata": {
         },
         "metadata": {

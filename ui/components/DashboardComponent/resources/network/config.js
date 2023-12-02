@@ -17,6 +17,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
   return {
     Service: {
       name: 'Service',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -243,6 +255,14 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     Endpoints: {
       name: 'Endpoints',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -374,6 +394,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     Ingress: {
       name: 'Ingress',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -532,6 +561,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     IngressClass: {
       name: 'IngressClass',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -672,6 +710,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     NetworkPolicy: {
       name: 'NetworkPolicy',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',

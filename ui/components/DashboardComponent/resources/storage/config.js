@@ -16,6 +16,16 @@ export const StorageTableConfig = (switchView, meshSyncResources, k8sConfig) => 
   return {
     PersistentVolume: {
       name: 'PersistentVolume',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -160,6 +170,16 @@ export const StorageTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     PersistentVolumeClaim: {
       name: 'PersistentVolumeClaim',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -339,6 +359,13 @@ export const StorageTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     StorageClass: {
       name: 'StorageClass',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
