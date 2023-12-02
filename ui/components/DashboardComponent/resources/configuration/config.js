@@ -11,13 +11,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
   return {
     ConfigMap: {
       name: 'ConfigMap',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -131,13 +137,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     Secrets: {
       name: 'Secrets',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -281,13 +293,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     ResourceQuota: {
       name: 'ResourceQuota',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -413,13 +431,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     LimitRange: {
       name: 'LimitRange',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -545,13 +569,21 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     HorizontalPodAutoscaler: {
       name: 'HorizontalPodAutoscaler',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['status.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -723,13 +755,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     VerticalPodAutoscaler: {
       name: 'VerticalPodAutoscaler',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -855,13 +893,21 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     PodDisruptionBudget: {
       name: 'PodDisruptionBudget',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['status.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -1047,13 +1093,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     PriorityClass: {
       name: 'PriorityClass',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -1179,13 +1231,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     RuntimeClass: {
       name: 'RuntimeClass',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -1311,13 +1369,21 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     Leases: {
       name: 'Leases',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['status.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',
@@ -1458,13 +1524,19 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
     },
     MutatingWebhookConfiguration: {
       name: 'MutatingWebhookConfiguration',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
           label: 'ID',
-          options: {
-            display: false,
-          },
+          options: {},
         },
         {
           name: 'metadata.name',

@@ -16,6 +16,17 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   const ping = useKubernetesHook();
   return {
     name: 'Node',
+    colViews: [
+      ['id', 'na'],
+      ['metadata.name', 'xs'],
+      ['apiVersion', 's'],
+      ['status.attribute', 'm'],
+      ['status.attribute', 'm'],
+      ['cluster_id', 'xs'],
+      ['status.attribute', 'm'],
+      ['status.attribute', 'm'],
+      ['metadata.creationTimestamp', 'l'],
+    ],
     columns: [
       {
         name: 'id',
