@@ -1,5 +1,14 @@
 import csv
 import os
+import argparse
+
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-f", "--file", help="CSV file with components")
+
+args = argParser.parse_args()
+print("args=%s" % args)
+
+print("args.name=%s" % args.file)
 
 def create_files_from_csv(csv_file_path, output_folder):
     with open(csv_file_path, 'r') as csv_file:
@@ -21,7 +30,7 @@ def create_files_from_csv(csv_file_path, output_folder):
             print(f'File {i + 1} created: {output_file_path}')
 
 # Example usage:
-csv_file_path = '/Users/lee/Downloads/input - Sheet1.csv'  # Replace with the path to your CSV file
+csv_file_path = args.file
 output_folder = 'output_files'  # Replace with the desired output folder
 
 create_files_from_csv(csv_file_path, output_folder)
