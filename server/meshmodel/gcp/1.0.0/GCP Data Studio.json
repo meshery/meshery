@@ -8,24 +8,24 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Data Studio",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#669df6",
         "published": "TRUE",
         "secondaryColor": "",
         "shape": "circle",
         "styleOverrides": "",
-        "subCategory": "Cloud Provider",
+        "subCategory": "Database",
         "svgColor": "",
         "svgComplete": "",
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Data Studio",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Database",
             "metadata": {
         },
         "metadata": {

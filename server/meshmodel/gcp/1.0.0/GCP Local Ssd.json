@@ -8,24 +8,24 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Local Ssd",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#4285F4",
         "published": "TRUE",
         "secondaryColor": "",
         "shape": "circle",
         "styleOverrides": "",
-        "subCategory": "Cloud Provider",
+        "subCategory": "Storage",
         "svgColor": "",
         "svgComplete": "",
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Local Ssd",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Storage",
             "metadata": {
         },
         "metadata": {
