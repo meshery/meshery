@@ -58,3 +58,8 @@ export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
   KUBERNETES: 'kubernetes',
 };
+
+export const MESHSYNC_STATES = {
+  DISCOVERED: 'discovered',
+  REGISTERED: 'registered',
+};
