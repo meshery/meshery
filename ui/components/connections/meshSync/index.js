@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   TableCell,
   Tooltip,
@@ -22,8 +22,8 @@ import SearchBar from '../../../utils/custom-search';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { camelcaseToSnakecase } from '../../../utils/utils';
-import RegisterConnectionModal from './registerConnModal';
+import { camelcaseToSnakecase, getColumnValue } from '../../../utils/utils';
+import RegisterConnectionModal from './RegisterConnectionModal';
 import classNames from 'classnames';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -38,6 +38,7 @@ const ACTION_TYPES = {
 
 export default function MeshSyncTable(props) {
   const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const callbackRef = useRef();
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
@@ -47,11 +48,9 @@ export default function MeshSyncTable(props) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
-  const StyleClass = useStyles();
-  const [registerConnectionModal, setRegisterConnectionModal] = useState({
-    open: false,
-  });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [registerConnectionMetadata, setRegisterConnectionMetadata] = useState();
+  const StyleClass = useStyles();
 
   const icons = {
     [MESHSYNC_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
@@ -224,7 +223,7 @@ export default function MeshSyncTable(props) {
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender: function CustomBody(value, tableMeta) {
           const DISCOVERED = {
             DISCOVERED: MESHSYNC_STATES.DISCOVERED,
           };
@@ -243,7 +242,15 @@ export default function MeshSyncTable(props) {
                   defaultValue={MESHSYNC_STATES.DISCOVERED}
                   disabled={disabled}
                   onClick={(e) => e.stopPropagation()}
-                  onChange={() => handleRegisterConnectionModal()}
+                  onChange={() => {
+                    callbackRef?.current?.(tableMeta);
+                    const componentMetadata = getColumnValue(
+                      tableMeta.rowData,
+                      'component_metadata',
+                      columns,
+                    );
+                    setRegisterConnectionMetadata(JSON.parse(componentMetadata.metadata));
+                  }}
                   className={classes.statusSelect}
                   disableUnderline
                   MenuProps={{
@@ -469,16 +476,8 @@ export default function MeshSyncTable(props) {
     return initialVisibility;
   });
 
-  const handleRegisterConnectionModalClose = () => {
-    setRegisterConnectionModal({
-      open: false,
-    });
-  };
-
-  const handleRegisterConnectionModal = () => {
-    setRegisterConnectionModal({
-      open: true,
-    });
+  const handleOpenRegisterModal = (callback) => {
+    callbackRef.current = callback;
   };
 
   return (
@@ -516,12 +515,10 @@ export default function MeshSyncTable(props) {
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
-      {registerConnectionModal.open && (
-        <RegisterConnectionModal
-          registerConnectionModalOpen={true}
-          handleRegisterConnectionModalClose={handleRegisterConnectionModalClose}
-        />
-      )}
+      <RegisterConnectionModal
+        handleOpen={handleOpenRegisterModal}
+        connectionMetadata={registerConnectionMetadata}
+      />
     </>
   );
 }

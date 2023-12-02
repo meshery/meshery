@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DialogContent, Dialog } from '@material-ui/core';
 
 import theme from '../../../themes/app.js';
+import CustomizedSteppers from './stepper/index.js';
 
-const RegisterConnectionModal = (props) => {
-  const { registerConnectionModalOpen, handleRegisterConnectionModalClose } = props;
+const RegisterConnectionModal = ({ handleOpen, connectionMetadata }) => {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    handleOpen(() => {
+      setOpen(true);
+    });
+  }, [handleOpen]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
-        open={registerConnectionModalOpen}
-        onClose={handleRegisterConnectionModalClose}
+        open={open}
+        onClose={handleClose}
         aria-labelledby="form-dialog-title"
         maxWidth="md"
         style={{ zIndex: 9999 }}
@@ -24,7 +35,9 @@ const RegisterConnectionModal = (props) => {
             borderRadius: '28px',
             border: `6px solid ${theme.palette.secondary.success}`,
           }}
-        ></DialogContent>
+        >
+          <CustomizedSteppers connectionMetadata={connectionMetadata} />
+        </DialogContent>
       </Dialog>
     </div>
   );
