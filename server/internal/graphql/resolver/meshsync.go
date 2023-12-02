@@ -9,7 +9,6 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
@@ -76,6 +75,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			for _, table := range tables {
+				if table == "events" {
+					continue
+				}
 				if err := dbHandler.Migrator().DropTable(table); err != nil {
 					r.Log.Error(err)
 					return "", err
@@ -99,7 +101,6 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				&models.PerformanceTestConfig{},
 				&models.SmiResultWithID{},
 				&models.K8sContext{},
-				&events.Event{},
 
 				// Registries
 				&registry.Registry{},
