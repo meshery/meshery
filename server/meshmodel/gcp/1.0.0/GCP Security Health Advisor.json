@@ -8,8 +8,8 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Security Health Advisor",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#FFFFFF",
         "published": "TRUE",
         "secondaryColor": "",
@@ -21,11 +21,11 @@
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Security Health Advisor",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Security & Compliance",
             "metadata": {
         },
         "metadata": {

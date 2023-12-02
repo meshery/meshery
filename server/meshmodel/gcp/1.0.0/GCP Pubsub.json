@@ -8,24 +8,24 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Pubsub",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#4285f4",
         "published": "TRUE",
         "secondaryColor": "",
         "shape": "circle",
         "styleOverrides": "",
-        "subCategory": "Cloud Provider",
+        "subCategory": "Streaming & Messaging",
         "svgColor": "",
         "svgComplete": "",
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Pubsub",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Streaming & Messaging",
             "metadata": {
         },
         "metadata": {

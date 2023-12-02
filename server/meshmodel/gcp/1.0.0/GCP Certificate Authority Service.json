@@ -8,8 +8,8 @@
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "GCP Certificate Authority Service",
+        "model": "gcp",
+        "modelDisplayName": "Google Cloud Platform",
         "primaryColor": "#4285F4",
         "published": "TRUE",
         "secondaryColor": "",
@@ -21,11 +21,11 @@
         "svgWhite": ""
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "gcp",
         "version": "1.0.0",
-        "displayName": "GCP Certificate Authority Service",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "gcp",
+            "name": "Security & Compliance",
             "metadata": {
         },
         "metadata": {
