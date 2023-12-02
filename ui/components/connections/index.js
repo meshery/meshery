@@ -43,7 +43,7 @@ import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
-import MeshSyncTable from './MeshsyncTable';
+import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
@@ -63,6 +63,8 @@ import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -168,6 +170,7 @@ function Connections({
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
+  const { width } = useWindowDimensions();
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -189,6 +192,17 @@ function Connections({
     ),
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
+
+  let colViews = [
+    ['name', 'xs'],
+    ['kind', 'm'],
+    ['type', 's'],
+    ['sub_type', 'm'],
+    ['updated_at', 'l'],
+    ['created_at', 'na'],
+    ['status', 'xs'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -249,7 +263,9 @@ function Connections({
                 }
               }}
               iconSrc={
-                getColumnValue(tableMeta.rowData, 'kindLogo', columns).colorIcon.split('public')[1]
+                localStorage.getItem('Theme') === 'light'
+                  ? `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon}`
+                  : `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon}`
               }
               style={{ maxWidth: '120px' }}
             />
@@ -461,7 +477,7 @@ function Connections({
                       >
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
-                          avatar={icons[status]()}
+                          avatar={icons[status] ? icons[status]() : ''}
                           label={status}
                         />
                       </MenuItem>
@@ -649,9 +665,9 @@ function Connections({
         res?.connections.forEach((connection) => {
           (connection.nextStatus =
             connection.nextStatus === undefined &&
-            connectionMetadataState[connection.kind].transitions),
+            connectionMetadataState[connection.kind]?.transitions),
             (connection.kindLogo =
-              connection.kindLogo === undefined && connectionMetadataState[connection.kind].icon);
+              connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
         setConnections(res?.connections || []);
         setPage(res?.page || 0);
@@ -692,7 +708,7 @@ function Connections({
     e.stopPropagation();
     let response = await modalRef.current.show({
       title: `Connection status transition`,
-      subtitle: `Are you sure that you want to transform the connection status to ${e.target.value.toUpperCase()}?`,
+      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       options: ['Confirm', 'No'],
       variant: PROMPT_VARIANTS.CONFIRMATION,
     });
@@ -854,10 +870,11 @@ function Connections({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });

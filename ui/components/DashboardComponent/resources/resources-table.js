@@ -9,6 +9,9 @@ import SearchBar from '../../../utils/custom-search';
 import View from '../view';
 import { ALL_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
+import { updateVisibleColumns } from '../../../utils/responsive-column';
+import { useWindowDimensions } from '../../../utils/dimension';
+import { camelcaseToSnakecase } from '../../../utils/utils';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -37,6 +40,7 @@ const ResourcesTable = (props) => {
   const [selectedResource, setSelectedResource] = useState({});
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { width } = useWindowDimensions();
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
@@ -80,7 +84,7 @@ const ResourcesTable = (props) => {
     );
   };
 
-  const [tableCols, updateCols] = useState();
+  const [tableCols, updateCols] = useState(tableConfig.columns);
 
   useEffect(() => {
     updateCols(tableConfig.columns);
@@ -90,10 +94,11 @@ const ResourcesTable = (props) => {
   }, [page, pageSize, search, sortOrder]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(tableConfig.colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     tableConfig.columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
@@ -121,9 +126,11 @@ const ResourcesTable = (props) => {
       enableNestedDataAccess: '.',
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+        const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
+
         let order = '';
         if (tableState.activeColumn) {
-          order = `${tableConfig.columns[tableState.activeColumn].name} desc`;
+          order = `${columnName} desc`;
         }
         switch (action) {
           case 'changePage':
@@ -135,9 +142,9 @@ const ResourcesTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${tableConfig.columns[tableState.activeColumn].name} asc`;
+                order = `${columnName} asc`;
               } else {
-                order = `${tableConfig.columns[tableState.activeColumn].name} desc`;
+                order = `${columnName} desc`;
               }
             }
             if (order !== sortOrder) {

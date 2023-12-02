@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-import { Paper, IconButton, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import { ALL_VIEW } from './resources/config';
+import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
+import { JsonParse } from '../../utils/utils';
 
 const View = (props) => {
   const {
@@ -197,10 +199,8 @@ const View = (props) => {
   const HeaderComponent = () => {
     return (
       <>
-        <TooltipButton title="Back" placement="left">
-          <IconButton onClick={() => setView(ALL_VIEW)}>
-            <ArrowBack />
-          </IconButton>
+        <TooltipButton title="Back" placement="left" style={{ padding: '10px' }}>
+          <ArrowBack onClick={() => setView(ALL_VIEW)} />
         </TooltipButton>
       </>
     );
@@ -230,3 +230,28 @@ const View = (props) => {
 };
 
 export default View;
+
+export const Title = ({ onClick, data, value }) => {
+  const [isHovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        color: 'inherit',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        textDecoration: isHovered ? 'underline' : 'none',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
+        <GetNodeIcon metadata={JsonParse(data)} />
+        <Typography style={{ marginLeft: '0.25rem' }} variant="body2">
+          {value}
+        </Typography>
+      </div>
+    </div>
+  );
+};

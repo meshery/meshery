@@ -13,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -338,4 +339,17 @@ func FormatK8sMessage(message string) string {
 	// If index is not nil, there will always be an array of length 2.
 	// 0th index since we want the start index of matched string.
 	return message[:index[0]]
+}
+
+func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
+	data, err := utils.Marshal(val)
+	if err != nil {
+		return
+	}
+
+	err = utils.Unmarshal(data, &unmarshalledvalue)
+	if err != nil {
+		return
+	}
+	return
 }
