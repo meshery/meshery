@@ -57,7 +57,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
@@ -72,7 +72,7 @@ const (
 )
 
 func main() {
-	url := os.Args[1]
+	url := "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmxD3-trwT6t_mD_LqOHfxt5eGvcE-TLkad94x8kQl8KJcJAnaXCufIBdSam2ELdavnKk-DbmNiRP0/pub?gid=0&single=true&output=csv"
 	if url == "" {
 		log.Fatal("provide a valid spreadsheet URL")
 		return
@@ -386,6 +386,15 @@ func mesheryUpdater(output []map[string]string) {
 							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 								component.Metadata[key] = svg
 							}
+						} else if key == "isModelAnnotation" {
+							if component.Model.Metadata == nil {
+								component.Model.Metadata = make(map[string]interface{})
+							}
+							if value == "TRUE" || value == "true" {
+								component.Model.Metadata["isAnnotation"] = true
+							} else {
+								component.Model.Metadata["isAnnotation"] = false
+							}
 						} else if contains(key, ColumnNamesToExtract) != -1 {
 							component.Metadata[key] = value
 						}
@@ -408,11 +417,18 @@ func mesheryUpdater(output []map[string]string) {
 					} else {
 						component.Metadata["isAnnotation"] = false
 					}
+
+					// if component.Model.Metadata["isModelAnnotation"] == "TRUE" || component.Metadata["isModelAnnotation"] == "true" {
+					// 	component.Model.Metadata["isAnnotation"] = true
+					// } else {
+					// 	component.Model.Metadata["isAnnotation"] = false
+					// }
 					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 					delete(component.Metadata, "Publish?")
 					delete(component.Metadata, "PublishToRegistry")
 					delete(component.Metadata, "CRDs")
 					delete(component.Metadata, "component")
+					delete(component.Model.Metadata, "isModelAnnotaion")
 					modelDisplayName := component.Metadata["modelDisplayName"].(string)
 					component.Model.DisplayName = modelDisplayName
 					byt, err = json.Marshal(component)

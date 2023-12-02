@@ -85,7 +85,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
-	
+
 	smInstancetracker.mx.Lock()
 	defer smInstancetracker.mx.Unlock()
 	id, ok := body["id"]
