@@ -30,13 +30,13 @@ image: /assets/img/integrations/flagger.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Reduce the risk of introducing a new software version in production by gradually shifting traffic to the new version while measuring metrics like HTTP/gRPC request success rate and latency.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

@@ -30,13 +30,13 @@ image: /assets/img/integrations/devstream.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Centrally manage your toolchain with versioned code, and keep track of every change.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. No reinvention of the wheels. Simply create a plugin, and connect any tools you like with DevStream.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Implement inbuilt best practices and share yours with the world.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

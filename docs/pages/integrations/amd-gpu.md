@@ -1,25 +1,23 @@
 ---
 layout: default
-title: Buildpacks
-permalink: integrations/buildpacks
+title: AMD GPU
+permalink: integrations/amd-gpu
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/buildpacks.svg
+image: /assets/img/integrations/amd-gpu.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: buildpacks -->
+ #### Category: amd-gpu -->
 
 ### Overview & Features:
-1. CLI for building apps using Cloud Native Buildpacks
-
-2. Collaborative and visual infrastructure as code for Buildpacks
+2. Collaborative and visual infrastructure as code for AMD GPU
 
 4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
@@ -30,11 +28,11 @@ image: /assets/img/integrations/buildpacks.svg
 
 
 
-5. Transform application source code into OCI images.
+5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
 
-6. Enable for swift rebasing of images and modular control over images.
+6. Invite anyone to review and make changes to your private designs.
 
-7. Replace Dockerfiles in the app development lifecycle.
+7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
 
 8. Collaborative Infrastructure as Code
 

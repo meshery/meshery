@@ -30,13 +30,13 @@ image: /assets/img/integrations/fluent-operator.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Fluentd decouples data sources from backend systems by providing a unified logging layer in between.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Fluentds 500+ plugins connect it to many data sources and outputs while keeping its core simple.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Fluentd has a flexible plugin system that allows the community to extend its functionality. 
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 
