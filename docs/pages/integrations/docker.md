@@ -22,21 +22,22 @@ image: /assets/img/integrations/docker.svg
 2. Collaborative and visual infrastructure as code for Docker
 
 4. 
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
+    Connect Docker with any of your favorite apps in just a few
+    clicks. Design, build, and automate anything for your work by
+    integrating apps like Docker to create visual automatedcl
+    workflows. Choose from hundreds of ready-made design patterns or use
+    our no-code designer, MeshMap to connect to apps not yet in our
+    library.
 
 
 
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
+5. Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.
 
+6. Convert your Docker Compose apps to Kubernetes apps.
 
-
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
-
-6. Provide high performance traffic serving that can scale to millions of requests per second.
-
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kuberentes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog. Use our no-code designer, MeshMap, to collaboratively design and operate your infra.
 
