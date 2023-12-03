@@ -239,15 +239,22 @@ export default function Provider() {
                     </MenuItem>
                   ))}
                   <Divider sx={{ my : 0.5 }} />
+                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
+                                        CNCF Labs{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
+                                        Equinix US-DAL{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="HPE Security">
+                                        HPE Security{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="MIT">
-                                        Massachusetts Institute of Technology (MIT) <span>Disabled</span>
+                                        Massachusetts Institute of Technology (MIT) <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
-                                        The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
+                                        The University of Texas at Austin{'\u00A0'}<span>Offline</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
-                                        CNCF Labs{'\u00A0'}<span>Disabled</span>
-                  </MenuProviderDisabled>
+                  
                 </MenuList>
               </ClickAwayListener>
             </Popover>
