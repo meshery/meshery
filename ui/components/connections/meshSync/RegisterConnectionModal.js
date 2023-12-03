@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DialogContent, Dialog } from '@material-ui/core';
 
 import theme from '../../../themes/app.js';
-import CustomizedSteppers from './stepper/index.js';
+import CustomizedSteppers from './Stepper/index.js';
 
 const RegisterConnectionModal = ({ handleOpen, connectionMetadata }) => {
   const [open, setOpen] = useState(false);
