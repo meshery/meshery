@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { ConnectionDetailContent, FinishContent, CredentialDetailContent } from './constants';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import {
+  Checkbox,
+  MenuItem,
+  ListItemText,
+  Select,
+  Typography,
+  Grid,
+  Button,
+} from '@material-ui/core';
 
+import { ConnectionDetailContent, FinishContent, CredentialDetailContent } from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import dataFetch from '../../../../lib/data-fetch';
-import { FormControl, MenuItem, Select } from '@material-ui/core';
 
 export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => {
   const [schema, setSchema] = useState({ properties: {} });
@@ -12,7 +23,9 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
   const formRef = React.createRef();
 
   useEffect(() => {
-    sharedData !== null && registerConnection(sharedData?.model);
+    sharedData !== null &&
+      sharedData.connection === undefined &&
+      registerConnection(sharedData?.model);
   }, [sharedData]);
 
   useEffect(() => {
@@ -55,9 +68,19 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       componentForm: data,
     }));
   };
-
+  const isDisabledNextButton =
+    sharedData?.componentForm &&
+    sharedData?.componentForm['name'] !== undefined &&
+    sharedData?.componentForm &&
+    sharedData?.componentForm['url'] !== undefined
+      ? false
+      : true;
   return (
-    <StepperContent {...ConnectionDetailContent} handleCallback={handleCallback} disabled={false}>
+    <StepperContent
+      {...ConnectionDetailContent}
+      handleCallback={handleCallback}
+      disabled={isDisabledNextButton}
+    >
       <RJSFWrapper
         key="register-connection-rjsf-form"
         jsonSchema={schema}
@@ -70,12 +93,15 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext }) => {
-  const [schema, setSchema] = useState({});
+  const [schema, setSchema] = useState({ properties: {} });
   const [connectionObject, setConnectionObject] = useState(null);
   const [existingCredentials, setExistingCredentials] = useState([]);
   const [selectedCredential, setSelectedCredential] = useState(null);
+  const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = React.useState(null);
-  const [/*isSuccess,*/ setIsSuccess] = React.useState(null);
+
+  const [disableVerify, setDisableVerify] = useState(true);
+  const [isSuccess, setIsSuccess] = React.useState(null);
   const formRef = React.createRef();
 
   useEffect(() => {
@@ -116,12 +142,12 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          Kind: sharedData?.connection?.component?.kind,
-          Name: sharedData?.connection?.component?.displayName,
-          Type: sharedData?.connection?.component?.metadata?.model,
+          Kind: sharedData?.connection?.component?.metadata?.model,
+          Name: sharedData?.connection?.component?.model.displayName,
+          Type: sharedData?.connection?.component?.metadata?.genealogy,
           Subtype: sharedData?.connection?.component?.metadata?.subCategory,
           Metadata: sharedData?.componentForm,
-          'Credential Secret': formState || selectedCredential,
+          'Credential Secret': selectedCredential !== null ? selectedCredential : formState,
           ID: sharedData?.connection?.id,
           Status: 'register',
         }),
@@ -153,7 +179,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   };
 
   const handleCallback = () => {
-    if (selectedCredential !== null) {
+    if (isSuccess === null || isSuccess === false) {
       verifyConnection();
     } else {
       handleNext();
@@ -168,38 +194,82 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
     const id = e.target.value;
     const credential = existingCredentials.find((credential) => credential.id === id);
     setSelectedCredential(credential);
+    setPrevSelectedCredential(id);
   };
 
   const handleChange = (data) => {
     setFormState(data);
   };
 
+  const handleClose = () => {
+    if (prevSelectedCredential === selectedCredential?.id) {
+      setSelectedCredential(null);
+      setPrevSelectedCredential(null);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      selectedCredential !== null ||
+      (formState !== null && formState['API key']) !== undefined ||
+      (formState !== null && formState['Basic Auth']) !== undefined
+    ) {
+      setDisableVerify(false);
+    } else {
+      setDisableVerify(true);
+    }
+  }, [selectedCredential, formState]);
+
   return (
     <StepperContent
       {...CredentialDetailContent}
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
-      disabled={selectedCredential === null || formState === null ? true : false}
-      // btnText={selectedCredential === null ? 'Verify Connection' : 'Next'}
+      disabled={disableVerify}
+      btnText={isSuccess === null || isSuccess === false ? 'Verify Connection' : 'Next'}
     >
       <p className={{ paddingLeft: '16px' }}>
         Select an existing credential to use for this connection
       </p>
-      <FormControl fullWidth>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel id="credential-checkbox-label">Select existing credential</InputLabel>
         <Select
-          labelId="credential-label"
-          id="credential"
-          label="Select existing credential"
-          defaultValue={'null'}
-          onChange={(e) => handleSelectCredential(e)}
+          labelId="credential-checkbox-label"
+          id="credential-checkbox"
+          onChange={handleSelectCredential}
+          value={selectedCredential?.name}
+          onClose={handleClose}
+          input={<OutlinedInput label="Select existing credential" />}
+          renderValue={() => (
+            <div>{selectedCredential !== null ? selectedCredential.name : ''}</div>
+          )}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            getContentAnchorEl: null,
+            style: {
+              maxHeight: 48 * 4.5 + 8,
+              width: 250,
+              zIndex: 10000,
+            },
+            PaperProps: {
+              style: {
+                zIndex: 10000,
+              },
+            },
+          }}
         >
-          <MenuItem value={'null'} disabled>
-            {'Select existing credential'}
-          </MenuItem>
           {existingCredentials &&
             existingCredentials?.map((credential) => (
               <MenuItem value={credential.id} name={credential.name}>
-                {credential.name}
+                <Checkbox checked={selectedCredential?.id === credential.id} />
+                <ListItemText primary={credential.name} />
               </MenuItem>
             ))}
         </Select>
@@ -214,15 +284,65 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         disabled={selectedCredential !== null ? true : false}
         onChange={handleChange}
       />
+      {isSuccess === false && (
+        <div
+          style={{
+            background: '#ff000010',
+            borderRadius: '10px',
+            padding: '10px',
+            display: 'flex',
+          }}
+        >
+          <Grid style={{ width: '80%' }}>
+            <Typography>
+              <b>Credential Invalid</b>
+            </Typography>
+            <Typography sx={{ color: '#00000020' }}>
+              {`Unable to establish a connection using ${connectionObject?.credential?.metadata?.modelDisplayName}`}
+            </Typography>
+          </Grid>
+          <Grid style={{ width: '20%', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              style={{
+                backgroundColor: '#ff0000',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                border: '0',
+                color: '#fff',
+                height: '40px',
+              }}
+              onClick={() => verifyConnection()}
+            >
+              Retry
+            </Button>
+          </Grid>
+        </div>
+      )}
+      {isSuccess === true && (
+        <div
+          style={{
+            background: '#00B39F40',
+            borderRadius: '10px',
+            padding: '10px',
+            display: 'flex',
+          }}
+        >
+          <Grid style={{ width: '90%' }}>
+            <Typography>
+              <b>Credential Verified</b>
+            </Typography>
+            <Typography sx={{ color: '#00000020' }}>
+              {`Credential ${connectionObject?.credential?.metadata?.modelDisplayName} created.`}
+            </Typography>
+          </Grid>
+          <Grid style={{ width: '10%' }}></Grid>
+        </div>
+      )}
     </StepperContent>
   );
 };
 
 export const Finish = () => {
-  const handleCallback = () => {
-    // MOve to step 2
-  };
-
   const cancelCallback = () => {
     // Close Modal
   };
@@ -230,16 +350,8 @@ export const Finish = () => {
   return (
     <StepperContent
       {...FinishContent}
-      handleCallback={handleCallback}
       cancelCallback={cancelCallback}
       disabled={false}
-    >
-      <p> Details</p>
-
-      <p>[ METADATA FORMATTER OUTPUT HERE ]</p>
-      <p>[ METADATA FORMATTER OUTPUT HERE ]</p>
-      <p>[ METADATA FORMATTER OUTPUT HERE ]</p>
-      <p>[ METADATA FORMATTER OUTPUT HERE ]</p>
-    </StepperContent>
+    ></StepperContent>
   );
 };
