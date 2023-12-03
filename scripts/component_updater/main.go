@@ -51,7 +51,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/manifests"
 )
@@ -72,7 +71,7 @@ const (
 )
 
 func main() {
-	url := "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmxD3-trwT6t_mD_LqOHfxt5eGvcE-TLkad94x8kQl8KJcJAnaXCufIBdSam2ELdavnKk-DbmNiRP0/pub?gid=0&single=true&output=csv"
+	url := os.Args[1]
 	if url == "" {
 		log.Fatal("provide a valid spreadsheet URL")
 		return
@@ -418,11 +417,6 @@ func mesheryUpdater(output []map[string]string) {
 						component.Metadata["isAnnotation"] = false
 					}
 
-					// if component.Model.Metadata["isModelAnnotation"] == "TRUE" || component.Metadata["isModelAnnotation"] == "true" {
-					// 	component.Model.Metadata["isAnnotation"] = true
-					// } else {
-					// 	component.Model.Metadata["isAnnotation"] = false
-					// }
 					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 					delete(component.Metadata, "Publish?")
 					delete(component.Metadata, "PublishToRegistry")
