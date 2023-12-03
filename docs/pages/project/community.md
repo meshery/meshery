@@ -10,7 +10,7 @@ category: none
 list: include
 ---
 
-Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
+Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding cloud native management and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
 
 ## Getting involved in the Community
 
