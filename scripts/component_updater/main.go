@@ -51,6 +51,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/manifests"
 )
