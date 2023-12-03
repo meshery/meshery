@@ -16,24 +16,6 @@ Meshery offers Providers as a point of extensibility. With a built-in Local Prov
 1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
    - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
 
-### Design Principles: Meshery Remote Provider Framework
-
-Meshery's Remote Provider extensibility framework is designed to enable:
-
-1. **Pluggable UI Functionality:**
-
-   - Out-of-tree custom UI components with seamless user experience.
-   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
-
-1. **Pluggable Backend Functionality:**
-
-   - Remote Providers have any number of capabilities unbeknownst to Meshery.
-
-1. **Pluggable AuthZ**
-   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
-
-![Providers](/assets/img/providers/provider_screenshot.png)
-
 ### What functionality do Providers perform?
 
 What a given Remote Provider offers might vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject different functionality - functionality specific to that provider.
@@ -48,6 +30,12 @@ What a given Remote Provider offers might vary broadly between providers. Mesher
   - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
 - **Reporting**
   - Examples: Using Meshery's GraphQL server to compose new dashboards.
+
+<a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot.png">
+<img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot.png" width="50%" /></a>
+<figure>
+  <figcaption>Figure: Selection of Provider upon login to Meshery</figcaption>
+</figure>
 
 ## Types of providers
 
@@ -78,6 +66,22 @@ Name: **“None”**
 - No performance test result history.
 - No conformance test result history.
 - Free to use.
+
+### Design Principles: Meshery Remote Provider Framework
+
+Meshery's Remote Provider extensibility framework is designed to enable:
+
+1. **Pluggable UI Functionality:**
+
+   - Out-of-tree custom UI components with seamless user experience.
+   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
+
+1. **Pluggable Backend Functionality:**
+
+   - Remote Providers have any number of capabilities unbeknownst to Meshery.
+
+1. **Pluggable AuthZ**
+   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
 
 ## How to Build a Remote Provider
 
