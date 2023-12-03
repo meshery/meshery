@@ -82,7 +82,7 @@ You can onboard ImageHub to an installed service mesh as shown below.
 
 You can also manage WASM filters through Meshery's CLI, mesheryctl.
 
-The `mesheryctl exp filter` subcommand lets you import and configure filters.
+The `mesheryctl filter` command lets you import and configure WebAssembly filters.
 
 For example,
 
