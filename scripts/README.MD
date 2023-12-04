@@ -32,6 +32,13 @@ Supported flags are:
 - `--only-published`
     Only handle components that have a value of "true" under the "Published?" column in spreadsheet.
 
+
+### Build
+
+```
+cd scripts/component_updater; go build main.go
+```
+
 ### Usage 
 
 1. To update docs on layer5.io website:
