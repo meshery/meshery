@@ -59,7 +59,7 @@ function MeshModelContructs({ classes }) {
         },
       },
       donut: {
-        title: 'Capabilities\nRegistry',
+        title: 'Registered\nCapabilities\nby Type',
         padAngle: 0.03,
       },
       tooltip: {
@@ -73,16 +73,19 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/models#models`;
+  const url = `https://docs.meshery.io/concepts/models`;
 
   return (
     <Link href="/settings#registry">
       <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
-            Models
+            Registry
           </Typography>
-          <Tooltip title="Learn more about models" placement="right">
+          <Tooltip
+            title="Learn more about Models, Components, and Relationships in Meshery"
+            placement="right"
+          >
             <InfoIcon
               color={theme.palette.secondary.iconMain}
               style={{ ...iconSmall, marginLeft: '0.5rem' }}
@@ -149,11 +152,11 @@ function MeshModelCategories({ classes }) {
   return (
     <Link href="/settings#registry">
       <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
-            Model Categories
+            Categories
           </Typography>
-          <Tooltip title="Learn more about model categories" placement="right">
+          <Tooltip title="Learn more about Categories" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
               style={{ ...iconSmall, marginLeft: '0.5rem' }}
