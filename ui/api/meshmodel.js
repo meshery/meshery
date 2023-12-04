@@ -34,8 +34,13 @@ export async function getAllComponents(page = 1, pageSize = 'all') {
   return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}?page=${page}&pagesize=${pageSize}`);
 }
 
-export async function getMeshModels(page = 1, pageSize = 'all') {
-  return await promisifiedDataFetch(`${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}`);
+export async function getMeshModels(page = 1, pageSize = 'all', options = defaultOptions) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&${optionToQueryConvertor({
+      ...defaultOptions,
+      ...options
+    })}`,
+  );
 }
 
 export async function getComponentFromModelApi(model, pageSize = 'all', trim = true) {
@@ -161,7 +166,10 @@ export async function getModelFromCategoryApi(category) {
  */
 export async function searchModels(queryString, options = defaultOptions) {
   return promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}?search=${encodeURI(queryString)}&${optionToQueryConvertor(options)}`,
+    `${MESHMODEL_ENDPOINT}?search=${encodeURI(queryString)}&${optionToQueryConvertor({
+      ...defaultOptions,
+      ...options
+    })}`,
   );
 }
 
@@ -183,11 +191,26 @@ export async function getModelByName(modelName, options = defaultOptions) {
  * @param {pageOptions} options
  */
 function optionToQueryConvertor(options) {
-  const { paginated, pageSize, page, trim } = options;
+  const uri = new URLSearchParams();
+  const { paginated, pageSize, page, trim, components, relationships } = options;
 
-  if (paginated) {
-    return `trim=${trim}&${pageSize && `pagesize=${pageSize}`}&page=${page || 0}`;
+  if (trim) {
+    uri.append('trim', `${trim}`);
   }
 
-  return `pagesize=all&trim=${trim}`;
+  if (pageSize) {
+    uri.append('pagesize', `${pageSize}`);
+  }
+
+  if (page) {
+    uri.append('page', `${page}`);
+  }
+
+  if (components) {
+    uri.append('components', `${components}`);
+  }
+  if (relationships) {
+    uri.append('relationships', `${relationships}`);
+  }
+  return uri.toString();
 }

@@ -100,16 +100,20 @@ const MeshModelComponent = ({
 
   const getModels = async (page) => {
     try {
-      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage);
+      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
+        components: true,
+        relationships: true,
+        paginated: true,
+      });
 
       if (!isRequestCancelled && models) {
         const updatedModels = [];
 
         for (const model of models) {
-          const { components } = await getComponentFromModelApi(model.name);
-          const { relationships } = await getRelationshipFromModelApi(model.name);
-          model.components = components;
-          model.relationships = relationships;
+          // const { components } = await getComponentFromModelApi(model.name);
+          // const { relationships } = await getRelationshipFromModelApi(model.name);
+          // model.components = components;
+          // model.relationships = relationships;
           updatedModels.push(model);
         }
 
@@ -160,16 +164,20 @@ const MeshModelComponent = ({
 
   const getSearchedModels = async (searchText) => {
     try {
-      const { total_count, models } = await searchModels(searchText);
-      const componentPromises = models.map(async (model) => {
-        const { components } = await getComponentFromModelApi(model.name);
-        const { relationships } = await getRelationshipFromModelApi(model.name);
-        model.components = components;
-        model.relationships = relationships;
+      const { total_count, models } = await searchModels(searchText, {
+        components: true,
+        relationships: true,
       });
+      // const componentPromises = models.map(async (model) => {
+      //   const { components } = await getComponentFromModelApi(model.name);
+      //   const { relationships } = await getRelationshipFromModelApi(model.name);
+      //   model.components = components;
+      //   model.relationships = relationships;
+      // });
 
-      await Promise.all(componentPromises);
+      // await Promise.all(componentPromises);
       setCount(total_count);
+      console.log(total_count, models);
       if (!isRequestCancelled) {
         setResourcesDetail(models ? models : []);
       }

@@ -203,6 +203,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Offset:     offset,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
+
+		Components:    r.URL.Query().Get("components") == "true",
+		Relationships: r.URL.Query().Get("relationships") == "true",
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.DisplayName = r.URL.Query().Get("search")
@@ -281,6 +284,9 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Greedy:  greedy,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
+
+		Components:    r.URL.Query().Get("components") == "true",
+		Relationships: r.URL.Query().Get("relationships") == "true",
 	})
 
 	var pgSize int64
@@ -487,7 +493,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _  := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
@@ -498,7 +504,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Limit:        limit,
 		OrderOn:      queryParams.Get("order"),
 		Sort:         queryParams.Get("sort"),
-		Annotations: returnAnnotationComp,
+		Annotations:  returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -597,7 +603,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Greedy:       greedy,
 		OrderOn:      queryParams.Get("order"),
 		Sort:         queryParams.Get("sort"),
-		Annotations: returnAnnotationComp,
+		Annotations:  returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -685,15 +691,15 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		ModelName:  typ,
-		APIVersion: queryParams.Get("apiVersion"),
-		Version:    v,
-		Offset:     offset,
-		Greedy:     greedy,
-		Limit:      limit,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Name:        name,
+		ModelName:   typ,
+		APIVersion:  queryParams.Get("apiVersion"),
+		Version:     v,
+		Offset:      offset,
+		Greedy:      greedy,
+		Limit:       limit,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -782,16 +788,16 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Version:    v,
-		ModelName:  queryParams.Get("model"),
-		Offset:     offset,
-		Limit:      limit,
-		Greedy:     greedy,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Name:        name,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Version:     v,
+		ModelName:   queryParams.Get("model"),
+		Offset:      offset,
+		Limit:       limit,
+		Greedy:      greedy,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -874,14 +880,14 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		ModelName:  typ,
-		Version:    v,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		ModelName:   typ,
+		Version:     v,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
@@ -980,7 +986,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		Offset:       offset,
 		OrderOn:      queryParams.Get("order"),
 		Sort:         queryParams.Get("sort"),
-		Annotations: returnAnnotationComp,
+		Annotations:  returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
@@ -1075,7 +1081,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		Offset:       offset,
 		OrderOn:      queryParams.Get("order"),
 		Sort:         queryParams.Get("sort"),
-		Annotations: returnAnnotationComp,
+		Annotations:  returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
@@ -1162,13 +1168,13 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		Version:    v,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Version:     v,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {

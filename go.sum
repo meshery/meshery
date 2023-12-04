@@ -1557,8 +1557,6 @@ github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg
 github.com/layer5io/meshery-operator v0.6.15 h1:IKvqMIB/xOA42JFB1IaNu6ZZLmJ3BJSvohVYIDkOG8o=
 github.com/layer5io/meshery-operator v0.6.15/go.mod h1:+lRenXgniyFfe0gVUVbuA8p+CxjywA6boybnUBsiJY8=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.6.88 h1:JvL/lzIorXxGR5a3BKo1nSzHmtssh/HstAY4yYc9aqM=
-github.com/layer5io/meshkit v0.6.88/go.mod h1:8dujy2ZSjnmtI7bFhMhnBUwFSlkPDyOowp6iLvxMslk=
 github.com/layer5io/meshsync v0.6.24 h1:ui/u89NW2yHyCtdVaJuuzrag5a1CbhVB8Lp70/9Y+lw=
 github.com/layer5io/meshsync v0.6.24/go.mod h1:0qI6ATBvkVx10C1ymH62NaGPy85ALFF3T9Dx/IEXfy0=
 github.com/layer5io/nighthawk-go v1.0.3 h1:AGhip7TM8FjaDJ58jU/7BoPx+O45S7UNImfw7vC2Z0U=
@@ -3051,8 +3049,8 @@ gotest.tools v2.2.0+incompatible/go.mod h1:DsYFclhRJ6vuDpmuTbkuFWG+y2sxOXAzmJt81
 gotest.tools/v3 v3.4.0 h1:ZazjZUfuVeZGLAmlKKuyv3IKP5orXcwtOwDQH6YVr6o=
 gotest.tools/v3 v3.4.0/go.mod h1:CtbdzLSsqVhDgMtKsx03ird5YTGB3ar27v0u/yKBW5g=
 helm.sh/helm/v3 v3.3.1/go.mod h1:CyCGQa53/k1JFxXvXveGwtfJ4cuB9zkaBSGa5rnAiHU=
-helm.sh/helm/v3 v3.13.0 h1:XPJKIU30K4JTQ6VX/6e0hFAmEIonYa8E7wx5aqv4xOc=
-helm.sh/helm/v3 v3.13.0/go.mod h1:2PBEKsMWKLVZTojUOqMS3Eadv5mP43FBWrRgLNkNm9Y=
+helm.sh/helm/v3 v3.13.2 h1:IcO9NgmmpetJODLZhR3f3q+6zzyXVKlRizKFwbi7K8w=
+helm.sh/helm/v3 v3.13.2/go.mod h1:GIHDwZggaTGbedevTlrQ6DB++LBN6yuQdeGj0HNaDx0=
 honnef.co/go/tools v0.0.0-20180728063816-88497007e858/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190106161140-3f1c8253044a/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
