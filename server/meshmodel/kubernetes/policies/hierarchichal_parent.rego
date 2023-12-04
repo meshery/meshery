@@ -6,7 +6,7 @@ namespace_Keys[namespace_key] {
   namespace_key = service.namespace
 }
 
-parent_relationship = { namespace_map: ns |
+heirarchical_parent_relationship = { namespace_map: ns |
 	some namespace_map
 	namespace_Keys[namespace_map]
     service := input.services[key]

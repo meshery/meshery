@@ -548,3 +548,8 @@ type possibleTransitions struct {
 	//in: body
 	Body map[string]map[connections.ConnectionStatus][]connections.ConnectionStatus
 }
+
+type relationshipPolicyEvalPayloadWrapper struct {
+	//in: body
+	relationshipPolicyEvalPayload relationshipPolicyEvalPayload
+}
