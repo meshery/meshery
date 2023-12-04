@@ -27,8 +27,8 @@ const (
 )
 
 type relationshipPolicyEvalPayload struct {
-	PatternFile core.Pattern `json:"pattern_file"`
-	RegoQueries []string     `json:"rego_queries`
+	PatternFile string   `json:"pattern_file"`
+	RegoQueries []string `json:"rego_queries"`
 }
 
 // swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy idEvaluateRelationshipPolicy
@@ -59,14 +59,20 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 
 	relationshipPolicyEvalPayload := relationshipPolicyEvalPayload{}
-	err = yaml.Unmarshal((body), &relationshipPolicyEvalPayload)
+	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
+	var patternFile core.Pattern
 
-	patternFile := relationshipPolicyEvalPayload.PatternFile
+	err = yaml.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
+	if err != nil {
+		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		return
+	}
+
 	regoQueriesToEval := relationshipPolicyEvalPayload.RegoQueries
 
 	for _, svc := range patternFile.Services {
@@ -82,74 +88,63 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	patternUUID := uuid.FromStringOrNil(patternFile.PatternID)
 	eventBuilder.ActedUpon(patternUUID)
 
-	evalResults := make(map[string]interface{}, len(regoQueriesToEval))
-
-	if len(regoQueriesToEval) == 1 && regoQueriesToEval[0] == "all" {
-		// evaluate all the relationship policies (right now all the policies located in kubernetes models folder are evaluated)
-		evalResults, err = h.Rego.RegoPolicyHandler(relationshipPolicyPackageName, data)
-		if err != nil {
-			h.log.Error(ErrResolvingRegoRelationship(err))
-			http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to evaluate relationships on the design file %s", patternFile.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-			return
-		}
-	} else {
-		// evaluate specified relationship policies
-		var errors []error
-		verifiedRegoQueriesToEval := h.verifyRegoQueries(regoQueriesToEval)
-		if len(verifiedRegoQueriesToEval) == 0 {
-			event := eventBuilder.WithDescription("Invalid or unsupported rego queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"queries": regoQueriesToEval}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-			return
-		}
-
-		for _, query := range verifiedRegoQueriesToEval {
-
-			result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
-			if err != nil {
-				h.log.Error(err)
-				errors = append(errors, err)
-				continue
-
-			}
-			evalResults[query] = result[query]
-			if len(errors) > 0 {
-				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to evaluate relationships on the design file %s", patternFile.Name)).
-					WithMetadata(map[string]interface{}{"error": errors}).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-				return
-			}
-		}
+	var evalResults interface{}
+	
+	// evaluate specified relationship policies
+	verifiedRegoQueriesToEval := h.verifyRegoQueries(regoQueriesToEval)
+	if len(verifiedRegoQueriesToEval) == 0 {
+		event := eventBuilder.WithDescription("Invalid or unsupported rego queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"queries": regoQueriesToEval}).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+		return
 	}
+	
+	evalresults := make(map[string]interface{}, 0)
+	for _, query := range verifiedRegoQueriesToEval {
+		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
+		if err != nil {
+			h.log.Error(err)
+			continue
+		}
+		evalresults[query] = result
+	}
+	evalResults = evalresults
 
 	// write the response
 	ec := json.NewEncoder(rw)
 	err = ec.Encode(evalResults)
 	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "networkPolicy response"))
-		http.Error(rw, models.ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h *Handler) verifyRegoQueries(reqoQueries []string) (verifiedRegoQueries []string) {
 	registeredRelationships, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{})
-	relationships, err := utils.Cast[[]v1alpha1.RelationshipDefinition](registeredRelationships)
-	if err != nil {
-		// If an error occurs return empty set of queries
-		return
+
+	var relationships []v1alpha1.RelationshipDefinition
+	for _, entity := range registeredRelationships {
+		relationship, err := utils.Cast[v1alpha1.RelationshipDefinition](entity)
+		if err != nil {
+			return
+		}
+		relationships = append(relationships, relationship)
 	}
-	for _, regoQuery := range verifiedRegoQueries {
+
+	if len(reqoQueries) == 0 || (len(reqoQueries) == 1 && reqoQueries[0] == "all") {
 		for _, relationship := range relationships {
-			if strings.TrimSuffix(regoQuery, siffix) == fmt.Sprintf("%s_%s", relationship.Kind, relationship.SubType) {
-				verifiedRegoQueries = append(verifiedRegoQueries, regoQuery)
-				break
+			if relationship.RegoQuery != "" {
+				verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+			}
+		}
+	} else {
+		for _, regoQuery := range reqoQueries {
+			for _, relationship := range relationships {				
+				if strings.TrimSuffix(regoQuery, siffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
+					verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+					break
+				}
 			}
 		}
 	}
