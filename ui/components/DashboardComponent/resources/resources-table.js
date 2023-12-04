@@ -12,8 +12,6 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { updateVisibleColumns } from '../../../utils/responsive-column';
-import { useWindowDimensions } from '../../../utils/dimension';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
