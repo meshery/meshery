@@ -26,6 +26,7 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
@@ -293,6 +294,13 @@ func main() {
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
+
+	totalcount, err := regManager.GetRegisteriesCount()
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info("Quantity of Items Imported Into Regestries succesfully: ", totalcount)
+	log.Info("Quantity of Items that are not imported successfully are: ", registry.NonImportCount)
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
