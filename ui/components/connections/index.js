@@ -262,11 +262,7 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={
-                localStorage.getItem('Theme') === 'light'
-                  ? `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon}`
-                  : `/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.whiteIcon}`
-              }
+              iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
               style={{ maxWidth: '120px' }}
             />
           );
