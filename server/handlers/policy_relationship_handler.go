@@ -31,7 +31,7 @@ type relationshipPolicyEvalPayload struct {
 	RegoQueries []string `json:"rego_queries"`
 }
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy idEvaluateRelationshipPolicy
+// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
 // Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
 //
 // responses:
