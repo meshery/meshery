@@ -35,7 +35,7 @@ export default function ConnectionStatsChart({ classes }) {
       },
     },
     donut: {
-      title: 'Connection Stats',
+      title: 'Connections\n by Status',
       padAngle: 0.03,
       label: {
         format: function (value) {
@@ -57,11 +57,11 @@ export default function ConnectionStatsChart({ classes }) {
   return (
     <Link href="/management/connections">
       <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
             Connections
           </Typography>
-          <Tooltip title="Learn more about connections" placement="right">
+          <Tooltip title="Learn more about Connections" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
               style={{ ...iconSmall, marginLeft: '0.5rem' }}

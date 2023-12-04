@@ -78,7 +78,7 @@ export default function MesheryConfigurationChart({ classes }) {
       },
     },
     donut: {
-      title: 'Configuration Stats',
+      title: 'Content\nby Type',
       padAngle: 0.03,
       label: {
         format: function (value) {
@@ -100,11 +100,11 @@ export default function MesheryConfigurationChart({ classes }) {
   return (
     <Link href="/configuration/designs">
       <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
-            Meshery Configuration
+            Configuration
           </Typography>
-          <Tooltip title="Learn more about configuring meshery" placement="right">
+          <Tooltip title="Learn more about Configuration Management in Meshery" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
               style={{ ...iconSmall, marginLeft: '0.5rem' }}
