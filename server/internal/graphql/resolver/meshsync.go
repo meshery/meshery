@@ -70,7 +70,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			r.Log.Info("Dropping Meshery Database")
 			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrGormDatabase(err))
 				return "", err
 			}
 
@@ -79,7 +79,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 					continue
 				}
 				if err := dbHandler.Migrator().DropTable(table); err != nil {
-					r.Log.Error(err)
+					r.Log.Error(ErrGormDatabase(err))
 					return "", err
 				}
 			}
