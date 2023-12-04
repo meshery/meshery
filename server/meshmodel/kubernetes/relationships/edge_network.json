@@ -15,6 +15,7 @@
     "metadata": {}
   },
   "subType": "Network",
+  "rego_query": "edge_network_relationship",
   "selectors": {
     "allow": {
       "from": [
