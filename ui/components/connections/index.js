@@ -36,7 +36,7 @@ import SearchBar from '../../utils/custom-search';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium, iconSmall } from '../../css/icons.styles';
+import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
@@ -251,7 +251,7 @@ function Connections({
             <ConnectionChip
               tooltip={'Server: ' + server}
               title={value}
-              status={tableMeta.rowData[7]}
+              status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
                   getColumnValue(tableMeta.rowData, 'id', columns),
@@ -409,14 +409,18 @@ function Connections({
               icon={
                 <InfoIcon
                   color={theme.palette.secondary.iconMain}
-                  style={iconSmall}
+                  style={{
+                    cursor: 'pointer',
+                    height: 20,
+                    width: 20,
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(url, '_blank');
                   }}
                 />
               }
-              tooltip="Click to know about connection and status"
+              tooltip="Click to learn about connection and status"
             />
           );
         },
