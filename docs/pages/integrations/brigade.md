@@ -22,6 +22,8 @@ image: /assets/img/integrations/brigade.svg
 2. Collaborative and visual infrastructure as code for Brigade
 
 4. 
+Brigade is a full-featured, event-driven scripting platform built on top of Kubernetes. It integrates with many different event sources, more are always being added, and it's easy to create your own if you need something specific. And the best part -- Kubernetes is well-abstracted so even team members without extensive Kubernetes experience or without direct access to a cluster can be productive.
+
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -30,13 +32,13 @@ image: /assets/img/integrations/brigade.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Designed to quickly and efficently handle large volumes of events.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Offers full management of user and service account authorization/authentication.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Enables high event throughput via its backing message queue.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

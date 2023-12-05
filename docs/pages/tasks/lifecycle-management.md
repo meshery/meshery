@@ -18,7 +18,7 @@ Meshery manages hundreds of different types of cloud native infrastructure. See 
 
 ![Lifecycle Management]({{ site.baseurl }}/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)
 
-Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure including [service mesh]({{ site.baseurl }}/service-meshes), so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.
+Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure, so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.
 
 Meshery automates the provisioning of various infrastructurees, allowing users to select different configuration profiles in order to support a variety of deployment models.
 

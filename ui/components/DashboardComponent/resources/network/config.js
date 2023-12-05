@@ -1,16 +1,34 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
+import {
+  getClusterNameFromClusterId,
+  getConnectionIdFromClusterId,
+} from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
+import useKubernetesHook from '../../../hooks/useKubernetesHook';
+import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 
 export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+  const ping = useKubernetesHook();
   return {
     Service: {
       name: 'Service',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 's'],
+        ['spec.attribute', 's'],
+        ['status.attribute', 'm'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -24,7 +42,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -44,7 +64,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -52,6 +83,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Type',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let type = attribute?.type;
@@ -64,6 +98,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Cluster IP',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let clusterIP = attribute?.clusterIP;
@@ -76,6 +113,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'External IP',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let loadbalancer = attribute?.loadbalancer;
@@ -100,6 +140,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Ports',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val, tableMeta) {
               let attribute = JSON.parse(val);
               let ports = attribute?.ports;
@@ -141,7 +184,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -165,13 +210,28 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <ConnectionChip
+                    title={clusterName}
+                    iconSrc="/static/img/kubernetes.svg"
+                    handlePing={() => ping(clusterName, val, connectionId)}
+                  />
                 </>
               );
             },
@@ -182,7 +242,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -193,6 +255,14 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     Endpoints: {
       name: 'Endpoints',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -206,7 +276,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -226,7 +298,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -234,7 +317,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -258,8 +343,17 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
-            sortThirdClickReset: true,
+            sort: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -287,7 +381,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -298,6 +394,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     Ingress: {
       name: 'Ingress',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -311,7 +416,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -331,7 +438,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -339,6 +457,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Rules',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let ingressRules = attribute?.ingressRule;
@@ -362,7 +483,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -386,8 +509,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -415,7 +548,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -426,6 +561,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     IngressClass: {
       name: 'IngressClass',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -439,7 +583,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -459,7 +605,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -467,6 +624,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Controller',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let controller = attribute?.controller;
@@ -479,7 +639,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -503,13 +665,28 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <ConnectionChip
+                    title={clusterName}
+                    iconSrc="/static/img/kubernetes.svg"
+                    handlePing={() => ping(clusterName, val, connectionId)}
+                  />
                 </>
               );
             },
@@ -520,7 +697,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -531,6 +710,15 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
     },
     NetworkPolicy: {
       name: 'NetworkPolicy',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -544,7 +732,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
@@ -564,7 +754,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -572,6 +773,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Ports',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let policyTypes = attribute?.policyTypes;
@@ -595,7 +799,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -619,8 +825,18 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -648,7 +864,9 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;

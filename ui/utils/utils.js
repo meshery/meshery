@@ -309,6 +309,7 @@ export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) =
 };
 
 /**
+ *
  * Add underscore to camal case variable name.
  *
  * @param {string} value - An array of column definitions.

@@ -30,13 +30,13 @@ image: /assets/img/integrations/curiefense.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Protects all forms of web traffic, services, and APIs.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Includes bot management, WAF, application-layer DDoS protection, session profiling, advanced rate limiting, and much more.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. It is integrated with NGINX and Envoy proxy.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 
