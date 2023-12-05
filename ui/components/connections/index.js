@@ -171,6 +171,7 @@ function Connections({
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -947,6 +948,8 @@ function Connections({
                   setSearch(value);
                 }}
                 placeholder="Search connections..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
               />
 
               <CustomColumnVisibilityControl
