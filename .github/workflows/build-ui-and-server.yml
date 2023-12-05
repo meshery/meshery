@@ -85,6 +85,7 @@ jobs:
         run: |
           set -e
           make ui-meshery-build || (echo "Meshery UI Build failed" && exit 1)
+          [ $? -eq 0 ] || exit 1
       - name: build provider-ui
         run: |
           set -e
