@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/pkg/errors"
 )
@@ -177,7 +176,6 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		//Watching and logging errors from error channel
 		case mhErr := <-erh.errorChan:
 			if err != nil {
-				registry.NonImportCount++
 				erh.log.Error(mhErr)
 			}
 

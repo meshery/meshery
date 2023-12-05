@@ -295,12 +295,13 @@ func main() {
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
 
-	totalcount, err := regManager.GetRegisteriesCount()
+	registeredEntityCount, err := regManager.GetRegisteriesCount()
 	if err != nil {
 		log.Error(err)
 	}
-	log.Info("Quantity of Items Imported Into Regestries succesfully: ", totalcount)
-	log.Info("Quantity of Items that are not imported successfully are: ", registry.NonImportCount)
+	nonRegisteredEntityCount := registry.NonImportModel
+	log.Infof("Quantity of entities imported successfully are Models: %d Components: %d Relationships: %d", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
+	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
