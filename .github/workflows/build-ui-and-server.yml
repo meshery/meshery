@@ -67,6 +67,7 @@ jobs:
       - name: Install dependencies
         if: steps.node-cache.outputs.cache-hit != 'true'
         run: |
+          set -e
           cd ui
           npm i
           cd ..
@@ -82,9 +83,11 @@ jobs:
       - name: build meshery-ui
         # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
-          make ui-meshery-build
+          set -e
+          make ui-meshery-build || (echo "Meshery UI Build failed" && exit 1)
       - name: build provider-ui
         run: |
+          set -e
           make ui-provider-build
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v3.0.0
