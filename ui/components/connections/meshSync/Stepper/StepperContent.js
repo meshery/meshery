@@ -142,14 +142,14 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          Kind: sharedData?.connection?.component?.metadata?.model,
-          Name: sharedData?.connection?.component?.model.displayName,
-          Type: sharedData?.connection?.component?.metadata?.genealogy,
-          Subtype: sharedData?.connection?.component?.metadata?.subCategory,
-          Metadata: sharedData?.componentForm,
-          'Credential Secret': selectedCredential !== null ? selectedCredential : formState,
-          ID: sharedData?.connection?.id,
-          Status: 'register',
+          kind: sharedData?.connection?.component?.metadata?.model, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
+          name: sharedData?.connection?.component?.model.displayName, // This name is from the name field in schema
+          type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
+          sub_type: sharedData?.connection?.component?.metadata?.subCategory.toLowerCase(),
+          metadata: sharedData?.componentForm,
+          credential_secret: selectedCredential !== null ? selectedCredential : formState,
+          id: sharedData?.connection?.id,
+          status: 'register',
         }),
       },
       (result) => {
