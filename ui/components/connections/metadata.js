@@ -156,7 +156,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ConnectionChip
                     tooltip={`Server: ${metadata.server}`}
-                    title={metadata.name}
+                    title={connection.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={() => handleKubernetesClick(connection.id)}
