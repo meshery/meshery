@@ -211,28 +211,25 @@ export default function MeshSyncTable(props) {
       name: 'status',
       label: 'Status',
       options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
+        sort: false,
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value, tableMeta) {
+          const metadata = getColumnValue(
+            tableMeta.rowData,
+            'component_metadata',
+            columns,
+          )?.metadata;
           const DISCOVERED = {
             DISCOVERED: MESHSYNC_STATES.DISCOVERED,
           };
           const meshSyncStates =
-            value && JSON.parse(value)?.capabilites?.connection === true
+            value && JSON.parse(metadata)?.capabilites?.connection === true
               ? MESHSYNC_STATES
               : DISCOVERED;
           const disabled =
-            value && JSON.parse(value)?.capabilites?.connection === true ? false : true;
+            value && JSON.parse(metadata)?.capabilites?.connection === true ? false : true;
           return (
             <>
               <FormControl className={classes.chipFormControl}>
