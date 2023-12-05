@@ -84,8 +84,8 @@ jobs:
         # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
           set -e
-          make ui-meshery-build || (echo "Meshery UI Build failed" && exit 1)
-          [ $? -eq 0 ] || exit 1
+          make ui-meshery-build
+          [ $? -eq 0 ] || (echo "Meshery UI Build failed" && exit 1)
       - name: build provider-ui
         run: |
           set -e
