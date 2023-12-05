@@ -50,7 +50,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	grafanaClient := models.NewGrafanaClient()
 	err = grafanaClient.Validate(ctx, grafanaConn.URL, grafanaCred.APIKeyOrBasicAuth)
-	if err != nil {
+	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
 	}
 	return machines.NoOp, nil, nil
