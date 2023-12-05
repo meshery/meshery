@@ -18,7 +18,7 @@ annotation_obj[annotation_key] {
 }
 
 
-matchlabels_relationship = result {
+sibling_matchlabels_relationship = result {
 	labels_result := {labels_map: key |
         some labels_map
         label_obj[labels_map]

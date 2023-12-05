@@ -1,9 +1,8 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { Tooltip, Tabs, Tab, Typography } from '@material-ui/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMendeley } from '@fortawesome/free-brands-svg-icons';
-import { iconSmall } from '../../../css/icons.styles';
+import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
+
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
@@ -25,6 +24,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    width: '100%',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -37,8 +37,14 @@ const styles = (theme) => ({
   },
 
   iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
+    display: 'flex',
+    flexWrap: 'no-wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '& svg': {
+      verticalAlign: 'middle',
+      marginRight: '.5rem',
+    },
   },
   backToPlay: { margin: theme.spacing(2) },
   link: { cursor: 'pointer' },
@@ -127,6 +133,7 @@ const ResourcesSubMenu = (props) => {
                 className={classes.tabs}
                 onChange={handleChange()}
                 variant="scrollable"
+                scrollButtons="auto"
                 indicatorColor="primary"
                 textColor="primary"
                 centered
@@ -138,10 +145,10 @@ const ResourcesSubMenu = (props) => {
                         key={index}
                         label={
                           <div className={classes.iconText}>
-                            <FontAwesomeIcon
-                              icon={faMendeley}
-                              style={iconSmall}
-                              className={classes.icon}
+                            <KubernetesIcon
+                              className={classes.iconText}
+                              width="22px"
+                              height="22px"
                             />
                             {resource.tableConfig()[key].name}
                           </div>

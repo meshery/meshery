@@ -28,13 +28,13 @@ image: /assets/img/integrations/cert-manager.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Simplifies the process of obtaining, renewing and using those certificates.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Supports issuing certificates from a variety of sources.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Ensures certificates remain valid and up to date.
 
-8. Collaborative Infrastructure as Code
+8. Cloud native certificate management
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. X.509 certificate management for Kubernetes and OpenShift
 

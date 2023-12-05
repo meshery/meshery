@@ -30,13 +30,13 @@ image: /assets/img/integrations/coredns.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Serves zone data from a file; both DNSSEC (NSEC only) and DNS are supported (file and auto).
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Retrieves zone data from primaries, i.e., act as a secondary server (AXFR only) (secondary).
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Signs zone data on-the-fly (dnssec).
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

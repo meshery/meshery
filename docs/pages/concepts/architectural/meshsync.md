@@ -64,7 +64,7 @@ Fingerprinting, the process of positively identifying and classifying resources,
 
 See Connnection State Management for additional information.
 
-Fingerprinting a service mesh is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
+Fingerprinting is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
 
 As a guiding principal, each set of composite fingerprints uses the same identifiers that each element management tool uses to identify itself (e.g., istioctl version).
 
