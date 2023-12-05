@@ -1,6 +1,6 @@
 //@ts-check
 import React, { useState } from 'react';
-import { Divider, Grid, IconButton, Typography, Tooltip } from '@material-ui/core';
+import { Divider, Grid, IconButton, Typography, Tooltip, Link, Avatar } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import Save from '@material-ui/icons/Save';
@@ -16,10 +16,14 @@ import TooltipButton from '../../utils/TooltipButton.js';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
+import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function FiltersCard({
+function FiltersCard_({
   name,
   updated_at,
   created_at,
@@ -35,6 +39,7 @@ function FiltersCard({
   updateHandler,
   canPublishFilter = false,
   handleInfoModal,
+  ownerId,
 }) {
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -43,6 +48,8 @@ function FiltersCard({
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
+
+  const { data: owner } = useGetUserByIdQuery(ownerId || '');
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -161,24 +168,28 @@ function FiltersCard({
             alignContent="space-between"
             alignItems="center"
           >
-            <Grid item xs={8} className={classes.yamlDialogTitle}>
+            <Grid item xs={12} className={classes.yamlDialogTitle}>
               <Typography variant="h6" className={classes.yamlDialogTitleText}>
                 {name}
               </Typography>
-              <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
-                <IconButton
-                  onClick={(ev) =>
-                    genericClickHandler(ev, () => {
-                      {
-                        toggleFullScreen();
-                      }
-                    })
-                  }
-                  className={classes.maximizeButton}
-                >
-                  {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-                </IconButton>
-              </Tooltip>
+              <div className={classes.cardHeaderRight}>
+                <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                  <Avatar alt="profile-avatar" src={owner?.avatar_url} />
+                </Link>
+                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                  <IconButton
+                    onClick={(ev) =>
+                      genericClickHandler(ev, () => {
+                        {
+                          toggleFullScreen();
+                        }
+                      })
+                    }
+                  >
+                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
@@ -245,6 +256,14 @@ function FiltersCard({
     </>
   );
 }
+
+export const FiltersCard = (props) => {
+  return (
+    <Provider store={store}>
+      <FiltersCard_ {...props} />
+    </Provider>
+  );
+};
 
 // @ts-ignore
 export default FiltersCard;

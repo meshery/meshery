@@ -51,7 +51,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth) // change this to accept credentials either basicauth or API Key.
 
-	if err != nil {
+	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)
 	}
 	return machines.NoOp, nil, nil

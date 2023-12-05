@@ -147,9 +147,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
 			sm.Log.Error(err)
-
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
-
+			sm.Log.Info(event)
 			break
 		}
 

@@ -325,7 +325,6 @@ export default function MeshSyncTable(props) {
       },
       (res) => {
         setMeshSyncResources(res?.resources || []);
-        setPage(res?.page || 0);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);

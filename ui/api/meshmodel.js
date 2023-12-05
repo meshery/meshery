@@ -38,7 +38,7 @@ export async function getMeshModels(page = 1, pageSize = 'all', options = defaul
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&${optionToQueryConvertor({
       ...defaultOptions,
-      ...options
+      ...options,
     })}`,
   );
 }
@@ -168,7 +168,7 @@ export async function searchModels(queryString, options = defaultOptions) {
   return promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?search=${encodeURI(queryString)}&${optionToQueryConvertor({
       ...defaultOptions,
-      ...options
+      ...options,
     })}`,
   );
 }

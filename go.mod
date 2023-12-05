@@ -6,7 +6,6 @@ replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
 	github.com/docker/docker => github.com/docker/docker v23.0.6+incompatible
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007
-	github.com/layer5io/meshkit v0.6.88 => ../meshkit
 	k8s.io/client-go => k8s.io/client-go v0.28.3
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
 	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
@@ -29,7 +28,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.4.0
-	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/gosimple/slug v1.13.1
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
@@ -37,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.15
-	github.com/layer5io/meshkit v0.6.88
+	github.com/layer5io/meshkit v0.7.0-beta-3
 	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -62,7 +61,7 @@ require (
 	golang.org/x/oauth2 v0.14.0
 	golang.org/x/text v0.14.0
 	gonum.org/v1/gonum v0.14.0
-	google.golang.org/grpc v1.58.3
+	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.5

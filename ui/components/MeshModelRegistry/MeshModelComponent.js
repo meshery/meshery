@@ -107,18 +107,8 @@ const MeshModelComponent = ({
       });
 
       if (!isRequestCancelled && models) {
-        const updatedModels = [];
-
-        for (const model of models) {
-          // const { components } = await getComponentFromModelApi(model.name);
-          // const { relationships } = await getRelationshipFromModelApi(model.name);
-          // model.components = components;
-          // model.relationships = relationships;
-          updatedModels.push(model);
-        }
-
         setResourcesDetail((prev) =>
-          [...prev, ...updatedModels].sort((a, b) => a.displayName.localeCompare(b.displayName)),
+          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
         );
       }
     } catch (error) {
@@ -168,16 +158,8 @@ const MeshModelComponent = ({
         components: true,
         relationships: true,
       });
-      // const componentPromises = models.map(async (model) => {
-      //   const { components } = await getComponentFromModelApi(model.name);
-      //   const { relationships } = await getRelationshipFromModelApi(model.name);
-      //   model.components = components;
-      //   model.relationships = relationships;
-      // });
-
-      // await Promise.all(componentPromises);
       setCount(total_count);
-      console.log(total_count, models);
+
       if (!isRequestCancelled) {
         setResourcesDetail(models ? models : []);
       }

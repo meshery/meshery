@@ -160,7 +160,7 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
-		http.Error(w,models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

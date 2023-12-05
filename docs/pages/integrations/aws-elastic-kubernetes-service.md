@@ -22,21 +22,21 @@ image: /assets/img/integrations/aws-elastic-kubernetes-service.svg
 2. Diagram and configure your Azure Kubernetes Service clusters
 
 4. 
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
+    Take advantage of Meshery's multi-cluster Kubernetes management features in your AKS environments. Design, build, and automate anything for your work by
+    integrating apps like AKS to create visual automatedcl
+    workflows. Choose from hundreds of ready-made design patterns or use
+    our no-code designer, MeshMap to connect to apps not yet in our
+    library.
 
 
 
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
+5. Save and share AKS configuration templates
 
+6. Ensure multi-tenancy enforcement
 
-
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
-
-6. Provide high performance traffic serving that can scale to millions of requests per second.
-
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Dry run your AKS configuration changes
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

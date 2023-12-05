@@ -30,13 +30,13 @@ image: /assets/img/integrations/contour.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Supports dynamic configuration updates out of the box while maintaining a lightweight profile.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Solves shortcomings in the original design.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour.
 
