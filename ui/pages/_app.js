@@ -62,6 +62,8 @@ import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponent } from '../api/meshmodel';
 import { CONNECTION_KINDS } from '../utils/Enum';
 
+import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
+
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
@@ -221,14 +223,13 @@ class MesheryApp extends App {
   loadMeshModelComponent = () => {
     const connectionDef = {};
     Object.keys(CONNECTION_KINDS).map(async (kind) => {
-      const res = await getMeshModelComponent(CONNECTION_KINDS[kind], 'Connection');
+      const connectionKind =
+        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
+      const res = await getMeshModelComponent(connectionKind, 'Connection');
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
-          icon: {
-            colorIcon: res?.components[0].model.metadata.svgColor,
-            whiteIcon: res?.components[0].model.metadata.svgWhite,
-          },
+          icon: res?.components[0].metadata.svgColor,
         };
       }
       this.setState({ connectionMetadata: connectionDef });
@@ -273,6 +274,10 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
+    subscribeMesheryControllersStatus((data) => {
+      console.log(data);
+    }, contexts);
+
     const operatorCallback = (data) => {
       this.props.store.dispatch({
         type: actionTypes.SET_OPERATOR_SUBSCRIPTION,

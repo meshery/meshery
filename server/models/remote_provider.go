@@ -1245,11 +1245,6 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
-	// tokenString, err := l.GetToken(req)
-	// if err != nil {
-	// 	logrus.Errorf("unable to get results: %v", err)
-	// 	return nil, err
-	// }
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -1286,12 +1281,10 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 		return nil, ErrMarshal(err, "meshery design resource")
 	}
 
-	logrus.Debugf("Design resource: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to save design resource to remote provider")
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	// logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
 		return nil, err
@@ -1316,7 +1309,7 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 			return nil, ErrUnmarshal(err, "Design Resource")
 		}
 
-		logrus.Infof("design successfully sent to remote provider: %+v", pr)
+		// logrus.Infof("design successfully sent to remote provider: %+v", pr)
 		return &pr, nil
 	}
 
@@ -3619,7 +3612,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connection := &connections.Connection{}
 		_ = json.Unmarshal(bdr, connection)
-		fmt.Println("connections, ", connection)
+		l.Log.Debug("connections, ", connection)
 		return connection, nil
 	}
 

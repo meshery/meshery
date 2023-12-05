@@ -3,11 +3,10 @@
         "provider_type": "remote",
         "provider_name": "Meshery",
         "provider_description": [
-            "Persistent sessions",
+            "Tiered multi-tenancy identity services with extensible RBAC",
             "Save environment configurations and user preferences",
-            "Store and retrieve patterns, filters, and application defintions",
-            "Retrieve performance and conformance test results",
-            "RBAC support",
+            "Store and retrieve designs, patterns, and filters, and test results",
+            "Multi-player collaboration with STUN and TURN services",
             "Free use"
         ],
         "provider_url": "https://meshery.layer5.io"
