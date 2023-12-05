@@ -4,7 +4,7 @@ import { DialogContent, Dialog } from '@material-ui/core';
 import theme from '../../../themes/app.js';
 import CustomizedSteppers from './Stepper/index.js';
 
-const RegisterConnectionModal = ({ handleOpen, connectionMetadata }) => {
+const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const RegisterConnectionModal = ({ handleOpen, connectionMetadata }) => {
             border: `6px solid ${theme.palette.secondary.success}`,
           }}
         >
-          <CustomizedSteppers connectionMetadata={connectionMetadata} />
+          <CustomizedSteppers connectionData={connectionData} />
         </DialogContent>
       </Dialog>
     </div>

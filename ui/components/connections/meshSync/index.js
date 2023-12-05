@@ -49,7 +49,10 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [registerConnectionMetadata, setRegisterConnectionMetadata] = useState();
+  const [registerConnection, setRegisterConnection] = useState({
+    metadata: {},
+    kind: '',
+  });
   const StyleClass = useStyles();
 
   const icons = {
@@ -225,11 +228,11 @@ export default function MeshSyncTable(props) {
             DISCOVERED: MESHSYNC_STATES.DISCOVERED,
           };
           const meshSyncStates =
-            value && JSON.parse(metadata)?.capabilites?.connection === true
+            metadata && JSON.parse(metadata)?.capabilites?.connection === true
               ? MESHSYNC_STATES
               : DISCOVERED;
           const disabled =
-            value && JSON.parse(metadata)?.capabilites?.connection === true ? false : true;
+            metadata && JSON.parse(metadata)?.capabilites?.connection === true ? false : true;
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -246,7 +249,11 @@ export default function MeshSyncTable(props) {
                       'component_metadata',
                       columns,
                     );
-                    setRegisterConnectionMetadata(JSON.parse(componentMetadata.metadata));
+                    const connectionKind = getColumnValue(tableMeta.rowData, 'kind', columns);
+                    setRegisterConnection({
+                      metadata: JSON.parse(componentMetadata.metadata),
+                      kind: connectionKind,
+                    });
                   }}
                   className={classes.statusSelect}
                   disableUnderline
@@ -514,7 +521,7 @@ export default function MeshSyncTable(props) {
       />
       <RegisterConnectionModal
         handleOpen={handleOpenRegisterModal}
-        connectionMetadata={registerConnectionMetadata}
+        connectionData={registerConnection}
       />
     </>
   );

@@ -142,8 +142,8 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          kind: sharedData?.connection?.component?.metadata?.model, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.connection?.component?.model.displayName, // This name is from the name field in schema
+          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
+          name: sharedData?.connection?.component?.displayName, // This name is from the name field in schema
           type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
           sub_type: sharedData?.connection?.component?.metadata?.subCategory.toLowerCase(),
           metadata: sharedData?.componentForm,
