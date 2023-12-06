@@ -301,7 +301,7 @@ func main() {
 	}
 	nonRegisteredEntityCount := registry.NonImportModel
 	log.Infof("Quantity of entities imported successfully are Models: %d Components: %d Relationships: %d", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
-	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
+	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", len(registry.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
