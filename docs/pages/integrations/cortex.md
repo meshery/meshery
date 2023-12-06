@@ -30,13 +30,13 @@ image: /assets/img/integrations/cortex.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Durably store data for longer than the lifetime of any single machine, and use this data for long term capacity planning.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Makes your PromQL queries blazin' fast through aggressive parallelization and caching.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Gives you a global view of Prometheus time series data that includes data in long-term storage, greatly expanding the usefulness of PromQL for analytical purposes.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

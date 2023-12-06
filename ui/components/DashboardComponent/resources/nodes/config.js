@@ -10,11 +10,23 @@ import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
+import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 
 export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   const ping = useKubernetesHook();
   return {
     name: 'Node',
+    colViews: [
+      ['id', 'na'],
+      ['metadata.name', 'xs'],
+      ['apiVersion', 's'],
+      ['status.attribute', 'm'],
+      ['status.attribute', 'm'],
+      ['cluster_id', 'xs'],
+      ['status.attribute', 'm'],
+      ['status.attribute', 'm'],
+      ['metadata.creationTimestamp', 'l'],
+    ],
     columns: [
       {
         name: 'id',
@@ -28,11 +40,10 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'Name',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(value, tableMeta) {
-            if (!!meshSyncResources && !!meshSyncResources[tableMeta.rowIndex]) {
-              return <div></div>;
-            }
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
@@ -51,7 +62,18 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         name: 'apiVersion',
         label: 'API version',
         options: {
-          sort: false,
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
         },
       },
       {
@@ -59,6 +81,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'CPU',
         options: {
           sort: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let capacity = attribute?.capacity;
@@ -72,6 +97,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'Memory',
         options: {
           sort: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let capacity = attribute?.capacity;
@@ -84,8 +112,18 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         name: 'cluster_id',
         label: 'Cluster',
         options: {
-          sort: false,
+          sort: true,
           sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
           customBodyRender: function CustomBody(val) {
             let clusterName = getClusterNameFromClusterId(val, k8sConfig);
             let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
@@ -106,7 +144,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'Internal IP',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let addresses = attribute?.addresses || [];
@@ -121,7 +161,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'External IP',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let addresses = attribute?.addresses || [];
@@ -136,7 +178,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'Age',
         options: {
           sort: false,
-          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;

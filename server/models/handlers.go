@@ -124,7 +124,7 @@ type HandlerInterface interface {
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
 
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
-
+	
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request)
@@ -138,6 +138,7 @@ type HandlerInterface interface {
 	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+	EvaluateRelationshipPolicy(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -198,7 +199,6 @@ type HandlerInterface interface {
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

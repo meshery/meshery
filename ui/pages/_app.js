@@ -223,14 +223,13 @@ class MesheryApp extends App {
   loadMeshModelComponent = () => {
     const connectionDef = {};
     Object.keys(CONNECTION_KINDS).map(async (kind) => {
-      const res = await getMeshModelComponent(CONNECTION_KINDS[kind], 'Connection');
+      const connectionKind =
+        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
+      const res = await getMeshModelComponent(connectionKind, 'Connection');
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
-          icon: {
-            colorIcon: res?.components[0].model.metadata.svgColor,
-            whiteIcon: res?.components[0].model.metadata.svgWhite,
-          },
+          icon: res?.components[0].metadata.svgColor,
         };
       }
       this.setState({ connectionMetadata: connectionDef });

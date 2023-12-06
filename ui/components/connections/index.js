@@ -36,7 +36,7 @@ import SearchBar from '../../utils/custom-search';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium, iconSmall } from '../../css/icons.styles';
+import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
@@ -63,6 +63,8 @@ import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -168,6 +170,8 @@ function Connections({
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -189,6 +193,17 @@ function Connections({
     ),
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
+
+  let colViews = [
+    ['name', 'xs'],
+    ['kind', 'm'],
+    ['type', 's'],
+    ['sub_type', 'm'],
+    ['updated_at', 'l'],
+    ['created_at', 'na'],
+    ['status', 'xs'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -236,7 +251,7 @@ function Connections({
             <ConnectionChip
               tooltip={'Server: ' + server}
               title={value}
-              status={tableMeta.rowData[7]}
+              status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
                   getColumnValue(tableMeta.rowData, 'id', columns),
@@ -248,9 +263,7 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={
-                getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon.split('public')[1]
-              }
+              iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
               style={{ maxWidth: '120px' }}
             />
           );
@@ -396,14 +409,18 @@ function Connections({
               icon={
                 <InfoIcon
                   color={theme.palette.secondary.iconMain}
-                  style={iconSmall}
+                  style={{
+                    cursor: 'pointer',
+                    height: 20,
+                    width: 20,
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(url, '_blank');
                   }}
                 />
               }
-              tooltip="Click to know about connection and status"
+              tooltip="Click to learn about connection and status"
             />
           );
         },
@@ -692,7 +709,7 @@ function Connections({
     e.stopPropagation();
     let response = await modalRef.current.show({
       title: `Connection status transition`,
-      subtitle: `Are you sure that you want to transform the connection status to ${e.target.value.toUpperCase()}?`,
+      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       options: ['Confirm', 'No'],
       variant: PROMPT_VARIANTS.CONFIRMATION,
     });
@@ -854,10 +871,11 @@ function Connections({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
@@ -934,6 +952,8 @@ function Connections({
                   setSearch(value);
                 }}
                 placeholder="Search connections..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
               />
 
               <CustomColumnVisibilityControl

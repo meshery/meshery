@@ -30,13 +30,13 @@ image: /assets/img/integrations/dapr.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Helps you write resilient and secured microservices.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Provides you with APIs that abstract away the complexity of common challenges developers encounter regularly when building distributed applications.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Leverages proven practices for distributed application development that enable you to build resilient, secured systems.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 
