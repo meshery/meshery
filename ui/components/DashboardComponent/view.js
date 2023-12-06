@@ -82,7 +82,7 @@ const View = (props) => {
       <>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-            {key}
+            {key.toUpperCase()}
           </Typography>
 
           <ResponsiveDataTable

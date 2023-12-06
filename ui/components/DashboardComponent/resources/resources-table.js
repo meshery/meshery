@@ -12,6 +12,7 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
+import { Slide } from '@material-ui/core';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -167,8 +168,27 @@ const ResourcesTable = (props) => {
   };
   return (
     <>
-      {view === ALL_VIEW ? (
-        <>
+      <Slide
+        in={view !== ALL_VIEW}
+        timeout={400}
+        direction={'left'}
+        exit={true}
+        enter={true}
+        mountOnEnter
+        unmountOnExit
+      >
+        <div>
+          <View
+            type={`${tableConfig.name}`}
+            setView={setView}
+            resource={selectedResource}
+            classes={classes}
+          />
+        </div>
+      </Slide>
+
+      {view === ALL_VIEW && (
+        <div>
           <div
             className={StyleClass.toolWrapper}
             style={{ marginBottom: '5px', marginTop: '1rem' }}
@@ -196,7 +216,6 @@ const ResourcesTable = (props) => {
               />
             </div>
           </div>
-
           <ResponsiveDataTable
             data={meshSyncResources}
             columns={tableConfig.columns}
@@ -206,16 +225,7 @@ const ResourcesTable = (props) => {
             updateCols={updateCols}
             columnVisibility={columnVisibility}
           />
-        </>
-      ) : (
-        <>
-          <View
-            type={`${tableConfig.name}`}
-            setView={setView}
-            resource={selectedResource}
-            classes={classes}
-          />
-        </>
+        </div>
       )}
     </>
   );
