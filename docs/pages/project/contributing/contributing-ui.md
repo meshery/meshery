@@ -53,6 +53,8 @@ The designs in this specification should result in enabling:
 - **Real-time** - Meshery UI should be event-driven where possible.
 
 ## Setup
+### Using WSL 2 
+Here is a link to setting up WSL2: [wslinstall](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 ### Node Version Recommendations 
 We recommend using Node 18 LTS. Meshery UI's build script supports other Node versions as well, including node16 and node17, but is recommended to use Node 18 LTS.
