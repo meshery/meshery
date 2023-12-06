@@ -168,60 +168,64 @@ const ResourcesTable = (props) => {
   };
   return (
     <>
-      {view === ALL_VIEW ? (
-        <>
-          <Slide in={true} timeout={400} direction={'right'} mountOnEnter unmountOnExit>
-            <div>
-              <div
-                className={StyleClass.toolWrapper}
-                style={{ marginBottom: '5px', marginTop: '1rem' }}
-              >
-                <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-                <div
-                  className={classes.searchAndView}
-                  style={{
-                    display: 'flex',
-                    borderRadius: '0.5rem 0.5rem 0 0',
-                  }}
-                >
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
-                    }}
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                    placeholder={`Search ${tableConfig.name}...`}
-                  />
+      <Slide
+        in={view !== ALL_VIEW}
+        timeout={400}
+        direction={'left'}
+        exit={true}
+        enter={true}
+        mountOnEnter
+        unmountOnExit
+      >
+        <div>
+          <View
+            type={`${tableConfig.name}`}
+            setView={setView}
+            resource={selectedResource}
+            classes={classes}
+          />
+        </div>
+      </Slide>
 
-                  <CustomColumnVisibilityControl
-                    columns={tableConfig.columns}
-                    customToolsProps={{ columnVisibility, setColumnVisibility }}
-                  />
-                </div>
-              </div>
-              <ResponsiveDataTable
-                data={meshSyncResources}
+      {view === ALL_VIEW && (
+        <div>
+          <div
+            className={StyleClass.toolWrapper}
+            style={{ marginBottom: '5px', marginTop: '1rem' }}
+          >
+            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display: 'flex',
+                borderRadius: '0.5rem 0.5rem 0 0',
+              }}
+            >
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder={`Search ${tableConfig.name}...`}
+              />
+
+              <CustomColumnVisibilityControl
                 columns={tableConfig.columns}
-                options={options}
-                className={classes.muiRow}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
-          </Slide>
-        </>
-      ) : (
-        <Slide in={true} timeout={400} direction={'left'} mountOnEnter unmountOnExit>
-          <div>
-            <View
-              type={`${tableConfig.name}`}
-              setView={setView}
-              resource={selectedResource}
-              classes={classes}
-            />
           </div>
-        </Slide>
+          <ResponsiveDataTable
+            data={meshSyncResources}
+            columns={tableConfig.columns}
+            options={options}
+            className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        </div>
       )}
     </>
   );
