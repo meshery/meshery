@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
@@ -279,9 +278,9 @@ func main() {
 	if err != nil {
 		log.Error(err)
 	}
-	nonRegisteredEntityCount := registry.NonImportModel
+	nonRegisteredEntityCount := meshmodel.NonImportModel
 	log.Infof("Quantity of entities imported successfully are Models: %d Components: %d Relationships: %d", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
-	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", len(registry.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
+	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", len(meshmodel.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
