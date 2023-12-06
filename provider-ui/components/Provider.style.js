@@ -41,7 +41,7 @@ export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
   },
 }));
 
-export const LearnMore = styled('div')(({ theme }) => ({
+export const LearnMore = styled('div')(() => ({
   width : '60%',
   marginLeft : 'auto',
   marginRight : 'auto',
