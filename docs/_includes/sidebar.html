@@ -21,16 +21,115 @@
     })();
   </script>
 
-  <nav class="sidebar-nav" id="td-section-nav">
-    {% for section in site.data.toc %}
+<nav class="sidebar-nav" id="td-section-nav">
+  {% for section in site.data.toc %}
+  <!-- <pre id="jekyll-debug"></pre> -->
+  <!-- <script>
+    var obj = JSON.parse(decodeURIComponent("{{ section | jsonify | uri_escape }}"));
+    var prettyJson = JSON.stringify(obj, null, 4);  // Pretty-printed JSON (indented 4 spaces).
+    document.getElementById("jekyll-debug").textContent = prettyJson;
+  </script> -->
+  <ul class="sidebar-nav__section">
+    {% capture sectionUrl %}
+      {{ section.url | replace: "/", "" | strip}}
+    {% endcapture %} 
+    {% capture pageUrl %}
+      {{page.url | replace: "/", "" }}
+    {% endcapture %}
+    <li class="sidebar-nav__section-title 
+      {% if pageUrl == sectionUrl %} active {% endif %}">  
+      <a href="{% if section.url %}
+          {{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}
+        {% else %}
+          {{section.external_url }}
+        {% endif %}"
+        class="td-sidebar-link td-sidebar-link__section"
+        >{{ section.title }}
+      </a>
+      {% if section.links %}
+          <ul class="td-sidebar-nav__section">
+            {% for entry in section.links %} 
+              {% capture entryUrl %}
+                {{ entry.url | replace: "/", "" | strip }}
+              {% endcapture %}
+              <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
+                 <a
+                  href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}
+                  {{entry.external_url }}{% endif %}"
+                  class="align-right pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                  >{{ entry.title }}</a
+                >
+              </li>
+              {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
+              <ul>
+                {% for child in entry.children %} 
+                  {% capture childUrl %}
+                    {% if child.url %}
+                      {{ site.baseurl}}{{linkUrlSelected}}/{{ child.url }}
+                    {% else %}
+                      {{ child.external_url }}
+                    {% endif %} 
+                  {% endcapture %} 
+                  {% capture childUrl %}
+                    {{childUrl | strip}}
+                  {% endcapture %} 
+                  {% capture childTitle %}
+                    {{ childUrl | replace: "/", "" | strip}}
+                  {% endcapture %}
+                  <li id="{{ child.title | slugify }}">
+                    <a
+                    class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
+                    id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify}}"
+                    href="{{childUrl}}"
+                    >{{ child.title }}</a>
+                  </li>
+                  {% if child.grandchildren %}
+                  <ul>
+                      {% for grandchild in child.grandchildren %} 
+                        {% capture grandchildUrl %}
+                          {% if grandchild.url %}
+                            {{ site.baseurl}}{{linkUrlSelected}}/{{ grandchild.url }}
+                          {% else %}
+                            {{ grandchild.external_url }}
+                          {% endif %} 
+                        {% endcapture %} 
+                        {% capture grandchildUrl %}
+                          {{grandchildUrl | strip}}
+                        {% endcapture %} 
+                        {% capture grandchildTitle %}
+                          {{ grandchildUrl | replace: "/", "" | strip}}
+                        {% endcapture %}
+                      <li id="{{ grandchild.title | slugify }}">
+                       <a
+                        class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
+                        id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
+                        href="{{grandchildUrl}}"
+                        >{{ grandchild.title }}</a
+                      >
+                      </li>
+                      {% endfor %} <!-- grandchild -->
+                  </ul>
+                  {% endif %} <!-- end grandchild -->
+                {% endfor %} <!-- children -->
+              </ul> 
+              {% endif %}  <!-- end children -->
+              {% endif %} 
+            {% endfor %} <!--  section.links -->
+          </ul>
+      {% endif %} <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  {% endfor %}
+</nav>
+</div>
     <ul class="sidebar-nav__section">
       {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
       page.url | replace: "/", "" }}{% endcapture %}
       <li class="sidebar-nav__section-title {% if pageUrl == sectionUrl %} active {% endif %}">
         <a
           href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{
-		  section.external_url }}{% endif %}"
-          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+      section.external_url }}{% endif %}"
+          class="td-sidebar-link td-sidebar-link__section"
           >{{ section.title }}
         </a>
       </li>
@@ -44,7 +143,7 @@
               <a
                 href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}
                 {{entry.external_url }}{% endif %}"
-                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                class="align-right td-sidebar-link td-sidebar-link__section"
                 >{{ entry.title }}</a
               >
             </li>
@@ -72,8 +171,7 @@
                         class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
                         id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
                         href="{{grandchildUrl}}"
-                        >{{ grandchild.title }}</a
-                      >
+                        >{{ grandchild.title }}</a>
                       </li>
                       {% endfor %}
                   </ul>
@@ -87,10 +185,7 @@
           </ul>
         </li>
       </ul>
-
       {% endif %}
-
     </ul>
-    {% endfor %}
   </nav>
 </div>
