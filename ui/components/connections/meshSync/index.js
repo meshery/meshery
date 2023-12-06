@@ -228,11 +228,11 @@ export default function MeshSyncTable(props) {
             DISCOVERED: MESHSYNC_STATES.DISCOVERED,
           };
           const meshSyncStates =
-            metadata && JSON.parse(metadata)?.capabilites?.connection === true
+            metadata && JSON.parse(metadata)?.capabilities?.connection === true
               ? MESHSYNC_STATES
               : DISCOVERED;
           const disabled =
-            metadata && JSON.parse(metadata)?.capabilites?.connection === true ? false : true;
+            metadata && JSON.parse(metadata)?.capabilities?.connection === true ? false : true;
           return (
             <>
               <FormControl className={classes.chipFormControl}>

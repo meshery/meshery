@@ -157,6 +157,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       (result) => {
         if (result === '') {
           setIsSuccess(true);
+          connectToConnection();
         } else {
           setIsSuccess(false);
         }
@@ -164,6 +165,32 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
     );
   };
 
+  const connectToConnection = () => {
+    dataFetch(
+      '/api/integrations/connections/register',
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
+          name: sharedData?.connection?.component?.displayName, // This name is from the name field in schema
+          type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
+          sub_type: sharedData?.connection?.component?.metadata?.subCategory.toLowerCase(),
+          metadata: sharedData?.componentForm,
+          credential_secret: selectedCredential !== null ? selectedCredential : formState,
+          id: sharedData?.connection?.id,
+          status: 'connect',
+        }),
+      },
+      (result) => {
+        if (result === '') {
+          setIsSuccess(true);
+        } else {
+          setIsSuccess(false);
+        }
+      },
+    );
+  };
   const cancelConnectionRegister = () => {
     dataFetch(
       '/api/integrations/connections/register',
@@ -301,7 +328,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
               setDisableVerify(false);
             }}
           />
-          <span>force connection bypass credential verification</span>
+          <span>Force connection registration bypass verification</span>
         </Typography>
       </Box>
       {isSuccess === false && (

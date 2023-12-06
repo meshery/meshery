@@ -54,9 +54,13 @@ export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 
+// Remove this fetch all connections initially
 export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
   KUBERNETES: 'kubernetes',
+  PROMETHEUS: 'kube-prometheus-stack',
+  GRAFANA: 'grafana-operator',
+  GITHUB: 'github',
 };
 
 export const MESHSYNC_STATES = {
