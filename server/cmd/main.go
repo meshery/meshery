@@ -299,9 +299,11 @@ func main() {
 		log.Error(err)
 	}
 	nonRegisteredEntityCount := meshmodel.NonImportModel
-	log.Infof("Quantity of entities imported successfully are Models: %d Components: %d Relationships: %d", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
-	log.Infof("Quantity of entities that are not imported successfully are Models: %d Components: %d Relationships: %d", len(meshmodel.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
+	log.Infof("Successfully imported %d models %d components %d relationships", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
 
+	if len(meshmodel.ModelCount) > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 {
+		log.Errorf("Failed to import %d models %d components %d relationships", len(meshmodel.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
+	}
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
 	if err != nil {
