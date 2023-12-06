@@ -12,6 +12,7 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
+import { Slide } from '@material-ui/core';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -169,53 +170,58 @@ const ResourcesTable = (props) => {
     <>
       {view === ALL_VIEW ? (
         <>
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '1rem' }}
-          >
-            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display: 'flex',
-                borderRadius: '0.5rem 0.5rem 0 0',
-              }}
-            >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder={`Search ${tableConfig.name}...`}
-              />
+          <Slide in={true} timeout={400} direction={'right'} mountOnEnter unmountOnExit>
+            <div>
+              <div
+                className={StyleClass.toolWrapper}
+                style={{ marginBottom: '5px', marginTop: '1rem' }}
+              >
+                <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
+                <div
+                  className={classes.searchAndView}
+                  style={{
+                    display: 'flex',
+                    borderRadius: '0.5rem 0.5rem 0 0',
+                  }}
+                >
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                    placeholder={`Search ${tableConfig.name}...`}
+                  />
 
-              <CustomColumnVisibilityControl
+                  <CustomColumnVisibilityControl
+                    columns={tableConfig.columns}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                </div>
+              </div>
+              <ResponsiveDataTable
+                data={meshSyncResources}
                 columns={tableConfig.columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
               />
             </div>
-          </div>
-
-          <ResponsiveDataTable
-            data={meshSyncResources}
-            columns={tableConfig.columns}
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
+          </Slide>
         </>
       ) : (
-        <>
-          <View
-            type={`${tableConfig.name}`}
-            setView={setView}
-            resource={selectedResource}
-            classes={classes}
-          />
-        </>
+        <Slide in={true} timeout={400} direction={'left'} mountOnEnter unmountOnExit>
+          <div>
+            <View
+              type={`${tableConfig.name}`}
+              setView={setView}
+              resource={selectedResource}
+              classes={classes}
+            />
+          </div>
+        </Slide>
       )}
     </>
   );
