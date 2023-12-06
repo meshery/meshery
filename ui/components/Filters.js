@@ -52,7 +52,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -256,6 +256,7 @@ function MesheryFilters({
   //hooks
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const [infoModal, setInfoModal] = useState({
     open: false,
@@ -1207,43 +1208,47 @@ function MesheryFilters({
           />
         )}
         <div className={StyleClass.toolWrapper}>
-          <div style={{ display: 'flex' }}>
-            {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
-              <div className={classes.createButton}>
-                <div>
-                  <Button
-                    aria-label="Add Filter"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={handleUploadImport}
-                    style={{ marginRight: '2rem' }}
-                  >
-                    <PublishIcon
-                      style={iconMedium}
-                      className={classes.addIcon}
-                      data-cy="import-button"
-                    />
-                    <span className={classes.btnText}> Import Filters </span>
-                  </Button>
+          {width < 600 && isSearchExpanded ? null : (
+            <div style={{ display: 'flex' }}>
+              {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
+                <div className={classes.createButton}>
+                  <div>
+                    <Button
+                      aria-label="Add Filter"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ marginRight: '2rem' }}
+                    >
+                      <PublishIcon
+                        style={iconMedium}
+                        className={classes.addIcon}
+                        data-cy="import-button"
+                      />
+                      <span className={classes.btnText}> Import Filters </span>
+                    </Button>
+                  </div>
                 </div>
+              )}
+              <div style={{ jdisplay: 'flex' }}>
+                <CatalogFilter
+                  catalogVisibility={catalogVisibility}
+                  handleCatalogVisibility={handleCatalogVisibility}
+                  classes={classes}
+                />
               </div>
-            )}
-            <div style={{ jdisplay: 'flex' }}>
-              <CatalogFilter
-                catalogVisibility={catalogVisibility}
-                handleCatalogVisibility={handleCatalogVisibility}
-                classes={classes}
-              />
             </div>
-          </div>
+          )}
           <div className={classes.searchWrapper} style={{ display: 'flex' }}>
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
                 initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search"
             />
             {viewType === 'table' && (

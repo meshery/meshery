@@ -36,6 +36,7 @@ function FilterCardGridItem({
         name={filter.name}
         updated_at={filter.updated_at}
         created_at={filter.created_at}
+        ownerId={filter.user_id}
         filter_resource={yaml}
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}

@@ -317,7 +317,11 @@ func isPodRunning(c *meshkitkube.Client, podName, namespace string) wait.Conditi
 // Poll up to timeout seconds for pod to enter running state.
 // Returns an error if the pod never enters the running state.
 func pollForPodRunning(c *meshkitkube.Client, namespace, podName string, timeout time.Duration) error {
-	return wait.PollImmediate(time.Second, timeout, isPodRunning(c, podName, namespace))
+	// return wait.PollImmediate(time.Second, timeout, isPodRunning(c, podName, namespace))
+	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, true, func(ctx context.Context) (done bool, err error) {
+		conditionFunc := isPodRunning(c, podName, namespace)
+		return conditionFunc()
+	})
 }
 
 // Wait up to timeout seconds for pod in 'namespace' to enter running state.
@@ -366,7 +370,11 @@ func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionF
 
 // Poll up to timeout seconds every 5 seconds until the namespace no more exists.
 func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
-	return wait.Poll(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
+	// return wait.Poll(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
+	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, false, func(ctx context.Context) (done bool, err error) {
+		conditionFunc := isNamespaceDeleted(c, namespace)
+		return conditionFunc()
+	})
 }
 
 // Wait up to timeout seconds for `namespace` to be deleted.

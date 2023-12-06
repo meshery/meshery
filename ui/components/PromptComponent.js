@@ -10,8 +10,8 @@ import {
   DialogTitle,
   FormControlLabel,
   Checkbox,
+  styled,
 } from '@material-ui/core';
-import classNames from 'classnames';
 
 const styles = (theme) => ({
   title: {
@@ -33,18 +33,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'space-evenly',
   },
-  button0: {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
-    backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-    '&:hover': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-      boxShadow:
-        '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
-    },
-    minWidth: 100,
-  },
+
   button1: {
     margin: theme.spacing(0.5),
     padding: theme.spacing(1),
@@ -75,6 +64,26 @@ const styles = (theme) => ({
   },
 });
 
+const PromptActionButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(0.5),
+  padding: theme.spacing(1),
+  borderRadius: 5,
+  backgroundColor: theme.palette.secondary.focused,
+  color: '#fff',
+  '&:hover': {
+    boxShadow:
+      '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+  },
+  minWidth: 100,
+}));
+
+export const PROMPT_VARIANTS = {
+  WARNING: 'warning',
+  DANGER: 'danger',
+  SUCCESS: 'success',
+  CONFIRMATION: 'confirmation',
+};
+
 class PromptComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -87,11 +96,14 @@ class PromptComponent extends React.Component {
       showCheckbox: false,
     };
     this.promiseInfo = {};
+    this.variant = this.props.variant;
   }
 
   show = async (passed) => {
     return new Promise((resolve, reject) => {
       this.promiseInfo = { resolve, reject };
+      console.log('show passed', passed);
+      this.variant = passed.variant;
       this.setState({
         title: passed.title,
         subtitle: passed.subtitle,
@@ -155,39 +167,35 @@ class PromptComponent extends React.Component {
             </DialogContent>
           )}
           <DialogActions className={classes.actions}>
-            <Button
-              onClick={() => {
-                this.hide();
-                resolve(options[1]);
-              }}
-              key={options[1]}
-              className={classes.button1}
-            >
-              <Typography variant body2>
-                {' '}
-                {options[1]}{' '}
-              </Typography>
-            </Button>
-            <Button
+            {options.length > 1 && (
+              <Button
+                onClick={() => {
+                  this.hide();
+                  resolve(options[1]);
+                }}
+                key={options[1]}
+                className={classes.button1}
+              >
+                <Typography variant body2>
+                  {' '}
+                  {options[1]}{' '}
+                </Typography>
+              </Button>
+            )}
+            <PromptActionButton
               onClick={() => {
                 this.hide();
                 resolve(options[0]);
               }}
               key={options[0]}
-              className={
-                options[0]?.toLowerCase() === 'reset'
-                  ? classNames(classes.button0, classes.resetButton)
-                  : classes.button0
-              }
+              promptVariant={this.variant}
               type="submit"
               variant="contained"
-              color="primary"
             >
               <Typography variant body2>
-                {' '}
                 {options[0]}{' '}
               </Typography>
-            </Button>
+            </PromptActionButton>
           </DialogActions>
         </Dialog>
       </div>

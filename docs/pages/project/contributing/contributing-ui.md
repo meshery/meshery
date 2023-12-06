@@ -6,6 +6,7 @@ description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
@@ -35,7 +36,7 @@ Meshery provides a GraphQl API available through the default port of `9081/tcp` 
 
 ## Design
 
-Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a service mesh or collection of service meshes.
+Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a cloud native infrastructure.
 
 ### User Flows / Wireframing / Mockups
 

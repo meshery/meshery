@@ -50,11 +50,6 @@ func New(opts Options) http.Handler {
 		if err != nil {
 			return nil, err
 		}
-
-		ctx, err = handlers.MesheryControllersMiddleware(ctx, handler)
-		if err != nil {
-			return nil, err
-		}
 		return next(ctx)
 	}
 

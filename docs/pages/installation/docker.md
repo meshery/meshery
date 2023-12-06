@@ -1,8 +1,11 @@
 ---
 layout: default
 title: Docker
-permalink: installation/platforms/docker
+permalink: installation/docker
 type: installation
+category: docker
+redirect_from:
+- installation/platforms/docker
 display-title: "false"
 language: en
 list: include
@@ -41,3 +44,7 @@ Upon starting Meshery successfully, instructions to access Meshery will be print
  </pre>
 
  <script src="/assets/js/terminal.js" data-termynal-container="#termynal1"></script>
+
+ {% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

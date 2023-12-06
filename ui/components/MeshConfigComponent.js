@@ -311,7 +311,6 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
         message: `Operator ${response.operatorStatus.toLowerCase()}`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-
       const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
         next: (res) => {
           _setOperatorState(updateCtxInfo(contextId, res));

@@ -30,7 +30,13 @@ import getPageContext from '../components/PageContext';
 import { OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
-import { actionTypes, makeStore, toggleCatalogContent, updateTelemetryUrls } from '../lib/store';
+import {
+  actionTypes,
+  makeStore,
+  toggleCatalogContent,
+  updateTelemetryUrls,
+  setConnectionMetadata,
+} from '../lib/store';
 import theme, { styles } from '../themes';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
@@ -53,6 +59,10 @@ import './styles/charts.css';
 
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
+import { getMeshModelComponent } from '../api/meshmodel';
+import { CONNECTION_KINDS } from '../utils/Enum';
+
+import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -106,6 +116,7 @@ class MesheryApp extends App {
       theme: 'light',
       isOpen: false,
       relayEnvironment: createRelayEnvironment(),
+      connectionMetadata: {},
     };
   }
 
@@ -206,7 +217,27 @@ class MesheryApp extends App {
     this.setState({ disposeK8sContextSubscription });
 
     document.addEventListener('fullscreenchange', this.fullScreenChanged);
+    this.loadMeshModelComponent();
   }
+
+  loadMeshModelComponent = () => {
+    const connectionDef = {};
+    Object.keys(CONNECTION_KINDS).map(async (kind) => {
+      const connectionKind =
+        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
+      const res = await getMeshModelComponent(connectionKind, 'Connection');
+      if (res?.components) {
+        connectionDef[CONNECTION_KINDS[kind]] = {
+          transitions: res?.components[0].model.metadata.transitions,
+          icon: res?.components[0].metadata.svgColor,
+        };
+      }
+      this.setState({ connectionMetadata: connectionDef });
+      this.props.setConnectionMetadata({
+        connectionMetadataState: connectionDef,
+      });
+    });
+  };
 
   componentWillUnmount() {
     document.removeEventListener('fullscreenchange', this.fullScreenChanged);
@@ -219,7 +250,6 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
-    console.log('prevProps.k8sConfig', prevProps.k8sConfig, 'k8sConfig', k8sConfig);
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
@@ -244,6 +274,10 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
+    subscribeMesheryControllersStatus((data) => {
+      console.log(data);
+    }, contexts);
+
     const operatorCallback = (data) => {
       this.props.store.dispatch({
         type: actionTypes.SET_OPERATOR_SUBSCRIPTION,
@@ -537,8 +571,17 @@ class MesheryApp extends App {
                         ) : (
                           <>
                             {' '}
-                            Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5
-                            Community
+                            Built with{' '}
+                            <FavoriteIcon
+                              style={{
+                                color:
+                                  this.state.theme === 'dark'
+                                    ? theme.palette.secondary.focused
+                                    : '#00b39f',
+                              }}
+                              className={classes.footerIcon}
+                            />{' '}
+                            by the Layer5 Community
                           </>
                         )}
                       </span>
@@ -567,11 +610,13 @@ const mapStateToProps = (state) => ({
   meshSyncSubscription: state.get('meshSyncSubscription'),
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
+  connectionMetadata: state.get('connectionMetadata'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
   updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
+  setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
 });
 
 const MesheryWithRedux = withStyles(styles)(

@@ -12,5 +12,5 @@ type MesheryEvents interface {
 	DeleteEvent(eventID uuid.UUID) error
 	UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error)
 	BulkUpdateEventStatus(eventID []*uuid.UUID, status string) ([]*events.Event, error)
-	BulkDeleteEvent(eventID []*uuid.UUID) (error)
+	BulkDeleteEvent(eventID []*uuid.UUID) error
 }

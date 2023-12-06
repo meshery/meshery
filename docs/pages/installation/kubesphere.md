@@ -1,8 +1,11 @@
 ---
 layout: default
 title: KubeSphere
-permalink: installation/platforms/kubesphere
+permalink: installation/kubesphere
 type: installation
+category: kubernetes
+redirect_from:
+- installation/platforms/kubershphere
 display-title: "false"
 language: en
 list: include
@@ -63,4 +66,6 @@ Perform the following steps in order:
 
     ![meshery-dashboard]({{ site.baseurl }}/assets/img/platforms/meshery-dashboard.png)
 
-4. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

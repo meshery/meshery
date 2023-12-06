@@ -1,0 +1,4020 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+
+  <link rel="alternate" type="application/rss&#43;xml" href="/v0.6/v0.6/index.xml" />
+
+  <link rel="shortcut icon" href="/v0.6/assets/favicons/favicon.ico" />
+  <link rel="apple-touch-icon" href="/v0.6/assets/favicons/apple-touch-icon.png" sizes="180x180" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="36x36" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="48x48" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="72x72" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="96x196" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="144x144" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-192x192.png" sizes="192x192" />
+
+  <title>GraphQL API Reference | Meshery</title>
+  <meta property="og:title" content="GraphQL API Reference" />
+  <meta property="og:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://docs.meshery.io" />
+  <meta property="og:site_name" content="https://docs.meshery.io" />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+
+  <meta itemprop="name" content="GraphQL API Reference" />
+  <meta itemprop="description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="GraphQL API Reference" />
+  <meta name="twitter:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta name="twitter:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+  <!-- <link rel="stylesheet" href="/v0.6/assets/css/palette.css" /> -->
+  <!-- <link rel="stylesheet" href="/v0.6/assets/css/anchorjs.css" /> -->
+  <link rel="stylesheet" href="/v0.6/assets/css/sass.css" />
+  <link rel="stylesheet" href="/v0.6/v0.6https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+    integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>
+    $(function () {
+      /** AnchorJS options and selector */
+      anchors.options = {
+        visible: "hover",
+        placement: "right",
+      };
+      anchors.add("h1, h2, h3, h4, h5");
+    });
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
+  </script>
+</head>
+<style></style> <header>
+  <nav class="js-navbar-scroll navbar">
+    <a class="navbar-brand" href="/v0.6/v0.6/">
+      <div class="navbar-logo">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 379.08 80.17"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3 {fill:var(--meshery-logo-text-fill);}</style></defs><polygon class="cls-1" points="41.26 18.9 41.26 38.04 57.86 28.43 41.26 18.9"/><polygon class="cls-1" points="41.26 42.05 41.26 61.29 58.01 51.71 41.26 42.05"/><polygon class="cls-2" points="38.87 37.91 38.87 19.06 22.48 28.45 38.87 37.91"/><path class="cls-2" d="M6,61.22A40.35,40.35,0,0,0,18.71,74V53.86Z"/><polygon class="cls-2" points="38.87 61.2 38.87 42.19 22.44 51.7 38.87 61.2"/><polygon class="cls-1" points="21.1 72.81 37.74 63.3 21.1 53.68 21.1 72.81"/><polygon class="cls-2" points="59.15 72.92 59.15 53.81 42.53 63.31 59.15 72.92"/><path class="cls-2" d="M75.42,59a39.88,39.88,0,0,0,4.71-17.18l-17.32,9.9Z"/><polygon class="cls-1" points="61.54 49.7 78.23 40.15 61.54 30.55 61.54 49.7"/><polygon class="cls-2" points="59.15 26.42 59.15 7.43 42.61 16.91 59.15 26.42"/><polygon class="cls-2" points="59.15 49.61 59.15 30.45 42.57 40.05 59.15 49.61"/><polygon class="cls-2" points="40.07 80.17 40.07 80.17 40.07 80.17 40.07 80.17"/><polygon class="cls-1" points="21.1 30.41 21.1 49.72 37.8 40.05 21.1 30.41"/><path class="cls-2" d="M38.87,0A40,40,0,0,0,21.28,4.65L38.87,14.77Z"/><polygon class="cls-1" points="21.1 7.31 21.1 26.49 37.81 16.91 21.1 7.31"/><path class="cls-2" d="M18.71,6.14A40.28,40.28,0,0,0,6,18.94l12.72,7.34Z"/><path class="cls-1" d="M59,4.74A40,40,0,0,0,41.26,0V14.93Z"/><path class="cls-1" d="M0,41.48A40,40,0,0,0,4.79,59.16L17.67,51.7Z"/><path class="cls-1" d="M4.79,21A40,40,0,0,0,0,38.58L17.69,28.45Z"/><path class="cls-2" d="M21.24,75.49a39.88,39.88,0,0,0,17.63,4.66V65.41Z"/><path class="cls-1" d="M74.17,19A40.24,40.24,0,0,0,61.54,6.21v20.1Z"/><path class="cls-1" d="M61.54,74A40.34,40.34,0,0,0,74.23,61.07L61.54,53.75Z"/><path class="cls-2" d="M80.13,38.48a39.88,39.88,0,0,0-4.76-17.42L62.64,28.43Z"/><path class="cls-1" d="M41.26,80.15a39.79,39.79,0,0,0,17.59-4.64L41.26,65.34Z"/><polygon class="cls-2" points="18.71 49.54 18.71 30.61 2.27 40.04 18.71 49.54"/><polygon class="cls-3" points="269.94 29.39 269.94 30.89 269.94 37.93 269.94 46.53 269.94 59.08 303.36 59.08 303.36 52.03 276.99 52.03 276.99 46.53 276.99 44.98 297.25 44.98 297.25 37.93 276.99 37.93 276.99 30.89 303.36 30.89 303.36 23.84 269.94 23.84 269.94 29.39"/><polygon class="cls-3" points="141.41 29.39 141.41 30.89 141.41 37.93 141.41 46.53 141.41 59.08 174.83 59.08 174.83 52.03 148.46 52.03 148.46 46.53 148.46 44.98 168.72 44.98 168.72 37.93 148.46 37.93 148.46 30.89 174.83 30.89 174.83 23.84 141.41 23.84 141.41 29.39"/><path class="cls-3" d="M221.08,49.87a8.74,8.74,0,0,1-.73,3.57,9,9,0,0,1-2,2.94,9.5,9.5,0,0,1-2.93,2,9,9,0,0,1-3.6.73h-33V51.66h33a1.78,1.78,0,0,0,1.79-1.79V47a1.76,1.76,0,0,0-.52-1.27,1.73,1.73,0,0,0-1.27-.51H188.09a8.74,8.74,0,0,1-3.57-.73,9.4,9.4,0,0,1-5-5,8.9,8.9,0,0,1-.73-3.57V33.09a9.11,9.11,0,0,1,.73-3.59,9.58,9.58,0,0,1,2-2.94,9.32,9.32,0,0,1,3-2,8.9,8.9,0,0,1,3.57-.72h33v7.47h-33a1.78,1.78,0,0,0-1.79,1.78V36a1.78,1.78,0,0,0,1.79,1.79h23.73a9.11,9.11,0,0,1,3.6.72,9.59,9.59,0,0,1,2.93,2,9.41,9.41,0,0,1,2,2.94,8.9,8.9,0,0,1,.73,3.59Z"/><path class="cls-3" d="M265.54,59.08h-6.73V45.22H232.6V59.08h-6.72V37.75h32.93V23.84h6.73ZM232.6,34.44h-6.72V23.84h6.72Z"/><polygon class="cls-3" points="361.45 36.17 352.64 23.84 343.83 23.84 357.93 44.98 357.93 59.08 364.98 59.08 364.98 44.98 379.08 23.84 370.38 23.84 361.45 36.17"/><path class="cls-3" d="M315.35,30.56h18.07v7.33H318.86v6.72h3.34L335,59.08h8.7L330.9,44.61h5a5.48,5.48,0,0,0,5.48-5.48V29.31a5.47,5.47,0,0,0-5.48-5.47H308.44V59.08h7.05Z"/><path class="cls-3" d="M136,59.08h-7.47V33.38a1.94,1.94,0,0,0-.16-.8,2.15,2.15,0,0,0-1.11-1.11,1.94,1.94,0,0,0-.8-.16H91.91V23.84h34.54a9.22,9.22,0,0,1,3.69.75,9.38,9.38,0,0,1,5.1,5.1,9.22,9.22,0,0,1,.75,3.69Zm-36.6,0H91.91V31.31l7.48-2Zm18.28,0h-7.48V35.22h7.48Z"/></svg>
+        <span
+          class="font-weight-bold small-hide"
+          style="
+            font-size: 2rem;
+            vertical-align: bottom;
+            color: var(--meshery-logo-text-fill);
+            font-family: 'Open Sans';
+          "
+          >Documentation</span
+        >
+      </div>
+    </a>
+
+    <div id="main_navbar">
+      <ul class="navbar-nav">
+        <!-- 
+			<li class="nav-item">
+        <a class="nav-link" href="/v0.6/v0.6https://github.com/meshery/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/v0.6/v0.6/installation/quick-start"
+            ><span>Quick Start</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/v0.6/v0.6https://meshery.io"
+            ><span>Site</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/v0.6/v0.6http://discuss.meshery.io/"
+            ><span>Discuss</span></a
+          >
+        </li>
+        
+        
+        <a href="/v0.6/v0.6https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
+        <!--Version Selector -->
+        <select
+          onchange="window.location=this.value"
+          class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
+          name="versioningSelection"
+          id="versioningSelection"
+        >
+       </select>
+
+          <!-- <option value="">Versions</option> -->
+          <option  
+           value="/"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+           <span>latest</span>
+         </option>
+         <option  
+          value="/v0.6"
+          class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+         <span>v0.6</span>
+       </option>
+         <!-- we get the version selected, and put it to the right option  -->
+         <option  
+           value="/v0.5"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+           <span>v0.5</span>
+         </option>
+         <!-- we get the version selected, and put it to the right option  --><option
+           
+           value="/v0.4"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+         >
+           <span>v0.4</span>
+         </option>
+         
+       </select>
+      </ul>
+    </div>
+
+    <div class="icon-container">
+      <button class="nav-toggle-btn nav-toggle-btn--main">
+        <svg
+          id="menu-nav-toggle-btn"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
+        <img class="nav-text" id="logo-dark-light" src="/assets/img/nav-icons/mode-toggle-icon-moon.png" 
+        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        />
+      </button>
+    </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="/v0.6/v0.6https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            meshery/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+meshery-custom-end -->
+
+
+  <body class="td-section dark-mode">
+    <script>
+      if(localStorage.getItem("mode") == "light-mode")  {
+      document.body.classList.remove("dark-mode");
+      const allLogos = document.querySelectorAll("#logo-dark-light");
+      allLogos.forEach(e => e.src = e.dataset.logoForLight);
+  }
+    </script>
+    <div class="flex-container">
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container"><div class="sidebar-menu">
+  <form class="sidebar__search-form">
+    <input
+      type="search"
+      class="sidebar__search-input"
+      id="sidebar-search-input"
+      placeholder="Search this site..."
+      aria-label="Search this site..."
+      autocomplete="off"
+    />
+  </form>
+
+  <script type="text/javascript">
+    <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      });
+    })();
+  </script>
+
+  <nav class="sidebar-nav" id="td-section-nav">
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/installation/quick-start"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🚀 Quick Start
+        </a>
+      </li>
+      
+      <ul>
+        <li id="quick-start">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/installation"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Supported Platforms ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/installation/compatibility-matrix"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Compatibility Matrix</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/project/overview"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🗺 Overview
+        </a>
+      </li>
+      
+      <ul>
+        <li id="overview">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/project/faq"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >FAQ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/project"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🧑‍💻 Contributing & Community
+        </a>
+      </li>
+      
+      <ul>
+        <li id="contributing-community">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/project/community"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Community</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/project/contributing"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Contributing ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/project/releases"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Releases</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/project/security-vulnerabilities"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Vulnerabilities</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/concepts"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🧠 Concepts
+        </a>
+      </li>
+      
+      <ul>
+        <li id="concepts">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/concepts/architecture"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Architectural ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/concepts/logical"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Logical ↆ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/tasks"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >⚙️ Tasks (all)
+        </a>
+      </li>
+      
+      <ul>
+        <li id="tasks-all">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/tasks/application-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Application Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/tasks/filter-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Filter Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/tasks/lifecycle-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Lifecycle Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/tasks/pattern-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Pattern Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/tasks/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/guides"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >📚 Guides (all)
+        </a>
+      </li>
+      
+      <ul>
+        <li id="guides-all">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/meshery-metrics"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Integrating Prometheus and Grafana</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/importing-apps"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Importing Applications</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/pipelining-service-mesh-specifications"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Pipelining service mesh specifications</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management with Meshery</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Troubleshooting Guide</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/upgrade"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Upgrading Meshery</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using mesheryctl ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/guides/multiple-adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using Multiple Meshery Adapters</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/extensibility"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🛠 Extensibility
+        </a>
+      </li>
+      
+      <ul>
+        <li id="extensibility">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Adapters</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/load-generators"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Load Generators</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/providers"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Providers</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/ui"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >UI Plugins</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/v0.6/reference"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >📖 Reference
+        </a>
+      </li>
+      
+      <ul>
+        <li id="reference">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/reference/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Meshery CLI</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/reference/error-codes"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Error Codes</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/v0.6/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs ↆ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+  </nav>
+</div>
+</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <?xml version="1.0" encoding="utf-8"?>
+              <svg version="1.1" id="document-nav-toggle-btn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" viewBox="0 0 10.7 18.7" style="enable-background:new 0 0 10.7 18.7;" xml:space="preserve">
+              <style type="text/css">
+                .st0{stroke:#000000;stroke-width:1.5;stroke-miterlimit:10;}
+              </style>
+              <path class="st0" d="M8.1,9.4L1,1.9C0.7,1.7,0.7,1.2,1,1c0.3-0.3,0.7-0.3,1,0c0,0,0,0,0,0l7.8,7.9c0.3,0.3,0.3,0.7,0,1l-7.8,7.9
+                c-0.3,0.3-0.7,0.3-1,0c0,0,0,0,0,0c-0.3-0.3-0.3-0.7,0-1L8.1,9.4z"/>
+              </svg>
+          </button>
+        </div>
+      </div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page"><div id="breadcrumbs">
+
+
+   <a href="/v0.6/v0.6/">home</a>
+
+
+  
+    / <a href="/v0.6/v0.6/reference">reference</a> 
+  
+
+  
+    / graphql api reference
+  
+
+</div>
+
+<!-- <a href="/v0.6/v0.6http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="/v0.6/v0.6http://localhost:4000">Learn API Doc</a> > graphql-api-reference -->
+</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          
+          <h1>GraphQL API Reference</h1>
+           <!---
+  This documentation is auto generated by a script.
+
+  Please do not edit this file directly, check compile_docs task on docs/Rakefile.
+--->
+
+<p>Self-generated API documentation for Meshery’s GraphQL API. The API can be explored interactively using the <a href="/v0.6/v0.6./extensibility">GraphQL Playground</a>. Documentation is generated from Meshery’s GraphQL schema. Each table below documents a GraphQL type.</p>
+
+<p>WARNING:
+Fields that are deprecated are marked with <strong>{warning-solid}</strong>.</p>
+
+<!-- vale off -->
+
+<h2 id="query-type"><code class="language-plaintext highlighter-rouge">Query</code> type</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Query</code> type contains the API’s top-level entry points for all executable queries.</p>
+
+<h3 id="queryconnecttonats"><code class="language-plaintext highlighter-rouge">Query.connectToNats</code></h3>
+
+<p>Check is Meshey Server is connected to NATS, if not connect to the NATS Server.</p>
+
+<h6 id="returns-status"><strong>Returns</strong> <a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a>.</h6>
+
+<h4 id="arguments"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryconnecttonatsk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querydeploymeshsync"><code class="language-plaintext highlighter-rouge">Query.deployMeshsync</code></h3>
+
+<p>Check the Meshsync Status and deploy if not enabled.</p>
+
+<h6 id="returns-status-1"><strong>Returns</strong> <a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a>.</h6>
+
+<h4 id="arguments-1"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querydeploymeshsynck8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>what to do in-order to deploy meshsync on multiple clusters/contexts.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchallresults"><code class="language-plaintext highlighter-rouge">Query.fetchAllResults</code></h3>
+
+<p>Query for fetching all results for profile ID.</p>
+
+<h6 id="returns-perfpageresult"><strong>Returns</strong> <a href="/v0.6/v0.6#perfpageresult"><code class="language-plaintext highlighter-rouge">PerfPageResult!</code></a>.</h6>
+
+<h4 id="arguments-2"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchallresultsselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchfiltercatalogcontent"><code class="language-plaintext highlighter-rouge">Query.fetchFilterCatalogContent</code></h3>
+
+<p>Query for getting Filter Catalog from remote provider.</p>
+
+<h6 id="returns-catalogfilter"><strong>Returns</strong> <a href="/v0.6/v0.6#catalogfilter"><code class="language-plaintext highlighter-rouge">[CatalogFilter!]!</code></a>.</h6>
+
+<h4 id="arguments-3"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchfiltercatalogcontentselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#catalogselector"><code class="language-plaintext highlighter-rouge">CatalogSelector</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchpatterncatalogcontent"><code class="language-plaintext highlighter-rouge">Query.fetchPatternCatalogContent</code></h3>
+
+<p>Query for getting Pattern Catalog from remote provider.</p>
+
+<h6 id="returns-catalogpattern"><strong>Returns</strong> <a href="/v0.6/v0.6#catalogpattern"><code class="language-plaintext highlighter-rouge">[CatalogPattern!]!</code></a>.</h6>
+
+<h4 id="arguments-4"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchpatterncatalogcontentselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#catalogselector"><code class="language-plaintext highlighter-rouge">CatalogSelector</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchpatterns"><code class="language-plaintext highlighter-rouge">Query.fetchPatterns</code></h3>
+
+<p>Query for fetching all patterns with selector.</p>
+
+<h6 id="returns-patternpageresult"><strong>Returns</strong> <a href="/v0.6/v0.6#patternpageresult"><code class="language-plaintext highlighter-rouge">PatternPageResult!</code></a>.</h6>
+
+<h4 id="arguments-5"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchpatternsselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchresults"><code class="language-plaintext highlighter-rouge">Query.fetchResults</code></h3>
+
+<p>Query for fetching all results for profile ID.</p>
+
+<h6 id="returns-perfpageresult-1"><strong>Returns</strong> <a href="/v0.6/v0.6#perfpageresult"><code class="language-plaintext highlighter-rouge">PerfPageResult!</code></a>.</h6>
+
+<h4 id="arguments-6"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchresultsprofileid"></a><code class="language-plaintext highlighter-rouge">profileID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="queryfetchresultsselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryfetchtelemetrycomponents"><code class="language-plaintext highlighter-rouge">Query.fetchTelemetryComponents</code></h3>
+
+<p>Query for telemetry components.</p>
+
+<h6 id="returns-telemetrycomp"><strong>Returns</strong> <a href="/v0.6/v0.6#telemetrycomp"><code class="language-plaintext highlighter-rouge">[TelemetryComp]!</code></a>.</h6>
+
+<h4 id="arguments-7"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryfetchtelemetrycomponentscontexts"></a><code class="language-plaintext highlighter-rouge">contexts</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetavailableaddons"><code class="language-plaintext highlighter-rouge">Query.getAvailableAddons</code></h3>
+
+<p>Query details about Addons available (Eg. Prometheus and Grafana).</p>
+
+<h6 id="returns-addonlist"><strong>Returns</strong> <a href="/v0.6/v0.6#addonlist"><code class="language-plaintext highlighter-rouge">[AddonList!]!</code></a>.</h6>
+
+<h4 id="arguments-8"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetavailableaddonsfilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Select Mesh Type.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetavailablenamespaces"><code class="language-plaintext highlighter-rouge">Query.getAvailableNamespaces</code></h3>
+
+<p>Query available Namesapces in your cluster.</p>
+
+<h6 id="returns-namespace"><strong>Returns</strong> <a href="/v0.6/v0.6#namespace"><code class="language-plaintext highlighter-rouge">[NameSpace!]!</code></a>.</h6>
+
+<h4 id="arguments-9"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetavailablenamespacesk8sclusterids"></a><code class="language-plaintext highlighter-rouge">k8sClusterIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetclusterresources"><code class="language-plaintext highlighter-rouge">Query.getClusterResources</code></h3>
+
+<p>Query for getting cluster info.</p>
+
+<h6 id="returns-clusterresources"><strong>Returns</strong> <a href="/v0.6/v0.6#clusterresources"><code class="language-plaintext highlighter-rouge">ClusterResources!</code></a>.</h6>
+
+<h4 id="arguments-10"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetclusterresourcesk8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="querygetclusterresourcesnamespace"></a><code class="language-plaintext highlighter-rouge">namespace</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetcontrolplanes"><code class="language-plaintext highlighter-rouge">Query.getControlPlanes</code></h3>
+
+<p>Query Control Plane data for a Service Mesh (or all) in your cluster.</p>
+
+<h6 id="returns-controlplane"><strong>Returns</strong> <a href="/v0.6/v0.6#controlplane"><code class="language-plaintext highlighter-rouge">[ControlPlane!]!</code></a>.</h6>
+
+<h4 id="arguments-11"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetcontrolplanesfilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Filter Control Plane Query.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetdataplanes"><code class="language-plaintext highlighter-rouge">Query.getDataPlanes</code></h3>
+
+<p>Query Data Plane information for a Service Mesh (or all) in your cluster.</p>
+
+<h6 id="returns-dataplane"><strong>Returns</strong> <a href="/v0.6/v0.6#dataplane"><code class="language-plaintext highlighter-rouge">[DataPlane!]!</code></a>.</h6>
+
+<h4 id="arguments-12"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetdataplanesfilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Filter Control Plane Query.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetkubectldescribe"><code class="language-plaintext highlighter-rouge">Query.getKubectlDescribe</code></h3>
+
+<p>Query for getting kubectl describe details with meshkit.</p>
+
+<h6 id="returns-kctldescribedetails"><strong>Returns</strong> <a href="/v0.6/v0.6#kctldescribedetails"><code class="language-plaintext highlighter-rouge">KctlDescribeDetails!</code></a>.</h6>
+
+<h4 id="arguments-13"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetkubectldescribekind"></a><code class="language-plaintext highlighter-rouge">kind</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="querygetkubectldescribename"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="querygetkubectldescribenamespace"></a><code class="language-plaintext highlighter-rouge">namespace</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetmeshmodelsummary"><code class="language-plaintext highlighter-rouge">Query.getMeshModelSummary</code></h3>
+
+<p>Query for meshmodel summary.</p>
+
+<h6 id="returns-meshmodelsummary"><strong>Returns</strong> <a href="/v0.6/v0.6#meshmodelsummary"><code class="language-plaintext highlighter-rouge">MeshModelSummary!</code></a>.</h6>
+
+<h4 id="arguments-14"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetmeshmodelsummaryselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#meshmodelsummaryselector"><code class="language-plaintext highlighter-rouge">MeshModelSummarySelector!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetmeshsyncstatus"><code class="language-plaintext highlighter-rouge">Query.getMeshsyncStatus</code></h3>
+
+<p>Check the Meshsync Status.</p>
+
+<h6 id="returns-operatorcontrollerstatus"><strong>Returns</strong> <a href="/v0.6/v0.6#operatorcontrollerstatus"><code class="language-plaintext highlighter-rouge">OperatorControllerStatus!</code></a>.</h6>
+
+<h4 id="arguments-15"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetmeshsyncstatusk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetnatsstatus"><code class="language-plaintext highlighter-rouge">Query.getNatsStatus</code></h3>
+
+<p>Check is Meshey Server is connected to NATS.</p>
+
+<h6 id="returns-operatorcontrollerstatus-1"><strong>Returns</strong> <a href="/v0.6/v0.6#operatorcontrollerstatus"><code class="language-plaintext highlighter-rouge">OperatorControllerStatus!</code></a>.</h6>
+
+<h4 id="arguments-16"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetnatsstatusk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetoperatorstatus"><code class="language-plaintext highlighter-rouge">Query.getOperatorStatus</code></h3>
+
+<p>Query status of Meshery Operator in your cluster.</p>
+
+<h6 id="returns-operatorstatus"><strong>Returns</strong> <a href="/v0.6/v0.6#operatorstatus"><code class="language-plaintext highlighter-rouge">OperatorStatus</code></a>.</h6>
+
+<h4 id="arguments-17"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetoperatorstatusk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetperfresult"><code class="language-plaintext highlighter-rouge">Query.getPerfResult</code></h3>
+
+<p>Query for performance result.</p>
+
+<h6 id="returns-mesheryresult"><strong>Returns</strong> <a href="/v0.6/v0.6#mesheryresult"><code class="language-plaintext highlighter-rouge">MesheryResult</code></a>.</h6>
+
+<h4 id="arguments-18"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetperfresultid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="querygetperformanceprofiles"><code class="language-plaintext highlighter-rouge">Query.getPerformanceProfiles</code></h3>
+
+<p>Query for fetching all results for profile ID.</p>
+
+<h6 id="returns-perfpageprofiles"><strong>Returns</strong> <a href="/v0.6/v0.6#perfpageprofiles"><code class="language-plaintext highlighter-rouge">PerfPageProfiles!</code></a>.</h6>
+
+<h4 id="arguments-19"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="querygetperformanceprofilesselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="queryresynccluster"><code class="language-plaintext highlighter-rouge">Query.resyncCluster</code></h3>
+
+<p>Query to resync the cluster discovery.</p>
+
+<h6 id="returns-status-2"><strong>Returns</strong> <a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a>.</h6>
+
+<h4 id="arguments-20"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="queryresyncclusterk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="queryresyncclusterselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#resyncactions"><code class="language-plaintext highlighter-rouge">ReSyncActions</code></a></td>
+      <td>Selector to control several resync actions.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="mutation-type"><code class="language-plaintext highlighter-rouge">Mutation</code> type</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Mutation</code> type contains all the mutations you can execute.</p>
+
+<p>All mutations receive their arguments in a single input object named <code class="language-plaintext highlighter-rouge">input</code>.</p>
+
+<h3 id="mutationchangeadapterstatus"><code class="language-plaintext highlighter-rouge">Mutation.changeAdapterStatus</code></h3>
+
+<p>Change the Adapter Status.</p>
+
+<h6 id="input-type-adapterstatusinput"><strong>Input type:</strong> <code class="language-plaintext highlighter-rouge">AdapterStatusInput</code></h6>
+
+<h4 id="arguments-21"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mutationchangeadapterstatusadapter"></a><code class="language-plaintext highlighter-rouge">adapter</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Name of the adapter to be deployed.</td>
+    </tr>
+    <tr>
+      <td><a id="mutationchangeadapterstatustargetport"></a><code class="language-plaintext highlighter-rouge">targetPort</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>The port on which adapter will be deployed.</td>
+    </tr>
+    <tr>
+      <td><a id="mutationchangeadapterstatustargetstatus"></a><code class="language-plaintext highlighter-rouge">targetStatus</code></td>
+      <td><a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a></td>
+      <td>Desired status for Meshery Operator.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h6 id="returns-status-3"><strong>Returns</strong> <a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a>.</h6>
+
+<h3 id="mutationchangeoperatorstatus"><code class="language-plaintext highlighter-rouge">Mutation.changeOperatorStatus</code></h3>
+
+<p>Change the Operator Status.</p>
+
+<h6 id="input-type-operatorstatusinput"><strong>Input type:</strong> <code class="language-plaintext highlighter-rouge">OperatorStatusInput</code></h6>
+
+<h4 id="arguments-22"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mutationchangeoperatorstatuscontextid"></a><code class="language-plaintext highlighter-rouge">contextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mutationchangeoperatorstatustargetstatus"></a><code class="language-plaintext highlighter-rouge">targetStatus</code></td>
+      <td><a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a></td>
+      <td>Desired status for Meshery Operator.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h6 id="returns-status-4"><strong>Returns</strong> <a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a>.</h6>
+
+<h2 id="subscription-type"><code class="language-plaintext highlighter-rouge">Subscription</code> type</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Subscription</code> type contains all the Subscriptions you can listen to.</p>
+
+<h3 id="subscriptionlistentoaddonstate"><code class="language-plaintext highlighter-rouge">Subscription.listenToAddonState</code></h3>
+
+<p>Listen to changes in status of Addons available (Eg. Prometheus and Grafana).</p>
+
+<h6 id="returns-addonlist-1"><strong>Returns</strong> <a href="/v0.6/v0.6#addonlist"><code class="language-plaintext highlighter-rouge">[AddonList!]!</code></a>.</h6>
+
+<h4 id="arguments-23"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionlistentoaddonstatefilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Select Mesh Type.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionlistentocontrolplanestate"><code class="language-plaintext highlighter-rouge">Subscription.listenToControlPlaneState</code></h3>
+
+<p>Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.</p>
+
+<h6 id="returns-controlplane-1"><strong>Returns</strong> <a href="/v0.6/v0.6#controlplane"><code class="language-plaintext highlighter-rouge">[ControlPlane!]!</code></a>.</h6>
+
+<h4 id="arguments-24"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionlistentocontrolplanestatefilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Filter Control Plane Query.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionlistentodataplanestate"><code class="language-plaintext highlighter-rouge">Subscription.listenToDataPlaneState</code></h3>
+
+<p>Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster.</p>
+
+<h6 id="returns-dataplane-1"><strong>Returns</strong> <a href="/v0.6/v0.6#dataplane"><code class="language-plaintext highlighter-rouge">[DataPlane!]!</code></a>.</h6>
+
+<h4 id="arguments-25"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionlistentodataplanestatefilter"></a><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td><a href="/v0.6/v0.6#servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></a></td>
+      <td>Filter Control Plane Query.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionlistentomeshsyncevents"><code class="language-plaintext highlighter-rouge">Subscription.listenToMeshSyncEvents</code></h3>
+
+<p>Listen to changes in the list of available Namesapces in your cluster.</p>
+
+<h6 id="returns-operatorcontrollerstatusperk8scontext"><strong>Returns</strong> <a href="/v0.6/v0.6#operatorcontrollerstatusperk8scontext"><code class="language-plaintext highlighter-rouge">OperatorControllerStatusPerK8sContext</code></a>.</h6>
+
+<h4 id="arguments-26"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionlistentomeshsynceventsk8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionlistentooperatorstate"><code class="language-plaintext highlighter-rouge">Subscription.listenToOperatorState</code></h3>
+
+<p>Listen to changes in status of Meshery Operator in your cluster.</p>
+
+<h6 id="returns-operatorstatusperk8scontext"><strong>Returns</strong> <a href="/v0.6/v0.6#operatorstatusperk8scontext"><code class="language-plaintext highlighter-rouge">OperatorStatusPerK8sContext</code></a>.</h6>
+
+<h4 id="arguments-27"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionlistentooperatorstatek8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribebrokerconnection"><code class="language-plaintext highlighter-rouge">Subscription.subscribeBrokerConnection</code></h3>
+
+<p>Listen to changes in Broker (NATS) Connection.</p>
+
+<h6 id="returns-boolean"><strong>Returns</strong> <a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean!</code></a>.</h6>
+
+<h3 id="subscriptionsubscribeclusterresources"><code class="language-plaintext highlighter-rouge">Subscription.subscribeClusterResources</code></h3>
+
+<h6 id="returns-clusterresources-1"><strong>Returns</strong> <a href="/v0.6/v0.6#clusterresources"><code class="language-plaintext highlighter-rouge">ClusterResources!</code></a>.</h6>
+
+<h4 id="arguments-28"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribeclusterresourcesk8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="subscriptionsubscribeclusterresourcesnamespace"></a><code class="language-plaintext highlighter-rouge">namespace</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribeconfiguration"><code class="language-plaintext highlighter-rouge">Subscription.subscribeConfiguration</code></h3>
+
+<h6 id="returns-configurationpage"><strong>Returns</strong> <a href="/v0.6/v0.6#configurationpage"><code class="language-plaintext highlighter-rouge">ConfigurationPage!</code></a>.</h6>
+
+<h4 id="arguments-29"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribeconfigurationapplicationselector"></a><code class="language-plaintext highlighter-rouge">applicationSelector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="subscriptionsubscribeconfigurationfilterselector"></a><code class="language-plaintext highlighter-rouge">filterSelector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="subscriptionsubscribeconfigurationpatternselector"></a><code class="language-plaintext highlighter-rouge">patternSelector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribek8scontext"><code class="language-plaintext highlighter-rouge">Subscription.subscribeK8sContext</code></h3>
+
+<h6 id="returns-k8scontextspage"><strong>Returns</strong> <a href="/v0.6/v0.6#k8scontextspage"><code class="language-plaintext highlighter-rouge">K8sContextsPage!</code></a>.</h6>
+
+<h4 id="arguments-30"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribek8scontextselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribemeshmodelsummary"><code class="language-plaintext highlighter-rouge">Subscription.subscribeMeshModelSummary</code></h3>
+
+<h6 id="returns-meshmodelsummary-1"><strong>Returns</strong> <a href="/v0.6/v0.6#meshmodelsummary"><code class="language-plaintext highlighter-rouge">MeshModelSummary!</code></a>.</h6>
+
+<h4 id="arguments-31"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribemeshmodelsummaryselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#meshmodelsummaryselector"><code class="language-plaintext highlighter-rouge">MeshModelSummarySelector!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribemeshsyncevents"><code class="language-plaintext highlighter-rouge">Subscription.subscribeMeshSyncEvents</code></h3>
+
+<p>Listen to the events that MeshSync is sending through Meshery Broker.
+Note: It does not listen to the changes in meshery database, but to meshsync events.</p>
+
+<h6 id="returns-meshsyncevent"><strong>Returns</strong> <a href="/v0.6/v0.6#meshsyncevent"><code class="language-plaintext highlighter-rouge">MeshSyncEvent!</code></a>.</h6>
+
+<h4 id="arguments-32"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribemeshsynceventsk8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribemesherycontrollersstatus"><code class="language-plaintext highlighter-rouge">Subscription.subscribeMesheryControllersStatus</code></h3>
+
+<p>Listen to changes in the status of meshery controllers.</p>
+
+<h6 id="returns-mesherycontrollersstatuslistitem"><strong>Returns</strong> <a href="/v0.6/v0.6#mesherycontrollersstatuslistitem"><code class="language-plaintext highlighter-rouge">[MesheryControllersStatusListItem!]!</code></a>.</h6>
+
+<h4 id="arguments-33"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribemesherycontrollersstatusk8scontextids"></a><code class="language-plaintext highlighter-rouge">k8scontextIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribeperfprofiles"><code class="language-plaintext highlighter-rouge">Subscription.subscribePerfProfiles</code></h3>
+
+<p>Listen to changes in Performance Profiles.</p>
+
+<h6 id="returns-perfpageprofiles-1"><strong>Returns</strong> <a href="/v0.6/v0.6#perfpageprofiles"><code class="language-plaintext highlighter-rouge">PerfPageProfiles!</code></a>.</h6>
+
+<h4 id="arguments-34"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribeperfprofilesselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="subscriptionsubscribeperfresults"><code class="language-plaintext highlighter-rouge">Subscription.subscribePerfResults</code></h3>
+
+<p>Listen to all results for profile ID.</p>
+
+<h6 id="returns-perfpageresult-2"><strong>Returns</strong> <a href="/v0.6/v0.6#perfpageresult"><code class="language-plaintext highlighter-rouge">PerfPageResult!</code></a>.</h6>
+
+<h4 id="arguments-35"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="subscriptionsubscribeperfresultsprofileid"></a><code class="language-plaintext highlighter-rouge">profileID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="subscriptionsubscribeperfresultsselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="object-types">Object types</h2>
+
+<p>Object types represent the resources that the Meshery GraphQL API can return.
+They contain <em>fields</em>. Each field has its own type, which will either be one of the
+basic GraphQL <a href="/v0.6/v0.6https://graphql.org/learn/schema/#scalar-types">scalar types</a>
+(e.g.: <code class="language-plaintext highlighter-rouge">String</code> or <code class="language-plaintext highlighter-rouge">Boolean</code>) or other object types. Fields may have arguments.
+Fields with arguments are exactly like top-level queries, and are listed beneath
+the table of fields for each object type.</p>
+
+<p>For more information, see
+<a href="/v0.6/v0.6https://graphql.org/learn/schema/#object-types-and-fields">Object Types and Fields</a>
+on <code class="language-plaintext highlighter-rouge">graphql.org</code>.</p>
+
+<h3 id="addonlist"><code class="language-plaintext highlighter-rouge">AddonList</code></h3>
+
+<p>Deatils about the Addon Component.</p>
+
+<h4 id="fields"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="addonlistname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Name.</td>
+    </tr>
+    <tr>
+      <td><a id="addonlistowner"></a><code class="language-plaintext highlighter-rouge">owner</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Owner.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="applicationpage"><code class="language-plaintext highlighter-rouge">ApplicationPage</code></h3>
+
+<h4 id="fields-1"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="applicationpageapplications"></a><code class="language-plaintext highlighter-rouge">applications</code></td>
+      <td><a href="/v0.6/v0.6#applicationresult"><code class="language-plaintext highlighter-rouge">[ApplicationResult]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationpagepage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationpagepage_size"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationpagetotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="applicationresult"><code class="language-plaintext highlighter-rouge">ApplicationResult</code></h3>
+
+<h4 id="fields-2"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="applicationresultapplication_file"></a><code class="language-plaintext highlighter-rouge">application_file</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultcreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultlocation"></a><code class="language-plaintext highlighter-rouge">location</code></td>
+      <td><a href="/v0.6/v0.6#location"><code class="language-plaintext highlighter-rouge">Location!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresulttype"></a><code class="language-plaintext highlighter-rouge">type</code></td>
+      <td><a href="/v0.6/v0.6#nullstring"><code class="language-plaintext highlighter-rouge">NullString!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="applicationresultvisibility"></a><code class="language-plaintext highlighter-rouge">visibility</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="catalogfilter"><code class="language-plaintext highlighter-rouge">CatalogFilter</code></h3>
+
+<h4 id="fields-3"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="catalogfiltercatalog_data"></a><code class="language-plaintext highlighter-rouge">catalog_data</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfiltercreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfilterfilter_file"></a><code class="language-plaintext highlighter-rouge">filter_file</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfilterid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfilterlocation"></a><code class="language-plaintext highlighter-rouge">location</code></td>
+      <td><a href="/v0.6/v0.6#location"><code class="language-plaintext highlighter-rouge">Location!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfiltername"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfilterupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfilteruser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogfiltervisibility"></a><code class="language-plaintext highlighter-rouge">visibility</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="catalogpattern"><code class="language-plaintext highlighter-rouge">CatalogPattern</code></h3>
+
+<h4 id="fields-4"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="catalogpatterncatalog_data"></a><code class="language-plaintext highlighter-rouge">catalog_data</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatterncreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternlocation"></a><code class="language-plaintext highlighter-rouge">location</code></td>
+      <td><a href="/v0.6/v0.6#location"><code class="language-plaintext highlighter-rouge">Location!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternpattern_file"></a><code class="language-plaintext highlighter-rouge">pattern_file</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogpatternvisibility"></a><code class="language-plaintext highlighter-rouge">visibility</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="clusterresources"><code class="language-plaintext highlighter-rouge">ClusterResources</code></h3>
+
+<p>Details about discovered workloads.</p>
+
+<h4 id="fields-5"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="clusterresourcesresources"></a><code class="language-plaintext highlighter-rouge">resources</code></td>
+      <td><a href="/v0.6/v0.6#resource"><code class="language-plaintext highlighter-rouge">[Resource!]!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="configurationpage"><code class="language-plaintext highlighter-rouge">ConfigurationPage</code></h3>
+
+<h4 id="fields-6"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="configurationpageapplications"></a><code class="language-plaintext highlighter-rouge">applications</code></td>
+      <td><a href="/v0.6/v0.6#applicationpage"><code class="language-plaintext highlighter-rouge">ApplicationPage</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="configurationpagefilters"></a><code class="language-plaintext highlighter-rouge">filters</code></td>
+      <td><a href="/v0.6/v0.6#filterpage"><code class="language-plaintext highlighter-rouge">FilterPage</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="configurationpagepatterns"></a><code class="language-plaintext highlighter-rouge">patterns</code></td>
+      <td><a href="/v0.6/v0.6#patternpageresult"><code class="language-plaintext highlighter-rouge">PatternPageResult</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="container"><code class="language-plaintext highlighter-rouge">Container</code></h3>
+
+<h4 id="fields-7"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="containercontainername"></a><code class="language-plaintext highlighter-rouge">containerName</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="containercontrolplanemembername"></a><code class="language-plaintext highlighter-rouge">controlPlaneMemberName</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="containerimage"></a><code class="language-plaintext highlighter-rouge">image</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="containerports"></a><code class="language-plaintext highlighter-rouge">ports</code></td>
+      <td><a href="/v0.6/v0.6#container_port"><code class="language-plaintext highlighter-rouge">[Container_Port]</code></a></td>
+      <td>args: NOT IMPLEMENTED.</td>
+    </tr>
+    <tr>
+      <td><a id="containerresources"></a><code class="language-plaintext highlighter-rouge">resources</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td>env: NOT IMPLEMENTED,.</td>
+    </tr>
+    <tr>
+      <td><a id="containerstatus"></a><code class="language-plaintext highlighter-rouge">status</code></td>
+      <td><a href="/v0.6/v0.6#container_status"><code class="language-plaintext highlighter-rouge">Container_Status</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="container_port"><code class="language-plaintext highlighter-rouge">Container_Port</code></h3>
+
+<h4 id="fields-8"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="container_portcontainerport"></a><code class="language-plaintext highlighter-rouge">containerPort</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_portname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_portprotocol"></a><code class="language-plaintext highlighter-rouge">protocol</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="container_status"><code class="language-plaintext highlighter-rouge">Container_Status</code></h3>
+
+<h4 id="fields-9"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="container_statuscontainerid"></a><code class="language-plaintext highlighter-rouge">containerID</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statuscontainerstatusname"></a><code class="language-plaintext highlighter-rouge">containerStatusName</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statusimage"></a><code class="language-plaintext highlighter-rouge">image</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statusimageid"></a><code class="language-plaintext highlighter-rouge">imageID</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statuslaststate"></a><code class="language-plaintext highlighter-rouge">lastState</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statusready"></a><code class="language-plaintext highlighter-rouge">ready</code></td>
+      <td><a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statusrestartcount"></a><code class="language-plaintext highlighter-rouge">restartCount</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="container_statusstarted"></a><code class="language-plaintext highlighter-rouge">started</code></td>
+      <td><a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean!</code></a></td>
+      <td>image: String! imageID: String! containerID: String!.</td>
+    </tr>
+    <tr>
+      <td><a id="container_statusstate"></a><code class="language-plaintext highlighter-rouge">state</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="controlplane"><code class="language-plaintext highlighter-rouge">ControlPlane</code></h3>
+
+<p>Control Plane data for a particular Mesh.</p>
+
+<h4 id="fields-10"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="controlplanemembers"></a><code class="language-plaintext highlighter-rouge">members</code></td>
+      <td><a href="/v0.6/v0.6#controlplanemember"><code class="language-plaintext highlighter-rouge">[ControlPlaneMember!]!</code></a></td>
+      <td>Members of the Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="controlplanename"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Service Mesh Name.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="controlplanemember"><code class="language-plaintext highlighter-rouge">ControlPlaneMember</code></h3>
+
+<p>Member Details.</p>
+
+<h4 id="fields-11"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="controlplanemembercomponent"></a><code class="language-plaintext highlighter-rouge">component</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Component.</td>
+    </tr>
+    <tr>
+      <td><a id="controlplanememberdata_planes"></a><code class="language-plaintext highlighter-rouge">data_planes</code></td>
+      <td><a href="/v0.6/v0.6#container"><code class="language-plaintext highlighter-rouge">[Container!]</code></a></td>
+      <td>DataPlanes.</td>
+    </tr>
+    <tr>
+      <td><a id="controlplanemembername"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Name.</td>
+    </tr>
+    <tr>
+      <td><a id="controlplanemembernamespace"></a><code class="language-plaintext highlighter-rouge">namespace</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Namespace.</td>
+    </tr>
+    <tr>
+      <td><a id="controlplanememberversion"></a><code class="language-plaintext highlighter-rouge">version</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Version.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="dataplane"><code class="language-plaintext highlighter-rouge">DataPlane</code></h3>
+
+<p>Data Plane for a particular Mesh.</p>
+
+<h4 id="fields-12"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="dataplanename"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Service Mesh Name.</td>
+    </tr>
+    <tr>
+      <td><a id="dataplaneproxies"></a><code class="language-plaintext highlighter-rouge">proxies</code></td>
+      <td><a href="/v0.6/v0.6#container"><code class="language-plaintext highlighter-rouge">[Container!]!</code></a></td>
+      <td>Members of the Mesh.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="error"><code class="language-plaintext highlighter-rouge">Error</code></h3>
+
+<h4 id="fields-13"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="errorcode"></a><code class="language-plaintext highlighter-rouge">code</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Error Code.</td>
+    </tr>
+    <tr>
+      <td><a id="errordescription"></a><code class="language-plaintext highlighter-rouge">description</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Error Details.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="filterpage"><code class="language-plaintext highlighter-rouge">FilterPage</code></h3>
+
+<h4 id="fields-14"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="filterpagefilters"></a><code class="language-plaintext highlighter-rouge">filters</code></td>
+      <td><a href="/v0.6/v0.6#filterresult"><code class="language-plaintext highlighter-rouge">[FilterResult]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterpagepage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterpagepage_size"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterpagetotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="filterresult"><code class="language-plaintext highlighter-rouge">FilterResult</code></h3>
+
+<h4 id="fields-15"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="filterresultcatalog_data"></a><code class="language-plaintext highlighter-rouge">catalog_data</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultcreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultfilter_file"></a><code class="language-plaintext highlighter-rouge">filter_file</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultlocation"></a><code class="language-plaintext highlighter-rouge">location</code></td>
+      <td><a href="/v0.6/v0.6#location"><code class="language-plaintext highlighter-rouge">Location!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="filterresultvisibility"></a><code class="language-plaintext highlighter-rouge">visibility</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="k8scontext"><code class="language-plaintext highlighter-rouge">K8sContext</code></h3>
+
+<h4 id="fields-16"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="k8scontextauth"></a><code class="language-plaintext highlighter-rouge">auth</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextcluster"></a><code class="language-plaintext highlighter-rouge">cluster</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextcreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextcreated_by"></a><code class="language-plaintext highlighter-rouge">created_by</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextdeployment_type"></a><code class="language-plaintext highlighter-rouge">deployment_type</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextkubernetes_server_id"></a><code class="language-plaintext highlighter-rouge">kubernetes_server_id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextmeshery_instance_id"></a><code class="language-plaintext highlighter-rouge">meshery_instance_id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextowner"></a><code class="language-plaintext highlighter-rouge">owner</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextserver"></a><code class="language-plaintext highlighter-rouge">server</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextversion"></a><code class="language-plaintext highlighter-rouge">version</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="k8scontextspage"><code class="language-plaintext highlighter-rouge">K8sContextsPage</code></h3>
+
+<h4 id="fields-17"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="k8scontextspagecontexts"></a><code class="language-plaintext highlighter-rouge">contexts</code></td>
+      <td><a href="/v0.6/v0.6#k8scontext"><code class="language-plaintext highlighter-rouge">[K8sContext]!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="k8scontextspagetotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="kctldescribedetails"><code class="language-plaintext highlighter-rouge">KctlDescribeDetails</code></h3>
+
+<h4 id="fields-18"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="kctldescribedetailsctxid"></a><code class="language-plaintext highlighter-rouge">ctxid</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="kctldescribedetailsdescribe"></a><code class="language-plaintext highlighter-rouge">describe</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="location"><code class="language-plaintext highlighter-rouge">Location</code></h3>
+
+<h4 id="fields-19"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="locationbranch"></a><code class="language-plaintext highlighter-rouge">branch</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="locationhost"></a><code class="language-plaintext highlighter-rouge">host</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="locationpath"></a><code class="language-plaintext highlighter-rouge">path</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="locationtype"></a><code class="language-plaintext highlighter-rouge">type</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="meshmodelcomponent"><code class="language-plaintext highlighter-rouge">MeshModelComponent</code></h3>
+
+<h4 id="fields-20"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshmodelcomponentcount"></a><code class="language-plaintext highlighter-rouge">count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="meshmodelcomponentname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="meshmodelrelationship"><code class="language-plaintext highlighter-rouge">MeshModelRelationship</code></h3>
+
+<h4 id="fields-21"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshmodelrelationshipcount"></a><code class="language-plaintext highlighter-rouge">count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="meshmodelrelationshipname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="meshmodelsummary"><code class="language-plaintext highlighter-rouge">MeshModelSummary</code></h3>
+
+<p>Type MeshModelComponentsSummary define the summary of a Mesh Model.</p>
+
+<h4 id="fields-22"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshmodelsummarycomponents"></a><code class="language-plaintext highlighter-rouge">components</code></td>
+      <td><a href="/v0.6/v0.6#meshmodelcomponent"><code class="language-plaintext highlighter-rouge">[MeshModelComponent!]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="meshmodelsummaryrelationships"></a><code class="language-plaintext highlighter-rouge">relationships</code></td>
+      <td><a href="/v0.6/v0.6#meshmodelrelationship"><code class="language-plaintext highlighter-rouge">[MeshModelRelationship!]</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="meshsyncevent"><code class="language-plaintext highlighter-rouge">MeshSyncEvent</code></h3>
+
+<h4 id="fields-23"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshsynceventcontextid"></a><code class="language-plaintext highlighter-rouge">contextId</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="meshsynceventobject"></a><code class="language-plaintext highlighter-rouge">object</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="meshsynceventtype"></a><code class="language-plaintext highlighter-rouge">type</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mesherycontrollersstatuslistitem"><code class="language-plaintext highlighter-rouge">MesheryControllersStatusListItem</code></h3>
+
+<h4 id="fields-24"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mesherycontrollersstatuslistitemcontextid"></a><code class="language-plaintext highlighter-rouge">contextId</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollersstatuslistitemcontroller"></a><code class="language-plaintext highlighter-rouge">controller</code></td>
+      <td><a href="/v0.6/v0.6#mesherycontroller"><code class="language-plaintext highlighter-rouge">MesheryController!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollersstatuslistitemstatus"></a><code class="language-plaintext highlighter-rouge">status</code></td>
+      <td><a href="/v0.6/v0.6#mesherycontrollerstatus"><code class="language-plaintext highlighter-rouge">MesheryControllerStatus!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mesheryresult"><code class="language-plaintext highlighter-rouge">MesheryResult</code></h3>
+
+<h4 id="fields-25"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mesheryresultcreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultmesh"></a><code class="language-plaintext highlighter-rouge">mesh</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultmeshery_id"></a><code class="language-plaintext highlighter-rouge">meshery_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultperformance_profile"></a><code class="language-plaintext highlighter-rouge">performance_profile</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultrunner_results"></a><code class="language-plaintext highlighter-rouge">runner_results</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultserver_board_config"></a><code class="language-plaintext highlighter-rouge">server_board_config</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultserver_metrics"></a><code class="language-plaintext highlighter-rouge">server_metrics</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresulttest_id"></a><code class="language-plaintext highlighter-rouge">test_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresulttest_start_time"></a><code class="language-plaintext highlighter-rouge">test_start_time</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesheryresultuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="namespace"><code class="language-plaintext highlighter-rouge">NameSpace</code></h3>
+
+<p>Type to define a k8s Namespace.</p>
+
+<h4 id="fields-26"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="namespacenamespace"></a><code class="language-plaintext highlighter-rouge">namespace</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Namespace Name.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="nullstring"><code class="language-plaintext highlighter-rouge">NullString</code></h3>
+
+<h4 id="fields-27"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="nullstringstring"></a><code class="language-plaintext highlighter-rouge">String</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="nullstringvalid"></a><code class="language-plaintext highlighter-rouge">Valid</code></td>
+      <td><a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="oamcapability"><code class="language-plaintext highlighter-rouge">OAMCapability</code></h3>
+
+<h4 id="fields-28"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="oamcapabilityhost"></a><code class="language-plaintext highlighter-rouge">host</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="oamcapabilityid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="oamcapabilitymetadata"></a><code class="language-plaintext highlighter-rouge">metadata</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="oamcapabilityoam_definition"></a><code class="language-plaintext highlighter-rouge">oam_definition</code></td>
+      <td><a href="/v0.6/v0.6#any"><code class="language-plaintext highlighter-rouge">Any</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="oamcapabilityoam_ref_schema"></a><code class="language-plaintext highlighter-rouge">oam_ref_schema</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="oamcapabilityrestricted"></a><code class="language-plaintext highlighter-rouge">restricted</code></td>
+      <td><a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="operatorcontrollerstatus"><code class="language-plaintext highlighter-rouge">OperatorControllerStatus</code></h3>
+
+<p>Controllers of Meshery Operator.</p>
+
+<h4 id="fields-29"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="operatorcontrollerstatuscontextid"></a><code class="language-plaintext highlighter-rouge">contextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="operatorcontrollerstatuserror"></a><code class="language-plaintext highlighter-rouge">error</code></td>
+      <td><a href="/v0.6/v0.6#error"><code class="language-plaintext highlighter-rouge">Error</code></a></td>
+      <td>Controller Error Log.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorcontrollerstatusname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Controller Name.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorcontrollerstatusstatus"></a><code class="language-plaintext highlighter-rouge">status</code></td>
+      <td><a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a></td>
+      <td>Controller Status.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorcontrollerstatusversion"></a><code class="language-plaintext highlighter-rouge">version</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Controller Verison.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="operatorcontrollerstatusperk8scontext"><code class="language-plaintext highlighter-rouge">OperatorControllerStatusPerK8sContext</code></h3>
+
+<h4 id="fields-30"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="operatorcontrollerstatusperk8scontextoperatorcontrollerstatus"></a><code class="language-plaintext highlighter-rouge">OperatorControllerStatus</code></td>
+      <td><a href="/v0.6/v0.6#operatorcontrollerstatus"><code class="language-plaintext highlighter-rouge">OperatorControllerStatus!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="operatorcontrollerstatusperk8scontextcontextid"></a><code class="language-plaintext highlighter-rouge">contextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="operatorstatus"><code class="language-plaintext highlighter-rouge">OperatorStatus</code></h3>
+
+<p>Status of Meshery Operator and its controllers.</p>
+
+<h4 id="fields-31"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="operatorstatuscontextid"></a><code class="language-plaintext highlighter-rouge">contextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="operatorstatuscontrollers"></a><code class="language-plaintext highlighter-rouge">controllers</code></td>
+      <td><a href="/v0.6/v0.6#operatorcontrollerstatus"><code class="language-plaintext highlighter-rouge">[OperatorControllerStatus!]!</code></a></td>
+      <td>Details about various Controllers of Meshery Operator.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorstatuserror"></a><code class="language-plaintext highlighter-rouge">error</code></td>
+      <td><a href="/v0.6/v0.6#error"><code class="language-plaintext highlighter-rouge">Error</code></a></td>
+      <td>Error Logs encountered by Meshery Operator.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorstatusstatus"></a><code class="language-plaintext highlighter-rouge">status</code></td>
+      <td><a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a></td>
+      <td>Status of Meshery Operator.</td>
+    </tr>
+    <tr>
+      <td><a id="operatorstatusversion"></a><code class="language-plaintext highlighter-rouge">version</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Verion of Meshery Operator.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="operatorstatusperk8scontext"><code class="language-plaintext highlighter-rouge">OperatorStatusPerK8sContext</code></h3>
+
+<h4 id="fields-32"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="operatorstatusperk8scontextcontextid"></a><code class="language-plaintext highlighter-rouge">contextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="operatorstatusperk8scontextoperatorstatus"></a><code class="language-plaintext highlighter-rouge">operatorStatus</code></td>
+      <td><a href="/v0.6/v0.6#operatorstatus"><code class="language-plaintext highlighter-rouge">OperatorStatus!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="patternpageresult"><code class="language-plaintext highlighter-rouge">PatternPageResult</code></h3>
+
+<h4 id="fields-33"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="patternpageresultpage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternpageresultpage_size"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternpageresultpatterns"></a><code class="language-plaintext highlighter-rouge">patterns</code></td>
+      <td><a href="/v0.6/v0.6#patternresult"><code class="language-plaintext highlighter-rouge">[PatternResult]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternpageresulttotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="patternresult"><code class="language-plaintext highlighter-rouge">PatternResult</code></h3>
+
+<h4 id="fields-34"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="patternresultcansupport"></a><code class="language-plaintext highlighter-rouge">canSupport</code></td>
+      <td><a href="/v0.6/v0.6#boolean"><code class="language-plaintext highlighter-rouge">Boolean!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultcatalog_data"></a><code class="language-plaintext highlighter-rouge">catalog_data</code></td>
+      <td><a href="/v0.6/v0.6#map"><code class="language-plaintext highlighter-rouge">Map</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultcreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresulterrmsg"></a><code class="language-plaintext highlighter-rouge">errmsg</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#id"><code class="language-plaintext highlighter-rouge">ID!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultlocation"></a><code class="language-plaintext highlighter-rouge">location</code></td>
+      <td><a href="/v0.6/v0.6#location"><code class="language-plaintext highlighter-rouge">Location!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultpattern_file"></a><code class="language-plaintext highlighter-rouge">pattern_file</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="patternresultvisibility"></a><code class="language-plaintext highlighter-rouge">visibility</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="perfpageprofiles"><code class="language-plaintext highlighter-rouge">PerfPageProfiles</code></h3>
+
+<h4 id="fields-35"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="perfpageprofilespage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageprofilespage_size"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageprofilesprofiles"></a><code class="language-plaintext highlighter-rouge">profiles</code></td>
+      <td><a href="/v0.6/v0.6#perfprofile"><code class="language-plaintext highlighter-rouge">[PerfProfile]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageprofilestotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="perfpageresult"><code class="language-plaintext highlighter-rouge">PerfPageResult</code></h3>
+
+<h4 id="fields-36"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="perfpageresultpage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageresultpage_size"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageresultresults"></a><code class="language-plaintext highlighter-rouge">results</code></td>
+      <td><a href="/v0.6/v0.6#mesheryresult"><code class="language-plaintext highlighter-rouge">[MesheryResult]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfpageresulttotal_count"></a><code class="language-plaintext highlighter-rouge">total_count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="perfprofile"><code class="language-plaintext highlighter-rouge">PerfProfile</code></h3>
+
+<h4 id="fields-37"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="perfprofileconcurrent_request"></a><code class="language-plaintext highlighter-rouge">concurrent_request</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilecontent_type"></a><code class="language-plaintext highlighter-rouge">content_type</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilecreated_at"></a><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileduration"></a><code class="language-plaintext highlighter-rouge">duration</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileendpoints"></a><code class="language-plaintext highlighter-rouge">endpoints</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileid"></a><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilelast_run"></a><code class="language-plaintext highlighter-rouge">last_run</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileload_generators"></a><code class="language-plaintext highlighter-rouge">load_generators</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilename"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileqps"></a><code class="language-plaintext highlighter-rouge">qps</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilerequest_body"></a><code class="language-plaintext highlighter-rouge">request_body</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilerequest_cookies"></a><code class="language-plaintext highlighter-rouge">request_cookies</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofilerequest_headers"></a><code class="language-plaintext highlighter-rouge">request_headers</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileservice_mesh"></a><code class="language-plaintext highlighter-rouge">service_mesh</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofiletotal_results"></a><code class="language-plaintext highlighter-rouge">total_results</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileupdated_at"></a><code class="language-plaintext highlighter-rouge">updated_at</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="perfprofileuser_id"></a><code class="language-plaintext highlighter-rouge">user_id</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="resource"><code class="language-plaintext highlighter-rouge">Resource</code></h3>
+
+<h4 id="fields-38"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="resourcecount"></a><code class="language-plaintext highlighter-rouge">count</code></td>
+      <td><a href="/v0.6/v0.6#int"><code class="language-plaintext highlighter-rouge">Int!</code></a></td>
+      <td>Number of resouce.</td>
+    </tr>
+    <tr>
+      <td><a id="resourcekind"></a><code class="language-plaintext highlighter-rouge">kind</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>Name of resource.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="telemetrycomp"><code class="language-plaintext highlighter-rouge">TelemetryComp</code></h3>
+
+<h4 id="fields-39"><strong>Fields</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="telemetrycompname"></a><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="telemetrycompspec"></a><code class="language-plaintext highlighter-rouge">spec</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="telemetrycompstatus"></a><code class="language-plaintext highlighter-rouge">status</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="enumeration-types">Enumeration types</h2>
+
+<p>Also called <em>Enums</em>, enumeration types are a special kind of scalar that
+is restricted to a particular set of allowed values.</p>
+
+<p>For more information, see
+<a href="/v0.6/v0.6https://graphql.org/learn/schema/#enumeration-types">Enumeration Types</a>
+on <code class="language-plaintext highlighter-rouge">graphql.org</code>.</p>
+
+<h3 id="meshtype"><code class="language-plaintext highlighter-rouge">MeshType</code></h3>
+
+<p>Service Mesh Types.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshtypeall_mesh"></a><code class="language-plaintext highlighter-rouge">ALL_MESH</code></td>
+      <td>All meshes that Meshery supports.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeapp_mesh"></a><code class="language-plaintext highlighter-rouge">APP_MESH</code></td>
+      <td>AWS App Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypecilium_service_mesh"></a><code class="language-plaintext highlighter-rouge">CILIUM_SERVICE_MESH</code></td>
+      <td>Cilium Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypecitrix_service_mesh"></a><code class="language-plaintext highlighter-rouge">CITRIX_SERVICE_MESH</code></td>
+      <td>Citrix Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeconsul"></a><code class="language-plaintext highlighter-rouge">CONSUL</code></td>
+      <td>Consul by HashiCorp.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeinvalid_mesh"></a><code class="language-plaintext highlighter-rouge">INVALID_MESH</code></td>
+      <td>Invalid Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeistio"></a><code class="language-plaintext highlighter-rouge">ISTIO</code></td>
+      <td>Istio Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypekuma"></a><code class="language-plaintext highlighter-rouge">KUMA</code></td>
+      <td>Kuma.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypelinkerd"></a><code class="language-plaintext highlighter-rouge">LINKERD</code></td>
+      <td>LinkerD Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypenetwork_service_mesh"></a><code class="language-plaintext highlighter-rouge">NETWORK_SERVICE_MESH</code></td>
+      <td>Network Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypenginx_service_mesh"></a><code class="language-plaintext highlighter-rouge">NGINX_SERVICE_MESH</code></td>
+      <td>NGINX Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeoctarine"></a><code class="language-plaintext highlighter-rouge">OCTARINE</code></td>
+      <td>Octarine Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypeopen_service_mesh"></a><code class="language-plaintext highlighter-rouge">OPEN_SERVICE_MESH</code></td>
+      <td>Open Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypetanzu"></a><code class="language-plaintext highlighter-rouge">TANZU</code></td>
+      <td>VMware Tanzu Service Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="meshtypetraefik_mesh"></a><code class="language-plaintext highlighter-rouge">TRAEFIK_MESH</code></td>
+      <td>Traefik Mesh.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mesherycontroller"><code class="language-plaintext highlighter-rouge">MesheryController</code></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mesherycontrollerbroker"></a><code class="language-plaintext highlighter-rouge">BROKER</code></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollermeshsync"></a><code class="language-plaintext highlighter-rouge">MESHSYNC</code></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrolleroperator"></a><code class="language-plaintext highlighter-rouge">OPERATOR</code></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mesherycontrollerstatus"><code class="language-plaintext highlighter-rouge">MesheryControllerStatus</code></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="mesherycontrollerstatusdeployed"></a><code class="language-plaintext highlighter-rouge">DEPLOYED</code></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollerstatusdeploying"></a><code class="language-plaintext highlighter-rouge">DEPLOYING</code></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollerstatusnotdeployed"></a><code class="language-plaintext highlighter-rouge">NOTDEPLOYED</code></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="mesherycontrollerstatusunkown"></a><code class="language-plaintext highlighter-rouge">UNKOWN</code></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="status"><code class="language-plaintext highlighter-rouge">Status</code></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="statusconnected"></a><code class="language-plaintext highlighter-rouge">CONNECTED</code></td>
+      <td>Connected (Applicable only for NATS status for now).</td>
+    </tr>
+    <tr>
+      <td><a id="statusdisabled"></a><code class="language-plaintext highlighter-rouge">DISABLED</code></td>
+      <td>Disabled.</td>
+    </tr>
+    <tr>
+      <td><a id="statusenabled"></a><code class="language-plaintext highlighter-rouge">ENABLED</code></td>
+      <td>Enabled.</td>
+    </tr>
+    <tr>
+      <td><a id="statusprocessing"></a><code class="language-plaintext highlighter-rouge">PROCESSING</code></td>
+      <td>Processing.</td>
+    </tr>
+    <tr>
+      <td><a id="statusunknown"></a><code class="language-plaintext highlighter-rouge">UNKNOWN</code></td>
+      <td>Unknown.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="scalar-types">Scalar types</h2>
+
+<p>Scalar values are atomic values, and do not have fields of their own.
+Basic scalars include strings, boolean values, and numbers. This schema also
+defines various custom scalar values, such as types for times and dates.</p>
+
+<p>This schema includes custom scalar types for identifiers, with a specific type for
+each kind of object.</p>
+
+<p>For more information, read about <a href="/v0.6/v0.6https://graphql.org/learn/schema/#scalar-types">Scalar Types</a> on <code class="language-plaintext highlighter-rouge">graphql.org</code>.</p>
+
+<h3 id="any"><code class="language-plaintext highlighter-rouge">Any</code></h3>
+
+<h3 id="boolean"><code class="language-plaintext highlighter-rouge">Boolean</code></h3>
+
+<p>Represents <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code> values.</p>
+
+<h3 id="id"><code class="language-plaintext highlighter-rouge">ID</code></h3>
+
+<p>Represents a unique identifier that is Base64 obfuscated. It is often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as <code class="language-plaintext highlighter-rouge">"VXNlci0xMA=="</code>) or integer (such as <code class="language-plaintext highlighter-rouge">4</code>) input value will be accepted as an ID.</p>
+
+<h3 id="int"><code class="language-plaintext highlighter-rouge">Int</code></h3>
+
+<p>Represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.</p>
+
+<h3 id="map"><code class="language-plaintext highlighter-rouge">Map</code></h3>
+
+<h3 id="string"><code class="language-plaintext highlighter-rouge">String</code></h3>
+
+<p>Represents textual data as UTF-8 character sequences. This type is most often used by GraphQL to represent free-form human-readable text.</p>
+
+<h3 id="time"><code class="language-plaintext highlighter-rouge">Time</code></h3>
+
+<h2 id="input-types">Input types</h2>
+
+<p>Types that may be used as arguments (all scalar types may also
+be used as arguments).</p>
+
+<p>Only general use input types are listed here. For mutation input types,
+see the associated mutation type above.</p>
+
+<p>For more information, read about <a href="/v0.6/v0.6https://graphql.org/learn/schema/#input-types">Scalar Types</a> on <code class="language-plaintext highlighter-rouge">graphql.org</code>.</p>
+
+<h3 id="addonstatusinput"><code class="language-plaintext highlighter-rouge">AddonStatusInput</code></h3>
+
+<p>Input for changing Addon Status.</p>
+
+<h4 id="arguments-36"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="addonstatusinputk8scontextid"></a><code class="language-plaintext highlighter-rouge">k8scontextID</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td>kubernetes context ID.</td>
+    </tr>
+    <tr>
+      <td><a id="addonstatusinputselector"></a><code class="language-plaintext highlighter-rouge">selector</code></td>
+      <td><a href="/v0.6/v0.6#meshtype"><code class="language-plaintext highlighter-rouge">MeshType</code></a></td>
+      <td>Filter by Serice Mesh.</td>
+    </tr>
+    <tr>
+      <td><a id="addonstatusinputtargetstatus"></a><code class="language-plaintext highlighter-rouge">targetStatus</code></td>
+      <td><a href="/v0.6/v0.6#status"><code class="language-plaintext highlighter-rouge">Status!</code></a></td>
+      <td>Desired Status.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="catalogselector"><code class="language-plaintext highlighter-rouge">CatalogSelector</code></h3>
+
+<h4 id="arguments-37"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="catalogselectororder"></a><code class="language-plaintext highlighter-rouge">order</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogselectorpage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogselectorpagesize"></a><code class="language-plaintext highlighter-rouge">page_size</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="catalogselectorsearch"></a><code class="language-plaintext highlighter-rouge">search</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="meshmodelsummaryselector"><code class="language-plaintext highlighter-rouge">MeshModelSummarySelector</code></h3>
+
+<h4 id="arguments-38"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="meshmodelsummaryselectortype"></a><code class="language-plaintext highlighter-rouge">type</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="pagefilter"><code class="language-plaintext highlighter-rouge">PageFilter</code></h3>
+
+<h4 id="arguments-39"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="pagefilterfrom"></a><code class="language-plaintext highlighter-rouge">from</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefilterorder"></a><code class="language-plaintext highlighter-rouge">order</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefilterpage"></a><code class="language-plaintext highlighter-rouge">page</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefilterpagesize"></a><code class="language-plaintext highlighter-rouge">pageSize</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefiltersearch"></a><code class="language-plaintext highlighter-rouge">search</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefilterto"></a><code class="language-plaintext highlighter-rouge">to</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="pagefilterupdated_after"></a><code class="language-plaintext highlighter-rouge">updated_after</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="resyncactions"><code class="language-plaintext highlighter-rouge">ReSyncActions</code></h3>
+
+<p>Type ReSyncActions define the actions involved during resync.</p>
+
+<h4 id="arguments-40"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="resyncactionsresync"></a><code class="language-plaintext highlighter-rouge">ReSync</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="resyncactionscleardb"></a><code class="language-plaintext highlighter-rouge">clearDB</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="resyncactionshardreset"></a><code class="language-plaintext highlighter-rouge">hardReset</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">String!</code></a></td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="servicemeshfilter"><code class="language-plaintext highlighter-rouge">ServiceMeshFilter</code></h3>
+
+<p>Filter Control Plane Query.</p>
+
+<h4 id="arguments-41"><strong>Arguments</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a id="servicemeshfilterk8sclusterids"></a><code class="language-plaintext highlighter-rouge">k8sClusterIDs</code></td>
+      <td><a href="/v0.6/v0.6#string"><code class="language-plaintext highlighter-rouge">[String!]</code></a></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a id="servicemeshfiltertype"></a><code class="language-plaintext highlighter-rouge">type</code></td>
+      <td><a href="/v0.6/v0.6#meshtype"><code class="language-plaintext highlighter-rouge">MeshType</code></a></td>
+      <td>Filter by Service Mesh.</td>
+    </tr>
+  </tbody>
+</table>
+  <br/>
+
+
+        </div>
+      </main>
+      
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable"><strong>Tools</strong>
+<a href="/v0.6/v0.6https://github.com/meshery/meshery/issues/new?assignees=&labels=area%2Fdocs%2C+framework%2Fjekyll&template=documentation.md&title=%5BDocs%5D" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="/v0.6/v0.6https://github.com/meshery/meshery/blob/master/docs/pages/reference/graphql-api-reference.md" rel="noopener" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="/v0.6/v0.6https://github.com/meshery/meshery/new/master/docs/pages/reference/graphql-api-reference.md?filename=change-me.md&value=---%0Atitle%3A+%22Long+Page+Title%22%0AlinkTitle%3A+%22Short+Nav+Title%22%0Aweight%3A+100%0Adescription%3A+%3E-%0A+++++Page+description+for+heading+and+indexes.%0A---%0A%0A%23%23+Heading%0A%0AEdit+this+template+to+create+your+new+page.%0A%0A%2A+Give+it+a+good+name%2C+ending+in+%60.md%60+-+e.g.+%60getting-started.md%60%0A%2A+Edit+the+%22front+matter%22+section+at+the+top+of+the+page+%28weight+controls+how+its+ordered+amongst+other+pages+in+the+same+directory%3B+lowest+number+first%29.%0A%2A+Add+a+good+commit+message+at+the+bottom+of+the+page+%28%3C80+characters%3B+use+the+extended+description+field+for+more+detail%29.%0A%2A+Create+a+new+branch+so+you+can+preview+your+new+file+and+request+a+review+via+Pull+Request.%0A" rel="noopener" target="_blank"><i class="fa fa-plus fa-fw"></i> Create new page</a>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+    </div>
+    <footer class="footer">
+  <!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="/v0.6/v0.6https://twitter.com/https://twitter.com/mesheryio">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="/v0.6/v0.6https://github.com/meshery/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+  <div class="text-white">&copy; 2023 The Meshery Authors</div>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <div class="footer-icons-list">
+    <div class="footer-icons">
+      <a class="social__link social__link--forum" href="/v0.6/v0.6http://discuss.meshery.io" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTEgMTA0IDEwNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMyMzFmMjA7fS5jbHMtMntmaWxsOiNmZmY5YWU7fS5jbHMtM3tmaWxsOiMwMGFlZWY7fS5jbHMtNHtmaWxsOiMwMGE5NGY7fS5jbHMtNXtmaWxsOiNmMTVkMjI7fS5jbHMtNntmaWxsOiNlMzFiMjM7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5EaXNjb3Vyc2VfbG9nbzwvdGl0bGU+PGcgaWQ9IkxheWVyXzIiPjxnIGlkPSJMYXllcl8zIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MS44NywwQzIzLjcxLDAsMCwyMi44MywwLDUxYzAsLjkxLDAsNTIuODEsMCw1Mi44MWw1MS44Ni0uMDVjMjguMTYsMCw1MS0yMy43MSw1MS01MS44N1M4MCwwLDUxLjg3LDBaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTIuMzcsMTkuNzRBMzEuNjIsMzEuNjIsMCwwLDAsMjQuNTgsNjYuNDFsLTUuNzIsMTguNEwzOS40LDgwLjE3YTMxLjYxLDMxLjYxLDAsMSwwLDEzLTYwLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc3LjQ1LDMyLjEyYTMxLjYsMzEuNiwwLDAsMS0zOC4wNSw0OEwxOC44Niw4NC44MmwyMC45MS0yLjQ3QTMxLjYsMzEuNiwwLDAsMCw3Ny40NSwzMi4xMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03MS42MywyNi4yOUEzMS42LDMxLjYsMCwwLDEsMzguOCw3OEwxOC44Niw4NC44MiwzOS40LDgwLjE3QTMxLjYsMzEuNiwwLDAsMCw3MS42MywyNi4yOVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0yNi40Nyw2Ny4xMWEzMS42MSwzMS42MSwwLDAsMSw1MS0zNUEzMS42MSwzMS42MSwwLDAsMCwyNC41OCw2Ni40MWwtNS43MiwxOC40WiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTI0LjU4LDY2LjQxQTMxLjYxLDMxLjYxLDAsMCwxLDcxLjYzLDI2LjI5YTMxLjYxLDMxLjYxLDAsMCwwLTQ5LDM5LjYzbC0zLjc2LDE4LjlaIi8+PC9nPjwvZz48L3N2Zz4="
+          alt="forum"
+        />
+        <span class="footer-icons-text small-hide">Community discussion forum</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="/v0.6/v0.6https://meshery.io/subscribe" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
+          alt="mail"
+        />
+        <span class="footer-icons-text small-hide">Get connected with the Layer5 community</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href="/v0.6/v0.6 https://slack.meshery.io/" target="_blank" rel="noreferrer">
+        <img
+          class="slack"
+          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtOC44NDMgMTIuNjUxYy0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxdjYuMzA2YzAgMS4zOTIgMS4xMjkgMi41MjEgMi41MjEgMi41MjFzMi41MjEtMS4xMjkgMi41MjEtMi41MjF2LTYuMzA2Yy0uMDAxLTEuMzkyLTEuMTMtMi41MjEtMi41MjEtMi41MjF6IiBmaWxsPSIjZTkxZTYzIi8+PHBhdGggZD0ibS4wMTkgMTUuMTcyYzAgMS4zOTMgMS4xMyAyLjUyMyAyLjUyMyAyLjUyM3MyLjUyMy0xLjEzIDIuNTIzLTIuNTIzdi0yLjUyM2gtMi41MjFjLS4wMDEgMC0uMDAxIDAtLjAwMiAwLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3oiIGZpbGw9IiNlOTFlNjMiLz48cGF0aCBkPSJtOC44NDYtLjAwMWMtLjAwMSAwLS4wMDIgMC0uMDAzIDAtMS4zOTMgMC0yLjUyMyAxLjEzLTIuNTIzIDIuNTIzczEuMTMgMi41MjMgMi41MjMgMi41MjNoMi41MjF2LTIuNTIzYzAtLjAwMSAwLS4wMDMgMC0uMDA1LS4wMDEtMS4zOTEtMS4xMjgtMi41MTgtMi41MTgtMi41MTh6IiBmaWxsPSIjMDBiY2Q0Ii8+PHBhdGggZD0ibTIuNTI1IDExLjM3aDYuMzE4YzEuMzkzIDAgMi41MjMtMS4xMyAyLjUyMy0yLjUyM3MtMS4xMy0yLjUyMy0yLjUyMy0yLjUyM2gtNi4zMThjLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3MxLjEzIDIuNTIzIDIuNTIzIDIuNTIzeiIgZmlsbD0iIzAwYmNkNCIvPjxwYXRoIGQ9Im0yMS40NTcgNi4zMjNjLTEuMzkxIDAtMi41MTggMS4xMjctMi41MTggMi41MTh2LjAwNSAyLjUyM2gyLjUyMWMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjNjLS4wMDEgMC0uMDAyIDAtLjAwMyAweiIgZmlsbD0iIzRjYWY1MCIvPjxwYXRoIGQ9Im0xMi42NDEgMi41MjJ2Ni4zMjVjMCAxLjM5MiAxLjEyOSAyLjUyMSAyLjUyMSAyLjUyMXMyLjUyMS0xLjEyOSAyLjUyMS0yLjUyMXYtNi4zMjVjMC0xLjM5Mi0xLjEyOS0yLjUyMS0yLjUyMS0yLjUyMS0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxeiIgZmlsbD0iIzRjYWY1MCIvPjxnIGZpbGw9IiNmZjk4MDAiPjxwYXRoIGQ9Im0xNy42ODIgMjEuNDc2YzAtMS4zOTItMS4xMjktMi41MjEtMi41MjEtMi41MjFoLTIuNTIxdjIuNTIzYy4wMDEgMS4zOTEgMS4xMjkgMi41MTkgMi41MjEgMi41MTlzMi41MjEtMS4xMjkgMi41MjEtMi41MjF6Ii8+PHBhdGggZD0ibTIxLjQ3OSAxMi42NDloLTYuMzE4Yy0xLjM5MyAwLTIuNTIzIDEuMTMtMi41MjMgMi41MjNzMS4xMyAyLjUyMyAyLjUyMyAyLjUyM2g2LjMxOGMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjN6Ii8+PC9nPjwvc3ZnPg=="
+          alt="slack"
+        />
+        <span class="footer-icons-text small-hide">Join the Meeshery Slack</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="/v0.6/v0.6https://meshery.io/calendar">
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+          <path
+            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+          />
+          <g stroke-linecap="undefined" stroke-linejoin="undefined">
+            <path d="M-3.468 8.168h-.033m25.313-4.242l-.063-.254M7.858 4.814v9.387" />
+            <path d="M1.833 9.507h12.051" />
+          </g>
+        </svg>
+        <span class="footer-icons-text small-hide">Subscribe to the community calender</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="/v0.6/v0.6https://twitter.com/mesheryio" target="_blank" rel="noreferrer">
+       <svg fill="#999" alt="twitter" class="twitter" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" version="1.1" height="1.8em"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#0d0d0d"></path></svg>
+       <span class="footer-icons-text small-hide">Follow on Twitter</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="/v0.6/v0.6https://github.com/meshery" target="_blank" rel="noreferrer">
+        <img
+          class="github"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjc0LjEgMjY3LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI3NC4xIDI2Ny4zIj48cGF0aCBkPSJNMTM3LjEsMEM2MS40LDAsMCw2MS4zLDAsMTM2LjlDMCwxOTYsMzcuOCwyNDguNCw5My44LDI2N2M2LjgsMS4zLDkuMy0zLDkuMy02LjZjMC0zLjMtMC4xLTExLjktMC4yLTIzLjMJYy0zOC4xLDguMy00Ni4xLTE4LjQtNDYuMS0xOC40Yy02LjItMTUuOC0xNS4yLTIwLTE1LjItMjBjLTEyLjQtOC41LDAuOS04LjMsMC45LTguM2MxMy43LDEsMjEsMTQuMSwyMSwxNC4xCWMxMi4yLDIwLjksMzIuMSwxNC45LDM5LjksMTEuNGMxLjItOC45LDQuOC0xNC45LDguNy0xOC4zYy0zMC40LTMuNS02Mi40LTE1LjItNjIuNC02Ny43Yy0wLjItMTMuNiw0LjgtMjYuOCwxNC4xLTM2LjgJYy0xLjQtMy41LTYuMS0xNy40LDEuMy0zNi4zYzAsMCwxMS41LTMuNywzNy43LDE0YzExLjItMy4xLDIyLjctNC42LDM0LjMtNC42YzExLjYsMC4xLDIzLjEsMS42LDM0LjMsNC42CWMyNi4yLTE3LjcsMzcuNi0xNCwzNy42LTE0YzcuNSwxOC45LDIuOCwzMi44LDEuNCwzNi4zYzkuMywxMCwxNC4zLDIzLjIsMTQuMSwzNi44YzAsNTIuNi0zMiw2NC4yLTYyLjUsNjcuNgljNC45LDQuMiw5LjMsMTIuNiw5LjMsMjUuNGMwLDE4LjMtMC4yLDMzLjEtMC4yLDM3LjZjMCwzLjcsMi41LDcuOSw5LjQsNi42YzcxLjgtMjQsMTEwLjUtMTAxLjcsODYuNS0xNzMuNQlDMjQ4LjMsMzcuNywxOTYsMCwxMzcuMSwwTDEzNy4xLDB6Ii8+PC9zdmc+"
+          alt="github"
+        />
+        <span class="footer-icons-text small-hide">Contribute on GitHub</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="/v0.6/v0.6https://www.linkedin.com/company/layer5" target="_blank" rel="noreferrer">
+        <img
+          class="linkedin"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHg9IjAiIHk9IjAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzA2OSIgZD0ibTQ3NS4wNzQyMTkgMGgtNDM4LjE0ODQzOGMtMjAuMzk0NTMxIDAtMzYuOTI1NzgxIDE2LjUzMTI1LTM2LjkyNTc4MSAzNi45MjU3ODF2NDM4LjE0ODQzOGMwIDIwLjM5NDUzMSAxNi41MzEyNSAzNi45MjU3ODEgMzYuOTI1NzgxIDM2LjkyNTc4MWg0MzguMTQ4NDM4YzIwLjM5NDUzMSAwIDM2LjkyNTc4MS0xNi41MzEyNSAzNi45MjU3ODEtMzYuOTI1Nzgxdi00MzguMTQ4NDM4YzAtMjAuMzk0NTMxLTE2LjUzMTI1LTM2LjkyNTc4MS0zNi45MjU3ODEtMzYuOTI1Nzgxem0tMjkzLjQ2NDg0NCAzODdoLTYyLjM0NzY1NnYtMTg3LjU3NDIxOWg2Mi4zNDc2NTZ6bS0zMS4xNzE4NzUtMjEzLjE4NzVoLS40MDYyNWMtMjAuOTIxODc1IDAtMzQuNDUzMTI1LTE0LjQwMjM0NC0zNC40NTMxMjUtMzIuNDAyMzQ0IDAtMTguNDA2MjUgMTMuOTQ1MzEzLTMyLjQxMDE1NiAzNS4yNzM0MzctMzIuNDEwMTU2IDIxLjMyODEyNiAwIDM0LjQ1MzEyNiAxNC4wMDM5MDYgMzQuODU5Mzc2IDMyLjQxMDE1NiAwIDE4LTEzLjUzMTI1IDMyLjQwMjM0NC0zNS4yNzM0MzggMzIuNDAyMzQ0em0yNTUuOTg0Mzc1IDIxMy4xODc1aC02Mi4zMzk4NDR2LTEwMC4zNDc2NTZjMC0yNS4yMTg3NS05LjAyNzM0My00Mi40MTc5NjktMzEuNTg1OTM3LTQyLjQxNzk2OS0xNy4yMjI2NTYgMC0yNy40ODA0NjkgMTEuNjAxNTYzLTMxLjk4ODI4MiAyMi44MDA3ODEtMS42NDg0MzcgNC4wMDc4MTMtMi4wNTA3ODEgOS42MDkzNzUtMi4wNTA3ODEgMTUuMjE0ODQ0djEwNC43NWgtNjIuMzQzNzVzLjgxNjQwNy0xNjkuOTc2NTYyIDAtMTg3LjU3NDIxOWg2Mi4zNDM3NXYyNi41NTg1OTRjOC4yODUxNTctMTIuNzgxMjUgMjMuMTA5Mzc1LTMwLjk2MDkzNyA1Ni4xODc1LTMwLjk2MDkzNyA0MS4wMTk1MzEgMCA3MS43NzczNDQgMjYuODA4NTkzIDcxLjc3NzM0NCA4NC40MjE4NzR6bTAgMCIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4="
+          alt="linkedin"
+        />
+        <span class="footer-icons-text small-hide">Connect on LinkedIn</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a
+        class="social__link"
+        href="/v0.6/v0.6https://www.youtube.com/Layer5io?sub_confirmation=1"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          class="youtube"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDM1OC41IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgMzU4LjUiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOnJlZH0uc3Qxe2ZpbGw6I2ZmZn08L3N0eWxlPjxwYXRoIGQ9Ik01MDEuNSw1Ni4xYy01LjktMjEuOS0yMy4yLTM5LjItNDUuMS00NS4xQzQxNi4zLDAsMjU2LDAsMjU2LDBTOTUuNywwLDU1LjcsMTAuNQljLTIxLjUsNS45LTM5LjIsMjMuNi00NS4xLDQ1LjVDMCw5Ni4yLDAsMTc5LjIsMCwxNzkuMnMwLDgzLjUsMTAuNSwxMjMuMWM1LjksMjEuOSwyMy4yLDM5LjIsNDUuMSw0NS4xYzQwLjUsMTEsMjAwLjMsMTEsMjAwLjMsMTEJczE2MC4zLDAsMjAwLjMtMTAuNWMyMS45LTUuOSwzOS4yLTIzLjIsNDUuMS00NS4xQzUxMiwyNjIuNyw1MTIsMTc5LjcsNTEyLDE3OS43UzUxMi40LDk2LjIsNTAxLjUsNTYuMXoiIGNsYXNzPSJzdDAiLz48cGF0aCBkPSJNMjA1LDI1NmwxMzMuMy03Ni44TDIwNSwxMDIuNVYyNTZ6IiBjbGFzcz0ic3QxIi8+PC9zdmc+"
+          alt="youtube"
+        />
+        <span class="footer-icons-text small-hide">Watch community meeting recordings</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="/v0.6/v0.6https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+        <img
+          class="docker"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="
+          alt="docker"
+        />
+        <span class="footer-icons-text small-hide">Access Docker images</span>
+      </a>
+    </div>
+  </div>
+  <!-- meshery-custom-end -->
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/v0.6/assets/css/lightbox.css" />
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/navbar.js"></script>
+
+ <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="/v0.6/v0.6#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="/v0.6/v0.6#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+        });
+      })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
+    });
+</script>
+
