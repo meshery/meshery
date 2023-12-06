@@ -41,8 +41,7 @@ export const ConnectionDetailContent = {
 
 export const CredentialDetailContent = {
   title: '',
-  tipsType: 'cb',
-  tips: 'force connection bypass credential verification',
+  tips: '',
   btnText: 'Verify Connection',
   cancel: true,
 };

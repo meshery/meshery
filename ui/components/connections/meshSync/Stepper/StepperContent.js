@@ -16,6 +16,7 @@ import { ConnectionDetailContent, FinishContent, CredentialDetailContent } from 
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import dataFetch from '../../../../lib/data-fetch';
+import { Box } from '@mui/material';
 
 export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => {
   const [schema, setSchema] = useState({ properties: {} });
@@ -99,7 +100,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = React.useState(null);
-
+  const [skipCredentialVerification, setSkipCredentialVerification] = useState(false);
   const [disableVerify, setDisableVerify] = useState(true);
   const [isSuccess, setIsSuccess] = React.useState(null);
   const formRef = React.createRef();
@@ -142,6 +143,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
+          skip_credential_verification: skipCredentialVerification,
           kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
           name: sharedData?.connection?.component?.displayName, // This name is from the name field in schema
           type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
@@ -284,6 +286,24 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         disabled={selectedCredential !== null ? true : false}
         onChange={handleChange}
       />
+      <Box
+        style={{
+          background: 'rgba(0, 211, 169, 0.05)',
+          padding: '0.6rem',
+          margin: '2rem 0',
+        }}
+      >
+        <Typography style={{ fontSize: '1rem' }}>
+          <Checkbox
+            color="success"
+            onChange={(e) => {
+              setSkipCredentialVerification(e.target.checked);
+              setDisableVerify(false);
+            }}
+          />
+          <span>force connection bypass credential verification</span>
+        </Typography>
+      </Box>
       {isSuccess === false && (
         <div
           style={{
