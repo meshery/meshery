@@ -82,7 +82,7 @@ const View = (props) => {
       <>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-            {key}
+            {key.toUpperCase()}
           </Typography>
 
           <ResponsiveDataTable
@@ -149,11 +149,10 @@ const View = (props) => {
               {Object.entries(obj).map(([key, value], innerIndex) => {
                 const parts = key.split('.');
                 const lastPart = parts[parts.length - 1];
-                console.log('value: ', value);
                 return value.length == 1 && value[0].hide == true ? null : (
                   <div style={{ margin: '2rem 0' }} key={innerIndex}>
                     <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-                      {lastPart}
+                      {lastPart.toUpperCase()}
                     </Typography>
                     <NameValueTable rows={value} />
                   </div>
