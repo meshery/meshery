@@ -60,7 +60,7 @@ import './styles/charts.css';
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponent } from '../api/meshmodel';
-import { CONNECTION_KINDS } from '../utils/Enum';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 
 import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
 
@@ -222,10 +222,8 @@ class MesheryApp extends App {
 
   loadMeshModelComponent = () => {
     const connectionDef = {};
-    Object.keys(CONNECTION_KINDS).map(async (kind) => {
-      const connectionKind =
-        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
-      const res = await getMeshModelComponent(connectionKind, 'Connection');
+    Object.keys(CONNECTION_KINDS_DEF).map(async (kind) => {
+      const res = await getMeshModelComponent(CONNECTION_KINDS_DEF[kind], 'Connection');
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
