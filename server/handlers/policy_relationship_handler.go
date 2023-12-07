@@ -2,78 +2,153 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"gopkg.in/yaml.v2"
 
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 
 	"github.com/sirupsen/logrus"
 )
 
-// swagger:route POST /api/policies/run_policy GetRegoPolicyForDesignFile idGetRegoPolicyForDesignFile
-// Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
+const (
+	relationshipPolicyPackageName = "data.meshmodel_policy"
+	siffix                        = "_relationship"
+)
+
+type relationshipPolicyEvalPayload struct {
+	PatternFile string   `json:"pattern_file"`
+	RegoQueries []string `json:"rego_queries"`
+}
+
+// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
+// Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
 //
 // responses:
 // 200
-func (h *Handler) GetRegoPolicyForDesignFile(
+func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
-	_ models.Provider,
+	user *models.User,
+	provider models.Provider,
 ) {
+	userUUID := uuid.FromStringOrNil(user.ID)
 	defer func() {
 		_ = r.Body.Close()
 	}()
+
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logrus.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-
 		rw.WriteHeader((http.StatusBadRequest))
 		return
 	}
 
-	var input core.Pattern
-	err = yaml.Unmarshal((body), &input)
+	relationshipPolicyEvalPayload := relationshipPolicyEvalPayload{}
+	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
+	var patternFile core.Pattern
 
-	for _, svc := range input.Services {
+	err = yaml.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
+	if err != nil {
+		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	regoQueriesToEval := relationshipPolicyEvalPayload.RegoQueries
+
+	for _, svc := range patternFile.Services {
 		svc.Settings = core.Format.DePrettify(svc.Settings, false)
 	}
 
-	data, err := yaml.Marshal(input)
+	data, err := yaml.Marshal(patternFile)
 	if err != nil {
 		http.Error(rw, models.ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
-	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := h.Rego.RegoPolicyHandler("data.meshmodel_policy", data)
-	if err != nil {
-		h.log.Error(ErrResolvingRegoRelationship(err))
-		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)
+
+	patternUUID := uuid.FromStringOrNil(patternFile.PatternID)
+	eventBuilder.ActedUpon(patternUUID)
+
+	var evalResults interface{}
+	
+	// evaluate specified relationship policies
+	verifiedRegoQueriesToEval := h.verifyRegoQueries(regoQueriesToEval)
+	if len(verifiedRegoQueriesToEval) == 0 {
+		event := eventBuilder.WithDescription("Invalid or unsupported rego queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"queries": regoQueriesToEval}).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return
 	}
+	
+	evalresults := make(map[string]interface{}, 0)
+	for _, query := range verifiedRegoQueriesToEval {
+		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
+		if err != nil {
+			h.log.Warn(err)
+			continue
+		}
+		evalresults[query] = result
+	}
+	evalResults = evalresults
 
 	// write the response
 	ec := json.NewEncoder(rw)
-	err = ec.Encode(networkPolicy)
+	err = ec.Encode(evalResults)
 	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "networkPolicy response"))
-		http.Error(rw, models.ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) verifyRegoQueries(reqoQueries []string) (verifiedRegoQueries []string) {
+	registeredRelationships, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{})
+
+	var relationships []v1alpha1.RelationshipDefinition
+	for _, entity := range registeredRelationships {
+		relationship, err := utils.Cast[v1alpha1.RelationshipDefinition](entity)
+		if err != nil {
+			return
+		}
+		relationships = append(relationships, relationship)
+	}
+
+	if len(reqoQueries) == 0 || (len(reqoQueries) == 1 && reqoQueries[0] == "all") {
+		for _, relationship := range relationships {
+			if relationship.RegoQuery != "" {
+				verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+			}
+		}
+	} else {
+		for _, regoQuery := range reqoQueries {
+			for _, relationship := range relationships {				
+				if strings.TrimSuffix(regoQuery, siffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
+					verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+					break
+				}
+			}
+		}
+	}
+	return
 }
 
 // swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName

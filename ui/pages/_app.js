@@ -229,10 +229,7 @@ class MesheryApp extends App {
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
-          icon: {
-            colorIcon: res?.components[0].metadata.svgColor,
-            whiteIcon: res?.components[0].metadata.svgWhite,
-          },
+          icon: res?.components[0].metadata.svgColor,
         };
       }
       this.setState({ connectionMetadata: connectionDef });

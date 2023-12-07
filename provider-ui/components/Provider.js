@@ -177,7 +177,7 @@ export default function Provider() {
                   <MenuProviderDisabled disabled={true} key="UT Austin">
                                         The University of Texas at Austin{'\u00A0'}<span> Offline</span>
                   </MenuProviderDisabled>
-                  
+
                 </MenuList>
               </ClickAwayListener>
             </Popover>
@@ -185,28 +185,28 @@ export default function Provider() {
         )}
       </CustomDiv>
       <LearnMore>
-      <Typography variant="h6" sx={{ fontWeight : 500 }} gutterBottom>
+        <Typography variant="h6" sx={{ fontWeight : 500 }} gutterBottom>
         Learn more about
-        <Tooltip
-          title="Learn more about providers"
-          placement="bottom"
-          data-cy="providers-tooltip"
-          sx={{
-            color : '#00B39F',
-            cursor : 'pointer',
-            fontWeight : 700
-          }}
-        >
-          <a onClick={handleModalOpen} style={{
-            color : '#00B39F',
-            cursor : 'pointer',
-            fontWeight : 700
-          }}>
-            {' '}
+          <Tooltip
+            title="Learn more about providers"
+            placement="bottom"
+            data-cy="providers-tooltip"
+            sx={{
+              color : '#00B39F',
+              cursor : 'pointer',
+              fontWeight : 700
+            }}
+          >
+            <a onClick={handleModalOpen} style={{
+              color : '#00B39F',
+              cursor : 'pointer',
+              fontWeight : 700
+            }}>
+              {' '}
                         providers{' '}
-          </a>
-        </Tooltip>
-      </Typography>
+            </a>
+          </Tooltip>
+        </Typography>
       </LearnMore>
       <CustomDialog
         onClose={handleModalClose}
@@ -222,7 +222,7 @@ export default function Provider() {
           <DialogContentText id="customized-dialog-content">
                         Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on.
 
-          <h3>Available Providers</h3>
+            <h3>Available Providers</h3>
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
@@ -251,12 +251,12 @@ export default function Provider() {
             </ul>
             <p style={{ fontWeight : 700 }}>HPE Security</p>
             <ul>
-              <li>Istio, SPIRE, and SPIFEE integration</li>              
+              <li>Istio, SPIRE, and SPIFEE integration</li>
             </ul>
             <p style={{ fontWeight : 700 }}>Equinix</p>
             <ul>
               <li>Identity services</li>
-              <li>Bare-metal Kubernetes configuration</li>              
+              <li>Bare-metal Kubernetes configuration</li>
             </ul>
           </DialogContentText>
         </DialogContent>

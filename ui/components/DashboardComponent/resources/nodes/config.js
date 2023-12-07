@@ -44,9 +44,6 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(value, tableMeta) {
-            if (!!meshSyncResources && !!meshSyncResources[tableMeta.rowIndex]) {
-              return <div></div>;
-            }
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}

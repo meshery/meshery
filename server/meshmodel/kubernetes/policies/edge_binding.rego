@@ -7,7 +7,7 @@ import future.keywords.in
 
 binding_types := ["mount", "permission"]
 
-binding_relationship[results] {
+edge_binding_relationship[results] {
     binding_type := binding_types[_]
 
     from_selectors := { kind: selectors |
