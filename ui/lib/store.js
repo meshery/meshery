@@ -69,6 +69,7 @@ const initialState = fromJS({
   },
   // global gql-subscriptions
   operatorState: null,
+  controllerState: null,
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
 });
@@ -95,6 +96,7 @@ export const actionTypes = {
   SET_ADAPTER: 'SET_ADAPTER',
   SET_CATALOG_CONTENT: 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
+  SET_CONTROLLER_STATE: 'SET_CONTROLLER_STATE',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
@@ -178,6 +180,9 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_OPERATOR_SUBSCRIPTION:
       return state.merge({ operatorState: action.operatorState });
+
+    case actionTypes.SET_CONTROLLER_STATE:
+      return state.merge({ controllerState: action.controllerState });
 
     case actionTypes.SET_MESHSYNC_SUBSCRIPTION:
       return state.merge({ meshSyncState: action.meshSyncState });
