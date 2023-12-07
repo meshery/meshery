@@ -140,7 +140,7 @@ const ResourcesSubMenu = (props) => {
               >
                 {Object.keys(resource.tableConfig()).map((key, index) => {
                   return (
-                    <Tooltip title={`${resource.tableConfig()[key].name}`} placement="top">
+                    <Tooltip key={index} title={`${resource.tableConfig()[key].name}`} placement="top">
                       <Tab
                         key={index}
                         label={
