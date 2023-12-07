@@ -1,45 +1,49 @@
 {
-    "kind":"SlantedParallelogram",
+    "kind":"Process",
     "apiVersion": "core.meshery.io/v1alpha1",
-    "displayName": "SlantedParallelogram",
+    "displayName": "Process",
     "format": "JSON",
     "metadata": {
         "genealogy": "",
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "Meshery Shapes",
+        "model": "meshery-flowchart",
+        "modelDisplayName": "Meshery Flowchart",
         "primaryColor": "#00B39F",
         "published": "TRUE",
         "secondaryColor": "#00D3A9",
         "shape": "polygon",
-        "styleOverrides": "{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"shape-polygon-points":"-0.5 -.5 1 -1 0.5 1 -.5 1  -1 1","data":{"label":""}}",
-        "subCategory": "App Definition and Development",
+        "styleOverrides": "{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"data":{"label":""}}",
+        "subCategory": "Flowchart",
         "svgColor": "<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-         viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-<polygon fill="#00B39F" fill-opacity="10%" stroke="#00B39F" stroke-miterlimit="10" points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5 "/>
+	 viewBox="0 0 278 154" style="enable-background:new 0 0 278 154;" xml:space="preserve">
+<path fill="#00B39F" fill-opacity="10%" stroke="#00B39F" stroke-miterlimit="10" d="M3,0.5h272c1.38,0,2.5,1.12,2.5,2.5v148c0,1.38-1.12,2.5-2.5,2.5H3c-1.38,0-2.5-1.12-2.5-2.5V3
+	C0.5,1.62,1.62,0.5,3,0.5z"/>
 </svg>",
         "svgComplete": "",
         "svgWhite": "<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-<polygon fill="#FFFFFF" fill-opacity="10%" stroke="#FFFFFF" stroke-miterlimit="10" points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5 "/>
+	 viewBox="0 0 278 154" style="enable-background:new 0 0 278 154;" xml:space="preserve">
+<path fill="#FFFFFF" fill-opacity="10%" stroke="#FFFFFF" stroke-miterlimit="10" d="M3,0.5h272c1.38,0,2.5,1.12,2.5,2.5v148c0,1.38-1.12,2.5-2.5,2.5H3c-1.38,0-2.5-1.12-2.5-2.5V3
+	C0.5,1.62,1.62,0.5,3,0.5z"/>
 </svg>",
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "meshery-flowchart",
         "version": "1.0.0",
-        "displayName": "Meshery Shapes",
+        "displayName": "Meshery Flowchart",
         "category": {
             "name": "Orchestration & Management",
             "metadata": {
                 "svgColor": "<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-         viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-<polygon fill="#00B39F" fill-opacity="10%" stroke="#00B39F" stroke-miterlimit="10" points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5 "/>
+	 viewBox="0 0 278 154" style="enable-background:new 0 0 278 154;" xml:space="preserve">
+<path fill="#00B39F" fill-opacity="10%" stroke="#00B39F" stroke-miterlimit="10" d="M3,0.5h272c1.38,0,2.5,1.12,2.5,2.5v148c0,1.38-1.12,2.5-2.5,2.5H3c-1.38,0-2.5-1.12-2.5-2.5V3
+	C0.5,1.62,1.62,0.5,3,0.5z"/>
 </svg>",
                 "svgWhite": "<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-<polygon fill="#FFFFFF" fill-opacity="10%" stroke="#FFFFFF" stroke-miterlimit="10" points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5 "/>
+	 viewBox="0 0 278 154" style="enable-background:new 0 0 278 154;" xml:space="preserve">
+<path fill="#FFFFFF" fill-opacity="10%" stroke="#FFFFFF" stroke-miterlimit="10" d="M3,0.5h272c1.38,0,2.5,1.12,2.5,2.5v148c0,1.38-1.12,2.5-2.5,2.5H3c-1.38,0-2.5-1.12-2.5-2.5V3
+	C0.5,1.62,1.62,0.5,3,0.5z"/>
 </svg>",
                 "isAnnotation": "TRUE"
             }
