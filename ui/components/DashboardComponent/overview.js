@@ -15,6 +15,10 @@ import {
 } from '../../lib/store.js';
 import blue from '@material-ui/core/colors/blue';
 
+import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
+import ConnectionStatsChart from './charts/ConnectionCharts.js';
+import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
+
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
@@ -83,23 +87,22 @@ const styles = (theme) => ({
 
 const Overview = (props) => {
   const { classes } = props;
-
   return (
     <NoSsr>
       <Popup />
       <div className={classes.rootClass}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12}>
-            {/* <DashboardMeshModelGraph classes={classes} /> */}
+            <DashboardMeshModelGraph classes={classes} />
           </Grid>
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                {/* <ConnectionStatsChart classes={classes} /> */}
+                <ConnectionStatsChart classes={classes} />
               </Grid>
               <Grid item xs={12} md={6}>
-                {/* <MesheryConfigurationChart classes={classes} /> */}
+                <MesheryConfigurationChart classes={classes} />
               </Grid>
             </Grid>
           </Grid>

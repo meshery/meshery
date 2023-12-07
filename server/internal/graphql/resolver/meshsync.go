@@ -9,6 +9,8 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -66,26 +68,20 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			defer dbHandler.Unlock()
 
 			r.Log.Info("Dropping Meshery Database")
-			err = dbHandler.Migrator().DropTable(
-				&meshsyncmodel.KubernetesKeyValue{},
-				&meshsyncmodel.KubernetesResource{},
-				&meshsyncmodel.KubernetesResourceSpec{},
-				&meshsyncmodel.KubernetesResourceStatus{},
-				&meshsyncmodel.KubernetesResourceObjectMeta{},
-				&models.PerformanceProfile{},
-				&models.MesheryResult{},
-				&models.MesheryPattern{},
-				&models.MesheryFilter{},
-				&models.PatternResource{},
-				&models.MesheryApplication{},
-				&models.UserPreference{},
-				&models.PerformanceTestConfig{},
-				&models.SmiResultWithID{},
-				models.K8sContext{},
-			)
+			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrGormDatabase(err))
 				return "", err
+			}
+
+			for _, table := range tables {
+				if table == "events" {
+					continue
+				}
+				if err := dbHandler.Migrator().DropTable(table); err != nil {
+					r.Log.Error(ErrGormDatabase(err))
+					return "", err
+				}
 			}
 
 			r.Log.Info("Migrating Meshery Database")
@@ -104,7 +100,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				&models.UserPreference{},
 				&models.PerformanceTestConfig{},
 				&models.SmiResultWithID{},
-				models.K8sContext{},
+				&models.K8sContext{},
+
+				// Registries
+				&registry.Registry{},
+				&registry.Host{},
+				&v1alpha1.ComponentDefinitionDB{},
+				&v1alpha1.RelationshipDefinitionDB{},
+				&v1alpha1.PolicyDefinitionDB{},
+				&v1alpha1.ModelDB{},
+				&v1alpha1.CategoryDB{},
 			)
 			if err != nil {
 				r.Log.Error(err)

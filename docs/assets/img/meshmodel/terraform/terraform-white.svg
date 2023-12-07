@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+    <style xmlns="http://www.w3.org/2000/svg">
+        
+        .C {
+            fill-rule: evenodd
+        }
+        
+    </style>
+    <g xmlns="http://www.w3.org/2000/svg" transform="matrix(.826767 0 0 .826767 8.416322 51.138164)" class="C">
+        <path xmlns="http://www.w3.org/2000/svg" d="M39.1 15.557v-24.43l-21.16-12.22v24.43zm0-27.1l-21.16-12.22v-24.44l21.16 12.22z" fill="#fff"></path>
+        <path xmlns="http://www.w3.org/2000/svg" d="M62.6-23.773v-24.44l-21.17 12.22v24.44z" fill="#fff"></path>
+        <g xmlns="http://www.w3.org/2000/svg" fill="#fff">
+            <path xmlns="http://www.w3.org/2000/svg" d="M15.62-25.193v-24.44l-21.16-12.22v24.44z"></path>
+            <path xmlns="http://www.w3.org/2000/svg" d="M53.64-.483"></path>
+            <path xmlns="http://www.w3.org/2000/svg" d="M17.94-21.093"></path>
+        </g>
+    </g>
+</svg>

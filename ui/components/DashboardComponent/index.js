@@ -6,15 +6,13 @@ import { updateGrafanaConfig, updatePrometheusConfig, updateTelemetryUrls } from
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { updateProgress } from '../../lib/store';
-import { iconMedium } from '../../css/icons.styles';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
 import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
+import MesheryIcon from './images/meshery-icon.js';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -124,7 +122,6 @@ const DashboardComponent = (props) => {
       </Typography>
     );
   }
-
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -136,22 +133,25 @@ const DashboardComponent = (props) => {
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
+            allowScrollButtonsMobile
+            scrollButtons="auto"
           >
             <Tooltip title={`View Overview`} placement="top">
               <Tab
                 className={classes.tab}
-                icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                scrollButtons
+                icon={<MesheryIcon style={{ width: '28px', height: '28px' }} />}
                 label={'Overview'}
               />
             </Tooltip>
 
             {Object.keys(ResourcesConfig).map((resource, idx) => {
               return (
-                <Tooltip title={`View ${resource}`} placement="top">
+                <Tooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
                     key={idx}
                     className={classes.tab}
-                    icon={<KubernetesIcon style={{ width: '1rem', height: '1rem' }} />}
+                    icon={<KubernetesIcon style={{ width: '28px', height: '28px' }} />}
                     label={resource}
                   />
                 </Tooltip>

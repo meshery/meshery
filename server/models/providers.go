@@ -205,16 +205,17 @@ type K8sContextPersistResponse struct {
 }
 
 type ConnectionPayload struct {
-	ID               uuid.UUID                    `json:"id,omitempty"`
-	Kind             string                       `json:"kind,omitempty"`
-	SubType          string                       `json:"sub_type,omitempty"`
-	Type             string                       `json:"type,omitempty"`
-	MetaData         map[string]interface{}       `json:"metadata,omitempty"`
-	Status           connections.ConnectionStatus `json:"status,omitempty"`
-	CredentialSecret map[string]interface{}       `json:"credential_secret,omitempty"`
-	Name             string                       `json:"name,omitempty"`
-	CredentialID     *uuid.UUID                   `json:"credential_id,omitempty"`
-	Model            string                       `json:"model,omitempty"`
+	ID                         uuid.UUID                    `json:"id,omitempty"`
+	Kind                       string                       `json:"kind,omitempty"`
+	SubType                    string                       `json:"sub_type,omitempty"`
+	Type                       string                       `json:"type,omitempty"`
+	MetaData                   map[string]interface{}       `json:"metadata,omitempty"`
+	Status                     connections.ConnectionStatus `json:"status,omitempty"`
+	CredentialSecret           map[string]interface{}       `json:"credential_secret,omitempty"`
+	Name                       string                       `json:"name,omitempty"`
+	CredentialID               *uuid.UUID                   `json:"credential_id,omitempty"`
+	Model                      string                       `json:"model,omitempty"`
+	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
 }
 
 type EnvironmentPayload struct {
