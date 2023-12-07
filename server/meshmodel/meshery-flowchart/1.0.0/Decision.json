@@ -1,24 +1,24 @@
 {
-    "kind":"RoundTriangle",
+    "kind":"Decision",
     "apiVersion": "core.meshery.io/v1alpha1",
-    "displayName": "RoundTriangle",
+    "displayName": "Decision",
     "format": "JSON",
     "metadata": {
         "genealogy": "",
         "isAnnotation": "TRUE",
         "isNamespaced": "false",
         "logoURL": "",
-        "model": "meshery-shapes",
-        "modelDisplayName": "Meshery Shapes",
+        "model": "meshery-flowchart",
+        "modelDisplayName": "Meshery Flowchart",
         "primaryColor": "#00B39F",
         "published": "TRUE",
         "secondaryColor": "#00D3A9",
-        "shape": "round-triangle",
+        "shape": "polygon",
         "styleOverrides": "{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"data":{"label":""}}",
-        "subCategory": "App Definition and Development",
+        "subCategory": "Flowchart",
         "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-<path d="M17.4963 7.00738C18.9399 4.12018 23.0601 4.12019 24.5037 7.00739L37.1655 32.3309C38.4677 34.9355 36.5738 38 33.6618 38H8.33824C5.42623 38 3.53226 34.9355 4.83455 32.3309L17.4963 7.00738Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" />
+<path d="M20.5003 1.00017L1.50049 20L20.5003 38.9998L39.5001 20L20.5003 1.00017Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
 
 </svg>
 
@@ -26,29 +26,29 @@
         "svgComplete": "",
         "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-<path d="M17.4963 7.00738C18.9399 4.12018 23.0601 4.12019 24.5037 7.00739L37.1655 32.3309C38.4677 34.9355 36.5738 38 33.6618 38H8.33824C5.42623 38 3.53226 34.9355 4.83455 32.3309L17.4963 7.00738Z" fill="white" fill-opacity="0.1" stroke="white" stroke-miterlimit="10"/>
+<path d="M20.5003 1.00017L1.50049 20L20.5003 38.9998L39.5001 20L20.5003 1.00017Z" fill="white" fill-opacity="0.1" stroke="white" stroke-width="1" stroke-miterlimit="10"/>
 
 </svg>
 
 ",
     },
     "model": {
-        "name": "meshery-shapes",
+        "name": "meshery-flowchart",
         "version": "1.0.0",
-        "displayName": "Meshery Shapes",
+        "displayName": "Meshery Flowchart",
         "category": {
             "name": "Orchestration & Management",
             "metadata": {
                 "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-<path d="M17.4963 7.00738C18.9399 4.12018 23.0601 4.12019 24.5037 7.00739L37.1655 32.3309C38.4677 34.9355 36.5738 38 33.6618 38H8.33824C5.42623 38 3.53226 34.9355 4.83455 32.3309L17.4963 7.00738Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" />
+<path d="M20.5003 1.00017L1.50049 20L20.5003 38.9998L39.5001 20L20.5003 1.00017Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
 
 </svg>
 
 ",
                 "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-<path d="M17.4963 7.00738C18.9399 4.12018 23.0601 4.12019 24.5037 7.00739L37.1655 32.3309C38.4677 34.9355 36.5738 38 33.6618 38H8.33824C5.42623 38 3.53226 34.9355 4.83455 32.3309L17.4963 7.00738Z" fill="white" fill-opacity="0.1" stroke="white" stroke-miterlimit="10"/>
+<path d="M20.5003 1.00017L1.50049 20L20.5003 38.9998L39.5001 20L20.5003 1.00017Z" fill="white" fill-opacity="0.1" stroke="white" stroke-width="1" stroke-miterlimit="10"/>
 
 </svg>
 
