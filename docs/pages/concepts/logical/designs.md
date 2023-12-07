@@ -19,7 +19,7 @@ Like a Google Doc, Designs are your primary tool for collaborative authorship of
 - Access to Designs may be granted to one or more users.
 
 ### Controlling Access to Designs
-When creating a new design by default it's visibility level will be set to __public__ unless you are an active Lara, five subscriber, in which case you can change this default to __private__. 
+When creating a new design by default it's visibility level will be set to __public__. Remove providers have the option of offering additional visibility levels like __private__ and __published__.
 
 
 

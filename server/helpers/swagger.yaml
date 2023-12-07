@@ -196,7 +196,7 @@ paths:
                 - ApplicationsAPI
     /api/application/download/{id}/{sourcetype}:
         get:
-            description: Get the application source-content
+            description: Get the pattern source-content
             operationId: typeGetApplication
             parameters:
                 - in: formData
@@ -204,9 +204,9 @@ paths:
                   type: file
                   x-go-name: FormFile
             responses: {}
-            summary: Handle GET request for Meshery Application with of source content
+            summary: Handle GET request for Meshery Patterns with of source content
             tags:
-                - ApplicationsAPI
+                - PatternsAPI
     /api/application/types:
         get:
             description: Get application file types
@@ -1229,6 +1229,25 @@ paths:
             summary: Handle GET for a Meshery Pattern
             tags:
                 - PatternsAPI
+    /api/pattern/{sourcetype}:
+        post:
+            description: Creates a new Pattern with source-content
+            operationId: idPostPatternFileRequest
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle POST request for Pattern Files
+            tags:
+                - PatternsAPI
+        put:
+            description: Updates the pattern with the given payload
+            operationId: idUpdateMesheryPattern
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle PUT request for Meshery Pattern with the given payload
+            tags:
+                - PatternsAPI
     /api/pattern/catalog:
         get:
             description: |-
@@ -1300,6 +1319,29 @@ paths:
                 "200":
                     description: ""
             summary: Handle POST request for Pattern Deploy
+            tags:
+                - PatternsAPI
+    /api/pattern/download/{id}/{sourcetype}:
+        get:
+            description: Get the pattern source-content
+            operationId: typeGetApplication
+            parameters:
+                - in: formData
+                  name: Upload Yaml/Yml File
+                  type: file
+                  x-go-name: FormFile
+            responses: {}
+            summary: Handle GET request for Meshery Patterns with of source content
+            tags:
+                - PatternsAPI
+    /api/pattern/types:
+        get:
+            description: Get pattern file types
+            operationId: typeGetMesheryPatternTypesHandler
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryApplicationTypesResponseWrapper'
+            summary: Handle GET request for Meshery Pattern types
             tags:
                 - PatternsAPI
     /api/patterns:

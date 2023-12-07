@@ -29,7 +29,7 @@ type MesheryPatternPage struct {
 // GetMesheryPatterns returns all of the 'private' patterns. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string, visibility []string) ([]byte, error) {
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
@@ -65,7 +65,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 // GetMesheryCatalogPatterns returns all of the published patterns
 func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, search, order string) ([]byte, error) {
 	var err error
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
@@ -214,6 +214,12 @@ func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, err
 
 	err := mpp.DB.First(&mesheryPattern, id).Error
 	return marshalMesheryPattern(&mesheryPattern), err
+}
+
+func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id uuid.UUID) ([]byte, error) {
+	var mesheryPattern MesheryPattern
+	err := mpp.DB.First(&mesheryPattern, id).Error
+	return mesheryPattern.SourceContent, err
 }
 
 func marshalMesheryPatternPage(mpp *MesheryPatternPage) []byte {

@@ -24,7 +24,7 @@ type MesheryApplicationPage struct {
 
 // GetMesheryApplications returns all of the applications
 func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"

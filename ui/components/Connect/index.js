@@ -68,7 +68,7 @@ const ConnectionWizardNew = (props) => {
     <NoSsr>
       <ErrorBoundary
         FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
+        onError={(e) => console.error('Error in connection wizard', e)}
       >
         <Provider store={store}>
           <ConnectionWizard {...props} />

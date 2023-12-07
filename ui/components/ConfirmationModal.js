@@ -13,7 +13,6 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
@@ -26,14 +25,8 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-// import UndeployIcon from "../public/static/img/UndeployIcon";
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
-import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
-import Link from 'next/link';
-import Operator from '../assets/img/Operator';
-import { ACTIONS } from '../utils/Enum';
-import OperatorLight from '../assets/img/OperatorLight';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -41,6 +34,8 @@ import RedOctagonSvg from './shapes/Octagon';
 import PatternIcon from '../assets/icons/Pattern';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
+import { ACTIONS } from '../utils/Enum';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -175,15 +170,6 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  textContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: '1rem',
-    padding: '10px',
-    borderRadius: '10px',
-  },
   subText: {
     color: 'rgba(84, 87, 91, 1)',
     fontSize: '16px',
@@ -247,7 +233,6 @@ function ConfirmationMsg(props) {
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
-  const theme = useTheme();
   const { notify } = useNotification();
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
@@ -524,22 +509,7 @@ function ConfirmationMsg(props) {
                       </div>
                     </Typography>
                   ) : (
-                    <div className={classes.textContent}>
-                      {theme.palette.type == 'dark' ? <OperatorLight /> : <Operator />}
-                      <Typography variant="h5">No cluster connected yet</Typography>
-
-                      <Link href="/settings">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
-                        >
-                          <AddIcon className={classes.AddIcon} />
-                          Connect Clusters
-                        </Button>
-                      </Link>
-                    </div>
+                    <K8sEmptyState />
                   )}
                 </div>
               </DialogContentText>

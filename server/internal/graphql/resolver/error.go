@@ -37,6 +37,7 @@ const (
 	ErrAdapterInsufficientInformationCode   = "1377"
 	ErrPerformanceProfilesSubscriptionCode  = "1378"
 	ErrPerformanceResultSubscriptionCode    = "1379"
+	ErrGormDatabaseCode                     = "1380"
 )
 
 var (
@@ -65,6 +66,10 @@ func ErrPerformanceProfilesSubscription(err error) error {
 
 func ErrPerformanceResultSubscription(err error) error {
 	return errors.New(ErrPerformanceResultSubscriptionCode, errors.Alert, []string{"PerformanceResult Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceResult stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrGormDatabase(err error) error {
+	return errors.New(ErrGormDatabaseCode, errors.Alert, []string{"Database operation failed", err.Error()}, []string{"Database operation failed. Please ensure that the database isn't corrupted"}, []string{"Could be a db issue"}, []string{"Confirm that database connection is working as expected."})
 }
 
 func ErrControlPlaneSubscription(err error) error {

@@ -28,7 +28,7 @@ type MesheryFilterPage struct {
 // GetMesheryFilters returns all of the 'private' filters. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
 func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64, visibility []string) ([]byte, error) {
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
@@ -42,7 +42,6 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 		query = mfp.DB.Where("visibility in (?)", visibility)
 	}
 	query = query.Order(order)
-
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -66,7 +65,7 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 // GetMesheryCatalogFilters returns all of the published filters
 func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, search, order string) ([]byte, error) {
 	var err error
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"

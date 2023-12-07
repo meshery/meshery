@@ -1,13 +1,16 @@
 ---
 layout: default
-title: Install Meshery with Helm
+title: Helm
 permalink: installation/kubernetes/helm
 type: installation
 category: kubernetes
-display-title: "true"
+redirect_from:
+- installation/platforms/helm
+display-title: "false"
 language: en
 list: include
 ---
+# Install Meshery on Kubernetes Using Helm
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>

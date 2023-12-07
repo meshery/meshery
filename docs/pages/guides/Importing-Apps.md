@@ -8,7 +8,7 @@ language: en
 ---
 
 
-Importing apps into Meshery as Meshery Apps is a powerful feature that enables users to manage, operate, and observe their service mesh more effectively. With this feature, users can easily import their app manifest and store it in the database.
+Importing apps into Meshery as Meshery Apps is a powerful feature that enables you to manage, operate, and observe your cloud native infrastructure more effectively. With this feature, you can easily import your app manifest and store it in the database.
 
 You can import apps into Meshery using either the Meshery CLI or the Meshery UI. We will discuss both methods in detail below.
 
@@ -64,9 +64,9 @@ Once you have accessed the Meshery UI, navigate to the App Import page. This pag
 
 **Step 3: Upload the Application**
 
-On the App Import page, you can upload your application by select File Type from the options and clicking on the "Browse" button and selecting the file from your local machine or uploading in through URL Once you have selected the file, click on the "Import" button to import app into Meshery.
-When you import a app into Meshery, it will create a Meshery App based on definition. This Meshery App will include all of the services, ports, and other parameters defined in the File.
+On the App Import page, you can upload your application by select File Type from the options and clicking on the "Browse" button and selecting the file from your local machine or uploading in through URL. Once you have selected the file, click on the "Import" button to import app into Meshery.
+When you import an app into Meshery, it will create a Meshery App based on definition. This Meshery App will include all of the services, ports, and other parameters defined in the File.
 
 <a href="{{ site.baseurl }}/assets/img/applications/ImportApp.png"><img alt="Import-Application" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/applications/ImportApp.png" /></a>
 
-Once the Meshery App has been created, you can use Meshery to manage, operate and observe your service mesh. You can also use Meshery to deploy your Meshery App to your service mesh.
+Once the Meshery App has been created, you can use Meshery to manage, operate and observe your cloud native infrastructure. You can also use Meshery to deploy your Meshery App to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
