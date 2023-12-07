@@ -1,0 +1,62 @@
+{
+    "kind":"OffPageReference",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "OffPageReference",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "TRUE",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "meshery-flowchart",
+        "modelDisplayName": "Meshery Flowchart",
+        "primaryColor": "#00B39F",
+        "published": "TRUE",
+        "secondaryColor": "#00D3A9",
+        "shape": "polygon",
+        "styleOverrides": "{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"data":{"label":""}}",
+        "subCategory": "Flowchart",
+        "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+        "svgComplete": "",
+        "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z" fill="white" fill-opacity="0.1" stroke="white" stroke-width="1" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+    },
+    "model": {
+        "name": "meshery-flowchart",
+        "version": "1.0.0",
+        "displayName": "Meshery Flowchart",
+        "category": {
+            "name": "Orchestration & Management",
+            "metadata": {
+                "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+                "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z" fill="white" fill-opacity="0.1" stroke="white" stroke-width="1" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+                "isAnnotation": "TRUE"
+            }
+        }
+    },
+        "schema": "{\"properties\": { \"title\": \"Label\", \"type\": \"String\", \"description\": \"Phrase displayed as a caption to the component.\" },\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+
+}

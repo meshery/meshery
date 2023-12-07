@@ -1,0 +1,58 @@
+{
+    "kind":"Trapezoid",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "Trapezoid",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "TRUE",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "meshery-shapes",
+        "modelDisplayName": "Meshery Shapes",
+        "primaryColor": "#00B39F",
+        "published": "TRUE",
+        "secondaryColor": "#00D3A9",
+        "shape": "polygon",
+        "styleOverrides": "{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"data":{"label":""}}",
+        "subCategory": "App Definition and Development",
+        "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M8.5 3H32.5L39.5 37H1.5L8.5 3Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" stroke-width="1"/>
+
+</svg>",
+        "svgComplete": "",
+        "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M8.5 3H32.5L39.5 37H1.5L8.5 3Z" fill="white" fill-opacity="0.1" stroke="white" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+    },
+    "model": {
+        "name": "meshery-shapes",
+        "version": "1.0.0",
+        "displayName": "Meshery Shapes",
+        "category": {
+            "name": "Orchestration & Management",
+            "metadata": {
+                "svgColor": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M8.5 3H32.5L39.5 37H1.5L8.5 3Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" stroke-width="1"/>
+
+</svg>",
+                "svgWhite": "<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path d="M8.5 3H32.5L39.5 37H1.5L8.5 3Z" fill="white" fill-opacity="0.1" stroke="white" stroke-miterlimit="10"/>
+
+</svg>
+
+",
+                "isAnnotation": "TRUE"
+            }
+        }
+    },
+        "schema": "{\"properties\": { \"title\": \"Label\", \"type\": \"String\", \"description\": \"Phrase displayed as a caption to the component.\" },\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+
+}
