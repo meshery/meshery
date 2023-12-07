@@ -52,8 +52,13 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { CONNECTION_STATES } from '../../utils/Enum';
-import { FormatConnectionMetadata } from './metadata';
+import {
+  CONNECTION_KINDS,
+  CONNECTION_STATES,
+  CONTROLLERS,
+  CONTROLLER_STATES,
+} from '../../utils/Enum';
+import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { ConnectionChip } from './ConnectionChip';
@@ -84,10 +89,6 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch connection transitions',
   },
 };
-
-const ENABLED = 'ENABLED';
-const DISABLED = 'DISABLED';
-const KUBERNETES = 'kubernetes';
 
 /**
  * Parent Component for Connection Component
@@ -154,6 +155,7 @@ function Connections({
   selectedK8sContexts,
   k8sconfig,
   connectionMetadataState,
+  meshsyncControllerState,
 }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -259,7 +261,7 @@ function Connections({
                 )
               }
               handlePing={() => {
-                if (tableMeta.rowData[4] === KUBERNETES) {
+                if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
@@ -507,7 +509,8 @@ function Connections({
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
-              {getColumnValue(tableMeta.rowData, 'kind', columns) === KUBERNETES ? (
+              {getColumnValue(tableMeta.rowData, 'kind', columns) ===
+              CONNECTION_KINDS.KUBERNETES ? (
                 <IconButton
                   aria-label="more"
                   id="long-button"
@@ -809,21 +812,22 @@ function Connections({
 
   function getOperatorStatus(index) {
     const ctxId = connections[index]?.metadata?.id;
-    const operator = _operatorState?.find((op) => op.contextID === ctxId);
+    const operator = meshsyncControllerState?.find(
+      (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+    );
     if (!operator) {
       return {};
     }
-    const operatorStatus = operator.operatorStatus;
     return {
-      operatorState: operatorStatus.status === ENABLED,
-      operatorVersion: operatorStatus.version,
+      operatorState: operator.status === CONTROLLER_STATES.DEPLOYED,
+      operatorVersion: operator?.version,
     };
   }
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = connections[index].metadata?.id;
     const variables = {
-      status: `${checked ? ENABLED : DISABLED}`,
+      status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
     };
 
@@ -1040,7 +1044,15 @@ const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
-  return { k8sconfig, selectedK8sContexts, operatorState, connectionMetadataState };
+  const meshsyncControllerState = state.get('controllerState');
+
+  return {
+    k8sconfig,
+    selectedK8sContexts,
+    operatorState,
+    connectionMetadataState,
+    meshsyncControllerState,
+  };
 };
 
 // @ts-ignore
