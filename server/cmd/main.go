@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,6 +26,7 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
@@ -273,17 +276,34 @@ func main() {
 	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
+	//lazy loading for more Registrants to Register their entities like Istio
+	time.AfterFunc(15*time.Second, func() {
+		hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
+		if err != nil {
+			log.Error(err)
+		}
+		for _, host := range hosts {
+			log.Infof("For Registrant %s Successfully imported %d models %d components %d relationships %d policy", host.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
+			nonRegisteredEntityCount := meshmodel.NonImportModel[host.Hostname]
+			if nonRegisteredEntityCount.Models > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 || nonRegisteredEntityCount.Policies > 0 {
+				log.Errorf("For Registrant %s Failed to import %d models %d components %d relationships %d policy", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
+			}
+		}
 
-	registeredEntityCount, err := regManager.GetRegisteriesCount()
-	if err != nil {
-		log.Error(err)
-	}
-	nonRegisteredEntityCount := meshmodel.NonImportModel
-	log.Infof("Successfully imported %d models %d components %d relationships", registeredEntityCount.Models, registeredEntityCount.Components, registeredEntityCount.Relationships)
+		filePath := "register_attempts.json"
+		jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
+		if err != nil {
+			fmt.Println("Error marshaling RegisterAttempts to JSON:", err)
+			return
+		}
 
-	if len(meshmodel.ModelCount) > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 {
-		log.Errorf("Failed to import %d models %d components %d relationships", len(meshmodel.ModelCount), nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships)
-	}
+		err = writeToFile(filePath, jsonData)
+		if err != nil {
+			fmt.Println("Error writing JSON data to file:", err)
+			return
+		}
+	})
+
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
 	if err != nil {
@@ -345,4 +365,18 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
+}
+func writeToFile(filePath string, data []byte) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
