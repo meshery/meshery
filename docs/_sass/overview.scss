@@ -31,7 +31,7 @@ div.overview {
 h2[id]:before,
 h4[id]:before,
 h5[id]:before {
-  display: block;
+  display: inline-block;
   content: " ";
   visibility: hidden;
 }

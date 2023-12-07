@@ -1,8 +1,8 @@
-import * as React from "react";
-import Button from "@material-ui/core/Button";
-import TroubleshootingModal from "./TroubleshootingModalComponent";
+import * as React from 'react';
+import Button from '@material-ui/core/Button';
+import TroubleshootingModal from './TroubleshootingModalComponent';
 
-const Troubleshoot = props => {
+const Troubleshoot = (props) => {
   const [open, setOpen] = React.useState(true);
   const handleOpen = () => {
     setOpen(true);

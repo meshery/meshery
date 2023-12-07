@@ -32,14 +32,17 @@ const DefaultPageSizeForMeshModelComponents = 25
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// ```?annotations={["true"/"false"/]}``` When this query parameter is "true", only models with the "isAnnotation" property set to true are returned. When  this query parameter is "false", all models except those considered to be annotation models are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
 // responses:
+// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
 //
 //	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -47,23 +50,26 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 			limit = defaultPageSize
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
+	returnAnnotationComp := queryParams.Get("annotations")
+
 	offset := (page - 1) * limit
 	filter := &v1alpha1.ModelFilter{
-		Category: cat,
-		Version:  r.URL.Query().Get("version"),
-		Limit:    limit,
-		Offset:   offset,
-		OrderOn:  r.URL.Query().Get("order"),
-		Sort:     r.URL.Query().Get("sort"),
+		Category:    cat,
+		Version:     queryParams.Get("version"),
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if queryParams.Get("search") != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = queryParams.Get("search")
 	}
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
@@ -103,6 +109,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
 //
 //	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request) {
@@ -110,11 +117,12 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
 	model := mux.Vars(r)["model"]
+	queryParams := r.URL.Query()
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -122,21 +130,24 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
+
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
-		Category: cat,
-		Name:     model,
-		Version:  r.URL.Query().Get("version"),
-		Limit:    limit,
-		Offset:   offset,
-		Greedy:   greedy,
-		OrderOn:  r.URL.Query().Get("order"),
-		Sort:     r.URL.Query().Get("sort"),
+		Category:    cat,
+		Name:        model,
+		Version:     queryParams.Get("version"),
+		Limit:       limit,
+		Offset:      offset,
+		Greedy:      greedy,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 
 	var pgSize int64
@@ -176,13 +187,15 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
 //
 //	200: meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -190,37 +203,30 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
+
 	filter := &v1alpha1.ModelFilter{
-		Version: v,
-		Limit:   limit,
-		Offset:  offset,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		Registrant:  queryParams.Get("registrant"),
+		Version:     v,
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
-		filter.DisplayName = r.URL.Query().Get("search")
+	if queryParams.Get("search") != "" {
+		filter.DisplayName = queryParams.Get("search")
 		filter.Greedy = true
 	}
 
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-	var meshmodel []v1alpha1.Model
-	for _, mod := range meshmodels {
-		filter := &v1alpha1.ComponentFilter{
-			ModelName: mod.Name,
-		}
-		entities, _, _ := h.registryManager.GetEntities(filter)
-		host := h.registryManager.GetRegistrant(entities[0])
-		mod.HostID = host.ID
-		mod.HostName = host.Hostname
-		mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-		meshmodel = append(meshmodel, mod)
-	}
+
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -232,7 +238,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodel),
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -258,18 +264,20 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
 //
 //	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["model"]
+	queryParams := r.URL.Query()
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -277,20 +285,22 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
-		Name:    name,
-		Version: v,
-		Limit:   limit,
-		Offset:  offset,
-		Greedy:  greedy,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		Name:        name,
+		Version:     v,
+		Limit:       limit,
+		Offset:      offset,
+		Greedy:      greedy,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 
 	var pgSize int64
@@ -465,20 +475,24 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+
+	queryParams := r.URL.Query()
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -486,23 +500,25 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
-		APIVersion:   r.URL.Query().Get("apiVersion"),
+		APIVersion:   queryParams.Get("apiVersion"),
 		Version:      v,
 		Offset:       offset,
 		Greedy:       greedy,
 		Limit:        limit,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations:  returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -558,6 +574,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -566,12 +584,13 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	queryParams := r.URL.Query()
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
 	cat := mux.Vars(r)["category"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -579,23 +598,26 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
+
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
-		ModelName:    r.URL.Query().Get("model"),
+		ModelName:    queryParams.Get("model"),
 		CategoryName: cat,
-		APIVersion:   r.URL.Query().Get("apiVersion"),
+		APIVersion:   queryParams.Get("apiVersion"),
 		Version:      v,
 		Offset:       offset,
 		Limit:        limit,
 		Greedy:       greedy,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations:  returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -649,6 +671,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned. returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -657,12 +681,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	queryParams := r.URL.Query()
+
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -670,22 +696,25 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
+
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		ModelName:  typ,
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Version:    v,
-		Offset:     offset,
-		Greedy:     greedy,
-		Limit:      limit,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Name:        name,
+		ModelName:   typ,
+		APIVersion:  queryParams.Get("apiVersion"),
+		Version:     v,
+		Offset:      offset,
+		Greedy:      greedy,
+		Limit:       limit,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -743,6 +772,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -750,11 +781,12 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	queryParams := r.URL.Query()
+	if queryParams.Get("search") == "true" {
 		greedy = true
 	}
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -762,23 +794,25 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Version:    v,
-		ModelName:  r.URL.Query().Get("model"),
-		Offset:     offset,
-		Limit:      limit,
-		Greedy:     greedy,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Name:        name,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Version:     v,
+		ModelName:   queryParams.Get("model"),
+		Offset:      offset,
+		Limit:       limit,
+		Greedy:      greedy,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -834,14 +868,17 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -849,25 +886,27 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		ModelName:  typ,
-		Version:    v,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		ModelName:   typ,
+		Version:     v,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if queryParams.Get("search") != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -926,6 +965,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -933,8 +973,9 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -942,26 +983,28 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
 		Version:      v,
-		Trim:         r.URL.Query().Get("trim") == "true",
-		APIVersion:   r.URL.Query().Get("apiVersion"),
+		Trim:         queryParams.Get("trim") == "true",
+		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations:  returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if queryParams.Get("search") != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1017,6 +1060,8 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -1024,8 +1069,9 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -1033,25 +1079,27 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 			limit = DefaultPageSizeForMeshModelComponents
 		}
 	}
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
-		Trim:         r.URL.Query().Get("trim") == "true",
-		APIVersion:   r.URL.Query().Get("apiVersion"),
+		Trim:         queryParams.Get("trim") == "true",
+		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations:  returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if queryParams.Get("search") != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1107,14 +1155,17 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //  200: meshmodelComponentsDuplicateResponseWrapper
 
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	v := r.URL.Query().Get("version")
-	limitstr := r.URL.Query().Get("pagesize")
+	queryParams := r.URL.Query()
+	v := queryParams.Get("version")
+	limitstr := queryParams.Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
@@ -1123,24 +1174,26 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	pagestr := r.URL.Query().Get("page")
+	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		Version:    v,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Version:     v,
+		Trim:        queryParams.Get("trim") == "true",
+		APIVersion:  queryParams.Get("apiVersion"),
+		Limit:       limit,
+		Offset:      offset,
+		OrderOn:     queryParams.Get("order"),
+		Sort:        queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if queryParams.Get("search") != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1214,4 +1267,80 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
+}
+
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
+// Handle GET request for getting all meshmodel registrants
+//
+// # Returns a list of registrants and summary count of its models, components, and relationships
+//
+// ```?page={pagenumber}``` Default page number is 1
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={Hostname}``` Gets host by the name
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// responses:
+//	200: []meshmodelRegistrantsResponseWrapper
+
+func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	limitstr := r.URL.Query().Get("pagesize")
+	pagestr := r.URL.Query().Get("page")
+
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	}
+
+	page, _ := strconv.Atoi(pagestr)
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
+	filter := &v1alpha1.HostFilter{
+		Limit:   limit,
+		Offset:  offset,
+		Sort:    r.URL.Query().Get("sort"),
+		OrderOn: r.URL.Query().Get("order"),
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.DisplayName = r.URL.Query().Get("search")
+	}
+	hosts, count, err := h.registryManager.GetRegistrants(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+	res := models.MeshmodelRegistrantsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
+		Registrants: hosts,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 }

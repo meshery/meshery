@@ -92,7 +92,7 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --q
 </div>
 </pre> 
 
-Execute a Performance test with specified system under test
+Execute a Performance test with specified service mesh
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
@@ -181,4 +181,4 @@ Usage of mesheryctl perf apply
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/) 
+Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

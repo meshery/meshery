@@ -12,27 +12,18 @@ import (
 
 func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provider, k8sContextIDs []string) ([]*model.TelemetryComp, error) {
 	query := `
-	SELECT rom.name, rs.attribute, rst.attribute FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id INNER JOIN resource_specs rs on o.id = rs.id INNER JOIN resource_statuses rst on o.id = rst.id WHERE o.kind = 'Service' AND o.cluster_id IN (?);
+	SELECT rom.name, rs.attribute, rst.attribute FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id INNER JOIN resource_specs rs on kr.id = rs.id INNER JOIN resource_statuses rst on kr.id = rst.id WHERE kr.kind = 'Service' AND kr.cluster_id IN (?);
 	`
 	var rows *sql.Rows
 	var err error
 	var ctxIDs []string
 
-	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sCtxs) == 0 {
-		return nil, model.ErrMesheryClientNil
+	if len(k8sContextIDs) == 0 {
+		return nil, ErrEmptyCurrentK8sContext
 	}
 
-	if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
-		for _, k8sContext := range k8sCtxs {
-			if k8sContext.KubernetesServerID != nil {
-				clusterID := k8sContext.KubernetesServerID.String()
-				ctxIDs = append(ctxIDs, clusterID)
-			}
-		}
-	} else {
-		ctxIDs = k8sContextIDs
-	}
+	ctxIDs = k8sContextIDs
+
 	rows, err = provider.GetGenericPersister().Raw(query, ctxIDs).Rows()
 
 	if err != nil {

@@ -5,13 +5,13 @@ Please do! Thank you for your help in improving Meshery! :balloon:
 ---
 
 <details>
-  
+
   <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3></summary>
 
 All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/newcomers) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](https://slack.meshery.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
-  
+
 **Sections**
 
 - <a name="contributing">General Contribution Flow</a>
@@ -28,6 +28,54 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
 # <a name="contributing">General Contribution Flow</a>
 
 To contribute to Meshery, please follow the fork-and-pull request workflow described [here](docs/CONTRIBUTING-gitflow.md).
+
+## Issues & Pull Requests
+
+### Creating an Issue
+
+Before **creating** an Issue i.e for `features`/`bugs`/`improvements` please follow these steps:
+
+
+1. Search existing Issues before creating a new Issue (look to see if the Issue has already been created).
+1. If it doesn't exist create a new Issue giving as much context as possible (please take note and select the correct Issue type, for example `bug`, `documentation` or `feature`.
+1. If you wish to work on the Issue once it has been triaged, please include this in your Issue description.
+
+### Working on an Issue
+
+Before working on an existing Issue please follow these steps:
+
+1. Comment asking for the Issue to be assigned to you.
+1. To best position yourself for Issues assignment, we recommend that you:
+    1. Confirm that you have read the CONTRIBUTING.md.
+    1. Have a functional development environment (have built and are able to run the project).
+    1. Convey your intended approach to solving the issue.
+    1. Put each of these items in writing in one or more comments.
+1. After the Issue is assigned to you, you can start working on it.
+1. In general, **only** start working on this Issue (and open a Pull Request) when it has been assigned to you. Doing so will prevent confusion, duplicate work (some of which may go unaccepted given its duplicity), incidental stepping on toes, and the headache involved for maintainers and contributors alike as Issue assignments collide and heads bump together.
+1. Reference the Issue in your Pull Request (for example `This PR fixes #123`). so that the corresponding Issue is automatically closed upon merge of your Pull Request.
+
+> Notes:
+>
+> - Check the `Assignees` box at the top of the page to see if the Issue has been assigned to someone else before requesting this be assigned to you. If the issue has a current Assignee, but appears to be inactive, politely inquire with the current Assignee as to whether they are still working on a solution and/or if you might collaborate with them.
+> - Only request to be assigned an Issue if you know how to work on it.
+> - If an Issue is unclear, ask questions to get more clarity before asking to have the Issue assigned to you; avoid asking "what do I do next? how do I fix this?" (see the item above this line)
+> - An Issue can be assigned to multiple people, if you all agree to collaborate on the Issue (the Pull Request can contain commits from different collaborators)
+> - Any Issues that has no activity after 2 weeks will be unassigned and re-assigned to someone else.
+
+## Reviewing Pull Requests
+
+We welcome everyone to review Pull Requests. It is a great way to learn, network, and support each other.
+
+### DOs
+
+- Use inline comments to explain your suggestions
+- Use inline suggestions to propose changes
+- Exercise patience and empathy while offering critiques of the works of others.
+
+### DON'Ts
+
+- Do not repeat feedback, this creates more noise than value (check the existing conversation), use GitHub reactions if you agree/disagree with a comment
+- Do not blindly approve Pull Requests to improve your GitHub contributors graph
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -99,11 +147,11 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. Go version 1.19.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
-1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
-1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+1. Go version 1.21.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.21.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
+2. `GOPATH` environment variable should be configured appropriately
+3. `npm` and `node` should be installed on your machine, preferably the latest versions.
+4. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
+5. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
 #### Build and Run Meshery Server
 
@@ -132,16 +180,15 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 <img src="./docs/assets/img/meshery-development-incompatible-error.png" width="50%">
 
-Potential Solution: 
+Potential Solution:
 
 -  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute: 
+Execute:
 
-
-- Restart the meshery server.
-- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
-
-- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+- `git remote add upstream https://github.com/meshery/meshery`
+- `git fetch upstream`
+- Restart the meshery server
+- Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 ### UI Development Server
 
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
@@ -161,7 +208,7 @@ To access the [Meshery UI Development Server](#ui-development-server) on port `3
 
 1. Meshery requires gcc at the `make server` step, **x64 windows** architecture can face issues while finding the best **GCC compiler**, You can install [tdm64-GCC](https://jmeubank.github.io/tdm-gcc/) which worked smoothly but many compilers other than that can cause issues, you also have to set an environment variable for this step.
 
-2. Installing `make` in windows requires you to install [choco](https://chocolatey.org/install) first, which makes it easier to install `make` then, It requires security access which can only be done in admin mode. 
+2. Installing `make` in windows requires you to install [choco](https://chocolatey.org/install) first, which makes it easier to install `make` then, It requires security access which can only be done in admin mode.
 
 #### Tests
 
@@ -191,11 +238,11 @@ Meshery uses adapters to provision and interact with different service meshes. F
    1. Using Go as an example, do the following:
       - install the protocol buffer compiler: https://grpc.io/docs/protoc-installation/
       - add GOPATH to PATH: `export PATH=$PATH:$(go env GOPATH)/bin`
-      - install the protocol compiler plugins for go: 
+      - install the protocol compiler plugins for go:
                `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
                `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
       - create a directory _meshes_
-      - Generate Go code: 
+      - Generate Go code:
          	`protoc --proto_path=. --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
 
    1. For other languages, please refer to gRPC.io for language-specific guides.
@@ -348,5 +395,5 @@ Resources: https://lab.github.com and https://try.github.com/
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
 </details>
-  
+
 ---

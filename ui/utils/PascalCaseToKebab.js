@@ -5,7 +5,7 @@
  * @returns
  */
 export default function PascalCaseToKebab(str) {
-  return pascalCaseToCamelCase(str).replace(/[A-Z]/g, "-$&").toLowerCase();
+  return pascalCaseToCamelCase(str).replace(/[A-Z]/g, '-$&').toLowerCase();
 }
 
 /**

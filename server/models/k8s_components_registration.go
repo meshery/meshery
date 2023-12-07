@@ -2,7 +2,11 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -13,6 +17,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
+
 type RegistrationStatus int
 
 const (
@@ -20,6 +26,8 @@ const (
 	NotRegistered
 	Registering
 )
+
+var K8sMeshModelMetadata = make(map[string]interface{})
 
 // INstead define a set of actions
 func (rs RegistrationStatus) String() string {
@@ -55,19 +63,21 @@ func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrat
 func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *ComponentsRegistrationHelper {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
+		cg.mx.Lock()
 		if _, ok := cg.ctxRegStatusMap[ctxID]; !ok {
-			cg.mx.Lock()
 			cg.ctxRegStatusMap[ctxID] = NotRegistered
-			cg.mx.Unlock()
 		}
+		cg.mx.Unlock()
 	}
 	return cg
 }
 
-type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *EventBroadcast, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *Broadcast, ctxName string) error
+
+type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *EventBroadcast, provider Provider, userID string, skip bool) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
 	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
 	then flag should not be respected and to control this behaviour skip is introduced.
 	In case of API requests "skip" is set to false, otherise true and behaviour is controlled by "SKIP_COMP_GEN".
@@ -81,21 +91,21 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		connectionID, _ := uuid.FromString(ctx.ConnectionID)
+		ctxName := ctx.Name
+
+		cg.mx.Lock()
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
 		// only start registering components for contexts whose status is NotRegistered
 		status, ok := cg.ctxRegStatusMap[ctxID]
 		if !ok || status != NotRegistered {
+			cg.mx.Unlock()
 			continue
 		}
 
-		ctxName := ctx.Name
-	
 		// update the status
-		cg.mx.Lock()
 		cg.ctxRegStatusMap[ctxID] = Registering
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
-	
 
 		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
 		err := provider.PersistEvent(event)
@@ -112,7 +122,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 				cg.mx.Unlock()
 
-				cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
+				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
 			}()
 
 			// start registration
@@ -130,4 +140,22 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			}
 		}(ctx)
 	}
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+	if err != nil {
+		return
+	}
+	byt, err := io.ReadAll(f)
+	if err != nil {
+		return
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(byt, &m)
+	if err != nil {
+		return
+	}
+	K8sMeshModelMetadata = m
 }

@@ -113,7 +113,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrMesheryConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		// Importing SMP Configuration from the file
@@ -122,18 +123,21 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			// Read the test configuration file
 			smpConfig, err := os.ReadFile(filePath)
 			if err != nil {
-				return ErrReadFilepath(err)
+				utils.Log.Error(ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n")))
+				return nil
 			}
 
 			testConfig := models.PerformanceTestConfigFile{}
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
-				return ErrFailUnmarshalFile(err)
+				utils.Log.Error(ErrFailUnmarshalFile(err))
+				return nil
 			}
 
 			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
-				return ErrInvalidTestConfigFile()
+				utils.Log.Error(ErrInvalidTestConfigFile())
+				return nil
 			}
 
 			testClient := testConfig.Config.Clients[0]
@@ -181,12 +185,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			return ErrNoProfileName()
+			utils.Log.Error(ErrNoProfileName())
+			return nil
 		}
 
 		// Invalid number of arguments
 		if len(args) > 1 {
-			return ErrorArgumentOverflow()
+			utils.Log.Error(ErrorArgumentOverflow())
+			return nil
 		}
 
 		// handles spaces in args if quoted args passed
@@ -197,12 +203,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		profileName = strings.Join(args, "%20")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
-		log.Debug("Fetching performance profile")
+		utils.Log.Debug("Fetching performance profile")
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
-
 		index := 0
 		if len(profiles) == 0 {
 			// if the provided performance profile does not exist, prompt the user to create a new one
@@ -218,10 +224,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			if userResponse {
 				profileID, profileName, err = createPerformanceProfile(mctlCfg)
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
 			} else {
-				return ErrNoProfileFound()
+				utils.Log.Error(ErrNoProfileFound())
+				return nil
 			}
 		} else {
 			if len(profiles) == 1 { // if single performance profile found set profileID
@@ -230,7 +238,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				data := profilesToStringArrays(profiles)
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
 				profileID = profiles[index].ID.String()
 			}
@@ -272,7 +281,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 
 		if testURL == "" {
-			return ErrNoTestURL()
+			utils.Log.Error(ErrNoTestURL())
+			return nil
 		}
 
 		log.Debugf("performance profile is: %s", profileName)
@@ -280,12 +290,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		// Method to check if the entered Test URL is valid or not
 		if validURL := govalidator.IsURL(testURL); !validURL {
-			return ErrNotValidURL()
+			utils.Log.Error(ErrNotValidURL())
+			return nil
 		}
 
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return nil
 		}
 
 		q := req.URL.Query()
@@ -315,7 +327,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		resp, err := utils.MakeRequest(req)
 
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer utils.SafeClose(resp.Body)
@@ -421,14 +434,14 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		if _, err := os.Stat(additionalOptions); err == nil {
 			optFile, err := os.ReadFile(additionalOptions)
 			if err != nil {
-				return "", "", errors.New("unable to read options file. " + err.Error())
+				return "", "", ErrReadFilepath(errors.Wrap(err, "unable to read options file. "))
 			}
 			additionalOptions = string(optFile)
 		}
 
 		// Check if the additionalOptions is a valid json
 		if !govalidator.IsJSON(additionalOptions) {
-			return "", "", errors.New("invalid json passed as options")
+			return "", "", ErrInvalidJSONFile()
 		}
 
 		values["metadata"] = map[string]interface{}{

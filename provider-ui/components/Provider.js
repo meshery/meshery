@@ -2,11 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dataFetch from "../lib/data-fetch";
 import ProviderLayout from "./ProviderLayout"
-import { CustomDiv, CustomDialog, MesheryLogo, MenuProviderDisabled } from "./Provider.style";
+import { CustomDiv, CustomDialog, MesheryLogo, MenuProviderDisabled, CustomDialogActions, LearnMore } from "./Provider.style";
 import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
 import Divider from "@mui/material/Divider"
-import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
@@ -20,7 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import CloseIcon from "@mui/icons-material/Close"
 import ClickAwayListener from '@mui/material/ClickAwayListener'
-
+import externalLinkIcon from '../public/static/img/external-link.svg';
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
@@ -33,8 +32,8 @@ function CustomDialogTitle(props) {
           onClick={onClose}
           sx={{
             position : 'absolute',
-            right : 8,
-            top : 8,
+            right : "1rem",
+            top : "1rem",
             color : (theme) => theme.palette.grey[500],
           }}
         >
@@ -118,81 +117,6 @@ export default function Provider() {
       <MesheryLogo src="/provider/static/img/meshery-logo/meshery-logo-light-text.png"
         alt="logo"
       />
-      <Typography variant="h6" sx={{ fontWeight : 700 }} gutterBottom>
-                Please choose a
-        <Tooltip
-          title="Learn more about providers"
-          placement="bottom"
-          data-cy="providers-tooltip"
-          sx={{
-            color : '#00B39F',
-            cursor : 'pointer',
-            fontWeight : 700
-          }}
-        >
-          <a onClick={handleModalOpen} style={{
-            color : '#00D3A9',
-            cursor : 'pointer',
-            fontWeight : 700
-          }}>
-            {' '}
-                        provider{' '}
-          </a>
-        </Tooltip>
-      </Typography>
-      <CustomDialog
-        onClose={handleModalClose}
-        aria-labelledby="customized-dialog-title"
-        open={openModal}
-        disableScrollLock={true}
-        data-cy="providers-modal"
-      >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose}>
-          <b>Choosing a provider</b>
-        </CustomDialogTitle>
-        <DialogContent dividers>
-          <DialogContentText id="customized-dialog-content">
-                        Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on.
-
-            {Object.keys(availableProviders).map((key) => {
-              return (
-                <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight : 700 }}>{availableProviders[key].provider_name}</p>
-                  <ul>
-                    {availableProviders[key].provider_description?.map((desc, i) => <li key={`desc-${i}`}>{desc}</li>)}
-                  </ul>
-                </React.Fragment>
-              )
-            })}
-            <p style={{ fontWeight : 700 }}>MIT</p>
-            <ul>
-              <li>Remote provider for Performance Testing</li>
-              <li>Provides provenence of test results and their persistence</li>
-              <li>Adaptive performance analysis - predictive optimization</li>
-            </ul>
-            <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
-            <ul>
-              <li>Academic research and advanced studies by Ph.D. researchers</li>
-              <li>Used by school of Electrical and Computer Engineering (ECE)</li>
-            </ul>
-            <p style={{ fontWeight : 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
-            <ul>
-              <li>Performance and compatibility-centric research and validation</li>
-              <li>Used by various service meshes and by the Service Mesh Performance project</li>
-            </ul>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleModalClose}
-            color="primary"
-            data-cy="providers-modal-button-ok"
-            variant="contained"
-          >
-                        OK
-          </Button>
-        </DialogActions>
-      </CustomDialog>
       <CustomDiv>
         {availableProviders !== '' && (
           <Fragment>
@@ -238,21 +162,117 @@ export default function Provider() {
                     </MenuItem>
                   ))}
                   <Divider sx={{ my : 0.5 }} />
+                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
+                                        CNCF Labs{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
+                                        Equinix US-DAL{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="HPE Security">
+                                        HPE Security{'\u00A0'}<span>Offline</span>
+                  </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="MIT">
-                                        Massachusetts Institute of Technology (MIT) <span>Disabled</span>
+                                        Massachusetts Institute of Technology (MIT){'\u00A0'}<span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
-                                        The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
+                                        The University of Texas at Austin{'\u00A0'}<span> Offline</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
-                                        CNCF Labs{'\u00A0'}<span>Disabled</span>
-                  </MenuProviderDisabled>
+
                 </MenuList>
               </ClickAwayListener>
             </Popover>
           </Fragment>
         )}
       </CustomDiv>
+      <LearnMore>
+        <Typography variant="h6" sx={{ fontWeight : 500 }} gutterBottom>
+        Learn more about
+          <Tooltip
+            title="Learn more about providers"
+            placement="bottom"
+            data-cy="providers-tooltip"
+            sx={{
+              color : '#00B39F',
+              cursor : 'pointer',
+              fontWeight : 700
+            }}
+          >
+            <a onClick={handleModalOpen} style={{
+              color : '#00B39F',
+              cursor : 'pointer',
+              fontWeight : 700
+            }}>
+              {' '}
+                        providers{' '}
+            </a>
+          </Tooltip>
+        </Typography>
+      </LearnMore>
+      <CustomDialog
+        onClose={handleModalClose}
+        aria-labelledby="customized-dialog-title"
+        open={openModal}
+        disableScrollLock={true}
+        data-cy="providers-modal"
+      >
+        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
+          <b>Choosing a Provider</b>
+        </CustomDialogTitle>
+        <DialogContent dividers>
+          <DialogContentText id="customized-dialog-content">
+                        Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on.
+
+            <h3>Available Providers</h3>
+            {Object.keys(availableProviders).map((key) => {
+              return (
+                <React.Fragment key={availableProviders[key].provider_name}>
+                  <p style={{ fontWeight : 700 }}>{availableProviders[key].provider_name}</p>
+                  <ul>
+                    {availableProviders[key].provider_description?.map((desc, i) => <li key={`desc-${i}`}>{desc}</li>)}
+                  </ul>
+                </React.Fragment>
+              )
+            })}
+            <p style={{ fontWeight : 700 }}>MIT</p>
+            <ul>
+              <li>Remote provider for performance testing</li>
+              <li>Provides provenence of test results and their persistence</li>
+              <li>Adaptive performance analysis - predictive optimization</li>
+            </ul>
+            <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
+            <ul>
+              <li>Academic research and advanced studies by Ph.D. researchers</li>
+              <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+            </ul>
+            <p style={{ fontWeight : 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
+            <ul>
+              <li>Performance and compatibility-centric research and validation</li>
+              <li>Used by various service meshes and by the Service Mesh Performance project</li>
+            </ul>
+            <p style={{ fontWeight : 700 }}>HPE Security</p>
+            <ul>
+              <li>Istio, SPIRE, and SPIFEE integration</li>
+            </ul>
+            <p style={{ fontWeight : 700 }}>Equinix</p>
+            <ul>
+              <li>Identity services</li>
+              <li>Bare-metal Kubernetes configuration</li>
+            </ul>
+          </DialogContentText>
+        </DialogContent>
+        <CustomDialogActions>
+          <div className="learnmore">
+            <a href="https://docs.meshery.io/extensibility/providers">Providers in Meshery Docs</a><img src={externalLinkIcon} width="16px" />
+          </div>
+          <Button
+            onClick={handleModalClose}
+            color="primary"
+            data-cy="providers-modal-button-ok"
+            variant="contained"
+          > OK
+          </Button>
+        </CustomDialogActions>
+      </CustomDialog>
     </ProviderLayout>
   )
 }

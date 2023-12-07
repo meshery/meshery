@@ -69,17 +69,17 @@ mesheryctl pattern list
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 		err = json.Unmarshal(body, &response)
-
 		if err != nil {
 			utils.Log.Error(utils.ErrUnmarshal(err))
 			return nil
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.Log.Error(utils.ErrReadToken(err))
 			return nil
 		}
 		provider := tokenObj["meshery-provider"]

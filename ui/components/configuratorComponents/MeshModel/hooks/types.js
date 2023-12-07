@@ -33,4 +33,4 @@
  * @property {string} schema
  */
 
-export const Types = {}
+export const Types = {};

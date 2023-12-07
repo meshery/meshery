@@ -1,6 +1,6 @@
 export const isValidColumnName = (name) => {
-  return name !== "" && name !== " " && name != undefined && name != null
-}
+  return name !== '' && name !== ' ' && name != undefined && name != null;
+};
 
 export const CHART_COLORS = [
   '#14232A', // Gunmetal
@@ -19,20 +19,20 @@ export const CHART_COLORS = [
   // '#AACCBD8', // Columbia Blue
   '#CBDEE6',
   // '#EEF4F7'
-]
+];
 
 export const dataToColors = (data) => {
-  const columns = data.map((item) => item[0] )
-  const colors = { }
-  let colorIdx = 0
+  const columns = data.map((item) => item[0]);
+  const colors = {};
+  let colorIdx = 0;
 
   columns.forEach((col) => {
     if (colorIdx >= CHART_COLORS.length) {
-      colorIdx = 0
+      colorIdx = 0;
     }
-    colors[col] = CHART_COLORS[colorIdx]
-    colorIdx +=1
-  })
+    colors[col] = CHART_COLORS[colorIdx];
+    colorIdx += 1;
+  });
 
-  return colors
-}
+  return colors;
+};

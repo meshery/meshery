@@ -1,15 +1,16 @@
-import { graphql, requestSubscription } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
+// not in use
 export const meshmodelSummarySubscription = graphql`
   subscription MeshModelSummarySubscription($selector: MeshModelSummarySelector!) {
     meshmodelSummary: subscribeMeshModelSummary(selector: $selector) {
       components {
-        name,
+        name
         count
-      },
+      }
       relationships {
-        name,
+        name
         count
       }
     }
@@ -19,9 +20,9 @@ export const meshmodelSummarySubscription = graphql`
 export default function subscribeClusterResources(dataCB, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
-    subscription : meshmodelSummarySubscription,
-    variables : variables,
-    onNext : dataCB,
-    onError : (error) => console.log(`MeshModel Subscription error:`, error),
+    subscription: meshmodelSummarySubscription,
+    variables: variables,
+    onNext: dataCB,
+    onError: (error) => console.log(`MeshModel Subscription error:`, error),
   });
 }

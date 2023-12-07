@@ -58,8 +58,8 @@
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
   width: fit-content;
-  max-width: 400px;
-  min-width: 250px;
+  max-width: 450px;
+  min-width: 300px;
   height: 100%;
 
   &::-webkit-scrollbar {
@@ -100,13 +100,17 @@
     & .sidebar__search {
       &-form {
         width: 100%;
-        margin: 2rem 0 2rem;
+        margin: 2rem 0 1rem;
         position: relative;
+        position: sticky;
+        top: 0;
+        z-index: 10;
       }
 
       &-input {
         border: none;
         width: 100%;
+        font-size: 1.1rem;
         border-radius: 21px;
         background: var(--background-neumorphic);
         padding: 8px 15px 8px 15px;
@@ -134,10 +138,10 @@
             font-weight: 600;
           }
         }
-
         & a {
           color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
+          
           &:hover {
             color: var(--sidenav-hover) !important;
           }
@@ -170,25 +174,45 @@
         }
 
         & > ul {
-          padding-inline-start: 2.3rem;
+          padding-inline-start: .3rem;
           list-style: none;
           margin-bottom: 0;
+
+          & > ul {
+            padding-inline-start: .3rem;
+            list-style: none;
+            margin-bottom: 0;
+
+            & > li  {
+              list-style: none;
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+              padding-inline-start: .3rem;
+              margin-bottom: 0;
+            }
+          }
 
           & > li ul {
             list-style: none;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            padding-inline-start: 0px;
+            padding-inline-start: .3rem;
             margin-bottom: 0;
-            & ul li {
-              list-style: none;
-              list-style: none;
-              display: flex;
+
+            & > li ul {
+              display: flex;  
+              list-style: none !important;
               flex-direction: column;
-              gap: 0.5rem;
-              padding-inline-start: 2.3rem;
+              gap: .25rem;
+              padding-inline-start: .3rem;
             }
+            // & ul > li {
+            //   & ::before {
+            //     content: "- ";
+            //   }
+            // }
           }
         }
       }

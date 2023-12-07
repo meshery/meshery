@@ -1,11 +1,5 @@
 name: Meshery UI and Server
 on:
-  #   push:
-  #     branches:
-  #       - 'master'
-  #     paths-ignore:
-  #       - 'docs/**'
-  #       - 'mesheryctl/**'
   pull_request:
     branches:
       - "master"
@@ -34,21 +28,14 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.20"
-      - name: Setup Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3.0.0
-        with:
-          name: meshery
-          path: ./main
+          go-version: "1.21"
+      - name: Build Meshery Server
+        env:
+          PROVIDER_BASE_URLS: http://localhost:9876
+          PORT: 9081
+          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
+        run: |
+          make build-server
   ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
@@ -78,21 +65,40 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
         run: |
           cd ui
           npm i
           cd ..
           cd provider-ui
           npm i
+      # - name: Cache meshery-ui
+      #   id: meshery-ui-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       /home/runner/work/meshery/meshery/ui/out
+      #     key: ${{ runner.os }}-meshery-ui-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
       - name: build meshery-ui
+        # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
           make ui-meshery-build
       - name: build provider-ui
         run: |
           make ui-provider-build
-  # tests-ui:
-  #   needs: [ui-build]
-  #   name: UI integration tests
+      - name: Upload meshery-ui artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: meshery-ui
+          path: /home/runner/work/meshery/meshery/ui/out
+      - name: Upload provider-ui artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: provider-ui
+          path: /home/runner/work/meshery/meshery/provider-ui/out
+  # tests-ui-e2e:
+  #   needs: [build-backend, ui-build]
+  #   name: UI end-to-end tests
   #   if: github.repository == 'meshery/meshery'
   #   runs-on: ubuntu-22.04
   #   steps:
@@ -100,164 +106,104 @@ jobs:
   #       uses: actions/checkout@v3
   #       with:
   #         fetch-depth: 0
-  #     - uses: actions/setup-node@v3
+  #     - name: Check out meshery-istio code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: layer5io/meshery-istio
+  #         path: ./meshery-istio
+  #     - name: Check out meshery-consul code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: layer5io/meshery-consul
+  #         path: ./meshery-consul
+  #     - name: Create k8s Kind Cluster
+  #       uses: helm/kind-action@v1.8.0
+  #       with:
+  #         cluster_name: "kind-cluster"
+  #     - name: Setup Go
+  #       uses: actions/setup-go@master
+  #       with:
+  #         go-version: "1.21"
+  #     - name: Run meshery-istio
+  #       run: |
+  #         mkdir -p /home/runner/.meshery/bin
+  #         cd ./meshery-istio
+  #         go run main.go &
+  #         sleep 60
+  #     - name: Run meshery-consul
+  #       run: |
+  #         mkdir -p /home/runner/.meshery/bin
+  #         cd ./meshery-consul
+  #         go run main.go &
+  #         sleep 60
+  #     - name: Setup node
+  #       uses: actions/setup-node@v3
   #       with:
   #         node-version: 18
-  #     - name: Cache node modules
+  #     - name: Restore node modules cache
   #       id: node-cache
   #       uses: actions/cache@v3
   #       with:
   #         path: |
   #           ~/cache
   #           ~/.cache
+  #           /home/runner/.cache
   #           !~/cache/exclude
   #           **/node_modules
-  #           /home/runner/.cache
+  #           /home/runner/.cache/Cypress
   #           ~/.npm
   #           ${{ github.workspace }}/.next/cache
   #         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  #     - name: Run tests
+  #         restore-keys: |
+  #           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+  #     - name: Download meshery-ui artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: meshery-ui
+  #         path: /home/runner/work/meshery/meshery/ui/out
+  #     - name: Download provider-ui artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: provider-ui
+  #         path: /home/runner/work/meshery/meshery/provider-ui/out
+  #     - name: Run Meshery UI and Server
+  #       env:
+  #         PROVIDER_BASE_URLS: http://localhost:9876
+  #         PORT: 9081
+  #         ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
   #       run: |
-  #         cd ui
-  #         npm i
-  #         npm run ci-test-integration
-  #         cd ..
-  #         cd provider-ui
-  #         npm i
-  #         npm test
-  #         cd ..
+  #         make server &
+  #         sleep 60
+  #     - name: Cypress run
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         working-directory: ui
+  #         wait-on: http://localhost:9081
+  #         spec: cypress/e2e/e2e/**/*
+  #         browser: chrome
+  #         record: true
+  #         tag: node-18
+  #       env:
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Upload artifacts
+  #       if: always()
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: cypress-ss
+  #         path: ./ui/cypress/screenshots
+  #     - name: Upload Videos
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: cypress-ss
+  #         path: ./ui/cypress/videos
   #     - name: Upload coverage to Codecov (ui)
   #       uses: codecov/codecov-action@v3
   #       with:
-  #         files: ./provider-ui/coverage/coverage-summary.json
-  #         directory: ./provider-ui/coverage/lcov-report
-  #         flags: integrationtests
-  tests-ui-e2e:
-    needs: [build-backend, ui-build]
-    name: UI end-to-end tests
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Check out meshery-istio code
-        uses: actions/checkout@v3
-        with:
-          repository: layer5io/meshery-istio
-          path: ./meshery-istio
-      - name: Check out meshery-consul code
-        uses: actions/checkout@v3
-        with:
-          repository: layer5io/meshery-consul
-          path: ./meshery-consul
-      - name: Setup go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.20"
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.8.0
-        with:
-          cluster_name: "kind-cluster"
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          go run main.go &
-          sleep 60
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: meshery
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            /home/runner/.cache
-            !~/cache/exclude
-            **/node_modules
-            /home/runner/.cache/Cypress
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Build Next App
-        run: |
-          cd ui
-          node --version
-          npm i
-          cd ../
-          make ui-meshery-build
-      # - name: Update /etc/hosts
-      #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          go run main.go &
-          sleep 60
-      - name: Run backend
-        env:
-          PROVIDER_BASE_URLS: http://localhost:9876
-          PORT: 9081
-          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
-        run: |
-          # chmod +x ./main
-          # ./main &
-          make ui-server &
-          sleep 60
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with:
-          working-directory: ui
-          # start: npm run dev
-          wait-on: http://localhost:9081
-          spec: cypress/e2e/e2e/**/*
-          browser: chrome
-          record: true
-          tag: node-18
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-ss
-          path: ./ui/cypress/screenshots
-      - name: Upload Videos
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: cypress-ss
-          path: ./ui/cypress/videos
-      - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./ui/coverage/coverage-summary.json
-          directory: ./ui/coverage/lcov-report
-          flags: e2etests
+  #         files: ./ui/coverage/coverage-summary.json
+  #         directory: ./ui/coverage/lcov-report
+  #         flags: e2etests
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'

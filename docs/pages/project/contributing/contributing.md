@@ -3,12 +3,13 @@ layout: page
 title: Contributing
 permalink: project/contributing
 description: How to contribute to the Meshery project.
+redirect_from:
+ - project/contributing/
+display-title: "false"
 language: en
 type: project
-redirect_from:
-  - contributing
-  - project/contributing/
 category: contributing
+list: exclude
 ---
 
 Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
@@ -106,7 +107,6 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 <li> <code>GOPATH</code> environment variable should be configured appropriately</li>
 <li> <code>npm</code> and <code>node</code> should be installed on your machine, `node` version 19 or higher is not supported right now.</li>
 <li> Fork this repository <code>git clone https://github.com/meshery/meshery.git</code>, and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.</li>
-<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
 <li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
 </ol>
 

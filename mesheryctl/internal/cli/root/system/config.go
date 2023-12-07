@@ -40,7 +40,8 @@ func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, errors.Wrap(err, "error processing config")
+		utils.Log.Error(err)
+		return nil, nil
 	}
 
 	// GETCONTEXTS endpoint points to the URL return the contexts available
@@ -48,23 +49,23 @@ func getContexts(configFile string) ([]string, error) {
 
 	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, utils.ParamName, configFile)
 	if err != nil {
-		return nil, err
+		return nil, ErrUploadFileParams(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrRequestResponse(err)
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrReadResponseBody(err)
 	}
 
 	log.Debugf("Get context API response: %s", string(body))
 	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrUnmarshal(err)
 	}
 
 	if results == nil {
@@ -92,22 +93,23 @@ func setContext(configFile, cname string) error {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		utils.Log.Error(err)
+		return nil
 	}
 
 	// SETCONTEXT endpoint points to set context
 	SETCONTEXT := mctlCfg.GetBaseMesheryURL() + "/api/system/kubernetes"
 	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, utils.ParamName, configFile)
 	if err != nil {
-		return err
+		return ErrUploadFileParams(err)
 	}
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return utils.ErrRequestResponse(err)
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return utils.ErrReadResponseBody(err)
 	}
 	// TODO: Pretty print the output
 	log.Debugf("Set context API response: %s", string(body))
@@ -389,7 +391,7 @@ func setToken() {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		log.Fatalf("Error getting context: %s", err.Error())
+		utils.Log.Error(err)
 	}
 	if contexts == nil || len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))

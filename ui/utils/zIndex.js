@@ -6,11 +6,11 @@
 export const ziCalc = (p = 1) => {
   if (p >= 1) {
     // 1 is the least power for zIndex
-    let zIndex = "";
+    let zIndex = '';
     for (let i = 0; i < p; i++) {
-      zIndex = zIndex + "9";
+      zIndex = zIndex + '9';
     }
     return zIndex;
   }
-    `0`;
+  `0`;
 };

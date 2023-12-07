@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -24,38 +24,44 @@ import (
 )
 
 const dumpFile = "./dump.csv"
-const COLUMNRANGE = "!A:AF3" //Update this on addition of new columns
+const COLUMNRANGE = "!A:AH3" //Update this on addition of new columns
+const APPENDRANGE = "!A4:V4"
 
 var NameToIndex = map[string]int{ //Update this on addition of new columns
-	"modelDisplayName":  0,
-	"model":             1,
-	"category":          2,
-	"subCategory":       3,
-	"CRDs":              4,
-	"link":              5,
-	"hasSchema?":        6,
-	"component":         7,
-	"shape":             8,
-	"primaryColor":      9,
-	"secondaryColor":    10,
-	"styleOverrides":    11,
-	"logoURL":           12,
-	"svgColor":          13,
-	"svgWhite":          14,
-	"svgComplete":       15,
-	"genealogy":         16,
-	"About Project":     17,
-	"Page Subtitle":     18,
-	"Docs URL":          19,
-	"Standard Blurb":    20,
-	"Feature 1":         21,
-	"Feature 2":         22,
-	"Feature 3":         23,
-	"howItWorks":        24,
-	"howItWorksDetails": 25,
-	"Screenshots":       26,
-	"Full Page":         27,
-	"Publish?":          28,
+	"modelDisplayName":   0,
+	"model":              1,
+	"category":           2,
+	"subCategory":        3,
+	"CRDs":               4,
+	"link":               5,
+	"hasSchema?":         6,
+	"component":          7,
+	"shape":              8,
+	"primaryColor":       9,
+	"secondaryColor":     10,
+	"styleOverrides":     11,
+	"styles":             12,
+	"shapePolygonPoints": 13,
+	"defaultData":        14,
+	"logoURL":            15,
+	"svgColor":           16,
+	"svgWhite":           17,
+	"svgComplete":        18,
+	"genealogy":          19,
+	"isAnnotation":       20,
+	"isModelAnnotation":  21,
+	"PublishToRegistry":  22,
+	"About Project":      24,
+	"Page Subtitle":      25,
+	"Docs URL":           26,
+	"Standard Blurb":     27,
+	"Feature 1":          28,
+	"Feature 2":          29,
+	"Feature 3":          30,
+	"howItWorks":         31,
+	"howItWorksDetails":  32,
+	"Screenshots":        33,
+	"Full Page":          34,
 }
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
@@ -63,7 +69,6 @@ var (
 	OutputDirectoryPath     = "../../server/meshmodel"
 	ComponentModelsFileName = path.Join(OutputDirectoryPath, "component_models.yaml")
 )
-
 
 var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
 
@@ -97,7 +102,7 @@ func main() {
 			return
 		}
 	}
-	
+
 	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -207,7 +212,7 @@ func main() {
 
 	executeInStages(StartPipeline, csvChan, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
-	
+
 	close(spreadsheetChan)
 	wg.Wait()
 }
@@ -296,8 +301,8 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 					continue
 				}
 				ahPkgs = append(ahPkgs, ap)
+				pkgsChan <- ahPkgs
 			}
-			pkgsChan <- ahPkgs
 		}
 		close(pkgsChan)
 	}()
@@ -382,7 +387,6 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 				helmURL: ap.ChartUrl,
 			}
 		}
-
 	}
 	return nil
 }
@@ -522,7 +526,8 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 	helmURL string
 }, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
-	rangeString := sheetName + "!A4:AB4"
+	rangeString := sheetName + APPENDRANGE
+	appendRange := sheetName + "!A4:AV4"
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
@@ -568,7 +573,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 				row := &sheets.ValueRange{
 					Values: values,
 				}
-				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 				values = make([][]interface{}, 0)
 				batchSize = 100
 				if err != nil || response2.HTTPStatusCode != 200 {
@@ -595,7 +600,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			row := &sheets.ValueRange{
 				Values: values,
 			}
-			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 			values = make([][]interface{}, 0)
 			batchSize = 100
 			if err != nil || response2.HTTPStatusCode != 200 {
@@ -608,7 +613,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		row := &sheets.ValueRange{
 			Values: values,
 		}
-		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 		if err != nil || response2.HTTPStatusCode != 200 {
 			fmt.Println(err)
 		}

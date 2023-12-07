@@ -18,6 +18,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -40,12 +41,13 @@ mesheryctl system logout
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			log.Error("failed to find token path for the current context")
+			utils.Log.Error(ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context")))
 			return nil
 		}
 

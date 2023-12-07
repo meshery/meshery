@@ -15,33 +15,10 @@ import (
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
 	var cids []string
 	if len(k8sClusterIDs) != 0 {
-		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8sCtxs) == 0 {
-			return nil, model.ErrMesheryClientNil
-		}
-		if len(k8sClusterIDs) == 1 && k8sClusterIDs[0] == "all" {
-			for _, k8sContext := range k8sCtxs {
-				if k8sContext.KubernetesServerID != nil {
-					clusterID := k8sContext.KubernetesServerID.String()
-					cids = append(cids, clusterID)
-				}
-			}
-		} else {
-			cids = k8sClusterIDs
-		}
-	} else { //This is a fallback
-		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8sctxs) == 0 {
-			r.Log.Error(ErrEmptyCurrentK8sContext)
-			return nil, ErrEmptyCurrentK8sContext
-		}
-		for _, context := range k8sctxs {
-			if context.KubernetesServerID == nil {
-				r.Log.Error(ErrEmptyCurrentK8sContext)
-				return nil, ErrEmptyCurrentK8sContext
-			}
-			cids = append(cids, context.KubernetesServerID.String())
-		}
+		cids = k8sClusterIDs
+	} else {
+		r.Log.Error(ErrEmptyCurrentK8sContext)
+		return nil, ErrEmptyCurrentK8sContext
 	}
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
 	namespaces, err := model.SelectivelyFetchNamespaces(cids, provider)
@@ -117,6 +94,7 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
 	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
 	respChan := make(chan *model.ClusterResources)
 
 	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
@@ -145,32 +123,22 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	var cids []string
 	query := `
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND o.cluster_id IN (?) GROUP BY kind
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE kr.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
 				UNION 
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE rom.namespace IN (?) AND o.cluster_id IN (?) GROUP BY kind 
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE rom.namespace IN (?) AND kr.cluster_id IN (?) GROUP BY kind 
 				UNION			
-		SELECT count(kind) as count, kind FROM objects o 
-			WHERE o.kind = 'Namespace' AND o.cluster_id IN (?) GROUP BY kind`
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr 
+			WHERE kr.kind = 'Namespace' AND kr.cluster_id IN (?) GROUP BY kind`
 
 	var rows *sql.Rows
 	var err error
-	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sCtxs) == 0 {
-		return nil, model.ErrMesheryClientNil
+	if len(k8scontextIDs) == 0 {
+		return nil, ErrEmptyCurrentK8sContext
 	}
 
-	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
-		for _, k8sContext := range k8sCtxs {
-			if k8sContext.KubernetesServerID != nil {
-				clusterID := k8sContext.KubernetesServerID.String()
-				cids = append(cids, clusterID)
-			}
-		}
-	} else {
-		cids = k8scontextIDs
-	}
+	cids = k8scontextIDs
 
 	rows, err = provider.GetGenericPersister().Raw(query, cids, namespace, cids, cids).Rows()
 
@@ -226,7 +194,8 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	// If the data from this subscriotion will be only used to manage then retrieve connected conns only. Right now in the settings page we need all avaliable contexts hence retireving conns of all statuses.
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, "", false)
 	if err != nil {
 		return nil, err
 	}

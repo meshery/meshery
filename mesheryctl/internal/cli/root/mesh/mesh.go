@@ -16,7 +16,6 @@ package mesh
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -58,7 +57,8 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				log.Fatalln(err)
+				utils.Log.Error(err)
+				return nil
 			}
 
 			if len(args) > 0 {
@@ -80,12 +80,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				log.Fatalln(err)
+				utils.Log.Error(err)
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				log.Fatalln(err)
+				utils.Log.Error(err)
 			}
 			return nil
 		},
@@ -129,7 +129,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 		// return an error if the provided mesh name is invalid
 		// this prevents it from dropping into interactive mode
 		// in case the command is being ran by automation
-		return "", fmt.Errorf("%s is not a valid mesh name or is unsupported", meshName)
+		return "", ErrValidMeshName(meshName)
 	}
 
 	// get details about the current meshery session
@@ -222,7 +222,7 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return "", utils.ErrReadResponseBody(err)
 	}
 	return string(body), nil
 }

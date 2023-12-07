@@ -12,30 +12,19 @@ import (
 )
 
 func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*ControlPlane, error) {
-	object := []meshsyncmodel.Object{}
+	object := []meshsyncmodel.KubernetesResource{}
 	controlplanelist := make([]*ControlPlane, 0)
 	cidMap := make(map[string]bool)
-	if len(cid) == 1 && cid[0] == "all" {
-		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8sctxs) == 0 {
-			return nil, ErrMesheryClientNil
-		}
-		for _, k8ctx := range k8sctxs {
-			if k8ctx.KubernetesServerID != nil {
-				cidMap[k8ctx.KubernetesServerID.String()] = true
-			}
-		}
-	} else {
-		for _, c := range cid {
-			cidMap[c] = true
-		}
+
+	for _, c := range cid {
+		cidMap[c] = true
 	}
 
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
-			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+		result := provider.GetGenericPersister().Model(&meshsyncmodel.KubernetesResource{}).
+			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
 			Preload("Status").
 			Find(&object, "kind = ?", "Pod")
@@ -70,10 +59,10 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 				}
 
 				members = append(members, &ControlPlaneMember{
-					Name:      obj.ObjectMeta.Name,
-					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
+					Name:      obj.KubernetesResourceMeta.Name,
+					Component: strings.Split(obj.KubernetesResourceMeta.GenerateName, "-")[0],
 					Version:   strings.Split(version, "@")[0],
-					Namespace: obj.ObjectMeta.Namespace,
+					Namespace: obj.KubernetesResourceMeta.Namespace,
 				})
 			}
 		}

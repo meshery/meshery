@@ -38,7 +38,7 @@ services:
 `
 	p, err := core.NewPatternFile([]byte(samplePattern))
 	if err != nil {
-		t.Fatal("failed to generate pattern file: ", err)
+		t.Fatal("failed to generate design file: ", err)
 	}
 
 	tests := []struct {

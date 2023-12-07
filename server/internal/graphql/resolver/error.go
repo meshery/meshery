@@ -37,6 +37,7 @@ const (
 	ErrAdapterInsufficientInformationCode   = "1377"
 	ErrPerformanceProfilesSubscriptionCode  = "1378"
 	ErrPerformanceResultSubscriptionCode    = "1379"
+	ErrGormDatabaseCode                     = "1380"
 )
 
 var (
@@ -67,6 +68,10 @@ func ErrPerformanceResultSubscription(err error) error {
 	return errors.New(ErrPerformanceResultSubscriptionCode, errors.Alert, []string{"PerformanceResult Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceResult stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
+func ErrGormDatabase(err error) error {
+	return errors.New(ErrGormDatabaseCode, errors.Alert, []string{"Database operation failed", err.Error()}, []string{"Database operation failed. Please ensure that the database isn't corrupted"}, []string{"Could be a db issue"}, []string{"Confirm that database connection is working as expected."})
+}
+
 func ErrControlPlaneSubscription(err error) error {
 	return errors.New(ErrResolverControlPlaneSubscriptionCode, errors.Alert, []string{"Control Plane Subscription failed", err.Error()}, []string{"GraphQL subscription for Control Plane stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
@@ -84,7 +89,7 @@ func ErrGettingNamespace(err error) error {
 }
 
 func ErrFetchingPatterns(err error) error {
-	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
+	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch designs"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
 }
 
 func ErrInvalidOAMType() error {
@@ -108,7 +113,7 @@ func ErrKubectlDescribe(err error) error {
 }
 
 func ErrPatternsSubscription(err error) error {
-	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Patterns stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for designs stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrApplicationsSubscription(err error) error {

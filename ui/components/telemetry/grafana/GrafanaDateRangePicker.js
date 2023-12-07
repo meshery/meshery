@@ -1,7 +1,19 @@
 import React from 'react';
 import { Component } from 'react';
 import {
-  NoSsr, Button, TextField, MenuItem, Grid, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, Switch, IconButton,
+  NoSsr,
+  Button,
+  TextField,
+  MenuItem,
+  Grid,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  FormControlLabel,
+  Switch,
+  IconButton,
 } from '@material-ui/core';
 import Moment from 'react-moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -11,65 +23,53 @@ import MesheryDateTimePicker from '../../MesheryDateTimePicker';
 import { Close } from '@material-ui/icons';
 
 const styles = (theme) => ({
-  rangeDialog : {
+  rangeDialog: {
     // width: window.innerWidth * 0.7,
   },
-  rangeDialogRow : {
-    display : 'flex',
-    gap : '4rem',
-    '&>*' : { flex : '1', },
+  rangeDialogRow: {
+    display: 'flex',
+    gap: '4rem',
+    '&>*': { flex: '1' },
   },
-  dateTimePicker : {
-    marginTop : theme.spacing(2),
-    marginBottom : theme.spacing(1),
+  dateTimePicker: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
-  innerGrid : {
-    borderTop : `1px solid ${theme.palette.divider}`,
-    paddingTop : theme.spacing(2),
-    marginTop : theme.spacing(2),
+  innerGrid: {
+    borderTop: `1px solid ${theme.palette.divider}`,
+    paddingTop: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
-  timeList : {
-    display : 'flex',
-    flexDirection : 'column',
-    alignItems : 'flex-start',
-    '& *' : { textAlign : 'left', },
+  timeList: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    '& *': { textAlign: 'left' },
   },
-  dialogTitleBar : {
-    display : "flex",
-    justifyContent : "space-between",
-    backgroundColor : "rgb(57, 102, 121)",
-    color : "white"
+  dialogTitleBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgb(57, 102, 121)',
+    color: 'white',
   },
-  close : {
-    transform : "rotate(-90deg)",
-    '&:hover' : {
-      transform : "rotate(90deg)",
-      transition : "all .3s ease-in",
-    }
+  close: {
+    transform: 'rotate(-90deg)',
+    '&:hover': {
+      transform: 'rotate(90deg)',
+      transition: 'all .3s ease-in',
+    },
   },
-  closeButton : {
-    height : "2.3rem",
-    marginTop : "0.8rem",
-    marginRight : "10px",
-    color : "white"
+  closeButton: {
+    height: '2.3rem',
+    marginTop: '0.8rem',
+    marginRight: '10px',
+    color: 'white',
   },
-  space : { margin : theme.spacing(1), },
-  rangeButton : { border : '1px solid rgba(0, 0, 0, 0.23)' },
+  space: { margin: theme.spacing(1) },
+  rangeButton: { border: '1px solid rgba(0, 0, 0, 0.23)' },
 });
 
-const refreshIntervals = [
-  'off',
-  '5s',
-  '10s',
-  '30s',
-  '1m',
-  '5m',
-  '15m',
-  '30m',
-  '1h',
-  '2h',
-  '1d',
-];
+const refreshIntervals = ['off', '5s', '10s', '30s', '1m', '5m', '15m', '30m', '1h', '2h', '1d'];
 
 const quickRanges = [
   [
@@ -81,14 +81,16 @@ const quickRanges = [
     'Last 1 year',
     'Last 2 years',
     'Last 5 years',
-  ], [
+  ],
+  [
     'Yesterday',
     'Day before yesterday',
     'This day last week',
     'Previous week',
     'Previous month',
     'Previous year',
-  ], [
+  ],
+  [
     'Today',
     'Today so far',
     'This week',
@@ -97,7 +99,8 @@ const quickRanges = [
     'This month so far',
     'This year',
     'This year so far',
-  ], [
+  ],
+  [
     'Last 5 minutes',
     'Last 15 minutes',
     'Last 30 minutes',
@@ -113,7 +116,6 @@ class GrafanaDateRangePicker extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
       // startDate: props.startDate,
       // endDate: props.endDate,
@@ -121,17 +123,20 @@ class GrafanaDateRangePicker extends Component {
       // endGDate: props.to,
       // liveTail: true,
       // refreshInterval: props.refresh,
-      open : false,
+      open: false,
     };
   }
 
   handleClick = () => {
-    this.setState({ open : true, });
-  }
+    this.setState({ open: true });
+  };
 
   setRange = (range) => () => {
-    let startDate; let endDate; let liveTail; let startGDate; let
-        endGDate;
+    let startDate;
+    let endDate;
+    let liveTail;
+    let startGDate;
+    let endGDate;
     switch (range) {
       case 'Last 2 days':
         startDate = new Date();
@@ -251,7 +256,7 @@ class GrafanaDateRangePicker extends Component {
         break;
       case 'Previous week':
         startDate = new Date();
-        startDate.setDate(startDate.getDate() - 6 - (startDate.getDay() + 8) % 7);
+        startDate.setDate(startDate.getDate() - 6 - ((startDate.getDay() + 8) % 7));
         startDate.setHours(0);
         startDate.setMinutes(0);
         startDate.setSeconds(0);
@@ -335,7 +340,7 @@ class GrafanaDateRangePicker extends Component {
         break;
       case 'This week':
         startDate = new Date();
-        startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
+        startDate.setDate(startDate.getDate() - ((startDate.getDay() + 7) % 7));
         startDate.setHours(0);
         startDate.setMinutes(0);
         startDate.setSeconds(0);
@@ -352,7 +357,7 @@ class GrafanaDateRangePicker extends Component {
         break;
       case 'This week so far':
         startDate = new Date();
-        startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
+        startDate.setDate(startDate.getDate() - ((startDate.getDay() + 7) % 7));
         startDate.setHours(0);
         startDate.setMinutes(0);
         startDate.setSeconds(0);
@@ -491,8 +496,15 @@ class GrafanaDateRangePicker extends Component {
         break;
     }
     // this.setState({startDate, startendDate, liveTail})
-    this.props.updateDateRange(startGDate, startDate, endGDate, endDate, liveTail, this.props.refresh);
-  }
+    this.props.updateDateRange(
+      startGDate,
+      startDate,
+      endGDate,
+      endDate,
+      liveTail,
+      this.props.refresh,
+    );
+  };
 
   // handleToggle = () => {
   //     this.setState(state => ({ open: !state.open }));
@@ -502,7 +514,7 @@ class GrafanaDateRangePicker extends Component {
     // if (this.anchorEl.contains(event.target)) {
     //     return;
     // }
-    this.setState({ open : false });
+    this.setState({ open: false });
     // this.setState({
     //     anchorEl: null,
     //   });
@@ -515,42 +527,91 @@ class GrafanaDateRangePicker extends Component {
       if (name === 'startDate') {
         if (dt > endDate) {
           // this.setState({ [name]: dt, endDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-          this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+          this.props.updateDateRange(
+            dt.getTime().toString(),
+            dt,
+            dt.getTime().toString(),
+            dt,
+            this.props.liveTail,
+            this.props.refresh,
+          );
           return;
         }
         // this.setState({ [name]: dt,  startGDate: dt.getTime().toString()});
-        this.props.updateDateRange(dt.getTime().toString(), dt, this.props.to, this.props.endDate, this.props.liveTail, this.props.refresh);
+        this.props.updateDateRange(
+          dt.getTime().toString(),
+          dt,
+          this.props.to,
+          this.props.endDate,
+          this.props.liveTail,
+          this.props.refresh,
+        );
       } else if (name === 'endDate') {
         if (dt < startDate) {
           // this.setState({ [name]: dt, startDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-          this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+          this.props.updateDateRange(
+            dt.getTime().toString(),
+            dt,
+            dt.getTime().toString(),
+            dt,
+            this.props.liveTail,
+            this.props.refresh,
+          );
           return;
         }
         // this.setState({ [name]: dt, endGDate: dt.getTime().toString() });
         // this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-        this.props.updateDateRange(this.props.from, this.props.startDate, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+        this.props.updateDateRange(
+          this.props.from,
+          this.props.startDate,
+          dt.getTime().toString(),
+          dt,
+          this.props.liveTail,
+          this.props.refresh,
+        );
       }
-      return;
-    } if (name === 'liveTail') {
-      // this.setState({liveTail: event.target.checked});
-      if (event.target.checked) {
-        this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);
-        return;
-      }
-      this.props.updateDateRange(this.props.startDate.getTime().toString(), this.props.startDate, this.props.endDate.getTime().toString(), this.props.endDate, event.target.checked, this.props.refresh);
-      return;
-    } if (name === 'refresh') {
-      this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);
       return;
     }
-    this.setState({ [name] : event.target.value });
+    if (name === 'liveTail') {
+      // this.setState({liveTail: event.target.checked});
+      if (event.target.checked) {
+        this.props.updateDateRange(
+          this.props.from,
+          this.props.startDate,
+          'now',
+          this.props.endDate,
+          event.target.checked,
+          this.props.refresh,
+        );
+        return;
+      }
+      this.props.updateDateRange(
+        this.props.startDate.getTime().toString(),
+        this.props.startDate,
+        this.props.endDate.getTime().toString(),
+        this.props.endDate,
+        event.target.checked,
+        this.props.refresh,
+      );
+      return;
+    }
+    if (name === 'refresh') {
+      this.props.updateDateRange(
+        this.props.from,
+        this.props.startDate,
+        this.props.to,
+        this.props.endDate,
+        this.props.liveTail,
+        event.target.value,
+      );
+      return;
+    }
+    this.setState({ [name]: event.target.value });
   };
 
   render() {
     const { open } = this.state;
-    const {
-      startDate, endDate, liveTail, refresh, classes,
-    } = this.props;
+    const { startDate, endDate, liveTail, refresh, classes } = this.props;
     return (
       <NoSsr>
         <React.Fragment>
@@ -562,18 +623,13 @@ class GrafanaDateRangePicker extends Component {
             // aria-owns={open ? 'daterange-popper' : undefined}
             // aria-haspopup="true"
             onClick={this.handleClick}
-            classes={{ root : classes.rangeButton }}
+            classes={{ root: classes.rangeButton }}
           >
-            <AccessTimeIcon style={{ marginRight : "0.25rem", fontSize : "1.15rem" }} />
+            <AccessTimeIcon style={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
             <Moment format="LLLL">{startDate}</Moment>
             <span className={classes.space}>-</span>
-            {liveTail
-              ? 'now'
-              : (<Moment format="LLLL">{endDate}</Moment>)}
-            <span className={classes.space}>
-              ,
-              {refresh}
-            </span>
+            {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
+            <span className={classes.space}>,{refresh}</span>
           </Button>
           {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
@@ -605,7 +661,7 @@ class GrafanaDateRangePicker extends Component {
             // fullWidth
             maxWidth="md"
           >
-            <div className={classes.dialogTitleBar} >
+            <div className={classes.dialogTitleBar}>
               <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
               <IconButton
                 aria-label="close"
@@ -618,21 +674,32 @@ class GrafanaDateRangePicker extends Component {
             <DialogContent>
               <DialogContentText className={classes.rangeDialog}>
                 <Grid container>
-                  <Grid item xs={12} >
+                  <Grid item xs={12}>
                     Custom Range
                     <div className={classes.rangeDialogRow}>
-                      <MesheryDateTimePicker selectedDate={startDate} onChange={this.handleChange('startDate')} label="Start" className={classes.dateTimePicker} />
-                      <MesheryDateTimePicker disabled={liveTail} selectedDate={endDate} onChange={this.handleChange('endDate')} label="End" className={classes.dateTimePicker} />
+                      <MesheryDateTimePicker
+                        selectedDate={startDate}
+                        onChange={this.handleChange('startDate')}
+                        label="Start"
+                        className={classes.dateTimePicker}
+                      />
+                      <MesheryDateTimePicker
+                        disabled={liveTail}
+                        selectedDate={endDate}
+                        onChange={this.handleChange('endDate')}
+                        label="End"
+                        className={classes.dateTimePicker}
+                      />
                     </div>
                     <div className={classes.rangeDialogRow}>
                       <FormControlLabel
-                        control={(
+                        control={
                           <Switch
                             checked={liveTail}
                             color="primary"
                             onChange={this.handleChange('liveTail')}
                           />
-                        )}
+                        }
                         label="Live tail"
                       />
                       <TextField
@@ -645,10 +712,12 @@ class GrafanaDateRangePicker extends Component {
                         margin="normal"
                         variant="outlined"
                         onChange={this.handleChange('refresh')}
-                      // disabled={liveTail}
+                        // disabled={liveTail}
                       >
                         {refreshIntervals.map((ri) => (
-                          <MenuItem key={`ri_-_-_${ri}`} value={ri}>{ri}</MenuItem>
+                          <MenuItem key={`ri_-_-_${ri}`} value={ri}>
+                            {ri}
+                          </MenuItem>
                         ))}
                       </TextField>
                     </div>
@@ -659,7 +728,9 @@ class GrafanaDateRangePicker extends Component {
                       {quickRanges.map((qr) => (
                         <Grid item key={qr.uniqueID} xs={12} sm={3} className={classes.timeList}>
                           {qr.map((q) => (
-                            <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>{q}</Button>
+                            <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>
+                              {q}
+                            </Button>
                           ))}
                         </Grid>
                       ))}
@@ -669,7 +740,6 @@ class GrafanaDateRangePicker extends Component {
               </DialogContentText>
             </DialogContent>
             <Divider light variant="fullWidth" />
-
           </Dialog>
           {/* </Paper> */}
           {/* </Popover> */}
@@ -683,13 +753,13 @@ class GrafanaDateRangePicker extends Component {
 }
 
 GrafanaDateRangePicker.propTypes = {
-  updateDateRange : PropTypes.func.isRequired,
-  from : PropTypes.string.isRequired,
-  startDate : PropTypes.object.isRequired,
-  to : PropTypes.string.isRequired,
-  endDate : PropTypes.object.isRequired,
+  updateDateRange: PropTypes.func.isRequired,
+  from: PropTypes.string.isRequired,
+  startDate: PropTypes.object.isRequired,
+  to: PropTypes.string.isRequired,
+  endDate: PropTypes.object.isRequired,
   // liveTail: PropTypes.bool.isRequired,
-  refresh : PropTypes.string.isRequired,
+  refresh: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(GrafanaDateRangePicker);

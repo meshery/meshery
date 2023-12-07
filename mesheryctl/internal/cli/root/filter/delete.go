@@ -38,7 +38,7 @@ mesheryctl filter delete [filter-name | ID]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(args) == 0 {
@@ -52,15 +52,15 @@ mesheryctl filter delete [filter-name | ID]
 
 		filterID, isValidID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 		if err != nil {
-			utils.Log.Error(err)
-			return err
+			utils.Log.Error(ErrFilterNameOrID(err))
+			return nil
 		}
 
 		if !isValidID {
 			filterName, filterID, isValidName, err = utils.ValidName(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
-				utils.Log.Error(err)
-				return err
+				utils.Log.Error(ErrFilterNameOrID(err))
+				return nil
 			}
 		}
 

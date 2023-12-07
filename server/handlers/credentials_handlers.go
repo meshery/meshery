@@ -13,6 +13,7 @@ import (
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error reading request body: %v", err))
 		http.Error(w, "unable to read result data", http.StatusInternalServerError)
@@ -32,14 +33,14 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	err = provider.SaveUserCredential(req, &credential)
+	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
 		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("credential saved successfully")
+	h.log.Info("credential saved successfully", createdCredential.Name, createdCredential.ID)
 	w.WriteHeader(http.StatusCreated)
 }
 

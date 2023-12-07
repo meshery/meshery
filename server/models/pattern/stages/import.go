@@ -296,6 +296,6 @@ func init() {
 	var err error
 	ImportRegex, err = regexp.Compile(ImportPattern)
 	if err != nil {
-		log.Fatal("failed to compile filler pattern regex")
+		log.Fatal("failed to compile filler design regex")
 	}
 }

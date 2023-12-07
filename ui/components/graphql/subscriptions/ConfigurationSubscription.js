@@ -1,27 +1,15 @@
-import { graphql, requestSubscription } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 const configurationSubscription = graphql`
-  subscription ConfigurationSubscription($applicationSelector: PageFilter!, $patternSelector: PageFilter!, $filterSelector: PageFilter!) {
-    configuration: subscribeConfiguration(applicationSelector: $applicationSelector, patternSelector: $patternSelector, filterSelector: $filterSelector) {
-      applications {
-        page
-        page_size
-        total_count
-        applications {
-          id
-          name
-          application_file
-          type {
-            String
-            Valid
-          }
-          user_id
-          visibility
-          created_at
-          updated_at
-        }
-      }
+  subscription ConfigurationSubscription(
+    $patternSelector: PageFilter!
+    $filterSelector: PageFilter!
+  ) {
+    configuration: subscribeConfiguration(
+      patternSelector: $patternSelector
+      filterSelector: $filterSelector
+    ) {
       patterns {
         page
         page_size
@@ -37,6 +25,11 @@ const configurationSubscription = graphql`
           errmsg
           created_at
           updated_at
+          type {
+            String
+            Valid
+          }
+          SourceContent
         }
       }
       filters {
@@ -62,9 +55,9 @@ const configurationSubscription = graphql`
 export default function ConfigurationSubscription(onNext, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
-    subscription : configurationSubscription,
-    variables : variables,
-    onNext : onNext,
-    onError : error => console.log("ERROR OCCURED IN CONFIGURATION SUBCRIPTION", error)
+    subscription: configurationSubscription,
+    variables: variables,
+    onNext: onNext,
+    onError: (error) => console.log('ERROR OCCURED IN CONFIGURATION SUBCRIPTION', error),
   });
 }

@@ -6,6 +6,7 @@ permalink: project/contributing/contributing-cli-guide
 type: project
 language: en
 category: contributing
+list: include
 ---
 
 These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.

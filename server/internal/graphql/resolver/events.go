@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/gofrs/uuid"
@@ -11,7 +10,7 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 )
 
-func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider, user models.User) (<- chan *model.Event, error){
+func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider, user models.User) (<-chan *model.Event, error) {
 	userID, _ := uuid.FromString(user.ID)
 	ch, unsubscribe := r.Config.EventBroadcaster.Subscribe(userID)
 
@@ -20,31 +19,31 @@ func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider
 		r.Log.Info("Events Subscription started for %s", user.ID)
 		for {
 			select {
-			case ech := <- ch:
+			case ech := <-ch:
 				event := ech.(*events.Event)
-				m := make(map[string]interface{})
-				_ = json.Unmarshal(event.Metadata, &m)
 				_event := &model.Event{
-					ID: event.ID.String(),
-					UserID: event.UserID.String(),
-					ActedUpon: event.ActedUpon.String(),
+					ID:          event.ID.String(),
+					UserID:      event.UserID.String(),
+					ActedUpon:   event.ActedUpon.String(),
 					OperationID: event.OperationID.String(),
+					Severity:    model.Severity(event.Severity),
 					Description: event.Description,
-					Category: event.Category,
-					Action: event.Action,
-					CreatedAt: event.CreatedAt, // change graphql type for date to scalar data
-					DeletedAt: event.DeletedAt,
-					UpdatedAt: event.UpdatedAt,
-					Metadata: m,
-
+					Category:    event.Category,
+					Action:      event.Action,
+					CreatedAt:   event.CreatedAt,
+					DeletedAt:   event.DeletedAt,
+					UpdatedAt:   event.UpdatedAt,
+					Metadata:    event.Metadata,
+					Status:      string(event.Status),
+					SystemID:    event.SystemID.String(),
 				}
-				
+
 				r.Log.Info(fmt.Sprintf("event received for id %s %v: ", userID, ch))
 				eventsChan <- _event
 			case <-ctx.Done():
 				unsubscribe()
 				close(eventsChan)
-				
+
 				r.Log.Info("Events Subscription stopped for %s", userID)
 				return
 			}

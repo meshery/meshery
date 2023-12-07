@@ -38,7 +38,7 @@ jobs:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
       - name: Run utility
-        run: cd meshery/scripts/component_updater; go build main.go; ./main "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv" --system docs layer5/src/collections/integrations meshery.io/integrations --published-only
+        run: cd meshery/scripts/component_updater; go build main.go; ./main "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv" --system docs layer5/src/collections/integrations meshery.io/integrations docs/ --published-only
       - name: Commit changes to Layer5.io repo
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

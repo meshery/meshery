@@ -1,12 +1,11 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
-import { Pagination } from "@material-ui/lab";
-import React, { useState } from "react";
-import PerformanceCard from "./PerformanceCard";
-import { makeStyles } from "@material-ui/core/styles";
+import { Grid } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
+import React, { useState } from 'react';
+import PerformanceCard from './PerformanceCard';
+import { makeStyles } from '@material-ui/core/styles';
 
-
-const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
+const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
@@ -17,21 +16,21 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
         profile={profile}
         handleEdit={() => setProfileForModal(profile)}
         handleDelete={() => deleteHandler(profile.id)}
-        handleRunTest={() => setProfileForModal({ ...profile, runTest : true })}
-        requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
+        handleRunTest={() => setProfileForModal({ ...profile, runTest: true })}
+        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
       />
     </Grid>
   );
 }
 const useStyles = makeStyles(() => ({
-  pagination : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    marginTop : "2rem"
-  }
-}))
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '2rem',
+  },
+}));
 /**
  * PerformanceProfileGrid is the react component for rendering grid
  * @param {{
@@ -52,14 +51,17 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-
 function PerformanceProfileGrid({
-  profiles = [], deleteHandler, setProfileForModal, pages = 1, setPage
+  profiles = [],
+  deleteHandler,
+  setProfileForModal,
+  pages = 1,
+  setPage,
 }) {
-  const classes = useStyles()
+  const classes = useStyles();
   return (
     <div>
-      <Grid container spacing={2} style={{ padding : "1rem" }}>
+      <Grid container spacing={2} style={{ padding: '1rem' }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
             key={profile.id}
@@ -69,13 +71,11 @@ function PerformanceProfileGrid({
           />
         ))}
       </Grid>
-      {profiles.length
-        ? (
-          <div className={classes.pagination} >
-            <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
-          </div>
-        )
-        : null}
+      {profiles.length ? (
+        <div className={classes.pagination}>
+          <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
+        </div>
+      ) : null}
     </div>
   );
 }

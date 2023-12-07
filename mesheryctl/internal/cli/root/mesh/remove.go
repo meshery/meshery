@@ -41,30 +41,29 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return errors.Wrap(err, "error processing config")
+				utils.Log.Error(err)
+				return nil
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				return errors.Wrap(err, "adapter not valid")
+				utils.Log.Error(err)
+				return nil
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-
-			if len(args) > 1 {
-				return errors.New(utils.MeshError("'mesheryctl mesh remove' should not have more than one argument, it can remove only one adapter at a time.\n"))
-			}
-
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s service mesh removed successfully", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return errors.Wrap(err, "error processing config")
+				utils.Log.Error(err)
+				return nil
 			}
 
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true, "null")
 			if err != nil {
-				return errors.Wrap(err, "error removing service mesh")
+				utils.Log.Error(ErrSendOperation(errors.Wrap(err, "error removing service mesh")))
+				return nil
 			}
 			s.Stop()
 

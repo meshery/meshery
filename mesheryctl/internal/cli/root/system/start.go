@@ -91,15 +91,18 @@ mesheryctl system start -p docker
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		return nil
 	},
@@ -201,40 +204,46 @@ func start() error {
 		}
 
 		//changing the port mapping in docker compose
-		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
 		userPort := strings.Split(currCtx.GetEndpoint(), ":")
 		//extracting container port from the docker-compose
-		containerPort := strings.Split(services["meshery"].Ports[0], ":")
+		containerPort := strings.Split(utils.Services["meshery"].Ports[0], ":")
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
-		services["meshery"].Ports[0] = userPortMapping
+		utils.Services["meshery"].Ports[0] = userPortMapping
 
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
-			if services[v].Image == "" {
+			if utils.Services[v].Image == "" {
 				log.Fatalf("Invalid component specified %s", v)
 			}
 
-			temp, ok := services[v]
+			temp, ok := utils.Services[v]
 			if !ok {
-				return errors.New("unable to extract component version")
+				return errors.New(fmt.Sprintf("No Docker Compose service exists for Meshery component `%s`.", v))
 			}
 
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
-			services[v] = temp
-			AllowedServices[v] = services[v]
+			utils.Services[v] = temp
+			AllowedServices[v] = utils.Services[v]
+			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), utils.Services[v])
+			err = utils.ViperCompose.WriteConfig()
+			if err != nil {
+				// failure while adding a service to docker compose file is not a fatal error
+				// mesheryctl will continue deploying with required services (meshery, watchtower)
+				log.Infof("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", v)
+			}
 		}
 
 		for _, v := range RequiredService {
 			if v == "watchtower" {
-				AllowedServices[v] = services[v]
+				AllowedServices[v] = utils.Services[v]
 				continue
 			}
 
-			temp, ok := services[v]
+			temp, ok := utils.Services[v]
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
@@ -252,14 +261,8 @@ func start() error {
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
-			services[v] = temp
-			AllowedServices[v] = services[v]
-		}
-
-		utils.ViperCompose.Set("services", AllowedServices)
-		err = utils.ViperCompose.WriteConfig()
-		if err != nil {
-			return err
+			utils.Services[v] = temp
+			AllowedServices[v] = utils.Services[v]
 		}
 
 		//////// FLAGS
@@ -303,6 +306,21 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 
+		// group, err := user.LookupGroup("docker")
+		// if err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to get GID of docker group"))
+		// }
+
+		// // Create the group_add option and add GID of docker group to meshery container
+		// groupAdd := viper.GetStringSlice("services.meshery.group_add")
+		// groupAdd = append(groupAdd, group.Gid)
+		// utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
+
+		// // Write the modified configuration back to the Docker Compose file
+		// if err := utils.ViperCompose.WriteConfig(); err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
+		// }
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -321,9 +339,10 @@ func start() error {
 		}
 
 		//connection to docker-client
-		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
+		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
-			return ErrCreatingDockerClient(err)
+			utils.Log.Error(ErrCreatingDockerClient(err))
+			return err
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -385,6 +404,7 @@ func start() error {
 		spinner.Start()
 
 		if err := utils.CreateManifestsFolder(); err != nil {
+			utils.Log.Error(ErrCreateManifestsFolder(err))
 			return err
 		}
 

@@ -83,7 +83,7 @@ func persistData(msg broker.Message,
 	objectJSON, _ := utils.Marshal(msg.Object)
 	switch msg.ObjectType {
 	case broker.MeshSync:
-		object := meshsyncmodel.Object{}
+		object := meshsyncmodel.KubernetesResource{}
 		err := utils.Unmarshal(string(objectJSON), &object)
 		if err != nil {
 			log.Error(err)
@@ -91,8 +91,8 @@ func persistData(msg broker.Message,
 		}
 
 		// persist the object
-		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
+		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
+		if object.KubernetesResourceMeta.Name == "meshery-operator" || object.KubernetesResourceMeta.Name == "meshery-broker" || object.KubernetesResourceMeta.Name == "meshery-meshsync" {
 			broadcaster.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
 				Data:   false,
@@ -126,9 +126,9 @@ func PersistClusterNames(
 	for _, clusterConfig := range k8sContexts {
 		clusterName := clusterConfig.Cluster["name"].(string)
 		clusterID := clusterConfig.KubernetesServerID.String()
-		object := meshsyncmodel.Object{
+		object := meshsyncmodel.KubernetesResource{
 			Kind: "Cluster",
-			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+			KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
 				Name:      clusterName,
 				ClusterID: clusterID,
 			},
@@ -136,7 +136,7 @@ func PersistClusterNames(
 		}
 
 		// persist the object
-		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
 		err := recordMeshSyncData(broker.Add, handler, &object)
 		if err != nil {
 			log.Error(err)
@@ -345,6 +345,47 @@ func GetInternalControllerStatus(status controllers.MesheryControllerStatus) Mes
 
 	case controllers.Unknown:
 		return MesheryControllerStatusUnkown
+
+	case controllers.Undeployed:
+		return MesheryControllerStatusUndeployed
+
+	case controllers.Enabled:
+		return MesheryControllerStatusEnabled
+
+	case controllers.Running:
+		return MesheryControllerStatusRunning
+
+	case controllers.Connected:
+		return MesheryControllerStatusConnected
+	}
+	return ""
+}
+
+func CheckIfBrokerEventExistsInArray(event broker.EventType, events []broker.EventType) bool {
+	for _, e := range events {
+		if e == event {
+			return true
+		}
+	}
+	return false
+}
+
+func GetMesheryBrokerEventTypesFromArray(events []MeshSyncEventType) []broker.EventType {
+	var brokerEvents []broker.EventType
+	for _, event := range events {
+		brokerEvents = append(brokerEvents, GetMesheryBrokerEventTypes(event))
+	}
+	return brokerEvents
+}
+
+func GetMesheryBrokerEventTypes(event MeshSyncEventType) broker.EventType {
+	switch event {
+	case MeshSyncEventTypeAdded:
+		return broker.Add
+	case MeshSyncEventTypeDeleted:
+		return broker.Delete
+	case MeshSyncEventTypeModified:
+		return broker.Update
 	}
 	return ""
 }
@@ -354,7 +395,7 @@ func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]stri
 	namespaces := make([]string, 0)
 	var rows *sql.Rows
 	var err error
-	rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id IN ?", cids).Rows()
+	rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom ON kr.id = rom.id WHERE kr.kind = 'Namespace' AND kr.cluster_id IN ?", cids).Rows()
 
 	if err != nil {
 		return nil, err

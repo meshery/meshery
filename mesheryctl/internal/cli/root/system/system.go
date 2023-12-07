@@ -46,7 +46,8 @@ var SystemCmd = &cobra.Command{
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		mctlCfg.GetBaseMesheryURL()
 		return nil
@@ -71,6 +72,7 @@ func init() {
 		logoutCmd,
 		tokenCmd,
 		dashboardCmd,
+		// ModelCmd,
 	}
 	// --context flag to temporarily change context. This is global to all system commands
 	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")

@@ -98,6 +98,12 @@ const (
 	ErrPersistEventCode                   = "1533"
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
+	ErrUpdateConnectionStatusCode         = "1540"
+	ErrResultNotFoundCode                 = "1546"
+	ErrPersistCredentialCode              = "1547"
+	ErrPersistConnectionCode              = "1548"
+	ErrPrometheusScanCode                 = "1549"
+	ErrGrafanaScanCode                    = "1550"
 )
 
 var (
@@ -353,11 +359,11 @@ func ErrShareDesign(err error) error {
 }
 
 func ErrShareFilter(err error) error {
-	return errors.New(ErrShareFilterCode, errors.Alert, []string{"cannot make filter public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the filter you are sharing", "Try again later", "Try using an alternate email address"})
+	return errors.New(ErrShareFilterCode, errors.Alert, []string{"Cannot make filter public"}, []string{err.Error()}, []string{"Email address provided might not be valid", "Verify that you have sufficient permission to share the filter. You should be the owner of the filter"}, []string{"Verify the spelling of the email address. Try using an alternate email address.", "Ensure that you are the owner of the filter you are sharing or have sharing permission assigned.", ""})
 }
 
 func ErrUnreachableRemoteProvider(err error) error {
-	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
 }
 
 func ErrPersistEvent(err error) error {
@@ -365,9 +371,33 @@ func ErrPersistEvent(err error) error {
 }
 
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not exposed.", "Credentials are malformed / invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The Kubernetes API server is not reachable.", "Credentials are invalid."}, []string{"Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.", "Ensure client credential is not expired and is properly formed.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
 	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrUpdateConnectionStatus(err error, statusCode int) error {
+	return errors.New(ErrUpdateConnectionStatusCode, errors.Alert, []string{"Unable to update connection status"}, []string{err.Error()}, []string{"Connection was already deleted", "User might not have necessary privileges"}, []string{"Try refresing, you might be seeing stale data on the dashboard", "Check if the user has necessary privileges"})
+}
+
+func ErrResultNotFound(err error) error {
+	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+}
+
+func ErrPersistCredential(err error) error {
+	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{"unable to persist credential details"}, []string{err.Error()}, []string{"The credential object is not valid"}, []string{"Ensure all the required fields are provided"})
+}
+
+func ErrPersistConnection(err error) error {
+	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{"unable to persist connection details"}, []string{err.Error()}, []string{"The connection object is not valid"}, []string{"Ensure all the required fields are provided"})
+}
+
+func ErrGrafanaScan(err error) error {
+	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+}
+
+func ErrPrometheusScan(err error) error {
+	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
 }

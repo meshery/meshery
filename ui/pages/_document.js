@@ -1,8 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Document, { Head, Main, NextScript, Html } from "next/document";
-import flush from "styled-jsx/server";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Document, { Head, Main, NextScript, Html } from 'next/document';
+import { createStyleRegistry } from 'styled-jsx';
 
+const registry = createStyleRegistry();
+const flush = registry.flush();
 class MesheryDocument extends Document {
   render() {
     return (
@@ -11,13 +13,15 @@ class MesheryDocument extends Document {
           <meta charSet="utf-8" />
           {/**
            * content="no-referrer" included to avoid 403 errors on Google avatars
-          */}
+           */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
 
           {/* Google Tag Manager */}
-          <script dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          {/* eslint-disable-next-line @next/next/next-script-for-ga */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             // Fetch user preferences
             fetch("/api/user/prefs", { credentials: 'include' })
               .then((res) => res.json())
@@ -27,32 +31,39 @@ class MesheryDocument extends Document {
                   w[l] = []; // Clear the dataLayer array
                   w['ga-disable-'+i] = true; // Disable Google Analytics tracking
                 }
+              }).catch((err) => {
+                console.error("error while fetching user prefs for googletagmanag",err);
               });
-          })(window,document,'script','dataLayer','GTM-TFLZDSQ');`
-          }} />
+          })(window,document,'script','dataLayer','GTM-TFLZDSQ');`,
+            }}
+          />
           {/* End Google Tag Manager */}
 
           {/**
-          * For hiding the scrollbar without losing the scroll functionality
-          * add the class "hide-scrollbar" to hide scrollbar for that element
-          * Only applicable for Chrome, safari and newest version of Opera
-          */}
-          <style type="text/css">{"\
+           * For hiding the scrollbar without losing the scroll functionality
+           * add the class "hide-scrollbar" to hide scrollbar for that element
+           * Only applicable for Chrome, safari and newest version of Opera
+           */}
+          <style type="text/css">
+            {
+              '\
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
             }\
           .reduce-scrollbar-width::-webkit-scrollbar {\
               width: 0.3em !important;\
             }\
-          "}
+          '
+            }
           </style>
-
         </Head>
         <body>
           {/* Google Tag Manager (noscript) */}
-          <noscript dangerouslySetInnerHTML={{
-            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFLZDSQ" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
-          }} />
+          <noscript
+            dangerouslySetInnerHTML={{
+              __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFLZDSQ" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+            }}
+          />
           {/* End Google Tag Manager (noscript) */}
 
           <Main />
@@ -118,7 +129,7 @@ MesheryDocument.getInitialProps = (ctx) => {
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: css }}
         />
-        {flush() || null}
+        {flush || null}
       </React.Fragment>
     ),
   };

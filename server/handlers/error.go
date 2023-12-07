@@ -11,117 +11,117 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrInvalidK8SConfigNilCode          = "1014"
-	ErrNilClientCode                    = "1015"
-	ErrPrometheusScanCode               = "1016"
-	ErrGrafanaScanCode                  = "1017"
-	ErrRecordPreferencesCode            = "1018"
-	ErrGrafanaConfigCode                = "1019"
-	ErrPrometheusConfigCode             = "1020"
-	ErrGrafanaQueryCode                 = "1021"
-	ErrPrometheusQueryCode              = "1022"
-	ErrPrometheusBoardsCode             = "1024"
-	ErrStaticBoardsCode                 = "1025"
-	ErrRequestBodyCode                  = "1026"
-	ErrParseBoolCode                    = "1030"
-	ErrStreamEventsCode                 = "1031"
-	ErrStreamClientCode                 = "1032"
-	ErrPublishSmiResultsCode            = "1033"
-	ErrPluginOpenCode                   = "1034"
-	ErrPluginLookupCode                 = "1035"
-	ErrPluginRunCode                    = "1036"
-	ErrParseFormCode                    = "1037"
-	ErrQueryGetCode                     = "1038"
-	ErrGetResultCode                    = "1039"
-	ErrConvertToSpecCode                = "1040"
-	ErrFetchSMIResultsCode              = "1041"
-	ErrFormFileCode                     = "1042"
-	ErrReadConfigCode                   = "1043"
-	ErrLoadConfigCode                   = "1044"
-	ErrOpenFileCode                     = "1045"
-	ErrKubeVersionCode                  = "1046"
-	ErrAddAdapterCode                   = "1047"
-	ErrRetrieveDataCode                 = "1048"
-	ErrValidAdapterCode                 = "1049"
-	ErrOperationIDCode                  = "1050"
-	ErrMeshClientCode                   = "1051"
-	ErrApplyChangeCode                  = "1052"
-	ErrRetrieveMeshDataCode             = "1053"
-	ErrApplicationFailureCode           = "1054"
-	ErrDecodingCode                     = "1055"
-	ErrRetrieveUserTokenCode            = "1056"
-	ErrFailToSaveCode                   = "1057"
-	ErrFailToDeleteCode                 = "1058"
-	ErrWriteResponseCode                = "1059"
-	ErrTestConfigsCode                  = "1060"
-	ErrInvalidGenValueCode              = "1061"
-	ErrFailToLoadExtensionsCode         = "1062"
-	ErrConversionCode                   = "1063"
-	ErrParseDurationCode                = "1064"
-	ErrLoadTestCode                     = "1065"
-	ErrFetchKubernetesCode              = "1066"
-	ErrPanicRecoveryCode                = "1067"
-	ErrBlankNameCode                    = "1068"
-	ErrInvalidLTURLCode                 = "1069"
-	ErrVersionCompareCode               = "1070"
-	ErrSaveSessionCode                  = "1071"
-	ErrKubeClientCode                   = "1072"
-	ErrWorkloadDefinitionCode           = "1073"
-	ErrTraitDefinitionCode              = "1074"
-	ErrScopeDefinitionCode              = "1075"
-	ErrPatternFileCode                  = "1076"
-	ErrExecutionPlanCode                = "1077"
-	ErrInvalidPatternCode               = "1078"
-	ErrCompConfigPairsCode              = "1079"
-	ErrCreateDirCode                    = "1080"
-	ErrInvalidRequestObjectCode         = "1081"
-	ErrChangeK8sContextCode             = "1082"
-	ErrSavingUserPreferenceCode         = "1083"
-	ErrGetFilterCode                    = "1084"
-	ErrSaveFilterCode                   = "1085"
-	ErrDecodeFilterCode                 = "1086"
-	ErrEncodeFilterCode                 = "1087"
-	ErrImportFilterCode                 = "1088"
-	ErrFetchFilterCode                  = "1089"
-	ErrDeleteFilterCode                 = "1090"
-	ErrSavePatternCode                  = "1091"
-	ErrSaveApplicationCode              = "1092"
-	ErrGetPatternCode                   = "1093"
-	ErrDeletePatternCode                = "1094"
-	ErrFetchPatternCode                 = "1095"
-	ErrImportPatternCode                = "1096"
-	ErrEncodePatternCode                = "1097"
-	ErrDecodePatternCode                = "1098"
-	ErrParsePatternCode                 = "1099"
-	ErrConvertPatternCode               = "1100"
-	ErrInvalidKubeConfigCode            = "1102"
-	ErrInvalidKubeHandlerCode           = "1103"
-	ErrInvalidKubeContextCode           = "1104"
-	ErrCreatingKubernetesComponentsCode = "1105"
-	ErrValidateCode                     = "1106"
-	ErrApplicationContentCode           = "1107"
-	ErrRemoteApplicationURL             = "1108"
-	ErrClonePatternCode                 = "1109"
-	ErrCloneFilterCode                  = "1110"
-	ErrGenerateComponentsCode           = "1111"
-	ErrPublishCatalogPatternCode        = "1112"
-	ErrPublishCatalogFilterCode         = "1113"
-	ErrGetMeshModelsCode                = "1114"
-	ErrGetUserDetailsCode               = "1115"
-	ErrResolvingRelationship            = "1116"
-	ErrGetLatestVersionCode             = "1117"
-	ErrCreateFileCode                   = "1118"
-	ErrLoadCertificateCode              = "1119"
-	ErrCleanupCertificateCode           = "1120"
-	ErrDownlaodWASMFileCode             = "1121"
-	ErrFetchProfileCode                 = "1122"
-	ErrPerformanceTestCode              = "1123"
-	ErrFetchApplicationCode             = "1124"
-	ErrDeleteApplicationCode            = "1125"
-	ErrGetEventsCode                    = "1126"
-	ErrUpdateEventCode                  = "1127"
-	ErrDeleteEventCode                  = "1128"
-	ErrUnsupportedEventStatusCode       = "1129"
+	ErrInvalidK8SConfigNilCode    = "1014"
+	ErrNilClientCode              = "1015"
+	ErrRecordPreferencesCode      = "1018"
+	ErrGrafanaConfigCode          = "1019"
+	ErrPrometheusConfigCode       = "1020"
+	ErrGrafanaQueryCode           = "1021"
+	ErrPrometheusQueryCode        = "1022"
+	ErrPrometheusBoardsCode       = "1024"
+	ErrStaticBoardsCode           = "1025"
+	ErrRequestBodyCode            = "1026"
+	ErrParseBoolCode              = "1030"
+	ErrStreamEventsCode           = "1031"
+	ErrStreamClientCode           = "1032"
+	ErrPublishSmiResultsCode      = "1033"
+	ErrPluginOpenCode             = "1034"
+	ErrPluginLookupCode           = "1035"
+	ErrPluginRunCode              = "1036"
+	ErrParseFormCode              = "1037"
+	ErrQueryGetCode               = "1038"
+	ErrGetResultCode              = "1039"
+	ErrConvertToSpecCode          = "1040"
+	ErrFetchSMIResultsCode        = "1041"
+	ErrFormFileCode               = "1042"
+	ErrReadConfigCode             = "1043"
+	ErrLoadConfigCode             = "1044"
+	ErrOpenFileCode               = "1045"
+	ErrKubeVersionCode            = "1046"
+	ErrAddAdapterCode             = "1047"
+	ErrRetrieveDataCode           = "1048"
+	ErrValidAdapterCode           = "1049"
+	ErrOperationIDCode            = "1050"
+	ErrMeshClientCode             = "1051"
+	ErrApplyChangeCode            = "1052"
+	ErrRetrieveMeshDataCode       = "1053"
+	ErrApplicationFailureCode     = "1054"
+	ErrDecodingCode               = "1055"
+	ErrRetrieveUserTokenCode      = "1056"
+	ErrFailToSaveCode             = "1057"
+	ErrFailToDeleteCode           = "1058"
+	ErrWriteResponseCode          = "1059"
+	ErrTestConfigsCode            = "1060"
+	ErrInvalidGenValueCode        = "1061"
+	ErrFailToLoadExtensionsCode   = "1062"
+	ErrConversionCode             = "1063"
+	ErrParseDurationCode          = "1064"
+	ErrLoadTestCode               = "1065"
+	ErrFetchKubernetesCode        = "1066"
+	ErrPanicRecoveryCode          = "1067"
+	ErrBlankNameCode              = "1068"
+	ErrInvalidLTURLCode           = "1069"
+	ErrVersionCompareCode         = "1070"
+	ErrSaveSessionCode            = "1071"
+	ErrKubeClientCode             = "1072"
+	ErrWorkloadDefinitionCode     = "1073"
+	ErrTraitDefinitionCode        = "1074"
+	ErrScopeDefinitionCode        = "1075"
+	ErrPatternFileCode            = "1076"
+	ErrExecutionPlanCode          = "1077"
+	ErrInvalidPatternCode         = "1078"
+	ErrCompConfigPairsCode        = "1079"
+	ErrCreateDirCode              = "1080"
+	ErrInvalidRequestObjectCode   = "1081"
+	ErrChangeK8sContextCode       = "1082"
+	ErrSavingUserPreferenceCode   = "1083"
+	ErrGetFilterCode              = "1084"
+	ErrSaveFilterCode             = "1085"
+	ErrDecodeFilterCode           = "1086"
+	ErrEncodeFilterCode           = "1087"
+	ErrImportFilterCode           = "1088"
+	ErrFetchFilterCode            = "1089"
+	ErrDeleteFilterCode           = "1090"
+	ErrSavePatternCode            = "1091"
+	ErrSaveApplicationCode        = "1092"
+	ErrGetPatternCode             = "1093"
+	ErrDeletePatternCode          = "1094"
+	ErrFetchPatternCode           = "1095"
+	ErrImportPatternCode          = "1096"
+	ErrEncodePatternCode          = "1097"
+	ErrDecodePatternCode          = "1098"
+	ErrParsePatternCode           = "1099"
+	ErrConvertPatternCode         = "1100"
+	ErrInvalidKubeConfigCode      = "1102"
+	ErrInvalidKubeHandlerCode     = "1103"
+	ErrInvalidKubeContextCode     = "1104"
+	ErrValidateCode               = "1106"
+	ErrApplicationContentCode     = "1107"
+	ErrRemoteApplicationURL       = "1108"
+	ErrClonePatternCode           = "1109"
+	ErrCloneFilterCode            = "1110"
+	ErrGenerateComponentsCode     = "1111"
+	ErrPublishCatalogPatternCode  = "1112"
+	ErrPublishCatalogFilterCode   = "1113"
+	ErrGetMeshModelsCode          = "1114"
+	ErrGetUserDetailsCode         = "1115"
+	ErrResolvingRelationship      = "1116"
+	ErrGetLatestVersionCode       = "1117"
+	ErrCreateFileCode             = "1118"
+	ErrLoadCertificateCode        = "1119"
+	ErrCleanupCertificateCode     = "1120"
+	ErrDownlaodWASMFileCode       = "1121"
+	ErrFetchProfileCode           = "1122"
+	ErrPerformanceTestCode        = "1123"
+	ErrFetchApplicationCode       = "1124"
+	ErrDeleteApplicationCode      = "1125"
+	ErrGetEventsCode              = "1126"
+	ErrUpdateEventCode            = "1127"
+	ErrDeleteEventCode            = "1128"
+	ErrUnsupportedEventStatusCode = "1129"
+	ErrBulkUpdateEventCode        = "1537"
+	ErrBulkDeleteEventCode        = "1538"
+	ErrFetchMeshSyncResourcesCode = "1539"
 )
 
 var (
@@ -146,18 +146,6 @@ func ErrGenerateComponents(err error) error {
 
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})
-}
-
-func ErrCreatingKubernetesComponents(err error, ctxID string) error {
-	return errors.New(ErrCreatingKubernetesComponentsCode, errors.Alert, []string{"failed to register/create kubernetes components for contextID " + ctxID}, []string{err.Error()}, []string{"component generation was canceled due to deletion or reload of K8s context", "Invalid kubeconfig", "Filters passed incorrectly in config", "Could not fetch API resources from Kubernetes server"}, []string{"If there is the log \"Starting to register ...\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.", "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"})
-}
-
-func ErrPrometheusScan(err error) error {
-	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
-}
-
-func ErrGrafanaScan(err error) error {
-	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrPrometheusQuery(err error) error {
@@ -193,11 +181,11 @@ func ErrScopeDefinition(err error) error {
 }
 
 func ErrPatternFile(err error) error {
-	return errors.New(ErrPatternFileCode, errors.Alert, []string{"Failed to Parse Pattern File", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
+	return errors.New(ErrPatternFileCode, errors.Alert, []string{"Failed to Parse design File", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
 func ErrInvalidPattern(err error) error {
-	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid Pattern, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
+	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
 func ErrExecutionPlan(err error) error {
@@ -420,7 +408,7 @@ func ErrDeleteFilter(err error) error {
 }
 
 func ErrSavePattern(err error) error {
-	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design"}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Confirm the correct path / URL to the design"})
 }
 
 func ErrSaveApplication(err error) error {
@@ -432,19 +420,19 @@ func ErrFetchApplication(err error) error {
 }
 
 func ErrDeleteApplication(err error) error {
-	return errors.New(ErrDeleteApplicationCode, errors.Alert, []string{"Error failed to delete application"}, []string{err.Error()}, []string{"Application might already have been deleted", "You might not have enough permissions to perform the operation.", }, []string{"Check the owner of the application."})
+	return errors.New(ErrDeleteApplicationCode, errors.Alert, []string{"Error failed to delete application"}, []string{err.Error()}, []string{"Application might already have been deleted", "You might not have enough permissions to perform the operation."}, []string{"Check the owner of the application."})
 }
 
 func ErrGetPattern(err error) error {
-	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
+	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get design"}, []string{err.Error()}, []string{"Cannot get the design with the given design ID"}, []string{"Check if the given design ID is correct"})
 }
 
 func ErrDeletePattern(err error) error {
-	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete pattern"}, []string{err.Error()}, []string{"Failed to delete Pattern with the given ID"}, []string{"Check if the Pattern ID is correct"})
+	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete design"}, []string{err.Error()}, []string{"Failed to delete design with the given ID"}, []string{"Check if the design ID is correct"})
 }
 
 func ErrFetchPattern(err error) error {
-	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch design"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the designs"}, []string{})
 }
 
 func ErrFetchProfile(err error) error {
@@ -452,15 +440,15 @@ func ErrFetchProfile(err error) error {
 }
 
 func ErrImportPattern(err error) error {
-	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import design"}, []string{err.Error()}, []string{"Cannot save the design due to wrong path or URL"}, []string{"Check if the given path or URL of the design is correct"})
 }
 
 func ErrEncodePattern(err error) error {
-	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode pattern"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode design"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDecodePattern(err error) error {
-	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode patterns data into go slice"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode design data into go slice"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrParsePattern(err error) error {
@@ -468,7 +456,7 @@ func ErrParsePattern(err error) error {
 }
 
 func ErrConvertPattern(err error) error {
-	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert design file to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRemoteApplication(err error) error {
@@ -476,7 +464,7 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is published"})
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{err.Error()}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
 }
 
 func ErrCloneFilter(err error) error {
@@ -484,7 +472,7 @@ func ErrCloneFilter(err error) error {
 }
 
 func ErrPublishCatalogPattern(err error) error {
-	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog pattern"}, []string{err.Error()}, []string{"Failed to publish catalog pattern"}, []string{"Check if the pattern ID is correct and you are admin"})
+	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog design"}, []string{err.Error()}, []string{"Failed to publish catalog design"}, []string{"Check if the design ID is correct and you are admin"})
 }
 
 func ErrPublishCatalogFilter(err error) error {
@@ -520,13 +508,26 @@ func ErrGetEvents(err error) error {
 }
 
 func ErrUpdateEvent(err error, id string) error {
-	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
+	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+}
+
+func ErrBulkUpdateEvent(err error) error {
+	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "The requested event status is invalid.", "Meshery Database is corrupt."}, []string{"Verify that the event still exists.", "Verify that the requested event status is supported.", "Visit Settings and reset the Meshery database."})
 }
 
 func ErrDeleteEvent(err error, id string) error {
-	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
+	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+}
+
+func ErrBulkDeleteEvent(err error) error {
+	return errors.New(ErrBulkDeleteEventCode, errors.Alert, []string{"Could not delete one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "Meshery Database is corrupt."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses. Check for availability of a new version of Meshery Server. Try upgrading to the latest version.", "Visit Settings and reset the Meshery database."})
 }
 
 func ErrUnsupportedEventStatus(err error, status string) error {
-	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status %s not supported.", status)}, []string{err.Error()}, []string{"Unsupported event status for the current Meshery Server."}, []string{"Try upgrading Meshery to latest version.", "Use one of the supported event statuses."})
+	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version."})
+}
+
+// ErrFetchMeshSyncResources
+func ErrFetchMeshSyncResources(err error) error {
+	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
 }

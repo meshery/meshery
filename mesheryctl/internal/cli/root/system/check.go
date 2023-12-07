@@ -86,18 +86,17 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, errors.Wrap(err, "error processing config")
+		utils.Log.Error(err)
+		return nil, nil
 	}
 	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
-		return nil, err
+		return nil, ErrSetCurrentContext(err)
 	}
-
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-		return nil, err
+		return nil, ErrGetCurrentContext(err)
 	}
-
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
@@ -149,7 +148,8 @@ mesheryctl system check --operator
 		}
 		hc, err := NewHealthChecker(hco)
 		if err != nil {
-			return errors.New("failed to initialize a healthchecker")
+			utils.Log.Error(ErrHealthCheckFailed(err))
+			return nil
 		}
 
 		// if --pre or --preflight has been passed we run preflight checks
@@ -178,7 +178,8 @@ mesheryctl system check --operator
 
 		currContext, err := hc.mctlCfg.GetCurrentContext()
 		if err != nil {
-			return errors.New("failed to get current context, please check that you've correct meshery config at $HOME/.meshery/config.yaml")
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		currPlatform := currContext.GetPlatform()
 

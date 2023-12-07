@@ -2,13 +2,31 @@
 Meshery Component Updater
 Uses a spreadsheet of centralized information about MeshModel components and their metadata like color, icon, and so on. Script is used to update components metada (svgs, icons etc) for Meshery, Websites (Layer5.io, Meshery.io), and Remote Provider.
 
+Secret - this script expects that an environment variable `CRED` is available
+and it contains a token for Google Sheets API interactions.
+
+Example:
+	export CRED='{
+		"type": "service_account",
+		"project_id": "",
+		"private_key_id": "",
+		"private_key": "-----BEGIN PRIVATE KEY-----\nn-----END PRIVATE KEY-----\n",
+		"client_email": "",
+		"client_id": "",
+		"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+		"token_uri": "https://oauth2.googleapis.com/token",
+		"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+		"client_x509_cert_url": "",
+		"universe_domain": "googleapis.com"
+		}'
+
 Usage: (order of flags matters)
 
     ./main [path-to-spreadsheet] [--system] [<system-name>] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
 
 Examples:
 
-	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --published-only
+	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations docs/ --published-only
 	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/meshmodels/models <remote-provider>/ui/public/img/meshmodels
 	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
 
@@ -39,11 +57,11 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
-	ExcludeDirs = []string{"relationships", "policies"}
+	ExcludeDirs                 = []string{"relationships", "policies"}
 )
 
 var System string
@@ -152,6 +170,7 @@ func docsUpdater(output []map[string]string) {
 	}
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
+	pathToIntegrationsMesheryDocs := os.Args[6]
 	updateOnlyPublished := true
 	if len(os.Args) > 6 {
 		if os.Args[6] == "--published-only" {
@@ -212,6 +231,7 @@ func docsUpdater(output []map[string]string) {
 		modelName := strings.TrimSpace(out["model"])
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))
 		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 		if err != nil {
 			panic(err)
@@ -239,7 +259,7 @@ func docsUpdater(output []map[string]string) {
 			panic(err)
 		}
 
-		// Write SVGs to Meshery docs
+		// Write SVGs to Meshery website
 		err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
 		if err != nil {
 			panic(err)
@@ -254,11 +274,31 @@ func docsUpdater(output []map[string]string) {
 		if err != nil {
 			panic(err)
 		}
+
+		// Write SVGs to Meshery docs
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsMesheryDocs), 0777)
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-white.svg"), svgwhite) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
 	mesheryDocsJSON += "]; export default data"
 	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -278,7 +318,7 @@ func mesheryUpdater(output []map[string]string) {
 		if changeFields["CRDs"] == "" {
 			countWithoutCrds++
 		}
-		if changeFields["Publish?"] == "TRUE" { //For a component level field
+		if changeFields["PublishToRegistry"] == "TRUE" { //For a component level field
 			publishedModels[changeFields[PrimaryColumnName]] = true
 		}
 		return nil
@@ -346,6 +386,15 @@ func mesheryUpdater(output []map[string]string) {
 							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 								component.Metadata[key] = svg
 							}
+						} else if key == "isModelAnnotation" {
+							if component.Model.Metadata == nil {
+								component.Model.Metadata = make(map[string]interface{})
+							}
+							if value == "TRUE" || value == "true" {
+								component.Model.Metadata["isAnnotation"] = true
+							} else {
+								component.Model.Metadata["isAnnotation"] = false
+							}
 						} else if contains(key, ColumnNamesToExtract) != -1 {
 							component.Metadata[key] = value
 						}
@@ -358,15 +407,23 @@ func mesheryUpdater(output []map[string]string) {
 						component.Metadata["isNamespaced"] = false
 					}
 					//Either component is set to published or the parent model is set to published
-					if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+					if component.Metadata["PublishToRegistry"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
 						component.Metadata["published"] = true
 					} else {
 						component.Metadata["published"] = false
 					}
+					if component.Metadata["isAnnotation"] == "TRUE" {
+						component.Metadata["isAnnotation"] = true
+					} else {
+						component.Metadata["isAnnotation"] = false
+					}
+
 					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 					delete(component.Metadata, "Publish?")
+					delete(component.Metadata, "PublishToRegistry")
 					delete(component.Metadata, "CRDs")
 					delete(component.Metadata, "component")
+					delete(component.Model.Metadata, "isModelAnnotaion")
 					modelDisplayName := component.Metadata["modelDisplayName"].(string)
 					component.Model.DisplayName = modelDisplayName
 					byt, err = json.Marshal(component)

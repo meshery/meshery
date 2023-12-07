@@ -1,8 +1,11 @@
 ---
 layout: default
 title: Docker Extension
-permalink: installation/platforms/docker-extension
+permalink: installation/docker/docker-extension
 type: installation
+category: docker
+redirect_from:
+- installation/platforms/docker-extension
 display-title: "false"
 language: en
 list: include
@@ -166,3 +169,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - If Meshery created configuration files or directories on your host machine, you can remove them manually if you no longer need them.
 
 <script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

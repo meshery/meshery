@@ -9,26 +9,27 @@ definitions:
     ContainerChangeResponseItem:
         description: ContainerChangeResponseItem change item in response to ContainerChanges operation
         x-go-package: github.com/docker/docker/api/types/container
-    ContainerCreateCreatedBody:
-        description: ContainerCreateCreatedBody OK response to ContainerCreate operation
-        x-go-package: github.com/docker/docker/api/types/container
     ContainerTopOKBody:
         description: ContainerTopOKBody OK response to ContainerTop operation
         x-go-package: github.com/docker/docker/api/types/container
     ContainerUpdateOKBody:
         description: ContainerUpdateOKBody OK response to ContainerUpdate operation
         x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBody:
-        description: ContainerWaitOKBody OK response to ContainerWait operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBodyError:
-        description: ContainerWaitOKBodyError container waiting error, if any
+    CreateOptions:
+        description: Volume configuration
+        title: CreateOptions VolumeConfig
+        x-go-package: github.com/docker/docker/api/types/volume
+    CreateResponse:
+        description: OK response to ContainerCreate operation
+        title: CreateResponse ContainerCreateResponse
         x-go-package: github.com/docker/docker/api/types/container
     ErrorResponse:
         title: ErrorResponse Represents an error.
         x-go-package: github.com/docker/docker/api/types
     GraphDriverData:
-        title: GraphDriverData Information about a container's graph driver.
+        description: |-
+            GraphDriverData Information about the storage driver used to store the container's and
+            image's filesystem.
         x-go-package: github.com/docker/docker/api/types
     HistoryResponseItem:
         description: HistoryResponseItem individual image layer information in response to ImageHistory operation
@@ -43,6 +44,10 @@ definitions:
     ImageSummary:
         description: ImageSummary image summary
         x-go-package: github.com/docker/docker/api/types
+    ListResponse:
+        description: Volume list response
+        title: ListResponse VolumeListResponse
+        x-go-package: github.com/docker/docker/api/types/volume
     Plugin:
         description: Plugin A plugin for the Engine API
         x-go-package: github.com/docker/docker/api/types
@@ -88,20 +93,21 @@ definitions:
     ServiceUpdateResponse:
         description: ServiceUpdateResponse service update response
         x-go-package: github.com/docker/docker/api/types
+    UsageData:
+        description: |-
+            UsageData Usage details about the volume. This information is used by the
+            `GET /system/df` endpoint, and omitted in other endpoints.
+        x-go-package: github.com/docker/docker/api/types/volume
     Volume:
         description: Volume volume
-        x-go-package: github.com/docker/docker/api/types
-    VolumeCreateBody:
-        description: VolumeCreateBody Volume configuration
         x-go-package: github.com/docker/docker/api/types/volume
-    VolumeListOKBody:
-        description: VolumeListOKBody Volume list response
-        x-go-package: github.com/docker/docker/api/types/volume
-    VolumeUsageData:
-        description: |-
-            VolumeUsageData Usage details about the volume. This information is used by the
-            `GET /system/df` endpoint, and omitted in other endpoints.
-        x-go-package: github.com/docker/docker/api/types
+    WaitExitError:
+        description: WaitExitError container waiting error, if any
+        x-go-package: github.com/docker/docker/api/types/container
+    WaitResponse:
+        description: OK response to ContainerWait operation
+        title: WaitResponse ContainerWaitResponse
+        x-go-package: github.com/docker/docker/api/types/container
 info:
     description: |-
         the purpose of this application is to provide an application
@@ -190,7 +196,7 @@ paths:
                 - ApplicationsAPI
     /api/application/download/{id}/{sourcetype}:
         get:
-            description: Get the application source-content
+            description: Get the pattern source-content
             operationId: typeGetApplication
             parameters:
                 - in: formData
@@ -198,9 +204,9 @@ paths:
                   type: file
                   x-go-name: FormFile
             responses: {}
-            summary: Handle GET request for Meshery Application with of source content
+            summary: Handle GET request for Meshery Patterns with of source content
             tags:
-                - ApplicationsAPI
+                - PatternsAPI
     /api/application/types:
         get:
             description: Get application file types
@@ -259,14 +265,39 @@ paths:
                 "200":
                     description: ""
             summary: Handle DELETE request for events.
+    /api/events/bulk:
+        delete:
+            description: Bulk delete events associated with the ids.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    description: ""
+            summary: Handle DELETE request to delete events in bulk.
+    /api/events/status:
+        put:
+            description: Bulk update status for the events associated with the ids.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/eventResponseWrapper'
+            summary: Handle PUT request to update event status in bulk.
     /api/events/status/{id}:
-        post:
+        put:
             description: Updates event status for the event associated with the id.
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    $ref: '#/responses/Event'
-            summary: Handle POST request to update event status.
+                    $ref: '#/responses/eventResponseWrapper'
+            summary: Handle PUT request to update event status.
+    /api/events/types:
+        get:
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    description: ""
+            summary: Handle GET request for available event categories and actions.
+            tags:
+                - EventsAPI
     /api/filter:
         get:
             description: |-
@@ -280,7 +311,8 @@ paths:
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
 
-                ```?visibility={visibility}``` Default visibility is public
+                ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+                Eg: ```?visibility=["public", "published"]``` will return public and published filters
             operationId: idGetFilterFiles
             responses:
                 "200":
@@ -547,6 +579,83 @@ paths:
             summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
+    /api/integrations/environments:
+        get:
+            description: |-
+                # Environments can be further filtered through query parameters
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                ```?filter={condition}```
+            operationId: idGetEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/environmentsResponseWrapper'
+            summary: Handles GET for all Environments
+            tags:
+                - EnvironmentsAPI
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new environment
+            tags:
+                - PostEnvironment
+    /api/integrations/environments/{environmentID}/connections/{connectionID}:
+        delete:
+            description: Removes connection from environment
+            operationId: idRemoveConnectionFromEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE to remove Connection from Environment by ID
+            tags:
+                - EnvironmentAPI
+        post:
+            description: Returns Environment connection mapping info
+            operationId: idAddConnectionToEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle POST to add Connection in Environment by ID
+            tags:
+                - EnvironmentAPI
+    /api/integrations/environments/{id}:
+        delete:
+            description: Returns Environment info
+            operationId: idDeleteEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE for Environment based on ID
+            tags:
+                - EnvironmentAPI
+        get:
+            description: Returns Environment info
+            operationId: idGetEnvironmentByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle GET for Environment info by ID
+            tags:
+                - EnvironmentAPI
+        put:
+            description: Updates a environment
+            operationId: idUpdateEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle PUT request for updating a environment
+            tags:
+                - PostEnvironment
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -1013,6 +1122,25 @@ paths:
             summary: Handle GET request for getting meshmodel relationships of a specific model by name.
             tags:
                 - GetMeshmodelRelationshipByName
+    /api/meshmodels/registrants:
+        get:
+            description: |-
+                # Returns a list of registrants and summary count of its models, components, and relationships
+
+                ```?page={pagenumber}``` Default page number is 1
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={Hostname}``` Gets host by the name
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: GetMeshmodelRegistrants
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelRegistrantsResponseWrapper'
+            summary: Handle GET request for getting all meshmodel registrants
     /api/meshmodels/relationships:
         get:
             description: |-
@@ -1047,6 +1175,9 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+                Eg: ```?visibility=["public", "published"]``` will return public and published designs
             operationId: idGetPatternFiles
             responses:
                 "200":
@@ -1096,6 +1227,25 @@ paths:
                 "200":
                     $ref: '#/responses/mesheryPatternResponseWrapper'
             summary: Handle GET for a Meshery Pattern
+            tags:
+                - PatternsAPI
+    /api/pattern/{sourcetype}:
+        post:
+            description: Creates a new Pattern with source-content
+            operationId: idPostPatternFileRequest
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle POST request for Pattern Files
+            tags:
+                - PatternsAPI
+        put:
+            description: Updates the pattern with the given payload
+            operationId: idUpdateMesheryPattern
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle PUT request for Meshery Pattern with the given payload
             tags:
                 - PatternsAPI
     /api/pattern/catalog:
@@ -1169,6 +1319,29 @@ paths:
                 "200":
                     description: ""
             summary: Handle POST request for Pattern Deploy
+            tags:
+                - PatternsAPI
+    /api/pattern/download/{id}/{sourcetype}:
+        get:
+            description: Get the pattern source-content
+            operationId: typeGetApplication
+            parameters:
+                - in: formData
+                  name: Upload Yaml/Yml File
+                  type: file
+                  x-go-name: FormFile
+            responses: {}
+            summary: Handle GET request for Meshery Patterns with of source content
+            tags:
+                - PatternsAPI
+    /api/pattern/types:
+        get:
+            description: Get pattern file types
+            operationId: typeGetMesheryPatternTypesHandler
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryApplicationTypesResponseWrapper'
+            summary: Handle GET request for Meshery Pattern types
             tags:
                 - PatternsAPI
     /api/patterns:
@@ -1526,6 +1699,37 @@ paths:
             summary: Handle GET request for fetching prometheus
             tags:
                 - SystemAPI
+    /api/system/meshsync/resources:
+        get:
+            description: |-
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
+
+                ```?labels={labels}``` labels is a boolean value. If true then labels are returned
+
+                ```?spec={spec}``` spec is a boolean value. If true then spec is returned
+
+                ```?status={status}``` status is a boolean value. If true then status is returned
+
+                ```?clusterId={clusterId}``` clusterId is a string value. If specified then resources for that cluster are returned
+            operationId: idGetMeshSyncResources
+            responses:
+                "200":
+                    $ref: '#/responses/meshsyncResourcesResponseWrapper'
+            summary: Handle GET request for meshsync discovered resources
+            tags:
+                - GetMeshSyncResources
     /api/system/sync:
         get:
             description: Used to send session data to the UI for initial sync
@@ -2036,13 +2240,13 @@ paths:
                 ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
                 ```?severity=[eventseverity] Returns events belonging to provided severities ```
                 ```?sort={field} order the records based on passed field, defaults to updated_at```
-                ```?order={[asc/desc]}``` Default behavior is asc
+                ```?order={[asc/desc]}``` Default behavior is desc
                 ```?page={page-number}``` Default page number is 1
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    $ref: '#/responses/EventsResponse'
+                    $ref: '#/responses/eventsResponseWrapper'
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
@@ -2203,6 +2407,14 @@ responses:
             type: object
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
+    environmentResponseWrapper:
+        description: Returns environment
+    environmentsResponseWrapper:
+        description: Returns all environements
+    eventResponseWrapper:
+        description: Returns event
+    eventsResponseWrapper:
+        description: Returns all events
     grafanaBoardsResponseWrapper:
         description: Returns Grafana boards and panels
         schema:
@@ -2265,8 +2477,12 @@ responses:
         description: Returns meshmodel models
     meshmodelPoliciesResponseWrapper:
         description: Returns meshmodel policies
+    meshmodelRegistrantsResponseWrapper:
+        description: Returns meshmodel registrants
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
+    meshsyncResourcesResponseWrapper:
+        description: Returns MeshSync resources
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:

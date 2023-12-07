@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d693aff626ed48318ca113d0a22d541b>>
+ * @generated SignedSource<<a169ec46d9c112ccac643a26fcc5ee66>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -51,6 +51,13 @@ var v0 = [
         "args": null,
         "kind": "ScalarField",
         "name": "systemID",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "status",
         "storageKey": null
       },
       {
@@ -131,16 +138,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "bb2c1aedbd4cd64fb8c50941ed80f04f",
+    "cacheID": "dfb0d28db01886a2b8877f52db0fd0c6",
     "id": null,
     "metadata": {},
     "name": "EventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription EventsSubscription {\n  event: subscribeEvents {\n    id\n    userID\n    actedUpon\n    operationID\n    systemID\n    severity\n    action\n    category\n    description\n    metadata\n    createdAt\n    updatedAt\n    deletedAt\n  }\n}\n"
+    "text": "subscription EventsSubscription {\n  event: subscribeEvents {\n    id\n    userID\n    actedUpon\n    operationID\n    systemID\n    status\n    severity\n    action\n    category\n    description\n    metadata\n    createdAt\n    updatedAt\n    deletedAt\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "c3c8a75a6a17692cd907a2d15c2726e2";
+node.hash = "b6a9380e1fcb5b6b417ef482bb98ab7b";
 
 module.exports = node;

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { createRef, useCallback, useEffect } from 'react';
-import Slider from "react-slick";
+import Slider from 'react-slick';
 import { Grid } from '@material-ui/core';
 // const VerticalCarousel = ({
 //   item,
@@ -37,10 +37,7 @@ import { Grid } from '@material-ui/core';
 //   leadingText: PropTypes.string.isRequired,
 // };
 
-
-
 const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
-
   // const scroll = useCallback(
   //   y => {
   //     if (y > 0) {
@@ -61,29 +58,28 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
 
   const settings = {
     // dots : true,
-    infinite : false,
-    slidesToShow : 1,
-    arrows : true,
+    infinite: false,
+    slidesToShow: 1,
+    arrows: true,
     // slidesToScroll : 1,
     // adaptiveHeight : true,
     // centerMode : true,
     // centerPadding : "0px",
-    vertical : true,
+    vertical: true,
     // verticalSwiping : true,
     // swipeToSlide : true,
-    afterChange : handleAfterSlideChange
+    afterChange: handleAfterSlideChange,
   };
 
   return (
     <>
-      <Grid item id="carousel-div"  xs={8} >
-        <Slider {...settings} ref={sliderRef}>{slides} </Slider>
+      <Grid item id="carousel-div" xs={8}>
+        <Slider {...settings} ref={sliderRef}>
+          {slides}{' '}
+        </Slider>
       </Grid>
     </>
-  )
-
-
-}
-
+  );
+};
 
 export default VerticalCarousel;

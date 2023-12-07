@@ -1,18 +1,15 @@
-import React from "react";
-import { NoSsr, withStyles } from "@material-ui/core";
-import { connect } from "react-redux";
+import React from 'react';
+import { NoSsr, withStyles } from '@material-ui/core';
+import { connect } from 'react-redux';
 import Head from 'next/head';
-import MesheryConnections from "../../components/connections";
+import MesheryConnections from '../../components/connections';
 
-const styles = { paper : { maxWidth : '90%',
-  margin : 'auto',
-  overflow : 'hidden', } };
+const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
 
 class Connections extends React.Component {
-  componentDidMount () {
-  }
+  componentDidMount() {}
 
-  render () {
+  render() {
     return (
       <NoSsr>
         <Head>
@@ -24,7 +21,4 @@ class Connections extends React.Component {
   }
 }
 
-
-export default withStyles(styles)(connect(
-  null,
-)(Connections));
+export default withStyles(styles)(connect(null)(Connections));

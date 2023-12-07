@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 /**
  * getWindowDimensions - Returns the width and height of the window
  * @returns {object} {width, height}
  */
 export function getWindowDimensions() {
-  const { innerWidth : width, innerHeight : height } = window;
+  const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
-    height
+    height,
   };
 }
 
@@ -29,7 +29,6 @@ export function getWindowDimensions() {
 // Eg:  React component that needs to respond to changes in the browser window's dimensions, for instance,
 // to make responsive design decisions. You can use the useWindowDimensions hook to achieve this.
 
-
 export function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
@@ -45,8 +44,8 @@ export function useWindowDimensions() {
       }, 500);
     }
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return windowDimensions;
