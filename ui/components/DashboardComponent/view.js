@@ -100,7 +100,7 @@ const View = (props) => {
   }
 
   const RenderObject = (obj) => {
-    function processObjForKeyValTable(obj) {
+    function ProcessObjForKeyValTable(obj) {
       const [processedData, setProcessedData] = React.useState([]);
 
       function processObj(obj, parentKey = '') {
@@ -172,7 +172,7 @@ const View = (props) => {
       );
     }
 
-    const processObjForKeyDataTable = (obj, parentKey = '') => {
+    const ProcessObjForKeyDataTable = (obj, parentKey = '') => {
       let results = [];
       for (const [key, value] of Object.entries(obj)) {
         const currentKey = parentKey ? `${parentKey}.${key}` : key;
@@ -185,10 +185,10 @@ const View = (props) => {
           results.push(RenderDynamicTable(key, value));
         }
         if (typeof value === 'object' && value !== null) {
-          results.push(processObjForKeyDataTable(value, currentKey));
+          results.push(ProcessObjForKeyDataTable(value, currentKey));
         } else {
           if (key === 'attribute') {
-            results.push(processObjForKeyDataTable(JSON.parse(value), currentKey));
+            results.push(ProcessObjForKeyDataTable(JSON.parse(value), currentKey));
           }
         }
       }
@@ -197,8 +197,8 @@ const View = (props) => {
 
     return (
       <>
-        {processObjForKeyValTable(obj)}
-        {processObjForKeyDataTable(obj)}
+        {ProcessObjForKeyValTable(obj)}
+        {ProcessObjForKeyDataTable(obj)}
       </>
     );
   };
