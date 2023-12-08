@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: `none`,
     },
   },
+
   metadataCell: {
     width: '100%',
     verticalAlign: 'top',
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   table: {
     border: '1px solid #e7e7e7',
     borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.secondary.mainBackground,
   },
   highlightRow: {
     color: theme.palette.tables.head.color,
@@ -154,14 +156,16 @@ export default function NameValueTable(props) {
           const hideValueGridItem = withHighlightStyle && !value;
 
           const parts = name.split('.');
-          const lastPart = parts[parts.length - 1];
-
+          const lastPart = parts[parts.length - 1].replace('_', ' ');
+          const keyname = lastPart.replace(/([a-zA-Z])(?=[A-Z])/g, '$1 ');
           return (
             <>
               <Grid
                 item
                 key={i}
                 xs={12}
+                lg={2}
+                xl={2}
                 spacing={1}
                 sm={hideValueGridItem ? 12 : 4}
                 component="dt"
@@ -171,7 +175,7 @@ export default function NameValueTable(props) {
                   withHighlightStyle ? classes.highlightRow : '',
                 )}
               >
-                {lastPart}
+                {keyname[0].toUpperCase() + keyname.substring(1)}
               </Grid>
               {!hideValueGridItem && (
                 <Grid

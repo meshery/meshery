@@ -34,7 +34,7 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { updateProgress } from '../lib/store';
 import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
-import { DEPLOYMENT_TYPE } from '../utils/Enum';
+import { CONTROLLER_STATES, DEPLOYMENT_TYPE, CONTROLLERS } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -112,10 +112,7 @@ const styles = (theme) => ({
   },
 });
 
-const ENABLED = 'ENABLED';
-const DISABLED = 'DISABLED';
-
-function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig }) {
+function MesherySettingsNew({ classes, updateProgress, meshsyncControllerState, k8sconfig }) {
   const [data, setData] = useState([]);
   const [showMenu, setShowMenu] = useState([false]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -123,7 +120,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
   const [NATSVersion, setNATSVersion] = useState(['N/A']);
   const [contexts, setContexts] = useState([]);
   const [discover, setLastDiscover] = useState(['']);
-  const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [_operatorState, _setOperatorState] = useState([]);
   const deleteCtxtRef = useRef(null);
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
@@ -162,25 +159,25 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
   }, [k8sconfig]);
   useEffect(() => {
     setTableData();
-    k8sconfig.forEach((ctx) => {
-      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: ctx.id }).subscribe({
-        next: (res) => {
-          if (!_operatorState?.find((opSt) => opSt.contextID === ctx.id)) {
-            const x = updateCtxInfo(ctx.id, res);
-            _setOperatorState(x);
-          }
-          tempSubscription.unsubscribe();
-        },
-        error: (err) => console.log('error at operator scan: ' + err),
-      });
-    });
+    // k8sconfig.forEach((ctx) => {
+    //   const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: ctx.id }).subscribe({
+    //     next: (res) => {
+    //       if (!_operatorState?.find((opSt) => opSt.contextID === ctx.id)) {
+    //         const x = updateCtxInfo(ctx.id, res);
+    //         _setOperatorState(x);
+    //       }
+    //       tempSubscription.unsubscribe();
+    //     },
+    //     error: (err) => console.log('error at operator scan: ' + err),
+    //   });
+    // });
   }, []);
 
-  useEffect(() => {
-    if (operatorState) {
-      _setOperatorState(operatorState);
-    }
-  }, [operatorState]);
+  // useEffect(() => {
+  //   if (operatorState) {
+  //     _setOperatorState(operatorState);
+  //   }
+  // }, [operatorState]);
 
   const handleFlushMeshSync = (index) => {
     return async () => {
@@ -295,7 +292,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = contexts[index].id;
     const variables = {
-      status: `${checked ? ENABLED : DISABLED}`,
+      status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
     };
 
@@ -350,56 +347,55 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
   };
 
   function getOperatorStatus(ctxId) {
-    const operator = _operatorState?.find((op) => op.contextID === ctxId);
+    const operator = meshsyncControllerState?.find(
+      (op) => op.contextID === ctxId && op.controller === CONTROLLERS.OPERATOR,
+    );
     if (!operator) {
       return {};
     }
-    const operatorStatus = operator.operatorStatus;
+
     return {
-      operatorState: operatorStatus.status === ENABLED,
-      operatorVersion: operatorStatus.version,
+      operatorState: operator.status === CONTROLLER_STATES.DEPLOYED,
+      operatorVersion: operator?.version,
     };
   }
 
   const getContextStatus = (ctxId) => {
-    const operator = _operatorStateRef.current?.find((op) => op.contextID === ctxId);
-    if (!operator) {
+    const controller = _operatorStateRef.current?.find((op) => op.contextID === ctxId);
+    if (!controller) {
       return {};
     }
-    const operatorStatus = operator.operatorStatus;
 
     function getMeshSyncStats() {
-      if (!operatorStatus) return {};
-      const { controllers } = operatorStatus;
+      if (!controller) return {};
+      const meshsyncController = controller?.find(
+        (ctlr) => ctlr?.controller === CONTROLLERS.MESHSYNC,
+      );
       // meshsync is at 1st idx
-      if (controllers?.[1]) {
-        const { status, version } = controllers[1];
+      if (meshsyncController) {
         return {
-          meshSyncState: status,
-          meshSyncVersion: version,
+          meshSyncState: meshsyncController?.status,
+          meshSyncVersion: meshsyncController?.version,
         };
       }
     }
 
     function getBrokerStats() {
-      if (!operatorStatus) return {};
-      const { controllers } = operatorStatus;
+      if (!controller) return {};
+      const brokerController = controller?.find((ctlr) => ctlr?.controller === CONTROLLERS.BROKER);
       // broker is at 0th idx
-      if (controllers?.[0]) {
-        const { status, version } = controllers[0];
-        if (status != '') {
-          return {
-            natsState: status,
-            natsVersion: version,
-          };
-        }
+      if (brokerController) {
+        return {
+          natsState: brokerController?.status,
+          natsVersion: brokerController?.version,
+        };
       }
     }
 
     const defaultState = {
       operatorState: false,
       operatorVersion: null,
-      meshSyncState: DISABLED,
+      meshSyncState: CONTROLLER_STATES.DISABLED,
       meshSyncVersion: 'Not Available',
       natsState: 'Not Active',
       natsVersion: 'Not Available',
@@ -746,13 +742,19 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
                                 <ListItem>
                                   <Tooltip
                                     title={
-                                      meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'
+                                      meshSyncState !== CONTROLLER_STATES.DISABLED
+                                        ? `Ping MeshSync`
+                                        : 'Not Available'
                                     }
                                     aria-label="meshSync"
                                   >
                                     <Chip
                                       label={'MeshSync'}
-                                      style={meshSyncState === DISABLED ? { opacity: 0.5 } : {}}
+                                      style={
+                                        meshSyncState === CONTROLLER_STATES.DISABLED
+                                          ? { opacity: 0.5 }
+                                          : {}
+                                      }
                                       onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
                                       icon={
                                         <img
@@ -866,7 +868,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
         _setOperatorState(updateCtxInfo(ctxId, res));
 
         updateProgress({ showProgress: false });
-        if (!res.operator.error && res.operator.status === ENABLED) {
+        if (!res.operator.error && res.operator.status === CONTROLLER_STATES.DEPLOYED) {
           notify({
             message: `Operator is ${res.operator.status.toLowerCase()}`,
             event_type: EVENT_TYPES.SUCCESS,
@@ -1023,9 +1025,9 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts');
-  const operatorState = state.get('operatorState');
+  const meshsyncControllerState = state.get('controllerState');
   // const MeshSyncState = state.get('meshSyncState'); // disfunctional at this point of time
-  return { k8sconfig, selectedK8sContexts, operatorState /*MeshSyncState*/ };
+  return { k8sconfig, selectedK8sContexts, meshsyncControllerState /*MeshSyncState*/ };
 };
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

@@ -7,7 +7,7 @@ import data.common.contains
 import data.common.get_array_pos
 import data.common.get_path
 
-inventory_relationship = updated_design {
+heirarchical_inventory_relationship = updated_design {
     from_selectors := data.inventory.selectors.allow.from
     to_selectors := data.inventory.selectors.allow.to
 

@@ -208,7 +208,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/models/{model}/relationships/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
 	
-	gMux.Handle("/api/meshmodels/relationships/evaluate", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetRegoPolicyForDesignFile), models.ProviderAuth))).
+	gMux.Handle("/api/meshmodels/relationships/evaluate", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EvaluateRelationshipPolicy), models.ProviderAuth))).
 		Methods("POST")
 
 	gMux.Handle("/api/meshmodels/models/{model}/policies", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicies), models.NoAuth))).Methods("GET")
@@ -378,10 +378,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// 	Methods("PUT")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnectionById), models.ProviderAuth))).
 		Methods("PUT")
-	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
-		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/register", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProcessConnectionRegistration), models.ProviderAuth))).
 		Methods("POST", "DELETE")
+	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
+		Methods("DELETE")
 
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}

@@ -30,13 +30,13 @@ image: /assets/img/integrations/buildpacks.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Transform application source code into OCI images.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Enable for swift rebasing of images and modular control over images.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Replace Dockerfiles in the app development lifecycle.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

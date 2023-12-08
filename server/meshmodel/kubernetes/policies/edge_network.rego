@@ -31,7 +31,7 @@ checkServiceToContainerPortMap(service_port, container_port) {
 	service_port.port == container_port["containerPort"]
 }
 
-network_relationship[service_name] {
+edge_network_relationship[service_name] {
 	# Select a service resource
 	service := input.services[_]
 
@@ -73,7 +73,7 @@ network_relationship[service_name] {
 	service_name = {"destination_name": pod.name, "source_id": source_id, "destination_id": destination_id, "source_name": service.name, "port": service_port}
 }
 
-network_relationship[service_name] {
+edge_network_relationship[service_name] {
     # Select a service resource
     service := input.services[_]
     
