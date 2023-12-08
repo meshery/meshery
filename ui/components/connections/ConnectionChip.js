@@ -10,7 +10,7 @@ import BadgeAvatars from '../CustomAvatar';
 import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
-import { CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
 import theme from '../../themes/app';
 
 const useChipStyles = makeStyles(() => ({
@@ -45,7 +45,7 @@ export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, 
           status ? (
             <BadgeAvatars
               color={
-                status === CONNECTION_STATES.CONNECTED
+                status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
                   ? theme.palette.secondary.success
                   : theme.palette.secondary.penColorSecondary
               }
