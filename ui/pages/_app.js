@@ -27,7 +27,7 @@ import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
 import getPageContext from '../components/PageContext';
-import { OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
+import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import {
@@ -61,8 +61,6 @@ import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponent } from '../api/meshmodel';
 import { CONNECTION_KINDS } from '../utils/Enum';
-
-import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -111,6 +109,7 @@ class MesheryApp extends App {
       k8sContexts: [],
       activeK8sContexts: [],
       operatorSubscription: null,
+      mesheryControllerSubscription: null,
       meshSyncSubscription: null,
       disposeK8sContextSubscription: null,
       theme: 'light',
@@ -252,17 +251,20 @@ class MesheryApp extends App {
     }
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
-      const { operatorSubscription, meshSyncSubscription } = this.state;
+      const { meshSyncSubscription, mesheryControllerSubscription } = this.state;
       console.log(
         'k8sconfig changed, re-initialising subscriptions',
         k8sConfig,
         this.state.activeK8sContexts,
       );
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (operatorSubscription) {
-        operatorSubscription.updateSubscription(ids);
-      }
+      // if (operatorSubscription) {
+      //   operatorSubscription.updateSubscription(ids);
+      // }
 
+      if (mesheryControllerSubscription) {
+        mesheryControllerSubscription.updateSubscription(ids);
+      }
       if (meshSyncSubscription) {
         meshSyncSubscription.updateSubscription(ids);
       }
@@ -274,25 +276,20 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
-    subscribeMesheryControllersStatus((data) => {
-      console.log(data);
-    }, contexts);
-
-    const operatorCallback = (data) => {
-      this.props.store.dispatch({
-        type: actionTypes.SET_OPERATOR_SUBSCRIPTION,
-        operatorState: data,
-      });
-    };
-
-    const operatorSubscription = new GQLSubscription({
-      type: OPERATOR_EVENT_SUBSCRIPTION,
+    const mesheryControllerSubscription = new GQLSubscription({
+      type: MESHERY_CONTROLLER_SUBSCRIPTION,
       contextIds: contexts,
-      callbackFunction: operatorCallback,
+      callbackFunction: (data) => {
+        this.props.store.dispatch({
+          type: actionTypes.SET_CONTROLLER_STATE,
+          controllerState: data,
+        });
+        console.log('CONTROLLER TEST CONTROLLER ', data);
+      },
     });
     // const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback }) above uses old listenToMeshSyncEvents subscription, instead new subscribeMeshSyncEvents is used
-
-    this.setState({ operatorSubscription });
+    this.setState({ mesheryControllerSubscription });
+    // this.setState({ operatorSubscription });
   };
 
   handleDrawerToggle = () => {

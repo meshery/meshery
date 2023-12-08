@@ -127,6 +127,25 @@
               "name"
             ]]
           }
+        },
+        {
+          "kind": "ServiceAccount",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "name"
+              ]
+            ],
+            "RoleBinding": [
+              [
+                "settings",
+                "subjects",
+                "_",
+                "name"
+              ]
+            ]
+          }
         }
       ]
     }

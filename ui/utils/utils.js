@@ -319,3 +319,10 @@ export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) =
 export const camelcaseToSnakecase = (value) => {
   return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
 };
+
+export const formatToTitleCase = (value) => {
+  if (typeof value === 'string') {
+    return value.substring(0, 1).toUpperCase().concat('', value.substring(1).toLowerCase());
+  }
+  return '';
+};

@@ -215,7 +215,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		r.Log.Error(ErrNilClient)
 		return ErrNilClient
 	}
-	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.StatusEnabled {
+	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.MesheryControllerStatus(model.StatusEnabled) {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))

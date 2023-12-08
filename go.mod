@@ -22,7 +22,6 @@ require (
 	github.com/docker/go-connections v0.4.0
 	github.com/envoyproxy/go-control-plane v0.11.1
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-errors/errors v1.5.1
 	github.com/go-openapi/runtime v0.26.0
 	github.com/go-openapi/strfmt v0.21.7
 	github.com/gofrs/uuid v4.4.0+incompatible
@@ -135,6 +134,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/fsouza/go-dockerclient v1.9.8 // indirect
 	github.com/fvbommel/sortorder v1.1.0 // indirect
+	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.5.0 // indirect
 	github.com/go-git/go-git/v5 v5.9.0 // indirect
