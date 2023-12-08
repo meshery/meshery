@@ -386,7 +386,7 @@ func mesheryUpdater(output []map[string]string) {
 							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 								component.Metadata[key] = svg
 							}
-						} else if key == "isModelAnnotation" {
+						} else if key == "isModelAnnotation" && changeFields["component"] == "" {
 							if component.Model.Metadata == nil {
 								component.Model.Metadata = make(map[string]interface{})
 							}
@@ -423,7 +423,6 @@ func mesheryUpdater(output []map[string]string) {
 					delete(component.Metadata, "PublishToRegistry")
 					delete(component.Metadata, "CRDs")
 					delete(component.Metadata, "component")
-					delete(component.Model.Metadata, "isModelAnnotaion")
 					modelDisplayName := component.Metadata["modelDisplayName"].(string)
 					component.Model.DisplayName = modelDisplayName
 					byt, err = json.Marshal(component)
