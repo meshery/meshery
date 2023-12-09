@@ -276,8 +276,7 @@ func main() {
 	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-	//lazy loading for more Registrants to Register their entities like Istio
-	time.AfterFunc(15*time.Second, func() {
+	
 		hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
 		if err != nil {
 			log.Error(err)
@@ -302,7 +301,7 @@ func main() {
 			fmt.Println("Error writing JSON data to file:", err)
 			return
 		}
-	})
+
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
