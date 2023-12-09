@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent-components';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -13,7 +14,6 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
@@ -43,24 +43,21 @@ function exportToJsonFile(jsonData, filename) {
 
 const User = (props) => {
   const [user, setUser] = useState(null);
-  const [open, setOpen] = useState(false);
   const [account, setAccount] = useState([]);
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  const anchorEl = useRef(null);
+  // const anchorEl = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
 
   const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
 
-  const handleToggle = () => {
-    setOpen(!open);
+  const handleToggle = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (event) => {
-    if (anchorEl.current && anchorEl.current.contains(event.target)) {
-      return;
-    }
-    setOpen(false);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const handleLogout = () => {
@@ -162,6 +159,8 @@ const User = (props) => {
     avatar_url = user.avatar_url;
   }
 
+  const open = Boolean(anchorEl);
+
   return (
     <div>
       <NoSsr>
@@ -187,6 +186,7 @@ const User = (props) => {
           transition
           style={{ zIndex: 10000 }}
           placement="top-end"
+          onClose={handleClose}
         >
           {({ TransitionProps, placement }) => (
             <Grow
