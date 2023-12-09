@@ -331,11 +331,12 @@ func main() {
 		return
 	}
 
-	err = writeToFile(filePath, jsonData)
-	if err != nil {
-		fmt.Println("Error writing JSON data to file:", err)
-		return
-	}
+		err = writeToFile(filePath, jsonData)
+		if err != nil {
+			fmt.Println("Error writing JSON data to file:", err)
+			return
+		}
+	})
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
