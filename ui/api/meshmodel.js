@@ -192,7 +192,7 @@ export async function getModelByName(modelName, options = defaultOptions) {
  */
 function optionToQueryConvertor(options) {
   const uri = new URLSearchParams();
-  const { paginated, pageSize, page, trim, components, relationships } = options;
+  const { pageSize, page, trim, components, relationships } = options;
 
   if (trim) {
     uri.append('trim', `${trim}`);

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Grid, List, ListItem, ListItemText, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateProgress } from '../../lib/store';
+
 import {
   FormatId,
   FormatStructuredData,
@@ -10,12 +14,14 @@ import {
   createColumnUiSchema,
 } from '../DataFormatter';
 import useKubernetesHook, {
-  useGetOperatorInfoQuery,
   useMesheryOperator,
   useMeshsSyncController,
   useNatsController,
 } from '../hooks/useKubernetesHook';
 import { ConnectionChip } from './ConnectionChip';
+import _ from 'lodash';
+import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
+import { formatToTitleCase } from '../../utils/utils';
 
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
@@ -110,7 +116,7 @@ const DefaultPropertyFormatters = {
   last_updated: (value) => customDateFormatter('Last Updated', value),
 };
 
-const KubernetesMetadataFormatter = ({ connection, metadata }) => {
+const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const classes = useKubernetesStyles();
   const contextID = metadata.id;
 
@@ -118,6 +124,70 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
   const { ping: pingNats } = useNatsController();
+
+  const getOperatorStatus = (ctxId) => {
+    const operator = meshsyncControllerState?.find(
+      (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+    );
+    if (!operator) {
+      return {};
+    }
+
+    return {
+      operatorState: operator.status,
+      operatorVersion: operator?.version,
+    };
+  };
+
+  const getContextStatus = (ctxId) => {
+    const controller = meshsyncControllerState?.filter((op) => op.contextId === ctxId);
+    if (!controller) {
+      return {};
+    }
+
+    function getMeshSyncStats() {
+      if (!controller) return {};
+      const meshsyncController = controller?.find(
+        (ctlr) => ctlr?.controller === CONTROLLERS.MESHSYNC,
+      );
+      // meshsync is at 1st idx
+      if (meshsyncController) {
+        return {
+          meshSyncState: meshsyncController?.status,
+          meshSyncVersion: meshsyncController?.version,
+        };
+      }
+    }
+
+    function getBrokerStats() {
+      if (!controller) return {};
+      const brokerController = controller?.find((ctlr) => ctlr?.controller === CONTROLLERS.BROKER);
+      // broker is at 0th idx
+      if (brokerController) {
+        return {
+          natsState: brokerController?.status,
+          natsVersion: brokerController?.version,
+        };
+      }
+    }
+
+    const defaultState = {
+      operatorState: CONTROLLER_STATES.DISABLED,
+      operatorVersion: 'Not Available',
+      meshSyncState: CONTROLLER_STATES.DISABLED,
+      meshSyncVersion: 'Not Available',
+      natsState: CONTROLLER_STATES.DISABLED,
+      natsVersion: 'Not Available',
+    };
+
+    const actualOperatorState = {
+      ...getOperatorStatus(ctxId),
+      ...getMeshSyncStats(),
+      ...getBrokerStats(),
+    };
+
+    return _.merge(defaultState, actualOperatorState);
+  };
 
   const handleKubernetesClick = () => {
     pingKubernetes(metadata.name, metadata.server, connection.id);
@@ -135,16 +205,12 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
     pingMeshSync({ connectionID: connection.id });
   };
 
-  const { operatorInfo: operatorStatus } = useGetOperatorInfoQuery({ contextID });
-  const {
-    isReachable: operatorState,
-    meshSyncStatus: meshSyncState,
-    natsStatus: natsState,
-  } = operatorStatus;
+  const controllerStates = getContextStatus(contextID);
+  const { operatorState, meshSyncState, natsState } = controllerStates;
 
-  const operatorVersion = operatorStatus.operatorVersion || 'Not Available';
-  const meshSyncVersion = operatorStatus.meshSyncVersion || 'Not Available';
-  const NATSVersion = operatorStatus.NATSVersion || 'Not Available';
+  const operatorVersion = controllerStates?.operatorVersion || 'Not Available';
+  const meshSyncVersion = controllerStates.meshSyncVersion || 'Not Available';
+  const NATSVersion = controllerStates.natsVersion || 'Not Available';
 
   return (
     <Grid container spacing={1} className={classes.root}>
@@ -156,7 +222,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ConnectionChip
                     tooltip={`Server: ${metadata.server}`}
-                    title={metadata.name}
+                    title={connection.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={() => handleKubernetesClick(connection.id)}
@@ -215,7 +281,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                   <ConnectionChip
                     tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
                     title={'Operator'}
-                    disabled={!operatorState}
+                    disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
                     status={operatorState}
                     handlePing={() => handleOperatorClick(connection.id)}
                     iconSrc="/static/img/meshery-operator.svg"
@@ -232,7 +298,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                       <ConnectionChip
                         tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
                         title={'MeshSync'}
-                        status={meshSyncState}
+                        status={meshSyncState?.toLowerCase()}
                         handlePing={handleMeshSyncClick}
                         iconSrc="/static/img/meshsync.svg"
                       />
@@ -245,7 +311,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                       <ConnectionChip
                         tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
                         title={'NATS'}
-                        status={natsState}
+                        status={natsState?.toLowerCase()}
                         handlePing={() => handleNATSClick()}
                         iconSrc="/static/img/nats-icon-color.svg"
                       />
@@ -262,7 +328,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ListItemText
                     primary="Operator State"
-                    secondary={operatorState ? 'Active' : 'Undeployed'}
+                    secondary={formatToTitleCase(operatorState)}
                   />
                 </ListItem>
                 <ListItem>
@@ -275,7 +341,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ListItemText
                     primary="MeshSync State"
-                    secondary={meshSyncState || 'Undeployed'}
+                    secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
                   />
                 </ListItem>
                 <ListItem>
@@ -286,7 +352,10 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={natsState || 'Not Connected'} />
+                  <ListItemText
+                    primary="NATS State"
+                    secondary={formatToTitleCase(natsState) || 'Not Connected'}
+                  />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
@@ -337,10 +406,15 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
   );
 };
 
-export const FormatConnectionMetadata = ({ connection }) => {
+const FormatConnectionMetadata = (props) => {
+  const { connection, meshsyncControllerState } = props;
   const formatterByKind = {
     [KUBERNETES]: () => (
-      <KubernetesMetadataFormatter connection={connection} metadata={connection.metadata} />
+      <KubernetesMetadataFormatter
+        meshsyncControllerState={meshsyncControllerState}
+        connection={connection}
+        metadata={connection.metadata}
+      />
     ),
     [MESHERY]: () => <MesheryMetadataFormatter connection={connection} />,
     default: () => (
@@ -361,3 +435,25 @@ export const FormatConnectionMetadata = ({ connection }) => {
     </Box>
   );
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
+const mapStateToProps = (state) => {
+  const k8sconfig = state.get('k8sConfig');
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+  const operatorState = state.get('operatorState');
+  const connectionMetadataState = state.get('connectionMetadataState');
+  const meshsyncControllerState = state.get('controllerState');
+
+  return {
+    k8sconfig,
+    meshsyncControllerState,
+    selectedK8sContexts,
+    operatorState,
+    connectionMetadataState,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);

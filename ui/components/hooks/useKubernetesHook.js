@@ -3,10 +3,7 @@ import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
 import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
-import {
-  getOperatorStatusFromQueryResult,
-  pingMesheryOperator,
-} from '../ConnectionWizard/helpers/mesheryOperator';
+import { pingMesheryOperator } from '../ConnectionWizard/helpers/mesheryOperator';
 import { EVENT_TYPES } from '../../lib/event-types';
 import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
 import { useEffect, useState } from 'react';
@@ -124,14 +121,7 @@ export function useMeshsSyncController() {
 export const useGetOperatorInfoQuery = ({ contextID }) => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const [operatorInfo, setOperatorInfo] = useState({
-    isReachable: false,
-    operatorVersion: '',
-    meshSyncStatus: '',
-    meshSyncVersion: '',
-    natsStatus: '',
-    NATSVersion: '',
-  });
+
   const handleError = handleErrorGenerator(dispatch, notify);
   // const handleSuccess = handleSuccessGenerator(dispatch, notify);
   const handleInfo = handleInfoGenerator(notify);
@@ -142,19 +132,19 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     dispatch(updateProgress({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
     const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextID }).subscribe({
-      next: (res) => {
+      next: () => {
         setIsLoading(false);
 
         dispatch(updateProgress({ showProgress: false }));
-        const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
-        setOperatorInfo({
-          isReachable,
-          ...operatorInfo,
-          meshSyncStatus: operatorInfo.MeshSync ? operatorInfo.MeshSync.status : '',
-          meshSyncVersion: operatorInfo.MeshSync ? operatorInfo.MeshSync.version : '',
-          NATSVersion: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.version : '',
-          natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
-        });
+        // const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
+        // setOperatorInfo({
+        //   isReachable,
+        //   ...operatorInfo,
+        //   meshSyncStatus: operatorInfo.MeshSync ? operatorInfo.MeshSync.status : '',
+        //   meshSyncVersion: operatorInfo.MeshSync ? operatorInfo.MeshSync.version : '',
+        //   NATSVersion: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.version : '',
+        //   natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
+        // });
       },
       error: () => {
         setIsLoading(false);
@@ -169,7 +159,6 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
   }, []);
 
   return {
-    operatorInfo,
     isLoading,
   };
 };

@@ -36,7 +36,7 @@ import SearchBar from '../../utils/custom-search';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium, iconSmall } from '../../css/icons.styles';
+import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
@@ -52,8 +52,13 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { CONNECTION_STATES } from '../../utils/Enum';
-import { FormatConnectionMetadata } from './metadata';
+import {
+  CONNECTION_KINDS,
+  CONNECTION_STATES,
+  CONTROLLERS,
+  CONTROLLER_STATES,
+} from '../../utils/Enum';
+import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { ConnectionChip } from './ConnectionChip';
@@ -84,10 +89,6 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch connection transitions',
   },
 };
-
-const ENABLED = 'ENABLED';
-const DISABLED = 'DISABLED';
-const KUBERNETES = 'kubernetes';
 
 /**
  * Parent Component for Connection Component
@@ -154,6 +155,7 @@ function Connections({
   selectedK8sContexts,
   k8sconfig,
   connectionMetadataState,
+  meshsyncControllerState,
 }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -171,6 +173,7 @@ function Connections({
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -250,7 +253,7 @@ function Connections({
             <ConnectionChip
               tooltip={'Server: ' + server}
               title={value}
-              status={tableMeta.rowData[7]}
+              status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
                   getColumnValue(tableMeta.rowData, 'id', columns),
@@ -258,7 +261,7 @@ function Connections({
                 )
               }
               handlePing={() => {
-                if (tableMeta.rowData[4] === KUBERNETES) {
+                if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
@@ -408,14 +411,18 @@ function Connections({
               icon={
                 <InfoIcon
                   color={theme.palette.secondary.iconMain}
-                  style={iconSmall}
+                  style={{
+                    cursor: 'pointer',
+                    height: 20,
+                    width: 20,
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(url, '_blank');
                   }}
                 />
               }
-              tooltip="Click to know about connection and status"
+              tooltip="Click to learn about connection and status"
             />
           );
         },
@@ -502,7 +509,8 @@ function Connections({
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
-              {getColumnValue(tableMeta.rowData, 'kind', columns) === KUBERNETES ? (
+              {getColumnValue(tableMeta.rowData, 'kind', columns) ===
+              CONNECTION_KINDS.KUBERNETES ? (
                 <IconButton
                   aria-label="more"
                   id="long-button"
@@ -804,21 +812,22 @@ function Connections({
 
   function getOperatorStatus(index) {
     const ctxId = connections[index]?.metadata?.id;
-    const operator = _operatorState?.find((op) => op.contextID === ctxId);
+    const operator = meshsyncControllerState?.find(
+      (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+    );
     if (!operator) {
       return {};
     }
-    const operatorStatus = operator.operatorStatus;
     return {
-      operatorState: operatorStatus.status === ENABLED,
-      operatorVersion: operatorStatus.version,
+      operatorState: operator.status === CONTROLLER_STATES.DEPLOYED,
+      operatorVersion: operator?.version,
     };
   }
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = connections[index].metadata?.id;
     const variables = {
-      status: `${checked ? ENABLED : DISABLED}`,
+      status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
     };
 
@@ -947,6 +956,8 @@ function Connections({
                   setSearch(value);
                 }}
                 placeholder="Search connections..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
               />
 
               <CustomColumnVisibilityControl
@@ -1033,7 +1044,15 @@ const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
-  return { k8sconfig, selectedK8sContexts, operatorState, connectionMetadataState };
+  const meshsyncControllerState = state.get('controllerState');
+
+  return {
+    k8sconfig,
+    selectedK8sContexts,
+    operatorState,
+    connectionMetadataState,
+    meshsyncControllerState,
+  };
 };
 
 // @ts-ignore

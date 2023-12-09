@@ -82,7 +82,7 @@ const View = (props) => {
       <>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-            {key}
+            {key.toUpperCase()}
           </Typography>
 
           <ResponsiveDataTable
@@ -100,7 +100,7 @@ const View = (props) => {
   }
 
   const RenderObject = (obj) => {
-    function processObjForKeyValTable(obj) {
+    function ProcessObjForKeyValTable(obj) {
       const [processedData, setProcessedData] = React.useState([]);
 
       function processObj(obj, parentKey = '') {
@@ -149,11 +149,18 @@ const View = (props) => {
               {Object.entries(obj).map(([key, value], innerIndex) => {
                 const parts = key.split('.');
                 const lastPart = parts[parts.length - 1];
-                console.log('value: ', value);
+                const heading = lastPart.replace('_', ' ');
                 return value.length == 1 && value[0].hide == true ? null : (
                   <div style={{ margin: '2rem 0' }} key={innerIndex}>
-                    <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-                      {lastPart}
+                    <Typography
+                      style={{
+                        fontSize: '.9rem',
+                        marginBottom: '1rem',
+                        textTransform: 'uppercase',
+                      }}
+                      align="left"
+                    >
+                      {heading}
                     </Typography>
                     <NameValueTable rows={value} />
                   </div>
@@ -165,7 +172,7 @@ const View = (props) => {
       );
     }
 
-    const processObjForKeyDataTable = (obj, parentKey = '') => {
+    const ProcessObjForKeyDataTable = (obj, parentKey = '') => {
       let results = [];
       for (const [key, value] of Object.entries(obj)) {
         const currentKey = parentKey ? `${parentKey}.${key}` : key;
@@ -178,10 +185,10 @@ const View = (props) => {
           results.push(RenderDynamicTable(key, value));
         }
         if (typeof value === 'object' && value !== null) {
-          results.push(processObjForKeyDataTable(value, currentKey));
+          results.push(ProcessObjForKeyDataTable(value, currentKey));
         } else {
           if (key === 'attribute') {
-            results.push(processObjForKeyDataTable(JSON.parse(value), currentKey));
+            results.push(ProcessObjForKeyDataTable(JSON.parse(value), currentKey));
           }
         }
       }
@@ -190,8 +197,8 @@ const View = (props) => {
 
     return (
       <>
-        {processObjForKeyValTable(obj)}
-        {processObjForKeyDataTable(obj)}
+        {ProcessObjForKeyValTable(obj)}
+        {ProcessObjForKeyDataTable(obj)}
       </>
     );
   };

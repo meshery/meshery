@@ -147,7 +147,7 @@ const DashboardComponent = (props) => {
 
             {Object.keys(ResourcesConfig).map((resource, idx) => {
               return (
-                <Tooltip title={`View ${resource}`} placement="top">
+                <Tooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
                     key={idx}
                     className={classes.tab}
