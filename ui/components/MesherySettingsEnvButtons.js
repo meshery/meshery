@@ -291,7 +291,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);
                   }}
-                  icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                  iconSrc={'/static/img/kubernetes.svg'}
                 />
               </div>
             </Tooltip>

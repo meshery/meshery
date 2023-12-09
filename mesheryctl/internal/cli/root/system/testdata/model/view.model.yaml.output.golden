@@ -1,0 +1,14 @@
+name: spire
+version: 0.12.2
+displayname: SPIRE
+hostname: ""
+hostid: 00000000-0000-0000-0000-000000000000
+displayhostname: ""
+category:
+  name: Security & Compliance
+  metadata: {}
+modelMetadata:
+  svgColor: ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg
+  svgWhite: ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg
+components: []
+relationships: []

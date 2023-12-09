@@ -6,15 +6,128 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	helpers "github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
+
+func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method == http.MethodDelete {
+		h.handleProcessTermination(w, req)
+		return
+	}
+
+	connectionRegisterPayload := models.ConnectionPayload{}
+	userUUID := uuid.FromStringOrNil(user.ID)
+	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
+	if err != nil {
+		http.Error(w, models.ErrUnmarshal(err, "connection registration payload").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+
+	if string(connectionRegisterPayload.Status) == string(machines.Init) {
+		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
+	} else {
+		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		smInstanceTracker.mx.Lock()
+		defer smInstanceTracker.mx.Unlock()
+
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionRegisterPayload.ID]
+		if !ok {
+			machineCtx := make(map[string]string, 0)
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				connectionRegisterPayload.ID,
+				smInstanceTracker,
+				h.log,
+				nil,
+				machines.DISCOVERED,
+				strings.ToLower(connectionRegisterPayload.Kind),
+				nil,
+			)
+			if err != nil {
+				event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+					"error": err,
+				}).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}
+		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+		}
+	}
+}
+
+func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Request) {
+	body := make(map[string]string, 0)
+	err := json.NewDecoder(req.Body).Decode(&body)
+	if err != nil {
+		_err := models.ErrUnmarshal(err, "request body")
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		return
+	}
+	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
+
+	smInstancetracker.mx.Lock()
+	defer smInstancetracker.mx.Unlock()
+	id, ok := body["id"]
+	if ok {
+		delete(smInstancetracker.ConnectToInstanceMap, uuid.FromStringOrNil(id))
+	}
+}
+
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
+	compFilter := &v1alpha1.ComponentFilter{
+		Name:      "Connection",
+		ModelName: payload.Model,
+		Limit:     1,
+	}
+	schema := make(map[string]interface{}, 1)
+	component, _, _ := h.registryManager.GetEntities(compFilter)
+	if len(component) == 0 {
+		http.Error(w, "Unable to register resource as connection. No matching connection definition found in the registry", http.StatusInternalServerError)
+		return
+	}
+
+	schema["component"] = component[0]
+	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name:      "Credential",
+		ModelName: payload.Model,
+		Limit:     1,
+	})
+
+	if len(credential) > 0 {
+		schema["credential"] = credential[0]
+	}
+	// id act as a connection registration process tracker.
+	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
+	id, _ := uuid.NewV4()
+	schema["id"] = id
+
+	err := json.NewEncoder(w).Encode(&schema)
+	if err != nil {
+		h.log.Error(ErrWriteResponse)
+	}
+}
 
 // swagger:route POST /api/integrations/connections PostConnection idPostConnection
 // Handle POST request for creating a new connection
@@ -43,7 +156,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	_, err = provider.SaveConnection(req, &connection, "", false)
+	_, err = provider.SaveConnection(&connection, "", false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -217,6 +330,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
+
 	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
 	if err != nil {
 		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
@@ -229,33 +343,108 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-	var statusCode int
-	for id, status := range *connectionStatusPayload {
-		eventBuilder.ActedUpon(id)
-		var updatedConnection *connections.Connection
-		var err error
-		token, ok := req.Context().Value(models.TokenCtxKey).(string)
-		if !ok {
-			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-			h.log.Error(err)
-			return
+
+	connKind := mux.Vars(req)["connectionKind"]
+	if connKind == "kubernetes" {
+		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		smInstanceTracker.mx.Lock()
+		for id, status := range *connectionStatusPayload {
+			eventBuilder.ActedUpon(id)
+			k8scontext, err := provider.GetK8sContext(token, id.String())
+
+			if err != nil {
+				eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+					"error": err,
+				})
+				_event := eventBuilder.Build()
+				_ = provider.PersistEvent(_event)
+				go h.config.EventBroadcaster.Publish(userID, _event)
+				continue
+			}
+
+			event := eventBuilder.WithSeverity(events.Informational).
+				WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			machineCtx := &kubernetes.MachineCtx{
+				K8sContext:         k8scontext,
+				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+				K8sCompRegHelper:   h.K8sCompRegHelper,
+				OperatorTracker:    h.config.OperatorTracker,
+				Provider:           provider,
+				K8scontextChannel:  h.config.K8scontextChannel,
+				EventBroadcaster:   h.config.EventBroadcaster,
+				RegistryManager:    h.registryManager,
+			}
+			inst, ok := smInstanceTracker.ConnectToInstanceMap[id]
+			if !ok {
+				inst, err = InitializeMachineWithContext(
+					machineCtx,
+					req.Context(),
+					id,
+					smInstanceTracker,
+					h.log,
+					provider,
+					machines.InitialState,
+					"kubernetes",
+					kubernetes.AssignInitialCtx,
+				)
+				if err != nil {
+					event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+						"error": err,
+					}).Build()
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+					continue
+				}
+			}
+
+			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+				event, err = inst.SendEvent(req.Context(), helpers.StatusToEvent(status), nil)
+				if err != nil {
+					h.log.Error(err)
+					_ = provider.PersistEvent(event)
+					h.config.EventBroadcaster.Publish(userID, event)
+					return
+				}
+
+				if status == connections.DELETED {
+					delete(smInstanceTracker.ConnectToInstanceMap, inst.ID)
+				}
+
+				_ = provider.PersistEvent(event)
+				h.config.EventBroadcaster.Publish(userID, event)
+			}(inst, status)
 		}
-		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
-		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
-				"error": err,
-			})
-			// Get the connection name as id doesn't convey much to the user.
-		} else {
-			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
-			go h.config.K8scontextChannel.PublishContext()
+		smInstanceTracker.mx.Unlock()
+	} else {
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		for id, status := range *connectionStatusPayload {
+			connection, statusCode, err := provider.UpdateConnectionStatusByID(token, id, status)
+
+			if err != nil {
+				event := events.NewEvent().WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
+				_ = provider.PersistEvent(event)
+				h.config.EventBroadcaster.Publish(userID, event)
+				h.log.Error(err)
+				continue
+			}
+			eb := events.NewEvent()
+			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithStatus("update")
+			if status == connections.DELETED {
+				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
+			}
+			event := events.NewEvent().WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
+			_ = provider.PersistEvent(event)
+			h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Debug("connection", connection, statusCode)
 		}
 
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
 	}
-	w.WriteHeader(statusCode)
+	w.WriteHeader(http.StatusAccepted)
 }
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection

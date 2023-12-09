@@ -1,4 +1,4 @@
----
+<!-- ---
 layout: default
 title: Meshery and Service Mesh Interface (SMI)
 permalink: tasks/service-mesh-interface
@@ -53,4 +53,4 @@ The conformance tool will run the test suite and automatically update the confor
 
 Ideally, this GitHub account is a service-robot account used within the project’s CI pipeline.
 
-The [SMI Conformance dashboard](https://meshery.io/service-mesh-interface) displays the current and historical test results of each of the service mesh projects. These results are automatically updated through the projects official accounts as mentioned above.
+The [SMI Conformance dashboard](https://meshery.io/service-mesh-interface) displays the current and historical test results of each of the service mesh projects. These results are automatically updated through the projects official accounts as mentioned above. -->

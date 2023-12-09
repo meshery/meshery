@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
+import debounce from '../../utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
-import CloseSquare from '../../assets/icons/CloseSquare';
+import DotSquare from '../../assets/icons/DotSquare';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { check, labelText, root, setSearchText, ...other } = props;
+  const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   return (
     <StyledTreeItemRoot
@@ -27,21 +33,24 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            py: check ? 0.5 : root ? 0.2 : 1.5,
+            py: check ? 0.5 : search ? 0.2 : 1.5,
             px: 0,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant={'body'} style={{ color: `${root}` }}>
-              {labelText}
-            </Typography>
-          </div>
+          {width < 1370 && isSearchExpanded ? null : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant={'body'} style={{ color: `${root}` }}>
+                {labelText}
+              </Typography>
+            </div>
+          )}
+
           {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
@@ -56,11 +65,11 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               }}
             />
           )}
-          {root && (
+          {search && (
             <SearchBar
-              onSearch={(value) => {
-                setSearchText(value);
-              }}
+              onSearch={debounce((value) => setSearchText(value), 200)}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search"
             />
           )}
@@ -88,6 +97,8 @@ const MesheryTreeView = ({
 }) => {
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   useEffect(() => {
     setSelected([]);
@@ -106,15 +117,26 @@ const MesheryTreeView = ({
     });
   }, [view]);
 
-  const handleScroll = (scrollingView) => () => {
+  const scrollRef = useRef();
+
+  const handleScroll = (scrollingView) => (event) => {
     const div = event.target;
-    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
       setPage((prevPage) => ({
         ...prevPage, // Keep the current values for other keys
         [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
       }));
     }
+
+    scrollRef.current = div.scrollTop;
   };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      const div = document.getElementById('scrollElement');
+      div.scrollTop = scrollRef.current;
+    }
+  }, [data]);
 
   const handleChecked = () => {
     setChecked(!checked);
@@ -143,7 +165,7 @@ const MesheryTreeView = ({
   };
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {view === MODELS && (
         <div>
           <div
@@ -152,49 +174,58 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <IconButton onClick={expandAll} size="large">
-                <PlusSquare />
-              </IconButton>
+            <div>
+              {width < 1370 && isSearchExpanded ? null : (
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                  <IconButton onClick={expandAll} size="large">
+                    {/* <PlusSquare /> */}
+                    <KeyboardArrowDownIcon />
+                  </IconButton>
 
-              <IconButton
-                onClick={() => setExpanded([])}
-                style={{ marginRight: '4px' }}
-                size="large"
-              >
-                <MinusSquare />
-              </IconButton>
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={checked}
-                    onClick={handleChecked}
-                    inputProps={{ 'aria-label': 'controlled' }}
+                  <IconButton
+                    onClick={() => setExpanded([])}
+                    style={{ marginRight: '4px' }}
+                    size="large"
+                  >
+                    {/* <MinusSquare /> */}
+                    <KeyboardArrowUpIcon />
+                  </IconButton>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        color="primary"
+                        checked={checked}
+                        onClick={handleChecked}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    }
+                    label="Duplicates"
                   />
-                }
-                label="Duplicates"
-              />
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex' }}>
               <SearchBar
-                onSearch={(value) => {
-                  setSearchText(value);
-                }}
+                onSearch={debounce((value) => setSearchText(value), 200)}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
                 placeholder="Search"
               />
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
+          <div
+            id="scrollElement"
+            style={{ overflowY: 'auto', height: '27rem' }}
+            onScroll={handleScroll(MODELS)}
+          >
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -300,12 +331,12 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                <PlusSquare />
+                {/* <PlusSquare /> */}
+                <KeyboardArrowDownIcon />
               </IconButton>
 
               <IconButton
@@ -313,17 +344,22 @@ const MesheryTreeView = ({
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                <MinusSquare />
+                {/* <MinusSquare /> */}
+                <KeyboardArrowUpIcon />
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }}>
+          <div
+            id="scrollElement"
+            style={{ overflowY: 'auto', height: '27rem' }}
+            onScroll={handleScroll(MODELS)}
+          >
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -336,10 +372,7 @@ const MesheryTreeView = ({
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
-                  <div
-                    style={{ overflowY: 'auto', height: '27rem' }}
-                    onScroll={handleScroll(MODELS)}
-                  >
+                  <div>
                     <StyledTreeItem
                       nodeId={1}
                       labelText={`Models (${registrant?.summary?.models})`}
@@ -359,7 +392,7 @@ const MesheryTreeView = ({
                             });
                           }}
                         >
-                          <div onScroll={handleScroll(COMPONENTS)}>
+                          <div id="scrollElement" onScroll={handleScroll(COMPONENTS)}>
                             <StyledTreeItem
                               nodeId={`${index}.1`}
                               labelText={`Components (${
@@ -403,7 +436,7 @@ const MesheryTreeView = ({
                             </StyledTreeItem>
                           </div>
 
-                          <div onScroll={handleScroll(RELATIONSHIPS)}>
+                          <div id="scrollElement" onScroll={handleScroll(RELATIONSHIPS)}>
                             <StyledTreeItem
                               nodeId={`${index}.2`}
                               labelText={`Relationships (${
@@ -460,7 +493,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect
@@ -471,6 +504,7 @@ const MesheryTreeView = ({
             nodeId={0}
             top
             root
+            search
             setSearchText={setSearchText}
             labelText={
               comp.model?.name ? `Model: ${comp.model?.displayName}` : 'Select a component node'
@@ -481,7 +515,11 @@ const MesheryTreeView = ({
               setSelected([]);
             }}
           >
-            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(COMPONENTS)}>
+            <div
+              id="scrollElement"
+              style={{ overflowY: 'auto', height: '27rem' }}
+              onScroll={handleScroll(COMPONENTS)}
+            >
               {data.map((component, index) => (
                 <StyledTreeItem
                   key={index}
@@ -503,7 +541,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect
@@ -525,7 +563,8 @@ const MesheryTreeView = ({
             }}
           >
             <div
-              style={{ overflowY: 'auto', height: '27rem' }}
+              id="scrollElement"
+              style={{ overflowY: 'auto', maxHeight: '27rem' }}
               onScroll={handleScroll(RELATIONSHIPS)}
             >
               {data.map((relationship, index) => (
@@ -533,7 +572,7 @@ const MesheryTreeView = ({
                   key={index}
                   nodeId={index + 1}
                   check
-                  labelText={relationship.kind}
+                  labelText={relationship.subType}
                   onClick={() => {
                     setRela(relationship);
                   }}

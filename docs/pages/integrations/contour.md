@@ -30,13 +30,13 @@ image: /assets/img/integrations/contour.svg
 
 
 
-5. Provides a method for packaging, deploying, and managing Contour.
+5. Supports dynamic configuration updates out of the box while maintaining a lightweight profile.
 
-6. Extends the functionality of the Kubernetes API to create, configure, and manage instances of Contour on behalf of users.
+6. Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).
 
-7. Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour.
+7. Solves shortcomings in the original design.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour.
 

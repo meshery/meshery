@@ -73,7 +73,6 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 				case "relationships":
 					relationships = append(relationships, entityPath)
 				case "policies":
-					break
 				default:
 					erh.generateComponents(entityPath) // register components first
 				}

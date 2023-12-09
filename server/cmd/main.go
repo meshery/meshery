@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -150,7 +151,6 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	// eventsPersister, err := models.
 	dbHandler := models.GetNewDBInstance()
 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
 	if err != nil {
@@ -270,12 +270,16 @@ func main() {
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
+	}
+
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
 	}
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

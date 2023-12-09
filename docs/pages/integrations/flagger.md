@@ -22,12 +22,11 @@ image: /assets/img/integrations/flagger.svg
 2. Collaborative and visual infrastructure as code for Flagger
 
 4. 
-    Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.
-    Save and share your design patterns to GitHub using either public or private repositories.
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
 
-    Learn more about <a href="/blog/service-mesh-specifications/pipelining-service-mesh-specifications">pipelining service mesh specifications</a> and using Service Mesh Interface and Service Mesh Performance specs on your CI/CD pipelines with Meshery's GitHub Actions.
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
 
 
 

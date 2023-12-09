@@ -253,6 +253,7 @@ type ComplexityRoot struct {
 		ContextID  func(childComplexity int) int
 		Controller func(childComplexity int) int
 		Status     func(childComplexity int) int
+		Version    func(childComplexity int) int
 	}
 
 	MesheryResult struct {
@@ -404,7 +405,7 @@ type ComplexityRoot struct {
 	Subscription struct {
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
-		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
+		SubscribeConfiguration            func(childComplexity int, patternSelector model.PageFilter, filterSelector model.PageFilter) int
 		SubscribeEvents                   func(childComplexity int) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshModelSummary         func(childComplexity int, selector model.MeshModelSummarySelector) int
@@ -429,7 +430,7 @@ type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error)
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
-	GetOperatorStatus(ctx context.Context, k8scontextID string) (*model.OperatorStatus, error)
+	GetOperatorStatus(ctx context.Context, k8scontextID string) (*model.MesheryControllersStatusListItem, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error)
 	GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
 	GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
@@ -451,7 +452,7 @@ type SubscriptionResolver interface {
 	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error)
-	SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
+	SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
 	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 	SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error)
@@ -1366,6 +1367,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MesheryControllersStatusListItem.Status(childComplexity), true
 
+	case "MesheryControllersStatusListItem.version":
+		if e.complexity.MesheryControllersStatusListItem.Version == nil {
+			break
+		}
+
+		return e.complexity.MesheryControllersStatusListItem.Version(childComplexity), true
+
 	case "MesheryResult.created_at":
 		if e.complexity.MesheryResult.CreatedAt == nil {
 			break
@@ -2186,7 +2194,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["applicationSelector"].(model.PageFilter), args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
+		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
 
 	case "Subscription.subscribeEvents":
 		if e.complexity.Subscription.SubscribeEvents == nil {
@@ -2488,12 +2496,17 @@ enum MesheryControllerStatus {
     NOTDEPLOYED
     DEPLOYING
     UNKOWN
+    UNDEPLOYED
+    ENABLED
+    RUNNING
+    CONNECTED
   }
 
 type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
+    version: String
   }
 
 type MeshSyncEvent {
@@ -3010,7 +3023,7 @@ type Query {
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus @KubernetesMiddleware
+  ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
@@ -3114,7 +3127,7 @@ type Subscription {
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 
-  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
+  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],
@@ -3142,7 +3155,8 @@ type KctlDescribeDetails {
   describe: String
   ctxid: String
 
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -3544,32 +3558,23 @@ func (ec *executionContext) field_Subscription_subscribeConfiguration_args(ctx c
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PageFilter
-	if tmp, ok := rawArgs["applicationSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applicationSelector"))
+	if tmp, ok := rawArgs["patternSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternSelector"))
 		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["applicationSelector"] = arg0
+	args["patternSelector"] = arg0
 	var arg1 model.PageFilter
-	if tmp, ok := rawArgs["patternSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternSelector"))
+	if tmp, ok := rawArgs["filterSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterSelector"))
 		arg1, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["patternSelector"] = arg1
-	var arg2 model.PageFilter
-	if tmp, ok := rawArgs["filterSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterSelector"))
-		arg2, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filterSelector"] = arg2
+	args["filterSelector"] = arg1
 	return args, nil
 }
 
@@ -9429,6 +9434,47 @@ func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_status
 	return fc, nil
 }
 
+func (ec *executionContext) _MesheryControllersStatusListItem_version(ctx context.Context, field graphql.CollectedField, obj *model.MesheryControllersStatusListItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MesheryControllersStatusListItem_version(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MesheryControllersStatusListItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MesheryResult_meshery_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MesheryResult_meshery_id(ctx, field)
 	if err != nil {
@@ -13160,10 +13206,10 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.OperatorStatus); ok {
+		if data, ok := tmp.(*model.MesheryControllersStatusListItem); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorStatus`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.MesheryControllersStatusListItem`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13172,9 +13218,9 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.OperatorStatus)
+	res := resTmp.(*model.MesheryControllersStatusListItem)
 	fc.Result = res
-	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
+	return ec.marshalOMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getOperatorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13185,18 +13231,16 @@ func (ec *executionContext) fieldContext_Query_getOperatorStatus(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "contextId":
+				return ec.fieldContext_MesheryControllersStatusListItem_contextId(ctx, field)
+			case "controller":
+				return ec.fieldContext_MesheryControllersStatusListItem_controller(ctx, field)
 			case "status":
-				return ec.fieldContext_OperatorStatus_status(ctx, field)
+				return ec.fieldContext_MesheryControllersStatusListItem_status(ctx, field)
 			case "version":
-				return ec.fieldContext_OperatorStatus_version(ctx, field)
-			case "controllers":
-				return ec.fieldContext_OperatorStatus_controllers(ctx, field)
-			case "error":
-				return ec.fieldContext_OperatorStatus_error(ctx, field)
-			case "contextID":
-				return ec.fieldContext_OperatorStatus_contextID(ctx, field)
+				return ec.fieldContext_MesheryControllersStatusListItem_version(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type OperatorStatus", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type MesheryControllersStatusListItem", field.Name)
 		},
 	}
 	defer func() {
@@ -14702,6 +14746,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeMesheryController
 				return ec.fieldContext_MesheryControllersStatusListItem_controller(ctx, field)
 			case "status":
 				return ec.fieldContext_MesheryControllersStatusListItem_status(ctx, field)
+			case "version":
+				return ec.fieldContext_MesheryControllersStatusListItem_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MesheryControllersStatusListItem", field.Name)
 		},
@@ -14831,7 +14877,7 @@ func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["applicationSelector"].(model.PageFilter), fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
+		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18900,6 +18946,8 @@ func (ec *executionContext) _MesheryControllersStatusListItem(ctx context.Contex
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "version":
+			out.Values[i] = ec._MesheryControllersStatusListItem_version(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22341,6 +22389,13 @@ func (ec *executionContext) marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesher
 	return v
 }
 
+func (ec *executionContext) marshalOMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, v *model.MesheryControllersStatusListItem) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._MesheryControllersStatusListItem(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -22387,13 +22442,6 @@ func (ec *executionContext) marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋm
 		return graphql.Null
 	}
 	return ec._MesheryResult(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OperatorStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx context.Context, v interface{}) (*model.OperatorStatusInput, error) {

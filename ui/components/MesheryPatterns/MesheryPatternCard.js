@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Tooltip } from '@material-ui/core';
+import { Avatar, Divider, Grid, IconButton, Typography, Tooltip, Link } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Save from '@material-ui/icons/Save';
 import Fullscreen from '@material-ui/icons/Fullscreen';
@@ -20,10 +20,14 @@ import { useTheme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import { Edit } from '@material-ui/icons';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
+import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function MesheryPatternCard({
+function MesheryPatternCard_({
   id,
   name,
   updated_at,
@@ -59,6 +63,8 @@ function MesheryPatternCard({
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
+
+  const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
 
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
@@ -250,24 +256,28 @@ function MesheryPatternCard({
             alignContent="space-between"
             alignItems="center"
           >
-            <Grid item xs={8} className={classes.yamlDialogTitle}>
+            <Grid item xs={12} className={classes.yamlDialogTitle}>
               <Typography variant="h6" className={classes.yamlDialogTitleText}>
                 {name}
               </Typography>
-              <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
-                <IconButton
-                  onClick={(ev) =>
-                    genericClickHandler(ev, () => {
-                      {
-                        toggleFullScreen();
-                      }
-                    })
-                  }
-                  className={classes.maximizeButton}
-                >
-                  {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-                </IconButton>
-              </Tooltip>
+              <div className={classes.cardHeaderRight}>
+                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
+                  <Avatar alt="profile-avatar" src={owner?.avatar_url} />
+                </Link>
+                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                  <IconButton
+                    onClick={(ev) =>
+                      genericClickHandler(ev, () => {
+                        {
+                          toggleFullScreen();
+                        }
+                      })
+                    }
+                  >
+                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
@@ -341,6 +351,14 @@ function MesheryPatternCard({
     </>
   );
 }
+
+export const MesheryPatternCard = (props) => {
+  return (
+    <Provider store={store}>
+      <MesheryPatternCard_ {...props} />
+    </Provider>
+  );
+};
 
 // @ts-ignore
 export default MesheryPatternCard;

@@ -22,29 +22,21 @@ image: /assets/img/integrations/fluent-operator.svg
 2. Collaborative and visual infrastructure as code for Fluent Operator
 
 4. 
-    Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.
-    Save and share your design patterns to GitHub using either public or private repositories.
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
 
-    Learn more about <a href="/blog/service-mesh-specifications/pipelining-service-mesh-specifications">pipelining service mesh specifications</a> and using Service Mesh Interface and Service Mesh Performance specs on your CI/CD pipelines with Meshery's GitHub Actions.
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
 
 
 
-5. Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.
+5. Fluentd decouples data sources from backend systems by providing a unified logging layer in between.
 
-6. Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.
+6. Fluentds 500+ plugins connect it to many data sources and outputs while keeping its core simple.
 
-7. Custom Configuration: Select input/filter/output plugins via labels.
+7. Fluentd has a flexible plugin system that allows the community to extend its functionality. 
 
-8. Fluent Bit will be deployed as a DaemonSet while Fluentd will be deployed as a StatefulSet. 
+8. Collaborative Infrastructure as Code
 
-9. Although both Fluent Bit and Fluentd can collect, process(parse and filter) and then forward log to the final destinations, still they have strengths in different aspects.
-
-Fluent Bit is a good choice as a logging agent because of its lightweight and efficiency, while Fluentd is more powerful to perform advanced processing on logs because of its rich plugins.
-
-Fluent Bit only mode: If you just need to collect logs and send logs to the final destinations, all you need is Fluent Bit.
-Fluent Bit + Fluentd mode: If you also need to perform some advanced processing on the logs collected or send to more sinks, then you also need Fluentd.
-Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
-Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish.
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

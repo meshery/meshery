@@ -43,7 +43,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
-import PromptComponent from './PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { SchemaContext } from '../utils/context/schemaSet';
 import Validation from './Validation';
@@ -64,13 +64,18 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+
+const genericClickHandler = (ev, fn) => {
+  ev.stopPropagation();
+  fn(ev);
+};
 
 const styles = (theme) => ({
   grid: {
@@ -333,7 +338,7 @@ function MesheryPatterns({
     ownerID: '',
     selectedResource: {},
   });
-
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -566,7 +571,7 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -1232,7 +1237,10 @@ function MesheryPatterns({
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
 
-              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+              <TooltipIcon
+                title="Design Information"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+              >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
@@ -1283,7 +1291,7 @@ function MesheryPatterns({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
       subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;
@@ -1434,7 +1442,7 @@ function MesheryPatterns({
    * Gets the data of Import Filter and handles submit operation
    *
    * @param {{
-   * uploadType: ("File Upload"| "URL Upload");
+   * uploadType: ("File Upload"| "URL Import");
    * name: string;
    * url: string;
    * file: string;
@@ -1455,7 +1463,7 @@ function MesheryPatterns({
           },
         });
         break;
-      case 'URL Upload':
+      case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
           url,
@@ -1492,53 +1500,57 @@ function MesheryPatterns({
           />
         )}
         <div className={StyleClass.toolWrapper}>
-          <div style={{ display: 'flex' }}>
-            {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
-              <div className={classes.createButton}>
-                <div style={{ display: 'flex', order: '1' }}>
-                  <Button
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={() => router.push('designs/configurator')}
-                    style={{ display: 'flex', marginRight: '2rem' }}
-                  >
-                    <AddIcon className={classes.addIcon} />
-                    <span className={classes.btnText}> Create Design </span>
-                  </Button>
-                  <Button
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={handleUploadImport}
-                    style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                  >
-                    <PublishIcon className={classes.addIcon} />
-                    <span className={classes.btnText}> Import Design </span>
-                  </Button>
+          {width < 600 && isSearchExpanded ? null : (
+            <div style={{ display: 'flex' }}>
+              {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
+                <div className={classes.createButton}>
+                  <div style={{ display: 'flex', order: '1' }}>
+                    <Button
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={() => router.push('designs/configurator')}
+                      style={{ display: 'flex', marginRight: '2rem' }}
+                    >
+                      <AddIcon className={classes.addIcon} />
+                      <span className={classes.btnText}> Create Design </span>
+                    </Button>
+                    <Button
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
+                    >
+                      <PublishIcon className={classes.addIcon} />
+                      <span className={classes.btnText}> Import Design </span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-            {!selectedPattern.show && (
-              <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                <CatalogFilter
-                  catalogVisibility={catalogVisibility}
-                  handleCatalogVisibility={handleCatalogVisibility}
-                  classes={classes}
-                />
-              </div>
-            )}
-          </div>
+              )}
+              {!selectedPattern.show && (
+                <div className={classes.catalogFilter} style={{ display: 'flex' }}>
+                  <CatalogFilter
+                    catalogVisibility={catalogVisibility}
+                    handleCatalogVisibility={handleCatalogVisibility}
+                    classes={classes}
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <div className={classes.searchWrapper} style={{ display: 'flex' }}>
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
                 initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search designs..."
             />
             {viewType === 'table' && (
