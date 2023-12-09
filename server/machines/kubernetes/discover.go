@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/gofrs/uuid"
@@ -47,7 +48,9 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 	_, err = machinectx.Provider.SaveK8sContext(token, machinectx.K8sContext)
-	if err != nil {
+	if errors.Is(err, models.ErrContextAlreadyPersisted) {
+		machinectx.log.Info(fmt.Sprintf("context already persisted (\"%s\" at %s)", k8sContext.Name, k8sContext.Server))
+	} else if err != nil {
 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
