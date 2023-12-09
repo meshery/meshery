@@ -39,6 +39,41 @@ export const EXTENSIONS = {
   MESHMAP: 'meshmap',
 };
 
+export const CONNECTION_STATES = {
+  DISCOVERED: 'discovered',
+  REGISTERED: 'registered',
+  CONNECTED: 'connected',
+  IGNORED: 'ignored',
+  MAINTENANCE: 'maintenance',
+  DISCONNECTED: 'disconnected',
+  DELETED: 'deleted',
+  NOTFOUND: 'not found',
+};
+
+export const CONTROLLERS = {
+  BROKER: 'BROKER',
+  OPERATOR: 'OPERATOR',
+  MESHSYNC: 'MESHSYNC',
+};
+
+// Fetch from GraphQL/REST API remove this
+export const CONTROLLER_STATES = {
+  DEPLOYED: 'DEPLOYED',
+  NOTDEPLOYED: 'NOTDEPLOYED',
+  UNDEPLOYED: 'UNDEPLOYED',
+  DEPLOYING: 'DEPLOYING',
+  ENABLED: 'ENABLED',
+  UNKOWN: 'UNKOWN',
+  RUNNING: 'RUNNING',
+  CONNECTED: 'CONNECTED',
+  DISABLED: 'DISABLED',
+};
+
 export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
+
+export const CONNECTION_KINDS = {
+  MESHERY: 'meshery',
+  KUBERNETES: 'kubernetes',
+};

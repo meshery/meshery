@@ -22,15 +22,16 @@ type Handler struct {
 	meshsyncChannel chan struct{}
 	log             logger.Handler
 	// to be removed
-	brokerConn         broker.Handler
-	K8sCompRegHelper   *models.ComponentsRegistrationHelper
-	MesheryCtrlsHelper *models.MesheryControllersHelper
-	Provider           string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
-	SystemID           *uuid.UUID
-	dbHandler          *database.Handler
-	registryManager    *meshmodel.RegistryManager
-	EventsBuffer       *events.EventStreamer
-	Rego               *policies.Rego
+	brokerConn                              broker.Handler
+	K8sCompRegHelper                        *models.ComponentsRegistrationHelper
+	MesheryCtrlsHelper                      *models.MesheryControllersHelper
+	Provider                                string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
+	SystemID                                *uuid.UUID
+	dbHandler                               *database.Handler
+	registryManager                         *meshmodel.RegistryManager
+	EventsBuffer                            *events.EventStreamer
+	Rego                                    *policies.Rego
+	ConnectionToStateMachineInstanceTracker *ConnectionToStateMachineInstanceTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -46,21 +47,23 @@ func NewHandlerInstance(
 	regManager *meshmodel.RegistryManager,
 	provider string,
 	rego *policies.Rego,
+	connToInstanceTracker *ConnectionToStateMachineInstanceTracker,
 ) models.HandlerInterface {
 
 	h := &Handler{
-		config:             handlerConfig,
-		meshsyncChannel:    meshSyncCh,
-		log:                logger,
-		brokerConn:         brokerConn,
-		K8sCompRegHelper:   compRegHelper,
-		MesheryCtrlsHelper: mctrlHelper,
-		dbHandler:          dbHandler,
-		EventsBuffer:       eb,
-		registryManager:    regManager,
-		Provider:           provider,
-		Rego:               rego,
-		SystemID:           viper.Get("INSTANCE_ID").(*uuid.UUID),
+		config:                                  handlerConfig,
+		meshsyncChannel:                         meshSyncCh,
+		log:                                     logger,
+		brokerConn:                              brokerConn,
+		K8sCompRegHelper:                        compRegHelper,
+		MesheryCtrlsHelper:                      mctrlHelper,
+		dbHandler:                               dbHandler,
+		EventsBuffer:                            eb,
+		registryManager:                         regManager,
+		Provider:                                provider,
+		Rego:                                    rego,
+		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
+		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

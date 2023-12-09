@@ -9,6 +9,8 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -66,35 +68,29 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			defer dbHandler.Unlock()
 
 			r.Log.Info("Dropping Meshery Database")
-			err = dbHandler.Migrator().DropTable(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
-				&models.PerformanceProfile{},
-				&models.MesheryResult{},
-				&models.MesheryPattern{},
-				&models.MesheryFilter{},
-				&models.PatternResource{},
-				&models.MesheryApplication{},
-				&models.UserPreference{},
-				&models.PerformanceTestConfig{},
-				&models.SmiResultWithID{},
-				models.K8sContext{},
-			)
+			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrGormDatabase(err))
 				return "", err
+			}
+
+			for _, table := range tables {
+				if table == "events" {
+					continue
+				}
+				if err := dbHandler.Migrator().DropTable(table); err != nil {
+					r.Log.Error(ErrGormDatabase(err))
+					return "", err
+				}
 			}
 
 			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
+				&meshsyncmodel.KubernetesKeyValue{},
+				&meshsyncmodel.KubernetesResource{},
+				&meshsyncmodel.KubernetesResourceSpec{},
+				&meshsyncmodel.KubernetesResourceStatus{},
+				&meshsyncmodel.KubernetesResourceObjectMeta{},
 				&models.PerformanceProfile{},
 				&models.MesheryResult{},
 				&models.MesheryPattern{},
@@ -104,7 +100,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				&models.UserPreference{},
 				&models.PerformanceTestConfig{},
 				&models.SmiResultWithID{},
-				models.K8sContext{},
+				&models.K8sContext{},
+
+				// Registries
+				&registry.Registry{},
+				&registry.Host{},
+				&v1alpha1.ComponentDefinitionDB{},
+				&v1alpha1.RelationshipDefinitionDB{},
+				&v1alpha1.PolicyDefinitionDB{},
+				&v1alpha1.ModelDB{},
+				&v1alpha1.CategoryDB{},
 			)
 			if err != nil {
 				r.Log.Error(err)
@@ -129,27 +134,27 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", model.ErrEmptyHandler
 			}
 
-			err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
+			err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceSpec{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceStatus{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceObjectMeta{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+			err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.KubernetesResource{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
@@ -210,7 +215,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		r.Log.Error(ErrNilClient)
 		return ErrNilClient
 	}
-	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.StatusEnabled {
+	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.MesheryControllerStatus(model.StatusEnabled) {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))

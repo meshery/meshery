@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d64858ca50550820eabcb2f9253dd5cd>>
+ * @generated SignedSource<<8db057b6a9f9bea598930f295bc40f58>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,21 +16,7 @@ var v0 = [
     "name": "k8scontextID"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "version",
-  "storageKey": null
-},
-v3 = [
+v1 = [
   {
     "alias": "operator",
     "args": [
@@ -40,56 +26,30 @@ v3 = [
         "variableName": "k8scontextID"
       }
     ],
-    "concreteType": "OperatorStatus",
+    "concreteType": "MesheryControllersStatusListItem",
     "kind": "LinkedField",
     "name": "getOperatorStatus",
     "plural": false,
     "selections": [
-      (v1/*: any*/),
-      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "OperatorControllerStatus",
-        "kind": "LinkedField",
-        "name": "controllers",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          (v2/*: any*/),
-          (v1/*: any*/)
-        ],
+        "kind": "ScalarField",
+        "name": "status",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "Error",
-        "kind": "LinkedField",
-        "name": "error",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "code",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "description",
-            "storageKey": null
-          }
-        ],
+        "kind": "ScalarField",
+        "name": "controller",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "contextId",
         "storageKey": null
       }
     ],
@@ -102,7 +62,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "OperatorStatusQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -111,19 +71,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "OperatorStatusQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "841b7f336722e3bf6a6c57a9aba6ddd2",
+    "cacheID": "c130db726cf439ef5854c0e9055c6141",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusQuery",
     "operationKind": "query",
-    "text": "query OperatorStatusQuery(\n  $k8scontextID: String!\n) {\n  operator: getOperatorStatus(k8scontextID: $k8scontextID) {\n    status\n    version\n    controllers {\n      name\n      version\n      status\n    }\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "query OperatorStatusQuery(\n  $k8scontextID: String!\n) {\n  operator: getOperatorStatus(k8scontextID: $k8scontextID) {\n    status\n    controller\n    contextId\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "ee746a7c43a6c4b8aa38b143e8a5b01e";
+node.hash = "f23b3f72594b73c2a5136019efc1b85a";
 
 module.exports = node;

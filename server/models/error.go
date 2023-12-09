@@ -98,6 +98,12 @@ const (
 	ErrPersistEventCode                   = "1533"
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
+	ErrUpdateConnectionStatusCode         = "1540"
+	ErrResultNotFoundCode                 = "1546"
+	ErrPersistCredentialCode              = "1547"
+	ErrPersistConnectionCode              = "1548"
+	ErrPrometheusScanCode                 = "1549"
+	ErrGrafanaScanCode                    = "1550"
 )
 
 var (
@@ -370,4 +376,28 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
 	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrUpdateConnectionStatus(err error, statusCode int) error {
+	return errors.New(ErrUpdateConnectionStatusCode, errors.Alert, []string{"Unable to update connection status"}, []string{err.Error()}, []string{"Connection was already deleted", "User might not have necessary privileges"}, []string{"Try refresing, you might be seeing stale data on the dashboard", "Check if the user has necessary privileges"})
+}
+
+func ErrResultNotFound(err error) error {
+	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+}
+
+func ErrPersistCredential(err error) error {
+	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{"unable to persist credential details"}, []string{err.Error()}, []string{"The credential object is not valid"}, []string{"Ensure all the required fields are provided"})
+}
+
+func ErrPersistConnection(err error) error {
+	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{"unable to persist connection details"}, []string{err.Error()}, []string{"The connection object is not valid"}, []string{"Ensure all the required fields are provided"})
+}
+
+func ErrGrafanaScan(err error) error {
+	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+}
+
+func ErrPrometheusScan(err error) error {
+	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
 }

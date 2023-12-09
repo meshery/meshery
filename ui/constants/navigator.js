@@ -4,6 +4,12 @@ export const CONFIGURATION = 'configuration';
 export const CONFORMANCE = 'conformance';
 export const PERFORMANCE = 'performance';
 
+export const WORKLOADS = 'workloads';
+export const STORAGE = 'storage';
+export const NETWORK = 'network';
+export const SECURITY = 'security';
+export const CONFIG = 'config';
+
 export const CONNECTION = 'connection';
 export const SERVICE_MESH = 'service_mesh';
 export const ISTIO = 'istio';
@@ -35,6 +41,10 @@ export const TOGGLER = 'toggler';
 export const SETTINGS = 'settings';
 export const CONTEXT_SWITCHER = 'contextSwitcher';
 
-export const MODELS = 'models';
-export const COMPONENTS = 'components';
-export const RELATIONSHIPS = 'relationships';
+export const OVERVIEW = 'Overview';
+export const MODELS = 'Models';
+export const COMPONENTS = 'Components';
+export const RELATIONSHIPS = 'Relationships';
+export const POLICIES = 'Policies';
+export const REGISTRANTS = 'Registrants';
+export const ENDPOINTURL = 'https://playground.meshery.io/';

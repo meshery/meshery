@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+
+  <link rel="alternate" type="application/rss&#43;xml" href="/v0.6/index.xml" />
+
+  <link rel="shortcut icon" href="/v0.6/assets/favicons/favicon.ico" />
+  <link rel="apple-touch-icon" href="/v0.6/assets/favicons/apple-touch-icon.png" sizes="180x180" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="36x36" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="48x48" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="72x72" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="96x196" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-144x144.png" sizes="144x144" />
+  <link rel="icon" type="image/png" href="/v0.6/assets/favicons/android-192x192.png" sizes="192x192" />
+
+  <title>Extensibility: Meshery Integrations | Meshery</title>
+  <meta property="og:title" content="Extensibility: Meshery Integrations" />
+  <meta property="og:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://docs.meshery.io" />
+  <meta property="og:site_name" content="https://docs.meshery.io" />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+
+  <meta itemprop="name" content="Extensibility: Meshery Integrations" />
+  <meta itemprop="description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Extensibility: Meshery Integrations" />
+  <meta name="twitter:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta name="twitter:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+  <!-- <link rel="stylesheet" href="/v0.6/assets/css/palette.css" /> -->
+  <!-- <link rel="stylesheet" href="/v0.6/assets/css/anchorjs.css" /> -->
+  <link rel="stylesheet" href="/v0.6/assets/css/sass.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+    integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>
+    $(function () {
+      /** AnchorJS options and selector */
+      anchors.options = {
+        visible: "hover",
+        placement: "right",
+      };
+      anchors.add("h1, h2, h3, h4, h5");
+    });
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
+  </script>
+</head>
+<style></style> <header>
+  <nav class="js-navbar-scroll navbar">
+    <a class="navbar-brand" href="/v0.6/">
+      <div class="navbar-logo">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 379.08 80.17"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3 {fill:var(--meshery-logo-text-fill);}</style></defs><polygon class="cls-1" points="41.26 18.9 41.26 38.04 57.86 28.43 41.26 18.9"/><polygon class="cls-1" points="41.26 42.05 41.26 61.29 58.01 51.71 41.26 42.05"/><polygon class="cls-2" points="38.87 37.91 38.87 19.06 22.48 28.45 38.87 37.91"/><path class="cls-2" d="M6,61.22A40.35,40.35,0,0,0,18.71,74V53.86Z"/><polygon class="cls-2" points="38.87 61.2 38.87 42.19 22.44 51.7 38.87 61.2"/><polygon class="cls-1" points="21.1 72.81 37.74 63.3 21.1 53.68 21.1 72.81"/><polygon class="cls-2" points="59.15 72.92 59.15 53.81 42.53 63.31 59.15 72.92"/><path class="cls-2" d="M75.42,59a39.88,39.88,0,0,0,4.71-17.18l-17.32,9.9Z"/><polygon class="cls-1" points="61.54 49.7 78.23 40.15 61.54 30.55 61.54 49.7"/><polygon class="cls-2" points="59.15 26.42 59.15 7.43 42.61 16.91 59.15 26.42"/><polygon class="cls-2" points="59.15 49.61 59.15 30.45 42.57 40.05 59.15 49.61"/><polygon class="cls-2" points="40.07 80.17 40.07 80.17 40.07 80.17 40.07 80.17"/><polygon class="cls-1" points="21.1 30.41 21.1 49.72 37.8 40.05 21.1 30.41"/><path class="cls-2" d="M38.87,0A40,40,0,0,0,21.28,4.65L38.87,14.77Z"/><polygon class="cls-1" points="21.1 7.31 21.1 26.49 37.81 16.91 21.1 7.31"/><path class="cls-2" d="M18.71,6.14A40.28,40.28,0,0,0,6,18.94l12.72,7.34Z"/><path class="cls-1" d="M59,4.74A40,40,0,0,0,41.26,0V14.93Z"/><path class="cls-1" d="M0,41.48A40,40,0,0,0,4.79,59.16L17.67,51.7Z"/><path class="cls-1" d="M4.79,21A40,40,0,0,0,0,38.58L17.69,28.45Z"/><path class="cls-2" d="M21.24,75.49a39.88,39.88,0,0,0,17.63,4.66V65.41Z"/><path class="cls-1" d="M74.17,19A40.24,40.24,0,0,0,61.54,6.21v20.1Z"/><path class="cls-1" d="M61.54,74A40.34,40.34,0,0,0,74.23,61.07L61.54,53.75Z"/><path class="cls-2" d="M80.13,38.48a39.88,39.88,0,0,0-4.76-17.42L62.64,28.43Z"/><path class="cls-1" d="M41.26,80.15a39.79,39.79,0,0,0,17.59-4.64L41.26,65.34Z"/><polygon class="cls-2" points="18.71 49.54 18.71 30.61 2.27 40.04 18.71 49.54"/><polygon class="cls-3" points="269.94 29.39 269.94 30.89 269.94 37.93 269.94 46.53 269.94 59.08 303.36 59.08 303.36 52.03 276.99 52.03 276.99 46.53 276.99 44.98 297.25 44.98 297.25 37.93 276.99 37.93 276.99 30.89 303.36 30.89 303.36 23.84 269.94 23.84 269.94 29.39"/><polygon class="cls-3" points="141.41 29.39 141.41 30.89 141.41 37.93 141.41 46.53 141.41 59.08 174.83 59.08 174.83 52.03 148.46 52.03 148.46 46.53 148.46 44.98 168.72 44.98 168.72 37.93 148.46 37.93 148.46 30.89 174.83 30.89 174.83 23.84 141.41 23.84 141.41 29.39"/><path class="cls-3" d="M221.08,49.87a8.74,8.74,0,0,1-.73,3.57,9,9,0,0,1-2,2.94,9.5,9.5,0,0,1-2.93,2,9,9,0,0,1-3.6.73h-33V51.66h33a1.78,1.78,0,0,0,1.79-1.79V47a1.76,1.76,0,0,0-.52-1.27,1.73,1.73,0,0,0-1.27-.51H188.09a8.74,8.74,0,0,1-3.57-.73,9.4,9.4,0,0,1-5-5,8.9,8.9,0,0,1-.73-3.57V33.09a9.11,9.11,0,0,1,.73-3.59,9.58,9.58,0,0,1,2-2.94,9.32,9.32,0,0,1,3-2,8.9,8.9,0,0,1,3.57-.72h33v7.47h-33a1.78,1.78,0,0,0-1.79,1.78V36a1.78,1.78,0,0,0,1.79,1.79h23.73a9.11,9.11,0,0,1,3.6.72,9.59,9.59,0,0,1,2.93,2,9.41,9.41,0,0,1,2,2.94,8.9,8.9,0,0,1,.73,3.59Z"/><path class="cls-3" d="M265.54,59.08h-6.73V45.22H232.6V59.08h-6.72V37.75h32.93V23.84h6.73ZM232.6,34.44h-6.72V23.84h6.72Z"/><polygon class="cls-3" points="361.45 36.17 352.64 23.84 343.83 23.84 357.93 44.98 357.93 59.08 364.98 59.08 364.98 44.98 379.08 23.84 370.38 23.84 361.45 36.17"/><path class="cls-3" d="M315.35,30.56h18.07v7.33H318.86v6.72h3.34L335,59.08h8.7L330.9,44.61h5a5.48,5.48,0,0,0,5.48-5.48V29.31a5.47,5.47,0,0,0-5.48-5.47H308.44V59.08h7.05Z"/><path class="cls-3" d="M136,59.08h-7.47V33.38a1.94,1.94,0,0,0-.16-.8,2.15,2.15,0,0,0-1.11-1.11,1.94,1.94,0,0,0-.8-.16H91.91V23.84h34.54a9.22,9.22,0,0,1,3.69.75,9.38,9.38,0,0,1,5.1,5.1,9.22,9.22,0,0,1,.75,3.69Zm-36.6,0H91.91V31.31l7.48-2Zm18.28,0h-7.48V35.22h7.48Z"/></svg>
+        <span
+          class="font-weight-bold small-hide"
+          style="
+            font-size: 2rem;
+            vertical-align: bottom;
+            color: var(--meshery-logo-text-fill);
+            font-family: 'Open Sans';
+          "
+          >Documentation</span
+        >
+      </div>
+    </a>
+
+    <div id="main_navbar">
+      <ul class="navbar-nav">
+        <!-- 
+			<li class="nav-item">
+        <a class="nav-link" href="https://github.com/meshery/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/v0.6/installation/quick-start"
+            ><span>Quick Start</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io"
+            ><span>Site</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/v0.6http://discuss.meshery.io/"
+            ><span>Discuss</span></a
+          >
+        </li>
+        
+        
+        <a href="https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
+        <!--Version Selector -->
+        <select
+          onchange="window.location=this.value"
+          class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
+          name="versioningSelection"
+          id="versioningSelection"
+        >
+       </select>
+
+          <!-- <option value="">Versions</option> -->
+          <option  
+           value="/"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+           <span>latest</span>
+         </option>
+         <option  
+          value="/v0.6"
+          class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+         <span>v0.6</span>
+       </option>
+         <!-- we get the version selected, and put it to the right option  -->
+         <option  
+           value="/v0.5"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+           <span>v0.5</span>
+         </option>
+         <!-- we get the version selected, and put it to the right option  --><option
+           
+           value="/v0.4"
+           class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+         >
+           <span>v0.4</span>
+         </option>
+         
+       </select>
+      </ul>
+    </div>
+
+    <div class="icon-container">
+      <button class="nav-toggle-btn nav-toggle-btn--main">
+        <svg
+          id="menu-nav-toggle-btn"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
+        <img class="nav-text" id="logo-dark-light" src="/assets/img/nav-icons/mode-toggle-icon-moon.png" 
+        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        />
+      </button>
+    </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            meshery/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+meshery-custom-end -->
+
+
+  <body class="td-section dark-mode">
+    <script>
+      if(localStorage.getItem("mode") == "light-mode")  {
+      document.body.classList.remove("dark-mode");
+      const allLogos = document.querySelectorAll("#logo-dark-light");
+      allLogos.forEach(e => e.src = e.dataset.logoForLight);
+  }
+    </script>
+    <div class="flex-container">
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container"><div class="sidebar-menu">
+  <form class="sidebar__search-form">
+    <input
+      type="search"
+      class="sidebar__search-input"
+      id="sidebar-search-input"
+      placeholder="Search this site..."
+      aria-label="Search this site..."
+      autocomplete="off"
+    />
+  </form>
+
+  <script type="text/javascript">
+    <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      });
+    })();
+  </script>
+
+  <nav class="sidebar-nav" id="td-section-nav">
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/installation/quick-start"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🚀 Quick Start
+        </a>
+      </li>
+      
+      <ul>
+        <li id="quick-start">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/installation"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Supported Platforms ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/installation/compatibility-matrix"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Compatibility Matrix</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/project/overview"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🗺 Overview
+        </a>
+      </li>
+      
+      <ul>
+        <li id="overview">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/project/faq"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >FAQ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/project"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🧑‍💻 Contributing & Community
+        </a>
+      </li>
+      
+      <ul>
+        <li id="contributing-community">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/project/community"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Community</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/project/contributing"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Contributing ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/project/releases"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Releases</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/project/security-vulnerabilities"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Vulnerabilities</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/concepts"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🧠 Concepts
+        </a>
+      </li>
+      
+      <ul>
+        <li id="concepts">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/concepts/architecture"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Architectural ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/concepts/logical"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Logical ↆ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/tasks"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >⚙️ Tasks (all)
+        </a>
+      </li>
+      
+      <ul>
+        <li id="tasks-all">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/tasks/application-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Application Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/tasks/filter-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Filter Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/tasks/lifecycle-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Lifecycle Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/tasks/pattern-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Pattern Management</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/tasks/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/guides"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >📚 Guides (all)
+        </a>
+      </li>
+      
+      <ul>
+        <li id="guides-all">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/meshery-metrics"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Integrating Prometheus and Grafana</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/importing-apps"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Importing Applications</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/pipelining-service-mesh-specifications"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Pipelining service mesh specifications</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management with Meshery</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Troubleshooting Guide</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/upgrade"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Upgrading Meshery</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using mesheryctl ↆ</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/guides/multiple-adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using Multiple Meshery Adapters</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/extensibility"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >🛠 Extensibility
+        </a>
+      </li>
+      
+      <ul>
+        <li id="extensibility">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Adapters</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/load-generators"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Load Generators</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/providers"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Providers</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/ui"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >UI Plugins</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+    <ul class="sidebar-nav__section">
+       
+      <li class="sidebar-nav__section-title ">
+        <a
+          href="/v0.6/reference"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >📖 Reference
+        </a>
+      </li>
+      
+      <ul>
+        <li id="reference">
+          <ul class="td-sidebar-nav__section">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/reference/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Meshery CLI</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/reference/error-codes"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Error Codes</a
+              >
+            </li>
+              
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/v0.6/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs ↆ</a
+              >
+            </li>
+             
+          </ul>
+        </li>
+      </ul>
+
+      
+
+    </ul>
+    
+  </nav>
+</div>
+</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <?xml version="1.0" encoding="utf-8"?>
+              <svg version="1.1" id="document-nav-toggle-btn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" viewBox="0 0 10.7 18.7" style="enable-background:new 0 0 10.7 18.7;" xml:space="preserve">
+              <style type="text/css">
+                .st0{stroke:#000000;stroke-width:1.5;stroke-miterlimit:10;}
+              </style>
+              <path class="st0" d="M8.1,9.4L1,1.9C0.7,1.7,0.7,1.2,1,1c0.3-0.3,0.7-0.3,1,0c0,0,0,0,0,0l7.8,7.9c0.3,0.3,0.3,0.7,0,1l-7.8,7.9
+                c-0.3,0.3-0.7,0.3-1,0c0,0,0,0,0,0c-0.3-0.3-0.3-0.7,0-1L8.1,9.4z"/>
+              </svg>
+          </button>
+        </div>
+      </div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page"><div id="breadcrumbs">
+
+
+   <a href="/v0.6/">home</a>
+
+
+  
+    / <a href="/v0.6/extensibility">extensibility</a> 
+  
+
+  
+    / extensibility: meshery integrations
+  
+
+</div>
+
+<!-- <a href="/v0.6http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="/v0.6http://localhost:4000">Learn API Doc</a> > integrations -->
+</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          
+          <h1>Extensibility: Meshery Integrations</h1>
+           <p>Meshery provides 220+ built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery’s approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.</p>
+
+<h2 id="integrations">Integrations</h2>
+
+<p>Optionally, you can <a href="https://meshery.io/integrations">navigate all integrations visually</a>.</p>
+
+<ul>
+  <li>
+    <p><strong>APISIX Ingress Controller</strong> - Integrates with the APISIX Ingress Controller to enable service mesh capabilities for managing and monitoring APISIX-based API gateways on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>APISIX Ingress Controller</strong> - Integrates with the APISIX Ingress Controller to enable service mesh capabilities for managing and monitoring APISIX-based API gateways on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>AWS API Gateway Operator</strong> - Integrates with the AWS API Gateway Operator to enable service mesh capabilities for managing and monitoring AWS API Gateway resources on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>AWS API Gateway Operator</strong> - Integrates with the AWS API Gateway Operator to enable service mesh capabilities for managing and monitoring AWS API Gateway resources on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>AWS App Mesh</strong> - Integrates with AWS App Mesh to provide cloud-native capabilities for managing and securing applications deployed on AWS. With this integration, users can enable features, including traffic management and observability, for their AWS workloads.</p>
+  </li>
+  <li>
+    <p><strong>AWS Elastic Kubernetes Service (EKS)</strong> - Binds with AWS EKS to provide cloud-native capabilities for managing and securing applications deployed on AWS EKS clusters. With this integration, users can enable features, including traffic management and observability, for their AWS EKS workloads.</p>
+  </li>
+  <li>
+    <p><strong>AWS Load Balancer</strong> - Binds with AWS Load Balancer to provide cloud-native capabilities for managing and securing load balancers on AWS. With this integration, users can enable features for AWS load balancers.</p>
+  </li>
+  <li>
+    <p><strong>AWS Node Termination Handler</strong> - Integrates with the AWS Node Termination Handler to provide service mesh features for handling node termination events in AWS environments.</p>
+  </li>
+  <li>
+    <p><strong>AWS Target Group Binding</strong> - Binds with AWS Target Group Binding to provide cloud-native capabilities for managing and securing communication between services on AWS. With this integration, users can enable features for AWS Target Groups.</p>
+  </li>
+  <li>
+    <p><strong>AWS VPC CNI</strong> - Integrates with AWS VPC CNI (Container Network Interface) to provide features and traffic control for AWS VPC networking.</p>
+  </li>
+  <li>
+    <p><strong>AWX Operator</strong> - Binds with the AWX Operator to enable functionality and configuration for Ansible AWX automation workloads.</p>
+  </li>
+  <li>
+    <p><strong>Actions Runner Controller (ARC)</strong> - Binds with ARC to incorporate cloud-native features in GitHub Actions, ensuring secure and observable workflows.</p>
+  </li>
+  <li>
+    <p><strong>Akri</strong> - Integrates with Akri to provide cloud-native capabilities for managing and securing IoT and edge computing deployments. With this integration, users can enable features for IoT and edge devices communication.</p>
+  </li>
+  <li>
+    <p><strong>Ambassador</strong> - Interacts with Ambassador to enable features and configuration for the Ambassador API Gateway on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Ambassador</strong> - Interacts with Ambassador to enable features and configuration for the Ambassador API Gateway on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Apache Shardingsphere Operator Charts</strong> - Interacts with Apache Shardingsphere Operator Charts and enable traffic control for the database sharding solution.</p>
+  </li>
+  <li>
+    <p><strong>Aperture Agent</strong> - Integrates with Aperture Agent to provide features and configuration for the Aperture service discovery and routing platform.</p>
+  </li>
+  <li>
+    <p><strong>Aperture Controller</strong> - Binds with the Aperture Controller to provide cloud-native capabilities for managing and monitoring the Aperture Gateway.</p>
+  </li>
+  <li>
+    <p><strong>Aperture Controller</strong> - Binds with the Aperture Controller to provide cloud-native capabilities for managing and monitoring the Aperture Gateway.</p>
+  </li>
+  <li>
+    <p><strong>Argo CD</strong> - Meshery can configure and manage the application with Argo CD, enabling better observability and traffic control for applications deployed through Argo CD.</p>
+  </li>
+  <li>
+    <p><strong>Argo CD Operator</strong> - Interacts with Argo CD Operator to provide functionality and configuration for Argo CD applications.</p>
+  </li>
+  <li>
+    <p><strong>Argo Workflows</strong> - Meshery can configure and manage the cloud-native interactions for Argo Workflows, enhancing observability and security for workflows.</p>
+  </li>
+  <li>
+    <p><strong>Argocd Operator</strong> - Interacts with Argocd Operator to provide cloud-native capabilities for managing and securing continuous delivery and GitOps workflows with ArgoCD. With this integration, users can enable features for GitOps deployments and observability.</p>
+  </li>
+  <li>
+    <p><strong>Armory Spinnaker Operator</strong> - Binds with the Armory Spinnaker Operator to provide service mesh features and configuration for the Armory Spinnaker continuous delivery platform.</p>
+  </li>
+  <li>
+    <p><strong>Armory Spinnaker Operator</strong> - Binds with the Armory Spinnaker Operator to provide service mesh features and configuration for the Armory Spinnaker continuous delivery platform.</p>
+  </li>
+  <li>
+    <p><strong>Artifact Hub</strong> - Interacts with Artifact Hub to provide cloud-native capabilities for managing and securing container images and artifacts. With this integration, users can enable features for secure and efficient artifact management.</p>
+  </li>
+  <li>
+    <p><strong>Athenz</strong> - Interacts with Athenz to provide cloud-native capabilities for managing and securing access to microservices. With this integration, users can enable features for access control and security policies based on Athenz identity and access management.</p>
+  </li>
+  <li>
+    <p><strong>Azure Active Directory (AAD)</strong> - Binds with Azure Active Directory to enable secure authentication and authorization within the service mesh for Azure-based applications.</p>
+  </li>
+  <li>
+    <p><strong>Azure Application Gateway</strong> - Interacts with Azure Application Gateway to provide service mesh capabilities for managing and securing inbound traffic to Azure services. With this integration, users can apply service mesh policies to control and secure traffic flow for Azure services.</p>
+  </li>
+  <li>
+    <p><strong>BFE</strong> - Binds with BFE to provide cloud-native capabilities for managing and securing network traffic in a microservices environment. BFE is a powerful proxy and traffic management solution, and with Meshery’s integration, users can enable advanced traffic management features.</p>
+  </li>
+  <li>
+    <p><strong>Backstage</strong> - Interacts with Backstage to provide cloud-native capabilities for managing and securing microservices communications. Backstage is a popular developer portal, and with Meshery’s integration, users can enable advanced traffic management and security features.</p>
+  </li>
+  <li>
+    <p><strong>Brigade</strong> - Binds with Brigade to provide cloud-native capabilities for managing and securing event-driven workflows. With this integration, users can enable features for event-driven applications and workflows.</p>
+  </li>
+  <li>
+    <p><strong>Buildpacks</strong> - Binds with Buildpacks to provide cloud-native capabilities for managing and securing container image building and management. With this integration, users can enable features for secure and efficient container image building.</p>
+  </li>
+  <li>
+    <p><strong>CD Pipeline Operator</strong> - Integrates with CD Pipeline Operator to provide features for continuous delivery pipelines.</p>
+  </li>
+  <li>
+    <p><strong>CRI-O</strong> - Binds with CRI-O to provide cloud-native capabilities for managing and securing container runtime operations. With this integration, users can enable features for secure and efficient container runtime operations.</p>
+  </li>
+  <li>
+    <p><strong>Camel K</strong> - Interacts with Camel K to enable features and configuration for Apache Camel integration patterns running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Camel K</strong> - Interacts with Camel K to enable features and configuration for Apache Camel integration patterns running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Capsule Proxy</strong> - Integrates with Capsule Proxy to provide functionality and configuration for Capsule-based applications.</p>
+  </li>
+  <li>
+    <p><strong>Cdk For Kubernetes (Cdk8S)</strong> - Integrates with Cdk8S to provide cloud-native capabilities for managing and securing Kubernetes resources using the Cdk8S framework. With this integration, users can enable features for Kubernetes resources management.</p>
+  </li>
+  <li>
+    <p><strong>Cert Manager</strong> - Integrates with Cert Manager to provide cloud-native capabilities for managing and securing TLS certificates. With this integration, users can enable features for requesting and managing TLS certificates for their applications.</p>
+  </li>
+  <li>
+    <p><strong>Cert Manager CRDs</strong> - Binds with Cert Manager CRDs to provide cloud-native capabilities for managing and securing TLS certificates. With this integration, users can easily request and manage TLS certificates for their service mesh applications.</p>
+  </li>
+  <li>
+    <p><strong>Cert Manager CRDs</strong> - Interacts with Cert Manager CRDs to manage certificates in the service mesh, enhancing security for TLS communication.</p>
+  </li>
+  <li>
+    <p><strong>Cert Manager Csi Driver Cacerts</strong> - Integrates with Cert Manager Csi Driver Cacerts to enable capabilities for certificate management in Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Cert Manager Csi Driver Cacerts</strong> - Integrates with Cert Manager Csi Driver Cacerts to enable service mesh capabilities for certificate management in Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Chaos Mesh</strong> - Integrates with Chaos Mesh to provide cloud-native capabilities for injecting chaos experiments into microservices environments. With this integration, users can enable features for chaos engineering and resilience testing.</p>
+  </li>
+  <li>
+    <p><strong>Cilium</strong> - Interacts with Cilium to provide cloud-native capabilities for managing and securing network communication between microservices. Cilium is a powerful networking solution, and with Meshery’s integration, users can enable advanced network policies and security features.</p>
+  </li>
+  <li>
+    <p><strong>Citrix Service Mesh</strong> - Interacts with Citrix Service Mesh to provide cloud-native capabilities for managing and securing microservices communications. Citrix Service Mesh is a popular service mesh, and with Meshery’s integration, users can enable advanced traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>Cloudevents</strong> - Integrates with Cloudevents to provide cloud-native capabilities for managing and monitoring Cloudevents resources running on Kubernetes. With this integration, users can enable features for event-driven applications.</p>
+  </li>
+  <li>
+    <p><strong>Clusterpedia</strong> - Interacts with Clusterpedia to provide cloud-native capabilities for managing and securing Kubernetes clusters. With this integration, users can enable features for cluster management and security.</p>
+  </li>
+  <li>
+    <p><strong>Confidential Containers</strong> - Interacts with Confidential Containers to provide capabilities for managing and securing confidential computing deployments. With this integration, users can enable features for secure and confidential computing.</p>
+  </li>
+  <li>
+    <p><strong>Consul</strong> - Interacts with Consul to provide cloud-native capabilities for managing and securing microservices communications. Consul is a popular service mesh, and with Meshery’s integration, users can enable advanced traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>Container Network Interface (CNI)</strong> - Integrates with CNI plugins to enable features for container networking, traffic management, and security.</p>
+  </li>
+  <li>
+    <p><strong>Container Network Interface (CNI)</strong> - Integrates with CNI plugins to enable features for container networking, traffic management, and security.</p>
+  </li>
+  <li>
+    <p><strong>Containerd</strong> - Binds with Containerd to provide cloud-native capabilities for managing and securing container runtime operations. With this integration, users can enable features for secure and efficient container runtime operations.</p>
+  </li>
+  <li>
+    <p><strong>Containerssh</strong> - Integrates with Containerssh to provide cloud-native capabilities for managing and securing SSH connections to containers. With this integration, users can enable features for secure and efficient SSH connections.</p>
+  </li>
+  <li>
+    <p><strong>Contour</strong> - Interacts with Contour to provide cloud-native capabilities for managing and securing inbound traffic to Kubernetes services. Contour is an Ingress controller for Kubernetes, and with Meshery’s integration, users can apply service mesh policies to control and secure traffic flow.</p>
+  </li>
+  <li>
+    <p><strong>CoreDNS</strong> - Binds with CoreDNS to provide cloud-native capabilities for managing and securing DNS resolution within Kubernetes clusters. With this integration, users can apply features to ensure secure and efficient DNS resolution for their applications.</p>
+  </li>
+  <li>
+    <p><strong>Cortex</strong> - Integrates with Cortex to provide cloud-native capabilities for managing and securing metrics and monitoring. With this integration, users can enable features for efficient and reliable metrics collection.</p>
+  </li>
+  <li>
+    <p><strong>Crossplane</strong> - Integrates with Crossplane to provide cloud-native capabilities for managing and securing cloud-native applications and resources. With this integration, users can enable features for resource management.</p>
+  </li>
+  <li>
+    <p><strong>Cubefs</strong> - Binds with Cubefs to provide cloud-native capabilities for managing and securing file storage and processing in a microservices environment. With this integration, users can enable features for file storage and processing.</p>
+  </li>
+  <li>
+    <p><strong>Curiefense</strong> - Interacts with Curiefense to provide cloud-native capabilities for managing and securing API gateways and API traffic. With this integration, users can enable features for API security and traffic control.</p>
+  </li>
+  <li>
+    <p><strong>Dapr</strong> - Binds with Dapr to provide cloud-native capabilities for managing and securing microservices communications using the Dapr framework. With this integration, users can enable features for Dapr applications.</p>
+  </li>
+  <li>
+    <p><strong>Devfile</strong> - Interacts with Devfile to provide cloud-native capabilities for defining and managing developer environments in a microservices environment. With this integration, users can enable features for developer environments.</p>
+  </li>
+  <li>
+    <p><strong>Devstream</strong> - Integrates with Devstream to provide cloud-native capabilities for managing and securing real-time data streaming. With this integration, users can enable features for reliable and efficient data streaming.</p>
+  </li>
+  <li>
+    <p><strong>Dex</strong> - Binds with Dex to provide cloud-native capabilities for managing and securing identity and access management in a microservices environment. Dex is an OpenID Connect identity provider, and with Meshery’s integration, users can enable features for secure identity management.</p>
+  </li>
+  <li>
+    <p><strong>Docker</strong> - Interacts with Docker to provide cloud-native capabilities for managing and securing container operations. With this integration, users can enable features for container management and security. Check out the Meshery Docker Extension.</p>
+  </li>
+  <li>
+    <p><strong>Dragonfly</strong> - Integrates with Dragonfly to manage and secure file transfer between nodes in a distributed system. With this integration, users can apply cloud-native features to ensure secure and reliable file transfers.</p>
+  </li>
+  <li>
+    <p><strong>Elastic Search</strong> - Integrates with Elastic Search to provide cloud-native capabilities for managing and securing Elastic Search workloads running on Kubernetes. With this integration, users can enable features for Elastic Search resources.</p>
+  </li>
+  <li>
+    <p><strong>Emissary Ingress</strong> - Binds with Emissary Ingress to incorporate cloud-native features in Kubernetes Ingress, enabling traffic control and observability.</p>
+  </li>
+  <li>
+    <p><strong>Envoy</strong> - Binds with Envoy to provide cloud-native capabilities for managing and securing microservices communications. Envoy is a popular proxy and data plane solution, and with Meshery’s integration, users can enable advanced traffic management and security features.</p>
+  </li>
+  <li>
+    <p><strong>Epam Delivery Platform (EDP) Admin Console</strong> - Integrates with EDP Admin Console to provide cloud-native functionality and configuration for EDP applications.</p>
+  </li>
+  <li>
+    <p><strong>Etcd Cluster Operator</strong> - Interacts with Etcd Cluster Operator to manage the service mesh configuration and interactions with Etcd.</p>
+  </li>
+  <li>
+    <p><strong>External Secrets Operator</strong> - Interacts with External Secrets Operator to provide capabilities for managing and securing external secrets in Kubernetes. With this integration, users can enable features for secret management.</p>
+  </li>
+  <li>
+    <p><strong>Fabedge</strong> - Binds with Fabedge to provide cloud-native capabilities for managing and securing edge computing deployments. With this integration, users can enable features for edge nodes and edge applications.</p>
+  </li>
+  <li>
+    <p><strong>Falco</strong> - Binds with Falco for runtime security monitoring. Falco is a powerful runtime security tool, and with Meshery’s integration, users can enable real-time security monitoring for their application.</p>
+  </li>
+  <li>
+    <p><strong>Flagger</strong> - Integrates with Flagger to provide cloud-native capabilities for progressive delivery and canary deployments. With this integration, users can enable features for advanced deployment strategies and observability.</p>
+  </li>
+  <li>
+    <p><strong>Fluent Operator</strong> - Interacts with the Fluent Operator to provide observability and monitoring using Fluentd log forwarding capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Fluent Operator</strong> - Interacts with the Fluent Operator to provide service mesh observability and monitoring using Fluentd log forwarding capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Fluentbit Operator</strong> - Interacts with Fluentbit Operator for configuration and to ensure seamless communication with other components.</p>
+  </li>
+  <li>
+    <p><strong>Fluentbit Skt</strong> - Binds with Fluentbit Skt to provide service mesh observability and monitoring using Fluentbit log forwarding capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Fluentbit Skt</strong> - Binds with Fluentbit Skt to provide service mesh observability and monitoring using Fluentbit log forwarding capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Fluentd Operator</strong> - Binds with the Fluentd Operator to provide service mesh observability and monitoring using Fluentd logging capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Fluentd Operator</strong> - Interacts with Fluentd Operator to configure and enable better observability.</p>
+  </li>
+  <li>
+    <p><strong>Flux</strong> - Binds with Flux to provide cloud-native capabilities for managing and securing GitOps deployments. With this integration, users can enable features for GitOps workflows and deployments.</p>
+  </li>
+  <li>
+    <p><strong>Fonio</strong> - Binds with Fonio to provide cloud-native capabilities for managing and securing data storage and processing in a microservices environment. With this integration, users can enable features for data storage and processing.</p>
+  </li>
+  <li>
+    <p><strong>GRPC</strong> - Integrates with gRPC to enable features for gRPC-based microservices communication and configuration.</p>
+  </li>
+  <li>
+    <p><strong>GRPC</strong> - Integrates with gRPC to enable features for gRPC-based microservices communication and configuration.</p>
+  </li>
+  <li>
+    <p><strong>GitLab Controller</strong> - Binds with the GitLab Controller to provide cloud-native capabilities for managing and securing GitLab resources. With this integration, users can easily enable features for GitLab projects and repositories.</p>
+  </li>
+  <li>
+    <p><strong>GitLab Runner Operator</strong> - Interacts with the GitLab Runner Operator to provide service mesh capabilities for managing and monitoring GitLab runners on Kubernetes. With this integration, users can enable features for GitLab runners.</p>
+  </li>
+  <li>
+    <p><strong>Github</strong> - Integrates with Github to provide cloud-native capabilities for managing and securing Github repositories and projects. With this integration, users can enable features for Github workflows and repositories.</p>
+  </li>
+  <li>
+    <p><strong>Github Actions Runner Operator</strong> - Binds with the Github Actions Runner Operator to provide service mesh capabilities for managing and monitoring Github Actions runners on Kubernetes. With this integration, users can enable features for Github Actions runners.</p>
+  </li>
+  <li>
+    <p><strong>Github Actions Runners</strong> - Interacts with Github Actions Runners to provide cloud-native capabilities for managing and monitoring Github Actions runners on Kubernetes. With this integration, users can enable features for Github Actions runners.</p>
+  </li>
+  <li>
+    <p><strong>Grafana Agent</strong> - Integrates with the Grafana Agent to provide service mesh observability and monitoring using Grafana’s agent-based monitoring capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Grafana Agent</strong> - Integrates with Grafana Agent to enable service mesh observability and monitoring using the Grafana dashboard.</p>
+  </li>
+  <li>
+    <p><strong>Grafana Agent Operator</strong> - Integrates with Grafana Agent Operator to provide capabilities for managing and monitoring Grafana agents on Kubernetes. With this integration, users can enable features for Grafana agent resources.</p>
+  </li>
+  <li>
+    <p><strong>Grafana Operator</strong> - Interacts with Grafana Operator to provide cloud-native capabilities for managing and monitoring Grafana instances on Kubernetes. With this integration, users can enable features for Grafana resources.</p>
+  </li>
+  <li>
+    <p><strong>Grafana UI Server</strong> - Integrates with Grafana UI Server to provide observability and monitoring using Grafana’s powerful visualization capabilities. With this integration, users can easily visualize and analyze service mesh metrics and logs.</p>
+  </li>
+  <li>
+    <p><strong>Harbor Operator</strong> - Integrates with Harbor Operator to provide configuration for the Harbor container registry.</p>
+  </li>
+  <li>
+    <p><strong>Helm Controller</strong> - Interacts with the Helm Controller to provide features for Helm-based application deployments and management.</p>
+  </li>
+  <li>
+    <p><strong>Hexa</strong> - Binds with Hexa to provide cloud-native capabilities for managing and monitoring Hexa workloads running on Kubernetes. With this integration, users can enable features for Hexa resources, ensuring secure communication and traffic control.</p>
+  </li>
+  <li>
+    <p><strong>Identity Manager</strong> - Interacts with Identity Manager to provide cloud-native capabilities for managing and securing identity and access management in a microservices environment. With this integration, users can enable features for secure identity management.</p>
+  </li>
+  <li>
+    <p><strong>In Toto</strong> - Interacts with In Toto to provide cloud-native capabilities for securing the software supply chain. With this integration, users can enable service mesh features for software integrity and verification.</p>
+  </li>
+  <li>
+    <p><strong>Inclavare Containers</strong> - Binds with Inclavare Containers to provide cloud-native capabilities for managing and securing confidential computing deployments. With this integration, users can enable features for secure and confidential computing.</p>
+  </li>
+  <li>
+    <p><strong>Istio</strong> - Binds with Istio to provide cloud-native capabilities for managing and securing microservices communications. Istio is a popular service mesh, and with Meshery’s integration, users can enable advanced traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>Istio Operator</strong> - Integrates with the Istio Operator to enable advanced service mesh features, traffic control, and security for applications running on Istio.</p>
+  </li>
+  <li>
+    <p><strong>Istio Rate Limit Operator</strong> - Interacts with the Istio Rate Limit Operator to enable features for rate limiting and traffic shaping in Istio.</p>
+  </li>
+  <li>
+    <p><strong>Istio Rate Limit Operator</strong> - Interacts with the Istio Rate Limit Operator to enable service mesh features for rate limiting and traffic shaping in Istio.</p>
+  </li>
+  <li>
+    <p><strong>JFrog Distribution</strong> - Binds with JFrog Distribution to provide cloud-native capabilities for managing and securing artifact distribution workflows. With this integration, users can enable features for artifact distribution and security.</p>
+  </li>
+  <li>
+    <p><strong>Jaeger</strong> - Binds with Jaeger to provide cloud-native capabilities for managing and securing distributed tracing and observability. With this integration, users can enable features for distributed tracing.</p>
+  </li>
+  <li>
+    <p><strong>Jaeger Operator</strong> - Interacts with the Jaeger Operator to enable distributed tracing and observability within the service mesh using Jaeger.</p>
+  </li>
+  <li>
+    <p><strong>Jenkins</strong> - Interacts with Jenkins to enable features and configuration for continuous integration and continuous delivery (CI/CD) pipelines running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Jenkins Operator</strong> - Binds with the Jenkins Operator to enable cloud-native capabilities for Jenkins-based continuous integration and continuous deployment pipelines.</p>
+  </li>
+  <li>
+    <p><strong>Jira Service Desk Operator</strong> - Integrates with the Jira Service Desk Operator to provide service mesh capabilities for managing and monitoring Jira Service Desk deployments on Kubernetes. With this integration, users can enable service mesh functionalities for Jira Service Desk resources.</p>
+  </li>
+  <li>
+    <p><strong>Jitsi</strong> - Meshery can configure and manage the service mesh for Jitsi, providing observability and security for the video conferencing platform.</p>
+  </li>
+  <li>
+    <p><strong>K3s</strong> - Meshery can configure and manage the service mesh for K3s, providing observability and traffic control for lightweight Kubernetes clusters.</p>
+  </li>
+  <li>
+    <p><strong>K8GB</strong> - Integrates with K8GB to provide cloud-native capabilities for managing features for efficient and secure DNS resolution across multiple and securing multi-cluster DNS resolution. With this integration, users can enable Kubernetes clusters.</p>
+  </li>
+  <li>
+    <p><strong>Karmada</strong> - Binds with Karmada to provide cloud-native capabilities for managing and securing multi-cluster communication and applications. With this integration, users can enable features for multi-cluster management and traffic control.</p>
+  </li>
+  <li>
+    <p><strong>Karpenter</strong> - Integrates with Karpenter to enable cloud-native capabilities for Kubernetes cluster autoscaling and workload placement.</p>
+  </li>
+  <li>
+    <p><strong>Karpenter</strong> - Integrates with Karpenter to enable cloud-native capabilities for Kubernetes cluster autoscaling and workload placement.</p>
+  </li>
+  <li>
+    <p><strong>Keda</strong> - Interacts with Keda to provide cloud-native capabilities for managing and securing event-driven workloads. With this integration, users can enable service mesh features for scaling and managing event-driven applications.</p>
+  </li>
+  <li>
+    <p><strong>Keycloak Operator</strong> - Interacts with the Keycloak Operator to enable functionality and configuration for the Keycloak identity and access management platform.</p>
+  </li>
+  <li>
+    <p><strong>Keylime</strong> - Integrates with Keylime to provide cloud-native capabilities for managing and securing trusted computing deployments. With this integration, users can enable features for trusted computing and secure boot.</p>
+  </li>
+  <li>
+    <p><strong>Kiali Operator</strong> - Binds with the Kiali Operator to provide service mesh observability and monitoring using the Kiali dashboard.</p>
+  </li>
+  <li>
+    <p><strong>Kiali Operator</strong> - Binds with the Kiali Operator to provide observability and monitoring using the Kiali dashboard.</p>
+  </li>
+  <li>
+    <p><strong>Knative</strong> - Binds with Knative to provide features for Knative-based serverless applications and event-driven workloads.</p>
+  </li>
+  <li>
+    <p><strong>Knative</strong> - Binds with Knative to provide features for Knative-based serverless applications and event-driven workloads.</p>
+  </li>
+  <li>
+    <p><strong>Knative Serving</strong> - Binds with Knative Serving to provide features for Knative-based serverless applications and event-driven workloads.</p>
+  </li>
+  <li>
+    <p><strong>Knative Serving</strong> - Binds with Knative Serving to provide features for Knative-based serverless applications and event-driven workloads.</p>
+  </li>
+  <li>
+    <p><strong>Kong API Gateway</strong> - Integrates with Kong API Gateway and provide service mesh configuration and traffic control for APIs.</p>
+  </li>
+  <li>
+    <p><strong>Kong Mesh</strong> - Interacts with Kong Mesh to enable advanced features, traffic control, and security for microservices running on Kong’s service mesh.</p>
+  </li>
+  <li>
+    <p><strong>Kube Prometheus</strong> - Interacts with Kube Prometheus to provide service mesh observability and monitoring using Prometheus. With this integration, users can easily collect and analyze service mesh metrics with Prometheus.</p>
+  </li>
+  <li>
+    <p><strong>Kube Prometheus Stack</strong> - Binds with the Kube Prometheus Stack to provide service mesh observability and monitoring using the Prometheus Operator and Grafana.</p>
+  </li>
+  <li>
+    <p><strong>Kube Prometheus Stack</strong> - Binds with the Kube Prometheus Stack to enable service mesh observability and monitoring using the Prometheus Operator and Grafana.</p>
+  </li>
+  <li>
+    <p><strong>Kube Rs</strong> - Binds with Kube Rs to provide cloud-native capabilities for managing and securing Kubernetes resources. With this integration, users can enable service mesh features for Kubernetes resources management and security.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb</strong> - Binds with Kubedb to provide features and configuration for various Kubernetes database workloads supported by Kubedb.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb</strong> - Binds with Kubedb to provide features and configuration for various Kubernetes database workloads supported by Kubedb.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb CRDs</strong> - Binds with Kubedb CRDs (Custom Resource Definitions) to enable cloud-native functionality and configuration for Kubernetes database resources.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Catalog</strong> - Integrates with Kubedb Catalog to provide observability and monitoring for various Kubernetes database workloads supported by Kubedb.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Grafana Dashboards</strong> - Integrates with Kubedb Grafana Dashboards to enable service mesh observability and monitoring using Grafana dashboards.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Metrics</strong> - Interacts with Kubedb Metrics to enable observability and monitoring for Kubernetes database workloads managed by Kubedb.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Ops Manager</strong> - Interacts with the Kubedb Ops Manager to provide cloud-native capabilities for managing and monitoring various database workloads on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Ops Manager</strong> - Interacts with the Kubedb Ops Manager to provide cloud-native capabilities for managing and monitoring various database workloads on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Opscenter</strong> - Binds with the Kubedb Opscenter to provide cloud-native capabilities for managing and monitoring various Kubernetes database workloads.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb Opscenter</strong> - Binds with the Kubedb Opscenter to provide cloud-native capabilities for managing and monitoring various Kubernetes database workloads.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb UI Server</strong> - Interacts with the Kubedb UI Server to provide features and configuration for managing and monitoring various Kubernetes database workloads.</p>
+  </li>
+  <li>
+    <p><strong>Kubedb UI Server</strong> - Interacts with the Kubedb UI Server to provide features and configuration for managing and monitoring various Kubernetes database workloads.</p>
+  </li>
+  <li>
+    <p><strong>Kubedl</strong> - Integrates with Kubedl to provide cloud-native capabilities for managing and monitoring Kubedl machine learning workloads running on Kubernetes. With this integration, users can enable features for Kubedl resources, ensuring secure and efficient machine learning workflows.</p>
+  </li>
+  <li>
+    <p><strong>Kubeflow</strong> - Interacts with Kubeflow to provide cloud-native capabilities for managing and monitoring Kubeflow workloads running on Kubernetes. With this integration, users can enable features for Kubeflow resources, ensuring secure and efficient machine learning workflows.</p>
+  </li>
+  <li>
+    <p><strong>Kubeflow Katib</strong> - Binds with Kubeflow Katib to provide cloud-native capabilities for managing and monitoring hyperparameter tuning jobs within Kubeflow. With this integration, users can enable features for efficient and reliable hyperparameter tuning.</p>
+  </li>
+  <li>
+    <p><strong>Kubeflow MPI Operator</strong> - Binds with the Kubeflow MPI Operator to provide cloud-native capabilities for managing and monitoring Kubeflow MPI workloads running on Kubernetes. With this integration, users can enable features for MPI applications within Kubeflow.</p>
+  </li>
+  <li>
+    <p><strong>Kuberhealthy</strong> - Interacts with Kuberhealthy to provide cloud-native capabilities for managing and securing Kubernetes health checks and observability. With this integration, users can enable features for health checks and observability.</p>
+  </li>
+  <li>
+    <p><strong>Kubernetes</strong> - Integrates with Kubernetes to provide cloud-native capabilities for managing and securing Kubernetes resources and workloads. With this integration, users can enable features for Kubernetes management and security.</p>
+  </li>
+  <li>
+    <p><strong>Kubernetes UI Server</strong> - Integrates with the Kubernetes UI Server to provide service mesh capabilities for managing and monitoring Kubernetes resources through the Kubernetes dashboard. With this integration, users can enable features within the Kubernetes dashboard.</p>
+  </li>
+  <li>
+    <p><strong>Kubesphere</strong> - Binds with Kubesphere to provide cloud-native capabilities for managing and securing Kubesphere applications and resources. With this integration, users can enable features for Kubesphere projects and workspaces.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault</strong> - Binds with Kubevault to enable secure and observable communication between applications and the Kubevault vaults.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault Catalog</strong> - Binds with Kubevault Catalog to incorporate features in Kubevault applications, enabling secure communication.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault Crds</strong> - Integrates with Kubevault CRDs to provide features and configuration for various Kubernetes secrets and secure data management.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault Metrics</strong> - Binds with Kubevault Metrics to incorporate service mesh observability and monitoring for Kubevault applications.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault Operator</strong> - Interacts with the Kubevault Operator to enable features and configuration for Kubernetes secret management.</p>
+  </li>
+  <li>
+    <p><strong>Kubevault Operator</strong> - Interacts with the Kubevault Operator to enable features and configuration for Kubernetes secret management.</p>
+  </li>
+  <li>
+    <p><strong>Kubevela</strong> - Integrates with Kubevela to provide cloud-native capabilities for managing and securing cloud-native applications using the Kubevela framework. With this integration, users can enable features for application management.</p>
+  </li>
+  <li>
+    <p><strong>Kubevirt</strong> - Interacts with Kubevirt to provide cloud-native capabilities for managing and securing virtual machine workloads on Kubernetes. With this integration, users can enable features for virtual machine management.</p>
+  </li>
+  <li>
+    <p><strong>Kuma</strong> - Integrates with Kuma to provide cloud-native capabilities for managing and securing microservices communications. Kuma is a lightweight service mesh, and with Meshery’s integration, users can enable traffic routing, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>Kured</strong> - Integrates with Kured to provide cloud-native capabilities for managing and monitoring Kubernetes node reboot operations. With this integration, users can enable features for managing node reboot events.</p>
+  </li>
+  <li>
+    <p><strong>Kusk Gateway</strong> - Interacts with the Kusk Gateway to enable features and configuration for the Kusk API Gateway.</p>
+  </li>
+  <li>
+    <p><strong>Kusk Gateway</strong> - Interacts with the Kusk Gateway to enable features and configuration for the Kusk API Gateway.</p>
+  </li>
+  <li>
+    <p><strong>Kyverno Monitor</strong> - Interacts with Kyverno Monitor to enable service mesh observability and monitoring for Kubernetes policy management.</p>
+  </li>
+  <li>
+    <p><strong>Linkerd</strong> - Interacts with Linkerd to provide cloud-native capabilities for managing and securing microservices communications. With this integration, users can enable features for traffic management and security.</p>
+  </li>
+  <li>
+    <p><strong>Linux</strong> - Integrates with Linux to provide cloud-native capabilities for managing and securing Linux containers and workloads. With this integration, users can enable features for Linux-based deployments.</p>
+  </li>
+  <li>
+    <p><strong>Litmus Chaos</strong> - Interacts with Litmus Chaos to enable features and configuration for Litmus-based chaos engineering experiments.</p>
+  </li>
+  <li>
+    <p><strong>Longhorn</strong> - Interacts with Longhorn to provide cloud-native capabilities for managing and monitoring Longhorn volumes running on Kubernetes. With this integration, users can enable service mesh functionalities for storage management and performance monitoring.</p>
+  </li>
+  <li>
+    <p><strong>Mattermost Operator</strong> - Interacts with the Mattermost Operator to enable functionality and configuration for the Mattermost messaging platform.</p>
+  </li>
+  <li>
+    <p><strong>Meshery</strong> - Binds with Meshery to provide cloud-native capabilities for managing and monitoring service mesh configurations and performance. With this integration, users can easily manage and visualize features using the Meshery dashboard.</p>
+  </li>
+  <li>
+    <p><strong>Meshery Operator</strong> - Binds with the Meshery Operator to provide a unified interface and configuration for managing multiple applications.</p>
+  </li>
+  <li>
+    <p><strong>Metallb</strong> - Interacts with Metallb to provide cloud-native capabilities for managing and securing load balancers in Kubernetes clusters. With this integration, users can apply features to ensure secure and efficient load balancing for their applications.</p>
+  </li>
+  <li>
+    <p><strong>Mimir</strong> - Integrates with Mimir to provide cloud-native capabilities for managing and securing data integration workflows. With this integration, users can enable features for secure and reliable data integration.</p>
+  </li>
+  <li>
+    <p><strong>MinIO Operator</strong> - Integrates with the MinIO Operator to enable cloud-native capabilities for managing and monitoring MinIO object storage on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>MinIO Operator</strong> - Integrates with the MinIO Operator to enable cloud-native capabilities for managing and monitoring MinIO object storage on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>MySQL Operator</strong> - Integrates with the MySQL Operator to provide cloud-native capabilities for managing and securing MySQL database clusters running on Kubernetes. With this integration, users can enable features for MySQL databases.</p>
+  </li>
+  <li>
+    <p><strong>NATS Operator</strong> - Integrates with NATS Operator to enable functionality and configuration for the NATS messaging system.</p>
+  </li>
+  <li>
+    <p><strong>NGINX</strong> - Integrates with NGINX to provide cloud-native capabilities for managing and securing microservices communications. NGINX is a popular proxy and web server, and with Meshery’s integration, users can enable traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>NGINX Ingress Controller</strong> - Interacts with the NGINX Ingress Controller to provide service mesh capabilities for managing and securing inbound traffic to Kubernetes services. With this integration, users can apply service mesh policies to control and secure traffic flow.</p>
+  </li>
+  <li>
+    <p><strong>NGINX Service Mesh</strong> - Integrates with NGINX Service Mesh to provide cloud-native capabilities for managing and securing microservices communications. NGINX Service Mesh is a popular service mesh, and with Meshery’s integration, users can enable advanced traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>New Relic Operator</strong> - Interacts with the New Relic Operator to enable observability and monitoring using New Relic’s monitoring capabilities.</p>
+  </li>
+  <li>
+    <p><strong>Nocalhost</strong> - Binds with Nocalhost to provide cloud-native capabilities for managing and securing local development environments for microservices. With this integration, users can enable features for local development and testing.</p>
+  </li>
+  <li>
+    <p><strong>Notary</strong> - Integrates with Notary to provide cloud-native capabilities for managing and securing container image signing and verification. With this integration, users can enable features for image security and integrity.</p>
+  </li>
+  <li>
+    <p><strong>OPA Gatekeeper</strong> - Integrates with OPA Gatekeeper to provide cloud-native capabilities for implementing fine-grained security policies. OPA Gatekeeper is an admission controller for Kubernetes, and with Meshery’s integration, users can easily define and enforce access control policies within the service mesh.</p>
+  </li>
+  <li>
+    <p><strong>Open Cluster Management</strong> - Binds with Open Cluster Management to provide cloud-native capabilities for managing and securing multiple Kubernetes clusters. With this integration, users can enable features for multi-cluster management and security.</p>
+  </li>
+  <li>
+    <p><strong>Open Policy Agent (OPA)</strong> - Binds with OPA for implementing fine-grained security policies. OPA is a powerful policy engine, and with Meshery’s integration, users can easily define and enforce access control policies within the service mesh.</p>
+  </li>
+  <li>
+    <p><strong>Open Service Mesh</strong> - Binds with Open Service Mesh to provide cloud-native capabilities for managing and securing microservices communications. Open Service Mesh is an open-source service mesh, and with Meshery’s integration, users can enable advanced traffic management, security, and observability features.</p>
+  </li>
+  <li>
+    <p><strong>OpenEBS</strong> - Meshery can manage and control the interactions between OpenEBS storage and the application, ensuring observability and security.</p>
+  </li>
+  <li>
+    <p><strong>OpenFeature</strong> - Integrates with OpenFeature to provide cloud-native capabilities for managing and securing feature flags and rollouts. With this integration, users can enable features for feature flag management and rollouts.</p>
+  </li>
+  <li>
+    <p><strong>OpenGitOps</strong> - Interacts with OpenGitOps to provide cloud-native capabilities for managing and securing Git</p>
+  </li>
+  <li>
+    <p><strong>OpenMetrics</strong> - Interacts with OpenMetrics to provide observability and monitoring using the OpenMetrics format. With this integration, users can easily collect and analyze service mesh metrics in a standardized format.</p>
+  </li>
+  <li>
+    <p><strong>OpenTelemetry Operator</strong> - Binds with the OpenTelemetry Operator to provide service mesh observability and monitoring using OpenTelemetry for distributed tracing and metrics.</p>
+  </li>
+  <li>
+    <p><strong>Openkruise</strong> - Integrates with Openkruise to provide cloud-native capabilities for managing and securing applications running on Kubernetes. With this integration, users can enable features for workload management and observability.</p>
+  </li>
+  <li>
+    <p><strong>Operator Framework</strong> - Interacts with Operator Framework to provide cloud-native capabilities for managing and securing Kubernetes operators. With this integration, users can enable features for Kubernetes operator management and security.</p>
+  </li>
+  <li>
+    <p><strong>Oras</strong> - Binds with Oras to provide cloud-native capabilities for managing and securing container image storage and distribution. With this integration, users can enable features for secure and efficient container image management.</p>
+  </li>
+  <li>
+    <p><strong>PGO (CrunchyData)</strong> - Binds with the PGO (Postgres Operator) provided by CrunchyData to enable cloud-native capabilities for PostgreSQL databases running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>PGO (CrunchyData)</strong> - Binds with PGO to enable functionality and configuration for PostgreSQL databases managed by CrunchyData.</p>
+  </li>
+  <li>
+    <p><strong>Parsec</strong> - Integrates with Parsec to provide cloud-native capabilities for managing and securing secure computation tasks. With this integration, users can apply features to ensure the security and integrity of secure computation tasks.</p>
+  </li>
+  <li>
+    <p><strong>Percona Operator for MongoDB</strong> - Meshery can manage and control the interactions between MongoDB and the application, enhancing its observability and security features.</p>
+  </li>
+  <li>
+    <p><strong>Percona Operator for MySQL</strong> - Interacts with Percona Operator for MySQL to enable and configuration for MySQL databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Operator for MySQL</strong> - Interacts with Percona Operator for MySQL to enable features and configuration for MySQL databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Postgres Operator</strong> - Binds with the Percona Postgres Operator to enable service mesh capabilities for PostgreSQL databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Server for MongoDB</strong> - Integrates with Percona Server for MongoDB to enable service mesh capabilities for MongoDB databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Server for MongoDB</strong> - Integrates with Percona Server for MongoDB to enable service mesh capabilities for MongoDB databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Server for MySQL</strong> - Binds with Percona Server for MySQL to provide cloud-native capabilities for MySQL databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Percona Server for MySQL</strong> - Binds with Percona Server for MySQL to provide cloud-native capabilities for MySQL databases managed by Percona.</p>
+  </li>
+  <li>
+    <p><strong>Piraeus Datastore</strong> - Integrates with the Piraeus Datastore to enable functionality and configuration for Piraeus-based distributed storage solutions.</p>
+  </li>
+  <li>
+    <p><strong>Piraeus Datastore</strong> - Integrates with the Piraeus Datastore to enable functionality and configuration for Piraeus-based distributed storage solutions.</p>
+  </li>
+  <li>
+    <p><strong>Pixie</strong> - Interacts with Pixie to provide cloud-native capabilities for managing and monitoring applications running on Kubernetes. With this integration, users can enable features for observability and performance monitoring.</p>
+  </li>
+  <li>
+    <p><strong>Porter</strong> - Interacts with Porter to provide cloud-native capabilities for managing and securing multi-cloud deployments. With this integration, users can enable features for multi-cloud management and security.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Controller</strong> - Interacts with the Postgres Controller to enable features and configuration for PostgreSQL databases running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Controller</strong> - Interacts with the Postgres Controller to enable features and configuration for PostgreSQL databases running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Database (CrunchyData)</strong> - Binds with the Postgres Database Operator to provide configuration for PostgreSQL databases managed by CrunchyData.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Database (CrunchyData)</strong> - Binds with the Postgres Database Operator to provide features and configuration for PostgreSQL databases managed by CrunchyData.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Operator</strong> - Integrates with the Postgres Operator to enable functionality and configuration for PostgreSQL databases running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Postgres Operator</strong> - Integrates with the Postgres Operator to enable functionality and configuration for PostgreSQL databases running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Postgres With Operator</strong> - Binds with the Postgres With Operator to provide features for PostgreSQL databases.</p>
+  </li>
+  <li>
+    <p><strong>Posthog</strong> - Integrates with Posthog and enable functionality for the Posthog event tracking platform.</p>
+  </li>
+  <li>
+    <p><strong>Pravega</strong> - Interacts with Pravega to provide cloud-native capabilities for managing and securing Pravega stream processing workloads. With this integration, users can enable features for reliable and efficient stream processing.</p>
+  </li>
+  <li>
+    <p><strong>Prometheus</strong> - Integrates with Prometheus to enable service mesh observability and monitoring using Prometheus metrics.</p>
+  </li>
+  <li>
+    <p><strong>Prometheus Operator</strong> - Integrates with the Prometheus Operator to enable observability and monitoring using Prometheus metrics.</p>
+  </li>
+  <li>
+    <p><strong>Pulsar Operator</strong> - Integrates with the Pulsar Operator to enable functionality and configuration for Apache Pulsar messaging resources running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Pulsar Operator</strong> - Integrates with the Pulsar Operator to enable functionality and configuration for Apache Pulsar messaging resources running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Pulsar Resources Operator</strong> - Interacts with the Pulsar Resources Operator to enable service mesh functionality and configuration for Apache Pulsar messaging resources.</p>
+  </li>
+  <li>
+    <p><strong>RabbitMQ Cluster Operator</strong> - Binds with RabbitMQ Cluster Operator to integrate RabbitMQ messaging system with the application, facilitating secure and observable communication.</p>
+  </li>
+  <li>
+    <p><strong>RabbitMQ Operator</strong> - Interacts with the RabbitMQ Operator to provide features and configuration for RabbitMQ message broker resources running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>RabbitMQ Operator</strong> - Interacts with the RabbitMQ Operator to enable features and configuration for RabbitMQ message broker resources running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Rook</strong> - Interacts with Rook to provide cloud-native capabilities for managing and securing distributed storage resources. With this integration, users can enable features for distributed storage management.</p>
+  </li>
+  <li>
+    <p><strong>SPIFFE</strong> - Interacts with SPIFFE (Secure Production Identity Framework For Everyone) to enable secure and verifiable identity management within the service mesh.</p>
+  </li>
+  <li>
+    <p><strong>SPIRE</strong> - Binds with SPIRE to provide SPIFFE-based identity management and secure communication within the service mesh.</p>
+  </li>
+  <li>
+    <p><strong>Schemahero</strong> - Integrates with Schemahero to provide cloud-native capabilities for managing and securing database schemas in Kubernetes. With this integration, users can enable features for database schema management and security.</p>
+  </li>
+  <li>
+    <p><strong>Serverless Workflow</strong> - Interacts with Serverless Workflow to provide cloud-native capabilities for managing and monitoring serverless workflows running on Kubernetes. With this integration, users can enable features for serverless applications.</p>
+  </li>
+  <li>
+    <p><strong>Skooner</strong> - Interacts with Skooner to provide cloud-native capabilities for managing and securing applications deployed on Skooner containers. With this integration, users can easily enable features, including traffic management and observability.</p>
+  </li>
+  <li>
+    <p><strong>Stackgres Operator</strong> - Binds with the Stackgres Operator to provide cloud-native capabilities for managing and monitoring PostgreSQL databases in Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Stackgres Operator</strong> - Binds with the Stackgres Operator to provide cloud-native capabilities for managing and monitoring PostgreSQL databases in Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Strimzi Kafka Operator</strong> - Interacts with the Strimzi Kafka Operator to enable service mesh features and configuration for Apache Kafka messaging resources on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Strimzi Kafka Operator</strong> - Interacts with the Strimzi Kafka Operator to enable service mesh features and configuration for Apache Kafka messaging resources on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Strimzi Registry Operator</strong> - Binds with Strimzi Registry Operator to provide features for the Strimzi Kafka Registry.</p>
+  </li>
+  <li>
+    <p><strong>Submariner</strong> - Integrates with Submariner for managing and securing cross-cluster communication. With this integration, users can easily enable secure communication between Kubernetes clusters.</p>
+  </li>
+  <li>
+    <p><strong>Superedge</strong> - Binds with Superedge to provide cloud-native capabilities for managing and securing edge computing deployments. With this integration, users can enable features for edge nodes and edge applications.</p>
+  </li>
+  <li>
+    <p><strong>TUF (The Update Framework)</strong> - Integrates with TUF to enable secure software updates and distribution within the service mesh, ensuring that only trusted updates are applied to containers and applications.</p>
+  </li>
+  <li>
+    <p><strong>Telepresence</strong> - Integrates with Telepresence to provide cloud-native capabilities for local development and debugging of service mesh-enabled applications. With this integration, users can easily test and debug applications with service mesh features in a local environment.</p>
+  </li>
+  <li>
+    <p><strong>Teller</strong> - Integrates with Teller to provide cloud-native capabilities for managing and securing bank vault operations. With this integration, users can enable features for secure and reliable bank vault operations.</p>
+  </li>
+  <li>
+    <p><strong>Terraform</strong> - Interacts with Terraform and the application, enabling integration for resources deployed using Terraform.</p>
+  </li>
+  <li>
+    <p><strong>Thanos</strong> - Integrates with Thanos to provide cloud-native capabilities for managing and securing distributed metrics and monitoring. With this integration, users can enable features for efficient and reliable metrics collection in distributed environments.</p>
+  </li>
+  <li>
+    <p><strong>Tikv Operator</strong> - Integrates with the Tikv Operator to enable functionality and configuration for TiKV distributed key-value storage on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Tikv Operator</strong> - Integrates with the Tikv Operator to enable functionality and configuration for TiKV distributed key-value storage on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Tinkerbell</strong> - Integrates with Tinkerbell to provide cloud-native capabilities for managing and securing hardware provisioning in a microservices environment. With this integration, users can enable features for secure and efficient hardware provisioning.</p>
+  </li>
+  <li>
+    <p><strong>Tremo</strong> - Integrates with Tremor to provide cloud-native capabilities for managing and securing data streaming and processing. With this integration, users can enable features for data streaming and processing.</p>
+  </li>
+  <li>
+    <p><strong>Trickster</strong> - Binds with Trickster to provide cloud-native capabilities for managing and securing metrics caching and observability. With this integration, users can enable features for efficient and reliable metrics caching.</p>
+  </li>
+  <li>
+    <p><strong>Vineyard</strong> - Binds with Vineyard to provide cloud-native capabilities for managing and securing distributed in-memory data. With this integration, users can enable features for secure and efficient distributed data processing.</p>
+  </li>
+  <li>
+    <p><strong>Virtual Kubelet</strong> - Binds with Virtual Kubelet to provide cloud-native capabilities for managing and securing workloads running on Virtual Kubelet nodes. With this integration, users can enable features for workloads running on Virtual Kubelet.</p>
+  </li>
+  <li>
+    <p><strong>Vitess</strong> - Binds with Vitess to provide cloud-native capabilities for managing and monitoring Vitess database clusters running on Kubernetes. With this integration, users can enable features for these databases.</p>
+  </li>
+  <li>
+    <p><strong>Volcano</strong> - Interacts with Volcano to provide capabilities for managing and monitoring batch workloads running on Kubernetes. With this integration, users can enable features for batch job scheduling and resource management.</p>
+  </li>
+  <li>
+    <p><strong>Wasmcloud</strong> - Interacts with Wasmcloud to provide cloud-native capabilities for managing and securing WebAssembly workloads. With this integration, users can enable features for WebAssembly applications running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Wasmedge Runtime</strong> - Interacts with the Wasmedge Runtime to provide cloud-native capabilities for managing and securing WebAssembly workloads. With this integration, users can enable features for WebAssembly applications running on Kubernetes.</p>
+  </li>
+  <li>
+    <p><strong>Windows</strong> - Binds with Windows to provide cloud-native capabilities for managing and securing Windows containers and workloads. With this integration, users can enable features for Windows-based deployments.</p>
+  </li>
+</ul>
+
+  <br/>
+
+
+        </div>
+      </main>
+      
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable"><strong>Tools</strong>
+<a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=area%2Fdocs%2C+framework%2Fjekyll&template=documentation.md&title=%5BDocs%5D" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/meshery/meshery/blob/master/docs/pages/extensibility/integrations.md" rel="noopener" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/meshery/meshery/new/master/docs/pages/extensibility/integrations.md?filename=change-me.md&value=---%0Atitle%3A+%22Long+Page+Title%22%0AlinkTitle%3A+%22Short+Nav+Title%22%0Aweight%3A+100%0Adescription%3A+%3E-%0A+++++Page+description+for+heading+and+indexes.%0A---%0A%0A%23%23+Heading%0A%0AEdit+this+template+to+create+your+new+page.%0A%0A%2A+Give+it+a+good+name%2C+ending+in+%60.md%60+-+e.g.+%60getting-started.md%60%0A%2A+Edit+the+%22front+matter%22+section+at+the+top+of+the+page+%28weight+controls+how+its+ordered+amongst+other+pages+in+the+same+directory%3B+lowest+number+first%29.%0A%2A+Add+a+good+commit+message+at+the+bottom+of+the+page+%28%3C80+characters%3B+use+the+extended+description+field+for+more+detail%29.%0A%2A+Create+a+new+branch+so+you+can+preview+your+new+file+and+request+a+review+via+Pull+Request.%0A" rel="noopener" target="_blank"><i class="fa fa-plus fa-fw"></i> Create new page</a>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+    </div>
+    <footer class="footer">
+  <!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/https://twitter.com/mesheryio">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/meshery/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+  <div class="text-white">&copy; 2023 The Meshery Authors</div>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <div class="footer-icons-list">
+    <div class="footer-icons">
+      <a class="social__link social__link--forum" href="/v0.6http://discuss.meshery.io" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTEgMTA0IDEwNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMyMzFmMjA7fS5jbHMtMntmaWxsOiNmZmY5YWU7fS5jbHMtM3tmaWxsOiMwMGFlZWY7fS5jbHMtNHtmaWxsOiMwMGE5NGY7fS5jbHMtNXtmaWxsOiNmMTVkMjI7fS5jbHMtNntmaWxsOiNlMzFiMjM7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5EaXNjb3Vyc2VfbG9nbzwvdGl0bGU+PGcgaWQ9IkxheWVyXzIiPjxnIGlkPSJMYXllcl8zIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MS44NywwQzIzLjcxLDAsMCwyMi44MywwLDUxYzAsLjkxLDAsNTIuODEsMCw1Mi44MWw1MS44Ni0uMDVjMjguMTYsMCw1MS0yMy43MSw1MS01MS44N1M4MCwwLDUxLjg3LDBaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTIuMzcsMTkuNzRBMzEuNjIsMzEuNjIsMCwwLDAsMjQuNTgsNjYuNDFsLTUuNzIsMTguNEwzOS40LDgwLjE3YTMxLjYxLDMxLjYxLDAsMSwwLDEzLTYwLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc3LjQ1LDMyLjEyYTMxLjYsMzEuNiwwLDAsMS0zOC4wNSw0OEwxOC44Niw4NC44MmwyMC45MS0yLjQ3QTMxLjYsMzEuNiwwLDAsMCw3Ny40NSwzMi4xMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03MS42MywyNi4yOUEzMS42LDMxLjYsMCwwLDEsMzguOCw3OEwxOC44Niw4NC44MiwzOS40LDgwLjE3QTMxLjYsMzEuNiwwLDAsMCw3MS42MywyNi4yOVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0yNi40Nyw2Ny4xMWEzMS42MSwzMS42MSwwLDAsMSw1MS0zNUEzMS42MSwzMS42MSwwLDAsMCwyNC41OCw2Ni40MWwtNS43MiwxOC40WiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTI0LjU4LDY2LjQxQTMxLjYxLDMxLjYxLDAsMCwxLDcxLjYzLDI2LjI5YTMxLjYxLDMxLjYxLDAsMCwwLTQ5LDM5LjYzbC0zLjc2LDE4LjlaIi8+PC9nPjwvZz48L3N2Zz4="
+          alt="forum"
+        />
+        <span class="footer-icons-text small-hide">Community discussion forum</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="https://meshery.io/subscribe" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
+          alt="mail"
+        />
+        <span class="footer-icons-text small-hide">Get connected with the Layer5 community</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href="/v0.6 https://slack.meshery.io/" target="_blank" rel="noreferrer">
+        <img
+          class="slack"
+          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtOC44NDMgMTIuNjUxYy0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxdjYuMzA2YzAgMS4zOTIgMS4xMjkgMi41MjEgMi41MjEgMi41MjFzMi41MjEtMS4xMjkgMi41MjEtMi41MjF2LTYuMzA2Yy0uMDAxLTEuMzkyLTEuMTMtMi41MjEtMi41MjEtMi41MjF6IiBmaWxsPSIjZTkxZTYzIi8+PHBhdGggZD0ibS4wMTkgMTUuMTcyYzAgMS4zOTMgMS4xMyAyLjUyMyAyLjUyMyAyLjUyM3MyLjUyMy0xLjEzIDIuNTIzLTIuNTIzdi0yLjUyM2gtMi41MjFjLS4wMDEgMC0uMDAxIDAtLjAwMiAwLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3oiIGZpbGw9IiNlOTFlNjMiLz48cGF0aCBkPSJtOC44NDYtLjAwMWMtLjAwMSAwLS4wMDIgMC0uMDAzIDAtMS4zOTMgMC0yLjUyMyAxLjEzLTIuNTIzIDIuNTIzczEuMTMgMi41MjMgMi41MjMgMi41MjNoMi41MjF2LTIuNTIzYzAtLjAwMSAwLS4wMDMgMC0uMDA1LS4wMDEtMS4zOTEtMS4xMjgtMi41MTgtMi41MTgtMi41MTh6IiBmaWxsPSIjMDBiY2Q0Ii8+PHBhdGggZD0ibTIuNTI1IDExLjM3aDYuMzE4YzEuMzkzIDAgMi41MjMtMS4xMyAyLjUyMy0yLjUyM3MtMS4xMy0yLjUyMy0yLjUyMy0yLjUyM2gtNi4zMThjLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3MxLjEzIDIuNTIzIDIuNTIzIDIuNTIzeiIgZmlsbD0iIzAwYmNkNCIvPjxwYXRoIGQ9Im0yMS40NTcgNi4zMjNjLTEuMzkxIDAtMi41MTggMS4xMjctMi41MTggMi41MTh2LjAwNSAyLjUyM2gyLjUyMWMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjNjLS4wMDEgMC0uMDAyIDAtLjAwMyAweiIgZmlsbD0iIzRjYWY1MCIvPjxwYXRoIGQ9Im0xMi42NDEgMi41MjJ2Ni4zMjVjMCAxLjM5MiAxLjEyOSAyLjUyMSAyLjUyMSAyLjUyMXMyLjUyMS0xLjEyOSAyLjUyMS0yLjUyMXYtNi4zMjVjMC0xLjM5Mi0xLjEyOS0yLjUyMS0yLjUyMS0yLjUyMS0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxeiIgZmlsbD0iIzRjYWY1MCIvPjxnIGZpbGw9IiNmZjk4MDAiPjxwYXRoIGQ9Im0xNy42ODIgMjEuNDc2YzAtMS4zOTItMS4xMjktMi41MjEtMi41MjEtMi41MjFoLTIuNTIxdjIuNTIzYy4wMDEgMS4zOTEgMS4xMjkgMi41MTkgMi41MjEgMi41MTlzMi41MjEtMS4xMjkgMi41MjEtMi41MjF6Ii8+PHBhdGggZD0ibTIxLjQ3OSAxMi42NDloLTYuMzE4Yy0xLjM5MyAwLTIuNTIzIDEuMTMtMi41MjMgMi41MjNzMS4xMyAyLjUyMyAyLjUyMyAyLjUyM2g2LjMxOGMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjN6Ii8+PC9nPjwvc3ZnPg=="
+          alt="slack"
+        />
+        <span class="footer-icons-text small-hide">Join the Meeshery Slack</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://meshery.io/calendar">
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+          <path
+            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+          />
+          <g stroke-linecap="undefined" stroke-linejoin="undefined">
+            <path d="M-3.468 8.168h-.033m25.313-4.242l-.063-.254M7.858 4.814v9.387" />
+            <path d="M1.833 9.507h12.051" />
+          </g>
+        </svg>
+        <span class="footer-icons-text small-hide">Subscribe to the community calender</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://twitter.com/mesheryio" target="_blank" rel="noreferrer">
+       <svg fill="#999" alt="twitter" class="twitter" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" version="1.1" height="1.8em"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#0d0d0d"></path></svg>
+       <span class="footer-icons-text small-hide">Follow on Twitter</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://github.com/meshery" target="_blank" rel="noreferrer">
+        <img
+          class="github"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjc0LjEgMjY3LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI3NC4xIDI2Ny4zIj48cGF0aCBkPSJNMTM3LjEsMEM2MS40LDAsMCw2MS4zLDAsMTM2LjlDMCwxOTYsMzcuOCwyNDguNCw5My44LDI2N2M2LjgsMS4zLDkuMy0zLDkuMy02LjZjMC0zLjMtMC4xLTExLjktMC4yLTIzLjMJYy0zOC4xLDguMy00Ni4xLTE4LjQtNDYuMS0xOC40Yy02LjItMTUuOC0xNS4yLTIwLTE1LjItMjBjLTEyLjQtOC41LDAuOS04LjMsMC45LTguM2MxMy43LDEsMjEsMTQuMSwyMSwxNC4xCWMxMi4yLDIwLjksMzIuMSwxNC45LDM5LjksMTEuNGMxLjItOC45LDQuOC0xNC45LDguNy0xOC4zYy0zMC40LTMuNS02Mi40LTE1LjItNjIuNC02Ny43Yy0wLjItMTMuNiw0LjgtMjYuOCwxNC4xLTM2LjgJYy0xLjQtMy41LTYuMS0xNy40LDEuMy0zNi4zYzAsMCwxMS41LTMuNywzNy43LDE0YzExLjItMy4xLDIyLjctNC42LDM0LjMtNC42YzExLjYsMC4xLDIzLjEsMS42LDM0LjMsNC42CWMyNi4yLTE3LjcsMzcuNi0xNCwzNy42LTE0YzcuNSwxOC45LDIuOCwzMi44LDEuNCwzNi4zYzkuMywxMCwxNC4zLDIzLjIsMTQuMSwzNi44YzAsNTIuNi0zMiw2NC4yLTYyLjUsNjcuNgljNC45LDQuMiw5LjMsMTIuNiw5LjMsMjUuNGMwLDE4LjMtMC4yLDMzLjEtMC4yLDM3LjZjMCwzLjcsMi41LDcuOSw5LjQsNi42YzcxLjgtMjQsMTEwLjUtMTAxLjcsODYuNS0xNzMuNQlDMjQ4LjMsMzcuNywxOTYsMCwxMzcuMSwwTDEzNy4xLDB6Ii8+PC9zdmc+"
+          alt="github"
+        />
+        <span class="footer-icons-text small-hide">Contribute on GitHub</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://www.linkedin.com/company/layer5" target="_blank" rel="noreferrer">
+        <img
+          class="linkedin"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHg9IjAiIHk9IjAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzA2OSIgZD0ibTQ3NS4wNzQyMTkgMGgtNDM4LjE0ODQzOGMtMjAuMzk0NTMxIDAtMzYuOTI1NzgxIDE2LjUzMTI1LTM2LjkyNTc4MSAzNi45MjU3ODF2NDM4LjE0ODQzOGMwIDIwLjM5NDUzMSAxNi41MzEyNSAzNi45MjU3ODEgMzYuOTI1NzgxIDM2LjkyNTc4MWg0MzguMTQ4NDM4YzIwLjM5NDUzMSAwIDM2LjkyNTc4MS0xNi41MzEyNSAzNi45MjU3ODEtMzYuOTI1Nzgxdi00MzguMTQ4NDM4YzAtMjAuMzk0NTMxLTE2LjUzMTI1LTM2LjkyNTc4MS0zNi45MjU3ODEtMzYuOTI1Nzgxem0tMjkzLjQ2NDg0NCAzODdoLTYyLjM0NzY1NnYtMTg3LjU3NDIxOWg2Mi4zNDc2NTZ6bS0zMS4xNzE4NzUtMjEzLjE4NzVoLS40MDYyNWMtMjAuOTIxODc1IDAtMzQuNDUzMTI1LTE0LjQwMjM0NC0zNC40NTMxMjUtMzIuNDAyMzQ0IDAtMTguNDA2MjUgMTMuOTQ1MzEzLTMyLjQxMDE1NiAzNS4yNzM0MzctMzIuNDEwMTU2IDIxLjMyODEyNiAwIDM0LjQ1MzEyNiAxNC4wMDM5MDYgMzQuODU5Mzc2IDMyLjQxMDE1NiAwIDE4LTEzLjUzMTI1IDMyLjQwMjM0NC0zNS4yNzM0MzggMzIuNDAyMzQ0em0yNTUuOTg0Mzc1IDIxMy4xODc1aC02Mi4zMzk4NDR2LTEwMC4zNDc2NTZjMC0yNS4yMTg3NS05LjAyNzM0My00Mi40MTc5NjktMzEuNTg1OTM3LTQyLjQxNzk2OS0xNy4yMjI2NTYgMC0yNy40ODA0NjkgMTEuNjAxNTYzLTMxLjk4ODI4MiAyMi44MDA3ODEtMS42NDg0MzcgNC4wMDc4MTMtMi4wNTA3ODEgOS42MDkzNzUtMi4wNTA3ODEgMTUuMjE0ODQ0djEwNC43NWgtNjIuMzQzNzVzLjgxNjQwNy0xNjkuOTc2NTYyIDAtMTg3LjU3NDIxOWg2Mi4zNDM3NXYyNi41NTg1OTRjOC4yODUxNTctMTIuNzgxMjUgMjMuMTA5Mzc1LTMwLjk2MDkzNyA1Ni4xODc1LTMwLjk2MDkzNyA0MS4wMTk1MzEgMCA3MS43NzczNDQgMjYuODA4NTkzIDcxLjc3NzM0NCA4NC40MjE4NzR6bTAgMCIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4="
+          alt="linkedin"
+        />
+        <span class="footer-icons-text small-hide">Connect on LinkedIn</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a
+        class="social__link"
+        href="https://www.youtube.com/Layer5io?sub_confirmation=1"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          class="youtube"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDM1OC41IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgMzU4LjUiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOnJlZH0uc3Qxe2ZpbGw6I2ZmZn08L3N0eWxlPjxwYXRoIGQ9Ik01MDEuNSw1Ni4xYy01LjktMjEuOS0yMy4yLTM5LjItNDUuMS00NS4xQzQxNi4zLDAsMjU2LDAsMjU2LDBTOTUuNywwLDU1LjcsMTAuNQljLTIxLjUsNS45LTM5LjIsMjMuNi00NS4xLDQ1LjVDMCw5Ni4yLDAsMTc5LjIsMCwxNzkuMnMwLDgzLjUsMTAuNSwxMjMuMWM1LjksMjEuOSwyMy4yLDM5LjIsNDUuMSw0NS4xYzQwLjUsMTEsMjAwLjMsMTEsMjAwLjMsMTEJczE2MC4zLDAsMjAwLjMtMTAuNWMyMS45LTUuOSwzOS4yLTIzLjIsNDUuMS00NS4xQzUxMiwyNjIuNyw1MTIsMTc5LjcsNTEyLDE3OS43UzUxMi40LDk2LjIsNTAxLjUsNTYuMXoiIGNsYXNzPSJzdDAiLz48cGF0aCBkPSJNMjA1LDI1NmwxMzMuMy03Ni44TDIwNSwxMDIuNVYyNTZ6IiBjbGFzcz0ic3QxIi8+PC9zdmc+"
+          alt="youtube"
+        />
+        <span class="footer-icons-text small-hide">Watch community meeting recordings</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+        <img
+          class="docker"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="
+          alt="docker"
+        />
+        <span class="footer-icons-text small-hide">Access Docker images</span>
+      </a>
+    </div>
+  </div>
+  <!-- meshery-custom-end -->
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/v0.6/assets/css/lightbox.css" />
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/navbar.js"></script>
+
+ <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="/v0.6#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="/v0.6#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+        });
+      })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
+    });
+</script>
+

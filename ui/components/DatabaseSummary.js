@@ -12,6 +12,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import useStyles from '../assets/styles/general/tool.styles';
+import { PROMPT_VARIANTS } from './PromptComponent';
 
 const styles = (theme) => ({
   textCenter: {
@@ -52,6 +53,7 @@ const DatabaseSummary = (props) => {
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress: false });
@@ -97,6 +99,7 @@ const DatabaseSummary = (props) => {
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
         options: ['RESET', 'CANCEL'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
         props.updateProgress({ showProgress: true });
@@ -194,6 +197,8 @@ const DatabaseSummary = (props) => {
             onSearch={(value) => {
               setSearchText(value);
             }}
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
             placeholder="Search"
           />
         </div>

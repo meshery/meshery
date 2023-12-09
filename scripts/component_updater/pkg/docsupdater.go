@@ -98,8 +98,16 @@ func (t TemplateAttributes) CreateJSONItem() string {
 		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", t.ModelName)
 	}
 
+	json += fmt.Sprintf(",\"permaLink\":\"https://docs.meshery.io/integrations/%s\"", FormatName(t.Title))
+
 	json += "}"
 	return json
+}
+
+func FormatName(input string) string {
+	formattedName := strings.ReplaceAll(input, " ", "-")
+	formattedName = strings.ToLower(formattedName)
+	return formattedName
 }
 
 const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"

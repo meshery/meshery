@@ -2,7 +2,7 @@
 layout: default
 title: Using Multiple Adapters
 permalink: guides/multiple-adapters
-type: Guides
+type: guides
 language: en
 ---
 

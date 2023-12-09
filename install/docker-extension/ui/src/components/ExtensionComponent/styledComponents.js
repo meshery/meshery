@@ -1,6 +1,6 @@
 
 import { styled } from "@mui/material/styles";
-import {Typography} from "@mui/material";
+import { ButtonBase, Typography } from "@mui/material";
 
 export const StyledDiv = styled('div')(() => ({
   paddingLeft: "0.2rem",
@@ -9,6 +9,7 @@ export const StyledDiv = styled('div')(() => ({
 
 
 export const AccountDiv = styled('div')(() => ({
+  minWidth: "200px",
   width: "50%",
   display: "flex",
   flexDirection: "column",
@@ -42,7 +43,7 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
 
 export const ComponentWrapper = styled('div')(({ theme }) => ({
   textAlign: "center",
-  padding: "5rem",
+  padding: "3rem 5rem",
   maxHeight: "100vh",
 }))
 
@@ -66,7 +67,7 @@ export const VersionDiv = styled('div')(({theme}) => ({
 }))
 
 export const VersionText = styled(Typography)(({ theme }) => ({
-  padding: "0rem 3rem",
+  padding: "0rem 0.5rem",
   paddingBottom: "0",
   width: "fit-content",
   marginLeft: "auto",
@@ -75,4 +76,69 @@ export const VersionText = styled(Typography)(({ theme }) => ({
 export const LogoutButton = styled('div')(({ theme }) => ({
   transform:" translateX(39%)",
   width: "fit-content",
+}));
+
+export const StyledButton = styled(ButtonBase)(() => ({
+  marginTop: '1rem',
+  whiteSpace: 'nowrap',
+  backgroundColor: "#00B39F",
+  borderRadius: "5px",
+  color: "white",
+  padding: "10px 20px",
+  "&:hover": {
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19)",
+  },
+}));
+
+export const LinkButton = styled(ButtonBase)(() => ({
+  marginTop: '1rem',
+  whiteSpace: 'nowrap',
+  padding: "0",
+  backgroundColor: "#00B39F",
+  borderRadius: "5px",
+  color: "white",
+  "&:hover": {
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19)",
+  },
+}));
+
+export const StyledLink = styled('a')(() => ({
+  padding: "10px 20px",
+  borderRadius: "5px",
+  color: "white",
+}));
+
+export const MeshModels = styled('div')(({ theme }) => ({
+  display: "flex",
+  alignItems: 'center',
+  flexWrap: "wrap",
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+  },
+}));
+
+export const PublishCard = styled("div")(({ theme }) => ({
+  width: "14rem",
+  height: "17rem",
+  border: `1px solid #cccccc`,
+  color: "#000000",
+  position: "relative",
+  textAlign: "center",
+  boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2), 2px 2px 3px 0px #00B39F`,
+  marginBottom: "1.25rem",
+  display: "block",
+  perspective: "1000px",
+  "&:hover": {
+    cursor: "pointer"
+  },
+  fontSize: "1.125rem",
+  borderRadius: "0.9375rem",
+  background: `linear-gradient(to left bottom, #EBEFF1, #f4f5f7, #f7f7f9, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #f7f7f9, #f4f5f7, #EBEFF1);`,
+  paddingTop: "30%",
+  paddingLeft: "10%",
+  paddingRight: "10%",
+  "&:active": {
+    transition: "all 0.1s ease-in",
+    boxShadow: "none"
+  }
 }));

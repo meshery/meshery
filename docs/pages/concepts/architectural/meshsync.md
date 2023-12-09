@@ -29,6 +29,7 @@ list: include
 - **Scalable and Performant**: Meshery's event-driven approach ensures speed and scalability. You have control over the depth of object discovery to manage large clusters efficiently. MeshSync's working snapshot of the state of each cluster under management is stored in the Server's local database and continuously refreshed.
 
 ## Discovery
+
 MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure.
 
 ### Brownfield: Discovering existing resources
@@ -63,7 +64,7 @@ Fingerprinting, the process of positively identifying and classifying resources,
 
 See Connnection State Management for additional information.
 
-Fingerprinting a service mesh is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
+Fingerprinting is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
 
 As a guiding principal, each set of composite fingerprints uses the same identifiers that each element management tool uses to identify itself (e.g., istioctl version).
 
@@ -124,4 +125,4 @@ MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always h
 # Suggested Reading
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
-{% include related-discussions.html tag="mesheryctl" %}
+{% include related-discussions.html tag="meshery" %}

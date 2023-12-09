@@ -1,5 +1,5 @@
 import { List, ListItem } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
+import { Avatar } from '@layer5/sistent-components';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
