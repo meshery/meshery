@@ -10,7 +10,6 @@ import MenuList from '@material-ui/core/MenuList';
 import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
-import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -18,15 +17,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import { styled } from '@mui/material/styles';
 
-const styles = () => ({
-  link: {
-    display: 'inline-flex',
-    width: '100%',
-    height: '30px',
-    alignItems: 'self-end',
-  },
-});
+const LinkDiv = styled('div')(() => ({
+  display: 'inline-flex',
+  width: '100%',
+  height: '30px',
+  alignItems: 'self-end',
+}));
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -133,9 +131,9 @@ const User = (props) => {
     const { classes } = props;
 
     const content = (
-      <div className={classNames(classes.link)}>
+      <LinkDiv>
         <ListItemText classes={{ primary: classes.itemPrimary }}>{name}</ListItemText>
-      </div>
+      </LinkDiv>
     );
     if (href) {
       return (
@@ -214,4 +212,4 @@ const User = (props) => {
   );
 };
 
-export default withStyles(styles)(User);
+export default User;
