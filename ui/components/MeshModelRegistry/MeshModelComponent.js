@@ -100,21 +100,15 @@ const MeshModelComponent = ({
 
   const getModels = async (page) => {
     try {
-      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage);
+      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
+        components: true,
+        relationships: true,
+        paginated: true,
+      });
 
       if (!isRequestCancelled && models) {
-        const updatedModels = [];
-
-        for (const model of models) {
-          const { components } = await getComponentFromModelApi(model.name);
-          const { relationships } = await getRelationshipFromModelApi(model.name);
-          model.components = components;
-          model.relationships = relationships;
-          updatedModels.push(model);
-        }
-
         setResourcesDetail((prev) =>
-          [...prev, ...updatedModels].sort((a, b) => a.displayName.localeCompare(b.displayName)),
+          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
         );
       }
     } catch (error) {
@@ -160,16 +154,12 @@ const MeshModelComponent = ({
 
   const getSearchedModels = async (searchText) => {
     try {
-      const { total_count, models } = await searchModels(searchText);
-      const componentPromises = models.map(async (model) => {
-        const { components } = await getComponentFromModelApi(model.name);
-        const { relationships } = await getRelationshipFromModelApi(model.name);
-        model.components = components;
-        model.relationships = relationships;
+      const { total_count, models } = await searchModels(searchText, {
+        components: true,
+        relationships: true,
       });
-
-      await Promise.all(componentPromises);
       setCount(total_count);
+
       if (!isRequestCancelled) {
         setResourcesDetail(models ? models : []);
       }
