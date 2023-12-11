@@ -285,7 +285,7 @@ func main() {
 			log.Infof("For Registrant %s Successfully imported %d models %d components %d relationships %d policy", host.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
 			nonRegisteredEntityCount := meshmodel.NonImportModel[host.Hostname]
 			if nonRegisteredEntityCount.Models > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 || nonRegisteredEntityCount.Policies > 0 {
-				log.Errorf("For Registrant %s Failed to import %d models %d components %d relationships %d policy", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
+				log.Errorf("Registrant %s: Failed to import %d models, %d components, %d relationships, and %d policies", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
 			}
 		}
 
