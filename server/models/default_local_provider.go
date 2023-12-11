@@ -1207,6 +1207,10 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 	return delCredential, nil
 }
 
+func (l *DefaultLocalProvider) GetOrganizations(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
 // to be imported
 //
