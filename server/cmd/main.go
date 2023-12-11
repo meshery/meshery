@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -296,50 +295,31 @@ func main() {
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-	
-		hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
-		if err != nil {
-			log.Error(err)
-		}
-		for _, host := range hosts {
-			log.Infof("For Registrant %s Successfully imported %d models %d components %d relationships %d policy", host.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
-			nonRegisteredEntityCount := meshmodel.NonImportModel[host.Hostname]
-			if nonRegisteredEntityCount.Models > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 || nonRegisteredEntityCount.Policies > 0 {
-				log.Errorf("Registrant %s: Failed to import %d models, %d components, %d relationships, and %d policies", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
-			}
-		}
 
-		nonImportModel := meshmodel.NonImportModel[host.Hostname]
-		if nonImportModel.Models > 0 || nonImportModel.Components > 0 || nonImportModel.Relationships > 0 || nonImportModel.Policies > 0 {
-			failedMsg := fmt.Sprintf("For Registrant %s Failed to import", host.Hostname)
-			appendIfNonZero := func(msg string, count int64, entityName string) string {
-				if count > 0 {
-					return fmt.Sprintf("%s %d %s", msg, count, entityName)
-				}
-				return msg
-			}
-
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Models, "models")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Components, "components")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Relationships, "relationships")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Policies, "policies")
-
-			log.Error(ErrRegisteringEntity(failedMsg))
+	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
+	if err != nil {
+		log.Error(err)
+	}
+	for _, host := range hosts {
+		log.Infof("For Registrant %s Successfully imported %d models %d components %d relationships %d policy", host.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
+		nonRegisteredEntityCount := meshmodel.NonImportModel[host.Hostname]
+		if nonRegisteredEntityCount.Models > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 || nonRegisteredEntityCount.Policies > 0 {
+			log.Errorf("Registrant %s: Failed to import %d models, %d components, %d relationships, and %d policies", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
 		}
 	}
 
 	filePath := "register_attempts.json"
 	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
 	if err != nil {
-		fmt.Println("Error marshaling RegisterAttempts to JSON:", err)
+		log.Error(ErrMarshalingRegisteryAttempts(err))
 		return
 	}
 
-		err = writeToFile(filePath, jsonData)
-		if err != nil {
-			fmt.Println("Error writing JSON data to file:", err)
-			return
-		}
+	err = writeToFile(filePath, jsonData)
+	if err != nil {
+		log.Error(ErrWritingRegisteryAttempts(err))
+		return
+	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
