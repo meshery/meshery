@@ -494,7 +494,7 @@ const MeshModelComponent = ({
         {convert && (
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
-            style={{ height: `${treeWrapperHeight} `}}
+            style={{ height: `${treeWrapperHeight} `}} 
           >
             <div
               className={StyleClass.treeContainer}
