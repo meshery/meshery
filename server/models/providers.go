@@ -281,6 +281,10 @@ const (
 	UsersIdentity Feature = "users-identity"
 
 	UsersKeys Feature = "users-keys"
+
+	Organization Feature = "organization"
+
+	Environments Feature = "environments"
 )
 
 const (
