@@ -97,7 +97,6 @@ const MeshModelComponent = ({
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
-
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
