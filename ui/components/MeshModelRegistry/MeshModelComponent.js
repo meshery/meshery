@@ -111,13 +111,13 @@ const MeshModelComponent = ({
     };
   }, []);
 
-  let treeWrapperHeight = '25rem'
+  let treeWrapperHeight = '25rem';
 
   if (windowHeight <= 1000) {
     treeWrapperHeight = '25rem';
   } else {
     let heightDifference = windowHeight - 1000;
-    treeWrapperHeight = `${Math.ceil(heightDifference/15) + 27}rem`;
+    treeWrapperHeight = `${Math.ceil(heightDifference / 15) + 27}rem`;
   }
 
   const getModels = async (page) => {
@@ -494,7 +494,7 @@ const MeshModelComponent = ({
         {convert && (
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
-            style={{height: `${treeWrapperHeight}`}}
+            style={{ height: `${treeWrapperHeight} `}}
           >
             <div
               className={StyleClass.treeContainer}

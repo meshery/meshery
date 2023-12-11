@@ -122,7 +122,7 @@ const MesheryTreeView = ({
     scrollElementStyle.height = '25rem';
   } else {
     let heightDifference = windowHeight - 1000;
-    scrollElementStyle.height = `${Math.ceil(heightDifference/15) + 20}rem`;
+    scrollElementStyle.height = `${Math.ceil(heightDifference / 15) + 20}rem`;
   }
 
   console.log(scrollElementStyle.height);
