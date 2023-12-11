@@ -98,6 +98,29 @@ const MeshModelComponent = ({
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
 
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const updateWindowHeight = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', updateWindowHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateWindowHeight);
+    };
+  }, []);
+
+  let treeWrapperHeight = '25rem'
+
+  if (windowHeight <= 1000) {
+    treeWrapperHeight = '25rem';
+  } else {
+    let heightDifference = windowHeight - 1000;
+    treeWrapperHeight = `${Math.ceil(heightDifference/15) + 27}rem`;
+  }
+
   const getModels = async (page) => {
     try {
       const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
@@ -472,6 +495,7 @@ const MeshModelComponent = ({
         {convert && (
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
+            style={{height: `${treeWrapperHeight}`}}
           >
             <div
               className={StyleClass.treeContainer}
