@@ -99,6 +99,33 @@ const MesheryTreeView = ({
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const updateWindowHeight = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', updateWindowHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateWindowHeight);
+    };
+  }, []);
+
+  const scrollElementStyle = {
+    overflowY: 'auto',
+    height: '25rem',
+  };
+
+  if (windowHeight <= 1000) {
+    scrollElementStyle.height = '25rem';
+  } else {
+    let heightDifference = windowHeight - 1000;
+    scrollElementStyle.height = `${Math.ceil(heightDifference/15) + 20}rem`;
+  }
+
+  console.log(scrollElementStyle.height);
 
   useEffect(() => {
     setSelected([]);
@@ -215,11 +242,7 @@ const MesheryTreeView = ({
               />
             </div>
           </div>
-          <div
-            id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
-            onScroll={handleScroll(MODELS)}
-          >
+          <div id="scrollElement" style={scrollElementStyle} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -349,11 +372,7 @@ const MesheryTreeView = ({
               </IconButton>
             </div>
           </div>
-          <div
-            id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
-            onScroll={handleScroll(MODELS)}
-          >
+          <div id="scrollElement" style={scrollElementStyle} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -515,11 +534,7 @@ const MesheryTreeView = ({
               setSelected([]);
             }}
           >
-            <div
-              id="scrollElement"
-              style={{ overflowY: 'auto', height: '27rem' }}
-              onScroll={handleScroll(COMPONENTS)}
-            >
+            <div id="scrollElement" style={scrollElementStyle} onScroll={handleScroll(COMPONENTS)}>
               {data.map((component, index) => (
                 <StyledTreeItem
                   key={index}
@@ -564,7 +579,7 @@ const MesheryTreeView = ({
           >
             <div
               id="scrollElement"
-              style={{ overflowY: 'auto', maxHeight: '27rem' }}
+              style={scrollElementStyle}
               onScroll={handleScroll(RELATIONSHIPS)}
             >
               {data.map((relationship, index) => (
