@@ -22,6 +22,8 @@ image: /assets/img/integrations/brigade.svg
 2. Collaborative and visual infrastructure as code for Brigade
 
 4. 
+Brigade is a full-featured, event-driven scripting platform built on top of Kubernetes. It integrates with many different event sources, more are always being added, and it's easy to create your own if you need something specific. And the best part -- Kubernetes is well-abstracted so even team members without extensive Kubernetes experience or without direct access to a cluster can be productive.
+
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 

@@ -9,9 +9,9 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -261,14 +261,14 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
-			K8sContext: *k8sContext,
+			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper: h.K8sCompRegHelper,
-			OperatorTracker: h.config.OperatorTracker,
-			Provider: provider,
-			K8scontextChannel: h.config.K8scontextChannel,
-			EventBroadcaster: h.config.EventBroadcaster,
-			RegistryManager: h.registryManager,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
@@ -281,6 +281,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				smInstanceTracker,
 				h.log,
 				provider,
+				machines.DefaultState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)
@@ -296,17 +299,17 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}(inst)
 		smInstanceTracker.mx.Unlock()
 	}
-	
+
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{
-			K8sContext: *k8sContext,
+			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper: h.K8sCompRegHelper,
-			OperatorTracker: h.config.OperatorTracker,
-			Provider: provider,
-			K8scontextChannel: h.config.K8scontextChannel,
-			EventBroadcaster: h.config.EventBroadcaster,
-			RegistryManager: h.registryManager,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
@@ -319,6 +322,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				smInstanceTracker,
 				h.log,
 				provider,
+				machines.DefaultState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)

@@ -13,9 +13,10 @@ import {
   updatePrometheusConfig,
   updateTelemetryUrls,
 } from '../../lib/store.js';
+import blue from '@material-ui/core/colors/blue';
+
 import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
 import ConnectionStatsChart from './charts/ConnectionCharts.js';
-import blue from '@material-ui/core/colors/blue';
 import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
 
 const styles = (theme) => ({
@@ -86,7 +87,6 @@ const styles = (theme) => ({
 
 const Overview = (props) => {
   const { classes } = props;
-
   return (
     <NoSsr>
       <Popup />

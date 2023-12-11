@@ -34,7 +34,7 @@ image: /assets/img/integrations/cert-manager-crds.svg
 
 7. Ensures certificates remain valid and up to date.
 
-8. Collaborative Infrastructure as Code
+8. Cloud native certificate management
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. X.509 certificate management for Kubernetes and OpenShift
 

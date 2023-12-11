@@ -55,13 +55,6 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
-  maximizeButton: {
-    width: 'fit-content',
-    margin: '0 0 0 auto',
-    position: 'absolute',
-    right: 0,
-    top: 0,
-  },
   noOfResultsContainer: {
     margin: '0 0 1rem',
     '& div': {
@@ -73,9 +66,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    marginTop: '1rem',
   },
   lastRunText: {
     marginRight: '0.5rem',
+  },
+  cardHeaderRight: {
+    display: 'flex',
+    alignItems: 'center',
   },
   iconPatt: {
     width: '24px',

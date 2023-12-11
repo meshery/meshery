@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-import { Paper, IconButton, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import { ALL_VIEW } from './resources/config';
+import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
+import { JsonParse } from '../../utils/utils';
 
 const View = (props) => {
   const {
@@ -80,7 +82,7 @@ const View = (props) => {
       <>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-            {key}
+            {key.toUpperCase()}
           </Typography>
 
           <ResponsiveDataTable
@@ -98,7 +100,7 @@ const View = (props) => {
   }
 
   const RenderObject = (obj) => {
-    function processObjForKeyValTable(obj) {
+    function ProcessObjForKeyValTable(obj) {
       const [processedData, setProcessedData] = React.useState([]);
 
       function processObj(obj, parentKey = '') {
@@ -147,11 +149,18 @@ const View = (props) => {
               {Object.entries(obj).map(([key, value], innerIndex) => {
                 const parts = key.split('.');
                 const lastPart = parts[parts.length - 1];
-                console.log('value: ', value);
+                const heading = lastPart.replace('_', ' ');
                 return value.length == 1 && value[0].hide == true ? null : (
                   <div style={{ margin: '2rem 0' }} key={innerIndex}>
-                    <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
-                      {lastPart}
+                    <Typography
+                      style={{
+                        fontSize: '.9rem',
+                        marginBottom: '1rem',
+                        textTransform: 'uppercase',
+                      }}
+                      align="left"
+                    >
+                      {heading}
                     </Typography>
                     <NameValueTable rows={value} />
                   </div>
@@ -163,7 +172,7 @@ const View = (props) => {
       );
     }
 
-    const processObjForKeyDataTable = (obj, parentKey = '') => {
+    const ProcessObjForKeyDataTable = (obj, parentKey = '') => {
       let results = [];
       for (const [key, value] of Object.entries(obj)) {
         const currentKey = parentKey ? `${parentKey}.${key}` : key;
@@ -176,10 +185,10 @@ const View = (props) => {
           results.push(RenderDynamicTable(key, value));
         }
         if (typeof value === 'object' && value !== null) {
-          results.push(processObjForKeyDataTable(value, currentKey));
+          results.push(ProcessObjForKeyDataTable(value, currentKey));
         } else {
           if (key === 'attribute') {
-            results.push(processObjForKeyDataTable(JSON.parse(value), currentKey));
+            results.push(ProcessObjForKeyDataTable(JSON.parse(value), currentKey));
           }
         }
       }
@@ -188,8 +197,8 @@ const View = (props) => {
 
     return (
       <>
-        {processObjForKeyValTable(obj)}
-        {processObjForKeyDataTable(obj)}
+        {ProcessObjForKeyValTable(obj)}
+        {ProcessObjForKeyDataTable(obj)}
       </>
     );
   };
@@ -197,10 +206,8 @@ const View = (props) => {
   const HeaderComponent = () => {
     return (
       <>
-        <TooltipButton title="Back" placement="left">
-          <IconButton onClick={() => setView(ALL_VIEW)}>
-            <ArrowBack />
-          </IconButton>
+        <TooltipButton title="Back" placement="left" style={{ padding: '10px' }}>
+          <ArrowBack onClick={() => setView(ALL_VIEW)} />
         </TooltipButton>
       </>
     );
@@ -219,7 +226,7 @@ const View = (props) => {
       >
         <Paper>
           <HeaderComponent />
-          <div style={{ margin: '1rem 7rem' }}>
+          <div style={{ margin: '1rem 7rem', paddingBottom: '1rem' }}>
             <ResourceMetrics />
             <RenderObject obj={resource} />
           </div>
@@ -230,3 +237,28 @@ const View = (props) => {
 };
 
 export default View;
+
+export const Title = ({ onClick, data, value }) => {
+  const [isHovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        color: 'inherit',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        textDecoration: isHovered ? 'underline' : 'none',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
+        <GetNodeIcon metadata={JsonParse(data)} />
+        <Typography style={{ marginLeft: '0.25rem' }} variant="body2">
+          {value}
+        </Typography>
+      </div>
+    </div>
+  );
+};
