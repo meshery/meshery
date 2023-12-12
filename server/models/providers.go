@@ -282,7 +282,7 @@ const (
 
 	UsersKeys Feature = "users-keys"
 
-	Organization Feature = "organization"
+	Organization Feature = "organizations"
 
 	Environments Feature = "environments"
 )
