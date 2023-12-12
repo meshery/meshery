@@ -325,7 +325,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
             color="success"
             onChange={(e) => {
               setSkipCredentialVerification(e.target.checked);
-              setDisableVerify(false);
+              setDisableVerify(!e.target.checked);
             }}
           />
           <span>Force connection registration bypass verification</span>

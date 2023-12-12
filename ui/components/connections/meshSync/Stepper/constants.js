@@ -48,6 +48,6 @@ export const CredentialDetailContent = {
 
 export const FinishContent = {
   title: 'Connection Created',
-  subtitle: 'Congratulations 🎉, you have registered a new {Component-Kind}.',
+  subtitle: 'Congratulations 🎉, you have registered a new connection.',
   btnText: 'Finish',
 };

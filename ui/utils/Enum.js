@@ -73,5 +73,5 @@ export const CONNECTION_KINDS = {
 
 export const MESHSYNC_STATES = {
   DISCOVERED: 'discovered',
-  REGISTERED: 'registered',
+  REGISTER: 'register',
 };

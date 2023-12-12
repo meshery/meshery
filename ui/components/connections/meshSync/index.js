@@ -56,7 +56,7 @@ export default function MeshSyncTable(props) {
   const StyleClass = useStyles();
 
   const icons = {
-    [MESHSYNC_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+    [MESHSYNC_STATES.REGISTER]: () => <AssignmentTurnedInIcon />,
     [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
   };
 
