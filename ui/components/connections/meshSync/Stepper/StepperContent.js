@@ -389,9 +389,9 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   );
 };
 
-export const Finish = () => {
+export const Finish = ({ sharedData }) => {
   const cancelCallback = () => {
-    // Close Modal
+    sharedData.onClose();
   };
 
   return (

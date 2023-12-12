@@ -36,7 +36,7 @@ const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
             border: `6px solid ${theme.palette.secondary.success}`,
           }}
         >
-          <CustomizedSteppers connectionData={connectionData} />
+          <CustomizedSteppers onClose={handleClose} connectionData={connectionData} />
         </DialogContent>
       </Dialog>
     </div>
