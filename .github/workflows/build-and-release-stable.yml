@@ -132,13 +132,13 @@ jobs:
         with:
           go-version: "1.21"
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
           version: latest
-          args: release --clean --skip-validation
+          args: release --clean --skip=validate
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v2
         with:
