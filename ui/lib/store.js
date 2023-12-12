@@ -72,6 +72,7 @@ const initialState = fromJS({
   controllerState: null,
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
+  organization: '',
 });
 
 export const actionTypes = {
@@ -103,6 +104,7 @@ export const actionTypes = {
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
+  SET_ORGANIZATION: 'SET_ORGANIZATION',
 };
 
 // REDUCERS
@@ -198,6 +200,9 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_CONNECTION_METADATA:
       return state.mergeDeep({ connectionMetadataState: action.connectionMetadataState });
+
+    case actionTypes.SET_ORGANIZATION:
+      return state.mergeDeep({ organization: action.organization });
 
     default:
       return state;
@@ -366,6 +371,12 @@ export const setConnectionMetadata =
   ({ connectionMetadataState }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
+  };
+
+export const setOrganization =
+  ({ organization }) =>
+  (dispatch) => {
+    return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
   };
 
 export const makeStore = (initialState, options) => {
