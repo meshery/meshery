@@ -41,10 +41,10 @@ func GetMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 			return mch, err
 		}
 		register := mch.States[machines.REGISTERED]
-		register.RegisterAction(&grafana.RegisterAction{})
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&grafana.RegisterAction{})
 
 		connect := mch.States[machines.CONNECTED]
-		connect.RegisterAction(&machines.DefaultConnectAction{})
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
 		return mch, nil
 	case "prometheus":
 		mch, err := New(initialState, id, log, mtype)
@@ -52,10 +52,10 @@ func GetMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 			return mch, err
 		}
 		register := mch.States[machines.REGISTERED]
-		register.RegisterAction(&prometheus.RegisterAction{})
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&prometheus.RegisterAction{})
 
 		connect := mch.States[machines.CONNECTED]
-		connect.RegisterAction(&machines.DefaultConnectAction{})
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
 
 		return mch, nil
 	}

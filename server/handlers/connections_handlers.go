@@ -66,9 +66,10 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}
-		event, err := inst.SendEvent(req.Context(), helpers.StatusToEvent(connectionRegisterPayload.Status), connectionRegisterPayload)
+		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
