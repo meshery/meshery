@@ -30,13 +30,13 @@ image: /assets/img/integrations/crossplane.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Highly configurable frontend that lets you define the declarative API it offers.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Provides reliability and security features like Role Based Access Control (RBAC) to orchestrate everything - not just containers.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

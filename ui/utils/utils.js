@@ -242,6 +242,21 @@ export const getVisibilityColums = (columns) => {
   return columns.filter((col) => col?.options?.display !== false);
 };
 
+export function JsonParse(item, safe = true) {
+  if (typeof item === 'string') {
+    try {
+      return JSON.parse(item || '{}');
+    } catch (e) {
+      if (safe) {
+        return {};
+      }
+      throw e;
+    }
+  }
+
+  return item;
+}
+
 export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
   return value?.length > maxLength ? (
     <Tooltip title={value} arrow placement="top">
@@ -270,4 +285,44 @@ export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
       {value}
     </div>
   );
+};
+
+/**
+ * Handle scroll event for infinite scrolling
+ *
+ * @param {string} scrollingView - The view identifier for which scrolling is handled
+ * @param {function} setPage - The function to set the page state
+ * @param {object} scrollRef - Reference to the scroll element
+ * @param {number} buffer - The buffer value for infinite scrolling
+ * @returns {function} - Scroll event handler function
+ */
+export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) => (event) => {
+  const div = event.target;
+  if (div.scrollTop >= div.scrollHeight - div.clientHeight - buffer) {
+    setPage((prevPage) => ({
+      ...prevPage,
+      [scrollingView]: prevPage[scrollingView] + 1,
+    }));
+  }
+
+  scrollRef.current = div.scrollTop;
+};
+
+/**
+ *
+ * Add underscore to camal case variable name.
+ *
+ * @param {string} value - An array of column definitions.
+ *
+ */
+
+export const camelcaseToSnakecase = (value) => {
+  return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+};
+
+export const formatToTitleCase = (value) => {
+  if (typeof value === 'string') {
+    return value.substring(0, 1).toUpperCase().concat('', value.substring(1).toLowerCase());
+  }
+  return '';
 };

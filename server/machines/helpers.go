@@ -1,23 +1,63 @@
 package machines
 
-import "github.com/layer5io/meshery/server/models/connections"
+import (
+	"fmt"
 
-func StatusToEvent(status connections.ConnectionStatus) EventType {
+	"github.com/layer5io/meshery/server/machines/grafana"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
+	"github.com/layer5io/meshery/server/machines/prometheus"
+	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/machines"
+	"github.com/layer5io/meshkit/logger"
+)
+
+func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	switch status {
 	case connections.DISCOVERED:
-		return Discovery
+		return machines.Discovery
 	case connections.REGISTERED:
-		return Register
+		return machines.Register
 	case connections.CONNECTED:
-		return Connect
+		return machines.Connect
 	case connections.DISCONNECTED:
-		return Disconnect
+		return machines.Disconnect
 	case connections.IGNORED:
-		return Ignore
+		return machines.Ignore
 	case connections.DELETED:
-		return Delete
+		return machines.Delete
 	case connections.NOTFOUND:
-		return NotFound
+		return machines.NotFound
 	}
-	return EventType(DefaultState)
+	return machines.EventType(machines.DefaultState)
+}
+
+func GetMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
+	switch mtype {
+	case "kubernetes":
+		return kubernetes.New(id, log)
+	case "grafana":
+		mch, err := New(initialState, id, log, mtype)
+		if err != nil {
+			return mch, err
+		}
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&grafana.RegisterAction{})
+
+		connect := mch.States[machines.CONNECTED]
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+		return mch, nil
+	case "prometheus":
+		mch, err := New(initialState, id, log, mtype)
+		if err != nil {
+			return mch, err
+		}
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&prometheus.RegisterAction{})
+
+		connect := mch.States[machines.CONNECTED]
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+
+		return mch, nil
+	}
+	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
 }

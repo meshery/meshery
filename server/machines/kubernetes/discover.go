@@ -2,22 +2,23 @@ package kubernetes
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 )
 
 type DiscoverAction struct{}
 
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
-func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
 
-func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
@@ -47,7 +48,9 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 	_, err = machinectx.Provider.SaveK8sContext(token, machinectx.K8sContext)
-	if err != nil {
+	if errors.Is(err, models.ErrContextAlreadyPersisted) {
+		machinectx.log.Info(fmt.Sprintf("context already persisted (\"%s\" at %s)", k8sContext.Name, k8sContext.Server))
+	} else if err != nil {
 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
@@ -56,6 +59,6 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (
 	return machines.Register, nil, nil
 }
 
-func (da *DiscoverAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (da *DiscoverAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

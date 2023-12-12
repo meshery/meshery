@@ -16,6 +16,8 @@ func TestListModelCmd(t *testing.T) {
 	SetupContextEnv(t)
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
+	// initialize mock meshery backend
+	go utils.StartMockMesheryServer(t) // nolint
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -37,7 +39,7 @@ func TestListModelCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view list of models",
-			Args:             []string{"model", "list"},
+			Args:             []string{"list"},
 			ExpectedResponse: "list.model.output.golden",
 			Fixture:          "list.model.api.response.golden",
 			URL:              testContext.BaseURL + "/api/meshmodels/models?pagesize=all",
@@ -66,9 +68,9 @@ func TestListModelCmd(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			SystemCmd.SetArgs(tt.Args)
-			SystemCmd.SetOutput(rescueStdout)
-			err = SystemCmd.Execute()
+			ModelCmd.SetArgs(tt.Args)
+			ModelCmd.SetOutput(rescueStdout)
+			err = ModelCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -107,8 +109,8 @@ func TestListModelCmd(t *testing.T) {
 
 func TestModelViewCmd(t *testing.T) {
 	SetupContextEnv(t)
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
+	// initialize mock meshery backend
+	go utils.StartMockMesheryServer(t) // nolint
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -130,7 +132,7 @@ func TestModelViewCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view a requested model in yaml format",
-			Args:             []string{"model", "view", "spire"},
+			Args:             []string{"view", "spire"},
 			ExpectedResponse: "view.model.yaml.output.golden",
 			Fixture:          "view.model.api.response.golden",
 			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
@@ -139,7 +141,7 @@ func TestModelViewCmd(t *testing.T) {
 		},
 		{
 			Name:             "view a requested model in json format",
-			Args:             []string{"model", "view", "spire", "-o", "json"},
+			Args:             []string{"view", "spire", "-o", "json"},
 			ExpectedResponse: "view.model.json.output.golden",
 			Fixture:          "view.model.api.response.golden",
 			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
@@ -150,6 +152,9 @@ func TestModelViewCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// initialize mock server for handling requests
+			utils.StartMockery(t)
+			defer utils.StopMockery(t)
 			// View api response from golden files
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
@@ -168,9 +173,9 @@ func TestModelViewCmd(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			SystemCmd.SetArgs(tt.Args)
-			SystemCmd.SetOutput(rescueStdout)
-			err = SystemCmd.Execute()
+			ModelCmd.SetArgs(tt.Args)
+			ModelCmd.SetOutput(rescueStdout)
+			err = ModelCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -201,8 +206,5 @@ func TestModelViewCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-
-		// we're done with testing stop mock server
-		utils.StopMockery(t)
 	}
 }

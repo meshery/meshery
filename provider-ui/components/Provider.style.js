@@ -7,7 +7,7 @@ export const CustomDiv = styled('div')(({ theme }) => ({
   width : '60%',
   marginLeft : 'auto',
   marginRight : 'auto',
-  marginTop : theme.spacing(5)
+  marginTop : theme.spacing(3)
 }))
 
 export const MesheryLogo = styled('img')(({ theme }) => ({
@@ -40,3 +40,10 @@ export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
     color : "#222",
   },
 }));
+
+export const LearnMore = styled('div')(() => ({
+  width : '60%',
+  marginLeft : 'auto',
+  marginRight : 'auto',
+  marginTop : '3rem',
+}))

@@ -30,13 +30,13 @@ image: /assets/img/integrations/cilium.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Ensure Cilium Service Mesh daemonset operation
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Define microservice isolation using eBPF
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Visually configure and explore your Cilium Service Mesh topology
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

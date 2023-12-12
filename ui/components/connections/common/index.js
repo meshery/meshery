@@ -9,7 +9,7 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
             <b>{columnData.label}</b>
           </Typography>
           {icon ? (
-            <Tooltip title={tooltip} placement="top">
+            <Tooltip title={tooltip ? tooltip : ''} placement="top">
               <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
                 {icon}
               </Typography>
@@ -22,6 +22,29 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
           active={columnMeta.name === columnData.name}
           direction={columnMeta.direction || 'asc'}
         ></TableSortLabel>
+      </Grid>
+    </TableCell>
+  );
+};
+
+export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
+  return (
+    <TableCell>
+      <Grid style={{ display: 'flex' }}>
+        <Grid style={{ display: 'flex', alignItems: 'center' }}>
+          <Typography>
+            <b>{columnData.label}</b>
+          </Typography>
+          {icon ? (
+            <Tooltip title={tooltip ? tooltip : ''} placement="top">
+              <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
+                {icon}
+              </Typography>
+            </Tooltip>
+          ) : (
+            ''
+          )}
+        </Grid>
       </Grid>
     </TableCell>
   );

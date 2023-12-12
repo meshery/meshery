@@ -342,7 +342,7 @@ func start() error {
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
 			utils.Log.Error(ErrCreatingDockerClient(err))
-			return nil
+			return err
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -405,7 +405,7 @@ func start() error {
 
 		if err := utils.CreateManifestsFolder(); err != nil {
 			utils.Log.Error(ErrCreateManifestsFolder(err))
-			return nil
+			return err
 		}
 
 		// Applying Meshery Helm charts for installing Meshery

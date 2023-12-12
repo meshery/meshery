@@ -666,7 +666,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		CredentialSecret: cred,
 	}
 
-	connection, err := l.SaveConnection(nil, conn, token, true)
+	connection, err := l.SaveConnection(conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
 		return connections.Connection{}, err
@@ -1245,11 +1245,6 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
-	// tokenString, err := l.GetToken(req)
-	// if err != nil {
-	// 	logrus.Errorf("unable to get results: %v", err)
-	// 	return nil, err
-	// }
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -1286,12 +1281,10 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 		return nil, ErrMarshal(err, "meshery design resource")
 	}
 
-	logrus.Debugf("Design resource: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to save design resource to remote provider")
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	// logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
 		return nil, err
@@ -1316,7 +1309,7 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 			return nil, ErrUnmarshal(err, "Design Resource")
 		}
 
-		logrus.Infof("design successfully sent to remote provider: %+v", pr)
+		// logrus.Infof("design successfully sent to remote provider: %+v", pr)
 		return &pr, nil
 	}
 
@@ -3298,7 +3291,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			CredentialSecret: cred,
 		}
 
-		_, err := l.SaveConnection(r, conn, tokenString, true)
+		_, err := l.SaveConnection(conn, tokenString, true)
 		if err != nil {
 			logrus.Errorf("unable to save Meshery connection: %v", err)
 		}
@@ -3584,7 +3577,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
+func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3599,16 +3592,9 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	tokenString := token
-	if !skipTokenCheck {
-		tokenString, err = l.GetToken(req)
-		if err != nil {
-			logrus.Error("error getting token: ", err)
-			return nil, err
-		}
-	}
+
 	logrus.Infof("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status)
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
@@ -3626,7 +3612,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connection := &connections.Connection{}
 		_ = json.Unmarshal(bdr, connection)
-		fmt.Println("connections, ", connection)
+		l.Log.Debug("connections, ", connection)
 		return connection, nil
 	}
 
@@ -3713,6 +3699,42 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 	return &res, nil
 }
 
+func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s", l.RemoteProviderURL, ep, kind, connectionID))
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		l.Log.Error(err)
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
+	}
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+	}
+	if resp.StatusCode == http.StatusOK {
+		var conn connections.Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
+		}
+		return &conn, resp.StatusCode, nil
+	}
+
+	l.Log.Debug(string(bdr))
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to update connection with id %s", connectionID), "connection", resp.StatusCode)
+}
+
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
@@ -3729,7 +3751,11 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Connections Status Page", resp.StatusCode)
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, ErrFetch(err, "Connections Status Page", statusCode)
 	}
 	defer resp.Body.Close()
 
@@ -4060,42 +4086,42 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SaveCredential - to save a creadential for an integration
-func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Credential) error {
+func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
+	var createdCredential Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
-		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 	_creds, err := json.Marshal(credential)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
-	if err != nil {
-		logrus.Error("error getting token: ", err)
-		return err
-	}
 
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return ErrFetch(err, "Save Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Credential", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Credential")
+		return nil, ErrDataRead(err, "Save Credential")
 	}
 
 	if resp.StatusCode == http.StatusCreated {
-		return nil
+		err := json.Unmarshal(bdr, &createdCredential)
+		if err != nil {
+			return nil, ErrUnmarshal(err, "created credential")
+		}
+		return &createdCredential, nil
 	}
 
-	return ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetCredentials - to get saved credentials
@@ -4136,6 +4162,38 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
+}
+
+func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s: %d", credentialID, resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp Credential
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, http.StatusInternalServerError, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+	}
+	return &cp, resp.StatusCode, nil
 }
 
 // UpdateUserCredential - to update an existing credential

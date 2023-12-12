@@ -358,6 +358,9 @@ Just for fun, here are all the types:
 {% include alert.html type="primary" content="This is a primary alert" %}
 {% include alert.html type="secondary" content="This is a secondary alert" %}
 
+{% include alert.html type="light" content="This is a light alert" %}
+{% include alert.html type="dark" content="This is a dark alert" %}
+
 #### alert.html
 
 Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.

@@ -1,13 +1,27 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
+import {
+  getClusterNameFromClusterId,
+  getConnectionIdFromClusterId,
+} from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
+import { Title } from '../../view';
 import { ConnectionChip } from '../../../connections/ConnectionChip';
+import useKubernetesHook from '../../../hooks/useKubernetesHook';
+import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 
 export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) => {
+  const ping = useKubernetesHook();
   return {
     ServiceAccount: {
       name: 'ServiceAccount',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -21,22 +35,20 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -45,15 +57,36 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -81,8 +114,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
-
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -93,6 +127,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     ClusterRole: {
       name: 'ClusterRole',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -106,22 +147,20 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -130,7 +169,18 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
@@ -138,7 +188,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Namespace',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
@@ -162,13 +214,28 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <ConnectionChip
+                    title={clusterName}
+                    iconSrc="/static/img/kubernetes.svg"
+                    handlePing={() => ping(clusterName, val, connectionId)}
+                  />
                 </>
               );
             },
@@ -179,8 +246,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
-
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -191,6 +259,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     Role: {
       name: 'Role',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -204,22 +279,20 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -228,15 +301,36 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -264,8 +358,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
-
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -276,6 +371,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     ClusterRoleBinding: {
       name: 'ClusterRoleBinding',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -289,22 +391,20 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -313,15 +413,36 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -349,8 +470,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
-
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -361,6 +483,13 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
     },
     RoleBinding: {
       name: 'RoleBinding',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 's'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
       columns: [
         {
           name: 'id',
@@ -374,22 +503,20 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Name',
           options: {
             sort: false,
-            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  data={
+                    meshSyncResources[tableMeta.rowIndex]
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      : {}
+                  }
+                  value={value}
+                />
               );
             },
           },
@@ -398,15 +525,36 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           name: 'apiVersion',
           label: 'API version',
           options: {
-            sort: false,
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
           },
         },
         {
           name: 'cluster_id',
           label: 'Cluster',
           options: {
-            sort: false,
+            sort: true,
             sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
@@ -434,8 +582,9 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
           label: 'Age',
           options: {
             sort: false,
-            sortThirdClickReset: true,
-
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;

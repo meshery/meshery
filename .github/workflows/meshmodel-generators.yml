@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
           
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v4
         with:
           go-version: "1.21"
 #       - name: Setup Cache

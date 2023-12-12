@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4cdc76aba325f0e522811cde51a1da3>>
+ * @generated SignedSource<<913da5338e44a21198d54b3ae19dedf4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -155,7 +155,32 @@ v12 = [
                 "storageKey": null
               },
               (v10/*: any*/),
-              (v11/*: any*/)
+              (v11/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "NullString",
+                "kind": "LinkedField",
+                "name": "type",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "String",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "Valid",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -236,16 +261,16 @@ return {
     "selections": (v12/*: any*/)
   },
   "params": {
-    "cacheID": "8d81d5dd33c4ea1b76228108d5cf7f2a",
+    "cacheID": "114d3745286afe9f521748a330799adc",
     "id": null,
     "metadata": {},
     "name": "ConfigurationSubscription",
     "operationKind": "subscription",
-    "text": "subscription ConfigurationSubscription(\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        user_id\n        pattern_file\n        visibility\n        catalog_data\n        canSupport\n        errmsg\n        created_at\n        updated_at\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        filter_resource\n        visibility\n        catalog_data\n        user_id\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
+    "text": "subscription ConfigurationSubscription(\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        user_id\n        pattern_file\n        visibility\n        catalog_data\n        canSupport\n        errmsg\n        created_at\n        updated_at\n        type {\n          String\n          Valid\n        }\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        filter_resource\n        visibility\n        catalog_data\n        user_id\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "28ee13b2d3a5254fe8c7933ab7835210";
+node.hash = "7aa8cbbbeec029fbf5f68fff16f3888b";
 
 module.exports = node;
