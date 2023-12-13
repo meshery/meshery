@@ -558,5 +558,5 @@ type relationshipPolicyEvalPayloadWrapper struct {
 // swagger:response orgsResponseWrapper
 type orgsResponseWrapper struct {
 	// in: body
-	Body *models.OrganizationPage
+	Body *models.OrganizationsPage
 }
