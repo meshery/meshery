@@ -282,9 +282,9 @@ const (
 
 	UsersKeys Feature = "users-keys"
 
-	Organization Feature = "organizations"
+	PersistOrganizations Feature = "organizations"
 
-	Environments Feature = "environments"
+	PersistEnvironments Feature = "environments"
 )
 
 const (

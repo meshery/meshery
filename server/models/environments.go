@@ -19,7 +19,7 @@ type EnvironmentData struct {
 }
 
 type EnvironmentPage struct {
-	Environments []Environment `json:"environments"`
+	Environments []EnvironmentData `json:"environments"`
 	TotalCount   int           `json:"total_count"`
 	Page         int           `json:"page"`
 	PageSize     int           `json:"page_size"`

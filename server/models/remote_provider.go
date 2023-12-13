@@ -4587,12 +4587,12 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 }
 
 func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error) {
-	if !l.Capabilities.IsSupported(Organization) {
+	if !l.Capabilities.IsSupported(PersistOrganizations) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Organization", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(Organization)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistOrganizations)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	if page != "" {
