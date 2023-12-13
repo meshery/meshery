@@ -281,6 +281,10 @@ const (
 	UsersIdentity Feature = "users-identity"
 
 	UsersKeys Feature = "users-keys"
+
+	PersistOrganizations Feature = "organizations"
+
+	PersistEnvironments Feature = "environments"
 )
 
 const (
@@ -474,4 +478,6 @@ type Provider interface {
 	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+
+	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
 }

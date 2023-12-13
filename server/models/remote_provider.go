@@ -4311,8 +4311,13 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 }
 
 func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -4360,8 +4365,13 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 }
 
 func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4397,13 +4407,19 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID str
 
 func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
 
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	_env, err := json.Marshal(env)
 	if err != nil {
 		return err
 	}
 	bf := bytes.NewBuffer(_env)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString := token
 	if !skipTokenCheck {
@@ -4436,8 +4452,14 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayl
 }
 
 func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4472,14 +4494,19 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 }
 
 func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return &EnvironmentData{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	_env, err := json.Marshal(env)
 	if err != nil {
 		return nil, err
 	}
 	bf := bytes.NewBuffer(_env)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4515,8 +4542,13 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPa
 }
 
 func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+  if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID + "/connections/" + connectionID)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4551,8 +4583,13 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 }
 
 func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep +  "/" + environmentID + "/connections/" + connectionID)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4585,3 +4622,58 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 	logrus.Errorf(err.Error())
 	return nil, err
 }
+
+func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistOrganizations) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Organization", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistOrganizations)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Organization", http.StatusUnauthorized)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Organization")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user data successfully retrieved from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Organizations", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
