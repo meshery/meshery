@@ -553,3 +553,10 @@ type relationshipPolicyEvalPayloadWrapper struct {
 	//in: body
 	relationshipPolicyEvalPayload relationshipPolicyEvalPayload
 }
+
+// Returns all orgs
+// swagger:response orgsResponseWrapper
+type orgsResponseWrapper struct {
+	// in: body
+	Body *models.OrganizationPage
+}
