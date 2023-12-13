@@ -9,7 +9,7 @@ import (
 
 type Organization struct {
 	// Unique identifier
-	ID uuid.UUID `json:"id,omitempty" db:"id"`
+	ID *uuid.UUID `json:"id,omitempty" db:"id"`
 	Name string `json:"name" db:"name"`
 	Country string `json:"country,omitempty" db:"country"`
 	Region string `json:"region,omitempty" db:"region"`
@@ -20,11 +20,11 @@ type Organization struct {
 	DeletedAt sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
-type OrganizationPage struct {
-	Organizations []Organization `json:"organizations"`
+type OrganizationsPage struct {
+	Organizations []*Organization `json:"organizations"`
 	TotalCount   int           `json:"total_count"`
-	Page         int           `json:"page"`
-	PageSize     int           `json:"page_size"`
+	Page         uint64           `json:"page"`
+	PageSize     uint64           `json:"page_size"`
 }
 
 

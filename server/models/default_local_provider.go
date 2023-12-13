@@ -46,6 +46,7 @@ type DefaultLocalProvider struct {
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
+	OrganizationPersister          *OrganizationPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 	Log                             logger.Handler
@@ -1119,6 +1120,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			}
 		}(seedContent, log, &seededUUIDs)
 	}
+
+	// seed default organization
+	go func() {
+		id, _ := uuid.NewV4()
+		org := &Organization{
+			ID:          &id,
+			Name:        "My Org",
+			Country:     "",
+			Region: 		"",
+			Description: "This is default organization",
+			Owner: 		 uuid.Nil,
+		}
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
+		}
+	}()
 }
 func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
@@ -1207,8 +1225,37 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 	return delCredential, nil
 }
 
-func (l *DefaultLocalProvider) GetOrganizations(_, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+// GetOrganizations returns the list of organizations
+func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order, updatedAfter string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+}
+
+// GetOrganization returns the organization for the given organizationID
+func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
+	id := uuid.FromStringOrNil(organizationId)
+	return l.OrganizationPersister.GetOrganzation(id)
+}
+
+// SaveOrganization saves given organization with the provider
+func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *Organization) ([]byte, error) {
+	return l.OrganizationPersister.SaveOrganization(organization)
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
