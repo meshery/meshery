@@ -3,15 +3,14 @@ import { api } from './index';
 const organizationsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getOrgs: builder.query({
-      query: (queryArg) => ({
+      query: ({ page = 0, pagesize = 25 }) => ({
         url: `identity/orgs`,
         params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-          order: queryArg.order,
+          page: page,
+          pagesize: pagesize,
         },
       }),
+      providesTags: ['organization'],
     }),
   }),
 });
