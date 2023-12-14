@@ -4310,7 +4310,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 	return resp.StatusCode, nil
 }
 
-func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
@@ -4334,6 +4334,9 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 	}
 	if filter != "" {
 		q.Set("filter", filter)
+	}
+	if orgID != "" {
+		q.Set("orgID", orgID)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 

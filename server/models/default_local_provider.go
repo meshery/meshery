@@ -134,7 +134,7 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
