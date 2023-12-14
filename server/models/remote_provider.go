@@ -4318,6 +4318,7 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	logrus.Debug("remoteProviderURL: ", remoteProviderURL.String())
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -4352,16 +4353,14 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 
 	bd, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, ErrDataRead(err, "Environments Data")
+		return nil, ErrDataRead(err, "Environments")
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
 		logrus.Infof("Environments data successfully retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(err, "Environments Data", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environments", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
@@ -4383,7 +4382,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID str
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
 	}
 
 	defer func() {
@@ -4400,9 +4399,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID str
 		logrus.Infof("Environment successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "Environment", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
@@ -4439,7 +4436,7 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayl
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := io.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Save Environment")
 	}
@@ -4448,7 +4445,7 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayl
 		return nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to save the environment"), fmt.Sprint(bdr), resp.StatusCode)
+	return ErrPost(fmt.Errorf("failed to save the environment"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error) {
@@ -4471,7 +4468,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
 	}
 
 	defer func() {
@@ -4488,9 +4485,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 		logrus.Infof("Environment successfully deleted from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "Environment", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
@@ -4518,7 +4513,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPa
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
 	}
 
 	defer func() {
@@ -4538,7 +4533,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPa
 		return &environment, nil
 	}
 
-	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to update the environment"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
@@ -4560,7 +4555,7 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
 	}
 
 	defer func() {
@@ -4577,9 +4572,7 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 		logrus.Infof("Connection successfully added to environment")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "Environment", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
@@ -4601,7 +4594,7 @@ if !l.Capabilities.IsSupported(PersistEnvironments) {
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
 	}
 
 	defer func() {
@@ -4618,9 +4611,8 @@ if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Infof("Connection successfully removed from environment")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "Environment", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	
+	return nil, ErrFetch(fmt.Errorf("failed to unassign connection from environment"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error) {
@@ -4672,8 +4664,7 @@ func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, 
 		logrus.Infof("user data successfully retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(err, "Organizations", resp.StatusCode)
-	logrus.Errorf(err.Error())
-	return nil, err
+	
+	return nil, ErrFetch(fmt.Errorf("failed to get organizations"), "Organization", resp.StatusCode)
 }
 
