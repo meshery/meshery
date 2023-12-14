@@ -22,6 +22,7 @@ Meshery supports all Kubernetes-based infrastructure including most cloud servic
 1. Configuration Management (Day 2)
    - Cloud native patterns catalog
    - Configuration best practices
+   - Policy engine for relationship inference and context-aware design
 1. Collaboration
    - Multi-player infrastructure design and operation
 1. Data Plane Intelligence
@@ -41,54 +42,8 @@ Through [Models]({{site.baseurl}}/concepts/models), Meshery describes infrastruc
 
 ### Meshery is for performance management
 
-Meshery helps users weigh the value of their cloud native deployments against the overhead incurred in running different deployment scenarios and different configruations. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and infrastructure configuration. In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
+Meshery helps users weigh the value of their cloud native deployments against the overhead incurred in running different deployment scenarios and different configruations. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and infrastructure configuration. In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
-Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, many projects refuse to publish their own performance data, because such tests can be quite invovled and misinterpreted.
+## Meshery is for all cloud and cloud native infrastructure
 
-Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between cloud native and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.
-
-Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of cloud native infrastructure. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.
-
-1. By leveraging Meshery you can achieve apples-to-apples performance comparison
-1. Track your service mesh performance from release to release.
-1. Understand behavioral differences between cloud native infrastructure.
-1. Track your application performance from version to version.
-
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Meshery Lifecycle Management" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
-Establish a performance benchmark and track performance against this baseline as your environment changes over time.
-
-## Meshery is for all cloud native infrastructure
-
-Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple Kubernetes clusters, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
-
-<!-- ### Supported Service Meshes
-
-#### **Stable**
-
-| Service Mesh | Status |
-| :----------- | -----: |
-{% for adapter in site.adapters -%}
-{% if adapter.project_status == "stable" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-{% endif -%}
-{% endfor %}
-
-##### **Beta**
-
-| Service Mesh | Status |
-| :----------- | -----: |
-{% for adapter in site.adapters -%}
-{% if adapter.project_status == "beta" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-{% endif -%}
-{% endfor %}
-
-##### **Alpha** - Service mesh adapters for which we are seeking community-contributed support.
-
-| Service Mesh | Status |
-| :----------- | -----: |
-{% for adapter in site.adapters -%}
-{% if adapter.project_status == "alpha" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-{% endif -%}
-{% endfor %} -->
+Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you'll find that Meshery supports your infrastructure diversity (or lack thereof). 
