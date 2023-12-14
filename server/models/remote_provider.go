@@ -4366,7 +4366,7 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environments", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
+func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
@@ -4374,6 +4374,12 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID str
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
+	q := remoteProviderURL.Query()
+	if orgID != "" {
+		q.Set("orgID", orgID)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {

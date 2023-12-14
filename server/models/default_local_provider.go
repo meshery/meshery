@@ -138,7 +138,7 @@ func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _, _ string) ([]by
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
