@@ -5,26 +5,29 @@ permalink: /getting-started/overview
 language: en
 ---
 
-As the cloud native management plane, Meshery enables the adoption, operation, and management of Kubernetes clusters and their lifecycle. Meshery's powerful performance management functionality is useful whether you are running workloads on Kubernetes or outside of Kubernetes. 
+Meshery is an extensible engineering platform for the collaborative design and operation of cloud and cloud native infrastructure and applications.
 
-Meshery implmenents both [Service Mesh Performance](https://smp-spec.io) (SMP) and [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+Kubernetes-centric. Kubernetes not required.
 
 ## Meshery's Functionality
 
-Meshery features can be categorized by:
+Meshery supports all Kubernetes-based infrastructure including most cloud services of AWS and GCP platforms. Meshery features can be categorized by:
 
-1. Cloud Native Performance Management
-   - Workload and cloud native performance characterization
+1. Performance Management
+   - Workload and performance characterization with both built-in and external load generators
    - Prometheus and Grafana integration
-1. Cloud Native Configuration Management
+1. Lifecycle Management (Day 0, Day 1)
+   - Cloud and cloud native provisioning
+   - Discovery and onboarding of existing environments and workloads
+1. Configuration Management (Day 2)
+   - Cloud native patterns catalog
    - Configuration best practices
-1. Cloud Native Lifecycle Management
-   - Cloud native provisioning and workload onboarding
-   - Meshery Operator and MeshSync
-   - Cloud native patterns and Open Application Model integration
+1. Collaboration
+   - Multi-player infrastructure design and operation
 1. Data Plane Intelligence
    - Registry and configuration of WebAssembly filters for Envoy
-1. Cloud Native Interoperability and Federation
+1. Interoperability and Federation
+   - Integration with thousands of cloud services and cloud native projects
    - Manage multiple service meshes concurrently
    - Connect to multiple clusters independently
 
