@@ -23,6 +23,8 @@ import (
 //
 // ```?search={environments_name}``` If search is non empty then a greedy search is performed
 //
+// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+//
 // ```?filter={condition}```
 // responses:
 // 	200: environmentsResponseWrapper
@@ -36,7 +38,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	q := req.URL.Query()
 
-	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
