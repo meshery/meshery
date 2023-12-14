@@ -70,6 +70,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import ReactSelectWrapper from '../ReactSelectWrapper';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -87,6 +88,10 @@ const ACTION_TYPES = {
   FETCH_CONNECTION_STATUS_TRANSITIONS: {
     name: 'FETCH_CONNECTION_STATUS_TRANSITIONS',
     error_msg: 'Failed to fetch connection transitions',
+  },
+  FETCH_ENVIRONMENT: {
+    name: 'FETCH_ENVIRONMENT',
+    error_msg: 'Failed to fetch environment',
   },
 };
 
@@ -156,6 +161,7 @@ function Connections({
   k8sconfig,
   connectionMetadataState,
   meshsyncControllerState,
+  organization,
 }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -174,6 +180,7 @@ function Connections({
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [environments, setEnvironments] = useState([]);
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -198,6 +205,7 @@ function Connections({
 
   let colViews = [
     ['name', 'xs'],
+    ['environments', 'm'],
     ['kind', 'm'],
     ['type', 's'],
     ['sub_type', 'm'],
@@ -268,6 +276,34 @@ function Connections({
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
               style={{ maxWidth: '120px' }}
             />
+          );
+        },
+      },
+    },
+    {
+      name: 'environments',
+      label: 'Environments',
+      options: {
+        sort: false,
+        customBodyRender: function CustomBody() {
+          const getOptions = () => {
+            return environments.map((env) => ({ label: env.name, value: env.id }));
+          };
+          console.log('opts:', getOptions());
+          return (
+            <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+              <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                <ReactSelectWrapper
+                  // onChange={(select) => setUrl(select ? select.value : '')}
+                  options={getOptions()}
+                  // value={{ label: url, value: url }}
+                  label={`Assign to envionment`}
+                  error={false}
+                  placeholder={`Name of environment`}
+                  noOptionsMessage={`No environment discovered`}
+                />
+              </Grid>
+            </Grid>
           );
         },
       },
@@ -644,14 +680,48 @@ function Connections({
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = showCols[col.name];
+    });
+    return initialVisibility;
+  });
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
+    updateCols(columns);
     if (!loading && connectionMetadataState) {
       getConnections(page, pageSize, search, sortOrder);
     }
   }, [page, pageSize, search, sortOrder, connectionMetadataState]);
+
+  useEffect(() => {
+    updateCols(columns);
+    if (typeof organization != undefined) {
+      getEnvironments();
+    }
+  }, [organization]);
+
+  const getEnvironments = () => {
+    dataFetch(
+      `/api/environments?orgID=${organization?.id}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        setEnvironments(res?.environments || []);
+      },
+      handleError(ACTION_TYPES.FETCH_CONNECTIONS),
+    );
+  };
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
@@ -872,18 +942,6 @@ function Connections({
     return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
-  const [tableCols, updateCols] = useState(columns);
-
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
-
   return (
     <>
       <NoSsr>
@@ -1045,6 +1103,7 @@ const mapStateToProps = (state) => {
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
+  const organization = state.get('organization');
 
   return {
     k8sconfig,
@@ -1052,6 +1111,7 @@ const mapStateToProps = (state) => {
     operatorState,
     connectionMetadataState,
     meshsyncControllerState,
+    organization,
   };
 };
 
