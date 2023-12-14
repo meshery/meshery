@@ -52,13 +52,16 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 // swagger:route GET /api/integrations/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
 // Handle GET for Environment info by ID
 //
+// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+//
 // Returns Environment info
 // responses:
 //   200: environmentResponseWrapper
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
-	resp, err := provider.GetEnvironmentByID(r, environmentID)
+	q := r.URL.Query()
+	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
