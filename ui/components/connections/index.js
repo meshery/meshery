@@ -203,6 +203,25 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
+  const handleConnectionAssignment = (connectionId, connName, environmentId) => {
+    let envName = environments.find((env) => env.id === environmentId).name;
+    dataFetch(
+      `/api/environments/${environmentId}/connections/${connectionId}`,
+      {
+        credentials: 'include',
+        method: 'POST',
+      },
+      () => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Connection: ${connName} assigned to environment: ${envName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      },
+      handleError(ACTION_TYPES.UPDATE_CONNECTION),
+    );
+  };
+
   let colViews = [
     ['name', 'xs'],
     ['environments', 'm'],
@@ -285,7 +304,18 @@ function Connections({
       label: 'Environments',
       options: {
         sort: false,
-        customBodyRender: function CustomBody() {
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
           const getOptions = () => {
             return environments.map((env) => ({ label: env.name, value: env.id }));
           };
@@ -294,7 +324,13 @@ function Connections({
             <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
               <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                 <ReactSelectWrapper
-                  // onChange={(select) => setUrl(select ? select.value : '')}
+                  onChange={(select) =>
+                    handleConnectionAssignment(
+                      connections[tableMeta.rowIndex].id,
+                      connections[tableMeta.rowIndex].name,
+                      select ? select.value : '',
+                    )
+                  }
                   options={getOptions()}
                   // value={{ label: url, value: url }}
                   label={`Assign to envionment`}
@@ -704,7 +740,7 @@ function Connections({
 
   useEffect(() => {
     updateCols(columns);
-    if (typeof organization != undefined) {
+    if (organization != '' && typeof organization != undefined) {
       getEnvironments();
     }
   }, [organization]);
