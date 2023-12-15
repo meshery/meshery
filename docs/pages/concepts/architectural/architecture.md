@@ -25,7 +25,8 @@ Meshery and its components are written using the following languages and technol
 | &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync) | Golang                                                                            |
 | &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker)     | Golang, NATS                                                                      |
 | [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   |
-
+|[mesheryctl](/guides/mesheryctl/working-with-mesheryctl)                 | Golang
+                                                                            |
 ## Deployments
 
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes. Meshery components connect to one another via gRPC requests. Meshery Server stores the location of the other components and connects with those components as needed. Typically, a connection from Meshery Server to Meshery Adapters is initiated from a client request (usually either `mesheryctl` or Meshery UI) to gather information from the Adapter or invoke an Adapter's operation.
@@ -119,6 +120,9 @@ Meshery's Docker extension provides a simple and flexible way to design and oper
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
 
+## mesheryctl
+
+Meshery's command line interface is mesheryctl ans it serves the duel purpose of both managing the lifecyle of Meshery itself and to access and invoke any of Meshery’s application and cloud native management functions. 
 
 ### **Statefulness in Meshery components**
 
