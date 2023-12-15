@@ -296,20 +296,23 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
 
-	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironments), models.ProviderAuth))).
+	gMux.Handle("/api/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironments), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironmentByIDHandler), models.ProviderAuth))).
+	gMux.Handle("/api/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironmentByIDHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteEnvironmentHandler), models.ProviderAuth))).
+	gMux.Handle("/api/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteEnvironmentHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveEnvironment), models.ProviderAuth))).
+	gMux.Handle("/api/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveEnvironment), models.ProviderAuth))).
 		Methods("POST")
-	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEnvironmentHandler), models.ProviderAuth))).
+	gMux.Handle("/api/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEnvironmentHandler), models.ProviderAuth))).
 		Methods("PUT")
-	gMux.Handle("/api/integrations/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddConnectionToEnvironmentHandler), models.ProviderAuth))).
+	gMux.Handle("/api/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddConnectionToEnvironmentHandler), models.ProviderAuth))).
 		Methods("POST")
-	gMux.Handle("/api/integrations/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveConnectionFromEnvironmentHandler), models.ProviderAuth))).
+	gMux.Handle("/api/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveConnectionFromEnvironmentHandler), models.ProviderAuth))).
 		Methods("DELETE")
+
+	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
+		Methods("GET")
 
 	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
