@@ -60,7 +60,7 @@ jobs:
               - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v3
+        uses: ruby/setup-ruby@v1.162.0
         with:
           ruby-version: 3.2.2
           bundler-cache: true
