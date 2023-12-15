@@ -2,7 +2,7 @@ name: Meshery Build and Releaser (stable)
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
 
@@ -41,7 +41,7 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated Swagger Docs for REST API"
-  
+
   update-graphql-docs:
     name: Update GraphQL API Documentation
     if: github.repository == 'meshery/meshery'
@@ -140,49 +140,48 @@ jobs:
           version: latest
           args: release --clean --skip=validate
       - name: bump homebrew-core formula
-        uses: mislav/bump-homebrew-formula-action@v2
+        uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
-          formula-path: Formula/m/mesheryctl.rb
         env:
-          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}  
+          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   call-dde-release-workflow:
-    needs: 
+    needs:
       - build
       - ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
   call-helm-chart-releaser:
-    needs: 
+    needs:
       - build
       - ctlrelease
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
-    secrets: inherit        
+    secrets: inherit
   # call-aks-playground-deploy-workflow:
   #   needs: build
   #   name: Deploy Meshery Playground
   #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
   #   secrets: inherit
   email-meshery-release-notes-workflow:
-    needs: 
+    needs:
       - build
       - ctlrelease
       - call-helm-chart-releaser
       - call-dde-release-workflow
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
-    secrets: 
+    secrets:
       token: ${{ secrets.GH_ACCESS_TOKEN }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     with:
       release-tag: ${{github.ref_name}}
-      to: developers@meshery.io 
+      to: developers@meshery.io
   call-cncf-playground-rollout:
-    needs: 
+    needs:
       - build
       - ctlrelease
     name: Deploy CNCF Playground
