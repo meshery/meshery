@@ -24,3 +24,10 @@ type EnvironmentPage struct {
 	Page         int           `json:"page"`
 	PageSize     int           `json:"page_size"`
 }
+
+type EnvironmentPayload struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	OrgID       string `json:"organization_id,omitempty"`
+}
+
