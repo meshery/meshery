@@ -221,7 +221,7 @@ type ConnectionPayload struct {
 type EnvironmentPayload struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
-	OrgID       string `json:"org_id,omitempty"`
+	OrgID       string `json:"organization_id,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
