@@ -245,6 +245,79 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/environments:
+        get:
+            description: |-
+                # Environments can be further filtered through query parameters
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+
+                ```?filter={condition}```
+            operationId: idGetEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/environmentsResponseWrapper'
+            summary: Handles GET for all Environments
+            tags:
+                - EnvironmentsAPI
+    /api/environments/{environmentID}/connections/{connectionID}:
+        delete:
+            description: Removes connection from environment
+            operationId: idRemoveConnectionFromEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE to remove Connection from Environment by ID
+            tags:
+                - EnvironmentAPI
+        post:
+            description: Returns Environment connection mapping info
+            operationId: idAddConnectionToEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle POST to add Connection in Environment by ID
+            tags:
+                - EnvironmentAPI
+    /api/environments/{id}:
+        delete:
+            description: Returns Environment info
+            operationId: idDeleteEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE for Environment based on ID
+            tags:
+                - EnvironmentAPI
+        get:
+            description: |-
+                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+
+                Returns Environment info
+            operationId: idGetEnvironmentByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle GET for Environment info by ID
+            tags:
+                - EnvironmentAPI
+        put:
+            description: Updates a environment
+            operationId: idUpdateEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle PUT request for updating a environment
+            tags:
+                - PostEnvironment
     /api/events:
         get:
             description: |-
@@ -442,6 +515,25 @@ paths:
             summary: Handle GET request for filter file with given id
             tags:
                 - FiltersAPI
+    /api/identity/orgs:
+        get:
+            description: |4-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                ```?filter={condition}```
+            operationId: idGetOrganizations
+            responses:
+                "200":
+                    $ref: '#/responses/orgsResponseWrapper'
+            summary: Handles GET for all Organizations
+            tags:
+                - OrganizationsAPI
     /api/identity/users:
         get:
             description: |-
@@ -569,6 +661,16 @@ paths:
             summary: Handle PUT request for updating an existing connection
             tags:
                 - PutConnection
+    /api/integrations/connections/{connectionKind}/transitions:
+        get:
+            description: Get all possible state transitions for a particular connection kind.
+            operationId: idGetConnectionsStatus
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionsStatusPage'
+            summary: Handle GET request for getting all possible connection transitions
+            tags:
+                - GetAvailableTransitionsByKind
     /api/integrations/connections/status:
         get:
             description: Get all connections status
@@ -580,26 +682,6 @@ paths:
             tags:
                 - GetConnectionsStatus
     /api/integrations/environments:
-        get:
-            description: |-
-                # Environments can be further filtered through query parameters
-
-                ```?order={field}``` orders on the passed field
-
-                ```?page={page-number}``` Default page number is 0
-
-                ```?pagesize={pagesize}``` Default pagesize is 20
-
-                ```?search={environments_name}``` If search is non empty then a greedy search is performed
-
-                ```?filter={condition}```
-            operationId: idGetEnvironments
-            responses:
-                "200":
-                    $ref: '#/responses/environmentsResponseWrapper'
-            summary: Handles GET for all Environments
-            tags:
-                - EnvironmentsAPI
         post:
             description: Creates a new environment
             operationId: idSaveEnvironment
@@ -607,53 +689,6 @@ paths:
                 "201":
                     $ref: '#/responses/noContentWrapper'
             summary: Handle POST request for creating a new environment
-            tags:
-                - PostEnvironment
-    /api/integrations/environments/{environmentID}/connections/{connectionID}:
-        delete:
-            description: Removes connection from environment
-            operationId: idRemoveConnectionFromEnvironmentHandler
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle DELETE to remove Connection from Environment by ID
-            tags:
-                - EnvironmentAPI
-        post:
-            description: Returns Environment connection mapping info
-            operationId: idAddConnectionToEnvironmentHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle POST to add Connection in Environment by ID
-            tags:
-                - EnvironmentAPI
-    /api/integrations/environments/{id}:
-        delete:
-            description: Returns Environment info
-            operationId: idDeleteEnvironmentHandler
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle DELETE for Environment based on ID
-            tags:
-                - EnvironmentAPI
-        get:
-            description: Returns Environment info
-            operationId: idGetEnvironmentByIDHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle GET for Environment info by ID
-            tags:
-                - EnvironmentAPI
-        put:
-            description: Updates a environment
-            operationId: idUpdateEnvironmentHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle PUT request for updating a environment
             tags:
                 - PostEnvironment
     /api/meshmodel/components/register:
@@ -744,6 +779,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetMeshmodelComponentByCategory
             responses:
                 "200":
@@ -772,6 +809,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetMeshmodelComponentsByNameByCategory
             responses:
                 "200":
@@ -793,6 +832,7 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+                ```?annotations={["true"/"false"/]}``` When this query parameter is "true", only models with the "isAnnotation" property set to true are returned. When  this query parameter is "false", all models except those considered to be annotation models are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
             operationId: idGetMeshmodelModelsByCategories
             responses:
                 "200":
@@ -842,6 +882,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetMeshmodelComponentByModelByCategory
             responses:
                 "200":
@@ -868,6 +910,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetMeshmodelComponentsByNameByModelByCategory
             responses:
                 "200":
@@ -895,6 +939,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
@@ -925,6 +971,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetAllMeshmodelComponentsByName
             responses:
                 "200":
@@ -999,6 +1047,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetMeshmodelComponentByModel
             responses:
                 "200":
@@ -1025,6 +1075,8 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned. returned.
             operationId: idGetMeshmodelComponentsByNameByModel
             responses:
                 "200":
@@ -1162,6 +1214,13 @@ paths:
             summary: Handle GET request for getting all meshmodel relationships
             tags:
                 - GetAllMeshmodelRelationships
+    /api/meshmodels/relationships/evaluate:
+        post:
+            description: Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
+            operationId: relationshipPolicyEvalPayloadWrapper
+            responses: {}
+            tags:
+                - EvaluateRelationshipPolicy
     /api/pattern:
         get:
             description: |-
@@ -1411,13 +1470,6 @@ paths:
             summary: Handles GET requests for perf result
             tags:
                 - PerfAPI
-    /api/policies/run_policy:
-        post:
-            description: Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
-            operationId: idGetRegoPolicyForDesignFile
-            responses: {}
-            tags:
-                - GetRegoPolicyForDesignFile
     /api/provider:
         get:
             description: Update the choice of provider in system
@@ -1722,7 +1774,7 @@ paths:
 
                 ```?status={status}``` status is a boolean value. If true then status is returned
 
-                ```?clusterId={clusterId}``` clusterId is a string value. If specified then resources for that cluster are returned
+                ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
             operationId: idGetMeshSyncResources
             responses:
                 "200":
@@ -1760,7 +1812,7 @@ paths:
             summary: Handle POST request for Prometheus board import
             tags:
                 - PrometheusAPI
-    /api/telemetry/metrics/boards:
+    /api/telemetry/metrics/boards/{connectionID}:
         post:
             description: Used to persist selected board and panels
             operationId: idPostPrometheusBoard
@@ -1811,7 +1863,7 @@ paths:
             summary: Handle POST for Prometheus configuration
             tags:
                 - PrometheusAPI
-    /api/telemetry/metrics/grafana/boards:
+    /api/telemetry/metrics/grafana/boards/{connectionID}:
         get:
             description: Used for fetching Grafana boards and panels
             operationId: idGetGrafanaBoards
@@ -1868,7 +1920,7 @@ paths:
             summary: Handle POST request for Grafana configuration
             tags:
                 - GrafanaAPI
-    /api/telemetry/metrics/grafana/ping:
+    /api/telemetry/metrics/grafana/ping/{connectionID}:
         get:
             description: Used to initiate a Grafana ping
             operationId: idGetGrafanaPing
@@ -1878,7 +1930,7 @@ paths:
             summary: Handle GET request for Grafana ping
             tags:
                 - GrafanaAPI
-    /api/telemetry/metrics/grafana/query:
+    /api/telemetry/metrics/grafana/query/{connectionID}:
         get:
             description: Used for handling Grafana queries
             operationId: idGetGrafanaQuery
@@ -1898,7 +1950,7 @@ paths:
             summary: Handle GET request for Grafana
             tags:
                 - GrafanaAPI
-    /api/telemetry/metrics/ping:
+    /api/telemetry/metrics/ping/{connectionID}:
         get:
             description: Used to ping prometheus
             operationId: idGetPrometheusPing
@@ -1908,7 +1960,7 @@ paths:
             summary: Handle GET request for Prometheus Ping
             tags:
                 - PrometheusAPI
-    /api/telemetry/metrics/query:
+    /api/telemetry/metrics/query/{connectionID}:
         get:
             description: Used to prometheus queries
             operationId: idGetPrometheusQuery
@@ -2368,6 +2420,9 @@ responses:
         description: ""
         headers:
             category: {}
+            components:
+                items: {}
+                type: array
             displayName:
                 type: string
             displayhostname:
@@ -2378,6 +2433,9 @@ responses:
             metadata: {}
             name:
                 type: string
+            relationships:
+                items: {}
+                type: array
             version:
                 type: string
         schema:
@@ -2399,6 +2457,8 @@ responses:
                 type: string
             metadata: {}
             model: {}
+            rego_query:
+                type: string
             selectors: {}
             subType:
                 type: string
@@ -2436,7 +2496,10 @@ responses:
             additionalProperties: {}
             type: object
     loadTestPreferencesWrapper:
-        description: Returns load test preferences
+        description: ""
+        schema:
+            additionalProperties: {}
+            type: object
     mesheryAdaptersRespWrapper:
         description: Returns all the meshery adapters
         schema:
@@ -2485,6 +2548,8 @@ responses:
         description: Returns MeshSync resources
     noContentWrapper:
         description: ""
+    orgsResponseWrapper:
+        description: Returns all orgs
     perfSingleResultRespWrapper:
         description: Returns Single test result
     perfTestPrefsRespWrapper:
