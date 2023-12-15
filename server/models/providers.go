@@ -218,12 +218,6 @@ type ConnectionPayload struct {
 	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
 }
 
-type EnvironmentPayload struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	OrgID       string `json:"organization_id,omitempty"`
-}
-
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
