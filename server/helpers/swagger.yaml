@@ -268,6 +268,15 @@ paths:
             summary: Handles GET for all Environments
             tags:
                 - EnvironmentsAPI
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new environment
+            tags:
+                - PostEnvironment
     /api/environments/{environmentID}/connections/{connectionID}:
         delete:
             description: Removes connection from environment
@@ -681,16 +690,6 @@ paths:
             summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
-    /api/integrations/environments:
-        post:
-            description: Creates a new environment
-            operationId: idSaveEnvironment
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle POST request for creating a new environment
-            tags:
-                - PostEnvironment
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema

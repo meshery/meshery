@@ -72,7 +72,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route POST /api/integrations/environments PostEnvironment idSaveEnvironment
+// swagger:route POST /api/environments PostEnvironment idSaveEnvironment
 // Handle POST request for creating a new environment
 //
 // Creates a new environment
