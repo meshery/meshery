@@ -58,7 +58,7 @@
     "@rjsf/material-ui": "^5.8.2",
     "@rjsf/utils": "^5.8.1",
     "@rjsf/validator-ajv8": "^5.8.1",
-    "@uiw/react-md-editor": "^3.3.8",
+    "@uiw/react-md-editor": "^3.14.4",
     "autoprefixer": "^10.4.14",
     "axios": "^1.6.2",
     "babel-plugin-istanbul": "^6.0.0",
