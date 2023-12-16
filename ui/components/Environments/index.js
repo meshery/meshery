@@ -6,7 +6,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import EnvironmentCard from './environment-card';
-import EnvironmentIcon from './environmentIcon';
+import EnvironmentIcon from '../../assets/icons/Environment';
 import { useEffect, useRef, useState } from 'react';
 import dataFetch from '../../lib/data-fetch';
 import { EVENT_TYPES } from '../../lib/event-types';
