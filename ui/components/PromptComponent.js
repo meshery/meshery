@@ -12,6 +12,7 @@ import {
   Checkbox,
   styled,
 } from '@material-ui/core';
+import theme from '../themes/app';
 
 const styles = (theme) => ({
   title: {
@@ -68,10 +69,8 @@ const PromptActionButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(0.5),
   padding: theme.spacing(1),
   borderRadius: 5,
-  backgroundColor: theme.palette.secondary.focused,
   color: '#fff',
   '&:hover': {
-    backgroundColor: theme.palette.secondary.focused,
     boxShadow:
       '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
   },
@@ -184,12 +183,14 @@ class PromptComponent extends React.Component {
               </Button>
             )}
             <PromptActionButton
+              color="primary"
               onClick={() => {
                 this.hide();
                 resolve(options[0]);
               }}
               key={options[0]}
               promptVariant={this.variant}
+              style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
               type="submit"
               variant="contained"
             >
