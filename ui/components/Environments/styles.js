@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import theme, { Colors } from '../../themes/app';
 
+// const styles = (theme) => ({
+// })
 export const EditButtonContainer = styled('div')(() => ({
   padding: '0 0.7rem',
   display: 'flex',
@@ -278,6 +280,9 @@ export const BulkSelectCheckbox = styled(Checkbox)({
   color: theme.palette.secondary.white,
   '&:hover': {
     cursor: 'pointer',
+  },
+  '&.Mui-checked': {
+    color: 'white',
   },
 });
 

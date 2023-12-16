@@ -114,7 +114,7 @@ const EnvironmentCard = ({
             minHeight: '320px',
             background: deleted
               ? 'rgba(255, 255, 255, .6)'
-              : 'linear-gradient(180deg, #FBFBFB 0%, #F5F5F5 100%)',
+              : `linear-gradient(180deg, $#FBFBFB 0%, #F5F5F5 100%)`,
           }}
           elevation={2}
         >
@@ -192,14 +192,7 @@ const EnvironmentCard = ({
               <BulkSelectCheckbox
                 onClick={(e) => e.stopPropagation()}
                 onChange={onSelect}
-                // disabled={
-                //   deleted
-                //     ? true
-                //     : !CAN(
-                //         keys.DELETE_ENVIRONMENT.subject,
-                //         keys.DELETE_ENVIRONMENT.action
-                //       )
-                // }
+                disabled={deleted ? true : false}
               />
               <CardTitle
                 sx={{ color: 'white' }}
@@ -226,12 +219,11 @@ const EnvironmentCard = ({
                   p: 0,
                 }}
                 onClick={onEdit}
-                // disabled={
-                //   selectedEnvironments?.filter(id => id == environmentDetails.id)
-                //     .length === 1
-                //     ? true
-                //     : !CAN(keys.EDIT_ENVIRONMENT.subject, keys.EDIT_ENVIRONMENT.action)
-                // }
+                disabled={
+                  selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    ? true
+                    : false
+                }
               >
                 <Edit style={{ color: 'white', margin: '0 2px' }} />
               </Button>
@@ -244,13 +236,11 @@ const EnvironmentCard = ({
                   p: 0,
                 }}
                 onClick={onDelete}
-                // disabled={
-                //   selectedEnvironments?.filter(id => id == environmentDetails.id)
-                //     .length === 1 ||
-                //   !CAN(keys.DELETE_ENVIRONMENT.subject, keys.DELETE_ENVIRONMENT.action)
-                //     ? true
-                //     : false
-                // }
+                disabled={
+                  selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    ? true
+                    : false
+                }
               >
                 <Delete style={{ color: 'white', margin: '0 2px' }} />
               </Button>
