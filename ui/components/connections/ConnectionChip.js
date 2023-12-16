@@ -68,7 +68,7 @@ export const TootltipWrappedConnectionChip = (props) => {
   return (
     <Tooltip title={props.tooltip || props.title} placement="bottom">
       <>
-      <_ConnectionChip {...props} />
+        <_ConnectionChip {...props} />
       </>
     </Tooltip>
   );

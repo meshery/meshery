@@ -321,6 +321,7 @@ export const camelcaseToSnakecase = (value) => {
 };
 
 export const formatToTitleCase = (value) => {
+  console.log('TEST 324: ', value);
   if (typeof value === 'string') {
     return value.substring(0, 1).toUpperCase().concat('', value.substring(1).toLowerCase());
   }

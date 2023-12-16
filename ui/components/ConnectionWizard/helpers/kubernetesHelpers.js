@@ -36,7 +36,7 @@ export const isKubernetesConnected = (isClusterConfigured, kubernetesPingStatus)
 
 export const deleteKubernetesConfig = (successCb, errorCb, connectionId) =>
   dataFetch(
-    `/api/integrations/connections/${CONNECTION_KINDS.KUBERNETES}`,
+    `/api/integrations/connections/${CONNECTION_KINDS.KUBERNETES}/status`,
     {
       method: 'PUT',
       credentials: 'include',
