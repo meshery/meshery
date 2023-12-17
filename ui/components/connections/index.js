@@ -441,8 +441,8 @@ function Connections({
             <>
               <FormControl className={classes.chipFormControl}>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  labelId="connection-status-select-label"
+                  id="connection-status-select"
                   disabled={disabled}
                   value={value}
                   defaultValue={value}
@@ -474,9 +474,9 @@ function Connections({
                     nextStatus.map((status) => (
                       <MenuItem
                         disabled={status === value ? true : false}
+                        style={{ padding: '0', display: status === value ? 'none' : 'flex' }}
                         value={status}
                         key={status}
-                        style={{ padding: '0' }}
                       >
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
