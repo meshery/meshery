@@ -1,0 +1,110 @@
+{
+  "Model": {},
+  "Registry": {},
+  "Component": {
+    "Filter": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    },
+    "Filter Policy": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    },
+    "Project": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    },
+    "Project Controller": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    },
+    "Project Revision": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    },
+    "Rate Limit": {
+      "Attempt": 1,
+      "Error": {
+        "Code": "11098",
+        "Severity": 2,
+        "ShortDescription": [
+          "Empty schema for the component"
+        ],
+        "LongDescription": null,
+        "ProbableCause": [
+          "The schema is empty for the component."
+        ],
+        "SuggestedRemediation": [
+          "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+        ]
+      }
+    }
+  },
+  "Relationship": {},
+  "Policy": {}
+}
