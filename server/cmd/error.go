@@ -18,7 +18,9 @@ const (
 	ErrCleaningUpLocalProviderCode                = "1011"
 	ErrClosingDatabaseInstanceCode                = "1012"
 	ErrInitializingRegistryManagerCode            = "1013"
-	ErrRegisteringEntityCode                      = "1014"
+	ErrMarshalingRegisteryAttemptsCode            = "1014"
+	ErrWritingRegisteryAttemptsCode               = "1015"
+	ErrRegisteringEntityCode                      = "1016"
 )
 
 func ErrInitializingRegistryManager(err error) error {
@@ -67,6 +69,12 @@ func ErrCleaningUpLocalProvider(err error) error {
 
 func ErrClosingDatabaseInstance(err error) error {
 	return errors.New(ErrClosingDatabaseInstanceCode, errors.Alert, []string{"Error closing database instance"}, []string{"Error closing database instance: ", err.Error()}, []string{}, []string{})
+}
+func ErrMarshalingRegisteryAttempts(err error) error {
+	return errors.New(ErrMarshalingRegisteryAttemptsCode, errors.Alert, []string{"Error marshaling RegisterAttempts to JSON"}, []string{"Error marshaling RegisterAttempts to JSON: ", err.Error()}, []string{}, []string{})
+}
+func ErrWritingRegisteryAttempts(err error) error {
+	return errors.New(ErrWritingRegisteryAttemptsCode, errors.Alert, []string{"Error writing RegisteryAttempts JSON data to file"}, []string{"Error writing RegisteryAttempts JSON data to file:", err.Error()}, []string{}, []string{})
 }
 func ErrRegisteringEntity(err string) error {
 	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{"Few entites for particular registrant failed to import in registry table"}, []string{err}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})

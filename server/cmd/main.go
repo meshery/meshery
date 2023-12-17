@@ -307,13 +307,13 @@ func main() {
 	filePath := "register_attempts.json"
 	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
 	if err != nil {
-		fmt.Println("Error marshaling RegisterAttempts to JSON:", err)
+		log.Error(ErrMarshalingRegisteryAttempts(err))
 		return
 	}
 
 	err = writeToFile(filePath, jsonData)
 	if err != nil {
-		fmt.Println("Error writing JSON data to file:", err)
+		log.Error(ErrWritingRegisteryAttempts(err))
 		return
 	}
 
