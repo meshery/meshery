@@ -296,33 +296,46 @@ func main() {
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-	//lazy loading for more Registrants to Register their entities like Istio
-	time.AfterFunc(15*time.Second, func() {
-		hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
-		if err != nil {
-			log.Error(err)
-		}
-		for _, host := range hosts {
-			log.Infof("For Registrant %s Successfully imported %d models %d components %d relationships %d policy", host.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
-			nonRegisteredEntityCount := meshmodel.NonImportModel[host.Hostname]
-			if nonRegisteredEntityCount.Models > 0 || nonRegisteredEntityCount.Components > 0 || nonRegisteredEntityCount.Relationships > 0 || nonRegisteredEntityCount.Policies > 0 {
-				log.Errorf("For Registrant %s Failed to import %d models %d components %d relationships %d policy", host.Hostname, nonRegisteredEntityCount.Models, nonRegisteredEntityCount.Components, nonRegisteredEntityCount.Relationships, nonRegisteredEntityCount.Policies)
+	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
+	if err != nil {
+		log.Error(err)
+	}
+	for _, host := range hosts {
+		summary := host.Summary
+		log.Info(fmt.Sprintf("For Registrant %s Successfully imported %d models %d components %d relationships %d policy",
+			host.Hostname, summary.Models, summary.Components, summary.Relationships, summary.Policies))
+
+		nonImportModel := meshmodel.NonImportModel[host.Hostname]
+		if nonImportModel.Models > 0 || nonImportModel.Components > 0 || nonImportModel.Relationships > 0 || nonImportModel.Policies > 0 {
+			failedMsg := fmt.Sprintf("For Registrant %s Failed to import", host.Hostname)
+			appendIfNonZero := func(msg string, count int64, entityName string) string {
+				if count > 0 {
+					return fmt.Sprintf("%s %d %s", msg, count, entityName)
+				}
+				return msg
 			}
-		}
 
-		filePath := "register_attempts.json"
-		jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
-		if err != nil {
-			fmt.Println("Error marshaling RegisterAttempts to JSON:", err)
-			return
-		}
+			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Models, "models")
+			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Components, "components")
+			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Relationships, "relationships")
+			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Policies, "policies")
 
-		err = writeToFile(filePath, jsonData)
-		if err != nil {
-			fmt.Println("Error writing JSON data to file:", err)
-			return
+			log.Error(ErrRegisteringEntity(failedMsg))
 		}
-	})
+	}
+
+	filePath := "register_attempts.json"
+	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
+	if err != nil {
+		fmt.Println("Error marshaling RegisterAttempts to JSON:", err)
+		return
+	}
+
+	err = writeToFile(filePath, jsonData)
+	if err != nil {
+		fmt.Println("Error writing JSON data to file:", err)
+		return
+	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
