@@ -70,6 +70,18 @@ type Connection struct {
 	CreatedAt    time.Time              `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt    time.Time              `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt    sql.NullTime           `json:"deleted_at,omitempty" db:"deleted_at"`
+	Environments []EnvironmentData            `json:"environments,omitempty" db:"environments"`
+}
+
+type EnvironmentData struct {
+	ID             uuid.UUID    `json:"id,omitempty" db:"id"`
+	Name           string       `json:"name,omitempty" db:"name"`
+	Owner          string       `json:"owner,omitempty" db:"owner"`
+	OrganizationID uuid.UUID    `json:"org_id,omitempty" db:"org_id"`
+	Description    string       `json:"description,omitempty" db:"description"`
+	CreatedAt      time.Time    `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt      time.Time    `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt      sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
 // swagger:response ConnectionPage

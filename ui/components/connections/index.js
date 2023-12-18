@@ -219,6 +219,7 @@ function Connections({
         }),
       },
       (resp) => {
+        getEnvironments();
         notify({
           message: `Environment: ${resp.name} created`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -362,6 +363,7 @@ function Connections({
           const getOptions = () => {
             return environments.map((env) => ({ label: env.name, value: env.id }));
           };
+          console.log('value:', value);
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id }));
           console.log('opts:', getOptions());
           return (
@@ -783,14 +785,6 @@ function Connections({
     }
   }, [page, pageSize, search, sortOrder, connectionMetadataState]);
 
-  useEffect(() => {
-    updateCols(columns);
-    console.log('org:', organization);
-    if (organization != '' && typeof organization != undefined) {
-      getEnvironments();
-    }
-  }, [organization]);
-
   const getEnvironments = () => {
     dataFetch(
       `/api/environments?orgID=${organization?.id}`,
@@ -804,6 +798,14 @@ function Connections({
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
   };
+
+  useEffect(() => {
+    updateCols(columns);
+    console.log('org:', organization);
+    if (organization != '' && typeof organization != undefined) {
+      getEnvironments();
+    }
+  }, [organization]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
