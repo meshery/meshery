@@ -93,6 +93,10 @@ const ACTION_TYPES = {
     name: 'FETCH_ENVIRONMENT',
     error_msg: 'Failed to fetch environment',
   },
+  CREATE_ENVIRONMENT: {
+    name: 'CREATE_ENVIRONMENT',
+    error_msg: 'Failed to create environment',
+  },
 };
 
 /**
@@ -203,8 +207,29 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  const handleConnectionAssignment = (connectionId, connName, environmentId) => {
-    let envName = environments.find((env) => env.id === environmentId).name;
+  const handleCreateEnvironment = (connectionId, connName, environmentId, envName) => {
+    dataFetch(
+      `/api/environments`,
+      {
+        credentials: 'include',
+        method: 'POST',
+        body: JSON.stringify({
+          name: envName,
+          organization_id: organization?.id,
+        }),
+      },
+      (resp) => {
+        notify({
+          message: `Environment: ${resp.name} created`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        handleConnectionAssignment(connectionId, connName, resp.id, resp.name);
+      },
+      handleError(ACTION_TYPES.CREATE_ENVIRONMENT),
+    );
+  };
+
+  const handleConnectionAssignment = (connectionId, connName, environmentId, envName) => {
     dataFetch(
       `/api/environments/${environmentId}/connections/${connectionId}`,
       {
@@ -220,6 +245,24 @@ function Connections({
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
     );
+  };
+
+  const handleEnvironmentSelect = (connectionId, connName, environments) => {
+    environments.forEach((environment) => {
+      console.log('env:', environment);
+      let envName = environment.label;
+      let environmentId = environment.value;
+      let isNew = environment.__isNew__ || false;
+
+      if (isNew) {
+        console.log('create + assign', envName, connectionId);
+        handleCreateEnvironment(connectionId, connName, environmentId, envName);
+        return;
+      }
+
+      console.log('assign', envName, connectionId);
+      handleConnectionAssignment(connectionId, connName, environmentId, envName);
+    });
   };
 
   let colViews = [
@@ -325,17 +368,18 @@ function Connections({
               <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                 <ReactSelectWrapper
                   onChange={(select) =>
-                    handleConnectionAssignment(
+                    handleEnvironmentSelect(
                       connections[tableMeta.rowIndex].id,
                       connections[tableMeta.rowIndex].name,
-                      select ? select.value : '',
+                      select ? select : '',
                     )
                   }
                   options={getOptions()}
                   // value={{ label: url, value: url }}
-                  label={`Assign to envionment`}
+                  label={`Assign envionments`}
                   error={false}
                   placeholder={`Name of environment`}
+                  isMulti={true}
                   noOptionsMessage={`No environment discovered`}
                 />
               </Grid>
@@ -740,6 +784,7 @@ function Connections({
 
   useEffect(() => {
     updateCols(columns);
+    console.log('org:', organization);
     if (organization != '' && typeof organization != undefined) {
       getEnvironments();
     }
