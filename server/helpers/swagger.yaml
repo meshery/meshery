@@ -268,15 +268,25 @@ paths:
             summary: Handles GET for all Environments
             tags:
                 - EnvironmentsAPI
-        post:
-            description: Creates a new environment
-            operationId: idSaveEnvironment
+    /api/environments/{environmentID}/connections:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                Returns all connections of environment
+            operationId: idGetConnectionsOfEnvironmentHandler
             responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle POST request for creating a new environment
+                "200":
+                    $ref: '#/responses/mesheryConnectionsResponseWrapper'
+            summary: Handle GET for all Connections of Environment
             tags:
-                - PostEnvironment
+                - EnvironmentAPI
     /api/environments/{environmentID}/connections/{connectionID}:
         delete:
             description: Removes connection from environment
@@ -612,7 +622,7 @@ paths:
             operationId: idGetConnections
             responses:
                 "200":
-                    $ref: '#/responses/ConnectionPage'
+                    $ref: '#/responses/mesheryConnectionsResponseWrapper'
             summary: Handle GET request for getting all connections
             tags:
                 - GetConnections
@@ -2515,6 +2525,8 @@ responses:
         description: Returns all meshery applications
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
+    mesheryConnectionsResponseWrapper:
+        description: Returns all connections
     mesheryConnectionsStatusPage:
         description: Returns all connections Status
     mesheryFilterResponseWrapper:

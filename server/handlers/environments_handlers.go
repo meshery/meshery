@@ -222,3 +222,30 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(resp))
 }
+
+// swagger:route GET /api/environments/{environmentID}/connections EnvironmentAPI idGetConnectionsOfEnvironmentHandler
+// Handle GET for all Connections of Environment
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 20
+//
+// ```?search={environments_name}``` If search is non empty then a greedy search is performed
+//
+// Returns all connections of environment
+// responses:
+//   200: mesheryConnectionsResponseWrapper
+func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	environmentID := mux.Vars(r)["environmentID"]
+	q := r.URL.Query()
+	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
