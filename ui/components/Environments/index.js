@@ -23,6 +23,10 @@ import { Box, Pagination, PaginationItem } from '@mui/material';
 import { debounce } from 'lodash';
 import EmptyState from './empty-state';
 import { Delete } from '@material-ui/icons';
+import TransferList from './transfer-list/transfer-list';
+import GenericModal from './generic-modal';
+import ConnectionIcon from '../../assets/icons/Connection';
+import { TRANSFER_COMPONET } from '../../utils/Enum';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -44,6 +48,10 @@ const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
     name: 'FETCH_ORGANIZATIONS',
     error_msg: 'There was an error fetching available orgs',
+  },
+  FETCH_CONNECTIONS: {
+    name: 'FETCH_CONNECTIONS',
+    error_msg: 'There was an error fetching connections',
   },
 };
 
@@ -71,9 +79,24 @@ const Environments = ({ organization }) => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editEnvId, setEditEnvId] = useState('');
-
   const [orgValue, setOrgValue] = useState([]);
   const [orgLabel, setOrgLabel] = useState([]);
+
+  const [assignConnectionModal, setAssignConnectionModal] = useState(false);
+  const [connectionAssignEnv, setConnectionAssignEnv] = useState({});
+  // const [environmentConnections, setEnvironmentConnections] = useState([]);
+  // const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [assignedConnections, setAssignedConnections] = useState([]);
+
+  const [connectionsData, setConnectionsData] = useState([]);
+  const [connectionsPage, setConnectionsPage] = useState(0);
+  const [connectionCount, setConnectionCount] = useState(0);
+
+  const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
+  const [environmentConnectionCount, setEnvironmentConnectionCount] = useState(0);
+  const [environmentConnectionPage, setEnvironmentConnectionPage] = useState(0);
+
+  const connectionPageSize = 25;
 
   const modalRef = useRef(null);
   const { notify } = useNotification();
@@ -217,6 +240,71 @@ const Environments = ({ organization }) => {
     );
   };
 
+  const getConnections = (page) => {
+    setLoading(true);
+    dataFetch(
+      `/api/integrations/connections?pagesize=${connectionPageSize}&page=${page}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        /* eslint-disable-next-line no-unsafe-optional-chaining */
+        setConnectionsData((prevConnectionsData) => [...prevConnectionsData, ...res?.connections]);
+        setConnectionCount(res?.total_count);
+        setConnectionsPage(res?.page + 1);
+        setLoading(false);
+      },
+      handleError(ERROR_MESSAGE.FETCH_CONNECTIONS),
+    );
+  };
+
+  const getEnvironmentConnections = (environmentId, page) => {
+    setLoading(true);
+    dataFetch(
+      `/api/environments/${environmentId}/connections?pagesize=${connectionPageSize}&page=${page}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        /* eslint-disable-next-line no-unsafe-optional-chaining */
+        setEnvironmentConnectionsData(res?.connections);
+        setEnvironmentConnectionCount(res?.total_count);
+        setEnvironmentConnectionPage(res?.page + 1);
+        setLoading(false);
+      },
+    );
+  };
+
+  const addConnectionToEnvironment = (environmentId, connectionId) => {
+    setLoading(true);
+    dataFetch(
+      `/api/environments/${environmentId}/connections/${connectionId}`,
+      {
+        credentials: 'include',
+        method: 'POST',
+      },
+      () => {
+        setLoading(false);
+      },
+    );
+  };
+
+  const removeConnectionFromEnvironment = (environmentId, connectionId) => {
+    setLoading(true);
+    dataFetch(
+      `/api/environments/${environmentId}/connections/${connectionId}`,
+      {
+        credentials: 'include',
+        method: 'DELETE',
+      },
+      () => {
+        setLoading(false);
+      },
+    );
+  };
+
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
     if (actionType === ACTION_TYPES.EDIT) {
@@ -326,6 +414,54 @@ const Environments = ({ organization }) => {
     setSelectedEnvironments([]);
   };
 
+  useEffect(() => {
+    const pagesCount = parseInt(Math.ceil(parseInt(connectionCount) / connectionPageSize));
+    if (pagesCount > connectionsPage || connectionsPage === 0) {
+      getConnections(connectionsPage);
+    }
+  }, [connectionsPage]);
+
+  useEffect(() => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(environmentConnectionCount) / connectionPageSize),
+    );
+    if (pagesCount > environmentConnectionPage || environmentConnectionPage === 0) {
+      getEnvironmentConnections(connectionAssignEnv.id, environmentConnectionPage);
+    }
+  }, [connectionAssignEnv, environmentConnectionPage]);
+
+  const handleAssignConnection = () => {
+    const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
+    const updatedConnectionsIds = assignedConnections.map((conn) => conn.id);
+
+    const addedConnectionsIds = updatedConnectionsIds.filter(
+      (id) => !originalConnectionsIds.includes(id),
+    );
+    const removedConnectionsIds = originalConnectionsIds.filter(
+      (id) => !updatedConnectionsIds.includes(id),
+    );
+
+    addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
+
+    removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
+    handleonAssignConnectionModalClose();
+  };
+
+  const handleonAssignConnectionModalOpen = (e, environment) => {
+    e.stopPropagation();
+    setAssignConnectionModal(true);
+    setConnectionAssignEnv(environment);
+  };
+
+  const handleonAssignConnectionModalClose = () => {
+    setAssignConnectionModal(false);
+    setConnectionAssignEnv({});
+  };
+
+  const handleAssignConnectionData = (updatedAssignedData) => {
+    setAssignedConnections(updatedAssignedData);
+  };
+
   return (
     <NoSsr>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
@@ -387,9 +523,7 @@ const Environments = ({ organization }) => {
                   onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
                   onDelete={(e) => handleDeleteEnvironmentConfirm(e, environment)}
                   onSelect={(e) => handleBulkSelect(e, environment.id)}
-                  // onAssignConnection={e =>
-                  //   handleonAssignConnectionModalOpen(e, environment)
-                  // }
+                  onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
                 />
               </Grid>
             ))}
@@ -447,6 +581,33 @@ const Environments = ({ organization }) => {
           initialData={initialData}
         />
       )}
+      <GenericModal
+        open={assignConnectionModal}
+        handleClose={handleonAssignConnectionModalClose}
+        title={`${connectionAssignEnv.name} Resources`}
+        body={
+          <TransferList
+            name="Connections"
+            assignableData={connectionsData}
+            assignedData={handleAssignConnectionData}
+            originalAssignedData={environmentConnectionsData}
+            emptyStateIconLeft={
+              <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+            }
+            emtyStateMessageLeft="No connections available"
+            emptyStateIconRight={
+              <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+            }
+            emtyStateMessageRight="No connections assigned"
+            transferComponentType={TRANSFER_COMPONET.CHIP}
+          />
+        }
+        action={handleAssignConnection}
+        buttonTitle="Save"
+        leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+        helpText="Assign connections to environment"
+        maxWidth="md"
+      />
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );

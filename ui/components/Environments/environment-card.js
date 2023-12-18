@@ -1,7 +1,5 @@
-import React, { /*useState,*/ useEffect } from 'react';
-import { Button, Grid /*Typography*/ } from '@mui/material';
-// import { useSelector } from 'react-redux';
-
+import React, { useEffect, useState } from 'react';
+import { Button, Grid } from '@mui/material';
 import {
   AllocationButton,
   BulkSelectCheckbox,
@@ -15,17 +13,9 @@ import {
   TabTitle,
 } from './styles';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-// import theme from "../../../styles/themes/theme";
-// import FlipCard from "components/general/flip-card";
-// import { L5DeleteIcon, L5EditIcon } from "@/assets/styles/users/styles";
-// import { useGetEnvironmentConnectionsQuery } from "@/api/api";
-// import { withDefaultPageArgs } from "@/api/index";
-// import { keys } from "../../../utility/permission_constants";
-// import CAN from "../../general/can";
-// import { formattoLongDate } from "@/utility/helpers";
-// import { TransferButton } from "../general";
 import FlipCard from './flip-card';
 import { Delete, Edit } from '@material-ui/icons';
+import dataFetch from '../../lib/data-fetch';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -66,40 +56,28 @@ const EnvironmentCard = ({
   onDelete,
   onEdit,
   onSelect,
-  // onAssignConnection,
+  onAssignConnection,
 }) => {
-  // const { id: org_id } = useSelector(state => state.organization.value);
-  // const [skip, setSkip] = useState(true);
-
-  // const {
-  //   data: environmentConnections,
-  //   isLoading: isEnvironmentConnectionsLoading,
-  //   isError: isEnvironmentConnectionsError,
-  //   error: environmentConnectionsError
-  // } = useGetEnvironmentConnectionsQuery(
-  //   withDefaultPageArgs({
-  //     environmentId: environmentDetails.id,
-  //     orgId: org_id
-  //   }),
-  //   {
-  //     skip
-  //   }
-  // );
-
-  const environmentConnectionsCount = 0;
-  // environmentConnections?.total_count
-  //   ? environmentConnections.total_count
-  //   : 0;
-
-  const deleted = environmentDetails.deleted_at.Valid;
+  const [environmentConnectionsCount, setEenvironmentConnectionsCount] = useState(0);
 
   useEffect(() => {
-    // if (!deleted) {
-    //   setSkip(false);
-    // } else {
-    //   setSkip(true);
-    // }
-  }, [environmentDetails, deleted]);
+    getEnvironmentConnections(environmentDetails.id);
+  }, environmentDetails);
+
+  const getEnvironmentConnections = (environmentId) => {
+    dataFetch(
+      `/api/environments/${environmentId}/connections`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        setEenvironmentConnectionsCount(res?.connections?.length);
+      },
+    );
+  };
+
+  const deleted = environmentDetails.deleted_at.Valid;
 
   return (
     <FlipCard
@@ -163,14 +141,14 @@ const EnvironmentCard = ({
                 <TransferButton
                   title="Assigned Connections"
                   count={environmentConnectionsCount}
-                  // onAssign={onAssignConnection}
+                  onAssign={onAssignConnection}
                 />
               </AllocationButton>
               <AllocationButton onClick={(e) => e.stopPropagation()}>
                 <TransferButton
                   title="Assigned Workspaces"
                   count={environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0}
-                  // onAssign={() => {}}
+                  onAssign={() => {}}
                 />
               </AllocationButton>
             </Grid>
