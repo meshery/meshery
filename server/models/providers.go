@@ -467,7 +467,7 @@ type Provider interface {
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
-	SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error
+	SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
 	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)

@@ -96,7 +96,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
-	err = provider.SaveEnvironment(req, &environment, "", false)
+	resp, err := provider.SaveEnvironment(req, &environment, "", false)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -106,6 +106,8 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	description := fmt.Sprintf("Environment %s created.", environment.Name)
 
 	h.log.Info(description)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
 	w.WriteHeader(http.StatusCreated)
 }
 

@@ -146,8 +146,8 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, _ string) ([]b
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
-	return ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string) (*EnvironmentData, error) {
