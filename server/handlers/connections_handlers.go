@@ -192,7 +192,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 200: ConnectionPage
+// 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	page, _ := strconv.Atoi(q.Get("page"))
