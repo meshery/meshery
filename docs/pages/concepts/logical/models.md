@@ -16,7 +16,7 @@ Meshery's internal object model is designed to provide a consistent and extensib
 
 ## Design Principles
 
-Meshery Models adheres to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
+Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
 
 * **Comprehensive:** The model should be able to represent a wide range of cloud-native constructs, including applications, services, meshes, and infrastructure components.
 * **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
@@ -25,7 +25,7 @@ Meshery Models adheres to several design principles, including establishing a se
 
 ## Models as the Unit of Packaging
 
-MeshModel supports packaging constructs as OCI-compatible images, making them portable and encapsulating intellectual property. Model packages can include multiple MeshModel constructs, facilitating reusability and versioning.
+Models support packaging constructs as OCI-compatible images, making them portable and encapsulating intellectual property. Model packages can include multiple MeshModel constructs, facilitating reusability and versioning.
 
 {% include alert.html title="Model Packaging" color="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
 
