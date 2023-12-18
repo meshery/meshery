@@ -77,5 +77,5 @@ func ErrWritingRegisteryAttempts(err error) error {
 	return errors.New(ErrWritingRegisteryAttemptsCode, errors.Alert, []string{"Error writing RegisteryAttempts JSON data to file"}, []string{"Error writing RegisteryAttempts JSON data to file:", err.Error()}, []string{}, []string{})
 }
 func ErrRegisteringEntity(err string) error {
-	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{"Few entites for particular registrant failed to import in registry table"}, []string{err}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})
+	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{"There were some issues during the import process for a particular registrant, causing a certain number of entities to not get registered in the table."}, []string{err}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})
 }
