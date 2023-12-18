@@ -4318,7 +4318,6 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	logrus.Debug("remoteProviderURL: ", remoteProviderURL.String())
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -4622,6 +4621,61 @@ if !l.Capabilities.IsSupported(PersistEnvironments) {
 	}
 	
 	return nil, ErrFetch(fmt.Errorf("failed to unassign connection from environment"), "Environment", resp.StatusCode)
+}
+
+func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID + "/connections")
+
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Connections successfully retrieved from environment")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error) {
