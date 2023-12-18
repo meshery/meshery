@@ -472,6 +472,7 @@ type Provider interface {
 	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order string) ([]byte, error)
 
 	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
 }
