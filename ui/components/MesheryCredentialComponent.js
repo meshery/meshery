@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
-import { CON_OPS } from '../utils/Enum';
+import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import dataFetch from '../lib/data-fetch';
 // import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 // import EditIcon from '@material-ui/icons/Edit';
@@ -39,7 +39,7 @@ const styles = (theme) => ({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, classes }) => {
+const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadataState }) => {
   const [credentials, setCredentials] = useState([]);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -131,7 +131,16 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
       case 'grafana':
         return <img src="/static/img/grafana_icon.svg" className={classes.iconPatt} />;
       case 'kubernetes':
-        return <img src="/static/img/kubernetes.svg" className={classes.iconPatt} />;
+        return (
+          <img
+            src={
+              connectionMetadataState
+                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                : ''
+            }
+            className={classes.iconPatt}
+          />
+        );
       default:
         return;
     }
@@ -468,4 +477,12 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(MesheryCredentialComponent));
+const mapStateToProps = (state) => {
+  return {
+    connectionMetadataState: state.get('connectionMetadataState'),
+  };
+};
+
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent),
+);

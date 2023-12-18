@@ -9,8 +9,14 @@ import { Title } from '../../view';
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
 
-export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const SecurityTypesConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   const ping = useKubernetesHook();
   return {
     ServiceAccount: {
@@ -233,7 +239,11 @@ export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) =>
                 <>
                   <TootltipWrappedConnectionChip
                     title={clusterName}
-                    iconSrc="/static/img/kubernetes.svg"
+                    iconSrc={
+                      connectionMetadataState
+                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        : ''
+                    }
                     handlePing={() => ping(clusterName, val, connectionId)}
                   />
                 </>

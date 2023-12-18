@@ -6,8 +6,14 @@ import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
 
-export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const ConfigurationTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   return {
     ConfigMap: {
       name: 'ConfigMap',
@@ -115,7 +121,11 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                 <>
                   <TootltipWrappedConnectionChip
                     title={clusterName}
-                    iconSrc="/static/img/kubernetes.svg"
+                    iconSrc={
+                      connectionMetadataState
+                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        : ''
+                    }
                   />
                 </>
               );

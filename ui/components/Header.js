@@ -40,6 +40,7 @@ import dataFetch from '../lib/data-fetch';
 import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
+import { CONNECTION_KINDS } from '../utils/Enum';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -238,6 +239,8 @@ function K8sContextMenu({
   const { notify } = useNotification();
   const ping = useKubernetesHook();
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+
   const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
   const styleSlider = {
     position: 'absolute',
@@ -309,7 +312,11 @@ function K8sContextMenu({
           <div className={classes.cbadgeContainer}>
             <img
               className="k8s-image"
-              src="/static/img/kubernetes.svg"
+              src={
+                connectionMetadataState
+                  ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                  : ''
+              }
               width="24px"
               height="24px"
               // style={{ zIndex: '2' }}
@@ -412,8 +419,12 @@ function K8sContextMenu({
                           <_ConnectionChip
                             title={ctx?.name}
                             onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                            handlePing={() => ping(ctx.name, ctx.connection_id, ctx.name)}
-                            iconSrc="/static/img/kubernetes.svg" // chnage to use connection def
+                            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+                            iconSrc={
+                              connectionMetadataState
+                                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                                : ''
+                            } // chnage to use connection def
                             status={operatorState}
                           />
                         </div>

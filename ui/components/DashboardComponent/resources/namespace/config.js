@@ -12,8 +12,14 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import { ConditionalTooltip } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
 
-export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const NamespaceTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   const ping = useKubernetesHook();
   return {
     name: 'Namespace',
@@ -97,7 +103,11 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
               <>
                 <TootltipWrappedConnectionChip
                   title={clusterName}
-                  iconSrc="/static/img/kubernetes.svg"
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
                   handlePing={() => ping(clusterName, val, connectionId)}
                 />
               </>

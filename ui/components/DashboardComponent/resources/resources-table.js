@@ -13,6 +13,7 @@ import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { Slide } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -42,6 +43,7 @@ const ResourcesTable = (props) => {
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
+  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
@@ -49,8 +51,10 @@ const ResourcesTable = (props) => {
   };
 
   const tableConfig = submenu
-    ? resourceConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
-    : resourceConfig(switchView, meshSyncResources, k8sConfig);
+    ? resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState)[
+        workloadType
+      ]
+    : resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState);
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
