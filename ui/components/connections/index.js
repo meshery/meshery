@@ -362,6 +362,7 @@ function Connections({
           const getOptions = () => {
             return environments.map((env) => ({ label: env.name, value: env.id }));
           };
+          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id }));
           console.log('opts:', getOptions());
           return (
             <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
@@ -375,7 +376,7 @@ function Connections({
                     )
                   }
                   options={getOptions()}
-                  // value={{ label: url, value: url }}
+                  value={cleanedEnvs}
                   label={`Assign envionments`}
                   error={false}
                   placeholder={`Name of environment`}
