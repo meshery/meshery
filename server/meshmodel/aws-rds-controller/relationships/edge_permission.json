@@ -1,0 +1,43 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods."
+  },
+  "model": {
+    "name": "aws-rds-controller",
+    "version": "1.1.8",
+    "displayName": "AWS Relational Database Service",
+    "category": {
+      "name": "Database",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Permission",
+  "rego_query": "edge_binding_relationship",
+  "selectors": {
+    "allow": {
+      "from": [
+        {
+          "kind": "DBCluster",
+          "model": "aws-rds-controller",
+          "match": {
+            "self": [],
+            "domainIAMRoleName": []
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Role",
+          "model": "aws-iam-controller ",
+          "match": {
+            "self": [],
+            "properties.spec.properties.path": []
+          }
+        }
+      ]
+    }
+  }
+}
