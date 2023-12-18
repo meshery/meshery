@@ -18,12 +18,8 @@ const (
 	ErrCleaningUpLocalProviderCode                = "1011"
 	ErrClosingDatabaseInstanceCode                = "1012"
 	ErrInitializingRegistryManagerCode            = "1013"
-<<<<<<< HEAD
-	ErrRegisteringEntityCode                      = "1014"
-=======
 	ErrMarshalingRegisteryAttemptsCode            = "1014"
 	ErrWritingRegisteryAttemptsCode               = "1015"
->>>>>>> 15f2861f88 (Meshkit error w/signoff)
 )
 
 func ErrInitializingRegistryManager(err error) error {
