@@ -282,7 +282,7 @@ func main() {
 	}
 	for _, host := range hosts {
 		summary := host.Summary
-		log.Info(fmt.Sprintf("For Registrant %s Successfully imported %d models %d components %d relationships %d policy",
+		log.Info(fmt.Sprintf("For Registrant %s successfully imported %d models %d components %d relationships %d policy",
 			host.Hostname, summary.Models, summary.Components, summary.Relationships, summary.Policies))
 
 		nonImportModel := meshmodel.NonImportModel[host.Hostname]
