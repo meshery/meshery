@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Importing  Applications
+title: Importing Applications
 abstract: This guide is to help users get a better understanding of sample apps
 permalink: guides/importing-apps
 type: guides
