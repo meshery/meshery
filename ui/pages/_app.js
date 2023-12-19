@@ -233,9 +233,9 @@ class MesheryApp extends App {
         };
       }
       this.setState({ connectionMetadata: connectionDef });
-      this.props.setConnectionMetadata({
-        connectionMetadataState: connectionDef,
-      });
+    });
+    this.props.setConnectionMetadata({
+      connectionMetadataState: connectionDef,
     });
   };
 

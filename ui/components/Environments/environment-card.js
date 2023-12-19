@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button, Grid } from '@mui/material';
 import {
   AllocationButton,
@@ -15,7 +15,7 @@ import {
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import FlipCard from './flip-card';
 import { Delete, Edit } from '@material-ui/icons';
-import dataFetch from '../../lib/data-fetch';
+import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -58,24 +58,15 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
 }) => {
-  const [environmentConnectionsCount, setEenvironmentConnectionsCount] = useState(0);
+  // const [environmentConnectionsCount, setEenvironmentConnectionsCount] = useState(0);
 
-  useEffect(() => {
-    getEnvironmentConnections(environmentDetails.id);
-  }, environmentDetails);
-
-  const getEnvironmentConnections = (environmentId) => {
-    dataFetch(
-      `/api/environments/${environmentId}/connections`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setEenvironmentConnectionsCount(res?.connections?.length);
-      },
-    );
-  };
+  const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
+    {
+      environmentId: environmentDetails.id,
+    },
+    { skip: !environmentDetails.id },
+  );
+  const environmentConnectionsCount = environmentConnections?.connections?.length || 0;
 
   const deleted = environmentDetails.deleted_at.Valid;
 
@@ -144,13 +135,18 @@ const EnvironmentCard = ({
                   onAssign={onAssignConnection}
                 />
               </AllocationButton>
-              <AllocationButton onClick={(e) => e.stopPropagation()}>
-                <TransferButton
-                  title="Assigned Workspaces"
-                  count={environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0}
-                  onAssign={() => {}}
-                />
-              </AllocationButton>
+              {/* temporary disable workspace allocation button  */}
+              {false && (
+                <AllocationButton onClick={(e) => e.stopPropagation()}>
+                  <TransferButton
+                    title="Assigned Workspaces"
+                    count={
+                      environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
+                    }
+                    onAssign={() => {}}
+                  />
+                </AllocationButton>
+              )}
             </Grid>
           </Grid>
         </CardWrapper>

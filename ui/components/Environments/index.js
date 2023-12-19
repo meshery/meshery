@@ -1,5 +1,5 @@
 import { Button, Grid, NoSsr } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -26,6 +26,11 @@ import TransferList from './transfer-list/transfer-list';
 import GenericModal from './generic-modal';
 import ConnectionIcon from '../../assets/icons/Connection';
 import { TRANSFER_COMPONET } from '../../utils/Enum';
+import {
+  useAddConnectionToEnvironmentMutation,
+  useRemoveConnectionFromEnvironmentMutation,
+} from '../../rtk-query/environments';
+import { store } from '../../store';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -276,32 +281,15 @@ const Environments = ({ organization }) => {
     );
   };
 
-  const addConnectionToEnvironment = (environmentId, connectionId) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${environmentId}/connections/${connectionId}`,
-      {
-        credentials: 'include',
-        method: 'POST',
-      },
-      () => {
-        setLoading(false);
-      },
-    );
+  const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
+  const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
+
+  const addConnectionToEnvironment = async (environmentId, connectionId) => {
+    addConnectionToEnvironmentMutator({ environmentId, connectionId });
   };
 
   const removeConnectionFromEnvironment = (environmentId, connectionId) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${environmentId}/connections/${connectionId}`,
-      {
-        credentials: 'include',
-        method: 'DELETE',
-      },
-      () => {
-        setLoading(false);
-      },
-    );
+    removeConnectionFromEnvMutator({ environmentId, connectionId });
   };
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
@@ -619,4 +607,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(withRouter(Environments));
+export default connect(mapStateToProps)(
+  withRouter((props) => (
+    <Provider store={store}>
+      <Environments {...props} />
+    </Provider>
+  )),
+);
