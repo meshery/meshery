@@ -77,3 +77,8 @@ export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
   KUBERNETES: 'kubernetes',
 };
+
+export const TRANSFER_COMPONET = {
+  CHIP: 'chip',
+  OTHER: 'other',
+};

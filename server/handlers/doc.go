@@ -508,6 +508,13 @@ type mesheryConnectionResponseWrapper struct {
 	Body connections.Connection
 }
 
+// Returns all connections
+// swagger:response mesheryConnectionsResponseWrapper
+type mesheryConnectionsResponseWrapper struct {
+	// in: body
+	Body *connections.ConnectionPage
+}
+
 // Returns all connections Status
 // swagger:response mesheryConnectionsStatusPage
 type mesheryConnectionsStatusPage struct {

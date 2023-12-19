@@ -245,6 +245,98 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/environments:
+        get:
+            description: |-
+                # Environments can be further filtered through query parameters
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+
+                ```?filter={condition}```
+            operationId: idGetEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/environmentsResponseWrapper'
+            summary: Handles GET for all Environments
+            tags:
+                - EnvironmentsAPI
+    /api/environments/{environmentID}/connections:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                Returns all connections of environment
+            operationId: idGetConnectionsOfEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionsResponseWrapper'
+            summary: Handle GET for all Connections of Environment
+            tags:
+                - EnvironmentAPI
+    /api/environments/{environmentID}/connections/{connectionID}:
+        delete:
+            description: Removes connection from environment
+            operationId: idRemoveConnectionFromEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE to remove Connection from Environment by ID
+            tags:
+                - EnvironmentAPI
+        post:
+            description: Returns Environment connection mapping info
+            operationId: idAddConnectionToEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle POST to add Connection in Environment by ID
+            tags:
+                - EnvironmentAPI
+    /api/environments/{id}:
+        delete:
+            description: Returns Environment info
+            operationId: idDeleteEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE for Environment based on ID
+            tags:
+                - EnvironmentAPI
+        get:
+            description: |-
+                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+
+                Returns Environment info
+            operationId: idGetEnvironmentByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle GET for Environment info by ID
+            tags:
+                - EnvironmentAPI
+        put:
+            description: Updates a environment
+            operationId: idUpdateEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle PUT request for updating a environment
+            tags:
+                - PostEnvironment
     /api/events:
         get:
             description: |-
@@ -530,7 +622,7 @@ paths:
             operationId: idGetConnections
             responses:
                 "200":
-                    $ref: '#/responses/ConnectionPage'
+                    $ref: '#/responses/mesheryConnectionsResponseWrapper'
             summary: Handle GET request for getting all connections
             tags:
                 - GetConnections
@@ -609,26 +701,6 @@ paths:
             tags:
                 - GetConnectionsStatus
     /api/integrations/environments:
-        get:
-            description: |-
-                # Environments can be further filtered through query parameters
-
-                ```?order={field}``` orders on the passed field
-
-                ```?page={page-number}``` Default page number is 0
-
-                ```?pagesize={pagesize}``` Default pagesize is 20
-
-                ```?search={environments_name}``` If search is non empty then a greedy search is performed
-
-                ```?filter={condition}```
-            operationId: idGetEnvironments
-            responses:
-                "200":
-                    $ref: '#/responses/environmentsResponseWrapper'
-            summary: Handles GET for all Environments
-            tags:
-                - EnvironmentsAPI
         post:
             description: Creates a new environment
             operationId: idSaveEnvironment
@@ -636,53 +708,6 @@ paths:
                 "201":
                     $ref: '#/responses/noContentWrapper'
             summary: Handle POST request for creating a new environment
-            tags:
-                - PostEnvironment
-    /api/integrations/environments/{environmentID}/connections/{connectionID}:
-        delete:
-            description: Removes connection from environment
-            operationId: idRemoveConnectionFromEnvironmentHandler
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle DELETE to remove Connection from Environment by ID
-            tags:
-                - EnvironmentAPI
-        post:
-            description: Returns Environment connection mapping info
-            operationId: idAddConnectionToEnvironmentHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle POST to add Connection in Environment by ID
-            tags:
-                - EnvironmentAPI
-    /api/integrations/environments/{id}:
-        delete:
-            description: Returns Environment info
-            operationId: idDeleteEnvironmentHandler
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle DELETE for Environment based on ID
-            tags:
-                - EnvironmentAPI
-        get:
-            description: Returns Environment info
-            operationId: idGetEnvironmentByIDHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle GET for Environment info by ID
-            tags:
-                - EnvironmentAPI
-        put:
-            description: Updates a environment
-            operationId: idUpdateEnvironmentHandler
-            responses:
-                "200":
-                    $ref: '#/responses/environmentResponseWrapper'
-            summary: Handle PUT request for updating a environment
             tags:
                 - PostEnvironment
     /api/meshmodel/components/register:
@@ -2510,6 +2535,8 @@ responses:
         description: Returns all meshery applications
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
+    mesheryConnectionsResponseWrapper:
+        description: Returns all connections
     mesheryConnectionsStatusPage:
         description: Returns all connections Status
     mesheryFilterResponseWrapper:

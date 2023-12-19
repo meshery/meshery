@@ -10,7 +10,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-// swagger:route GET /api/integrations/environments EnvironmentsAPI idGetEnvironments
+// swagger:route GET /api/environments EnvironmentsAPI idGetEnvironments
 // Handles GET for all Environments
 //
 // # Environments can be further filtered through query parameters
@@ -49,7 +49,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route GET /api/integrations/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
+// swagger:route GET /api/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
 // Handle GET for Environment info by ID
 //
 // ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
@@ -109,7 +109,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route DELETE /api/integrations/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
+// swagger:route DELETE /api/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
 // Handle DELETE for Environment based on ID
 //
 // Returns Environment info
@@ -129,7 +129,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route PUT /api/integrations/environments/{id} PostEnvironment idUpdateEnvironmentHandler
+// swagger:route PUT /api/environments/{id} PostEnvironment idUpdateEnvironmentHandler
 // Handle PUT request for updating a environment
 //
 // Updates a environment
@@ -181,7 +181,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route POST /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idAddConnectionToEnvironmentHandler
+// swagger:route POST /api/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idAddConnectionToEnvironmentHandler
 // Handle POST to add Connection in Environment by ID
 //
 // Returns Environment connection mapping info
@@ -202,7 +202,7 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route DELETE /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idRemoveConnectionFromEnvironmentHandler
+// swagger:route DELETE /api/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idRemoveConnectionFromEnvironmentHandler
 // Handle DELETE to remove Connection from Environment by ID
 //
 // Removes connection from environment
@@ -219,6 +219,33 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
+// swagger:route GET /api/environments/{environmentID}/connections EnvironmentAPI idGetConnectionsOfEnvironmentHandler
+// Handle GET for all Connections of Environment
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 20
+//
+// ```?search={environments_name}``` If search is non empty then a greedy search is performed
+//
+// Returns all connections of environment
+// responses:
+//   200: mesheryConnectionsResponseWrapper
+func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	environmentID := mux.Vars(r)["environmentID"]
+	q := r.URL.Query()
+	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(resp))
 }

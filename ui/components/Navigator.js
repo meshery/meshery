@@ -68,6 +68,7 @@ import {
   PROFILES,
   TOGGLER,
   CONNECTION,
+  ENVIRONMENT,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 
@@ -355,6 +356,13 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         href: '/management/connections',
         title: 'Connections',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+        link: true,
+      },
+      {
+        id: ENVIRONMENT,
+        href: '/management/environments',
+        title: 'Environments',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
       },
       {

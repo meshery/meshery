@@ -218,12 +218,6 @@ type ConnectionPayload struct {
 	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
 }
 
-type EnvironmentPayload struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	OrgID       string `json:"org_id,omitempty"`
-}
-
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -478,6 +472,7 @@ type Provider interface {
 	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order string) ([]byte, error)
 
 	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
 }

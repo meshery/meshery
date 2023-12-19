@@ -158,6 +158,7 @@ function Modal(props) {
     submitBtnIcon,
     uiSchema = {},
     RJSFWrapperComponent = null,
+    initialData = {},
   } = props;
   const classes = useStyles();
 
@@ -235,7 +236,7 @@ function Modal(props) {
 
         <RJSFWrapper
           key={type}
-          formData={formStateRef.current}
+          formData={initialData || formStateRef}
           jsonSchema={schema || getSchema(type)}
           uiSchema={uiSchema}
           onChange={handleFormChange}
