@@ -1,6 +1,10 @@
 package main
 
-import "github.com/layer5io/meshkit/errors"
+import (
+	"fmt"
+
+	"github.com/layer5io/meshkit/errors"
+)
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -75,6 +79,6 @@ func ErrMarshalingRegisteryAttempts(err error) error {
 func ErrWritingRegisteryAttempts(err error) error {
 	return errors.New(ErrWritingRegisteryAttemptsCode, errors.Alert, []string{"Error writing RegisteryAttempts JSON data to file"}, []string{"Error writing RegisteryAttempts JSON data to file:", err.Error()}, []string{}, []string{})
 }
-func ErrRegisteringEntity(err string) error {
-	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{"There were some issues during the import process for a particular registrant, causing a certain number of entities to not get registered in the table."}, []string{err}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})
+func ErrRegisteringEntity(failedMsg string, hostName string) error {
+	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{fmt.Sprintf("The import process for a Registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", hostName, failedMsg)}, []string{fmt.Sprintf("For Registrant %s %s", hostName, failedMsg)}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})
 }
