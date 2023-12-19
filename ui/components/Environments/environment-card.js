@@ -144,13 +144,18 @@ const EnvironmentCard = ({
                   onAssign={onAssignConnection}
                 />
               </AllocationButton>
-              <AllocationButton onClick={(e) => e.stopPropagation()}>
-                <TransferButton
-                  title="Assigned Workspaces"
-                  count={environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0}
-                  onAssign={() => {}}
-                />
-              </AllocationButton>
+              {/* temporary disable workspace allocation button  */}
+              {false && (
+                <AllocationButton onClick={(e) => e.stopPropagation()}>
+                  <TransferButton
+                    title="Assigned Workspaces"
+                    count={
+                      environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
+                    }
+                    onAssign={() => {}}
+                  />
+                </AllocationButton>
+              )}
             </Grid>
           </Grid>
         </CardWrapper>
