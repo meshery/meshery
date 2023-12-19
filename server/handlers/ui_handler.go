@@ -10,7 +10,6 @@ import (
 
 var dynamicUIEndpoints = map[string]string{
 	"/extension":   "/extension/[...component].html",
-	"/management/": "/management/[mesh].html",
 }
 
 func isDynamicUIEndpoint(reqURL string) bool {
