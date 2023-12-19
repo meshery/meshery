@@ -287,7 +287,7 @@ func main() {
 
 		nonImportModel := meshmodel.NonImportModel[host.Hostname]
 		if nonImportModel.Models > 0 || nonImportModel.Components > 0 || nonImportModel.Relationships > 0 || nonImportModel.Policies > 0 {
-			failedMsg := fmt.Sprintf("For Registrant %s Failed to import", host.Hostname)
+			failedMsg := "failed to import"
 			appendIfNonZero := func(msg string, count int64, entityName string) string {
 				if count > 0 {
 					return fmt.Sprintf("%s %d %s", msg, count, entityName)
@@ -300,7 +300,7 @@ func main() {
 			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Relationships, "relationships")
 			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Policies, "policies")
 
-			log.Error(ErrRegisteringEntity(failedMsg))
+			log.Error(ErrRegisteringEntity(failedMsg, host.Hostname))
 		}
 	}
 
