@@ -27,6 +27,19 @@ const dumpFile = "./dump.csv"
 const COLUMNRANGE = "!A:AH3" //Update this on addition of new columns
 const APPENDRANGE = "!A4:V4"
 
+type componentWrapper struct {
+	comps   []v1alpha1.ComponentDefinition
+	model   string
+	helmURL string
+}
+
+type pipelineFunc func(in chan []artifacthub.AhPackage, csv chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error
+
+type ComponentStruct struct {
+	PackageName string                         `yaml:"name"`
+	Components  []v1alpha1.ComponentDefinition `yaml:"components"`
+}
+
 var NameToIndex = map[string]int{ //Update this on addition of new columns
 	"modelDisplayName":   0,
 	"model":              1,
@@ -91,6 +104,7 @@ func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPack
 	}
 	return
 }
+
 func main() {
 	if len(os.Args) > 1 {
 		spreadsheetID = os.Args[1]
@@ -130,25 +144,16 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		err = writeComponentModels(pkgs, &modelsWriter)
+		err = writeComponentModels(pkgs, modelsFd)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 	}
 	verified, official, cncf, priority, unverified := sortOnVerified(pkgs)
-	csvChan := make(chan string, 50)
-	f, err := os.Create(dumpFile)
-	if err != nil {
-		fmt.Printf("Error creating file: %s\n", err)
-	}
+	compsCSV := make(chan componentWrapper, 50)
+	go dumpCsv(compsCSV)
 
-	f.Write([]byte("model,component_count,components\n"))
-	go func() {
-		for entry := range csvChan {
-			f.Write([]byte(entry))
-		}
-	}()
 	srv := NewSheetSRV()
 	// Convert sheet ID to sheet name.
 	response1, err := srv.Spreadsheets.Get(spreadsheetID).Fields("sheets(properties(sheetId,title))").Do()
@@ -164,11 +169,7 @@ func main() {
 			break
 		}
 	}
-	spreadsheetChan := make(chan struct {
-		comps   []v1alpha1.ComponentDefinition
-		model   string
-		helmURL string
-	}, 100)
+	spreadsheetChan := make(chan componentWrapper, 100)
 	// Set the range of cells to retrieve.
 	rangeString := sheetName + COLUMNRANGE
 
@@ -210,47 +211,51 @@ func main() {
 	}()
 	dp := newdedup()
 
-	executeInStages(StartPipeline, csvChan, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
+	executeInStages(StartPipeline, compsCSV, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
 
 	close(spreadsheetChan)
 	wg.Wait()
 }
 
+func dumpCsv(compsCSV chan componentWrapper) {
+	f, err := os.Create(dumpFile)
+	if err != nil {
+		fmt.Printf("Error creating file: %s\n", err)
+		return
+	}
+	f.Write([]byte("model,component_count,components\n"))
+	for comps := range compsCSV {
+		count := len(comps.comps)
+		names := "\""
+		for _, cmp := range comps.comps {
+			names += fmt.Sprintf("%s,", cmp.Kind)
+		}
+		names = strings.TrimSuffix(names, ",")
+		names += "\""
+		if count > 0 {
+			f.Write([]byte(fmt.Sprintf("%s,%d,%s\n", comps.model, count, names)))
+		}
+	}
+}
+
 // Stages have to run sequentially. The steps within each stage can be concurrent.
 // pipeline function should return only after completion
-func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan string, spreadsheet chan struct {
-	comps   []v1alpha1.ComponentDefinition
-	model   string
-	helmURL string
-}, dp *dedup) error,
-	csv chan string,
-	spreadsheetChan chan struct {
-		comps   []v1alpha1.ComponentDefinition
-		model   string
-		helmURL string
-	}, dp *dedup, pkg ...[]artifacthub.AhPackage) {
-	for stageno, p := range pkg {
-		input := make(chan []artifacthub.AhPackage)
-		go func() {
-			for len(p) != 0 {
-				x := 50
-				if len(p) < x {
-					x = len(p)
-				}
-				input <- p[:x]
-				p = p[x:]
-			}
-			close(input)
-		}()
+func executeInStages(pipeline pipelineFunc, compsCSV chan componentWrapper,
+	spreadsheetChan chan componentWrapper, dp *dedup, pkgs ...[]artifacthub.AhPackage) {
+	for stageno, pkg := range pkgs {
+		input := make(chan artifacthub.AhPackage)
 		var wg sync.WaitGroup
 		for i := 1; i < 10; i++ {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				pipeline(input, csv, spreadsheetChan, dp) //synchronous
+				pipeline(input, compsCSV, spreadsheetChan, dp) //synchronous
 				fmt.Println("Pipeline exited for a go routine")
 			}()
+		}
+		for _, p := range pkg {
+			input <- p
 		}
 		wg.Wait()
 		fmt.Println("[DEBUG] Completed stage", stageno)
@@ -275,133 +280,42 @@ func (d *dedup) set(key string) {
 func (d *dedup) check(key string) bool {
 	return d.m[key]
 }
-func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet chan struct {
-	comps   []v1alpha1.ComponentDefinition
-	model   string
-	helmURL string
-}, dp *dedup) error {
-	pkgsChan := make(chan []artifacthub.AhPackage)
-	compsChan := make(chan struct {
-		comps []v1alpha1.ComponentDefinition
-		model string
-	})
-	compsCSV := make(chan struct {
-		comps []v1alpha1.ComponentDefinition
-		model string
-	})
-	// updating pacakge data
-	go func() {
-		for pkgs := range in {
-			ahPkgs := make([]artifacthub.AhPackage, 0)
-			for _, ap := range pkgs {
-				fmt.Println("[DEBUG] Updating package data for: ", ap.Name)
-				err := ap.UpdatePackageData()
-				if err != nil {
-					fmt.Println(err)
-					continue
-				}
-				ahPkgs = append(ahPkgs, ap)
-				pkgsChan <- ahPkgs
-			}
-		}
-		close(pkgsChan)
-	}()
-	// writer
-	go func() {
-		for modelcomps := range compsChan {
-			err := writeComponents(modelcomps.comps)
-			if err != nil {
-				fmt.Println(err)
-			}
-			compsCSV <- struct {
-				comps []v1alpha1.ComponentDefinition
-				model string
-			}{
-				comps: modelcomps.comps,
-				model: modelcomps.model,
-			}
-		}
-	}()
-	if _, err := os.Stat(dumpFile); os.IsExist(err) {
-		// If file exists, delete it
-		err := os.Remove(dumpFile)
-		if err != nil {
-			fmt.Printf("Error deleting file: %s\n", err)
-		}
-	}
 
-	go func() {
-		for comps := range compsCSV {
-			count := len(comps.comps)
-			names := "\""
-			for _, cmp := range comps.comps {
-				names += fmt.Sprintf("%s,", cmp.Kind)
-			}
-			names = strings.TrimSuffix(names, ",")
-			names += "\""
-			if count > 0 {
-				model := comps.model
-				fmt.Println(fmt.Sprintf("[DEBUG]Adding to CSV: %s", model))
-				csv <- fmt.Sprintf("%s,%d,%s\n", model, count, names)
+func StartPipeline(pkgChan chan []artifacthub.AhPackage, compsCSV chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error {
+	for pkg := range pkgChan {
+		if err := pkg.UpdatePackageData(); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
+		comps, err := pkg.GenerateComponents()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		var newcomps []v1alpha1.ComponentDefinition
+		for _, comp := range comps {
+			key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
+			if !dp.check(key) {
+				fmt.Println("SETTING FOR: ", key)
+				newcomps = append(newcomps, comp)
+				dp.set(key)
 			}
 		}
-	}()
-	for pkgs := range pkgsChan {
-		for _, ap := range pkgs {
-			fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
-			comps, err := ap.GenerateComponents()
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-			var newcomps []v1alpha1.ComponentDefinition
-			for _, comp := range comps {
-				key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
-				if !dp.check(key) {
-					fmt.Println("SETTING FOR: ", key)
-					newcomps = append(newcomps, comp)
-					dp.set(key)
-				}
-			}
-			compsCSV <- struct {
-				comps []v1alpha1.ComponentDefinition
-				model string
-			}{
-				comps: newcomps,
-				model: ap.Name,
-			}
-			compsChan <- struct {
-				comps []v1alpha1.ComponentDefinition
-				model string
-			}{
-				comps: newcomps,
-				model: ap.Name,
-			}
-			spreadsheet <- struct {
-				comps   []v1alpha1.ComponentDefinition
-				model   string
-				helmURL string
-			}{
-				comps:   newcomps,
-				model:   ap.Name,
-				helmURL: ap.ChartUrl,
-			}
+		if err := writeComponents(comps); err != nil {
+			fmt.Println(err)
+		}
+		compsCSV <- componentWrapper{
+			comps: newcomps,
+			model: pkg.Name,
+		}
+		spreadsheet <- componentWrapper{
+			comps:   newcomps,
+			model:   pkg.Name,
+			helmURL: pkg.ChartUrl,
 		}
 	}
 	return nil
-}
-
-type ComponentStruct struct {
-	PackageName string                         `yaml:"name"`
-	Components  []v1alpha1.ComponentDefinition `yaml:"components"`
-}
-
-func wrapComponentsInWritableStruct(comps []v1alpha1.ComponentDefinition, pkgName string) ComponentStruct {
-	return ComponentStruct{
-		PackageName: pkgName,
-		Components:  comps,
-	}
-
 }
 
 type Writer struct {
@@ -409,15 +323,12 @@ type Writer struct {
 	m    sync.Mutex
 }
 
-func writeComponentModels(models []artifacthub.AhPackage, writer *Writer) error {
-	writer.m.Lock()
-	defer writer.m.Unlock()
+func writeComponentModels(models []artifacthub.AhPackage, file *os.File) error {
 	val, err := yaml.Marshal(models)
 	if err != nil {
 		return err
 	}
-	_, err = writer.file.Write(val)
-	if err != nil {
+	if _, err := file.Write(val); err != nil {
 		return err
 	}
 	return nil
@@ -473,58 +384,12 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 	return nil
 }
 
-// this function should take in the file descriptor for a yaml
-// file that contains array of items and split that into multiple files
-// with each item having certain number of items
-// TODO: Refactor
-func SplitYamlIntoFiles(file *os.File) error {
-	fileContent, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
-	var list []ComponentStruct
-	err = yaml.Unmarshal(fileContent, &list)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(list)
-	result := make([]([]ComponentStruct), 0)
-	dummy := make([]ComponentStruct, 0)
-	for i, comp := range list {
-		dummy = append(dummy, comp)
-		if (i+1)%30 == 0 || i+1 == len(list) {
-			result = append(result, dummy)
-			dummy = make([]ComponentStruct, 0)
-		}
-	}
-	for i, fileContent := range result {
-		file, err := os.Create(fmt.Sprintf("%s/components%d.yaml", OutputDirectoryPath, i+1))
-		if err != nil {
-			return err
-		}
-		out, err := yaml.Marshal(fileContent)
-		if err != nil {
-			return err
-		}
-		_, err = file.Write(out)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 var spreadsheetID = "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"
 
 const sheetID = 0
 
-func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct {
-	comps   []v1alpha1.ComponentDefinition
-	model   string
-	helmURL string
-}, am map[string][]interface{}, acpm map[string]map[string]bool) {
+func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan componentWrapper,
+	am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
 	rangeString := sheetName + APPENDRANGE
 	appendRange := sheetName + "!A4:AV4"
