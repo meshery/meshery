@@ -3,16 +3,8 @@ import { NoSsr, Grid } from '@material-ui/core';
 
 import Popup from '../Popup';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { bindActionCreators } from 'redux';
-import {
-  updateGrafanaConfig,
-  updateProgress,
-  updatePrometheusConfig,
-  updateTelemetryUrls,
-} from '../../lib/store.js';
 import blue from '@material-ui/core/colors/blue';
 
 import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
@@ -85,8 +77,7 @@ const styles = (theme) => ({
   },
 });
 
-const Overview = (props) => {
-  const { classes } = props;
+const Overview = ({ classes }) => {
   return (
     <NoSsr>
       <Popup />
@@ -112,31 +103,4 @@ const Overview = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters');
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-
-  return {
-    meshAdapters,
-    meshAdaptersts,
-    k8sconfig,
-    grafana,
-    prometheus,
-    selectedK8sContexts,
-  };
-};
-
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(Overview))),
-);
+export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Overview)));
