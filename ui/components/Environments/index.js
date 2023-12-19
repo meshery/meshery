@@ -1,5 +1,4 @@
 import { Button, Grid, NoSsr } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -14,7 +13,7 @@ import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
-import styles, { CreateButtonWrapper, EditButton, TextButton } from './styles';
+import { CreateButtonWrapper, EditButton, TextButton } from './styles';
 import theme from '../../themes/app';
 import Modal from '../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
@@ -620,4 +619,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(withRouter(Environments)));
+export default connect(mapStateToProps)(withRouter(Environments));
