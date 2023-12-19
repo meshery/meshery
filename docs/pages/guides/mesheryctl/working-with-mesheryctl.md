@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Using Meshery CLI
-description: How to use mesheryctl
+abstract: How to use mesheryctl
 permalink: guides/mesheryctl/working-with-mesheryctl
 language: en
 type: guides

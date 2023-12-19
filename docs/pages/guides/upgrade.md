@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Upgrading Meshery and all of its components
-description: How to Meshery and all of its components
+abstract: How to Meshery and all of its components
 permalink: guides/upgrade
 display-title: "false"
 type: guides

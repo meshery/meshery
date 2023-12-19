@@ -2,7 +2,7 @@
 layout: page
 title: Contributing
 permalink: project/contributing
-description: How to contribute to the Meshery project.
+abstract: How to contribute to the Meshery project.
 redirect_from:
  - project/contributing/
 display-title: "false"

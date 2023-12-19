@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Registering a Connection
-description: Discovering Components with MeshSync and Registering as a Connection
+abstract: Discovering Components with MeshSync and Registering as a Connection
 permalink: guides/registering-a-connection
 type: guides
 language: en

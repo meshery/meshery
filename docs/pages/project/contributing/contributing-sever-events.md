@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Contributing to Meshery Server Events
-description: Guide is to help backend contributors send server events using Golang.
+abstract: Guide is to help backend contributors send server events using Golang.
 permalink: project/contributing/contributing-server-events
 type: project
 category: contributing
