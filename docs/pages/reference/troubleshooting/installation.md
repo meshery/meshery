@@ -6,6 +6,7 @@ permalink: guides/troubleshooting/installation
 type: guides
 category: troubleshooting
 language: en
+abstract: Troubleshoot Meshery installation and deployment
 ---
 
 ## Meshery's Preflight Checks

@@ -4,6 +4,7 @@ title: Concepts
 permalink: concepts/logical
 language: en
 list: exclude
+description: Concepts for understanding Meshery's various features and components.
 ---
 
 Concepts for understanding Meshery's various features and components.

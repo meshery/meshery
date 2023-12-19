@@ -5,6 +5,7 @@ permalink: reference
 redirect_from: reference/
 language: en
 list: exclude
+abstract: References for using Meshery's various features and components.
 ---
 
 References for using Meshery's various features and components.

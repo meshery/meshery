@@ -5,6 +5,7 @@ permalink: concepts
 redirect_from: concepts/
 language: en
 list: exclude
+abstract: Concepts for understanding Meshery's various features and components.
 ---
 
 Concepts for understanding Meshery's various features and components.
