@@ -61,7 +61,7 @@ import {
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
-import { ConnectionChip } from './ConnectionChip';
+import { TootltipWrappedConnectionChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
 import { SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
@@ -321,7 +321,7 @@ function Connections({
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           return (
-            <ConnectionChip
+            <TootltipWrappedConnectionChip
               tooltip={'Server: ' + server}
               title={value}
               status={getColumnValue(tableMeta.rowData, 'status', columns)}
