@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import { Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from '../assets/icons/search';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
@@ -49,8 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchBar = ({ onSearch, placeholder }) => {
-  const [expanded, setExpanded] = useState(false);
+const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
   const [searchText, setSearchText] = useState('');
   const searchRef = useRef(null);
   const classes = useStyles();
@@ -80,25 +79,42 @@ const SearchBar = ({ onSearch, placeholder }) => {
     }
   };
 
+  const width = window.innerWidth;
+  let searchWidth = '200px';
+  if (width <= 750) {
+    searchWidth = '120px';
+  }
+
   return (
     <div>
       <TextField
         className={classes.searchInput}
-        id="standard-basic"
+        id="searchClick"
         variant="standard"
         value={searchText}
         onChange={handleSearchChange}
         inputRef={searchRef}
         placeholder={placeholder}
         style={{
-          width: expanded ? '200px' : '0',
+          width: expanded ? searchWidth : '0',
           opacity: expanded ? 1 : 0,
           transition: 'width 0.3s ease, opacity 0.3s ease',
         }}
       />
 
       {expanded ? (
-        <ClickAwayListener onClickAway={handleClearIconClick}>
+        <ClickAwayListener
+          onClickAway={(event) => {
+            //when user clicks on actions menu, search bar should not close
+            const isSearchBar = event.target.closest('#your-search-bar-id');
+            const isTable = event.target.closest('#searchClick');
+
+            if (!isSearchBar && !isTable) {
+              // The click is outside the search bar and table, so you can close the search bar
+              handleClearIconClick(); // Close the search bar as needed
+            }
+          }}
+        >
           <Tooltip title="Close">
             <IconButton
               onClick={handleClearIconClick}
@@ -122,7 +138,7 @@ const SearchBar = ({ onSearch, placeholder }) => {
               },
             }}
           >
-            <SearchIcon className={classes.icon} />
+            <SearchIcon />
           </IconButton>
         </Tooltip>
       )}

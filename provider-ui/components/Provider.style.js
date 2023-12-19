@@ -1,12 +1,13 @@
 import { styled } from '@mui/material/styles'
 import MenuItem from '@mui/material/MenuItem'
 import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
 
 export const CustomDiv = styled('div')(({ theme }) => ({
   width : '60%',
   marginLeft : 'auto',
   marginRight : 'auto',
-  marginTop : theme.spacing(5)
+  marginTop : theme.spacing(3)
 }))
 
 export const MesheryLogo = styled('img')(({ theme }) => ({
@@ -27,4 +28,22 @@ export const CustomDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogActions-root' : {
     padding : theme.spacing(1),
   },
+  '& .MuiDialogContentText-root > a' : {
+    color : "#222",
+  },
 }));
+export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
+  display : "flex", justifyContent : "space-between",
+  background : "#eee",
+  padding : theme.spacing(2),
+  '& div > a' : {
+    color : "#222",
+  },
+}));
+
+export const LearnMore = styled('div')(() => ({
+  width : '60%',
+  marginLeft : 'auto',
+  marginRight : 'auto',
+  marginTop : '3rem',
+}))

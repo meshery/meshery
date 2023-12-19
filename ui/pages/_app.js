@@ -21,16 +21,22 @@ import App from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import { connect, Provider } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
 import getPageContext from '../components/PageContext';
-import { OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
+import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
-import { actionTypes, makeStore, toggleCatalogContent, updateTelemetryUrls } from '../lib/store';
+import {
+  actionTypes,
+  makeStore,
+  toggleCatalogContent,
+  updateTelemetryUrls,
+  setConnectionMetadata,
+} from '../lib/store';
 import theme, { styles } from '../themes';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
@@ -50,17 +56,11 @@ import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
-import subscribeEvents from '../components/graphql/subscriptions/EventsSubscription';
-import { store as rtkStore } from '../store';
-import { pushEvent } from '../store/slices/events';
-import { api as mesheryApi } from '../rtk-query';
-import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
-import { useNotification } from '../utils/hooks/useNotification';
-import {
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
-  validateEvent,
-} from '../components/NotificationCenter/constants';
-import { ErrorBoundary, withSuppressedErrorBoundary } from '../components/General/ErrorBoundary';
+
+import { ErrorBoundary } from '../components/General/ErrorBoundary';
+import { NotificationCenterProvider } from '../components/NotificationCenter';
+import { getMeshModelComponent } from '../api/meshmodel';
+import { CONNECTION_KINDS } from '../utils/Enum';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -76,56 +76,6 @@ if (typeof window !== 'undefined') {
     window.jsonlint = require('jsonlint-mod');
   }
 }
-
-const EventsSubsciptionProvider = withSuppressedErrorBoundary(() => {
-  const { notify } = useNotification();
-
-  const eventsSubscription = useCallback(
-    () =>
-      subscribeEvents((result) => {
-        console.log('event received', result);
-        if (!result.event) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        const [isValid, validatedEvent] = validateEvent({
-          ...result.event,
-          user_id: result.event.userID,
-          system_id: result.event.systemID,
-          updated_at: result.event.updatedAt,
-          created_at: result.event.createdAt,
-          deleted_at: result.event.deletedAt,
-          operation_id: result.event.operationID,
-        });
-        if (!isValid) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        try {
-          rtkStore.dispatch(pushEvent(validatedEvent));
-          rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
-          notify({
-            message: validatedEvent.description,
-            event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
-            id: validatedEvent.id,
-            showInNotificationCenter: true,
-          });
-        } catch (e) {
-          console.error('Error While Storing Event --Event-Subscription ', e);
-        }
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    const subscription = eventsSubscription();
-    return () => {
-      subscription.dispose();
-    };
-  }, []);
-
-  return null;
-});
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -159,11 +109,13 @@ class MesheryApp extends App {
       k8sContexts: [],
       activeK8sContexts: [],
       operatorSubscription: null,
+      mesheryControllerSubscription: null,
       meshSyncSubscription: null,
       disposeK8sContextSubscription: null,
       theme: 'light',
       isOpen: false,
       relayEnvironment: createRelayEnvironment(),
+      connectionMetadata: {},
     };
   }
 
@@ -222,6 +174,7 @@ class MesheryApp extends App {
 
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    this.loadOrg();
     this.initSubscriptions([]);
     dataFetch(
       '/api/user/prefs',
@@ -264,7 +217,27 @@ class MesheryApp extends App {
     this.setState({ disposeK8sContextSubscription });
 
     document.addEventListener('fullscreenchange', this.fullScreenChanged);
+    this.loadMeshModelComponent();
   }
+
+  loadMeshModelComponent = () => {
+    const connectionDef = {};
+    Object.keys(CONNECTION_KINDS).map(async (kind) => {
+      const connectionKind =
+        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
+      const res = await getMeshModelComponent(connectionKind, 'Connection');
+      if (res?.components) {
+        connectionDef[CONNECTION_KINDS[kind]] = {
+          transitions: res?.components[0].model.metadata.transitions,
+          icon: res?.components[0].metadata.svgColor,
+        };
+      }
+      this.setState({ connectionMetadata: connectionDef });
+      this.props.setConnectionMetadata({
+        connectionMetadataState: connectionDef,
+      });
+    });
+  };
 
   componentWillUnmount() {
     document.removeEventListener('fullscreenchange', this.fullScreenChanged);
@@ -277,20 +250,22 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
-    console.log('prevProps.k8sConfig', prevProps.k8sConfig, 'k8sConfig', k8sConfig);
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
-      const { operatorSubscription, meshSyncSubscription } = this.state;
+      const { meshSyncSubscription, mesheryControllerSubscription } = this.state;
       console.log(
         'k8sconfig changed, re-initialising subscriptions',
         k8sConfig,
         this.state.activeK8sContexts,
       );
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (operatorSubscription) {
-        operatorSubscription.updateSubscription(ids);
-      }
+      // if (operatorSubscription) {
+      //   operatorSubscription.updateSubscription(ids);
+      // }
 
+      if (mesheryControllerSubscription) {
+        mesheryControllerSubscription.updateSubscription(ids);
+      }
       if (meshSyncSubscription) {
         meshSyncSubscription.updateSubscription(ids);
       }
@@ -302,21 +277,20 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
-    const operatorCallback = (data) => {
-      this.props.store.dispatch({
-        type: actionTypes.SET_OPERATOR_SUBSCRIPTION,
-        operatorState: data,
-      });
-    };
-
-    const operatorSubscription = new GQLSubscription({
-      type: OPERATOR_EVENT_SUBSCRIPTION,
+    const mesheryControllerSubscription = new GQLSubscription({
+      type: MESHERY_CONTROLLER_SUBSCRIPTION,
       contextIds: contexts,
-      callbackFunction: operatorCallback,
+      callbackFunction: (data) => {
+        this.props.store.dispatch({
+          type: actionTypes.SET_CONTROLLER_STATE,
+          controllerState: data,
+        });
+        console.log('CONTROLLER TEST CONTROLLER ', data);
+      },
     });
     // const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback }) above uses old listenToMeshSyncEvents subscription, instead new subscribeMeshSyncEvents is used
-
-    this.setState({ operatorSubscription });
+    this.setState({ mesheryControllerSubscription });
+    // this.setState({ operatorSubscription });
   };
 
   handleDrawerToggle = () => {
@@ -385,6 +359,26 @@ class MesheryApp extends App {
 
   updateExtensionType = (type) => {
     this.props.store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
+  };
+
+  loadOrg = async () => {
+    const { store } = this.props;
+    dataFetch(
+      '/api/identity/orgs',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          store.dispatch({
+            type: actionTypes.SET_ORGANIZATION,
+            organization: result?.organizations[0],
+          });
+        }
+      },
+      (err) => console.log('There was an error fetching available orgs:', err),
+    );
   };
 
   async loadConfigFromServer() {
@@ -535,21 +529,22 @@ class MesheryApp extends App {
                     }}
                     maxSnack={10}
                   >
-                    <EventsSubsciptionProvider />
-                    <MesheryProgressBar />
-                    {!this.state.isFullScreenMode && (
-                      <Header
-                        onDrawerToggle={this.handleDrawerToggle}
-                        onDrawerCollapse={isDrawerCollapsed}
-                        contexts={this.state.k8sContexts}
-                        activeContexts={this.state.activeK8sContexts}
-                        setActiveContexts={this.setActiveContexts}
-                        searchContexts={this.searchContexts}
-                        updateExtensionType={this.updateExtensionType}
-                        theme={this.state.theme}
-                        themeSetter={this.themeSetter}
-                      />
-                    )}
+                    <NotificationCenterProvider>
+                      <MesheryProgressBar />
+                      {!this.state.isFullScreenMode && (
+                        <Header
+                          onDrawerToggle={this.handleDrawerToggle}
+                          onDrawerCollapse={isDrawerCollapsed}
+                          contexts={this.state.k8sContexts}
+                          activeContexts={this.state.activeK8sContexts}
+                          setActiveContexts={this.setActiveContexts}
+                          searchContexts={this.searchContexts}
+                          updateExtensionType={this.updateExtensionType}
+                          theme={this.state.theme}
+                          themeSetter={this.themeSetter}
+                        />
+                      )}
+                    </NotificationCenterProvider>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
                         <ErrorBoundary>
@@ -594,8 +589,17 @@ class MesheryApp extends App {
                         ) : (
                           <>
                             {' '}
-                            Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5
-                            Community
+                            Built with{' '}
+                            <FavoriteIcon
+                              style={{
+                                color:
+                                  this.state.theme === 'dark'
+                                    ? theme.palette.secondary.focused
+                                    : '#00b39f',
+                              }}
+                              className={classes.footerIcon}
+                            />{' '}
+                            by the Layer5 Community
                           </>
                         )}
                       </span>
@@ -624,11 +628,13 @@ const mapStateToProps = (state) => ({
   meshSyncSubscription: state.get('meshSyncSubscription'),
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
+  connectionMetadata: state.get('connectionMetadata'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
   updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
+  setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
 });
 
 const MesheryWithRedux = withStyles(styles)(

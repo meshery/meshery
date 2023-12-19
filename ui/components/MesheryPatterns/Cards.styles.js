@@ -1,14 +1,14 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  dialogTitle: {
-    textAlign: 'center',
-    minWidth: 400,
-    padding: '10px',
-    color: '#fff',
-    backgroundColor:
-      theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
-  },
+  // dialogTitle: {
+  //   textAlign: 'center',
+  //   minWidth: 400,
+  //   padding: '10px',
+  //   color: '#fff',
+  //   backgroundColor:
+  //     theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  // },
   cardButtons: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -39,13 +39,13 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     bottom: 0,
   },
-  yamlDialogTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  yamlDialogTitleText: {
-    flexGrow: 1,
-  },
+  // yamlDialogTitle: {
+  //   display: 'flex',
+  //   alignItems: 'center',
+  // },
+  // yamlDialogTitleText: {
+  //   flexGrow: 1,
+  // },
   fullScreenCodeMirror: {
     height: '100%',
     width: '100%',
@@ -54,13 +54,6 @@ const useStyles = makeStyles((theme) => ({
       height: '100%',
       width: '100%',
     },
-  },
-  maximizeButton: {
-    width: 'fit-content',
-    margin: '0 0 0 auto',
-    position: 'absolute',
-    right: 0,
-    top: 0,
   },
   noOfResultsContainer: {
     margin: '0 0 1rem',
@@ -73,9 +66,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    marginTop: '1rem',
   },
   lastRunText: {
     marginRight: '0.5rem',
+  },
+  cardHeaderRight: {
+    display: 'flex',
+    alignItems: 'center',
   },
   iconPatt: {
     width: '24px',

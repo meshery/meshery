@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -249,4 +250,20 @@ func Populate(src, dst string) error {
 	defer destination.Close()
 	_, err = io.Copy(destination, source)
 	return err
+}
+
+func StartMockMesheryServer(t *testing.T) error {
+	serverAddr, _ := strings.CutPrefix(MesheryEndpoint, "http://")
+	l, err := net.Listen("tcp", serverAddr)
+	if err != nil {
+		return err
+	}
+	// accept and close the connection.
+	// this is to verify IsServerRunning() in auth.go
+	conn, err := l.Accept()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	return nil
 }

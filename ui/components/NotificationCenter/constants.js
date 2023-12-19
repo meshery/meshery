@@ -5,12 +5,13 @@ import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import Ajv from 'ajv';
 import _ from 'lodash';
+import InfoIcon from '../../assets/icons/InfoIcon';
 
 export const SEVERITY = {
   INFO: 'informational',
   ERROR: 'error',
   WARNING: 'warning',
-  // SUCCESS: "success"
+  SUCCESS: 'success',
 };
 
 // This class is required to add to any svg or button that opens notification center
@@ -21,6 +22,7 @@ export const SEVERITY_TO_NOTIFICATION_TYPE_MAPPING = {
   [SEVERITY.INFO]: 'info',
   [SEVERITY.ERROR]: 'error',
   [SEVERITY.WARNING]: 'warning',
+  [SEVERITY.SUCCESS]: 'success',
 };
 
 export const STATUS = {
@@ -32,21 +34,30 @@ export const STATUS_STYLE = {
   [STATUS.READ]: {
     icon: ReadIcon,
     color: Colors.charcoal,
+    darkColor: '#BCC7CC',
   },
 };
 
 export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {
-    icon: ErrorIcon,
+    icon: InfoIcon,
     color: NOTIFICATIONCOLORS.INFO,
+    darkColor: NOTIFICATIONCOLORS.INFO,
   },
   [SEVERITY.ERROR]: {
     icon: ErrorIcon,
     color: NOTIFICATIONCOLORS.ERROR,
+    darlColor: NOTIFICATIONCOLORS.ERROR_DARK,
   },
   [SEVERITY.WARNING]: {
     icon: AlertIcon,
     color: NOTIFICATIONCOLORS.WARNING,
+    darkColor: NOTIFICATIONCOLORS.WARNING,
+  },
+  [SEVERITY.SUCCESS]: {
+    icon: InfoIcon,
+    color: NOTIFICATIONCOLORS.SUCCESS,
+    darkColor: NOTIFICATIONCOLORS.SUCCESS,
   },
 };
 

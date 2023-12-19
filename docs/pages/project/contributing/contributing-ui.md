@@ -6,6 +6,7 @@ description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
@@ -27,6 +28,7 @@ The following is a list of top-level frameworks, libraries, design system used i
 The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
 
 ### REST API
+
 Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference](https://docs.meshery.io/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
@@ -35,7 +37,7 @@ Meshery provides a GraphQl API available through the default port of `9081/tcp` 
 
 ## Design
 
-Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a service mesh or collection of service meshes.
+Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a cloud native infrastructure.
 
 ### User Flows / Wireframing / Mockups
 
@@ -53,15 +55,19 @@ The designs in this specification should result in enabling:
 
 ## Setup
 
-### Node Version Recommendations 
+{% include alert.html type="info" title="Windows User?" content="See <a href='https://docs.meshery.io/project/contributing/meshery-windows'>Setting up Meshery Development Environment on Windows</a>."
+%}
+
+### Node Version Recommendations
+
 We recommend using Node 18 LTS. Meshery UI's build script supports other Node versions as well, including node16 and node17, but is recommended to use Node 18 LTS.
 
 ### Linting-UI
 
 When contributing to Meshery UI, it is advisable to:
 
-  - Use [prettier](https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode) and [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
-  - Disable plugins other than `prettier` and `eslint` for formatting and linting, if any.
+- Use [prettier](https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode) and [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+- Disable plugins other than `prettier` and `eslint` for formatting and linting, if any.
 
 ### Install UI dependencies
 
@@ -96,16 +102,15 @@ Now, Meshery will run on the default port `http://localhost:9081`.
   <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
 </a>
 
-Potential Solution: 
+Potential Solution:
 
--  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute: 
+- Go to your meshery folder in your local-system where you’ve cloned it.
+  Execute:
 
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
 - Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
-
 
 ### UI Development Server
 
@@ -127,10 +132,10 @@ To run cypress integration tests, a convenience make target called `ui-integrati
 
 Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
 
-
 ### Static Files, Icons and Images
 
 The Meshery UI public folder contains static files. Its folder structure looks like this:
+
 ```
 meshery
 └── ui
@@ -145,30 +150,32 @@ meshery
 Images and icons used in Meshery UI need to be sourced from the [public directory of images](https://github.com/meshery/meshery/tree/master/ui/public/static/img). The files written inside this directory should only end with the extensions like `.svg`, `.png`, `.jpg` or `.jpeg`. Always use vector-based graphics (`.svg`), unless your have extenuating circumstances.
 
 ##### Conventions for SVG files
-1. SVGs should be optimized and compressed. 
-    1. Use an online, SVG optimizer, like https://www.svgviewer.dev, to compress the file(s) to smaller size.
-3. All SVGs should have `height` and `width` properties set to 20px x 20px by default. Ensure that height and width attributes are always set in original SVG.
-4. All SVGs should have `height` and `width` included as a style prop in their React component. 
-5. Always include this XML header in each SVG image:  
-    <pre class="codeblock-pre"><div class="codeblock">
-    <div class="clipboardjs">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;!DOCTYPE svg&gt;</div></div>
-    </pre>
-4. Svg can only fall under two categories, and this categories should be the name of folder \
-    1. white: containing white or mono-colored version of that SVG
-    2. color: containing colored version of that SVG.
-    e.g.: the Meshery logo icon folder structure looks like this:
-    ```
-    └── img
-        └── meshery
-            ├── white
-            |   └── meshery-white.svg
-            └── color
-                └── meshery-color.svg
-    ```
-5. Avoid any kind of duplicity in the versions of icons used.
+
+1. SVGs should be optimized and compressed.
+   1. Use an online, SVG optimizer, like https://www.svgviewer.dev, to compress the file(s) to smaller size.
+2. All SVGs should have `height` and `width` properties set to 20px x 20px by default. Ensure that height and width attributes are always set in original SVG.
+3. All SVGs should have `height` and `width` included as a style prop in their React component.
+4. Always include this XML header in each SVG image:
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;!DOCTYPE svg&gt;</div></div>
+</pre>
+5. Svg can only fall under two categories, and this categories should be the name of folder \
+   1. white: containing white or mono-colored version of that SVG
+   2. color: containing colored version of that SVG.
+      e.g.: the Meshery logo icon folder structure looks like this:
+   ```
+   └── img
+       └── meshery
+           ├── white
+           |   └── meshery-white.svg
+           └── color
+               └── meshery-color.svg
+   ```
+6. Avoid any kind of duplicity in the versions of icons used.
 
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
 
 {% include code.html code="let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);" %}
 
 {% include suggested-reading.html %}
+

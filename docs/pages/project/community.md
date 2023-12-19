@@ -6,9 +6,11 @@ description: Meshery's open source, cloud native community
 redirect_from: project/community/
 language: en
 type: project
+category: none
+list: include
 ---
 
-Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
+Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding cloud native management and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
 
 ## Getting involved in the Community
 
@@ -56,7 +58,7 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 
 <div class="wrapper">
     <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview">Access slides and resources</div></a>
+    <a href="https://layer5.io/newcomers"><div class="overview">Access slides and resources</div></a>
 </div>
 
 <!-- 

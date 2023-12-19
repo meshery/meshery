@@ -120,3 +120,18 @@ NOTE: Make sure to renew certificates before they expire
 - Delete the previous secrets named tls-secret or tls-meshery-secret(check the name in the Ingress resource) and delete the the secret with `nginx-ingress-default-server-tls` in the name in meshery namespace
 - Run `kubectl create secret tls tls-secret --cert=/etc/letsencrypt/live/playground.meshery.io/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io/privkey.pem`  and `kubectl create secret tls nginx-ingress-default-server-tls --cert=/etc/letsencrypt/live/playground.meshery.io/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io/privkey.pem`
 - Delete the ingress pod so that it can restart and use the newly configured secrets.
+
+
+### Troubleshooting Steps:
+1. Issues due to Cilium CNI:
+	The networking is setup using WeaveNet, installation of Cilium updates the CNI conf causing issues.
+	If the pods are not getting created/provisioned on the node, or there are any networking issues happening, most often installation of Cilium is the culprit.
+	<br>
+	First check if there any Cilium pods/deamonsets in the `kube-system` namespace.
+
+2. Delete all the resources related to Cilium.
+3. Run `cilium uninstall`.
+4. Check if the issue is resolved, else proceed to next steps.
+5. Run `cd /etc/cni/net.d/`, check for `05-cilium.conf` or any other conf files of pattern `*-cilium.conf`, remove those files.
+6. You may also delete any cilium related network interfaces. Run `ifconfig interface_name down`, where interface_name is  all interfaces whose name starts with `cilium_*`.
+

@@ -1,5 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import { List, ListItem } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
+import { Avatar } from '@layer5/sistent-components';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
@@ -9,27 +10,21 @@ import MenuList from '@material-ui/core/MenuList';
 import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
-import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { withRouter } from 'next/router';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useRouter } from 'next/router';
+import { useSelector, useDispatch } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { withNotify } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
+import { styled } from '@mui/material/styles';
 
-const styles = () => ({
-  link: {
-    display: 'inline-flex',
-    width: '100%',
-    height: '30px',
-    alignItems: 'self-end',
-  },
-});
+const LinkDiv = styled('div')(() => ({
+  display: 'inline-flex',
+  width: '100%',
+  height: '30px',
+  alignItems: 'self-end',
+}));
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -44,44 +39,34 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove();
 }
 
-class User extends React.Component {
-  state = {
-    user: null,
-    open: false,
-    account: ExtensionPointSchemaValidator('account')(),
-    providerType: '',
-    capabilitiesLoaded: false,
+const User = (props) => {
+  const [user, setUser] = useState(null);
+  const [account, setAccount] = useState([]);
+  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  // const anchorEl = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+
+  const handleToggle = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleToggle = () => {
-    this.setState((state) => ({ open: !state.open }));
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleClose = (event) => {
-    if (this.anchorEl.contains(event.target)) {
-      return;
-    }
-    this.setState({ open: false });
-  };
-
-  handleLogout = () => {
+  const handleLogout = () => {
     window.location = '/user/logout';
   };
 
-  handleError = (error) => {
-    const notify = this.props.notify;
-    notify({
-      message: `Error performing logout: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
+  const handlePreference = () => {
+    router.push('/user/preferences');
   };
 
-  handlePreference = () => {
-    this.props.router.push('/user/preferences');
-  };
-
-  handleGetToken = () => {
+  const handleGetToken = () => {
     dataFetch(
       '/api/token',
       { credentials: 'same-origin' },
@@ -92,39 +77,36 @@ class User extends React.Component {
     );
   };
 
-  componentDidMount() {
+  useEffect(() => {
     dataFetch(
       '/api/user',
       {
         credentials: 'same-origin',
       },
-      (user) => {
-        this.setState({ user });
-        this.props.updateUser({ user });
+      (userData) => {
+        setUser(userData);
+        dispatch(updateUser({ user: userData }));
       },
       (error) => ({
         error,
       }),
     );
-  }
+  }, [dispatch]);
 
-  componentDidUpdate() {
-    const { capabilitiesRegistry } = this.props;
-    if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
-      this.setState({
-        capabilitiesLoaded: true, // to prevent re-compute
-        account: ExtensionPointSchemaValidator('account')(
-          capabilitiesRegistry?.extensions?.account,
-        ),
-        providerType: capabilitiesRegistry?.provider_type,
-      });
+  useEffect(() => {
+    const { capabilitiesRegistry } = props;
+    if (!capabilitiesLoaded && capabilitiesRegistry) {
+      setCapabilitiesLoaded(true); // to prevent re-compute
+      setAccount(
+        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+      );
     }
-  }
+  }, [capabilitiesRegistry, capabilitiesLoaded]);
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
    */
-  renderAccountExtension(children) {
+  function renderAccountExtension(children) {
     if (children && children.length > 0) {
       return (
         <List disablePadding>
@@ -135,7 +117,7 @@ class User extends React.Component {
             return (
               <React.Fragment key={id}>
                 <ListItem button key={id}>
-                  {this.extensionPointContent(href, title)}
+                  {extensionPointContent(href, title)}
                 </ListItem>
               </React.Fragment>
             );
@@ -145,20 +127,20 @@ class User extends React.Component {
     }
   }
 
-  extensionPointContent(href, name) {
-    const { classes } = this.props;
+  function extensionPointContent(href, name) {
+    const { classes } = props;
 
     const content = (
-      <div className={classNames(classes.link)}>
+      <LinkDiv>
         <ListItemText classes={{ primary: classes.itemPrimary }}>{name}</ListItemText>
-      </div>
+      </LinkDiv>
     );
     if (href) {
       return (
         <Link href={href}>
           <span
             className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType(name)}
+            onClick={() => props.updateExtensionType(name)}
           >
             {content}
           </span>
@@ -169,75 +151,65 @@ class User extends React.Component {
     return content;
   }
 
-  render() {
-    const { color, iconButtonClassName, avatarClassName, classes } = this.props;
-    let avatar_url;
-    if (this.state.user && this.state.user !== null) {
-      avatar_url = this.state.user.avatar_url;
-    }
-    const { open } = this.state;
-    return (
-      <div>
-        <NoSsr>
-          <div data-test="profile-button">
-            <IconButton
-              color={color}
-              className={iconButtonClassName}
-              buttonRef={(node) => {
-                this.anchorEl = node;
-              }}
-              aria-owns={open ? 'menu-list-grow' : undefined}
-              aria-haspopup="true"
-              onClick={this.handleToggle}
-            >
-              <Avatar
-                className={avatarClassName}
-                src={avatar_url}
-                imgProps={{ referrerPolicy: 'no-referrer' }}
-              />
-            </IconButton>
-          </div>
-          <Popper
-            open={open}
-            anchorEl={this.anchorEl}
-            transition
-            style={{ zIndex: 10000 }}
-            placement="top-end"
-          >
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{
-                  transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
-                }}
-              >
-                <Paper className={classes.popover}>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <MenuList>
-                      {this.state.account && this.state.account.length ? (
-                        <>{this.renderAccountExtension(this.state.account)}</>
-                      ) : null}
-                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
-                      <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
-                      <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </NoSsr>
-      </div>
-    );
+  const { color, iconButtonClassName, avatarClassName, classes } = props;
+  let avatar_url;
+  if (user && user !== null) {
+    avatar_url = user.avatar_url;
   }
-}
 
-const mapDispatchToProps = (dispatch) => ({ updateUser: bindActionCreators(updateUser, dispatch) });
-const mapStateToProps = (state) => ({
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
+  const open = Boolean(anchorEl);
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(withRouter(User))),
-);
+  return (
+    <div>
+      <NoSsr>
+        <div data-test="profile-button">
+          <IconButton
+            color={color}
+            className={iconButtonClassName}
+            ref={anchorEl}
+            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}
+          >
+            <Avatar
+              className={avatarClassName}
+              src={avatar_url}
+              imgProps={{ referrerPolicy: 'no-referrer' }}
+            />
+          </IconButton>
+        </div>
+        <Popper
+          open={open}
+          anchorEl={anchorEl}
+          transition
+          style={{ zIndex: 10000 }}
+          placement="top-end"
+          onClose={handleClose}
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{
+                transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
+              }}
+            >
+              <Paper className={classes.popover}>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList>
+                    {account && account.length ? <>{renderAccountExtension(account)}</> : null}
+                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
+                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </NoSsr>
+    </div>
+  );
+};
+
+export default User;

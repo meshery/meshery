@@ -1,19 +1,17 @@
 import {
-  Button,
   Chip,
   IconButton,
   TableCell,
   TableSortLabel,
   Tooltip,
-  Typography,
   withStyles,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
-import { CON_OPS } from '../utils/Enum';
+import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import dataFetch from '../lib/data-fetch';
-import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
-import EditIcon from '@material-ui/icons/Edit';
+// import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
+// import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
@@ -41,7 +39,7 @@ const styles = (theme) => ({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, classes }) => {
+const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadataState }) => {
   const [credentials, setCredentials] = useState([]);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -61,16 +59,16 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     fetchCredential();
   }, []);
 
-  const handleOpen = (ev) => (data, type, id) => {
-    ev.stopPropagation();
-    data && setCredentialType(data?.type);
-    setCredModal({
-      open: true,
-      data: data?.secret || null,
-      actionType: type,
-      id: id,
-    });
-  };
+  // const handleOpen = (ev) => (data, type, id) => {
+  //   ev.stopPropagation();
+  //   data && setCredentialType(data?.type);
+  //   setCredModal({
+  //     open: true,
+  //     data: data?.secret || null,
+  //     actionType: type,
+  //     id: id,
+  //   });
+  // };
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);
@@ -133,7 +131,16 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
       case 'grafana':
         return <img src="/static/img/grafana_icon.svg" className={classes.iconPatt} />;
       case 'kubernetes':
-        return <img src="/static/img/kubernetes.svg" className={classes.iconPatt} />;
+        return (
+          <img
+            src={
+              connectionMetadataState
+                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                : ''
+            }
+            className={classes.iconPatt}
+          />
+        );
       default:
         return;
     }
@@ -268,15 +275,15 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
         customBodyRender: (_, tableMeta) => {
           const rowData = credentials[tableMeta.rowIndex];
           return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-              <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {/* <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
                 <IconButton
                   aria-label="edit"
                   onClick={(ev) => handleOpen(ev)(rowData, 'update', rowData['id'])}
                 >
                   <EditIcon />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
@@ -403,7 +410,8 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
       <div className={StyleClass.toolWrapper} style={customInlineStyle}>
         <div>
-          <Button
+          {/* TODO: Uncomment this when schema spec is ready to support various credential */}
+          {/* <Button
             type="submit"
             variant="contained"
             color="primary"
@@ -425,7 +433,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
             >
               Create
             </Typography>
-          </Button>
+          </Button> */}
         </div>
         <div>
           {/* <SearchBar
@@ -469,4 +477,12 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(MesheryCredentialComponent));
+const mapStateToProps = (state) => {
+  return {
+    connectionMetadataState: state.get('connectionMetadataState'),
+  };
+};
+
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent),
+);

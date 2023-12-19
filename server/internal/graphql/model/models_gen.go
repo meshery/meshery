@@ -235,6 +235,7 @@ type MesheryControllersStatusListItem struct {
 	ContextID  string                  `json:"contextId"`
 	Controller MesheryController       `json:"controller"`
 	Status     MesheryControllerStatus `json:"status"`
+	Version    *string                 `json:"version,omitempty"`
 }
 
 type MesheryResult struct {
@@ -302,13 +303,14 @@ type OperatorStatusPerK8sContext struct {
 }
 
 type PageFilter struct {
-	Page         string  `json:"page"`
-	PageSize     string  `json:"pageSize"`
-	Order        *string `json:"order,omitempty"`
-	Search       *string `json:"search,omitempty"`
-	From         *string `json:"from,omitempty"`
-	To           *string `json:"to,omitempty"`
-	UpdatedAfter *string `json:"updated_after,omitempty"`
+	Page         string   `json:"page"`
+	PageSize     string   `json:"pageSize"`
+	Order        *string  `json:"order,omitempty"`
+	Search       *string  `json:"search,omitempty"`
+	From         *string  `json:"from,omitempty"`
+	To           *string  `json:"to,omitempty"`
+	UpdatedAfter *string  `json:"updated_after,omitempty"`
+	Visibility   []string `json:"visibility,omitempty"`
 }
 
 type PatternPageResult struct {
@@ -549,6 +551,10 @@ const (
 	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
 	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
 	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+	MesheryControllerStatusUndeployed  MesheryControllerStatus = "UNDEPLOYED"
+	MesheryControllerStatusEnabled     MesheryControllerStatus = "ENABLED"
+	MesheryControllerStatusRunning     MesheryControllerStatus = "RUNNING"
+	MesheryControllerStatusConnected   MesheryControllerStatus = "CONNECTED"
 )
 
 var AllMesheryControllerStatus = []MesheryControllerStatus{
@@ -556,11 +562,15 @@ var AllMesheryControllerStatus = []MesheryControllerStatus{
 	MesheryControllerStatusNotdeployed,
 	MesheryControllerStatusDeploying,
 	MesheryControllerStatusUnkown,
+	MesheryControllerStatusUndeployed,
+	MesheryControllerStatusEnabled,
+	MesheryControllerStatusRunning,
+	MesheryControllerStatusConnected,
 }
 
 func (e MesheryControllerStatus) IsValid() bool {
 	switch e {
-	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown, MesheryControllerStatusUndeployed, MesheryControllerStatusEnabled, MesheryControllerStatusRunning, MesheryControllerStatusConnected:
 		return true
 	}
 	return false

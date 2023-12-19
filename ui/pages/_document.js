@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
-import flush from 'styled-jsx/server';
+import { createStyleRegistry } from 'styled-jsx';
 
+const registry = createStyleRegistry();
+const flush = registry.flush();
 class MesheryDocument extends Document {
   render() {
     return (
@@ -16,6 +18,7 @@ class MesheryDocument extends Document {
           <link rel="icon" href="/static/favicon.png" />
 
           {/* Google Tag Manager */}
+          {/* eslint-disable-next-line @next/next/next-script-for-ga */}
           <script
             dangerouslySetInnerHTML={{
               __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -126,7 +129,7 @@ MesheryDocument.getInitialProps = (ctx) => {
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: css }}
         />
-        {flush() || null}
+        {flush || null}
       </React.Fragment>
     ),
   };

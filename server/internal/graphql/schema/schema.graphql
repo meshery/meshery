@@ -68,12 +68,17 @@ enum MesheryControllerStatus {
     NOTDEPLOYED
     DEPLOYING
     UNKOWN
+    UNDEPLOYED
+    ENABLED
+    RUNNING
+    CONNECTED
   }
 
 type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
+    version: String
   }
 
 type MeshSyncEvent {
@@ -432,6 +437,7 @@ type PatternResult {
   errmsg: String
   created_at: String
   updated_at: String
+  type: NullString
 }
 
 type Location {
@@ -515,7 +521,10 @@ input PageFilter {
   from: String
   to: String
   updated_after: String
+  visibility: [String!]
 }
+
+# ============== CATALOG =============================
 
 input CatalogSelector {
   page: String!
@@ -587,7 +596,7 @@ type Query {
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus @KubernetesMiddleware
+  ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
@@ -691,7 +700,7 @@ type Subscription {
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 
-  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
+  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],

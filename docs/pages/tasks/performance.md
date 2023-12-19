@@ -12,12 +12,13 @@ Key to the efficient operation of any service mesh is the measurement and manage
 ## Performance Profiles
 
 Performance Profile is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:
+
 1. Saving Test Configurations
-2. Create schedules for running tests automatically. 
+2. Create schedules for running tests automatically.
 3. Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!
 4. All the tests performed are under Profiles which has multiple advantages like:
-    - Access test results ran under a certain profiles at one place.
-    - If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use.
+   - Access test results ran under a certain profiles at one place.
+   - If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use.
 
 ## Load Generators
 
@@ -84,8 +85,6 @@ Connect Meshery to your existing Grafana instance. Meshery will auto-import the 
 
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png" /></a>
-
 - Import Grafana boards
   - Import existing Grafana boards via API
   - Import custom Grafana board via yaml
@@ -100,3 +99,4 @@ Once you have connected Meshery to your Prometheus deployment(s), you may perfor
 ## Suggested Reading
 
 - Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)
+

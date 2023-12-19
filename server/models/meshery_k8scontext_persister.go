@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"gorm.io/gorm"
 )
@@ -24,7 +25,7 @@ type MesheryK8sContextPage struct {
 
 // GetMesheryK8sContexts returns all of the contexts
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) ([]byte, error) {
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
@@ -63,11 +64,12 @@ func (mkcp *MesheryK8sContextPersister) DeleteMesheryK8sContext(id string) (K8sC
 	return context, nil
 }
 
-func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K8sContext, error) {
+func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
+	conn := connections.Connection{}
 	if mkc.ID == "" {
 		id, err := K8sContextGenerateID(mkc)
 		if err != nil {
-			return mkc, ErrContextID
+			return conn, ErrContextID
 		}
 
 		mkc.ID = id
@@ -85,7 +87,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 		return tx.Save(&mkc).Error
 	})
 
-	return mkc, err
+	return conn, err
 }
 
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {
