@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/docker.svg
+abstract: Install Meshery on Docker
 ---
 
 {% include installation_prerequisites.html %}

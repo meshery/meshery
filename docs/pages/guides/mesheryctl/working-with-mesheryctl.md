@@ -6,6 +6,7 @@ permalink: guides/mesheryctl/working-with-mesheryctl
 language: en
 type: guides
 category: mesheryctl
+abstract: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 
 Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:

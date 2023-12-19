@@ -7,6 +7,7 @@ language: en
 type: project
 category: contributing
 list: include
+abstract: How to contribute to Meshery Adapters
 ---
 
 

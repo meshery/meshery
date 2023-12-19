@@ -12,8 +12,6 @@ list: include
 
 {% include/alert.html title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
 
-
-
 ## Semantic and Non-Semantic Relationships
 
 Shapes (all styles) convertable to Components

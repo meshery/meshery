@@ -5,6 +5,7 @@ description: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management
 type: guides
 language: en
+abstract: Learn how to use Meshery Designs effectively
 ---
 
 As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.

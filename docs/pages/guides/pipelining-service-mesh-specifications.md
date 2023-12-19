@@ -1,10 +1,12 @@
 ---
 layout: default
 title: Pipelining Service Mesh Specifications
-description: Using SMI and SMP specs on your CI/CD pipelines with Meshery's GitHub Actions
+abstract: Using SMI and SMP specs on your CI/CD pipelines with Meshery's GitHub Actions
 permalink: guides/pipelining-service-mesh-specifications
 type: guides
 language: en
+list: exclude
+published: false
 ---
 
 With growing adoption of service meshes in cloud native environments, service mesh abstractions - service mesh-neutral specifications - have emerged. <a href="https://layer5.io/projects/service-mesh-performance">Service Mesh Performance</a>  and <a href="https://layer5.io/projects/service-mesh-interface-conformance">Service Mesh Interface</a> are two open specifications that address the need for universal interfaces for interacting with and managing any type of service mesh. Let’s examine what each specification provides.

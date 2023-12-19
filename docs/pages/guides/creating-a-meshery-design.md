@@ -6,6 +6,7 @@ permalink: guides/creating-a-meshery-design
 type: guides
 language: en
 published: false
+abstract: Learn how to create a Meshery design from scratch or from a template.
 ---
 
 
