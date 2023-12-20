@@ -534,7 +534,7 @@ const UserPreferenceWithErrorBoundary = (props) => {
     <NoSsr>
       <ErrorBoundary
         FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
+        onError={(e) => console.error('Error in UserPrefs Page', e)}
       >
         <Provider store={store}>
           <UserPreference {...props} />
