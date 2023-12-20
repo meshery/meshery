@@ -47,6 +47,15 @@ const connectionsApi = api
           { type: TAGS.ENVIRONMENT_CONNECTIONS, id: arg.environmentId },
         ],
       }),
+
+      getEnvironments: builder.query({
+        query: (queryArgs) => ({
+          url: `environments`,
+          params: {
+            orgID: queryArgs.orgID,
+          },
+        }),
+      }),
     }),
   });
 
@@ -54,4 +63,5 @@ export const {
   useGetEnvironmentConnectionsQuery,
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
+  useGetEnvironmentsQuery,
 } = connectionsApi;
