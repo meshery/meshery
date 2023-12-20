@@ -1,11 +1,12 @@
 ---
 layout: default
 title: Troubleshooting Meshery Installations
-description: Troubleshoot Meshery installation and deployment
+abstract: Troubleshoot Meshery installation and deployment
 permalink: guides/troubleshooting/installation
 type: guides
 category: troubleshooting
 language: en
+abstract: Troubleshoot Meshery installation and deployment
 ---
 
 ## Meshery's Preflight Checks

@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/kubesphere.png
+abstract: Install Meshery on KubeSphere
 ---
 
 {% include installation_prerequisites.html %}
