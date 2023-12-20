@@ -1573,12 +1573,12 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 	fmt.Fprint(rw, string(b))
 }
 
-// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetApplication
+// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetPatternSourceContent
 // Handle GET request for Meshery Patterns with of source content
 //
 // Get the pattern source-content
 // responses:
-//  200
+//  200: mesheryPatternSourceContentResponseWrapper
 
 // GetMesheryPatternHandler fetched the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
