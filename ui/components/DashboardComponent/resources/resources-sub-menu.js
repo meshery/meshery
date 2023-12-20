@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
-import { Tooltip, Tabs, Tab, Typography } from '@material-ui/core';
+import { Tooltip, Tabs, Tab } from '@material-ui/core';
 import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
 
 import { withRouter } from 'next/router';
@@ -8,6 +8,7 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
+import { TabPanel } from '../tabpanel';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -107,21 +108,20 @@ const styles = (theme) => ({
 });
 
 const ResourcesSubMenu = (props) => {
-  const { classes, updateProgress, k8sConfig, resource, selectedK8sContexts } = props;
+  const {
+    classes,
+    updateProgress,
+    k8sConfig,
+    resource,
+    selectedK8sContexts,
+    selectedResource,
+    handleChangeSelectedResource,
+  } = props;
 
-  const [tabVal, setTabVal] = React.useState(0);
-
-  const handleChange = () => (event, newValue) => {
-    setTabVal(newValue);
-  };
-
-  function TabContainer(props) {
-    return (
-      <Typography component="div" style={{ paddingTop: 2 }}>
-        {props.children}
-      </Typography>
-    );
+  if (!selectedResource) {
+    handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
   }
+
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -129,9 +129,9 @@ const ResourcesSubMenu = (props) => {
           <div className={classes.subMenuTab}>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880, md: 1200 } }}>
               <Tabs
-                value={tabVal}
+                value={selectedResource}
                 className={classes.tabs}
-                onChange={handleChange()}
+                onChange={(_e, v) => handleChangeSelectedResource(v)}
                 variant="scrollable"
                 scrollButtons="auto"
                 indicatorColor="primary"
@@ -147,6 +147,7 @@ const ResourcesSubMenu = (props) => {
                     >
                       <Tab
                         key={index}
+                        value={key}
                         label={
                           <div className={classes.iconText}>
                             <KubernetesIcon
@@ -165,24 +166,20 @@ const ResourcesSubMenu = (props) => {
             </Box>
           </div>
         </Paper>
-        {Object.keys(resource.tableConfig()).map((key, index) => {
-          return (
-            tabVal === index && (
-              <TabContainer>
-                <ResourcesTable
-                  key={index}
-                  workloadType={key}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sConfig}
-                  resourceConfig={resource.tableConfig}
-                  submenu={resource.submenu}
-                  selectedK8sContexts={selectedK8sContexts}
-                />
-              </TabContainer>
-            )
-          );
-        })}
+        {Object.keys(resource.tableConfig()).map((key, index) => (
+          <TabPanel value={selectedResource} index={key} key={index}>
+            <ResourcesTable
+              key={index}
+              workloadType={key}
+              updateProgress={updateProgress}
+              classes={classes}
+              k8sConfig={k8sConfig}
+              resourceConfig={resource.tableConfig}
+              submenu={resource.submenu}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </TabPanel>
+        ))}
       </div>
     </>
   );

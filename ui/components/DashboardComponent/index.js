@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
+import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
+import { Tooltip, Tabs, Tab, Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -12,6 +12,7 @@ import ResourcesSubMenu from './resources/resources-sub-menu';
 import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
+import { TabPanel } from './tabpanel';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -104,30 +105,48 @@ const styles = (theme) => ({
     cursor: 'pointer',
   },
 });
+const useDashboardRouter = () => {
+  const router = useRouter();
+  const { query, push: pushRoute, route } = router;
 
-const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
-  const [tabVal, setTabVal] = React.useState(0);
+  const resourceCategory = query.resourceCategory || 'overview';
+  const selectedResource = query.resource;
 
-  const handleChange = () => (event, newValue) => {
-    setTabVal(newValue);
+  const changeResourceTab = (resourceCategory) => {
+    if (query.resourceCategory === resourceCategory) {
+      return;
+    }
+    pushRoute(
+      `${route}?resourceCategory=${resourceCategory || query.resourceCategory}`,
+      undefined,
+      { shallow: true },
+    );
   };
 
-  function TabContainer(props) {
-    return (
-      <Typography component="div" style={{ paddingTop: 2 }}>
-        {props.children}
-      </Typography>
-    );
-  }
+  const handleChangeSelectedResource = (resource) => {
+    if (query.resource === resource) {
+      return;
+    }
+    pushRoute(`${route}?resourceCategory=${resourceCategory}&resource=${resource}`, undefined, {
+      shallow: true,
+    });
+  };
+
+  return { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource };
+};
+
+const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
+  const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
+    useDashboardRouter();
 
   return (
     <>
       <div className={classes.wrapperClss}>
         <Paper square className={classes.wrapperClss}>
           <Tabs
-            value={tabVal}
+            value={resourceCategory}
             className={classes.tabs}
-            onChange={handleChange()}
+            onChange={(e, val) => changeResourceTab(val)}
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
@@ -140,6 +159,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                 scrollButtons
                 icon={<MesheryIcon style={{ width: '28px', height: '28px' }} />}
                 label={'Overview'}
+                value={'overview'}
               />
             </Tooltip>
 
@@ -148,6 +168,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                 <Tooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
                     key={idx}
+                    value={resource}
                     className={classes.tab}
                     icon={<KubernetesIcon style={{ width: '28px', height: '28px' }} />}
                     label={resource}
@@ -157,41 +178,37 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             })}
           </Tabs>
         </Paper>
-        {tabVal === 0 && (
-          <TabContainer>
-            <Overview />
-          </TabContainer>
-        )}
-        {Object.keys(ResourcesConfig).map((resource, idx) => {
-          return (
-            tabVal === idx + 1 &&
-            (ResourcesConfig[resource].submenu ? (
-              <TabContainer>
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                />
-              </TabContainer>
+
+        <TabPanel value={resourceCategory} index={'overview'}>
+          <Overview />
+        </TabPanel>
+        {Object.keys(ResourcesConfig).map((resource, idx) => (
+          <TabPanel value={resourceCategory} index={resource} key={resource}>
+            {ResourcesConfig[resource].submenu ? (
+              <ResourcesSubMenu
+                key={idx}
+                resource={ResourcesConfig[resource]}
+                selectedResource={selectedResource}
+                handleChangeSelectedResource={handleChangeSelectedResource}
+                updateProgress={updateProgress}
+                classes={classes}
+                k8sConfig={k8sconfig}
+                selectedK8sContexts={selectedK8sContexts}
+              />
             ) : (
-              <TabContainer>
-                <ResourcesTable
-                  key={idx}
-                  workloadType={resource}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
-                />
-              </TabContainer>
-            ))
-          );
-        })}
+              <ResourcesTable
+                key={idx}
+                workloadType={resource}
+                classes={classes}
+                k8sConfig={k8sconfig}
+                selectedK8sContexts={selectedK8sContexts}
+                resourceConfig={ResourcesConfig[resource].tableConfig}
+                menu={ResourcesConfig[resource].submenu}
+                updateProgress={updateProgress}
+              />
+            )}
+          </TabPanel>
+        ))}
       </div>
     </>
   );
