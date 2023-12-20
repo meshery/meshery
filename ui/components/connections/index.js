@@ -71,7 +71,12 @@ import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import MultiSelectWrapper from '../multi-select-wrapper';
-import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
+import {
+  useGetEnvironmentsQuery,
+  useAddConnectionToEnvironmentMutation,
+  // useRemoveConnectionFromEnvironmentMutation,
+  useSaveEnvironmentMutation,
+} from '../../rtk-query/environments';
 import ErrorBoundary from '../ErrorBoundary';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
@@ -188,7 +193,79 @@ function Connections({
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  // const [environments, setEnvironments] = useState([]);
+
+  const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
+  // const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
+  const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const addConnectionToEnvironment = async (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  // const removeConnectionFromEnvironment = (environmentId, environmentName, connectionId, connectionName) => {
+  //   removeConnectionFromEnvMutator({ environmentId, connectionId })
+  //     .unwrap()
+  //     .then(() => {
+  //       getConnections(page, pageSize, search, sortOrder);
+  //       notify({
+  //         message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     }
+  //   )
+  //     .catch((err) => {
+  //       notify({
+  //         message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
+  //         event_type: EVENT_TYPES.ERROR,
+  //         details: err.toString(),
+  //       });
+  //     })
+  // };
+
+  const saveEnvironment = (connectionId, connectionName, environmentName) => {
+    saveEnvironmentMutator({
+      body: {
+        name: environmentName,
+        organization_id: organization?.id,
+      },
+    })
+      .unwrap()
+      .then((resp) => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Environment: ${resp.Name} saved`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        addConnectionToEnvironment(connectionId, connectionName, resp.ID, resp.Name);
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
 
   const {
     data: environmentsResponse,
@@ -224,61 +301,20 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  // const handleCreateEnvironment = (connectionId, connName, environmentId, envName) => {
-  //   dataFetch(
-  //     `/api/environments`,
-  //     {
-  //       credentials: 'include',
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         name: envName,
-  //         organization_id: organization?.id,
-  //       }),
-  //     },
-  //     (resp) => {
-  //       getEnvironments();
-  //       notify({
-  //         message: `Environment: ${resp.name} created`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //       handleConnectionAssignment(connectionId, connName, resp.id, resp.name);
-  //     },
-  //     handleError(ACTION_TYPES.CREATE_ENVIRONMENT),
-  //   );
-  // };
-
-  // const handleConnectionAssignment = (connectionId, connName, environmentId, envName) => {
-  //   dataFetch(
-  //     `/api/environments/${environmentId}/connections/${connectionId}`,
-  //     {
-  //       credentials: 'include',
-  //       method: 'POST',
-  //     },
-  //     () => {
-  //       getConnections(page, pageSize, search, sortOrder);
-  //       notify({
-  //         message: `Connection: ${connName} assigned to environment: ${envName}`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     },
-  //     handleError(ACTION_TYPES.UPDATE_CONNECTION),
-  //   );
-  // };
-
   const handleEnvironmentSelect = (connectionId, connName, environments) => {
     console.log('environments: ', environments);
-    // environments.forEach((environment) => {
-    //   let envName = environment.label;
-    //   let environmentId = environment.value;
-    //   let isNew = environment.__isNew__ || false;
+    environments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+      let isNew = environment.__isNew__ || false;
 
-    //   if (isNew) {
-    //     handleCreateEnvironment(connectionId, connName, environmentId, envName);
-    //     return;
-    //   }
+      if (isNew) {
+        saveEnvironment(connectionId, connName, envName);
+        return;
+      }
 
-    //   handleConnectionAssignment(connectionId, connName, environmentId, envName);
-    // });
+      addConnectionToEnvironment(environmentId, envName, connectionId, connName);
+    });
   };
 
   let colViews = [
