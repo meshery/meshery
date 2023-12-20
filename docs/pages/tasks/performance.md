@@ -5,6 +5,7 @@ permalink: tasks/performance-management
 type: tasks
 language: en
 list: include
+abstract: "Advanced performance characterization with Meshery."
 ---
 
 Key to the efficient operation of any service mesh is the measurement and management of it's performance.

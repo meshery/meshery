@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/linux_mac.png 
+abstract: Install Meshery CLI on Linux or Mac
 ---
 
 # Overview

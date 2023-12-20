@@ -1,14 +1,15 @@
 ---
 layout: default
-title: Importing an Application
+title: Importing existing applications
 permalink: extensions/importing-an-application
 language: en
 display-title: "false"
 list: exclude
 type: meshmap
+abstract: Import your existing applications into Meshery.
 ---
 
-# Importing an Application
+## Import existing applications into Meshery
 
 Importing apps into Meshery Extension as Meshery Apps is a powerful feature that enables users to manage, operate, and observe their cloud native infrastructure more effectively. With this feature, users can easily import their app manifest and store it in the database.
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { updateGrafanaConfig, updatePrometheusConfig, updateTelemetryUrls } from '../../lib/store';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
@@ -106,9 +105,7 @@ const styles = (theme) => ({
   },
 });
 
-const DashboardComponent = (props) => {
-  const { classes, k8sconfig, selectedK8sContexts, updateProgress } = props;
-
+const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const [tabVal, setTabVal] = React.useState(0);
 
   const handleChange = () => (event, newValue) => {
@@ -122,6 +119,7 @@ const DashboardComponent = (props) => {
       </Typography>
     );
   }
+
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -201,25 +199,14 @@ const DashboardComponent = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters');
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
-    meshAdapters,
-    meshAdaptersts,
     k8sconfig,
-    grafana,
-    prometheus,
     selectedK8sContexts,
   };
 };
