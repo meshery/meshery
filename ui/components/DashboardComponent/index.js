@@ -32,6 +32,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
   },
   tabs: {
+    flexGrow: 1,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -135,42 +136,49 @@ const useDashboardRouter = () => {
   return { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource };
 };
 
+const ResourceCategoryTabs = ['overview', ...Object.keys(ResourcesConfig)];
 const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
+
+  const getResourceCategoryIndex = (resourceCategory) => {
+    return ResourceCategoryTabs.findIndex((resource) => resource === resourceCategory);
+  };
+
+  const getResourceCategory = (index) => {
+    return ResourceCategoryTabs[index];
+  };
 
   return (
     <>
       <div className={classes.wrapperClss}>
         <Paper square className={classes.wrapperClss}>
           <Tabs
-            value={resourceCategory}
-            className={classes.tabs}
-            onChange={(e, val) => changeResourceTab(val)}
-            variant="fullWidth"
+            value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
+            className={classes.tabs}
+            onChange={(_e, val) => {
+              changeResourceTab(getResourceCategory(val));
+            }}
+            variant="fullWidth"
             textColor="primary"
             allowScrollButtonsMobile
             scrollButtons="auto"
           >
-            <Tooltip title={`View Overview`} placement="top">
-              <Tab
-                className={classes.tab}
-                scrollButtons
-                icon={<MesheryIcon style={{ width: '28px', height: '28px' }} />}
-                label={'Overview'}
-                value={'overview'}
-              />
-            </Tooltip>
-
-            {Object.keys(ResourcesConfig).map((resource, idx) => {
+            {ResourceCategoryTabs.map((resource, idx) => {
               return (
                 <Tooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
-                    key={idx}
-                    value={resource}
+                    value={idx}
+                    key={resource}
                     className={classes.tab}
-                    icon={<KubernetesIcon style={{ width: '28px', height: '28px' }} />}
+                    icon={
+                      resource === 'overview' ? (
+                        <MesheryIcon style={{ width: '28px', height: '28px' }} />
+                      ) : (
+                        <KubernetesIcon style={{ width: '28px', height: '28px' }} />
+                      )
+                    }
                     label={resource}
                   />
                 </Tooltip>

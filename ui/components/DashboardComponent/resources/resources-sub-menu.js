@@ -122,6 +122,16 @@ const ResourcesSubMenu = (props) => {
     handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
   }
 
+  const TABS = Object.keys(resource.tableConfig());
+
+  const getResourceCategoryIndex = (resourceCategory) => {
+    return TABS.findIndex((resource) => resource === resourceCategory);
+  };
+
+  const getResourceCategory = (index) => {
+    return TABS[index];
+  };
+
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -129,44 +139,38 @@ const ResourcesSubMenu = (props) => {
           <div className={classes.subMenuTab}>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880, md: 1200 } }}>
               <Tabs
-                value={selectedResource}
+                value={getResourceCategoryIndex(selectedResource)}
                 className={classes.tabs}
-                onChange={(_e, v) => handleChangeSelectedResource(v)}
+                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
                 variant="scrollable"
                 scrollButtons="auto"
                 indicatorColor="primary"
                 textColor="primary"
                 centered
               >
-                {Object.keys(resource.tableConfig()).map((key, index) => {
-                  return (
-                    <Tooltip
+                {TABS.map((key, index) => (
+                  <Tooltip
+                    key={index}
+                    title={`${resource.tableConfig()[key].name}`}
+                    placement="top"
+                  >
+                    <Tab
                       key={index}
-                      title={`${resource.tableConfig()[key].name}`}
-                      placement="top"
-                    >
-                      <Tab
-                        key={index}
-                        value={key}
-                        label={
-                          <div className={classes.iconText}>
-                            <KubernetesIcon
-                              className={classes.iconText}
-                              width="22px"
-                              height="22px"
-                            />
-                            {resource.tableConfig()[key].name}
-                          </div>
-                        }
-                      />
-                    </Tooltip>
-                  );
-                })}
+                      value={index}
+                      label={
+                        <div className={classes.iconText}>
+                          <KubernetesIcon className={classes.iconText} width="22px" height="22px" />
+                          {resource.tableConfig()[key].name}
+                        </div>
+                      }
+                    />
+                  </Tooltip>
+                ))}
               </Tabs>
             </Box>
           </div>
         </Paper>
-        {Object.keys(resource.tableConfig()).map((key, index) => (
+        {TABS.map((key, index) => (
           <TabPanel value={selectedResource} index={key} key={index}>
             <ResourcesTable
               key={index}
