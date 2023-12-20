@@ -70,7 +70,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
-import ReactSelectWrapper from '../ReactSelectWrapper';
+import MultiSelectWrapper from '../multi-select-wrapper';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -369,7 +369,7 @@ function Connections({
           return (
             <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
               <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                <ReactSelectWrapper
+                <MultiSelectWrapper
                   onChange={(select) =>
                     handleEnvironmentSelect(
                       connections[tableMeta.rowIndex].id,
@@ -379,11 +379,13 @@ function Connections({
                   }
                   options={getOptions()}
                   value={cleanedEnvs}
-                  label={`Assign envionments`}
-                  error={false}
-                  placeholder={`Name of environment`}
-                  isMulti={true}
-                  noOptionsMessage={`No environment discovered`}
+                  // label={`Assign envionments`}
+                  // error={false}
+                  // placeholder={`Name of environment`}
+                  // isMulti={true}
+                  // noOptionsMessage={`No environment discovered`}
+                  isSelectAll={true}
+                  menuPlacement={'bottom'}
                 />
               </Grid>
             </Grid>
