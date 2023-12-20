@@ -2,7 +2,7 @@
 layout: page
 title: Build & Release (CI)
 permalink: project/contributing/build-and-release
-description: Details of Meshery's build and release strategy.
+abstract: Details of Meshery's build and release strategy.
 language: en
 type: project
 category: contributing

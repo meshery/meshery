@@ -3,7 +3,7 @@ layout: page
 title: Contributing to Models
 permalink: project/contributing/contributing-models
 redirect_from: project/contributing/contributing-models/
-description: How to contribute to Meshery Models, Components, Relationships, Policies...
+abstract: How to contribute to Meshery Models, Components, Relationships, Policies...
 language: en
 type: project
 category: contributing

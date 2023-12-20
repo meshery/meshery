@@ -1,11 +1,12 @@
 ---
 layout: default
 title: Creating a Meshery Design
-description: Get to know what is Design & how its helps in configuring components
+abstract: Learn how to create a Meshery design from scratch or from a template.
 permalink: guides/creating-a-meshery-design
 type: guides
 language: en
 published: false
+abstract: Learn how to create a Meshery design from scratch or from a template.
 ---
 
 
