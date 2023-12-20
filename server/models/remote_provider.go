@@ -2671,7 +2671,13 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *RemoteProvider) GetPatternSourceConte(req *http.Request, designID string) ([]byte, error) {
+func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID string) ([]byte, error) {
+		if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
+	}
+
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, designID)
 	remoteProviderURL, _ := url.Parse(downloadURL)
