@@ -73,6 +73,7 @@ const MultiSelectWrapper = (props) => {
   };
 
   const handleChange = (selected) => {
+    console.log('handleChange: ', selected);
     if (
       selected.length > 0 &&
       !isAllSelected.current &&

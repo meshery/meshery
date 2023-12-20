@@ -71,6 +71,10 @@ import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import MultiSelectWrapper from '../multi-select-wrapper';
+import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
+import ErrorBoundary from '../ErrorBoundary';
+import { store } from '../../store';
+import { Provider } from 'react-redux';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -184,7 +188,20 @@ function Connections({
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [environments, setEnvironments] = useState([]);
+  // const [environments, setEnvironments] = useState([]);
+
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgID: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -207,63 +224,61 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  const handleCreateEnvironment = (connectionId, connName, environmentId, envName) => {
-    dataFetch(
-      `/api/environments`,
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          name: envName,
-          organization_id: organization?.id,
-        }),
-      },
-      (resp) => {
-        getEnvironments();
-        notify({
-          message: `Environment: ${resp.name} created`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-        handleConnectionAssignment(connectionId, connName, resp.id, resp.name);
-      },
-      handleError(ACTION_TYPES.CREATE_ENVIRONMENT),
-    );
-  };
+  // const handleCreateEnvironment = (connectionId, connName, environmentId, envName) => {
+  //   dataFetch(
+  //     `/api/environments`,
+  //     {
+  //       credentials: 'include',
+  //       method: 'POST',
+  //       body: JSON.stringify({
+  //         name: envName,
+  //         organization_id: organization?.id,
+  //       }),
+  //     },
+  //     (resp) => {
+  //       getEnvironments();
+  //       notify({
+  //         message: `Environment: ${resp.name} created`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //       handleConnectionAssignment(connectionId, connName, resp.id, resp.name);
+  //     },
+  //     handleError(ACTION_TYPES.CREATE_ENVIRONMENT),
+  //   );
+  // };
 
-  const handleConnectionAssignment = (connectionId, connName, environmentId, envName) => {
-    dataFetch(
-      `/api/environments/${environmentId}/connections/${connectionId}`,
-      {
-        credentials: 'include',
-        method: 'POST',
-      },
-      () => {
-        getConnections(page, pageSize, search, sortOrder);
-        notify({
-          message: `Connection: ${connName} assigned to environment: ${envName}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.UPDATE_CONNECTION),
-    );
-  };
+  // const handleConnectionAssignment = (connectionId, connName, environmentId, envName) => {
+  //   dataFetch(
+  //     `/api/environments/${environmentId}/connections/${connectionId}`,
+  //     {
+  //       credentials: 'include',
+  //       method: 'POST',
+  //     },
+  //     () => {
+  //       getConnections(page, pageSize, search, sortOrder);
+  //       notify({
+  //         message: `Connection: ${connName} assigned to environment: ${envName}`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     },
+  //     handleError(ACTION_TYPES.UPDATE_CONNECTION),
+  //   );
+  // };
 
   const handleEnvironmentSelect = (connectionId, connName, environments) => {
-    environments.forEach((environment) => {
-      console.log('env:', environment);
-      let envName = environment.label;
-      let environmentId = environment.value;
-      let isNew = environment.__isNew__ || false;
+    console.log('environments: ', environments);
+    // environments.forEach((environment) => {
+    //   let envName = environment.label;
+    //   let environmentId = environment.value;
+    //   let isNew = environment.__isNew__ || false;
 
-      if (isNew) {
-        console.log('create + assign', envName, connectionId);
-        handleCreateEnvironment(connectionId, connName, environmentId, envName);
-        return;
-      }
+    //   if (isNew) {
+    //     handleCreateEnvironment(connectionId, connName, environmentId, envName);
+    //     return;
+    //   }
 
-      console.log('assign', envName, connectionId);
-      handleConnectionAssignment(connectionId, connName, environmentId, envName);
-    });
+    //   handleConnectionAssignment(connectionId, connName, environmentId, envName);
+    // });
   };
 
   let colViews = [
@@ -360,35 +375,32 @@ function Connections({
           );
         },
         customBodyRender: (value, tableMeta) => {
+          console.log('environments: ', value);
           const getOptions = () => {
-            return environments.map((env) => ({ label: env.name, value: env.id }));
+            return environments.map((env) => ({ label: env.name, value: env.id })) || [];
           };
-          console.log('value:', value);
-          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id }));
-          console.log('opts:', getOptions());
+          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
           return (
-            <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-              <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                <MultiSelectWrapper
-                  onChange={(select) =>
-                    handleEnvironmentSelect(
-                      connections[tableMeta.rowIndex].id,
-                      connections[tableMeta.rowIndex].name,
-                      select ? select : '',
-                    )
-                  }
-                  options={getOptions()}
-                  value={cleanedEnvs}
-                  // label={`Assign envionments`}
-                  // error={false}
-                  // placeholder={`Name of environment`}
-                  // isMulti={true}
-                  // noOptionsMessage={`No environment discovered`}
-                  isSelectAll={true}
-                  menuPlacement={'bottom'}
-                />
+            isEnvironmentsSuccess && (
+              <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                  <MultiSelectWrapper
+                    onChange={(select) =>
+                      handleEnvironmentSelect(
+                        connections[tableMeta.rowIndex].id,
+                        connections[tableMeta.rowIndex].name,
+                        select ? select : '',
+                      )
+                    }
+                    options={getOptions()}
+                    value={cleanedEnvs}
+                    placeholder={`Assigned Environments`}
+                    isSelectAll={true}
+                    menuPlacement={'bottom'}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+            )
           );
         },
       },
@@ -787,27 +799,15 @@ function Connections({
     }
   }, [page, pageSize, search, sortOrder, connectionMetadataState]);
 
-  const getEnvironments = () => {
-    dataFetch(
-      `/api/environments?orgID=${organization?.id}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setEnvironments(res?.environments || []);
-      },
-      handleError(ACTION_TYPES.FETCH_CONNECTIONS),
-    );
-  };
-
   useEffect(() => {
-    updateCols(columns);
-    console.log('org:', organization);
-    if (organization != '' && typeof organization != undefined) {
-      getEnvironments();
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: environmentsError.toString(),
+      });
     }
-  }, [organization]);
+  }, [environmentsError]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
@@ -1201,7 +1201,22 @@ const mapStateToProps = (state) => {
   };
 };
 
+const ConnectionManagementPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in Connection Management', e)}
+      >
+        <Provider store={store}>
+          <ConnectionManagementPage {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
 // @ts-ignore
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPage),
+  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPageWithErrorBoundary),
 );
