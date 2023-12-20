@@ -1588,12 +1588,11 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	applicationID := mux.Vars(r)["id"]
-	resp, err := provider.GetApplicationSourceContent(r, applicationID)
+	designID := mux.Vars(r)["id"]
+	resp, err := provider.GetDesignSourceContent(r, designID)
 	if err != nil {
-		obj := "download"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
 
