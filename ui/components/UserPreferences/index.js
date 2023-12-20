@@ -32,10 +32,13 @@ import { getTheme, setTheme } from '../../utils/theme';
 import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
-// import { useGetOrgsQuery } from '../../rtk-query/organization';
+import { useGetOrgsQuery } from '../../rtk-query/organization';
 import { OrgIconWrapper, Org, SelectItem, OrgSelect } from './style';
 import OrgIcon from '../../assets/icons/OrgIcon';
 import theme from '../../themes/app';
+import ErrorBoundary from '../ErrorBoundary';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -166,7 +169,7 @@ function ThemeToggler({ theme, themeSetter, classes }) {
   );
 }
 
-function UserPreference(props) {
+const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
@@ -175,8 +178,13 @@ function UserPreference(props) {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  // const { data: orgs, isSuccess: isOrgsSuccess } = useGetOrgsQuery();
-  const [orgs, setOrgs] = useState([]);
+  const {
+    data: orgsResponse,
+    isSuccess: isOrgsSuccess,
+    isError: isOrgsError,
+    error: orgsError,
+  } = useGetOrgsQuery({});
+  let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization } = props;
 
   const { notify } = useNotification();
@@ -186,23 +194,6 @@ function UserPreference(props) {
 
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
-  };
-
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          console.log(result);
-          setOrgs(result?.organizations);
-        }
-      },
-      (err) => handleError('There was an error fetching available orgs', err),
-    );
   };
 
   const handleCatalogPreference = (catalogContent) => {
@@ -259,8 +250,6 @@ function UserPreference(props) {
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    // console.log(requestBody,anonymousStats,perfResultStats);
-
     props.updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl('/api/user/prefs', props.selectedK8sContexts),
@@ -307,15 +296,22 @@ function UserPreference(props) {
       },
       (result) => {
         if (result) {
-          // console.log(result);
           setExtensionPreferences(result?.usersExtensionPreferences);
           setCatalogContent(result?.usersExtensionPreferences?.catalogContent);
         }
       },
       (err) => console.error(err),
     );
-    fetchAvailableOrgs();
   }, []);
+
+  useEffect(() => {
+    if (isOrgsError) {
+      notify({
+        message: `There was an error fetching available data ${orgsError?.data}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [orgsError]);
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;
@@ -363,7 +359,7 @@ function UserPreference(props) {
       <Paper className={props.classes.statsWrapper}>
         {tabVal === 0 && (
           <>
-            {orgs && (
+            {isOrgsSuccess && orgs && (
               <div className={props.classes.formContainer}>
                 <FormControl component="fieldset" className={props.classes.formGrp}>
                   <FormLabel component="legend" className={props.classes.formLegend}>
@@ -511,7 +507,7 @@ function UserPreference(props) {
       </Paper>
     </NoSsr>
   );
-}
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateUser: bindActionCreators(updateUser, dispatch),
@@ -533,6 +529,21 @@ const mapStateToProps = (state) => {
   };
 };
 
+const UserPreferenceWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
+        <Provider store={store}>
+          <UserPreference {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference)),
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreferenceWithErrorBoundary)),
 );
