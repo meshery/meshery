@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/aks.svg
+abstract: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster. 
 ---
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
@@ -31,8 +32,8 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 
 - [In-cluster Installation](#in-cluster-installation)
     - [Preflight Checks](#preflight-checks)
-        - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-        - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
     - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
     - [Installation: Using Helm](#installation-using-helm)
 - [Post-Installation Steps](#post-installation-steps)

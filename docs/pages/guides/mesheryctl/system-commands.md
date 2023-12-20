@@ -5,6 +5,7 @@ permalink : guides/mesheryctl/system-commands
 language : en
 type : Guides
 category : mesheryctl
+abstract: Mesheryctl system commands for managing Meshery deployments.
 ---
 
 Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : `mesheryctl <Main_command> <Argument> <Flags>`

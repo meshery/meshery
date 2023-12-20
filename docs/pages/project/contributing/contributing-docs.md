@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery Docs
 permalink: project/contributing/contributing-docs
-description: How to contribute to Meshery Docs.
+abstract: How to contribute to Meshery Docs.
 language: en
 type: project
 category: contributing

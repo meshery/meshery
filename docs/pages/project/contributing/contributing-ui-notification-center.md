@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery UI - Notification Center
 permalink: project/contributing/contributing-ui-notification-center
-description: How to contribute to the Notification Center in Meshery's web-based UI.
+abstract: How to contribute to the Notification Center in Meshery's web-based UI.
 language: en
 display-title: false
 type: project

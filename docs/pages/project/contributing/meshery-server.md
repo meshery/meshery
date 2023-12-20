@@ -3,7 +3,7 @@ layout: page
 title: Contributing to Meshery Server
 permalink: project/contributing/contributing-server
 redirect_from: project/contributing/contributing-server/
-description: How to contribute to Meshery Server
+abstract: How to contribute to Meshery Server
 language: en
 type: project
 category: contributing
