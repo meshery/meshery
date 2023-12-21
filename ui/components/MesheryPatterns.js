@@ -62,8 +62,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
-import SearchBar from '../utils/custom-search';
-import CustomColumnVisibilityControl from '../utils/custom-column';
+import { SearchBar } from '@layer5/sistent-components';
+import { CustomColumnVisibilityControl } from '@layer5/sistent-components';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
@@ -71,6 +71,7 @@ import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { SistentThemeProvider } from '@layer5/sistent-components';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -1544,22 +1545,24 @@ function MesheryPatterns({
             </div>
           )}
           <div className={classes.searchWrapper} style={{ display: 'flex' }}>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-                initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
-              }}
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-              placeholder="Search designs..."
-            />
-            {viewType === 'table' && (
-              <CustomColumnVisibilityControl
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+            <SistentThemeProvider>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+                }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder="Search designs..."
               />
-            )}
-
+              {viewType === 'table' && (
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              )}
+            </SistentThemeProvider>
             {!selectedPattern.show && (
               <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
             )}

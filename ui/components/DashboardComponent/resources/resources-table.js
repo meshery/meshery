@@ -3,9 +3,9 @@ import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
-import CustomColumnVisibilityControl from '../../../utils/custom-column';
+import { CustomColumnVisibilityControl } from '@layer5/sistent-components';
 import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
+import { SearchBar } from '@layer5/sistent-components';
 import View from '../view';
 import { ALL_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -14,6 +14,7 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { SistentThemeProvider } from '@layer5/sistent-components';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -205,19 +206,22 @@ const ResourcesTable = (props) => {
                 borderRadius: '0.5rem 0.5rem 0 0',
               }}
             >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder={`Search ${tableConfig.name}...`}
-              />
+              <SistentThemeProvider>
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                  placeholder={`Search ${tableConfig.name}...`}
+                />
 
-              <CustomColumnVisibilityControl
-                columns={tableConfig.columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={tableConfig.columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              </SistentThemeProvider>
             </div>
           </div>
           <ResponsiveDataTable
