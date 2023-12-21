@@ -567,3 +567,10 @@ type orgsResponseWrapper struct {
 	// in: body
 	Body *models.OrganizationsPage
 }
+
+// Returns Design Source Content
+// swagger:response mesheryPatternSourceContentResponseWrapper
+type mesheryPatternSourceContentResponseWrapper struct {
+	// in: body
+	Body []byte
+}
