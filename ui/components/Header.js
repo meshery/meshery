@@ -287,6 +287,7 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
+
   return (
     <>
       <div style={show ? cursorNotAllowed : {}}>
@@ -314,7 +315,7 @@ function K8sContextMenu({
               className="k8s-image"
               src={
                 connectionMetadataState
-                  ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                  ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                   : ''
               }
               width="24px"

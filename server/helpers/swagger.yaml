@@ -196,7 +196,7 @@ paths:
                 - ApplicationsAPI
     /api/application/download/{id}/{sourcetype}:
         get:
-            description: Get the pattern source-content
+            description: Get the application source-content
             operationId: typeGetApplication
             parameters:
                 - in: formData
@@ -204,9 +204,9 @@ paths:
                   type: file
                   x-go-name: FormFile
             responses: {}
-            summary: Handle GET request for Meshery Patterns with of source content
+            summary: Handle GET request for Meshery Application with of source content
             tags:
-                - PatternsAPI
+                - ApplicationsAPI
     /api/application/types:
         get:
             description: Get application file types
@@ -1402,13 +1402,10 @@ paths:
     /api/pattern/download/{id}/{sourcetype}:
         get:
             description: Get the pattern source-content
-            operationId: typeGetApplication
-            parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses: {}
+            operationId: typeGetPatternSourceContent
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternSourceContentResponseWrapper'
             summary: Handle GET request for Meshery Patterns with of source content
             tags:
                 - PatternsAPI
@@ -2545,6 +2542,13 @@ responses:
         description: Returns all meshery filters
     mesheryPatternResponseWrapper:
         description: Returns a single meshery pattern
+    mesheryPatternSourceContentResponseWrapper:
+        description: Returns Design Source Content
+        schema:
+            items:
+                format: uint8
+                type: integer
+            type: array
     mesheryPatternsResponseWrapper:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
