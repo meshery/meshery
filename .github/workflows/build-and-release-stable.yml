@@ -2,7 +2,7 @@ name: Meshery Build and Releaser (stable)
 on:
   push:
     tags:
-      - "v"
+      - "v*"
 
 jobs:
 
