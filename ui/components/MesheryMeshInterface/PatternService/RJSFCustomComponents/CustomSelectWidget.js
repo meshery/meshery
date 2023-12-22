@@ -153,6 +153,11 @@ export default function CustomSelectWidget({
               horizontal: 'left',
             },
             getContentAnchorEl: null,
+            PaperProps: {
+              style: {
+                maxHeight: '400px', // Adjust the maxHeight as needed
+              },
+            },
           },
         }}
         aria-describedby={ariaDescribedByIds(id)}
