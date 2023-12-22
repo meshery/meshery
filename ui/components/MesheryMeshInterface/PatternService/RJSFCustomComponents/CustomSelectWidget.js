@@ -155,7 +155,7 @@ export default function CustomSelectWidget({
             getContentAnchorEl: null,
             PaperProps: {
               style: {
-                maxHeight: '400px', // Adjust the maxHeight as needed
+                maxHeight: '400px',
               },
             },
           },
