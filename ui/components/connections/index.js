@@ -260,7 +260,8 @@ function Connections({
                   getColumnValue(tableMeta.rowData, 'kind', columns),
                 )
               }
-              handlePing={() => {
+              handlePing={(e) => {
+                e.stopPropagation();
                 if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
