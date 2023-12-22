@@ -31,7 +31,6 @@ const BaseInput = (props) => {
     },
   }));
 
-  console.log('value', props.value);
   const theme = useTheme();
   const classes = styles();
   return (
