@@ -6,6 +6,7 @@ permalink: reference/error-codes
 redirect_from: reference/error-codes/
 type: Reference
 language: en
+abstract: "Meshery Error Code Reference for all Meshery components so that you can troubleshoot issues."
 ---
 <style>
 

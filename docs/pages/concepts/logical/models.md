@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Meshery Models
+title: Models
 permalink: concepts/models
 type: concepts
 abstract: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.

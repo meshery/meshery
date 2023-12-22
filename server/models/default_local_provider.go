@@ -644,6 +644,12 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 	return l.MesheryPatternPersister.CloneMesheryPattern(patternID, clonePatternRequest)
 }
 
+// GetDesignSourceContent returns design source-content from provider
+func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(designID)
+	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
