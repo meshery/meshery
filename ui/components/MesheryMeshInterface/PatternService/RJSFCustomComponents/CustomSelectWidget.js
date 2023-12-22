@@ -49,7 +49,6 @@ export default function CustomSelectWidget({
   const xRjsfGridArea = schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
-  const isRequired = props?.required;
   const emptyValue = multiple ? [] : '';
   const isEmpty =
     typeof value === 'undefined' ||
@@ -67,7 +66,7 @@ export default function CustomSelectWidget({
   return (
     <>
       {xRjsfGridArea && (
-        <InputLabel required={isRequired} htmlFor={id}>
+        <InputLabel required={required} htmlFor={id}>
           {labelValue(label, hideLabel || !label, false)}
         </InputLabel>
       )}
