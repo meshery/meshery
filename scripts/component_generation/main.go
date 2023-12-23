@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -17,15 +15,15 @@ import (
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/artifacthub"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/option"
-	"google.golang.org/api/sheets/v4"
 	"gopkg.in/yaml.v3"
 )
 
 const dumpFile = "./dump.csv"
 const COLUMNRANGE = "!A:AH3" //Update this on addition of new columns
 const APPENDRANGE = "!A4:V4"
+const sheetID = 0
+
+var spreadsheetID = "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"
 
 type componentWrapper struct {
 	comps   []v1alpha1.ComponentDefinition
@@ -33,7 +31,7 @@ type componentWrapper struct {
 	helmURL string
 }
 
-type pipelineFunc func(in chan []artifacthub.AhPackage, csv chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error
+type pipelineFunc func(in chan artifacthub.AhPackage, csv chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error
 
 type ComponentStruct struct {
 	PackageName string                         `yaml:"name"`
@@ -90,9 +88,7 @@ func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPack
 	for _, pkg := range pkgs {
 		if priorityRepos[pkg.Repository] {
 			priority = append(priority, pkg)
-			continue
-		}
-		if pkg.CNCF {
+		} else if pkg.CNCF {
 			cncf = append(cncf, pkg)
 		} else if pkg.Official {
 			official = append(official, pkg)
@@ -122,9 +118,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	modelsWriter := Writer{
-		file: modelsFd,
-	}
+
 	defer modelsFd.Close()
 	// move to a new function: getHelmPackages
 	pkgs := make([]artifacthub.AhPackage, 0)
@@ -203,11 +197,18 @@ func main() {
 		}
 	}
 
+	updater := spreadsheetUpdater{
+		spreadsheetID:               spreadsheetID,
+		sheetName:                   sheetName,
+		spreadsheetChan:             spreadsheetChan,
+		availableModels:             availableModels,
+		availableComponentsPerModel: availableComponentsPerModel,
+	}
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		Spreadsheet(srv, sheetName, spreadsheetChan, availableModels, availableComponentsPerModel)
+		updater.update(srv)
 	}()
 	dp := newdedup()
 
@@ -281,13 +282,13 @@ func (d *dedup) check(key string) bool {
 	return d.m[key]
 }
 
-func StartPipeline(pkgChan chan []artifacthub.AhPackage, compsCSV chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error {
+func StartPipeline(pkgChan chan artifacthub.AhPackage, compsCSV chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error {
 	for pkg := range pkgChan {
 		if err := pkg.UpdatePackageData(); err != nil {
 			fmt.Println(err)
 			continue
 		}
-		fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
+		fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", pkg.Name, pkg.VerifiedPublisher)
 		comps, err := pkg.GenerateComponents()
 		if err != nil {
 			fmt.Println(err)
@@ -316,11 +317,6 @@ func StartPipeline(pkgChan chan []artifacthub.AhPackage, compsCSV chan component
 		}
 	}
 	return nil
-}
-
-type Writer struct {
-	file *os.File
-	m    sync.Mutex
 }
 
 func writeComponentModels(models []artifacthub.AhPackage, file *os.File) error {
@@ -382,127 +378,4 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 		}
 	}
 	return nil
-}
-
-var spreadsheetID = "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"
-
-const sheetID = 0
-
-func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan componentWrapper,
-	am map[string][]interface{}, acpm map[string]map[string]bool) {
-	start := time.Now()
-	rangeString := sheetName + APPENDRANGE
-	appendRange := sheetName + "!A4:AV4"
-	// Get the value of the specified cell.
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
-	if err != nil {
-		fmt.Println("Unable to retrieve data from sheet: ", err)
-		return
-	}
-	batchSize := 100
-	values := make([][]interface{}, 0)
-	for entry := range spreadsheet {
-		if len(entry.comps) == 0 {
-			continue
-		}
-		for _, comp := range entry.comps {
-			if acpm[entry.model][comp.Kind] {
-				fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model, comp.Kind)
-				continue
-			}
-			var newValues []interface{}
-			if am[entry.model] != nil {
-				newValues = make([]interface{}, len(am[entry.model]))
-				copy(newValues, am[entry.model])
-			} else {
-				newValues = make([]interface{}, len(resp.Values[0]))
-				copy(newValues, resp.Values[0])
-				newValues[NameToIndex["modelDisplayName"]] = entry.model
-				newValues[NameToIndex["model"]] = entry.model
-			}
-			newValues[NameToIndex["component"]] = comp.Kind
-			if comp.Schema != "" {
-				newValues[NameToIndex["hasSchema?"]] = true
-			} else {
-				newValues[NameToIndex["hasSchema?"]] = false
-			}
-			newValues[NameToIndex["link"]] = entry.helmURL
-			values = append(values, newValues)
-			if acpm[entry.model] == nil {
-				acpm[entry.model] = make(map[string]bool)
-			}
-			acpm[entry.model][comp.Kind] = true
-			batchSize--
-			fmt.Println("Batch size: ", batchSize)
-			if batchSize <= 0 {
-				row := &sheets.ValueRange{
-					Values: values,
-				}
-				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-				values = make([][]interface{}, 0)
-				batchSize = 100
-				if err != nil || response2.HTTPStatusCode != 200 {
-					fmt.Println(err)
-					continue
-				}
-			}
-		}
-		if am[entry.model] != nil {
-			fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model)
-			continue
-		}
-		newValues := make([]interface{}, len(resp.Values[0]))
-		copy(newValues, resp.Values[0])
-		newValues[NameToIndex["modelDisplayName"]] = entry.model
-		newValues[NameToIndex["model"]] = entry.model
-		newValues[NameToIndex["CRDs"]] = len(entry.comps)
-		newValues[NameToIndex["link"]] = entry.helmURL
-		values = append(values, newValues)
-		copy(am[entry.model], newValues)
-		batchSize--
-		fmt.Println("Batch size: ", batchSize)
-		if batchSize <= 0 {
-			row := &sheets.ValueRange{
-				Values: values,
-			}
-			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-			values = make([][]interface{}, 0)
-			batchSize = 100
-			if err != nil || response2.HTTPStatusCode != 200 {
-				fmt.Println(err)
-				continue
-			}
-		}
-	}
-	if len(values) != 0 {
-		row := &sheets.ValueRange{
-			Values: values,
-		}
-		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-		if err != nil || response2.HTTPStatusCode != 200 {
-			fmt.Println(err)
-		}
-	}
-	elapsed := time.Now().Sub(start)
-	fmt.Printf("Time taken by spreadsheet updater in minutes (including the time it required to generate components): %f", elapsed.Minutes())
-}
-
-func NewSheetSRV() *sheets.Service {
-	ctx := context.Background()
-	byt, _ := base64.StdEncoding.DecodeString(os.Getenv("CRED"))
-	// authenticate and get configuration
-	config, err := google.JWTConfigFromJSON(byt, "https://www.googleapis.com/auth/spreadsheets")
-	if err != nil {
-		fmt.Println("ERR2", err)
-		return nil
-	}
-	// create client with config and context
-	client := config.Client(ctx)
-	// create new service using client
-	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		fmt.Println("ERR3", err)
-		return nil
-	}
-	return srv
 }
