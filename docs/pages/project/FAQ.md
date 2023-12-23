@@ -52,6 +52,7 @@ type: project
 <p><strong>Answer:</strong> Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different <a href="{{site.baseurl}}/extensibility/#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
 </details>
 
+
 ## User FAQs
 
 <details>
@@ -135,6 +136,13 @@ type: project
 
 <p>Note: You can also verify health of your system using <a href="{{site.baseurl}}/reference/mesheryctl/system/check">mesheryctl system check</a></p>
 
+</details>
+
+<details>
+    <summary>
+<h6>Question: Why are images invisible for some designs in the Meshery Catalog?</h6>
+</summary>
+<p><strong>Answer:</strong> In certain instances, the images of published designs in <a href="https://meshery.io/catalog">Meshery Catalog</a> may not be visible due to bandwidth issues. This can occur when there are network constraints affecting the retrieval of image data. However, rest assured that the design information and other relevant details are still accessible.</p>
 </details>
 
 ## Contributing FAQs
