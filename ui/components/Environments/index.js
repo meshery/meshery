@@ -4,7 +4,7 @@ import { Provider, connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { withStyles } from '@material-ui/core/styles';
-import { Pagination, PaginationItem } from '@mui/material';
+import { Pagination, PaginationItem } from '@material-ui/lab';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@material-ui/icons';
