@@ -30,11 +30,12 @@ var (
 var FilterCmd = &cobra.Command{
 	Use:   "filter",
 	Short: "Cloud Native Filter Management",
-	Long:  ``,
+	Long:  `Cloud Native Filter Management
+
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Base command for WASM filters
-mesheryctl filter [subcommands]	
-	`,
+Base command for WASM filters:
+  mesheryctl filter [subcommands]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
