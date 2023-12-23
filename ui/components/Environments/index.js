@@ -1,27 +1,27 @@
-import { Button, Grid, NoSsr } from '@material-ui/core';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
 import { Provider, connect } from 'react-redux';
-import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { withStyles } from '@material-ui/core/styles';
+import { Pagination, PaginationItem } from '@mui/material';
+import { withRouter } from 'next/router';
+import { debounce } from 'lodash';
+import { Delete } from '@material-ui/icons';
+import classNames from 'classnames';
 
+import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
-import { useEffect, useRef, useState } from 'react';
 import dataFetch from '../../lib/data-fetch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
-import { CreateButtonWrapper, EditButton, TextButton } from './styles';
-import theme from '../../themes/app';
 import Modal from '../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
-import { withRouter } from 'next/router';
-import { Box, Pagination, PaginationItem } from '@mui/material';
-import { debounce } from 'lodash';
 import EmptyState from './empty-state';
-import { Delete } from '@material-ui/icons';
 import TransferList from './transfer-list/transfer-list';
 import GenericModal from './generic-modal';
 import ConnectionIcon from '../../assets/icons/Connection';
@@ -31,6 +31,7 @@ import {
   useRemoveConnectionFromEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { store } from '../../store';
+import styles from './styles';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -64,7 +65,7 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization }) => {
+const Environments = ({ organization, classes }) => {
   const [environments, setEnvironments] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -452,15 +453,31 @@ const Environments = ({ organization }) => {
   return (
     <NoSsr>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-        <CreateButtonWrapper>
-          <EditButton
+        <div className={classes.createButtonWrapper}>
+          <Button
+            type="submit"
             variant="contained"
+            color="primary"
+            size="large"
             onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
+            style={{
+              padding: '8px',
+              borderRadius: 5,
+              marginRight: '2rem',
+            }}
+            data-cy="btnResetDatabase"
           >
-            <AddIcon height="24" width="24" fill={theme.palette.secondary.white} />
-            <TextButton>Create</TextButton>
-          </EditButton>
-        </CreateButtonWrapper>
+            <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+            <Typography
+              style={{
+                paddingLeft: '4px',
+                marginRight: '4px',
+              }}
+            >
+              Create
+            </Typography>
+          </Button>
+        </div>
         <SearchBar
           onSearch={(value) => {
             setSearch(value);
@@ -471,26 +488,13 @@ const Environments = ({ organization }) => {
         />
       </div>
       {selectedEnvironments.length > 0 && (
-        <Box
-          sx={{
-            width: '100%',
-            p: '0.8rem',
-            justifyContent: 'space-between',
-            marginTop: '0.18rem',
-            marginBottom: '1rem',
-            backgroundColor: theme.palette.secondary.white,
-            borderRadius: '.25rem',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ color: '#000' }}>
+        <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+          <Typography>
             {selectedEnvironments.length > 1
               ? `${selectedEnvironments.length} environments selected`
               : `${selectedEnvironments.length} environment selected`}
-          </span>
-          <Button>
+          </Typography>
+          <Button className={classes.iconButton}>
             <Delete
               style={{ color: 'red', margin: '0 2px' }}
               onClick={handleBulkDeleteEnvironmentConfirm}
@@ -505,6 +509,7 @@ const Environments = ({ organization }) => {
             {environments.map((environment) => (
               <Grid item xs={12} md={6} key={environment.id}>
                 <EnvironmentCard
+                  classes={classes}
                   environmentDetails={environment}
                   selectedEnvironments={selectedEnvironments}
                   onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
@@ -607,10 +612,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(
-  withRouter((props) => (
-    <Provider store={store}>
-      <Environments {...props} />
-    </Provider>
-  )),
+export default withStyles(styles)(
+  connect(mapStateToProps)(
+    withRouter((props) => (
+      <Provider store={store}>
+        <Environments {...props} />
+      </Provider>
+    )),
+  ),
 );
