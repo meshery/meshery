@@ -117,7 +117,7 @@ export var darkTheme = createTheme({
       disableButtonBg: '#666666',
       disableButton: '#9d9d9d',
       listItemHover: 'rgb(0, 187, 166, 0.5)',
-      white: 'rgb(255, 255, 255, 0.1)',
+      white: '#202020',
       btnDisabled: '#b0bec5',
     },
     tables: {

@@ -20,6 +20,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '20px',
+    backgroundColor: theme.palette.secondary.white,
     '&:hover': {
       cursor: 'pointer',
     },
@@ -95,6 +96,7 @@ const styles = (theme) => ({
     height: '100%',
     display: 'flex',
     width: '100%',
+    background: theme.palette.secondary.focused,
   },
 
   allocationWorkspace: {
@@ -113,6 +115,11 @@ const styles = (theme) => ({
     boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
     marginBottom: '10px',
     padding: '20px 10px',
+    backgroundColor: `${theme.palette.secondary.white}`,
+    color: theme.palette.secondary.penColorPrimary,
+    '&:hover': {
+      background: theme.palette.secondary.white,
+    },
   },
 
   viewButton: {

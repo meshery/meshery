@@ -119,7 +119,7 @@ const EnvironmentCard = ({
               sm={3}
               md={12}
               style={{
-                pt: 2,
+                paddingTop: '15px',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
