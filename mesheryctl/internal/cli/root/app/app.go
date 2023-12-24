@@ -38,13 +38,11 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Cloud Native Apps Management",
-	Long:  `All apps operations: import, list, view, onboard and offboard
-	
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Long:  `All apps operations: import, list, view, onboard and offboard`,
 	Example: `
 Base command:
   mesheryctl app [subcommand]
-	`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
