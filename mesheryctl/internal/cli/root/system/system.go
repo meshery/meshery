@@ -36,7 +36,8 @@ var (
 var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
-	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
+	Long:  `Manage the state and configuration of Meshery server, components, and client.
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
