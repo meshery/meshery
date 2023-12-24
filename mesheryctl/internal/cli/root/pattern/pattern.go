@@ -31,9 +31,7 @@ var (
 var PatternCmd = &cobra.Command{
 	Use:   "pattern",
 	Short: "Cloud Native Patterns Management",
-	Long:  `Manage service meshes using predefined patterns
-	
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Long:  `Manage service meshes using predefined patterns`,
 	Example: `
 Apply pattern file:
   mesheryctl pattern apply --file [path to pattern file | URL of the file]
@@ -46,7 +44,8 @@ View pattern file:
 
 List all patterns:
   mesheryctl pattern list
-	`,
+	
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
