@@ -1,64 +1,45 @@
 package meshmodel_policy
 
-label_obj[label_key] {
-	some key
-	svc := input.services[_]
-	labels := svc.labels
-	labels[key]
-	label_key = key
+get_tag_keys(tag_type) := tag_keys {
+	tag_keys := {tag_key |
+		some tag_key
+		svc := input.services[_]
+		tags := svc[tag_type]
+		tags[tag_key]
+	}
 }
 
-annotation_obj[annotation_key] {
-	some key
-	svc := input.services[_]
-	annotation := svc.annotations
-	annotation[key]
-	annotation_key = key
+group_nodes(tag_type, tag_key) := key {
+	key := {value: group |
+		svc := input.services[_]
+		tags := svc[tag_type]
+		some value
+		some key
+		value = tags[key]
+		key == tag_key
+		group = {g |
+			some name
+			x := input.services[name]
+			x[tag_type][key]
+			x[tag_type][key] == value
+			id := x.traits.meshmap.id
+			g := {"id": id, "name": name}
+		}
+	}
 }
 
 sibling_matchlabels_relationship = result {
-	labels_result := {labels_map: key |
-		some labels_map
-		label_obj[labels_map]
-
-		key := {value: result |
-			svc := input.services[_]
-			labels := svc.labels
-			some value
-			some k
-			value = labels[k]
-			k == labels_map
-			result = {r |
-				some name
-				x := input.services[name]
-				x.labels[k]
-				x.labels[k] == value
-				id := x.traits.meshmap.id
-				r := {"id": id, "name": name}
-			}
-		}
+	labels_result := {tag_labels: key |
+		tag_labels_array := get_tag_keys("labels")
+		tag_labels_array[tag_labels]
+		key := group_nodes("labels", tag_labels)
 	}
 
-	annotation_result := {annotations_map: key |
-		some annotations_map
-		annotation_obj[annotations_map]
-		key := {value: result |
-			svc := input.services[_]
-			annotations := svc.annotations
-			some value
-			some k
-			value = annotations[k]
-			k == annotations_map
-			result = {r |
-				some name
-				x := input.services[name]
-                x.annotations[k]
-				x.annotations[k] == value
-				id := x.traits.meshmap.id
-				r := {"id": id, "name": name}
-			}
-		}
+	annotations_result := {tag_annotations: key |
+		tag_annotations_array := get_tag_keys("annotations")
+		tag_annotations_array[tag_annotations]
+		key := group_nodes("annotations", tag_annotations)
 	}
 
-	result := {"annotation": annotation_result, "labels": labels_result}
+	result := {"annotation": annotations_result, "labels": labels_result}
 }
