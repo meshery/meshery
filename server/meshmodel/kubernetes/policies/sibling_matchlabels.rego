@@ -1,4 +1,4 @@
-package play
+package meshmodel_policy
 
 label_obj[label_key] {
 	some key
