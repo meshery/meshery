@@ -116,14 +116,12 @@ const EnvironmentCard = ({
             </Grid>
             <Grid
               xs={12}
-              sm={3}
-              md={12}
               style={{
                 paddingTop: '15px',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
-                gap: 1,
+                gap: '10px',
               }}
             >
               <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
@@ -136,7 +134,7 @@ const EnvironmentCard = ({
               </Box>
               {/* temporary disable workspace allocation button  */}
               {false && (
-                <Box onClick={(e) => e.stopPropagation()}>
+                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
                   <TransferButton
                     title="Assigned Workspaces"
                     count={
