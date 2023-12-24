@@ -30,8 +30,7 @@ var (
 var FilterCmd = &cobra.Command{
 	Use:   "filter",
 	Short: "Cloud Native Filter Management",
-	Long:  `Cloud Native Filter Management.
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Long:  `Cloud Native Filter Management.Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Base command for WASM filters
 mesheryctl filter [subcommands]	
