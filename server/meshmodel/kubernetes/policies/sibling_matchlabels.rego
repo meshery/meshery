@@ -16,7 +16,7 @@ annotation_obj[annotation_key] {
 	annotation_key = key
 }
 
-group_objects_with_matching_field = result {
+sibling_matchlabels_relationship = result {
 	labels_result := {labels_map: key |
 		some labels_map
 		label_obj[labels_map]
