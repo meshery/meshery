@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Checkbox from '@mui/material/Checkbox';
+import { List, ListItem, Grid } from '@material-ui/core';
 
 import KubernetesIcon from '../../../assets/icons/KubernetesIcon';
 import SMPIcon from '../../../assets/icons/SMPIcon';
@@ -12,6 +9,7 @@ import {
   ButtonGrid,
   ListGrid,
   ListHeading,
+  StyledCheckbox,
   StyledChip,
   StyledPaper,
   TransferButton,
@@ -140,7 +138,7 @@ export default function TransferList({
                     </Typography>
                   </Tooltip>
                 )}
-                <Checkbox
+                <StyledCheckbox
                   checked={checked.indexOf(item) !== -1}
                   tabIndex={-1}
                   disableRipple
@@ -185,6 +183,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleAllRight}
             disabled={left?.length === 0}
             aria-label="move all right"
@@ -195,6 +194,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleCheckedRight}
             disabled={leftChecked.length === 0}
             aria-label="move selected right"
@@ -204,6 +204,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleCheckedLeft}
             disabled={rightChecked.length === 0}
             aria-label="move selected left"
@@ -213,6 +214,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleAllLeft}
             disabled={right.length === 0}
             aria-label="move all left"
