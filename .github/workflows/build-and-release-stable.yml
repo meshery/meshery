@@ -183,7 +183,6 @@ jobs:
   call-cncf-playground-rollout:
     needs:
       - build
-      - ctlrelease
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
