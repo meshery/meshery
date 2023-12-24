@@ -169,7 +169,6 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 				Hostname: ArtifactHubComponentsHandler.String(),
 			}, comp)
 		case rel := <-erh.relationshipChan:
-			fmt.Printf("relationship: %+v\n", rel)
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
 			}, rel)
