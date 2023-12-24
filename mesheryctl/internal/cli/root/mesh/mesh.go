@@ -46,9 +46,7 @@ var (
 	MeshCmd    = &cobra.Command{
 		Use:   "mesh",
 		Short: "Cloud Native Lifecycle Management",
-		Long:  `Provisioning, configuration, and on-going operational management of service meshes.
-		
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+		Long:  `Provisioning, configuration, and on-going operational management of service meshes.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 			// if `mesh` command is ran without any subcommands, show Help and exit
