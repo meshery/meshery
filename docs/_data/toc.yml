@@ -4,7 +4,7 @@
     - title: Supported Platforms ↆ
       url: installation
       children:
-        - title: Docker
+        - title: Docker ↆ
           url: installation/docker
           grandchildren:
             - title: Docker Extension
