@@ -481,7 +481,7 @@ type Provider interface {
 
 	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
-	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) error
+	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
 	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
 }

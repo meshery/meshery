@@ -4877,17 +4877,17 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *WorkspacePayload, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		logrus.Warn("operation not available")
-		return ErrInvalidCapability("Workspace", l.ProviderName)
+		return []byte(""), ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	_env, err := json.Marshal(env)
 	if err != nil {
-		return err
+		return []byte(""), err
 	}
 	bf := bytes.NewBuffer(_env)
 
@@ -4898,29 +4898,29 @@ func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *WorkspacePayload,
 		tokenString, err = l.GetToken(req)
 		if err != nil {
 			logrus.Error("error getting token: ", err)
-			return err
+			return []byte(""), err
 		}
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
+			return []byte(""), ErrUnreachableRemoteProvider(err)
 		}
-		return ErrFetch(err, "Save Workspace", resp.StatusCode)
+		return []byte(""), ErrFetch(err, "Save Workspace", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	_, err = io.ReadAll(resp.Body)
+	bfResp, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Workspace")
+		return []byte(""), ErrDataRead(err, "Save Workspace")
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		return nil
+		return bfResp, nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to save the workspace"), "Workspace", resp.StatusCode)
+	return []byte(""), ErrPost(fmt.Errorf("failed to save the workspace"), "Workspace", resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error) {

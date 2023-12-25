@@ -1270,8 +1270,8 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byt
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, _ *WorkspacePayload, _ string, _ bool) error {
-	return ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, _ *WorkspacePayload, _ string, _ bool) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, _ *WorkspacePayload, _ string) (*Workspace, error) {
