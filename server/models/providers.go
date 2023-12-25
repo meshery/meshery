@@ -480,8 +480,8 @@ type Provider interface {
 	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
 
 	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
-	GetWorkspaceByID(req *http.Request, environmentID, orgID string) ([]byte, error)
-	SaveWorkspace(req *http.Request, env *WorkspacePayload, token string, skipTokenCheck bool) error
-	DeleteWorkspace(req *http.Request, environmentID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, env *WorkspacePayload, environmentID string) (*Workspace, error)
+	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
+	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) error
+	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
+	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
 }
