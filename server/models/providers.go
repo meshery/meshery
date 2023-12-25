@@ -279,6 +279,8 @@ const (
 	PersistOrganizations Feature = "organizations"
 
 	PersistEnvironments Feature = "environments"
+
+	PersistWorkspaces Feature = "workspaces"
 )
 
 const (
@@ -476,4 +478,6 @@ type Provider interface {
 	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order string) ([]byte, error)
 
 	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
+
+	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
 }

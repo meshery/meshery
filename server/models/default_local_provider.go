@@ -1258,6 +1258,27 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
 }
 
+func (l *DefaultLocalProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, _ *WorkspacePayload, _ string, _ bool) error {
+	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, _ *WorkspacePayload, _ string) (*Workspace, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
 	id := uuid.FromStringOrNil(organizationId)
