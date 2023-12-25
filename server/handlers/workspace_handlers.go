@@ -76,7 +76,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 //
 // Creates a new workspace
 // responses:
-// 201: noContentWrapper
+// 201: workspaceResponseWrapper
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -115,8 +115,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 //
 // Deletes a workspace
 // responses:
-// 201: noContentWrapper
-
+// 201: workspaceResponseWrapper
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
@@ -200,7 +199,6 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 // ```?filter={condition}```
 // responses:
 // 	200: environmentsResponseWrapper
-
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
@@ -229,8 +227,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 //
 // ```?filter={condition}```
 // responses:
-// 	200: mesheryDesignsResponseWrapper
-
+// 	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
@@ -250,8 +247,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 //
 // Adds an environment to a workspace
 // responses:
-// 201: noContentWrapper
-
+// 201: workspaceEnvironmentsMappingResponseWrapper
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	environmentID := mux.Vars(req)["environmentID"]
@@ -270,8 +266,7 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 //
 // Removes an environment from a workspace
 // responses:
-// 201: noContentWrapper
-
+// 201: workspaceEnvironmentsMappingResponseWrapper
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	environmentID := mux.Vars(req)["environmentID"]
@@ -290,8 +285,7 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 //
 // Adds a meshery design to a workspace
 // responses:
-// 201: noContentWrapper
-
+// 201: workspaceDesignsMappingResponseWrapper
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	designID := mux.Vars(req)["designID"]
@@ -310,8 +304,7 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 //
 // Removes a meshery design from a workspace
 // responses:
-// 201: noContentWrapper
-
+// 201: workspaceDesignsMappingResponseWrapper
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	designID := mux.Vars(req)["designID"]
