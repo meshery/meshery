@@ -21,7 +21,7 @@ const connectionsApi = api
           },
           method: 'GET',
         }),
-        providesTags: (_result, _error) => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+        providesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
       }),
 
       createEnvironment: builder.mutation({
@@ -31,7 +31,7 @@ const connectionsApi = api
           body: queryArg.environmentPayload,
         }),
 
-        invalidatesTags: (_result, _error) => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
       }),
 
       updateEnvironment: builder.mutation({
@@ -41,7 +41,7 @@ const connectionsApi = api
           body: queryArg.environmentPayload,
         }),
 
-        invalidatesTags: (_result, _error) => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
       }),
 
       deleteEnvironment: builder.mutation({
@@ -50,7 +50,7 @@ const connectionsApi = api
           method: 'DELETE',
         }),
 
-        invalidatesTags: (_result, _error) => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
       }),
 
       getEnvironmentConnections: builder.query({

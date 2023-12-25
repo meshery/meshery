@@ -17,7 +17,7 @@ const connectionsApi = api.injectEndpoints({
         },
         method: 'GET',
       }),
-      providesTags: (_result, _error) => [{ type: TAGS.CONNECTIONS }],
+      providesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
     getConnectionStatus: builder.query({
       query: (queryArg) => ({
