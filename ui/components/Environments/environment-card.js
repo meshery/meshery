@@ -52,15 +52,13 @@ const EnvironmentCard = ({
   onAssignConnection,
   classes,
 }) => {
-  // const [environmentConnectionsCount, setEenvironmentConnectionsCount] = useState(0);
-
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
     },
     { skip: !environmentDetails.id },
   );
-  const environmentConnectionsCount = environmentConnections?.connections?.length || 0;
+  const environmentConnectionsCount = environmentConnections?.total_count || 0;
 
   const deleted = environmentDetails.deleted_at.Valid;
 
