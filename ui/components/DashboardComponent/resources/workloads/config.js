@@ -8,7 +8,7 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip } from '../../../../utils/utils';
+import { ConditionalTooltip, ResizableCell } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -169,7 +169,11 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let nodeName = attribute?.nodeName;
-              return <>{nodeName}</>;
+              return (
+                <>
+                  <ResizableCell value={nodeName} />
+                </>
+              );
             },
           },
         },
