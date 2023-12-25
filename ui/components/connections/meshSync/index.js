@@ -12,6 +12,7 @@ import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
 import { camelcaseToSnakecase } from '../../../utils/utils';
+import UniversalFilter from '../../../utils/custom-filter';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -26,6 +27,7 @@ export default function MeshSyncTable(props) {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
@@ -324,10 +326,17 @@ export default function MeshSyncTable(props) {
         method: 'GET',
       },
       (res) => {
-        setMeshSyncResources(res?.resources || []);
+        const filteredData = res?.resources?.filter((item) => {
+          if (selectedFilters.kind === 'All') {
+            return true;
+          }
+          return item.kind === selectedFilters.kind;
+        });
+        setMeshSyncResources(filteredData);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
+        setFilter(filter);
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
@@ -340,6 +349,59 @@ export default function MeshSyncTable(props) {
       event_type: EVENT_TYPES.ERROR,
       details: error.toString(),
     });
+  };
+
+  const filters = {
+    kind: {
+      name: 'Kind',
+      options: [
+        { label: 'Deployment', value: 'Deployment' },
+        { label: 'Service', value: 'Service' },
+        { label: 'Pod', value: 'Pod' },
+        { label: 'Namespace', value: 'Namespace' },
+        { label: 'StatefulSet', value: 'StatefulSet' },
+        { label: 'DaemonSet', value: 'DaemonSet' },
+        { label: 'Job', value: 'Job' },
+        { label: 'CronJob', value: 'CronJob' },
+        { label: 'ReplicaSet', value: 'ReplicaSet' },
+        { label: 'ReplicationController', value: 'ReplicationController' },
+        { label: 'HorizontalPodAutoscaler', value: 'HorizontalPodAutoscaler' },
+        { label: 'Ingress', value: 'Ingress' },
+        { label: 'ConfigMap', value: 'ConfigMap' },
+        { label: 'Secret', value: 'Secret' },
+        { label: 'ServiceAccount', value: 'ServiceAccount' },
+        { label: 'PersistentVolume', value: 'PersistentVolume' },
+        { label: 'PersistentVolumeClaim', value: 'PersistentVolumeClaim' },
+        { label: 'StorageClass', value: 'StorageClass' },
+        { label: 'VolumeAttachment', value: 'VolumeAttachment' },
+        { label: 'CustomResourceDefinition', value: 'CustomResourceDefinition' },
+        { label: 'ClusterRole', value: 'ClusterRole' },
+        { label: 'ClusterRoleBinding', value: 'ClusterRoleBinding' },
+        { label: 'Role', value: 'Role' },
+        { label: 'RoleBinding', value: 'RoleBinding' },
+        { label: 'NetworkPolicy', value: 'NetworkPolicy' },
+        { label: 'PodSecurityPolicy', value: 'PodSecurityPolicy' },
+        { label: 'Node', value: 'Node' },
+        { label: 'CustomResource', value: 'CustomResource' },
+        { label: 'CustomResourceDefinition', value: 'CustomResourceDefinition' },
+        { label: 'Mesh', value: 'Mesh' },
+        { label: 'MeshSync', value: 'MeshSync' },
+        { label: 'MeshSyncResource', value: 'MeshSyncResource' },
+        { label: 'MeshSyncResourceType', value: 'MeshSyncResourceType' },
+      ],
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
+
+  const handleApplyFilter = () => {
+    const columnName = Object.keys(selectedFilters)[0];
+    const columnValue = selectedFilters[columnName];
+    const filter = {
+      [columnName]: columnValue === 'All' ? null : [columnValue],
+    };
+    setFilter(filter);
+    getMeshsyncResources(page, pageSize, search, sortOrder, 'filter');
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -371,6 +433,15 @@ export default function MeshSyncTable(props) {
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search connections..."
+          />
+
+          <UniversalFilter
+            id="ref"
+            filters={filters}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            handleApplyFilter={handleApplyFilter}
+            conditionForMaxHeight={true}
           />
 
           <CustomColumnVisibilityControl

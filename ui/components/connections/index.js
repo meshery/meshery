@@ -70,6 +70,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import UniversalFilter from '../../utils/custom-filter';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -171,6 +172,7 @@ function Connections({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
+  const [filter, setFilter] = useState('');
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -674,11 +676,19 @@ function Connections({
             (connection.kindLogo =
               connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
-        setConnections(res?.connections || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
+        const filteredConnections = res?.connections.filter((connection) => {
+          if (selectedFilters.status === 'All') {
+            return connection;
+          }
+          return connection.status === selectedFilters.status;
+        });
+
+        setConnections(filteredConnections);
+        setCount(res?.total_count);
         setLoading(false);
+        setPageSize(res?.page_size);
+        setPage(res?.page);
+        setFilter(filter);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
@@ -873,6 +883,34 @@ function Connections({
     return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
+  const filters = {
+    status: {
+      name: 'Status',
+      options: [
+        { label: 'Connected', value: 'connected' },
+        { label: 'Registered', value: 'registered' },
+        { label: 'Discovered', value: 'discovered' },
+        { label: 'Ignored', value: 'ignored' },
+        { label: 'Deleted', value: 'deleted' },
+        { label: 'Maintenance', value: 'maintenance' },
+        { label: 'Disconnected', value: 'disconnected' },
+        { label: 'Not Found', value: 'not found' },
+      ],
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All' });
+
+  const handleApplyFilter = () => {
+    const columnName = Object.keys(selectedFilters)[0];
+    const columnValue = selectedFilters[columnName];
+    const filter = {
+      [columnName]: columnValue === 'All' ? null : [columnValue],
+    };
+    setFilter(filter);
+    getConnections(page, pageSize, search, sortOrder, 'filter');
+  };
+
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -959,6 +997,14 @@ function Connections({
                 placeholder="Search connections..."
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
+              />
+
+              <UniversalFilter
+                id="ref"
+                filters={filters}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                handleApplyFilter={handleApplyFilter}
               />
 
               <CustomColumnVisibilityControl
