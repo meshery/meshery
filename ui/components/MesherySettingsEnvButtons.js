@@ -19,7 +19,7 @@ import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
-import { ConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 
 const styles = makeStyles((theme) => ({
@@ -286,7 +286,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 whiteSpace="no-wrap"
                 textOverflow="ellipsis"
               >
-                <ConnectionChip
+                <TootltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);

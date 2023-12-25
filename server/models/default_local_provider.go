@@ -46,6 +46,7 @@ type DefaultLocalProvider struct {
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
+	OrganizationPersister          *OrganizationPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 	Log                             logger.Handler
@@ -133,11 +134,11 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
@@ -160,6 +161,11 @@ func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, _ str
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
+
+func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
@@ -636,6 +642,12 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns M
 // CloneMesheryPattern clones a meshery pattern with the given id
 func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.CloneMesheryPattern(patternID, clonePatternRequest)
+}
+
+// GetDesignSourceContent returns design source-content from provider
+func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(designID)
+	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }
 
 // RemotePatternFile takes in the
@@ -1119,6 +1131,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			}
 		}(seedContent, log, &seededUUIDs)
 	}
+
+	// seed default organization
+	go func() {
+		id, _ := uuid.NewV4()
+		org := &Organization{
+			ID:          &id,
+			Name:        "My Org",
+			Country:     "",
+			Region: 		"",
+			Description: "This is default organization",
+			Owner: 		 uuid.Nil,
+		}
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
+		}
+	}()
 }
 func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
@@ -1205,6 +1234,39 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 		return nil, err
 	}
 	return delCredential, nil
+}
+
+// GetOrganizations returns the list of organizations
+func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order, updatedAfter string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+}
+
+// GetOrganization returns the organization for the given organizationID
+func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
+	id := uuid.FromStringOrNil(organizationId)
+	return l.OrganizationPersister.GetOrganzation(id)
+}
+
+// SaveOrganization saves given organization with the provider
+func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *Organization) ([]byte, error) {
+	return l.OrganizationPersister.SaveOrganization(organization)
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed

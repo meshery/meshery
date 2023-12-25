@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Troubleshooting Errors while running Meshery 
-description: Troubleshooting Meshery errors when running make run-fast / meshery system start 
+abstract: Troubleshooting Meshery errors when running make run-fast / meshery system start 
 permalink: guides/troubleshooting/meshery-server
 redirect_from: guides/troubleshooting/running
 type: guides

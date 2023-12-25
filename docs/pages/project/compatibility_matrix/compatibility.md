@@ -5,7 +5,7 @@ permalink: installation/compatibility-matrix
 redirect_from: 
  - project/compatibility-matrix/
  - installation/compatibility-matrix/
-description: a complete compatibility matrix and project test status dashboard.
+abstract: An installation compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
 list: include

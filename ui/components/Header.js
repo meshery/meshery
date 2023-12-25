@@ -9,11 +9,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
-import Chip from '@material-ui/core/Chip';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
@@ -22,17 +21,13 @@ import { Checkbox, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import {
-  deleteKubernetesConfig,
-  pingKubernetes,
-} from './ConnectionWizard/helpers/kubernetesHelpers';
+import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from './ConnectionWizard/helpers/common';
+import { _ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import BadgeAvatars from './CustomAvatar';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
@@ -43,6 +38,9 @@ import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
+import { formatToTitleCase } from '../utils/utils';
+import { CONNECTION_KINDS } from '../utils/Enum';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -196,17 +194,6 @@ const styles = (theme) => ({
   },
 });
 
-const CONTROLLERS = {
-  BROKER: 0,
-  MESHSYNC: 1,
-};
-
-const STATUS = {
-  DISABLED: 'Disabled',
-  NOT_CONNECTED: 'Not Connected',
-  ACTIVE: 'Active',
-};
-
 async function loadActiveK8sContexts() {
   try {
     const res = await promisifiedDataFetch('/api/system/sync');
@@ -240,11 +227,8 @@ function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
-  runningStatus,
   show,
   updateK8SConfig,
-  updateProgress,
-
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
@@ -253,6 +237,11 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
+  const ping = useKubernetesHook();
+  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+
+  const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
@@ -264,70 +253,6 @@ function K8sContextMenu({
   const ctxStyle = {
     ...disabledStyle,
     marginRight: '0.5rem',
-  };
-
-  const getOperatorStatus = (contextId) => {
-    const state = runningStatus.operatorStatus;
-    if (!state) {
-      return STATUS.DISABLED;
-    }
-
-    const context = state.find((st) => st.contextID === contextId);
-    if (!context) {
-      return STATUS.DISABLED;
-    }
-
-    return context.operatorStatus.status === 'ENABLED' ? STATUS.ACTIVE : STATUS.DISABLED;
-  };
-
-  const getMeshSyncStatus = (contextId) => {
-    const state = runningStatus.operatorStatus;
-    if (!state) {
-      return STATUS.DISABLED;
-    }
-
-    const context = state.find((st) => st.contextID === contextId);
-    if (!context) {
-      return STATUS.DISABLED;
-    }
-
-    const status = context.operatorStatus.controllers[CONTROLLERS.MESHSYNC]?.status;
-    if (status?.includes('ENABLED')) {
-      return status.split(' ')[1].trim();
-    }
-    return status;
-  };
-
-  const getBrokerStatus = (contextId) => {
-    const state = runningStatus.operatorStatus;
-    if (!state) {
-      return STATUS.NOT_CONNECTED;
-    }
-
-    const context = state.find((st) => st.contextID === contextId);
-    if (!context) {
-      return STATUS.NOT_CONNECTED;
-    }
-
-    const status = context.operatorStatus.controllers[CONTROLLERS.BROKER]?.status;
-    if (status?.includes('CONNECTED')) {
-      return status.split(' ')[1].trim();
-    }
-
-    return STATUS.NOT_CONNECTED;
-  };
-
-  const handleKubernetesClick = (name, connectionID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      connectionID,
-    );
   };
 
   const handleKubernetesDelete = (name, connectionID) => async () => {
@@ -362,6 +287,7 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
+
   return (
     <>
       <div style={show ? cursorNotAllowed : {}}>
@@ -387,7 +313,11 @@ function K8sContextMenu({
           <div className={classes.cbadgeContainer}>
             <img
               className="k8s-image"
-              src="/static/img/kubernetes.svg"
+              src={
+                connectionMetadataState
+                  ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                  : ''
+              }
               width="24px"
               height="24px"
               // style={{ zIndex: '2' }}
@@ -462,24 +392,18 @@ function K8sContextMenu({
                   </Link>
                 )}
                 {contexts?.contexts?.map((ctx, idx) => {
-                  const meshStatus = getMeshSyncStatus(ctx.id);
-                  const brokerStatus = getBrokerStatus(ctx.id);
-                  const operStatus = getOperatorStatus(ctx.id);
-
-                  function getStatus(status) {
-                    if (status) {
-                      return STATUS.ACTIVE;
-                    } else {
-                      return STATUS.DISABLED;
-                    }
-                  }
+                  const { operatorState, meshSyncState, natsState } = getControllerStatesByContexID(
+                    ctx.id,
+                  );
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
                       <Tooltip
-                        title={`Server: ${ctx.server},  Operator: ${getStatus(
-                          operStatus,
-                        )}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}
+                        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+                          operatorState,
+                        )}, MeshSync: ${formatToTitleCase(
+                          meshSyncState,
+                        )}, Broker: ${formatToTitleCase(natsState)}`}
                       >
                         <div
                           style={{
@@ -493,30 +417,16 @@ function K8sContextMenu({
                             onChange={() => setActiveContexts(ctx.id)}
                             color="primary"
                           />
-                          <Chip
-                            label={ctx?.name}
+                          <_ConnectionChip
+                            title={ctx?.name}
                             onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                            onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
-                            avatar={
-                              meshStatus ? (
-                                <BadgeAvatars>
-                                  <Avatar
-                                    src="/static/img/kubernetes.svg"
-                                    className={classes.icon}
-                                    style={operStatus ? {} : { opacity: 0.2 }}
-                                  />
-                                </BadgeAvatars>
-                              ) : (
-                                <Avatar
-                                  src="/static/img/kubernetes.svg"
-                                  className={classes.icon}
-                                  style={operStatus ? {} : { opacity: 0.2 }}
-                                />
-                              )
-                            }
-                            variant="filled"
-                            className={classes.Chip}
-                            data-cy="chipContextName"
+                            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+                            iconSrc={
+                              connectionMetadataState
+                                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                                : ''
+                            } // chnage to use connection def
+                            status={operatorState}
                           />
                         </div>
                       </Tooltip>
@@ -734,3 +644,10 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));
+
+// const withControllerStates = (Component) => {
+//   return function WrappedWithControllerStates(props) {
+//     const { getControllerStatesByContexID } = useControllerStatus();
+//     return <Component {...props} getControllerStatesByContexID={getControllerStatesByContexID} />;
+//   };
+// };

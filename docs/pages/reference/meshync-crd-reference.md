@@ -6,6 +6,7 @@ permalink: reference/meshery-operator-crds
 redirect_from: reference/
 type: Reference
 language: en
+abstract: "Details for the Custom Resource Definitions included in Meshery Operator and used by it's custom controllers."
 ---
 
 Included in [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.

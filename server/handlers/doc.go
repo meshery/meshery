@@ -508,6 +508,13 @@ type mesheryConnectionResponseWrapper struct {
 	Body connections.Connection
 }
 
+// Returns all connections
+// swagger:response mesheryConnectionsResponseWrapper
+type mesheryConnectionsResponseWrapper struct {
+	// in: body
+	Body *connections.ConnectionPage
+}
+
 // Returns all connections Status
 // swagger:response mesheryConnectionsStatusPage
 type mesheryConnectionsStatusPage struct {
@@ -552,4 +559,18 @@ type possibleTransitions struct {
 type relationshipPolicyEvalPayloadWrapper struct {
 	//in: body
 	relationshipPolicyEvalPayload relationshipPolicyEvalPayload
+}
+
+// Returns all orgs
+// swagger:response orgsResponseWrapper
+type orgsResponseWrapper struct {
+	// in: body
+	Body *models.OrganizationsPage
+}
+
+// Returns Design Source Content
+// swagger:response mesheryPatternSourceContentResponseWrapper
+type mesheryPatternSourceContentResponseWrapper struct {
+	// in: body
+	Body []byte
 }

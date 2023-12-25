@@ -94,3 +94,8 @@ export const MESHSYNC_STATES = {
   DISCOVERED: 'discovered',
   REGISTER: 'register',
 };
+
+export const TRANSFER_COMPONET = {
+  CHIP: 'chip',
+  OTHER: 'other',
+};

@@ -34,7 +34,7 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { updateProgress } from '../lib/store';
 import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
-import { CONTROLLER_STATES, DEPLOYMENT_TYPE, CONTROLLERS } from '../utils/Enum';
+import { CONTROLLER_STATES, DEPLOYMENT_TYPE, CONTROLLERS, CONNECTION_KINDS } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -112,7 +112,15 @@ const styles = (theme) => ({
   },
 });
 
-function MesherySettingsNew({ classes, updateProgress, meshsyncControllerState, k8sconfig }) {
+// This component can be deleted.
+
+function MesherySettingsNew({
+  classes,
+  updateProgress,
+  meshsyncControllerState,
+  k8sconfig,
+  connectionMetadataState,
+}) {
   const [data, setData] = useState([]);
   const [showMenu, setShowMenu] = useState([false]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -443,7 +451,16 @@ function MesherySettingsNew({ classes, updateProgress, meshsyncControllerState, 
                 onClick={() =>
                   handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)
                 }
-                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                icon={
+                  <img
+                    src={
+                      connectionMetadataState
+                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        : ''
+                    }
+                    className={classes.icon}
+                  />
+                }
                 variant="outlined"
                 data-cy="chipContextName"
               />
@@ -641,7 +658,10 @@ function MesherySettingsNew({ classes, updateProgress, meshsyncControllerState, 
                                   }
                                   icon={
                                     <img
-                                      src="/static/img/kubernetes.svg"
+                                      src={
+                                        connectionMetadataState[CONNECTION_KINDS.KUBERNETES]
+                                          ?.icon || ''
+                                      }
                                       className={classes.icon}
                                     />
                                   }
@@ -1026,8 +1046,14 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const meshsyncControllerState = state.get('controllerState');
+  const connectionMetadataState = state.get('connectionMetadataState');
   // const MeshSyncState = state.get('meshSyncState'); // disfunctional at this point of time
-  return { k8sconfig, selectedK8sContexts, meshsyncControllerState /*MeshSyncState*/ };
+  return {
+    k8sconfig,
+    selectedK8sContexts,
+    meshsyncControllerState,
+    connectionMetadataState /*MeshSyncState*/,
+  };
 };
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

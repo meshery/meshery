@@ -218,12 +218,6 @@ type ConnectionPayload struct {
 	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
 }
 
-type EnvironmentPayload struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	OrgID       string `json:"org_id,omitempty"`
-}
-
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -281,6 +275,10 @@ const (
 	UsersIdentity Feature = "users-identity"
 
 	UsersKeys Feature = "users-keys"
+
+	PersistOrganizations Feature = "organizations"
+
+	PersistEnvironments Feature = "environments"
 )
 
 const (
@@ -417,6 +415,7 @@ type Provider interface {
 	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
 	DeleteMesheryPatternResource(token, resourceID string) error
 	SaveMesheryPatternSourceContent(token string, applicationID string, sourceContent []byte) error
+	GetDesignSourceContent(req *http.Request, patternID string) ([]byte, error)
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility []string) ([]byte, error)
@@ -467,11 +466,14 @@ type Provider interface {
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 
-	GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error)
-	GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error)
+	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
+	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
 	SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
 	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order string) ([]byte, error)
+
+	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
 }

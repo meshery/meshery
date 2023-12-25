@@ -2,7 +2,7 @@
 layout: default
 title: Meshery Community
 permalink: project/community
-description: Meshery's open source, cloud native community
+abstract: Meshery's open source, cloud native community
 redirect_from: project/community/
 language: en
 type: project

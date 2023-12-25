@@ -96,7 +96,7 @@ function MeshModelContructs({ classes }) {
             />
           </Tooltip>
         </div>
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
       </div>
@@ -167,7 +167,7 @@ function MeshModelCategories({ classes }) {
             />
           </Tooltip>
         </div>
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
       </div>
