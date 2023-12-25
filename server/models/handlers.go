@@ -218,6 +218,12 @@ type HandlerInterface interface {
 	SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

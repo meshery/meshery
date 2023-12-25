@@ -1278,6 +1278,30 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, _ *WorkspacePayl
 	return nil, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _ , _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {

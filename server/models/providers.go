@@ -484,4 +484,10 @@ type Provider interface {
 	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
 	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
+	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
+	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
+	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
 }
