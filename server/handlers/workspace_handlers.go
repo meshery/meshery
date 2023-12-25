@@ -95,7 +95,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	err = provider.SaveWorkspace(req, &workspace, "", false)
+	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -106,6 +106,8 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(bf))
 }
 
 // swagger:route DELETE /api/workspaces/{id} WorkspaceAPI idDeleteWorkspaceHandler
