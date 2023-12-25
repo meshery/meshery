@@ -288,6 +288,7 @@ const Loading = () => {
 const BulkActions = () => {
   const checkedEvents = useSelector(selectCheckedEvents);
   const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
+  const allEvents = useSelector(selectEvents);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
   const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
 
@@ -308,6 +309,12 @@ const BulkActions = () => {
   const handleDelete = () => {
     deleteEvents({
       ids: checkedEvents.map((e) => e.id),
+    }).then(resetSelection);
+  };
+
+  const handleDeleteAll = () => {
+    deleteEvents({
+      ids: allEvents.map((e) => e.id),
     }).then(resetSelection);
   };
 
@@ -361,28 +368,47 @@ const BulkActions = () => {
       <Box>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
       </Box>
-      <Collapse in={checkedEvents.length > 0}>
-        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <BulkActionButton
-            tooltip="Delete selected notifications"
-            Icon={DeleteIcon}
-            isLoading={isDeleting}
-            onClick={handleDelete}
-          />
-          <BulkActionButton
-            tooltip="Mark selected notifications as read"
-            Icon={ReadIcon}
-            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
-            onClick={() => handleChangeStatus(STATUS.READ)}
-          />
-          <BulkActionButton
-            tooltip="Mark selected notifications as unread"
-            Icon={UnreadIcon}
-            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
-            onClick={() => handleChangeStatus(STATUS.UNREAD)}
-          />
-        </Box>
-      </Collapse>
+      <Box>
+        <Collapse in={checkedEvents.length == 0 && allEvents.length > 0}>
+          <Box
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              alignItems: 'center',
+              flexDirection: 'row-reverse',
+            }}
+          >
+            <BulkActionButton
+              tooltip="Delete All notifications"
+              Icon={DeleteIcon}
+              isLoading={isDeleting}
+              onClick={handleDeleteAll}
+            />
+          </Box>
+        </Collapse>
+        <Collapse in={checkedEvents.length > 0}>
+          <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <BulkActionButton
+              tooltip="Delete selected notifications"
+              Icon={DeleteIcon}
+              isLoading={isDeleting}
+              onClick={handleDelete}
+            />
+            <BulkActionButton
+              tooltip="Mark selected notifications as read"
+              Icon={ReadIcon}
+              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
+              onClick={() => handleChangeStatus(STATUS.READ)}
+            />
+            <BulkActionButton
+              tooltip="Mark selected notifications as unread"
+              Icon={UnreadIcon}
+              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
+              onClick={() => handleChangeStatus(STATUS.UNREAD)}
+            />
+          </Box>
+        </Collapse>
+      </Box>
     </Box>
   );
 };
