@@ -313,14 +313,16 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/environments/{environmentID}/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsOfEnvironmentHandler), models.ProviderAuth))).
 		Methods("GET")
 
-	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspaces), models.ProviderAuth))).
+	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspacesHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveWorkspace), models.ProviderAuth))).
+	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveWorkspaceHandler), models.ProviderAuth))).
 		Methods("POST")
-	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateWorkspace), models.ProviderAuth))).
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateWorkspaceHandler), models.ProviderAuth))).
 		Methods("PUT")
-	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteWorkspace), models.ProviderAuth))).
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteWorkspaceHandler), models.ProviderAuth))).
 		Methods("DELETE")
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspaceByIdHandler), models.ProviderAuth))).
+		Methods("GET")
 
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
