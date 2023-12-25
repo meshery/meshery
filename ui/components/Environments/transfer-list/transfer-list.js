@@ -176,7 +176,7 @@ export default function TransferList({
               <ListItem
                 key={item.id}
                 role="listitem"
-                sx={{
+                style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   '&:hover': {
@@ -188,7 +188,7 @@ export default function TransferList({
                 {transferComponentType === TRANSFER_COMPONET.CHIP ? (
                   <Tooltip title={item.name} placement="top">
                     <StyledChip
-                      sx={{ paddingY: '10px' }}
+                      style={{ padding: '10px 0' }}
                       variant="outlined"
                       label={item.name}
                       onDelete={() => {}}
@@ -198,7 +198,7 @@ export default function TransferList({
                   </Tooltip>
                 ) : (
                   <Tooltip title={item.name} placement="top">
-                    <Typography sx={{ maxWidth: '230px', height: '1.5rem', overflow: 'hidden' }}>
+                    <Typography style={{ maxWidth: '230px', height: '1.5rem', overflow: 'hidden' }}>
                       {item.name}
                     </Typography>
                   </Tooltip>
@@ -226,7 +226,7 @@ export default function TransferList({
             }}
           >
             {emptyStateIcon}
-            <Typography sx={{ color: '#979797', px: 5, py: 2, lineHeight: 1 }}>
+            <Typography style={{ color: '#979797', padding: '24px 5px', lineHeight: 1 }}>
               {emtyStateMessage}
             </Typography>
           </div>

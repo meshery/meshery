@@ -10,7 +10,7 @@ export const StyledChip = styled(Chip)({
   height: 'unset',
   borderRadius: '100px',
   border: `0.5px solid ${theme.palette.secondary.card}`,
-  maxWidth: '230px',
+  maxWidth: '215px',
 });
 
 export const StyledPaper = styled(Paper)({
@@ -42,6 +42,7 @@ export const TransferButton = styled(Button)({
   padding: '7px 0',
   borderRadius: '10px',
   boxShadow: 'none',
+  borderColor: Colors.keppelGreen,
 });
 
 export const ListGrid = styled(Grid)({
