@@ -279,6 +279,8 @@ const (
 	PersistOrganizations Feature = "organizations"
 
 	PersistEnvironments Feature = "environments"
+
+	PersistWorkspaces Feature = "workspaces"
 )
 
 const (
@@ -476,4 +478,16 @@ type Provider interface {
 	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order string) ([]byte, error)
 
 	GetOrganizations(token, page, pageSize, search, order, filter string) ([]byte, error)
+
+	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
+	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
+	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
+	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
+	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
+	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
+	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
+	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
 }
