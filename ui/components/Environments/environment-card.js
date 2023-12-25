@@ -1,11 +1,11 @@
 import React from 'react';
-import { ClassNames } from '@emotion/react';
 import { Button, Card, Grid, Typography, Box, Checkbox } from '@material-ui/core';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Delete, Edit } from '@material-ui/icons';
 
 import FlipCard from './flip-card';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
+import classNames from 'classnames';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -98,7 +98,7 @@ const EnvironmentCard = ({
             <Grid xs={12} sm={9} md={12} style={{ display: 'flex', justifyContent: 'flex-start' }}>
               {environmentDetails.description ? (
                 <Typography
-                  className={ClassNames(classes.emptyDescription, classes.descriptionLabel)}
+                  className={classNames(classes.emptyDescription, classes.descriptionLabel)}
                   onClick={(e) => e.stopPropagation()}
                   style={{ marginBottom: { xs: 2, sm: 0 }, paddingRight: { sm: 2, lg: 0 } }}
                 >

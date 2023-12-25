@@ -29,9 +29,15 @@ import { TRANSFER_COMPONET } from '../../utils/Enum';
 import {
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
+  useGetEnvironmentConnectionsQuery,
+  useGetEnvironmentsQuery,
+  useCreateEnvironmentMutation,
+  useUpdateEnvironmentMutation,
+  useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { store } from '../../store';
 import styles from './styles';
+import { useGetConnectionsQuery } from '../../rtk-query/connection';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -66,17 +72,6 @@ const ACTION_TYPES = {
 };
 
 const Environments = ({ organization, classes }) => {
-  const [environments, setEnvironments] = useState([]);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [sortOrder /* setSortOrder */] = useState('');
-  const [search, setSearch] = useState('');
-  const [filter /* setFilter */] = useState('');
-  const [totalCount, setTotalCount] = useState();
-  const [, /* loading */ setLoading] = useState(false);
-  const [orgId, setOrgId] = useState('');
-  const [selectedEnvironments, setSelectedEnvironments] = useState([]);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -86,26 +81,106 @@ const Environments = ({ organization, classes }) => {
   const [editEnvId, setEditEnvId] = useState('');
   const [orgValue, setOrgValue] = useState([]);
   const [orgLabel, setOrgLabel] = useState([]);
-
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState('');
+  const [orgId, setOrgId] = useState('');
+  const [selectedEnvironments, setSelectedEnvironments] = useState([]);
   const [assignConnectionModal, setAssignConnectionModal] = useState(false);
   const [connectionAssignEnv, setConnectionAssignEnv] = useState({});
-  // const [environmentConnections, setEnvironmentConnections] = useState([]);
-  // const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
   const [assignedConnections, setAssignedConnections] = useState([]);
-
   const [connectionsData, setConnectionsData] = useState([]);
   const [connectionsPage, setConnectionsPage] = useState(0);
-  const [connectionCount, setConnectionCount] = useState(0);
-
   const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
-  const [environmentConnectionCount, setEnvironmentConnectionCount] = useState(0);
-  const [environmentConnectionPage, setEnvironmentConnectionPage] = useState(0);
+  const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [skip, setSkip] = useState(true);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
+  const pageSize = 10;
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+
+  const {
+    data: environmentsData,
+    // isLoading: isEnvironmentsLoading,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    {
+      search: search,
+      page: page,
+      pagesize: pageSize,
+      orgId: orgId,
+    },
+    {
+      skip: !orgId ? true : false,
+    },
+  );
+
+  const [createEnvironment] = useCreateEnvironmentMutation();
+
+  const [updateEnvironment] = useUpdateEnvironmentMutation();
+
+  const [deleteEnvironment] = useDeleteEnvironmentMutation();
+
+  const {
+    data: connections,
+    // isLoading: isConnectionsLoading,
+    isError: isConnectionsError,
+    error: connectionsError,
+  } = useGetConnectionsQuery(
+    {
+      page: connectionsPage,
+      pagesize: connectionPageSize,
+    },
+    {
+      skip,
+    },
+  );
+
+  const {
+    data: environmentConnections,
+    // isLoading: isEnvironmentConnectionsLoading,
+    isError: isEnvironmentConnectionsError,
+    error: environmentConnectionsError,
+  } = useGetEnvironmentConnectionsQuery(
+    {
+      page: connectionsOfEnvironmentPage,
+      pagesize: connectionPageSize,
+      environmentId: connectionAssignEnv.id,
+    },
+    {
+      skip,
+    },
+  );
+
+  // const loading = isEnvironmentsLoading || isEnvironmentConnectionsLoading || isConnectionsLoading;
+
+  const environments = environmentsData?.environments ? environmentsData.environments : [];
+
+  useEffect(() => {
+    if (isEnvironmentsError) {
+      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+    }
+    if (isEnvironmentConnectionsError) {
+      handleError(
+        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
+      );
+    }
+    if (isConnectionsError) {
+      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+    }
+  }, [
+    isEnvironmentsError,
+    isEnvironmentConnectionsError,
+    isConnectionsError,
+    environmentsError,
+    environmentConnectionsError,
+    connectionsError,
+    handleError,
+  ]);
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -116,89 +191,18 @@ const Environments = ({ organization, classes }) => {
     });
   };
 
+  const handleSuccess = (msg) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: msg,
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+  };
+
   useEffect(() => {
     setOrgId(organization?.id);
     fetchAvailableOrgs();
   }, [organization]);
-
-  useEffect(() => {
-    if (orgId) {
-      getEnvironments(page, pageSize, search, sortOrder, filter);
-    }
-  }, [page, pageSize, search, sortOrder, filter, orgId]);
-
-  const getEnvironments = (page, pageSize, search, sortOrder) => {
-    setLoading(true);
-    if (!search) search = '';
-    dataFetch(
-      `/api/environments?orgID=${orgId}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}&filter=${filter}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        const { environments, page, page_size, total_count } = res;
-        setEnvironments(environments);
-        setPage(page);
-        setPageSize(page_size);
-        setTotalCount(total_count);
-        setLoading(false);
-      },
-      handleError(ERROR_MESSAGE.FETCH_ENVIRONMENTS),
-    );
-  };
-
-  const createEnvironment = (payload) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments`,
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: payload,
-      },
-      () => {
-        notify({ message: 'Environment created', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.CREATE_ENVIRONMENT),
-    );
-  };
-
-  const updateEnvironment = (payload) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${editEnvId}`,
-      {
-        credentials: 'include',
-        method: 'PUT',
-        body: payload,
-      },
-      () => {
-        notify({ message: 'Environment updated', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.UPDATE_ENVIRONMENT),
-    );
-  };
-
-  const deleteEnvironment = (id) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${id}`,
-      {
-        credentials: 'include',
-        method: 'DELETE',
-      },
-      () => {
-        notify({ message: 'Environment deleted', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.DELETE_ENVIRONMENT),
-    );
-  };
 
   const fetchAvailableOrgs = async () => {
     dataFetch(
@@ -220,7 +224,6 @@ const Environments = ({ organization, classes }) => {
   };
 
   const fetchSchema = async (actionType) => {
-    setLoading(true);
     dataFetch(
       `/api/schema/resource/environment`,
       {
@@ -241,43 +244,6 @@ const Environments = ({ organization, classes }) => {
             schema: res,
           });
         }
-      },
-    );
-  };
-
-  const getConnections = (page) => {
-    setLoading(true);
-    dataFetch(
-      `/api/integrations/connections?pagesize=${connectionPageSize}&page=${page}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        /* eslint-disable-next-line no-unsafe-optional-chaining */
-        setConnectionsData((prevConnectionsData) => [...prevConnectionsData, ...res?.connections]);
-        setConnectionCount(res?.total_count);
-        setConnectionsPage(res?.page + 1);
-        setLoading(false);
-      },
-      handleError(ERROR_MESSAGE.FETCH_CONNECTIONS),
-    );
-  };
-
-  const getEnvironmentConnections = (environmentId, page) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${environmentId}/connections?pagesize=${connectionPageSize}&page=${page}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        /* eslint-disable-next-line no-unsafe-optional-chaining */
-        setEnvironmentConnectionsData(res?.connections);
-        setEnvironmentConnectionCount(res?.total_count);
-        setEnvironmentConnectionPage(res?.page + 1);
-        setLoading(false);
       },
     );
   };
@@ -324,22 +290,31 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleCreateEnvironment = ({ organization, name, description }) => {
-    const payload = JSON.stringify({
-      name: name,
-      description: description,
-      organization_id: organization,
-    });
-    createEnvironment(payload);
+    createEnvironment({
+      environmentPayload: {
+        name: name,
+        description: description,
+        organization_id: organization,
+      },
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment "${name}" created `))
+      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
     handleEnvironmentModalClose();
   };
 
   const handleEditEnvironment = ({ name, description }) => {
-    const payload = JSON.stringify({
-      name: name,
-      description: description,
-      organization_id: initialData.organization,
-    });
-    updateEnvironment(payload);
+    updateEnvironment({
+      environmentId: editEnvId,
+      environmentPayload: {
+        name: name,
+        description: description,
+        organization_id: initialData.organization,
+      },
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment "${name}" updated`))
+      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
     handleEnvironmentModalClose();
   };
 
@@ -357,7 +332,12 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleDeleteEnvironment = (id) => {
-    deleteEnvironment(id);
+    deleteEnvironment({
+      environmentId: id,
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment deleted`))
+      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
   };
 
   const deleteEnvironmentModalContent = (environment) => (
@@ -403,20 +383,31 @@ const Environments = ({ organization, classes }) => {
   };
 
   useEffect(() => {
-    const pagesCount = parseInt(Math.ceil(parseInt(connectionCount) / connectionPageSize));
-    if (pagesCount > connectionsPage || connectionsPage === 0) {
-      getConnections(connectionsPage);
+    const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
+    if (connections) {
+      setConnectionsData((prevData) => [...prevData, ...connections.connections]);
+      if (connections?.total_count && connectionsPage < pagesCount - 1) {
+        setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
+      }
     }
-  }, [connectionsPage]);
+  }, [connections, connectionsPage, connectionPageSize]);
 
   useEffect(() => {
     const pagesCount = parseInt(
-      Math.ceil(parseInt(environmentConnectionCount) / connectionPageSize),
+      Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
     );
-    if (pagesCount > environmentConnectionPage || environmentConnectionPage === 0) {
-      getEnvironmentConnections(connectionAssignEnv.id, environmentConnectionPage);
+    if (environmentConnections) {
+      setEnvironmentConnectionsData((prevData) => [
+        ...prevData,
+        ...environmentConnections.connections,
+      ]);
+      if (environmentConnections?.total_count && connectionsOfEnvironmentPage < pagesCount - 1) {
+        setConnectionsOfEnvironmentPage(
+          (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
+        );
+      }
     }
-  }, [connectionAssignEnv, environmentConnectionPage]);
+  }, [environmentConnections, connectionPageSize, connectionsOfEnvironmentPage]);
 
   const handleAssignConnection = () => {
     const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
@@ -432,18 +423,23 @@ const Environments = ({ organization, classes }) => {
     addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
 
     removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
+    setEnvironmentConnectionsData([]);
     handleonAssignConnectionModalClose();
   };
 
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
+    if (connectionAssignEnv.id !== environment.id) {
+      setEnvironmentConnectionsData([]);
+    }
     setConnectionAssignEnv(environment);
+    setSkip(false);
   };
 
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
-    setConnectionAssignEnv({});
+    setSkip(true);
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
@@ -529,7 +525,7 @@ const Environments = ({ organization, classes }) => {
             spacing={2}
           >
             <Pagination
-              count={Math.ceil(totalCount / pageSize)}
+              count={Math.ceil(environmentsData?.total_count / pageSize)}
               page={page + 1}
               sx={{
                 backgroundColor: 'white',

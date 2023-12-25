@@ -54,7 +54,11 @@ export default function TransferList({
 }) {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = useState([]);
-  const [right, setRight] = useState(originalAssignedData);
+  const [right, setRight] = useState([]);
+
+  useEffect(() => {
+    setRight(originalAssignedData);
+  }, [originalAssignedData]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
