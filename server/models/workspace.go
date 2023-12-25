@@ -37,3 +37,21 @@ type MesheryDesignPage struct {
 	TotalCount int               `json:"total_count"`
 	Designs    []*MesheryPattern `json:"designs"`
 }
+
+type WorkspacesEnvironmentsMapping struct {
+	ID uuid.UUID `json:"ID,omitempty" db:"id"`
+	WorkspaceId uuid.UUID `json:"workspace_id,omitempty" db:"workspace_id"`
+	EnvironmentId uuid.UUID `json:"environment_id,omitempty" db:"environment_id"`
+	CreatedAt time.Time `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
+}
+
+type WorkspacesDesignsMapping struct {
+	ID uuid.UUID `json:"ID,omitempty" db:"id"`
+	WorkspaceId uuid.UUID `json:"workspace_id,omitempty" db:"workspace_id"`
+	DesignId uuid.UUID `json:"design_id,omitempty" db:"design_id"`
+	CreatedAt time.Time `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
+}
