@@ -268,6 +268,15 @@ paths:
             summary: Handles GET for all Environments
             tags:
                 - EnvironmentsAPI
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new environment
+            tags:
+                - PostEnvironment
     /api/environments/{environmentID}/connections:
         get:
             description: |-
@@ -2360,6 +2369,9 @@ responses:
                 type: string
             credential_id: {}
             deleted_at: {}
+            environments:
+                items: {}
+                type: array
             id: {}
             kind:
                 type: string
