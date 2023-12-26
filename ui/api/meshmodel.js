@@ -139,6 +139,9 @@ export async function getMeshModelComponent(model, component, version, apiVersio
   );
 }
 
+export async function getMeshModelComponentByName(component) {
+  return promisifiedDataFetch(`${MESHMODEL_ENDPOINT}/components/${component}`);
+}
 // export async function queryMeshModel(modelQueryString, paginated = true) {
 //   // Note: returns paginated response
 //   if (paginated) {
