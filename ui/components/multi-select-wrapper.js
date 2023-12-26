@@ -174,8 +174,13 @@ const MultiSelectWrapper = (props) => {
       ...base,
       backgroundColor: base.backgroundColor2,
       borderColor: Colors.keppelGreen,
+      color: Colors.keppelGreen,
+      boxShadow: 'none',
       '&:hover': {
         borderColor: Colors.keppelGreen,
+      },
+      '&$focused': {
+        borderColor: '#00B39F',
       },
     }),
     menu: (base) => ({
