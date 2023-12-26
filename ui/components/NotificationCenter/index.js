@@ -379,7 +379,7 @@ const BulkActions = () => {
             }}
           >
             <BulkActionButton
-              tooltip="Delete All notifications"
+              tooltip="Delete all notifications"
               Icon={DeleteIcon}
               isLoading={isDeleting}
               onClick={handleDeleteAll}
