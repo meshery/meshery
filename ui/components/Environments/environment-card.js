@@ -1,21 +1,11 @@
 import React from 'react';
-import { Button, Grid } from '@mui/material';
-import {
-  AllocationButton,
-  BulkSelectCheckbox,
-  CardTitle,
-  CardWrapper,
-  DateLabel,
-  DescriptionLabel,
-  EmptyDescription,
-  PopupButton,
-  TabCount,
-  TabTitle,
-} from './styles';
+import { Button, Card, Grid, Typography, Box, Checkbox } from '@material-ui/core';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import FlipCard from './flip-card';
 import { Delete, Edit } from '@material-ui/icons';
+
+import FlipCard from './flip-card';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
+import classNames from 'classnames';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -25,13 +15,15 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign }) => {
+export const TransferButton = ({ title, count, onAssign, classes }) => {
   return (
-    <PopupButton onClick={onAssign}>
-      <TabCount>{count}</TabCount>
-      <TabTitle>{title}</TabTitle>
-      <SyncAltIcon />
-    </PopupButton>
+    <Button variant="contained" color="primary" className={classes.popupButton} onClick={onAssign}>
+      <Grid>
+        <Typography className={classes.tabCount}>{count}</Typography>
+        <Typography className={classes.tabTitle}>{title}</Typography>
+        <SyncAltIcon />
+      </Grid>
+    </Button>
   );
 };
 
@@ -47,6 +39,7 @@ export const TransferButton = ({ title, count, onAssign }) => {
  * @param {Function} props.onSelect - Function to select environment for bulk actions.
  * @param {Function} props.onAssignConnection - Function to open connection assignment modal open.
  * @param {Array} props.selectedEnvironments - Selected environments list for delete.
+ * @param {String} props.classes - Styles property names for classes.
  *
  */
 
@@ -57,16 +50,15 @@ const EnvironmentCard = ({
   onEdit,
   onSelect,
   onAssignConnection,
+  classes,
 }) => {
-  // const [environmentConnectionsCount, setEenvironmentConnectionsCount] = useState(0);
-
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
     },
     { skip: !environmentDetails.id },
   );
-  const environmentConnectionsCount = environmentConnections?.connections?.length || 0;
+  const environmentConnectionsCount = environmentConnections?.total_count || 0;
 
   const deleted = environmentDetails.deleted_at.Valid;
 
@@ -78,120 +70,119 @@ const EnvironmentCard = ({
           : false
       }
       frontComponents={
-        <CardWrapper
-          sx={{
+        <Card
+          className={classes.cardWrapper}
+          style={{
             minHeight: '320px',
-            background: deleted
-              ? 'rgba(255, 255, 255, .6)'
-              : `linear-gradient(180deg, $#FBFBFB 0%, #F5F5F5 100%)`,
+            height: '320px',
           }}
-          elevation={2}
         >
-          <Grid sx={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
-            <CardTitle variant="body2" onClick={(e) => e.stopPropagation()}>
+          <Grid style={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
+            <Typography
+              className={classes.listItem}
+              variant="body2"
+              onClick={(e) => e.stopPropagation()}
+            >
               {environmentDetails?.name}
-            </CardTitle>
+            </Typography>
           </Grid>
           <Grid
-            sx={{
+            style={{
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
             }}
           >
-            <Grid xs={12} sm={9} md={12} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <Grid xs={12} sm={9} md={12} style={{ display: 'flex', justifyContent: 'flex-start' }}>
               {environmentDetails.description ? (
-                <DescriptionLabel
+                <Typography
+                  className={classNames(classes.emptyDescription, classes.descriptionLabel)}
                   onClick={(e) => e.stopPropagation()}
-                  sx={{ marginBottom: { xs: 2, sm: 0 }, paddingRight: { sm: 2, lg: 0 } }}
+                  style={{ marginBottom: { xs: 2, sm: 0 }, paddingRight: { sm: 2, lg: 0 } }}
                 >
                   {environmentDetails.description}
-                </DescriptionLabel>
+                </Typography>
               ) : (
-                <EmptyDescription
+                <Typography
+                  className={classes.emptyDescription}
                   onClick={(e) => e.stopPropagation()}
-                  sx={{ color: 'rgba(122,132,142,1)' }}
+                  style={{ color: 'rgba(122,132,142,1)' }}
                 >
                   No description
-                </EmptyDescription>
+                </Typography>
               )}
             </Grid>
             <Grid
               xs={12}
-              sm={3}
-              md={12}
-              sx={{
-                pt: 2,
+              style={{
+                paddingTop: '15px',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
-                gap: 1,
+                gap: '10px',
               }}
             >
-              <AllocationButton onClick={(e) => e.stopPropagation()}>
+              <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
                 <TransferButton
                   title="Assigned Connections"
                   count={environmentConnectionsCount}
                   onAssign={onAssignConnection}
+                  classes={classes}
                 />
-              </AllocationButton>
+              </Box>
               {/* temporary disable workspace allocation button  */}
               {false && (
-                <AllocationButton onClick={(e) => e.stopPropagation()}>
+                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
                   <TransferButton
                     title="Assigned Workspaces"
                     count={
                       environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                     }
-                    onAssign={() => {}}
+                    onAssign={onAssignConnection}
+                    classes={classes}
                   />
-                </AllocationButton>
+                </Box>
               )}
             </Grid>
           </Grid>
-        </CardWrapper>
+        </Card>
       }
       backComponents={
-        <CardWrapper
+        <Card
           elevation={2}
-          sx={{
+          className={classes.cardWrapper}
+          style={{
             minHeight: '320px',
-            background: deleted
-              ? 'rgba(255, 255, 255, .6)'
-              : 'linear-gradient(180deg, #007366 0%, #000 100%)',
+            background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
           }}
         >
-          <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
-            <Grid xs={6} sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <BulkSelectCheckbox
+          <Grid xs={12} style={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
+            <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
+              <Checkbox
+                className={classes.bulkSelectCheckbox}
                 onClick={(e) => e.stopPropagation()}
                 onChange={onSelect}
                 disabled={deleted ? true : false}
               />
-              <CardTitle
-                sx={{ color: 'white' }}
+              <Typography
+                className={classes.cardTitle}
+                style={{ color: 'white' }}
                 variant="body2"
                 onClick={(e) => e.stopPropagation()}
               >
                 {environmentDetails?.name}
-              </CardTitle>
+              </Typography>
             </Grid>
             <Grid
               xs={6}
-              sx={{
+              style={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
             >
               <Button
-                sx={{
-                  minWidth: 'fit-content',
-                  '&.MuiButtonBase-root:hover': {
-                    bgcolor: 'transparent',
-                  },
-                  p: 0,
-                }}
+                className={classes.iconButton}
                 onClick={onEdit}
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -202,13 +193,7 @@ const EnvironmentCard = ({
                 <Edit style={{ color: 'white', margin: '0 2px' }} />
               </Button>
               <Button
-                sx={{
-                  minWidth: 'fit-content',
-                  '&.MuiButtonBase-root:hover': {
-                    bgcolor: 'transparent',
-                  },
-                  p: 0,
-                }}
+                className={classes.iconButton}
                 onClick={onDelete}
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -220,19 +205,27 @@ const EnvironmentCard = ({
               </Button>
             </Grid>
           </Grid>
-          <Grid sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
-            <Grid xs={6} sx={{ textAlign: 'left' }}>
-              <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
+          <Grid style={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
+            <Grid xs={6} style={{ textAlign: 'left' }}>
+              <Typography
+                className={classes.dateLabel}
+                variant="span"
+                onClick={(e) => e.stopPropagation()}
+              >
                 Updated At: {formattoLongDate(environmentDetails?.updated_at)}
-              </DateLabel>
+              </Typography>
             </Grid>
-            <Grid xs={6} sx={{ textAlign: 'left' }}>
-              <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
+            <Grid xs={6} style={{ textAlign: 'left' }}>
+              <Typography
+                className={classes.dateLabel}
+                variant="span"
+                onClick={(e) => e.stopPropagation()}
+              >
                 Created At: {formattoLongDate(environmentDetails?.created_at)}
-              </DateLabel>
+              </Typography>
             </Grid>
           </Grid>
-        </CardWrapper>
+        </Card>
       }
     />
   );
