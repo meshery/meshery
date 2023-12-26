@@ -33,7 +33,7 @@ const schema = selectCompSchema(
   'Select type of connection to register',
   'selectedConnectionType',
 );
-export const SelectConnection = ({ sharedData, setSharedData, handleNext }) => {
+export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
 
   const registerConnection = (componentName) => {
@@ -109,13 +109,13 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       ...prevState,
       componentForm: {
         name: randomPatternNameGenerator(),
-        url: e.target.value
-      }
-    }))
+        url: e.target.value,
+      },
+    }));
 
     setSelectedEndpoint(e.target.value);
     setPrevSelectedEndpoint(e.target.value);
-  }
+  };
 
   const handleClose = () => {
     if (prevSelectedEndpoint === selectedEndpoint) {
@@ -132,9 +132,9 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
   };
   const isDisabledNextButton =
     sharedData?.componentForm &&
-      sharedData?.componentForm['name'] !== undefined &&
-      sharedData?.componentForm &&
-      sharedData?.componentForm['url'] !== undefined
+    sharedData?.componentForm['name'] !== undefined &&
+    sharedData?.componentForm &&
+    sharedData?.componentForm['url'] !== undefined
       ? false
       : true;
   return (
@@ -143,7 +143,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       handleCallback={handleCallback}
       disabled={isDisabledNextButton}
     >
-      {sharedData?.capabilities &&
+      {sharedData?.capabilities && (
         <FormControl fullWidth size="small">
           <InputLabel fontSize="inherit" id="endpoint-checkbox-label">
             Select from the discovered endpoints
@@ -155,9 +155,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
             value={selectedEndpoint}
             onClose={handleClose}
             input={<OutlinedInput label="Select discovered endpoint" />}
-            renderValue={() => (
-              <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>
-            )}
+            renderValue={() => <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>}
             MenuProps={{
               anchorOrigin: {
                 vertical: 'bottom',
@@ -180,15 +178,15 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
               },
             }}
           >
-            {
-              sharedData.capabilities?.urls?.map((endpoint, index) => (
-                <MenuItem key={index} value={endpoint} name={endpoint}>
-                  <Checkbox checked={endpoint === selectedEndpoint} />
-                  <ListItemText primary={endpoint} />
-                </MenuItem>
-              ))}
+            {sharedData.capabilities?.urls?.map((endpoint, index) => (
+              <MenuItem key={index} value={endpoint} name={endpoint}>
+                <Checkbox checked={endpoint === selectedEndpoint} />
+                <ListItemText primary={endpoint} />
+              </MenuItem>
+            ))}
           </Select>
-        </FormControl>}
+        </FormControl>
+      )}
       <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
       <p>Enter the {sharedData.kind} service URL</p>
       <RJSFWrapper
@@ -239,9 +237,9 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       credential = formState;
     } else {
       credential = {
-        "secret": selectedCredential?.secret?.secret,
-        "name": selectedCredential?.name,
-      }
+        secret: selectedCredential?.secret?.secret,
+        name: selectedCredential?.name,
+      };
       credential.id = selectedCredential?.id;
     }
 
@@ -279,12 +277,11 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       credential = formState;
     } else {
       credential = {
-        "name": selectedCredential?.name,
-        "secret": selectedCredential?.secret?.secret
-      }
+        name: selectedCredential?.name,
+        secret: selectedCredential?.secret?.secret,
+      };
       credential.id = selectedCredential?.id;
     }
-
 
     dataFetch(
       '/api/integrations/connections/register',
@@ -343,10 +340,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   };
 
   useEffect(() => {
-    if (
-      selectedCredential !== null ||
-      (formState !== null && formState['secret']) !== undefined
-    ) {
+    if (selectedCredential !== null || (formState !== null && formState['secret']) !== undefined) {
       setDisableVerify(false);
     } else {
       setDisableVerify(true);
