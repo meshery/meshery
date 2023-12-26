@@ -1,18 +1,22 @@
 import React from 'react';
-import { Backdrop, Box, Fade, Dialog, Typography, IconButton } from '@mui/material';
+import CloseIcon from '@material-ui/icons/Close';
 import {
-  CreateTokenModalBody,
-  CreateTokenModalHeader,
-  ButtonContainer,
-  GenerateButton,
-  CancelButton,
-  ModalCloseIcon,
-  CustomTooltip,
-  ModalWrapper,
-} from './styles';
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
+  Backdrop,
+} from '@material-ui/core';
+import useStyles from './styles';
+import { CustomTooltip } from './styles';
 import HelpOutlineIcon from '../../../assets/icons/HelpOutlineIcon';
+import theme from '../../../themes/app';
 
-export default function GenericModal({
+const GenericModal = ({
   open,
   handleClose,
   title,
@@ -26,7 +30,9 @@ export default function GenericModal({
   disabled = false,
   helpText,
   maxWidth = 'xs',
-}) {
+}) => {
+  const classes = useStyles();
+
   return (
     <Dialog
       fullWidth={true}
@@ -44,58 +50,79 @@ export default function GenericModal({
       }}
       id="searchClick"
     >
-      <Fade in={open}>
-        <Box>
-          <ModalWrapper>
-            <CreateTokenModalHeader>
-              {leftHeaderIcon && (
-                <div style={{ display: 'flex', alignItems: 'center' }}>{leftHeaderIcon}</div>
+      <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
+        {leftHeaderIcon && (
+          <div style={{ display: 'flex', alignItems: 'center' }}>{leftHeaderIcon}</div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h6" component="h6">
+            {title}
+          </Typography>
+          {selector ? selector : null}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {helpText && (
+            <CustomTooltip title={helpText}>
+              <IconButton>
+                <HelpOutlineIcon
+                  height={'2rem'}
+                  wdith={'2rem'}
+                  fill={theme.palette.secondary.primaryModalText}
+                />
+              </IconButton>
+            </CustomTooltip>
+          )}
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            component="button"
+            style={{
+              color: theme.palette.secondary.primaryModalText,
+            }}
+          >
+            <CloseIcon className={classes.closing} />
+          </IconButton>
+        </div>
+      </DialogTitle>
+      <DialogContent style={{ padding: '1.5rem' }}>{body}</DialogContent>
+      {!hideFooter && (
+        <DialogActions
+          style={{
+            justifyContent: 'space-evenly',
+            marginBottom: '0.5rem',
+          }}
+        >
+          <Grid className={classes.modalActions}>
+            <Button variant="outlined" onClick={handleClose} className={classes.copyButton}>
+              Cancel
+            </Button>
+            <Button
+              title={buttonTitle ? buttonTitle : 'Submit'}
+              variant="contained"
+              color="primary"
+              className={classes.submitButton}
+              disabled={disabled}
+              onClick={action}
+            >
+              {actionBtnIcon && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginRight: '0.27rem',
+                    color: theme.palette.primaryModalText,
+                  }}
+                >
+                  {actionBtnIcon}
+                </div>
               )}
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h6" component="h6">
-                  {title}
-                </Typography>
-                {selector ? selector : null}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {helpText && (
-                  <CustomTooltip title={helpText}>
-                    <IconButton>
-                      <HelpOutlineIcon height={'2rem'} wdith={'2rem'} fill="#ffffff" />
-                    </IconButton>
-                  </CustomTooltip>
-                )}
-                <ModalCloseIcon onClick={handleClose} rotate={90} />
-              </div>
-            </CreateTokenModalHeader>
-
-            <CreateTokenModalBody>{body}</CreateTokenModalBody>
-
-            {!hideFooter && (
-              <ButtonContainer>
-                <CancelButton variant="contained" onClick={handleClose}>
-                  Cancel
-                </CancelButton>
-                <GenerateButton disabled={disabled} variant="contained" onClick={action}>
-                  {actionBtnIcon && (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        marginRight: '0.27rem',
-                        color: '#ffffff',
-                      }}
-                    >
-                      {actionBtnIcon}
-                    </div>
-                  )}
-                  {buttonTitle ? buttonTitle : 'Continue'}
-                </GenerateButton>
-              </ButtonContainer>
-            )}
-          </ModalWrapper>
-        </Box>
-      </Fade>
+              <span className={classes.btnText}>{buttonTitle ? buttonTitle : 'Submit'}</span>
+            </Button>
+          </Grid>
+        </DialogActions>
+      )}
     </Dialog>
   );
-}
+};
+
+export default GenericModal;

@@ -536,6 +536,34 @@ type environmentsResponseWrapper struct {
 	Body *models.EnvironmentPage
 }
 
+// Returns workspaces
+// swagger:response workspacesResponseWrapper
+type workspacesResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacePage
+}
+
+// Returns workspace
+// swagger:response workspaceResponseWrapper
+type workspaceResponseWrapper struct {
+	// in: body
+	Body *models.Workspace
+}
+
+// Returns workspace designs mapping
+// swagger:response workspaceDesignsMappingResponseWrapper
+type workspaceDesignsMappingResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacesDesignsMapping
+}
+
+// Returns workspace environments mapping
+// swagger:response workspaceEnvironmentsMappingResponseWrapper
+type workspaceEnvironmentsMappingResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacesEnvironmentsMapping
+}
+
 // Returns event
 // swagger:response eventResponseWrapper
 type eventResponseWrapper struct {
