@@ -2,24 +2,32 @@ import { useState, useRef } from 'react';
 import { default as ReactSelect, components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
-// export const Option = {
-//   value,
-//   label
-// };
-
 const MultiSelectWrapper = (props) => {
+  console.log('props', props);
   const [selectInput, setSelectInput] = useState('');
-  const isAllSelected = useRef(false);
   const selectAllLabel = useRef('Select all');
   const allOption = { value: '*', label: selectAllLabel.current };
 
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label.toLowerCase().includes(input.toLowerCase()));
 
-  const comparator = (v1, v2) => v1.value - v2.value;
+  const comparator = (v1, v2) => {
+    if (v1.value === allOption.value) {
+      return 1;
+    } else if (v2.value === allOption.value) {
+      return -1;
+    }
 
-  let filteredOptions = filterOptions(props.options, selectInput);
-  let filteredSelectedOptions = filterOptions(props.value, selectInput);
+    return v1.label.localeCompare(v2.label);
+  };
+
+  let filteredOptions = filterOptions(props.options, selectInput).sort(comparator);
+  let filteredSelectedOptions = filterOptions(props.value, selectInput).sort(comparator);
+
+  const isAllSelected = useRef(
+    JSON.stringify(filteredSelectedOptions.sort(comparator)) ===
+      JSON.stringify(filteredOptions.sort(comparator)),
+  );
 
   const Option = (props) => (
     <components.Option {...props}>
@@ -77,8 +85,9 @@ const MultiSelectWrapper = (props) => {
       selected.length > 0 &&
       !isAllSelected.current &&
       (selected[selected.length - 1].value === allOption.value ||
-        JSON.stringify(filteredOptions) === JSON.stringify(selected.sort(comparator)))
-    )
+        JSON.stringify(filteredOptions.sort(comparator)) ===
+          JSON.stringify(selected.sort(comparator)))
+    ) {
       return props.onChange(
         [
           ...(props.value ?? []),
@@ -90,16 +99,16 @@ const MultiSelectWrapper = (props) => {
         ].sort(comparator),
         [],
       );
-    else if (
+    } else if (
       selected.length > 0 &&
       selected[selected.length - 1].value !== allOption.value &&
-      JSON.stringify(selected.sort(comparator)) !== JSON.stringify(filteredOptions)
+      JSON.stringify(selected.sort(comparator)) !== JSON.stringify(filteredOptions.sort(comparator))
     ) {
       let filteredUnselectedOptions = filteredSelectedOptions.filter(
         (opts) => !selected.some((sel) => sel.value === opts.value),
       );
       return props.onChange(selected, filteredUnselectedOptions);
-    } else
+    } else {
       return props.onChange(
         [
           ...props.value.filter(
@@ -108,6 +117,7 @@ const MultiSelectWrapper = (props) => {
         ],
         filteredSelectedOptions.length == 1 ? filteredSelectedOptions : props.options,
       );
+    }
   };
 
   const customStyles = {
