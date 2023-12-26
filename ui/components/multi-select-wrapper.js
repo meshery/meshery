@@ -2,6 +2,10 @@ import { useState, useRef } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 // import Typography from '@material-ui/core/Typography';
+import theme from '../themes/app';
+import { MenuItem } from '@material-ui/core';
+import { Checkbox } from '@material-ui/core';
+import { FormControlLabel } from '@material-ui/core';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -30,26 +34,51 @@ const MultiSelectWrapper = (props) => {
   );
 
   const Option = (props) => {
+    console.log('props: ', props);
     return (
-      <components.Option {...props}>
-        {props.value === '*' && !isAllSelected.current && filteredSelectedOptions?.length > 0 ? (
-          <input
-            key={props.value}
-            type="checkbox"
-            ref={(input) => {
-              if (input) input.indeterminate = true;
-            }}
-          />
-        ) : (
-          <input
-            key={props.value}
-            type="checkbox"
-            checked={props.isSelected || isAllSelected.current}
-            onChange={() => {}}
-          />
-        )}
-        <label style={{ marginLeft: '5px' }}>{props.label}</label>
-      </components.Option>
+      <MenuItem
+        buttonRef={props.innerRef}
+        selected={props.isFocused}
+        {...props.innerProps}
+        component="div"
+        style={{ fontWeight: props.isSelected ? 500 : 400, padding: '0.4rem 1rem' }}
+      >
+        <FormControlLabel
+          control={
+            props.value === '*' && !isAllSelected.current && filteredSelectedOptions?.length > 0 ? (
+              <Checkbox
+                color="primary"
+                key={props.value}
+                ref={(input) => {
+                  if (input) input.indeterminate = true;
+                }}
+                style={{
+                  color: theme.palette.secondary.focused,
+                  '&$checked': {
+                    color: theme.palette.secondary.focused,
+                  },
+                  padding: '0',
+                }}
+              />
+            ) : (
+              <Checkbox
+                color="primary"
+                key={props.value}
+                checked={props.isSelected || isAllSelected.current}
+                onChange={() => {}}
+                style={{
+                  color: theme.palette.secondary.focused,
+                  '&$checked': {
+                    color: theme.palette.secondary.focused,
+                  },
+                  padding: '0',
+                }}
+              />
+            )
+          }
+          label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
+        />
+      </MenuItem>
     );
   };
 
@@ -137,21 +166,24 @@ const MultiSelectWrapper = (props) => {
       maxHeight: '65px',
       overflow: 'auto',
     }),
-    option: (styles, { isSelected, isFocused }) => {
-      return {
-        ...styles,
-        backgroundColor:
-          isSelected && !isFocused
-            ? null
-            : isFocused && !isSelected
-            ? styles.backgroundColor
-            : isFocused && isSelected
-            ? '#DEEBFF'
-            : null,
-        color: isSelected ? null : null,
-      };
-    },
-    menu: (def) => ({ ...def, zIndex: 9999 }),
+    // option: (styles, { isSelected, isFocused }) => {
+    //   console.log('option: ', styles, isSelected, isFocused)
+    //   console.log("theme:", theme)
+    //   let color= theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679'
+    //   return {
+    //     ...styles,
+    //     backgroundColor:
+    //       isSelected && !isFocused
+    //         ? null
+    //         : isFocused && !isSelected
+    //         ? 'lightgray'
+    //         : isFocused && isSelected
+    //         ? '#DEEBFF'
+    //         : null,
+    //     color: isSelected ? null : null,
+    //   };
+    // },
+    // menu: (def) => ({ ...def, zIndex: 9999 }),
   };
 
   if (props.isSelectAll && props.options.length !== 0) {
