@@ -74,7 +74,7 @@ import MultiSelectWrapper from '../multi-select-wrapper';
 import {
   useGetEnvironmentsQuery,
   useAddConnectionToEnvironmentMutation,
-  // useRemoveConnectionFromEnvironmentMutation,
+  useRemoveConnectionFromEnvironmentMutation,
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
 import ErrorBoundary from '../ErrorBoundary';
@@ -195,7 +195,7 @@ function Connections({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
-  // const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
+  const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
   const addConnectionToEnvironment = async (
@@ -215,32 +215,36 @@ function Connections({
       })
       .catch((err) => {
         notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
       });
   };
 
-  // const removeConnectionFromEnvironment = (environmentId, environmentName, connectionId, connectionName) => {
-  //   removeConnectionFromEnvMutator({ environmentId, connectionId })
-  //     .unwrap()
-  //     .then(() => {
-  //       getConnections(page, pageSize, search, sortOrder);
-  //       notify({
-  //         message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     }
-  //   )
-  //     .catch((err) => {
-  //       notify({
-  //         message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
-  //         event_type: EVENT_TYPES.ERROR,
-  //         details: err.toString(),
-  //       });
-  //     })
-  // };
+  const removeConnectionFromEnvironment = (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
 
   const saveEnvironment = (connectionId, connectionName, environmentName) => {
     saveEnvironmentMutator({
@@ -256,11 +260,11 @@ function Connections({
           message: `Environment: ${resp.Name} saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        addConnectionToEnvironment(connectionId, connectionName, resp.ID, resp.Name);
+        addConnectionToEnvironment(resp.id, resp.Name, connectionId, connectionName);
       })
       .catch((err) => {
         notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err}`,
+          message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${err.error}`,
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
@@ -301,9 +305,13 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  const handleEnvironmentSelect = (connectionId, connName, environments) => {
-    console.log('environments: ', environments);
-    environments.forEach((environment) => {
+  const handleEnvironmentSelect = (
+    connectionId,
+    connName,
+    selectedEnvironments,
+    unSelectedEnvironments,
+  ) => {
+    selectedEnvironments.forEach((environment) => {
       let envName = environment.label;
       let environmentId = environment.value || '';
       let isNew = environment.__isNew__ || false;
@@ -314,6 +322,12 @@ function Connections({
       }
 
       addConnectionToEnvironment(environmentId, envName, connectionId, connName);
+    });
+    unSelectedEnvironments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+
+      removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
     });
   };
 
@@ -412,7 +426,6 @@ function Connections({
           );
         },
         customBodyRender: (value, tableMeta) => {
-          console.log('environments: ', value);
           const getOptions = () => {
             return environments.map((env) => ({ label: env.name, value: env.id })) || [];
           };
@@ -422,11 +435,12 @@ function Connections({
               <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
                 <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                   <MultiSelectWrapper
-                    onChange={(select) =>
+                    onChange={(selected, unselected) =>
                       handleEnvironmentSelect(
                         connections[tableMeta.rowIndex].id,
                         connections[tableMeta.rowIndex].name,
-                        select ? select : '',
+                        selected,
+                        unselected,
                       )
                     }
                     options={getOptions()}
@@ -834,7 +848,7 @@ function Connections({
     if (!loading && connectionMetadataState) {
       getConnections(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder, connectionMetadataState]);
+  }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
