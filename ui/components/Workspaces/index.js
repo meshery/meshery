@@ -107,7 +107,7 @@ const Workspaces = ({ organization, classes }) => {
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({
       workspaceId: editWorkspaceId,
-      workspaceUpdatePayload: {
+      workspacePayload: {
         name: name,
         description: description,
         organization_id: organization,
