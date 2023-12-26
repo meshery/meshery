@@ -42,7 +42,7 @@ type PromConn struct {
 type PromCred struct {
 	Name string `json:"name,omitempty"`
 	// If Basic then it should be formatted as username:password
-	APIKeyOrBasicAuth string `json:"credential,omitempty"`
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
 type GrafanaConn struct {
@@ -53,7 +53,7 @@ type GrafanaConn struct {
 type GrafanaCred struct {
 	Name string `json:"name,omitempty"`
 	// If Basic then it should be formatted as username:password
-	APIKeyOrBasicAuth string `json:"credential,omitempty"`
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
 // swagger:response Connection
