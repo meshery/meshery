@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
-import { withNotify } from '../../utils/hooks/useNotification';
-import { Tooltip, Tabs, Tab, Paper } from '@material-ui/core';
+import { withNotify, useNotification } from '../../utils/hooks/useNotification';
+import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -12,7 +12,7 @@ import ResourcesSubMenu from './resources/resources-sub-menu';
 import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
-import { TabPanel } from './tabpanel';
+import { EVENT_TYPES } from '../../lib/event-types';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -110,8 +110,9 @@ const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
 
-  const resourceCategory = query.resourceCategory || 'Overview';
-  const selectedResource = query.resource;
+const DashboardComponent = (props) => {
+  const { classes, k8sconfig, selectedK8sContexts, updateProgress } = props;
+  const { notify } = useNotification();
 
   const changeResourceTab = (resourceCategory) => {
     if (query.resourceCategory === resourceCategory) {
@@ -148,6 +149,62 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   const getResourceCategory = (index) => {
     return ResourceCategoryTabs[index];
   };
+  const fetchData = async () => {
+    try {
+      const response = await fetch('api/meshmodels/registrants');
+      const data = await response.json();
+
+      if (data.total_count > 0) {
+        for (const registrant of data.registrants) {
+          const { hostname, summary } = registrant;
+
+          let successMessage = `For registrant ${hostname} successfully imported `;
+          if (summary.models > 0) successMessage += ` ${summary.models} models`;
+          if (summary.components > 0) successMessage += ` ${summary.components} components`;
+          if (summary.relationships > 0)
+            successMessage += ` ${summary.relationships} relationships`;
+          if (summary.policies > 0) successMessage += ` ${summary.policies} policies`;
+
+          notify({
+            message: successMessage,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+
+          const nonRegisteredResponse = await fetch('api/meshmodels/nonRegisterEntity', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Hostname: hostname }),
+          });
+
+          const nonRegisteredData = await nonRegisteredResponse.json();
+          console.log(nonRegisteredData);
+
+          let errorMessage = `For registrant ${hostname} failed to import`;
+          if (nonRegisteredData.summary.models > 0)
+            errorMessage += ` ${nonRegisteredData.summary.models} models`;
+          if (nonRegisteredData.summary.components > 0)
+            errorMessage += ` ${nonRegisteredData.summary.components} components`;
+          if (nonRegisteredData.summary.relationships > 0)
+            errorMessage += ` ${nonRegisteredData.summary.relationships} relationships`;
+          if (nonRegisteredData.summary.policies > 0)
+            errorMessage += ` ${nonRegisteredData.summary.policies} policies`;
+
+          notify({
+            message: errorMessage,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>
