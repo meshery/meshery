@@ -9,6 +9,50 @@ const connectionsApi = api
   })
   .injectEndpoints({
     endpoints: (builder) => ({
+      getEnvironments: builder.query({
+        query: (queryArg) => ({
+          url: `environments`,
+          params: {
+            search: queryArg.search,
+            order: queryArg.order,
+            page: queryArg.page || 0,
+            pagesize: queryArg.pagesize || 'all',
+            orgID: queryArg.orgId,
+          },
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+      }),
+
+      createEnvironment: builder.mutation({
+        query: (queryArg) => ({
+          url: `environments`,
+          method: 'POST',
+          body: queryArg.environmentPayload,
+        }),
+
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+      }),
+
+      updateEnvironment: builder.mutation({
+        query: (queryArg) => ({
+          url: `environments/${queryArg.environmentId}`,
+          method: 'PUT',
+          body: queryArg.environmentPayload,
+        }),
+
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+      }),
+
+      deleteEnvironment: builder.mutation({
+        query: (queryArg) => ({
+          url: `environments/${queryArg.environmentId}`,
+          method: 'DELETE',
+        }),
+
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+      }),
+
       getEnvironmentConnections: builder.query({
         query: (queryArg) => ({
           url: `environments/${queryArg.environmentId}/connections`,
@@ -51,6 +95,10 @@ const connectionsApi = api
   });
 
 export const {
+  useGetEnvironmentsQuery,
+  useCreateEnvironmentMutation,
+  useUpdateEnvironmentMutation,
+  useDeleteEnvironmentMutation,
   useGetEnvironmentConnectionsQuery,
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,

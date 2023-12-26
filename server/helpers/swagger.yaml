@@ -258,7 +258,7 @@ paths:
 
                 ```?search={environments_name}``` If search is non empty then a greedy search is performed
 
-                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+                ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org *required*
 
                 ```?filter={condition}```
             operationId: idGetEnvironments
@@ -268,6 +268,15 @@ paths:
             summary: Handles GET for all Environments
             tags:
                 - EnvironmentsAPI
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new environment
+            tags:
+                - PostEnvironment
     /api/environments/{environmentID}/connections:
         get:
             description: |-
@@ -308,12 +317,11 @@ paths:
                 - EnvironmentAPI
     /api/environments/{id}:
         delete:
-            description: Returns Environment info
+            description: Handle DELETE for Environment based on ID
             operationId: idDeleteEnvironmentHandler
             responses:
                 "201":
                     $ref: '#/responses/noContentWrapper'
-            summary: Handle DELETE for Environment based on ID
             tags:
                 - EnvironmentAPI
         get:
@@ -700,16 +708,6 @@ paths:
             summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
-    /api/integrations/environments:
-        post:
-            description: Creates a new environment
-            operationId: idSaveEnvironment
-            responses:
-                "201":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle POST request for creating a new environment
-            tags:
-                - PostEnvironment
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -2318,6 +2316,145 @@ paths:
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
+    /api/workspaces:
+        get:
+            description: |4-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={name}``` If search is non empty then a greedy search is performed
+
+                ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
+
+                ```?filter={condition}```
+            operationId: idGetWorkspaces
+            responses:
+                "200":
+                    $ref: '#/responses/workspacesResponseWrapper'
+            summary: Handles GET for all Workspaces
+            tags:
+                - WorkspacesAPI
+        post:
+            description: Creates a new workspace
+            operationId: idSaveWorkspace
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceResponseWrapper'
+            summary: Handle POST request for creating a new workspace
+            tags:
+                - PostWorkspace
+    /api/workspaces/{id}:
+        delete:
+            description: Deletes a workspace
+            operationId: idDeleteWorkspaceHandler
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceResponseWrapper'
+            summary: Handle DELETE for Workspace based on ID
+            tags:
+                - WorkspaceAPI
+        get:
+            description: |-
+                ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org
+
+                Returns Workspace info
+            operationId: idGetWorkspacesByIdHandler
+            responses:
+                "200":
+                    $ref: '#/responses/workspaceResponseWrapper'
+            summary: Handle GET for Workspace info by ID
+            tags:
+                - WorkspacesAPI
+        put:
+            description: Updates a workspace
+            operationId: idUpdateWorkspaceHandler
+            responses:
+                "200":
+                    $ref: '#/responses/workspaceResponseWrapper'
+            summary: Handle PUT request for updating a workspace
+            tags:
+                - PostWorkspace
+    /api/workspaces/{id}/designs:
+        get:
+            description: |4-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={name}``` If search is non empty then a greedy search is performed
+
+                ```?filter={condition}```
+            operationId: idGetWorkspaceMesheryDesigns
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternsResponseWrapper'
+            summary: Handles GET for all Meshery Designs in a Workspace
+            tags:
+                - WorkspacesAPI
+    /api/workspaces/{id}/designs/{designID}:
+        delete:
+            description: Removes a meshery design from a workspace
+            operationId: idRemoveMesheryDesignFromWorkspace
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceDesignsMappingResponseWrapper'
+            summary: Handle DELETE request for removing a meshery design from a workspace
+            tags:
+                - WorkspacesAPI
+        post:
+            description: Adds a meshery design to a workspace
+            operationId: idAddMesheryDesignToWorkspace
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceDesignsMappingResponseWrapper'
+            summary: Handle POST request for adding a meshery design to a workspace
+            tags:
+                - WorkspacesAPI
+    /api/workspaces/{id}/environments:
+        get:
+            description: |4-
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={name}``` If search is non empty then a greedy search is performed
+
+                ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
+
+                ```?filter={condition}```
+            operationId: idGetWorkspaceEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/environmentsResponseWrapper'
+            summary: Handles GET for all Environments in a Workspace
+            tags:
+                - WorkspacesAPI
+    /api/workspaces/{id}/environments/{environmentID}:
+        delete:
+            description: Removes an environment from a workspace
+            operationId: idRemoveEnvironmentFromWorkspace
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceEnvironmentsMappingResponseWrapper'
+            summary: Handle DELETE request for removing an environment from a workspace
+            tags:
+                - WorkspacesAPI
+        post:
+            description: Adds an environment to a workspace
+            operationId: idAddEnvironmentToWorkspace
+            responses:
+                "201":
+                    $ref: '#/responses/workspaceEnvironmentsMappingResponseWrapper'
+            summary: Handle POST request for adding an environment to a workspace
+            tags:
+                - WorkspacesAPI
     /provider:
         get:
             description: Servers providers UI
@@ -2620,6 +2757,14 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    workspaceDesignsMappingResponseWrapper:
+        description: Returns workspace designs mapping
+    workspaceEnvironmentsMappingResponseWrapper:
+        description: Returns workspace environments mapping
+    workspaceResponseWrapper:
+        description: Returns workspace
+    workspacesResponseWrapper:
+        description: Returns workspaces
 schemes:
     - http
 security:
