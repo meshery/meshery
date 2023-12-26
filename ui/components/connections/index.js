@@ -255,12 +255,12 @@ function Connections({
     })
       .unwrap()
       .then((resp) => {
-        getConnections(page, pageSize, search, sortOrder);
         notify({
           message: `Environment: ${resp.Name} saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         addConnectionToEnvironment(resp.id, resp.Name, connectionId, connectionName);
+        getConnections(page, pageSize, search, sortOrder);
       })
       .catch((err) => {
         notify({
@@ -308,10 +308,15 @@ function Connections({
   const handleEnvironmentSelect = (
     connectionId,
     connName,
+    assignedEnvironments,
     selectedEnvironments,
     unSelectedEnvironments,
   ) => {
-    selectedEnvironments.forEach((environment) => {
+    let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+      return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+    });
+
+    newlySelectedEnvironments.forEach((environment) => {
       let envName = environment.label;
       let environmentId = environment.value || '';
       let isNew = environment.__isNew__ || false;
@@ -439,6 +444,7 @@ function Connections({
                       handleEnvironmentSelect(
                         connections[tableMeta.rowIndex].id,
                         connections[tableMeta.rowIndex].name,
+                        cleanedEnvs,
                         selected,
                         unselected,
                       )
