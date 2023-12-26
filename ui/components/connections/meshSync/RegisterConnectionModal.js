@@ -6,20 +6,20 @@ import CustomizedSteppers from './Stepper/index.js';
 import dataFetch from '../../../lib/data-fetch.js';
 
 export const cancelConnectionRegister = (id) => {
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        body: JSON.stringify({
-          id: id,
-        }),
-      },
-      (result) => {
-        console.log(result);
-      },
-    );
-  };
+  dataFetch(
+    '/api/integrations/connections/register',
+    {
+      method: 'DELETE',
+      credentials: 'include',
+      body: JSON.stringify({
+        id: id,
+      }),
+    },
+    (result) => {
+      console.log(result);
+    },
+  );
+};
 
 const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
   const [open, setOpen] = useState(false);
@@ -30,7 +30,7 @@ const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
       setOpen(true);
     });
   }, [handleOpen]);
-  
+
   const handleClose = () => {
     cancelConnectionRegister(formConnectionIdRef.current);
     setOpen(false);
@@ -55,7 +55,11 @@ const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
             border: `6px solid ${theme.palette.secondary.success}`,
           }}
         >
-          <CustomizedSteppers formConnectionIdRef onClose={handleClose} connectionData={connectionData} />
+          <CustomizedSteppers
+            formConnectionIdRef
+            onClose={handleClose}
+            connectionData={connectionData}
+          />
         </DialogContent>
       </Dialog>
     </div>
