@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
-import { default as components } from 'react-select';
+import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+// import Typography from '@material-ui/core/Typography';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -28,29 +29,31 @@ const MultiSelectWrapper = (props) => {
       JSON.stringify(filteredOptions.sort(comparator)),
   );
 
-  const Option = (props) => (
-    <components.Option {...props}>
-      {props.value === '*' && !isAllSelected.current && filteredSelectedOptions?.length > 0 ? (
-        <input
-          key={props.value}
-          type="checkbox"
-          ref={(input) => {
-            if (input) input.indeterminate = true;
-          }}
-        />
-      ) : (
-        <input
-          key={props.value}
-          type="checkbox"
-          checked={props.isSelected || isAllSelected.current}
-          onChange={() => {}}
-        />
-      )}
-      <label style={{ marginLeft: '5px' }}>{props.label}</label>
-    </components.Option>
-  );
+  const Option = (props) => {
+    return (
+      <components.Option {...props}>
+        {props.value === '*' && !isAllSelected.current && filteredSelectedOptions?.length > 0 ? (
+          <input
+            key={props.value}
+            type="checkbox"
+            ref={(input) => {
+              if (input) input.indeterminate = true;
+            }}
+          />
+        ) : (
+          <input
+            key={props.value}
+            type="checkbox"
+            checked={props.isSelected || isAllSelected.current}
+            onChange={() => {}}
+          />
+        )}
+        <label style={{ marginLeft: '5px' }}>{props.label}</label>
+      </components.Option>
+    );
+  };
 
-  const Input = (props) => {
+  const CustomInput = (props) => {
     return selectInput.length === 0 ? (
       <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
         {props.children}
@@ -176,7 +179,7 @@ const MultiSelectWrapper = (props) => {
       onChange={handleChange}
       components={{
         Option: Option,
-        Input: Input,
+        Input: CustomInput,
         ...props.components,
       }}
       filterOption={customFilterOption}
