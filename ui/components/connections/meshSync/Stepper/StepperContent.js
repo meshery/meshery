@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
@@ -12,55 +12,116 @@ import {
   Button,
 } from '@material-ui/core';
 
-import { ConnectionDetailContent, FinishContent, CredentialDetailContent } from './constants';
+import {
+  ConnectionDetailContent,
+  FinishContent,
+  CredentialDetailContent,
+  SelectConnectionTypeContent,
+} from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import dataFetch from '../../../../lib/data-fetch';
 import { Box } from '@mui/material';
+import { selectCompSchema } from '../../../RJSFUtils/common';
+import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 
-export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => {
-  const [schema, setSchema] = useState({ properties: {} });
-  const [connectionObject, setConnectionObject] = useState(null);
-  const formRef = React.createRef();
+const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
-  useEffect(() => {
-    sharedData !== null &&
-      sharedData.connection === undefined &&
-      registerConnection(sharedData?.model);
-  }, [sharedData]);
+const schema = selectCompSchema(
+  CONNECTION_TYPES,
+  'Select one of the available Connection type',
+  'Select type of connection to register',
+  'selectedConnectionType',
+);
+export const SelectConnection = ({ sharedData, setSharedData, handleNext }) => {
+  const formRef = useRef();
 
-  useEffect(() => {
-    ConnectionDetailContent.title = `Connecting to ${connectionObject?.component?.metadata?.modelDisplayName}`;
-  }, [connectionObject]);
-
-  const registerConnection = (model) => {
+  const registerConnection = (componentName) => {
     dataFetch(
       '/api/integrations/connections/register',
       {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          application_data: model,
+          kind: componentName,
           status: 'initialize',
         }),
       },
       (result) => {
-        setConnectionObject(result);
+        let schemaObj = {
+          connection: JsonParse(result?.connection?.schema),
+          credential: JsonParse(result?.credential?.schema),
+        };
+        // formConnectionIdRef.current = result.id;
         setSharedData((prevState) => ({
           ...prevState,
           connection: result,
+          schemas: schemaObj,
+          kind: componentName,
         }));
-        const componentSchema = result?.component?.schema;
-        if (componentSchema !== null || componentSchema !== undefined) {
-          const schemaObj = JSON.parse(componentSchema);
-          setSchema(schemaObj);
-        }
+        handleNext();
       },
     );
   };
 
   const handleCallback = () => {
     handleNext();
+  };
+
+  const handleChange = (data) => {
+    if (data.selectedConnectionType) {
+      const selectedConnectionType = data.selectedConnectionType;
+      // The selectedConnectionType is the concatentaion of connectionType, ' ' and 'Connection' suffix.
+      // Therefore, when initiating connection we are removing ' ' and suffix so that correct schema is retrieved.
+      registerConnection(selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' ')));
+    }
+  };
+
+  return (
+    <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
+      <RJSFWrapper
+        key="select-connection-type-rjsf-form"
+        jsonSchema={schema}
+        liveValidate={false}
+        formRef={formRef}
+        onChange={handleChange}
+      />
+    </StepperContent>
+  );
+};
+
+export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => {
+  const formRef = React.createRef();
+  const [selectedEndpoint, setSelectedEndpoint] = useState(null);
+  // stores selected endpoint just before dropdown is closed
+  const [prevSelectedEndpoint, setPrevSelectedEndpoint] = useState(null);
+
+  useEffect(() => {
+    ConnectionDetailContent.title = `Connecting to ${sharedData?.kind}`;
+  }, [sharedData?.connection]);
+
+  const handleCallback = () => {
+    handleNext();
+  };
+
+  const handleSelectEndpoint = (e) => {
+    setSharedData((prevState) => ({
+      ...prevState,
+      componentForm: {
+        name: randomPatternNameGenerator(),
+        url: e.target.value
+      }
+    }))
+
+    setSelectedEndpoint(e.target.value);
+    setPrevSelectedEndpoint(e.target.value);
+  }
+
+  const handleClose = () => {
+    if (prevSelectedEndpoint === selectedEndpoint) {
+      setSelectedEndpoint(null);
+      setPrevSelectedEndpoint(null);
+    }
   };
 
   const handleChange = (data) => {
@@ -71,9 +132,9 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
   };
   const isDisabledNextButton =
     sharedData?.componentForm &&
-    sharedData?.componentForm['name'] !== undefined &&
-    sharedData?.componentForm &&
-    sharedData?.componentForm['url'] !== undefined
+      sharedData?.componentForm['name'] !== undefined &&
+      sharedData?.componentForm &&
+      sharedData?.componentForm['url'] !== undefined
       ? false
       : true;
   return (
@@ -82,11 +143,60 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       handleCallback={handleCallback}
       disabled={isDisabledNextButton}
     >
+      {sharedData?.capabilities &&
+        <FormControl fullWidth size="small">
+          <InputLabel fontSize="inherit" id="endpoint-checkbox-label">
+            Select from the discovered endpoints
+          </InputLabel>
+          <Select
+            labelId="endpoint-checkbox-label"
+            id="endpoint-checkbox"
+            onChange={handleSelectEndpoint}
+            value={selectedEndpoint}
+            onClose={handleClose}
+            input={<OutlinedInput label="Select discovered endpoint" />}
+            renderValue={() => (
+              <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>
+            )}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              getContentAnchorEl: null,
+              style: {
+                maxHeight: 48 * 4.5 + 8,
+                width: 250,
+                zIndex: 10000,
+              },
+              PaperProps: {
+                style: {
+                  zIndex: 10000,
+                },
+              },
+            }}
+          >
+            {
+              sharedData.capabilities?.urls?.map((endpoint, index) => (
+                <MenuItem key={index} value={endpoint} name={endpoint}>
+                  <Checkbox checked={endpoint === selectedEndpoint} />
+                  <ListItemText primary={endpoint} />
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>}
+      <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
+      <p>Enter the {sharedData.kind} service URL</p>
       <RJSFWrapper
         key="register-connection-rjsf-form"
-        jsonSchema={schema}
-        liveValidate={false}
+        jsonSchema={sharedData?.schemas?.connection}
+        liveValidate={true}
         formRef={formRef}
+        disabled={selectedEndpoint !== null ? true : false}
         onChange={handleChange}
       />
     </StepperContent>
@@ -94,34 +204,21 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext }) => {
-  const [schema, setSchema] = useState({ properties: {} });
-  const [connectionObject, setConnectionObject] = useState(null);
   const [existingCredentials, setExistingCredentials] = useState([]);
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
-  const [formState, setFormState] = React.useState(null);
+  const [formState, setFormState] = useState(null);
   const [skipCredentialVerification, setSkipCredentialVerification] = useState(false);
   const [disableVerify, setDisableVerify] = useState(true);
   const [isSuccess, setIsSuccess] = React.useState(null);
   const formRef = React.createRef();
-
   useEffect(() => {
-    credentialSchema();
     getchExistingCredential();
   }, []);
 
-  const credentialSchema = () => {
-    setConnectionObject(sharedData?.connection);
-    const credentialSchema = sharedData?.connection?.credential?.schema;
-    if (credentialSchema !== null || credentialSchema !== undefined) {
-      const schemaObj = JSON.parse(credentialSchema);
-      setSchema(schemaObj);
-    }
-  };
-
   useEffect(() => {
-    CredentialDetailContent.title = `Credential for ${connectionObject?.credential?.metadata?.modelDisplayName}`;
-  }, [connectionObject]);
+    CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
+  }, [sharedData.kind]);
 
   const getchExistingCredential = () => {
     dataFetch(
@@ -137,6 +234,17 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   };
 
   const verifyConnection = () => {
+    let credential = {};
+    if (selectedCredential === null) {
+      credential = formState;
+    } else {
+      credential = {
+        "secret": selectedCredential?.secret?.secret,
+        "name": selectedCredential?.name,
+      }
+      credential.id = selectedCredential?.id;
+    }
+
     dataFetch(
       '/api/integrations/connections/register',
       {
@@ -145,11 +253,11 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         body: JSON.stringify({
           skip_credential_verification: skipCredentialVerification,
           kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.connection?.component?.displayName, // This name is from the name field in schema
-          type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.component?.metadata?.subCategory.toLowerCase(),
+          name: sharedData?.componentForm?.name, // This name is from the name field in schema
+          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
           metadata: sharedData?.componentForm,
-          credential_secret: selectedCredential !== null ? selectedCredential : formState,
+          credential_secret: credential,
           id: sharedData?.connection?.id,
           status: 'register',
         }),
@@ -166,6 +274,18 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   };
 
   const connectToConnection = () => {
+    let credential = {};
+    if (selectedCredential === null) {
+      credential = formState;
+    } else {
+      credential = {
+        "name": selectedCredential?.name,
+        "secret": selectedCredential?.secret?.secret
+      }
+      credential.id = selectedCredential?.id;
+    }
+
+
     dataFetch(
       '/api/integrations/connections/register',
       {
@@ -173,11 +293,11 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         credentials: 'include',
         body: JSON.stringify({
           kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.connection?.component?.displayName, // This name is from the name field in schema
-          type: sharedData?.connection?.component?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.component?.metadata?.subCategory.toLowerCase(),
+          name: sharedData?.componentForm?.name, // This name is from the name field in schema
+          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
           metadata: sharedData?.componentForm,
-          credential_secret: selectedCredential !== null ? selectedCredential : formState,
+          credential_secret: credential,
           id: sharedData?.connection?.id,
           status: 'connect',
         }),
@@ -191,21 +311,6 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       },
     );
   };
-  const cancelConnectionRegister = () => {
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        body: JSON.stringify({
-          id: sharedData?.connection?.id,
-        }),
-      },
-      (result) => {
-        console.log(result);
-      },
-    );
-  };
 
   const handleCallback = () => {
     if (isSuccess === null || isSuccess === false) {
@@ -216,7 +321,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   };
 
   const cancelCallback = () => {
-    cancelConnectionRegister();
+    sharedData.onClose();
   };
 
   const handleSelectCredential = (e) => {
@@ -240,8 +345,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
   useEffect(() => {
     if (
       selectedCredential !== null ||
-      (formState !== null && formState['API key']) !== undefined ||
-      (formState !== null && formState['Basic Auth']) !== undefined
+      (formState !== null && formState['secret']) !== undefined
     ) {
       setDisableVerify(false);
     } else {
@@ -261,7 +365,9 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         Select an existing credential to use for this connection
       </p>
       <FormControl sx={{ width: '100%' }} size="small">
-        <InputLabel id="credential-checkbox-label">Select existing credential</InputLabel>
+        <InputLabel fontSize="20" id="credential-checkbox-label">
+          Select existing credential
+        </InputLabel>
         <Select
           labelId="credential-checkbox-label"
           id="credential-checkbox"
@@ -296,7 +402,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         >
           {existingCredentials &&
             existingCredentials?.map((credential) => (
-              <MenuItem value={credential.id} name={credential.name}>
+              <MenuItem key={credential.id} value={credential.id} name={credential.name}>
                 <Checkbox checked={selectedCredential?.id === credential.id} />
                 <ListItemText primary={credential.name} />
               </MenuItem>
@@ -307,8 +413,8 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       <p>Configure a new credential to use for this connection</p>
       <RJSFWrapper
         key="register-connection-rjsf-form"
-        jsonSchema={schema}
-        liveValidate={false}
+        jsonSchema={sharedData?.schemas?.credential}
+        liveValidate={true}
         formRef={formRef}
         disabled={selectedCredential !== null ? true : false}
         onChange={handleChange}
@@ -316,19 +422,22 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       <Box
         style={{
           background: 'rgba(0, 211, 169, 0.05)',
-          padding: '0.6rem',
-          margin: '2rem 0',
+          padding: '0.4rem',
+          margin: '1rem 0',
         }}
       >
-        <Typography style={{ fontSize: '1rem' }}>
+        <Typography style={{ fontSize: 'inherit' }}>
           <Checkbox
+            id="bypass_verification"
             color="success"
             onChange={(e) => {
               setSkipCredentialVerification(e.target.checked);
               setDisableVerify(!e.target.checked);
             }}
           />
-          <span>Force connection registration bypass verification</span>
+          <label fontSize="inherit" for="bypass_verification">
+            Bypass connection verification
+          </label>
         </Typography>
       </Box>
       {isSuccess === false && (
@@ -345,7 +454,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
               <b>Credential Invalid</b>
             </Typography>
             <Typography sx={{ color: '#00000020' }}>
-              {`Unable to establish a connection using ${connectionObject?.credential?.metadata?.modelDisplayName}`}
+              {`Unable to establish a connection using ${sharedData?.kind}`}
             </Typography>
           </Grid>
           <Grid style={{ width: '20%', display: 'flex', justifyContent: 'flex-end' }}>
@@ -369,17 +478,15 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         <div
           style={{
             background: '#00B39F40',
-            borderRadius: '10px',
-            padding: '10px',
+            borderRadius: '0.5rem',
+            padding: '0.5rem',
             display: 'flex',
+            marginBottom: '1rem',
           }}
         >
-          <Grid style={{ width: '90%' }}>
-            <Typography>
-              <b>Credential Verified</b>
-            </Typography>
-            <Typography sx={{ color: '#00000020' }}>
-              {`Credential ${connectionObject?.credential?.metadata?.modelDisplayName} created.`}
+          <Grid>
+            <Typography variant="body2" sx={{ color: '#00000020' }}>
+              {`Credential for ${sharedData?.kind} created.`}
             </Typography>
           </Grid>
           <Grid style={{ width: '10%' }}></Grid>

@@ -52,6 +52,7 @@ export default function CustomizedSteppers({ connectionData, onClose }) {
   React.useEffect(() => {
     setSharedData({
       metadata: connectionData.metadata,
+      capabilities: connectionData.capabilities,
       kind: connectionData.kind,
       onClose: onClose,
     });
