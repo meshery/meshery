@@ -23,7 +23,7 @@ import (
 //
 // ```?search={environments_name}``` If search is non empty then a greedy search is performed
 //
-// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org *required*
 //
 // ```?filter={condition}```
 // responses:
@@ -114,7 +114,6 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 // swagger:route DELETE /api/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
 // Handle DELETE for Environment based on ID
 //
-// Returns Environment info
 // responses:
 // 201: noContentWrapper
 

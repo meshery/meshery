@@ -168,7 +168,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Name" secondary={metadata.name} />
+                  <ListItemText primary="Name" secondary={connection.name} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="K8s Version" secondary={metadata.version} />

@@ -1,27 +1,27 @@
-import { Button, Grid, NoSsr } from '@material-ui/core';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
 import { Provider, connect } from 'react-redux';
-import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { withStyles } from '@material-ui/core/styles';
+import { Pagination, PaginationItem } from '@material-ui/lab';
+import { withRouter } from 'next/router';
+import { debounce } from 'lodash';
+import { Delete } from '@material-ui/icons';
+import classNames from 'classnames';
 
+import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
-import { useEffect, useRef, useState } from 'react';
 import dataFetch from '../../lib/data-fetch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
-import { CreateButtonWrapper, EditButton, TextButton } from './styles';
-import theme from '../../themes/app';
 import Modal from '../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
-import { withRouter } from 'next/router';
-import { Box, Pagination, PaginationItem } from '@mui/material';
-import { debounce } from 'lodash';
 import EmptyState from './empty-state';
-import { Delete } from '@material-ui/icons';
 import TransferList from './transfer-list/transfer-list';
 import GenericModal from './generic-modal';
 import ConnectionIcon from '../../assets/icons/Connection';
@@ -29,8 +29,15 @@ import { TRANSFER_COMPONET } from '../../utils/Enum';
 import {
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
+  useGetEnvironmentConnectionsQuery,
+  useGetEnvironmentsQuery,
+  useCreateEnvironmentMutation,
+  useUpdateEnvironmentMutation,
+  useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { store } from '../../store';
+import styles from './styles';
+import { useGetConnectionsQuery } from '../../rtk-query/connection';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -64,18 +71,7 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization }) => {
-  const [environments, setEnvironments] = useState([]);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [sortOrder /* setSortOrder */] = useState('');
-  const [search, setSearch] = useState('');
-  const [filter /* setFilter */] = useState('');
-  const [totalCount, setTotalCount] = useState();
-  const [, /* loading */ setLoading] = useState(false);
-  const [orgId, setOrgId] = useState('');
-  const [selectedEnvironments, setSelectedEnvironments] = useState([]);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+const Environments = ({ organization, classes }) => {
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -85,26 +81,118 @@ const Environments = ({ organization }) => {
   const [editEnvId, setEditEnvId] = useState('');
   const [orgValue, setOrgValue] = useState([]);
   const [orgLabel, setOrgLabel] = useState([]);
-
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState('');
+  const [orgId, setOrgId] = useState('');
+  const [selectedEnvironments, setSelectedEnvironments] = useState([]);
   const [assignConnectionModal, setAssignConnectionModal] = useState(false);
   const [connectionAssignEnv, setConnectionAssignEnv] = useState({});
-  // const [environmentConnections, setEnvironmentConnections] = useState([]);
-  // const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
   const [assignedConnections, setAssignedConnections] = useState([]);
-
   const [connectionsData, setConnectionsData] = useState([]);
   const [connectionsPage, setConnectionsPage] = useState(0);
-  const [connectionCount, setConnectionCount] = useState(0);
-
   const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
-  const [environmentConnectionCount, setEnvironmentConnectionCount] = useState(0);
-  const [environmentConnectionPage, setEnvironmentConnectionPage] = useState(0);
+  const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [skip, setSkip] = useState(true);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
+  const pageSize = 10;
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+
+  const {
+    data: environmentsData,
+    // isLoading: isEnvironmentsLoading,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    {
+      search: search,
+      page: page,
+      pagesize: pageSize,
+      orgId: orgId,
+    },
+    {
+      skip: !orgId ? true : false,
+    },
+  );
+
+  const [createEnvironment] = useCreateEnvironmentMutation();
+
+  const [updateEnvironment] = useUpdateEnvironmentMutation();
+
+  const [deleteEnvironment] = useDeleteEnvironmentMutation();
+
+  const {
+    data: connections,
+    // isLoading: isConnectionsLoading,
+    isError: isConnectionsError,
+    error: connectionsError,
+  } = useGetConnectionsQuery(
+    {
+      page: connectionsPage,
+      pagesize: connectionPageSize,
+    },
+    {
+      skip,
+    },
+  );
+
+  const {
+    data: environmentConnections,
+    // isLoading: isEnvironmentConnectionsLoading,
+    isError: isEnvironmentConnectionsError,
+    error: environmentConnectionsError,
+  } = useGetEnvironmentConnectionsQuery(
+    {
+      page: connectionsOfEnvironmentPage,
+      pagesize: connectionPageSize,
+      environmentId: connectionAssignEnv.id,
+    },
+    {
+      skip,
+    },
+  );
+
+  // const loading = isEnvironmentsLoading || isEnvironmentConnectionsLoading || isConnectionsLoading;
+
+  const environments = environmentsData?.environments ? environmentsData.environments : [];
+  // const connectionsDataRtk = connections?.connections ? connections.connections : [];
+  // const environmentConnectionsDataRtk = environmentConnections?.connections
+  //   ? environmentConnections.connections
+  //   : [];
+
+  // useEffect(() => {
+  //   setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
+  // }, [connections]);
+
+  // useEffect(() => {
+  //   setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
+  // }, [environmentConnections]);
+
+  useEffect(() => {
+    if (isEnvironmentsError) {
+      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+    }
+    if (isEnvironmentConnectionsError) {
+      handleError(
+        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
+      );
+    }
+    if (isConnectionsError) {
+      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+    }
+  }, [
+    isEnvironmentsError,
+    isEnvironmentConnectionsError,
+    isConnectionsError,
+    environmentsError,
+    environmentConnectionsError,
+    connectionsError,
+    handleError,
+  ]);
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -115,89 +203,18 @@ const Environments = ({ organization }) => {
     });
   };
 
+  const handleSuccess = (msg) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: msg,
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+  };
+
   useEffect(() => {
     setOrgId(organization?.id);
     fetchAvailableOrgs();
   }, [organization]);
-
-  useEffect(() => {
-    if (orgId) {
-      getEnvironments(page, pageSize, search, sortOrder, filter);
-    }
-  }, [page, pageSize, search, sortOrder, filter, orgId]);
-
-  const getEnvironments = (page, pageSize, search, sortOrder) => {
-    setLoading(true);
-    if (!search) search = '';
-    dataFetch(
-      `/api/environments?orgID=${orgId}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}&filter=${filter}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        const { environments, page, page_size, total_count } = res;
-        setEnvironments(environments);
-        setPage(page);
-        setPageSize(page_size);
-        setTotalCount(total_count);
-        setLoading(false);
-      },
-      handleError(ERROR_MESSAGE.FETCH_ENVIRONMENTS),
-    );
-  };
-
-  const createEnvironment = (payload) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments`,
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: payload,
-      },
-      () => {
-        notify({ message: 'Environment created', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.CREATE_ENVIRONMENT),
-    );
-  };
-
-  const updateEnvironment = (payload) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${editEnvId}`,
-      {
-        credentials: 'include',
-        method: 'PUT',
-        body: payload,
-      },
-      () => {
-        notify({ message: 'Environment updated', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.UPDATE_ENVIRONMENT),
-    );
-  };
-
-  const deleteEnvironment = (id) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${id}`,
-      {
-        credentials: 'include',
-        method: 'DELETE',
-      },
-      () => {
-        notify({ message: 'Environment deleted', event_type: EVENT_TYPES.SUCCESS });
-        getEnvironments(page, pageSize, search, sortOrder, filter);
-      },
-      handleError(ERROR_MESSAGE.DELETE_ENVIRONMENT),
-    );
-  };
 
   const fetchAvailableOrgs = async () => {
     dataFetch(
@@ -219,7 +236,6 @@ const Environments = ({ organization }) => {
   };
 
   const fetchSchema = async (actionType) => {
-    setLoading(true);
     dataFetch(
       `/api/schema/resource/environment`,
       {
@@ -244,42 +260,32 @@ const Environments = ({ organization }) => {
     );
   };
 
-  const getConnections = (page) => {
-    setLoading(true);
-    dataFetch(
-      `/api/integrations/connections?pagesize=${connectionPageSize}&page=${page}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        /* eslint-disable-next-line no-unsafe-optional-chaining */
-        setConnectionsData((prevConnectionsData) => [...prevConnectionsData, ...res?.connections]);
-        setConnectionCount(res?.total_count);
-        setConnectionsPage(res?.page + 1);
-        setLoading(false);
-      },
-      handleError(ERROR_MESSAGE.FETCH_CONNECTIONS),
-    );
-  };
+  useEffect(() => {
+    const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
+    if (connections) {
+      setConnectionsData((prevData) => [...prevData, ...connections.connections]);
+      if (connections?.total_count && connectionsPage < pagesCount - 1) {
+        setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
+      }
+    }
+  }, [connections, connectionsPage, connectionPageSize]);
 
-  const getEnvironmentConnections = (environmentId, page) => {
-    setLoading(true);
-    dataFetch(
-      `/api/environments/${environmentId}/connections?pagesize=${connectionPageSize}&page=${page}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        /* eslint-disable-next-line no-unsafe-optional-chaining */
-        setEnvironmentConnectionsData(res?.connections);
-        setEnvironmentConnectionCount(res?.total_count);
-        setEnvironmentConnectionPage(res?.page + 1);
-        setLoading(false);
-      },
+  useEffect(() => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
     );
-  };
+    if (environmentConnections) {
+      setEnvironmentConnectionsData((prevData) => [
+        ...prevData,
+        ...environmentConnections.connections,
+      ]);
+      if (environmentConnections?.total_count && connectionsOfEnvironmentPage < pagesCount - 1) {
+        setConnectionsOfEnvironmentPage(
+          (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
+        );
+      }
+    }
+  }, [environmentConnections, connectionPageSize, connectionsOfEnvironmentPage]);
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -323,22 +329,31 @@ const Environments = ({ organization }) => {
   };
 
   const handleCreateEnvironment = ({ organization, name, description }) => {
-    const payload = JSON.stringify({
-      name: name,
-      description: description,
-      organization_id: organization,
-    });
-    createEnvironment(payload);
+    createEnvironment({
+      environmentPayload: {
+        name: name,
+        description: description,
+        organization_id: organization,
+      },
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment "${name}" created `))
+      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
     handleEnvironmentModalClose();
   };
 
   const handleEditEnvironment = ({ name, description }) => {
-    const payload = JSON.stringify({
-      name: name,
-      description: description,
-      organization_id: initialData.organization,
-    });
-    updateEnvironment(payload);
+    updateEnvironment({
+      environmentId: editEnvId,
+      environmentPayload: {
+        name: name,
+        description: description,
+        organization_id: initialData.organization,
+      },
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment "${name}" updated`))
+      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
     handleEnvironmentModalClose();
   };
 
@@ -356,7 +371,12 @@ const Environments = ({ organization }) => {
   };
 
   const handleDeleteEnvironment = (id) => {
-    deleteEnvironment(id);
+    deleteEnvironment({
+      environmentId: id,
+    })
+      .unwrap()
+      .then(handleSuccess(`Environment deleted`))
+      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
   };
 
   const deleteEnvironmentModalContent = (environment) => (
@@ -401,22 +421,6 @@ const Environments = ({ organization }) => {
     setSelectedEnvironments([]);
   };
 
-  useEffect(() => {
-    const pagesCount = parseInt(Math.ceil(parseInt(connectionCount) / connectionPageSize));
-    if (pagesCount > connectionsPage || connectionsPage === 0) {
-      getConnections(connectionsPage);
-    }
-  }, [connectionsPage]);
-
-  useEffect(() => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(environmentConnectionCount) / connectionPageSize),
-    );
-    if (pagesCount > environmentConnectionPage || environmentConnectionPage === 0) {
-      getEnvironmentConnections(connectionAssignEnv.id, environmentConnectionPage);
-    }
-  }, [connectionAssignEnv, environmentConnectionPage]);
-
   const handleAssignConnection = () => {
     const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
     const updatedConnectionsIds = assignedConnections.map((conn) => conn.id);
@@ -431,36 +435,75 @@ const Environments = ({ organization }) => {
     addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
 
     removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
+    setEnvironmentConnectionsData([]);
     handleonAssignConnectionModalClose();
   };
 
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
+    if (connectionAssignEnv.id !== environment.id) {
+      setEnvironmentConnectionsData([]);
+    }
     setConnectionAssignEnv(environment);
+    setSkip(false);
   };
 
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
-    setConnectionAssignEnv({});
+    setSkip(true);
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
     setAssignedConnections(updatedAssignedData);
   };
 
+  // const handleAssignablePage = () => {
+  //   const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
+  //   if (connectionsPage < pagesCount - 1) {
+  //     setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
+  //   }
+  // };
+
+  // const handleAssignedPage = () => {
+  //   const pagesCount = parseInt(
+  //     Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
+  //   );
+  //   if (connectionsOfEnvironmentPage < pagesCount - 1) {
+  //     setConnectionsOfEnvironmentPage(
+  //       (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
+  //     );
+  //   }
+  // };
+
   return (
     <NoSsr>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-        <CreateButtonWrapper>
-          <EditButton
+        <div className={classes.createButtonWrapper}>
+          <Button
+            type="submit"
             variant="contained"
+            color="primary"
+            size="large"
             onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
+            style={{
+              padding: '8px',
+              borderRadius: 5,
+              marginRight: '2rem',
+            }}
+            data-cy="btnResetDatabase"
           >
-            <AddIcon height="24" width="24" fill={theme.palette.secondary.white} />
-            <TextButton>Create</TextButton>
-          </EditButton>
-        </CreateButtonWrapper>
+            <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+            <Typography
+              style={{
+                paddingLeft: '4px',
+                marginRight: '4px',
+              }}
+            >
+              Create
+            </Typography>
+          </Button>
+        </div>
         <SearchBar
           onSearch={(value) => {
             setSearch(value);
@@ -471,26 +514,13 @@ const Environments = ({ organization }) => {
         />
       </div>
       {selectedEnvironments.length > 0 && (
-        <Box
-          sx={{
-            width: '100%',
-            p: '0.8rem',
-            justifyContent: 'space-between',
-            marginTop: '0.18rem',
-            marginBottom: '1rem',
-            backgroundColor: theme.palette.secondary.white,
-            borderRadius: '.25rem',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ color: '#000' }}>
+        <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+          <Typography>
             {selectedEnvironments.length > 1
               ? `${selectedEnvironments.length} environments selected`
               : `${selectedEnvironments.length} environment selected`}
-          </span>
-          <Button>
+          </Typography>
+          <Button className={classes.iconButton}>
             <Delete
               style={{ color: 'red', margin: '0 2px' }}
               onClick={handleBulkDeleteEnvironmentConfirm}
@@ -505,6 +535,7 @@ const Environments = ({ organization }) => {
             {environments.map((environment) => (
               <Grid item xs={12} md={6} key={environment.id}>
                 <EnvironmentCard
+                  classes={classes}
                   environmentDetails={environment}
                   selectedEnvironments={selectedEnvironments}
                   onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
@@ -524,7 +555,7 @@ const Environments = ({ organization }) => {
             spacing={2}
           >
             <Pagination
-              count={Math.ceil(totalCount / pageSize)}
+              count={Math.ceil(environmentsData?.total_count / pageSize)}
               page={page + 1}
               sx={{
                 backgroundColor: 'white',
@@ -587,6 +618,10 @@ const Environments = ({ organization }) => {
             }
             emtyStateMessageRight="No connections assigned"
             transferComponentType={TRANSFER_COMPONET.CHIP}
+            // assignablePage={handleAssignablePage}
+            // assignedPage={handleAssignedPage}
+            // originalLeftCount={connections?.total_count}
+            // originalRightCount={environmentConnections?.total_count}
           />
         }
         action={handleAssignConnection}
@@ -607,10 +642,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(
-  withRouter((props) => (
-    <Provider store={store}>
-      <Environments {...props} />
-    </Provider>
-  )),
+export default withStyles(styles)(
+  connect(mapStateToProps)(
+    withRouter((props) => (
+      <Provider store={store}>
+        <Environments {...props} />
+      </Provider>
+    )),
+  ),
 );

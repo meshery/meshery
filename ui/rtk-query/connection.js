@@ -1,7 +1,24 @@
 import { api } from './index';
 
+const TAGS = {
+  CONNECTIONS: 'connections',
+};
+
 const connectionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getConnections: builder.query({
+      query: (queryArg) => ({
+        url: `integrations/connections`,
+        params: {
+          page: queryArg.page,
+          pagesize: queryArg.pagesize,
+          search: queryArg.search,
+          order: queryArg.order,
+        },
+        method: 'GET',
+      }),
+      providesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
     getConnectionStatus: builder.query({
       query: (queryArg) => ({
         url: `integrations/connections/${queryArg.connectionKind}/status`,
@@ -39,6 +56,7 @@ const connectionsApi = api.injectEndpoints({
 });
 
 export const {
+  useGetConnectionsQuery,
   useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
