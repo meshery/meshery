@@ -373,11 +373,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = () => {
-  // const meshsyncControllerState = state.get('controllerState');
-  // return {
-  //   meshsyncControllerState
-  // };
-};
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);

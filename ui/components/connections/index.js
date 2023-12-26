@@ -166,16 +166,18 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections({
-  classes,
-  updateProgress,
-  /*onOpenCreateConnectionModal,*/ operatorState,
-  selectedK8sContexts,
-  k8sconfig,
-  connectionMetadataState,
-  meshsyncControllerState,
-  organization,
-}) {
+function Connections(props) {
+  const {
+    classes,
+    updateProgress,
+    /*onOpenCreateConnectionModal,*/ operatorState,
+    selectedK8sContexts,
+    k8sconfig,
+    connectionMetadataState,
+    meshsyncControllerState,
+    organization,
+  } = props;
+  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -818,7 +820,10 @@ function Connections({
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
                           <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <FormatConnectionMetadata connection={connection} />
+                            <FormatConnectionMetadata
+                              connection={connection}
+                              meshsyncControllerState={meshsyncControllerState}
+                            />
                           </Grid>
                         </Grid>
                       </Grid>
