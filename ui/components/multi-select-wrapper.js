@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-// import Typography from '@material-ui/core/Typography';
-import theme from '../themes/app';
+import theme, { Colors } from '../themes/app';
 import { MenuItem } from '@material-ui/core';
 import { Checkbox } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -53,10 +53,6 @@ const MultiSelectWrapper = (props) => {
                   if (input) input.indeterminate = true;
                 }}
                 style={{
-                  color: theme.palette.secondary.focused,
-                  '&$checked': {
-                    color: theme.palette.secondary.focused,
-                  },
                   padding: '0',
                 }}
               />
@@ -67,10 +63,6 @@ const MultiSelectWrapper = (props) => {
                 checked={props.isSelected || isAllSelected.current}
                 onChange={() => {}}
                 style={{
-                  color: theme.palette.secondary.focused,
-                  '&$checked': {
-                    color: theme.palette.secondary.focused,
-                  },
                   padding: '0',
                 }}
               />
@@ -93,6 +85,18 @@ const MultiSelectWrapper = (props) => {
           {props.children}
         </components.Input>
       </div>
+    );
+  };
+
+  const Menu = (props) => {
+    return (
+      <Paper
+        square
+        style={{ zIndex: 9999, width: '100%', position: 'absolute' }}
+        {...props.innerProps}
+      >
+        {props.children}
+      </Paper>
     );
   };
 
@@ -166,24 +170,18 @@ const MultiSelectWrapper = (props) => {
       maxHeight: '65px',
       overflow: 'auto',
     }),
-    // option: (styles, { isSelected, isFocused }) => {
-    //   console.log('option: ', styles, isSelected, isFocused)
-    //   console.log("theme:", theme)
-    //   let color= theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679'
-    //   return {
-    //     ...styles,
-    //     backgroundColor:
-    //       isSelected && !isFocused
-    //         ? null
-    //         : isFocused && !isSelected
-    //         ? 'lightgray'
-    //         : isFocused && isSelected
-    //         ? '#DEEBFF'
-    //         : null,
-    //     color: isSelected ? null : null,
-    //   };
-    // },
-    // menu: (def) => ({ ...def, zIndex: 9999 }),
+    control: (base) => ({
+      ...base,
+      backgroundColor: base.backgroundColor2,
+      borderColor: Colors.keppelGreen,
+      '&:hover': {
+        borderColor: Colors.keppelGreen,
+      },
+    }),
+    menu: (base) => ({
+      ...base,
+      backgroundColor: base.backgroundColor2,
+    }),
   };
 
   if (props.isSelectAll && props.options.length !== 0) {
@@ -212,11 +210,20 @@ const MultiSelectWrapper = (props) => {
       components={{
         Option: Option,
         Input: CustomInput,
+        Menu: Menu,
         ...props.components,
       }}
       filterOption={customFilterOption}
       menuPlacement={props.menuPlacement ?? 'auto'}
       styles={customStyles}
+      theme={(selectTheme) => ({
+        ...selectTheme,
+        colors: {
+          ...selectTheme.colors,
+          backgroundColor2:
+            theme.palette.type === 'dark' ? theme.palette.secondary.mainBackground : '#fff',
+        },
+      })}
       isMulti
       closeMenuOnSelect={false}
       tabSelectsValue={false}
