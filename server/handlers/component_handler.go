@@ -1269,6 +1269,50 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	go h.config.MeshModelSummaryChannel.Publish()
 }
 
+// swagger:route POST /api/meshmodel/nonRegisterEntity
+// Handle POST request for registering meshmodel components.
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:MeshModelHostsWithEntitySummary
+
+// request body should be json
+// request body should be of Host format
+func (h *Handler) NonRegisterEntity(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
+	defer r.Body.Close()
+
+	var host registry.Host
+	if err := json.NewDecoder(r.Body).Decode(&host); err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	nonImportModel, exists := registry.NonImportModel[host.Hostname]
+	if !exists {
+		http.NotFound(rw, r)
+		return
+	}
+
+	res := v1alpha1.MeshModelHostsWithEntitySummary{
+		Hostname: host.Hostname,
+		Summary: v1alpha1.EntitySummary{
+			Models:        nonImportModel.Models,
+			Components:    nonImportModel.Components,
+			Relationships: nonImportModel.Relationships,
+			Policies:      nonImportModel.Policies,
+		},
+	}
+
+	responseJSON, err := json.Marshal(res)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Write(responseJSON)
+}
+
 // swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
 // Handle GET request for getting all meshmodel registrants
 //
