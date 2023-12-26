@@ -1,9 +1,8 @@
 import { useState, useRef } from 'react';
-import { default as ReactSelect, components } from 'react-select';
+import { default as components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 const MultiSelectWrapper = (props) => {
-  console.log('props', props);
   const [selectInput, setSelectInput] = useState('');
   const selectAllLabel = useRef('Select all');
   const allOption = { value: '*', label: selectAllLabel.current };
@@ -51,21 +50,19 @@ const MultiSelectWrapper = (props) => {
     </components.Option>
   );
 
-  const Input = (props) => (
-    <>
-      {selectInput.length === 0 ? (
+  const Input = (props) => {
+    return selectInput.length === 0 ? (
+      <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
+        {props.children}
+      </components.Input>
+    ) : (
+      <div style={{ border: '1px dotted gray' }}>
         <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
           {props.children}
         </components.Input>
-      ) : (
-        <div style={{ border: '1px dotted gray' }}>
-          <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
-            {props.children}
-          </components.Input>
-        </div>
-      )}
-    </>
-  );
+      </div>
+    );
+  };
 
   const customFilterOption = ({ value, label }, input) =>
     (value !== '*' && label.toLowerCase().includes(input.toLowerCase())) ||
@@ -88,6 +85,7 @@ const MultiSelectWrapper = (props) => {
         JSON.stringify(filteredOptions.sort(comparator)) ===
           JSON.stringify(selected.sort(comparator)))
     ) {
+      setSelectInput('');
       return props.onChange(
         [
           ...(props.value ?? []),
@@ -107,8 +105,10 @@ const MultiSelectWrapper = (props) => {
       let filteredUnselectedOptions = filteredSelectedOptions.filter(
         (opts) => !selected.some((sel) => sel.value === opts.value),
       );
+      setSelectInput('');
       return props.onChange(selected, filteredUnselectedOptions);
     } else {
+      setSelectInput('');
       return props.onChange(
         [
           ...props.value.filter(
@@ -153,7 +153,8 @@ const MultiSelectWrapper = (props) => {
 
   if (props.isSelectAll && props.options.length !== 0) {
     isAllSelected.current =
-      JSON.stringify(filteredSelectedOptions) === JSON.stringify(filteredOptions);
+      JSON.stringify(filteredSelectedOptions.sort(comparator)) ===
+      JSON.stringify(filteredOptions.sort(comparator));
 
     if (filteredSelectedOptions?.length > 0) {
       if (filteredSelectedOptions?.length === filteredOptions?.length)
@@ -163,49 +164,30 @@ const MultiSelectWrapper = (props) => {
     } else selectAllLabel.current = 'Select all';
 
     allOption.label = selectAllLabel.current;
-
-    return (
-      <CreatableSelect
-        {...props}
-        inputValue={selectInput}
-        onInputChange={onInputChange}
-        onKeyDown={onKeyDown}
-        options={[allOption, ...props.options]}
-        onChange={handleChange}
-        components={{
-          Option: Option,
-          Input: Input,
-          ...props.components,
-        }}
-        filterOption={customFilterOption}
-        menuPlacement={props.menuPlacement ?? 'auto'}
-        styles={customStyles}
-        isMulti
-        closeMenuOnSelect={false}
-        tabSelectsValue={false}
-        backspaceRemovesValue={false}
-        hideSelectedOptions={false}
-        blurInputOnSelect={false}
-      />
-    );
   }
 
   return (
-    <ReactSelect
+    <CreatableSelect
       {...props}
       inputValue={selectInput}
       onInputChange={onInputChange}
-      filterOption={customFilterOption}
+      onKeyDown={onKeyDown}
+      options={[allOption, ...props.options]}
+      onChange={handleChange}
       components={{
+        Option: Option,
         Input: Input,
         ...props.components,
       }}
+      filterOption={customFilterOption}
       menuPlacement={props.menuPlacement ?? 'auto'}
-      onKeyDown={onKeyDown}
+      styles={customStyles}
+      isMulti
+      closeMenuOnSelect={false}
       tabSelectsValue={false}
-      hideSelectedOptions={true}
       backspaceRemovesValue={false}
-      blurInputOnSelect={true}
+      hideSelectedOptions={false}
+      blurInputOnSelect={false}
     />
   );
 };

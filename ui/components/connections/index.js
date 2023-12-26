@@ -259,7 +259,7 @@ function Connections({
           message: `Environment: ${resp.Name} saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        addConnectionToEnvironment(resp.id, resp.Name, connectionId, connectionName);
+        addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
         getConnections(page, pageSize, search, sortOrder);
       })
       .catch((err) => {
