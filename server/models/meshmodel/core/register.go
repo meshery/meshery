@@ -11,10 +11,10 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
 	"github.com/layer5io/meshery/server/models"
-	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
@@ -79,15 +79,15 @@ func writeK8sMetadata(comp *v1alpha1.ComponentDefinition, reg *meshmodel.Registr
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		putils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+		utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(v1alpha1.ComponentDefinition)
 		if !ok {
-			putils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+			utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 			return
 		}
-		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
+		utils.MergeMaps(comp.Metadata, existingComp.Metadata)
 		comp.Model = existingComp.Model
 	}
 }
