@@ -73,7 +73,6 @@ const MultiSelectWrapper = (props) => {
   };
 
   const handleChange = (selected) => {
-    console.log('handleChange: ', selected);
     if (
       selected.length > 0 &&
       !isAllSelected.current &&
@@ -89,19 +88,26 @@ const MultiSelectWrapper = (props) => {
               (props.value ?? []).filter((opt) => opt.label === label).length === 0,
           ),
         ].sort(comparator),
+        [],
       );
     else if (
       selected.length > 0 &&
       selected[selected.length - 1].value !== allOption.value &&
       JSON.stringify(selected.sort(comparator)) !== JSON.stringify(filteredOptions)
-    )
-      return props.onChange(selected);
-    else
-      return props.onChange([
-        ...props.value.filter(
-          ({ label }) => !label.toLowerCase().includes(selectInput?.toLowerCase()),
-        ),
-      ]);
+    ) {
+      let filteredUnselectedOptions = filteredSelectedOptions.filter(
+        (opts) => !selected.some((sel) => sel.value === opts.value),
+      );
+      return props.onChange(selected, filteredUnselectedOptions);
+    } else
+      return props.onChange(
+        [
+          ...props.value.filter(
+            ({ label }) => !label.toLowerCase().includes(selectInput?.toLowerCase()),
+          ),
+        ],
+        filteredSelectedOptions.length == 1 ? filteredSelectedOptions : props.options,
+      );
   };
 
   const customStyles = {
