@@ -9,9 +9,7 @@ type: project
 category: none
 list: include
 ---
-
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
-
-{% for release in sorted_release limit:1 offset:0 %}
+{%- for release in sorted_release limit:1 offset:0 -%}
   {{ release.tags }}
 {% endfor %}
