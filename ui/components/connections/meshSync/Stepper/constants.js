@@ -1,26 +1,36 @@
 import FinishFlagIcon from '../../../../assets/icons/FinishFlagIcon';
-import { ConnectionDetails, CredentialDetails, Finish } from './StepperContent';
+import { ConnectionDetails, CredentialDetails, Finish, SelectConnection } from './StepperContent';
 import ConnectionIcon from '../../../../assets/icons/Connection';
 import CredentialIcon from '../../../../assets/icons/CredentialIcon';
 
-export const registerConnectionSteps = ['Connection Details', 'Credential Details', 'Finish'];
+export const registerConnectionSteps = [
+  'Select Connection type',
+  'Connection Details',
+  'Credential Details',
+  'Finish',
+];
 
 export const registerConnectionIcons = {
   1: <ConnectionIcon height={26} width={26} />,
-  2: <CredentialIcon height={32} width={32} />,
-  3: <FinishFlagIcon width="2rem" />,
+  2: <ConnectionIcon height={26} width={26} />,
+  3: <CredentialIcon height={32} width={32} />,
+  4: <FinishFlagIcon width="2rem" />,
 };
 
 export const registerConnectionContent = {
   1: {
-    component: <ConnectionDetails />,
+    component: <SelectConnection />,
     props: ['handleNext', 'sharedData', 'setSharedData'],
   },
   2: {
-    component: <CredentialDetails />,
+    component: <ConnectionDetails />,
     props: ['handleNext', 'sharedData', 'setSharedData'],
   },
   3: {
+    component: <CredentialDetails />,
+    props: ['handleNext', 'sharedData', 'setSharedData'],
+  },
+  4: {
     component: <Finish />,
     props: ['sharedData', 'setSharedData'],
   },
@@ -32,6 +42,12 @@ export const ConnectionStepperTips = [
   'Import your Docker Compose, Helm Chart, and Kubernetes mainfests. Let Meshery visualize and deploy them.',
 ];
 
+export const SelectConnectionTypeContent = {
+  title: 'Select type of connection to register.',
+  tips: 'Establish a connection by registering this resource.',
+  btnText: '',
+  cancel: false,
+};
 export const ConnectionDetailContent = {
   title: '',
   tips: 'Establish a connection by registering this resource.',
