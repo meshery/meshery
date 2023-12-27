@@ -234,7 +234,7 @@ const MesheryTreeView = ({
             id="scrollElement"
             style={{
               overflowY: 'auto',
-              height: width < 960 ? '48rem' : '27rem',
+              height: width < 960 ? '44rem' : '27rem',
             }}
             onScroll={handleScroll(MODELS)}
           >

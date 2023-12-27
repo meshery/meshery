@@ -374,6 +374,7 @@ export default function MeshSyncTable(props) {
           />
 
           <CustomColumnVisibilityControl
+            id="ref"
             columns={columns}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />

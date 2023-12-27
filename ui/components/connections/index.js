@@ -1167,6 +1167,7 @@ function Connections(props) {
               />
 
               <CustomColumnVisibilityControl
+                id="ref"
                 columns={getVisibilityColums(columns)}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />

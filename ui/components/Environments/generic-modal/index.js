@@ -48,7 +48,6 @@ const GenericModal = ({
           timeout: 500,
         },
       }}
-      id="searchClick"
     >
       <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
         {leftHeaderIcon && (

@@ -173,6 +173,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
