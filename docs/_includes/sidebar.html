@@ -59,7 +59,7 @@
                     id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify}}"
                     href="{{childUrl}}"
                     >{{ child.title }}</a>
-                </li>
+                  </li>
                   {% if child.grandchildren %}
                   <ul>
                       {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
