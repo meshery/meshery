@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DialogContent, Dialog } from '@material-ui/core';
 
 import theme from '../../../themes/app.js';
@@ -21,25 +21,17 @@ export const cancelConnectionRegister = (id) => {
   );
 };
 
-const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
-  const [open, setOpen] = useState(false);
-  const formConnectionIdRef = useRef();
-
-  useEffect(() => {
-    handleOpen(() => {
-      setOpen(true);
-    });
-  }, [handleOpen]);
-
+const RegisterConnectionModal = ({ openRegistrationModal, connectionData, handleRegistrationModalClose }) => {
+  const [sharedData, setSharedData] = React.useState(null);
   const handleClose = () => {
-    cancelConnectionRegister(formConnectionIdRef.current);
-    setOpen(false);
+    handleRegistrationModalClose();
+    cancelConnectionRegister(sharedData?.connection?.id);
   };
 
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
-        open={open}
+        open={openRegistrationModal}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         maxWidth="md"
@@ -59,6 +51,8 @@ const RegisterConnectionModal = ({ handleOpen, connectionData }) => {
             formConnectionIdRef
             onClose={handleClose}
             connectionData={connectionData}
+            sharedData={sharedData}
+            setSharedData={setSharedData}
           />
         </DialogContent>
       </Dialog>

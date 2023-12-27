@@ -39,6 +39,7 @@ const ACTION_TYPES = {
 export default function MeshSyncTable(props) {
   const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
+  const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
@@ -65,7 +66,10 @@ export default function MeshSyncTable(props) {
   );
 
   const { notify } = useNotification();
-
+  
+  const handleRegistrationModalClose = () => {
+    setRegistrationModal(false);
+  }
   const columns = [
     {
       name: 'metadata.name',
@@ -242,7 +246,13 @@ export default function MeshSyncTable(props) {
                   id="demo-simple-select"
                   defaultValue={MESHSYNC_STATES.DISCOVERED}
                   disabled={disabled}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const clickedValue = e.target.value;
+                    if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
+                      setRegistrationModal((open) => !open);
+                    }
+                  }}
                   onChange={() => {
                     callbackRef?.current?.(tableMeta);
                     setRegisterConnection({
@@ -268,7 +278,7 @@ export default function MeshSyncTable(props) {
                 >
                   {Object.keys(meshSyncStates).map((s) => (
                     <MenuItem
-                      disabled={meshSyncStates[s] === value ? true : false}
+                      disabled={meshSyncStates[s] === value || meshSyncStates[s] === CONNECTION_STATES.REGISTERED ? true : false}
                       value={meshSyncStates[s]}
                       key={meshSyncStates[s]}
                       style={{ padding: '0' }}
@@ -475,9 +485,6 @@ export default function MeshSyncTable(props) {
     return initialVisibility;
   });
 
-  const handleOpenRegisterModal = (callback) => {
-    callbackRef.current = callback;
-  };
 
   return (
     <>
@@ -515,7 +522,8 @@ export default function MeshSyncTable(props) {
         columnVisibility={columnVisibility}
       />
       <RegisterConnectionModal
-        handleOpen={handleOpenRegisterModal}
+        handleRegistrationModalClose={handleRegistrationModalClose}
+        openRegistrationModal={openRegistrationModal}
         connectionData={registerConnection}
       />
     </>

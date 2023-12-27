@@ -1,9 +1,7 @@
 import React from 'react';
-``;
 import { Box, Typography, Divider, Button } from '@material-ui/core';
 import { useStyles } from '../../../Connect/styles';
 import { useTheme } from '@material-ui/core/styles';
-import { Colors } from '../../../../themes/app';
 
 const ContentHeader = ({ title }) => (
   <>
@@ -25,7 +23,6 @@ const StepperContent = ({
   cancelCallback,
   disabled,
 }) => {
-  const theme = useTheme();
   const classes = useStyles();
   return (
     <Box className={classes.contentContainer}>
@@ -59,8 +56,6 @@ const StepperContent = ({
           <Button
             className={classes.cancelButton}
             style={{
-              background: Colors.charcoal,
-              color: theme.palette.secondary.primaryModalText,
               margin: 0,
             }}
             onClick={cancelCallback}

@@ -43,16 +43,16 @@ export const ConnectionStepperTips = [
 ];
 
 export const SelectConnectionTypeContent = {
-  title: 'Select type of connection to register.',
-  tips: 'Establish a connection by registering this resource.',
+  title: 'Select type of Connection to register.',
+  tips: 'Establish a connection by registering the resource.',
   btnText: '',
   cancel: false,
 };
 export const ConnectionDetailContent = {
   title: '',
-  tips: 'Establish a connection by registering this resource.',
+  tips: 'Establish a Connection by registering the resource.',
   btnText: 'Next',
-  cancel: false,
+  cancel: true,
 };
 
 export const CredentialDetailContent = {

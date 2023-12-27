@@ -30,7 +30,7 @@ const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 const schema = selectCompSchema(
   CONNECTION_TYPES,
   'Select one of the available Connection type',
-  'Select type of connection to register',
+  'Select type of Connection to register',
   'selectedConnectionType',
 );
 export const SelectConnection = ({ setSharedData, handleNext }) => {
@@ -104,6 +104,10 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
     handleNext();
   };
 
+  const cancelCallback = () => {
+    sharedData.onClose();
+  };
+
   const handleSelectEndpoint = (e) => {
     setSharedData((prevState) => ({
       ...prevState,
@@ -142,6 +146,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       {...ConnectionDetailContent}
       handleCallback={handleCallback}
       disabled={isDisabledNextButton}
+      cancelCallback={cancelCallback}
     >
       {sharedData?.capabilities && (
         <FormControl fullWidth size="small">
@@ -512,7 +517,7 @@ export const Finish = ({ sharedData }) => {
   return (
     <StepperContent
       {...FinishContent}
-      cancelCallback={cancelCallback}
+      handleCallback={cancelCallback}
       disabled={false}
     ></StepperContent>
   );
