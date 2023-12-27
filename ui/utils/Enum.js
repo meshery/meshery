@@ -74,7 +74,7 @@ export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 
 // Remove this fetch all connections initially
-export const CONNECTION_KINDS_DEF = [MESHERY, KUBERNETES, PROMETHEUS, GRAFANA, GITHUB];
+export const CONNECTION_KINDS_DEF = ['MESHERY', 'KUBERNETES', 'PROMETHEUS', 'GRAFANA', 'GITHUB'];
 
 export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
