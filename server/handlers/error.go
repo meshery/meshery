@@ -122,7 +122,7 @@ const (
 	ErrBulkUpdateEventCode        = "1537"
 	ErrBulkDeleteEventCode        = "1538"
 	ErrFetchMeshSyncResourcesCode = "1539"
-	ErrDesignSourceContentCode    = "1540"
+	ErrDesignSourceContentCode    = "1554"
 )
 
 var (
@@ -294,9 +294,8 @@ func ErrApplicationSourceContent(err error, obj string) error {
 }
 
 func ErrDesignSourceContent(err error, obj string) error {
-	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
+	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
 }
-
 
 func ErrDownloadWASMFile(err error, obj string) error {
 	return errors.New(ErrDownlaodWASMFileCode, errors.Alert, []string{"failed to ", obj, "the WASM file"}, []string{err.Error()}, []string{"Ensure that DB is not corrupted", "Ensure Remote Provider is working properly", "Ensure Meshery Server is working properly and connected to remote provider"}, []string{"Try restarting Meshery server"})
