@@ -66,10 +66,10 @@ export default function MeshSyncTable(props) {
   );
 
   const { notify } = useNotification();
-  
+
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
-  }
+  };
   const columns = [
     {
       name: 'metadata.name',
@@ -278,7 +278,12 @@ export default function MeshSyncTable(props) {
                 >
                   {Object.keys(meshSyncStates).map((s) => (
                     <MenuItem
-                      disabled={meshSyncStates[s] === value || meshSyncStates[s] === CONNECTION_STATES.REGISTERED ? true : false}
+                      disabled={
+                        meshSyncStates[s] === value ||
+                        meshSyncStates[s] === CONNECTION_STATES.REGISTERED
+                          ? true
+                          : false
+                      }
                       value={meshSyncStates[s]}
                       key={meshSyncStates[s]}
                       style={{ padding: '0' }}
@@ -484,7 +489,6 @@ export default function MeshSyncTable(props) {
     });
     return initialVisibility;
   });
-
 
   return (
     <>
