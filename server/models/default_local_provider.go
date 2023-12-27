@@ -979,7 +979,7 @@ func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ 
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*connections.ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string, _ string, _ []string, _ []string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
