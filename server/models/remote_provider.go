@@ -23,6 +23,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -433,14 +434,14 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 }
 
 // Returns Keys from a user /api/identity/users/keys
-func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersKeys) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersKeys", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(UsersKeys)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistOrganizations)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + orgID + "/users/keys")
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -464,7 +465,7 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Users keys", http.StatusUnauthorized)
+		return nil, ErrFetch(nil, "Users keys", http.StatusUnauthorized)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -474,10 +475,10 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		return nil, ErrDataRead(err, "Users Keys")
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("user keys successfully retrived from remote provider")
+		logrus.Infof("user keys successfully retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(err, "Users Keys", resp.StatusCode)
+	err = ErrFetch(nil, "Users Keys", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
@@ -3665,7 +3666,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3678,6 +3679,20 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+
+	if len(status) > 0 {
+		for _, v := range status {
+			q.Add("status", v)
+		}
+	}
+	if len(kind) > 0 {
+		for _, v := range kind {
+			q.Add("kind", v)
+		}
+	}
 
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
@@ -4456,17 +4471,17 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environments.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
-		return ErrInvalidCapability("Environment", l.ProviderName)
+		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	_env, err := json.Marshal(env)
 	if err != nil {
-		return err
+		return []byte{}, err
 	}
 	bf := bytes.NewBuffer(_env)
 
@@ -4477,29 +4492,29 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayl
 		tokenString, err = l.GetToken(req)
 		if err != nil {
 			logrus.Error("error getting token: ", err)
-			return err
+			return []byte{}, err
 		}
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
+			return []byte{}, ErrUnreachableRemoteProvider(err)
 		}
-		return ErrFetch(err, "Save Environment", resp.StatusCode)
+		return []byte{}, ErrFetch(err, "Save Environment", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	_, err = io.ReadAll(resp.Body)
+	respBf, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Environment")
+		return []byte{}, ErrDataRead(err, "Save Environment")
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		return nil
+		return respBf, nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to save the environment"), "Environment", resp.StatusCode)
+	return []byte{}, ErrPost(fmt.Errorf("failed to save the environment"), "Environment", resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error) {
@@ -4542,10 +4557,10 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environments.EnvironmentPayload, environmentID string) (*environments.EnvironmentData, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
-		return &EnvironmentData{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environments.EnvironmentData{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4580,7 +4595,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment EnvironmentData
+		var environment environments.EnvironmentData
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
