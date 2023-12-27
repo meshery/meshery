@@ -132,7 +132,7 @@
         &-title a {
           font-weight: bold;
           margin-bottom: .5rem;
-
+          
           &:hover {
             font-weight: normal;
           }
@@ -162,6 +162,10 @@
           }
 
           & a:hover {
+            text-decoration: none;
+            color: #008979;
+          }
+          & a.active {
             text-decoration: none;
             color: #008979;
           }
