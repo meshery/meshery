@@ -185,21 +185,8 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit <= 0 {
-			limit = defaultPageSize
-		}
-	}
-
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	offset := (page - 1) * limit
-	order := r.URL.Query().Get("order")
-	sort := r.URL.Query().Get("sort")
-	search := r.URL.Query().Get("search")
+	page, offset, limit,
+		search, order, sort, _ := getPaginationParams(r)
 
 	filter := struct {
 		ClusterIds []string `json:"clusterIds"`
@@ -254,19 +241,12 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var pgSize int
-	if limitstr == "all" {
-		pgSize = len(kinds)
-	} else {
-		pgSize = limit
-	}
-
 
 	response := &models.MeshSyncResourcesKindsAPIResponse{
 		Kinds:      kinds,
 		TotalCount: totalCount,
 		Page:       page,
-		PageSize:   pgSize,
+		PageSize:   limit,
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
