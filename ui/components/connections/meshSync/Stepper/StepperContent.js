@@ -206,7 +206,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
   );
 };
 
-export const CredentialDetails = ({ sharedData, handleNext }) => {
+export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
   const [existingCredentials, setExistingCredentials] = useState([]);
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
@@ -325,6 +325,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
       verifyConnection();
     } else {
       handleNext();
+      handleRegistrationComplete();
     }
   };
 
@@ -457,7 +458,7 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         >
           <Grid style={{ width: '80%' }}>
             <Typography variant="body2">
-              <b>Credential Invalid</b>
+              <b>Verification Failed</b>
             </Typography>
             <Typography variant="body2" sx={{ color: '#00000020' }}>
               {`Unable to establish a connection using ${sharedData?.kind}`}

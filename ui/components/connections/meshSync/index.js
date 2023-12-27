@@ -258,6 +258,7 @@ export default function MeshSyncTable(props) {
                     setRegisterConnection({
                       capabilities: componentMetadata?.capabilities,
                       metadata: JsonParse(componentMetadata.metadata),
+                      resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
                     });
                   }}
                   className={classes.statusSelect}
@@ -319,6 +320,13 @@ export default function MeshSyncTable(props) {
             />
           );
         },
+      },
+    },
+    {
+      name: 'id',
+      label: 'Resource ID',
+      options: {
+        display: false,
       },
     },
   ];

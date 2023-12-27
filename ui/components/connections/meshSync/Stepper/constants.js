@@ -28,7 +28,7 @@ export const registerConnectionContent = {
   },
   3: {
     component: <CredentialDetails />,
-    props: ['handleNext', 'sharedData', 'setSharedData'],
+    props: ['handleNext', 'sharedData', 'setSharedData', 'handleRegistrationComplete'],
   },
   4: {
     component: <Finish />,

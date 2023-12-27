@@ -32,6 +32,13 @@ const RegisterConnectionModal = ({
     cancelConnectionRegister(sharedData?.connection?.id);
   };
 
+  const handleRegistrationComplete = () => {
+    dataFetch(`/api/system/meshsync/resources/${connectionData?.resourceID}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+  };
+
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
@@ -57,6 +64,7 @@ const RegisterConnectionModal = ({
             connectionData={connectionData}
             sharedData={sharedData}
             setSharedData={setSharedData}
+            handleRegistrationComplete={handleRegistrationComplete}
           />
         </DialogContent>
       </Dialog>
