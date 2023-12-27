@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/environments"
 )
 
 // swagger:route GET /api/environments EnvironmentsAPI idGetEnvironments
@@ -86,7 +87,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
-	environment := models.EnvironmentPayload{}
+	environment := environments.EnvironmentPayload{}
 	err = json.Unmarshal(bd, &environment)
 	obj := "environment"
 
@@ -146,7 +147,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	environment := models.EnvironmentPayload{}
+	environment := environments.EnvironmentPayload{}
 	err = json.Unmarshal(bd, &environment)
 	obj := "environment"
 

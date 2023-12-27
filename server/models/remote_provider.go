@@ -23,6 +23,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -4456,7 +4457,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environments.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
@@ -4542,10 +4543,10 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environments.EnvironmentPayload, environmentID string) (*environments.EnvironmentData, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
-		return &EnvironmentData{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environments.EnvironmentData{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4580,7 +4581,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment EnvironmentData
+		var environment environments.EnvironmentData
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
