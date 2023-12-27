@@ -3665,7 +3665,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3678,6 +3678,9 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
+	if filter != "" {
+		q.Set("filter", filter)
+	}
 
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
