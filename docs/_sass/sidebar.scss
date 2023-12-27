@@ -163,7 +163,11 @@
 
           & a:hover {
             text-decoration: none;
-            color: #008979;
+            color: var(--sidenav-hover);
+          }
+          & a.active {
+            text-decoration: none;
+            color: var(--sidenav-hover);
           }
           & a.active {
             text-decoration: none;
