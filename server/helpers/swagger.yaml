@@ -627,6 +627,8 @@ paths:
                 ```?page={page-number}``` Default page number is 0
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
             operationId: idGetConnections
             responses:
                 "200":
