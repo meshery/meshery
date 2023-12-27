@@ -191,11 +191,7 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	filter := struct {
 		ClusterIds []string `json:"clusterIds"`
 	}{}
-
-	if page <= 0 {
-		page = 1
-	}
-
+	
 	var kinds []string
 	var totalCount int64
 
