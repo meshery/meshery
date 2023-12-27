@@ -7,8 +7,10 @@ import { Colors } from '../../../../themes/app';
 
 const ContentHeader = ({ title }) => (
   <>
-    <Typography style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{title}</Typography>
-    <Divider style={{ margin: '1rem 0 1.5rem 0' }} />
+    <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+      {title}
+    </Typography>
+    <Divider style={{ margin: '1rem 0 1rem 0' }} />
   </>
 );
 
@@ -31,7 +33,7 @@ const StepperContent = ({
         <ContentHeader title={title} />
         {subtitle && (
           <Box className={classes.contentBody}>
-            <Typography style={{ fontSize: '1rem' }}>{subtitle}</Typography>
+            <Typography variant="body2">{subtitle}</Typography>
           </Box>
         )}
         {children}

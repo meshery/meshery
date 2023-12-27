@@ -22,12 +22,12 @@ import SearchBar from '../../../utils/custom-search';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { camelcaseToSnakecase, getColumnValue } from '../../../utils/utils';
+import { JsonParse, camelcaseToSnakecase, getColumnValue } from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
 import classNames from 'classnames';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { MESHSYNC_STATES } from '../../../utils/Enum';
+import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -219,20 +219,21 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value, tableMeta) {
-          const metadata = getColumnValue(
+          const componentMetadata = getColumnValue(
             tableMeta.rowData,
             'component_metadata',
             columns,
-          )?.metadata;
+          );
           const DISCOVERED = {
             DISCOVERED: MESHSYNC_STATES.DISCOVERED,
           };
           const meshSyncStates =
-            metadata && JSON.parse(metadata)?.capabilities?.connection === true
-              ? MESHSYNC_STATES
-              : DISCOVERED;
+            componentMetadata?.capabilities?.connection === true ? MESHSYNC_STATES : DISCOVERED;
           const disabled =
-            metadata && JSON.parse(metadata)?.capabilities?.connection === true ? false : true;
+            componentMetadata?.capabilities?.connection === true &&
+            value !== CONNECTION_STATES.REGISTERED
+              ? false
+              : true;
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -244,15 +245,9 @@ export default function MeshSyncTable(props) {
                   onClick={(e) => e.stopPropagation()}
                   onChange={() => {
                     callbackRef?.current?.(tableMeta);
-                    const componentMetadata = getColumnValue(
-                      tableMeta.rowData,
-                      'component_metadata',
-                      columns,
-                    );
-                    const connectionKind = getColumnValue(tableMeta.rowData, 'kind', columns);
                     setRegisterConnection({
-                      metadata: JSON.parse(componentMetadata.metadata),
-                      kind: connectionKind,
+                      capabilities: componentMetadata?.capabilities,
+                      metadata: JsonParse(componentMetadata.metadata),
                     });
                   }}
                   className={classes.statusSelect}

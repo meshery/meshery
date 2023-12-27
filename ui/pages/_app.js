@@ -52,7 +52,7 @@ import Router from 'next/router';
 import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyncEventsSubscription';
 import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
 import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
-import { updateURLs } from '../utils/utils';
+import { formatToTitleCase, updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
@@ -223,7 +223,7 @@ class MesheryApp extends App {
   loadMeshModelComponent = () => {
     const connectionDef = {};
     CONNECTION_KINDS_DEF.map(async (kind) => {
-      const res = await getMeshModelComponentByName(kind.concat('Connection'));
+      const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,

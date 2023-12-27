@@ -57,7 +57,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
           ...prevState,
           connection: result,
           schemas: schemaObj,
-          kind: componentName,
+          kind: componentName.toLowerCase(),
         }));
         handleNext();
       },
@@ -268,6 +268,12 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
           setIsSuccess(false);
         }
       },
+      (err) => {
+        if (err != '') {
+          console.error(err);
+          setIsSuccess(false);
+        }
+      },
     );
   };
 
@@ -438,32 +444,40 @@ export const CredentialDetails = ({ sharedData, handleNext }) => {
         <div
           style={{
             background: '#ff000010',
-            borderRadius: '10px',
-            padding: '10px',
+            borderRadius: '0.5rem',
+            padding: '0.5rem',
             display: 'flex',
+            marginBottom: '1rem',
           }}
         >
           <Grid style={{ width: '80%' }}>
-            <Typography>
+            <Typography variant="body2">
               <b>Credential Invalid</b>
             </Typography>
-            <Typography sx={{ color: '#00000020' }}>
+            <Typography variant="body2" sx={{ color: '#00000020' }}>
               {`Unable to establish a connection using ${sharedData?.kind}`}
             </Typography>
           </Grid>
-          <Grid style={{ width: '20%', display: 'flex', justifyContent: 'flex-end' }}>
+          <Grid
+            style={{
+              width: '20%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+            }}
+          >
             <Button
               style={{
                 backgroundColor: '#ff0000',
-                padding: '10px 20px',
-                borderRadius: '10px',
+                padding: '0.5rem',
+                borderRadius: '0.5rem',
                 border: '0',
                 color: '#fff',
-                height: '40px',
+                height: '2rem',
               }}
               onClick={() => verifyConnection()}
             >
-              Retry
+              <Typography variant="body2">Retry</Typography>
             </Button>
           </Grid>
         </div>
