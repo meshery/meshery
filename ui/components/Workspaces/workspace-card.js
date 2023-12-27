@@ -12,28 +12,14 @@ import {
   DescriptionLabel,
   EmptyDescription,
   OrganizationName,
-  PopupButton,
   StyledIconButton,
   TabCount,
   TabTitle,
-  ViewButton,
 } from './styles';
 import theme from '../../themes/app';
 import FlipCard from '../Environments/flip-card';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { useGetDesignsOfWorkspaceQuery, useGetEnvironmentsOfWorkspaceQuery } from '../../rtk-query/workspace';
-// import {
-//   useGetDesignsOfWorkspaceQuery,
-//   useGetEnvironmentsOfWorkspaceQuery,
-//   useGetTeamsOfWorkspaceQuery
-// } from "@/api/api";
-// import { withDefaultPageArgs } from "@/api/index";
-// import OrgIcon from "@/assets/icons/org";
-// import { keys } from "../../../utility/permission_constants";
-// import CAN from "../../general/can";
-// import { formattoLongDate } from "@/utility/helpers";
-// import { RecordRow, RedirectButton, TransferButton } from "../general";
-// import Loading from "components/loading";
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -43,27 +29,27 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, disabled }) => {
+export const TransferButton = ({ title, count, onAssign, disabled, classes }) => {
   return (
-    <PopupButton onClick={onAssign} disabled={disabled} color="primary">
+    <Button onClick={onAssign} disabled={disabled} color="primary" className={classes.popupButton}>
       <Grid>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
         <SyncAltIcon />
       </Grid>
-    </PopupButton>
+    </Button>
   );
 };
 
-export const RedirectButton = ({ title, count }) => {
+export const RedirectButton = ({ title, count, disabled=true, classes }) => {
   return (
-    <ViewButton disabled={true} color="primary">
+    <Button disabled={disabled} color="primary" className={classes.popupButton}>
       <Grid>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
         <ArrowForward />
       </Grid>
-    </ViewButton>
+    </Button>
   );
 };
 
@@ -92,6 +78,7 @@ const WorkspaceCard = ({
   onAssignTeam,
   onAssignEnvironment,
   onAssignDesign,
+  classes,
 }) => {
   const [skip, setSkip] = useState(true);
 
@@ -151,7 +138,7 @@ const WorkspaceCard = ({
                 {workspaceDetails?.name}
               </CardTitle>
             </Grid>
-            <Grid style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: "10px" }}>
               <StyledIconButton onClick={(e) => e.stopPropagation()}>
                 <OrgIcon width="24" height="24" />
               </StyledIconButton>
@@ -169,22 +156,24 @@ const WorkspaceCard = ({
             >
               <Grid xs={12} sm={4}>
                 <AllocationWorkspace onClick={(e) => e.stopPropagation()}>
-                  <RedirectButton title="Connections" count={0} />
+                  <RedirectButton title="Connections" count={0} classes={classes} />
                   <TransferButton
                     title="Environments"
                     count={environmentsOfWorkspaceCount}
                     onAssign={onAssignEnvironment}
+                    classes={classes}
                   />
                 </AllocationWorkspace>
               </Grid>
               <Grid xs={12} sm={4} style={{ display: 'flex', justifyContent: 'center' }}>
                 <AllocationWorkspace onClick={(e) => e.stopPropagation()}>
-                  <RedirectButton title="Users" count={0} link="/identity/users" />
+                  <RedirectButton disabled={true} title="Users" count={0} link="/identity/users" classes={classes} />
                   <TransferButton
                     title="Teams"
                     count={teamsOfWorkspaceCount}
                     onAssign={onAssignTeam}
                     disabled={true}
+                    classes={classes}
                   />
                 </AllocationWorkspace>
               </Grid>
@@ -195,8 +184,9 @@ const WorkspaceCard = ({
                     count={designsOfWorkspaceCount}
                     onAssign={onAssignDesign}
                     disabled={true}
+                    classes={classes}
                   />
-                  <RedirectButton title="Deployments" count={0} />
+                  <RedirectButton title="Deployments" count={0} classes={classes} />
                 </AllocationWorkspace>
               </Grid>
             </Grid>
@@ -271,16 +261,14 @@ const WorkspaceCard = ({
                 {workspaceDetails.description ? (
                   <DescriptionLabel
                     onClick={(e) => e.stopPropagation()}
-                    py={2}
-                    style={{ color: theme.palette.secondary.white, maxHeight: '105px' }}
+                    style={{ padding: '10px 0', color: theme.palette.secondary.white, maxHeight: '105px' }}
                   >
                     {workspaceDetails.description}
                   </DescriptionLabel>
                 ) : (
                   <EmptyDescription
                     onClick={(e) => e.stopPropagation()}
-                    py={2}
-                    style={{ color: theme.palette.secondary.superLightWhite }}
+                    style={{ padding: '10px 0', color: `${theme.palette.secondary.white}90` }}
                   >
                     No description
                   </EmptyDescription>

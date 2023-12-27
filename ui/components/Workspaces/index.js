@@ -589,6 +589,7 @@ const Workspaces = ({ organization, classes }) => {
                   // selectedWorkspaces={selectedWorkspaces}
                   onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
                   onAssignDesign={e => handleAssignDesignModalOpen(e, workspace)}
+                  classes={classes}
                 />
               </Grid>
             ))}
