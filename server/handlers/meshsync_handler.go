@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
@@ -272,5 +273,13 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	resourceID := mux.Vars(r)["id"]
+	db := provider.GetGenericPersister()
+	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
+	if err != nil {
+		h.log.Error(models.ErrDelete(err, "meshsync data", http.StatusInternalServerError))
 	}
 }
