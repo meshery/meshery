@@ -4,17 +4,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  FormControl,
-  FormLabel,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  Grid,
-} from '@material-ui/core';
+import { FormControl, FormLabel, FormGroup, FormControlLabel, Switch } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../../lib/data-fetch';
-import { updateUser, updateProgress, toggleCatalogContent, setOrganization } from '../../lib/store';
+import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
@@ -32,10 +25,7 @@ import { getTheme, setTheme } from '../../utils/theme';
 import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
-// import { useGetOrgsQuery } from '../../rtk-query/organization';
-import { OrgIconWrapper, Org, SelectItem, OrgSelect } from './style';
-import OrgIcon from '../../assets/icons/OrgIcon';
-import theme from '../../themes/app';
+import SpacesPreferences from './spaces-preferences';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -166,7 +156,7 @@ function ThemeToggler({ theme, themeSetter, classes }) {
   );
 }
 
-function UserPreference(props) {
+const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
@@ -175,9 +165,6 @@ function UserPreference(props) {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  // const { data: orgs, isSuccess: isOrgsSuccess } = useGetOrgsQuery();
-  const [orgs, setOrgs] = useState([]);
-  const { organization, setOrganization } = props;
 
   const { notify } = useNotification();
 
@@ -186,23 +173,6 @@ function UserPreference(props) {
 
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
-  };
-
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          console.log(result);
-          setOrgs(result?.organizations);
-        }
-      },
-      (err) => handleError('There was an error fetching available orgs', err),
-    );
   };
 
   const handleCatalogPreference = (catalogContent) => {
@@ -259,8 +229,6 @@ function UserPreference(props) {
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    // console.log(requestBody,anonymousStats,perfResultStats);
-
     props.updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl('/api/user/prefs', props.selectedK8sContexts),
@@ -307,21 +275,13 @@ function UserPreference(props) {
       },
       (result) => {
         if (result) {
-          // console.log(result);
           setExtensionPreferences(result?.usersExtensionPreferences);
           setCatalogContent(result?.usersExtensionPreferences?.catalogContent);
         }
       },
       (err) => console.error(err),
     );
-    fetchAvailableOrgs();
   }, []);
-
-  const handleOrgSelect = (e) => {
-    const id = e.target.value;
-    const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
-  };
 
   return (
     <NoSsr>
@@ -363,50 +323,7 @@ function UserPreference(props) {
       <Paper className={props.classes.statsWrapper}>
         {tabVal === 0 && (
           <>
-            {orgs && (
-              <div className={props.classes.formContainer}>
-                <FormControl component="fieldset" className={props.classes.formGrp}>
-                  <FormLabel component="legend" className={props.classes.formLegend}>
-                    Spaces
-                  </FormLabel>
-                  <FormGroup>
-                    <FormControlLabel
-                      key="SpacesPreferences"
-                      control={
-                        <Grid container spacing={1} alignItems="flex-end">
-                          <Grid item xs={12} data-cy="mesh-adapter-url">
-                            <OrgSelect
-                              value={organization.id}
-                              onChange={handleOrgSelect}
-                              SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
-                            >
-                              {orgs?.map((org) => {
-                                return (
-                                  <SelectItem
-                                    key={org.id}
-                                    sx={{ color: theme.palette.darkShadeGray }}
-                                    value={org.id}
-                                  >
-                                    <OrgIconWrapper>
-                                      <OrgIcon
-                                        width="24"
-                                        height="24"
-                                        secondaryFill={theme.palette.darkSlateGray}
-                                      />
-                                    </OrgIconWrapper>
-                                    <Org>{org.name}</Org>
-                                  </SelectItem>
-                                );
-                              })}
-                            </OrgSelect>
-                          </Grid>
-                        </Grid>
-                      }
-                    />
-                  </FormGroup>
-                </FormControl>
-              </div>
-            )}
+            <SpacesPreferences />
             <div className={props.classes.formContainer}>
               <FormControl component="fieldset" className={props.classes.formGrp}>
                 <FormLabel component="legend" className={props.classes.formLegend}>
@@ -511,25 +428,22 @@ function UserPreference(props) {
       </Paper>
     </NoSsr>
   );
-}
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateUser: bindActionCreators(updateUser, dispatch),
   updateProgress: bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-  setOrganization: bindActionCreators(setOrganization, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const catalogVisibility = state.get('catalogVisibility');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  const organization = state.get('organization');
   return {
     selectedK8sContexts,
     catalogVisibility,
     capabilitiesRegistry,
-    organization,
   };
 };
 
