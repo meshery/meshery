@@ -191,6 +191,10 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
 // ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
+//
+// ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"] responses:
+//
+// ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
 // responses:
 // 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -214,8 +218,39 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		order = "updated_at desc"
 	}
 
+	err := req.ParseForm()
+	if err != nil {
+		h.log.Error(ErrGetConnections(err))
+		http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, filter)
+	queryParam := struct {
+		Status []string `json:"status"`
+		Kind   []string `json:"kind"`
+	}{}
+
+	status := q.Get("status")
+	kind := q.Get("kind")
+	if status != "" {
+		err := json.Unmarshal([]byte(status), &queryParam.Status)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if kind != "" {
+		err := json.Unmarshal([]byte(kind), &queryParam.Kind)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind)
 	obj := "connections"
 
 	if err != nil {

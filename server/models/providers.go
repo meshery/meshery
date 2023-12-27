@@ -453,7 +453,7 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string) (*connections.ConnectionPage, error)
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error)
 	GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)

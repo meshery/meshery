@@ -123,6 +123,7 @@ const (
 	ErrBulkDeleteEventCode        = "1538"
 	ErrFetchMeshSyncResourcesCode = "1539"
 	ErrDesignSourceContentCode    = "1554"
+	ErrGetConnectionsCode    	  = "1555"
 )
 
 var (
@@ -535,4 +536,8 @@ func ErrUnsupportedEventStatus(err error, status string) error {
 // ErrFetchMeshSyncResources
 func ErrFetchMeshSyncResources(err error) error {
 	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
+}
+
+func ErrGetConnections(err error) error {
+	return errors.New(ErrGetConnectionsCode, errors.Alert, []string{"Failed to retrieve connections"}, []string{err.Error()}, []string{"Unable to retrieve the connections"}, []string{"Check if the cluster is connected and healthy, you can check it from k8s switcher in header"})
 }
