@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/styles';
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
   const xRjsfGridArea = props.schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
+  const xEncodeInURI = props.schema?.['x-encode-in-uri']; // check if data need to be encoded in uri format or not
   const name = additional ? 'Value' : props.label; // || props.id?.split('_')[-1].trim()
   const focused = props.options?.focused; // true for datetime-local
   const isRequired = props?.required;
@@ -52,6 +53,8 @@ const BaseInput = (props) => {
               ? null
               : additional && props?.value === 'New Value'
               ? ''
+              : props?.value && xEncodeInURI
+              ? decodeURIComponent(props?.value)
               : props?.value
           } // remove the default value i.e. New Value for additionalFields
           id={props.id}
@@ -63,7 +66,13 @@ const BaseInput = (props) => {
           onChange={(e) =>
             props.options?.inputType === 'file'
               ? props?.onChange(e)
-              : props?.onChange(e.target.value === '' ? props.options.emptyValue : e.target.value)
+              : props?.onChange(
+                  e.target.value === ''
+                    ? props.options.emptyValue
+                    : xEncodeInURI
+                    ? encodeURIComponent(e.target.value)
+                    : e.target.value,
+                )
           }
           InputLabelProps={{
             className:

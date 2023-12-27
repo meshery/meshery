@@ -168,7 +168,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Name" secondary={metadata.name} />
+                  <ListItemText primary="Name" secondary={connection.name} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="K8s Version" secondary={metadata.version} />
@@ -373,20 +373,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const operatorState = state.get('operatorState');
-  const connectionMetadataState = state.get('connectionMetadataState');
-  const meshsyncControllerState = state.get('controllerState');
-
-  return {
-    k8sconfig,
-    meshsyncControllerState,
-    selectedK8sContexts,
-    operatorState,
-    connectionMetadataState,
-  };
-};
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);

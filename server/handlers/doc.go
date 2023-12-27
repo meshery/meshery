@@ -36,6 +36,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/models/events"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
@@ -526,14 +527,42 @@ type mesheryConnectionsStatusPage struct {
 // swagger:response environmentResponseWrapper
 type environmentResponseWrapper struct {
 	// in: body
-	Body *models.EnvironmentData
+	Body *environments.EnvironmentData
 }
 
 // Returns all environements
 // swagger:response environmentsResponseWrapper
 type environmentsResponseWrapper struct {
 	// in: body
-	Body *models.EnvironmentPage
+	Body *environments.EnvironmentPage
+}
+
+// Returns workspaces
+// swagger:response workspacesResponseWrapper
+type workspacesResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacePage
+}
+
+// Returns workspace
+// swagger:response workspaceResponseWrapper
+type workspaceResponseWrapper struct {
+	// in: body
+	Body *models.Workspace
+}
+
+// Returns workspace designs mapping
+// swagger:response workspaceDesignsMappingResponseWrapper
+type workspaceDesignsMappingResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacesDesignsMapping
+}
+
+// Returns workspace environments mapping
+// swagger:response workspaceEnvironmentsMappingResponseWrapper
+type workspaceEnvironmentsMappingResponseWrapper struct {
+	// in: body
+	Body *models.WorkspacesEnvironmentsMapping
 }
 
 // Returns event
