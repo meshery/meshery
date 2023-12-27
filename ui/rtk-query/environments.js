@@ -121,6 +121,5 @@ export const {
   useGetEnvironmentConnectionsQuery,
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
-  useGetEnvironmentsQuery,
   useSaveEnvironmentMutation,
 } = connectionsApi;
