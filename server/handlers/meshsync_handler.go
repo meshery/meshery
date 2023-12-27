@@ -79,8 +79,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
-			h.log.Error(ErrFetchPattern(err))
-			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrFetchMeshSyncResources(err))
+			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -157,6 +157,118 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		Resources:  resources,
 	}
 
+	if err := enc.Encode(response); err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+
+// swagger:route GET /api/system/meshsync/resources/kinds GetMeshSyncResourcesKinds idGetMeshSyncResourcesKinds
+// Handle GET request for meshsync discovered resources kinds
+//
+// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
+//
+// ```?page = {page-number}``` Default page number is 1
+//
+// ```?pagesize = {pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?search = {componentname}``` If search is non empty then a greedy search is performed
+//
+// ```?order = {field}``` orders on the passed field
+//
+// responses:
+// 200: []meshsyncResourcesKindsResponseWrapper
+
+func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	limitstr := r.URL.Query().Get("pagesize")
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit <= 0 {
+			limit = defaultPageSize
+		}
+	}
+
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	offset := (page - 1) * limit
+	order := r.URL.Query().Get("order")
+	sort := r.URL.Query().Get("sort")
+	search := r.URL.Query().Get("search")
+
+	filter := struct {
+		ClusterIds []string `json:"clusterIds"`
+	}{}
+
+	if page <= 0 {
+		page = 1
+	}
+
+	var kinds []string
+	var totalCount int64
+
+	clusterIds := r.URL.Query().Get("clusterIds")
+	if clusterIds != "" {
+		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+		if err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		filter.ClusterIds = []string{}
+	}
+
+	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).Distinct("kind").
+	Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+
+	if search != "" {
+		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
+	}
+
+	if limit != 0 {
+		result = result.Limit(limit)
+	}
+
+	if offset != 0 {
+		result = result.Offset(offset)
+	}
+
+	if order != "" {
+		if sort == "desc" {
+			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
+		} else {
+			result = result.Order(order)
+		}
+	}
+
+	err := result.Pluck("kinds", &kinds).Error
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int
+	if limitstr == "all" {
+		pgSize = len(kinds)
+	} else {
+		pgSize = limit
+	}
+
+
+	response := &models.MeshSyncResourcesKindsAPIResponse{
+		Kinds:      kinds,
+		TotalCount: totalCount,
+		Page:       page,
+		PageSize:   pgSize,
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
