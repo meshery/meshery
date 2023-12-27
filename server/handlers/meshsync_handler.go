@@ -228,7 +228,7 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
 	if search != "" {
-		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
+		result = result.Where("kubernetes_resources.kind LIKE ?", "%"+search+"%")
 	}
 
 	if limit != 0 {
