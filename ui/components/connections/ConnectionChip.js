@@ -33,41 +33,46 @@ const useChipStyles = makeStyles(() => ({
   },
 }));
 
-export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, status }) => {
+export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }) => {
   const classes = useChipStyles();
   return (
-    <Tooltip title={tooltip || title} placement="bottom">
-      <Chip
-        label={title}
-        onClick={handlePing}
-        onDelete={onDelete}
-        avatar={
-          status ? (
-            <BadgeAvatars
-              color={
-                status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                  ? theme.palette.secondary.success
-                  : theme.palette.secondary.penColorSecondary
-              }
-            >
-              <Avatar
-                src={iconSrc}
-                className={classes.icon}
-                style={status ? {} : { opacity: 0.2 }}
-              />
-            </BadgeAvatars>
-          ) : (
-            <Avatar src={iconSrc} className={classes.icon} />
-          )
-        }
-        variant="filled"
-        className={classes.Chip}
-        data-cy="chipContextName"
-      />
-    </Tooltip>
+    // <Tooltip title={tooltip || title} placement="bottom">
+    <Chip
+      label={title}
+      onClick={handlePing}
+      onDelete={onDelete}
+      avatar={
+        status ? (
+          <BadgeAvatars
+            color={
+              status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
+                ? theme.palette.secondary.success
+                : theme.palette.secondary.penColorSecondary
+            }
+          >
+            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+          </BadgeAvatars>
+        ) : (
+          <Avatar src={iconSrc} className={classes.icon} />
+        )
+      }
+      variant="filled"
+      className={classes.Chip}
+      data-cy="chipContextName"
+    />
+    // </Tooltip>
   );
 };
 
+export const TootltipWrappedConnectionChip = (props) => {
+  return (
+    <Tooltip title={props.tooltip || props.title} placement="bottom">
+      <>
+        <_ConnectionChip {...props} />
+      </>
+    </Tooltip>
+  );
+};
 const styles = makeStyles((theme) => ({
   statusCip: {
     minWidth: '142px !important',

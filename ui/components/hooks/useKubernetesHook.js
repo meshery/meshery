@@ -9,6 +9,8 @@ import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
 import { useEffect, useState } from 'react';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
+import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
+import _ from 'lodash';
 
 export default function useKubernetesHook() {
   const { notify } = useNotification();
@@ -213,5 +215,74 @@ export const useNatsController = () => {
 
   return {
     ping,
+  };
+};
+
+export const useControllerStatus = (controllerState) => {
+  const getContextStatus = (ctxId) => {
+    const defaultState = {
+      operatorState: CONTROLLER_STATES.DISABLED,
+      operatorVersion: 'Not Available',
+      meshSyncState: CONTROLLER_STATES.DISABLED,
+      meshSyncVersion: 'Not Available',
+      natsState: CONTROLLER_STATES.DISABLED,
+      natsVersion: 'Not Available',
+    };
+
+    const controller = controllerState?.filter((op) => op.contextId === ctxId);
+    if (!controller) {
+      return defaultState;
+    }
+
+    function getMeshSyncStats() {
+      if (!controller) return defaultState;
+      const meshsyncController = controller?.find(
+        (ctlr) => ctlr?.controller === CONTROLLERS.MESHSYNC,
+      );
+      // meshsync is at 1st idx
+      if (meshsyncController) {
+        return {
+          meshSyncState: meshsyncController?.status,
+          meshSyncVersion: meshsyncController?.version,
+        };
+      }
+    }
+
+    function getBrokerStats() {
+      if (!controller) return defaultState;
+      const brokerController = controller?.find((ctlr) => ctlr?.controller === CONTROLLERS.BROKER);
+      if (brokerController) {
+        return {
+          natsState: brokerController?.status,
+          natsVersion: brokerController?.version,
+        };
+      }
+    }
+
+    function getOperatorStatus(ctxId) {
+      const operator = controllerState?.find(
+        (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+      );
+      if (!operator) {
+        return defaultState;
+      }
+
+      return {
+        operatorState: operator.status,
+        operatorVersion: operator?.version,
+      };
+    }
+
+    const actualOperatorState = {
+      ...getOperatorStatus(ctxId),
+      ...getMeshSyncStats(),
+      ...getBrokerStats(),
+    };
+
+    return _.merge(defaultState, actualOperatorState);
+  };
+
+  return {
+    getControllerStatesByContexID: getContextStatus,
   };
 };

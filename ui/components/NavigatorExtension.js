@@ -29,6 +29,7 @@ import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './Modal';
+import { MDEditor } from './Markdown';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -116,6 +117,7 @@ function NavigatorExtension({
         capabilitiesRegistry,
         CapabilitiesRegistryClass: CapabilitiesRegistry,
         useNotificationHook: useNotification,
+        MDEditor: MDEditor,
       }}
     />
   );

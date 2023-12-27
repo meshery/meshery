@@ -4,10 +4,16 @@ import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
-import { ConnectionChip } from '../../../connections/ConnectionChip';
+import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
 
-export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const ConfigurationTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   return {
     ConfigMap: {
       name: 'ConfigMap',
@@ -113,7 +119,14 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                  <TootltipWrappedConnectionChip
+                    title={clusterName}
+                    iconSrc={
+                      connectionMetadataState
+                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        : ''
+                    }
+                  />
                 </>
               );
             },

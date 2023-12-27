@@ -10,6 +10,7 @@ display-title: "true"
 language: en
 list: include
 image: /assets/img/platforms/wsl2.png
+abstract: Install Meshery CLI on Windows
 ---
 
 
