@@ -39,7 +39,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@layer5/sistent-components": "^0.12.3",
+    "@layer5/sistent-components": "^0.13.0-alpha.10",
     "@layer5/sistent-svg": "^0.14.3",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
