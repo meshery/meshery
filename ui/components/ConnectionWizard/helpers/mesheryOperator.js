@@ -1,3 +1,4 @@
+import { CONTROLLER_STATES } from '../../../utils/Enum';
 import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
 
 export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
@@ -13,7 +14,16 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
   const subscription = fetchMesheryOperatorStatus({
     k8scontextID: id,
   }).subscribe({
-    next: () => {
+    next: (data) => {
+      if (
+        data === null ||
+        data?.operator === null ||
+        data?.operator?.status === CONTROLLER_STATES.UNKOWN
+      ) {
+        errorcb();
+        subscription.unsubscribe();
+        return;
+      }
       successcb();
       subscription.unsubscribe();
     },

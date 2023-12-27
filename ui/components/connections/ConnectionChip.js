@@ -6,17 +6,19 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import HandymanIcon from '@mui/icons-material/Handyman';
-// import HelpIcon from '@material-ui/icons/Help';
-// import { iconSmall } from '../../css/icons.styles';
 import BadgeAvatars from '../CustomAvatar';
 import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
+import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
+import theme from '../../themes/app';
 
 const useChipStyles = makeStyles(() => ({
   Chip: {
-    width: '9rem',
-    textAlign: 'center',
+    width: '13rem',
+    maxWidth: '13rem',
+    minWidth: '9rem',
+    textAlign: 'left',
     cursor: 'pointer',
     '& .MuiChip-label': {
       flexGrow: 1,
@@ -31,35 +33,46 @@ const useChipStyles = makeStyles(() => ({
   },
 }));
 
-export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, status }) => {
+export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }) => {
   const classes = useChipStyles();
   return (
-    <Tooltip title={tooltip || title} placement="bottom">
-      <Chip
-        label={title}
-        onClick={handlePing}
-        onDelete={onDelete}
-        avatar={
-          status ? (
-            <BadgeAvatars>
-              <Avatar
-                src={iconSrc}
-                className={classes.icon}
-                style={status ? {} : { opacity: 0.2 }}
-              />
-            </BadgeAvatars>
-          ) : (
-            <Avatar src={iconSrc} className={classes.icon} />
-          )
-        }
-        variant="filled"
-        className={classes.Chip}
-        data-cy="chipContextName"
-      />
-    </Tooltip>
+    // <Tooltip title={tooltip || title} placement="bottom">
+    <Chip
+      label={title}
+      onClick={handlePing}
+      onDelete={onDelete}
+      avatar={
+        status ? (
+          <BadgeAvatars
+            color={
+              status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
+                ? theme.palette.secondary.success
+                : theme.palette.secondary.penColorSecondary
+            }
+          >
+            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+          </BadgeAvatars>
+        ) : (
+          <Avatar src={iconSrc} className={classes.icon} />
+        )
+      }
+      variant="filled"
+      className={classes.Chip}
+      data-cy="chipContextName"
+    />
+    // </Tooltip>
   );
 };
 
+export const TootltipWrappedConnectionChip = (props) => {
+  return (
+    <Tooltip title={props.tooltip || props.title} placement="bottom">
+      <>
+        <_ConnectionChip {...props} />
+      </>
+    </Tooltip>
+  );
+};
 const styles = makeStyles((theme) => ({
   statusCip: {
     minWidth: '142px !important',

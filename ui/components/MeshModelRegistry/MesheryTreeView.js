@@ -4,6 +4,7 @@ import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from 
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
+import debounce from '../../utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
@@ -66,9 +67,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
           )}
           {search && (
             <SearchBar
-              onSearch={(value) => {
-                setSearchText(value);
-              }}
+              onSearch={debounce((value) => setSearchText(value), 200)}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
               placeholder="Search"
@@ -209,9 +208,7 @@ const MesheryTreeView = ({
             </div>
             <div style={{ display: 'flex' }}>
               <SearchBar
-                onSearch={(value) => {
-                  setSearchText(value);
-                }}
+                onSearch={debounce((value) => setSearchText(value), 200)}
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
                 placeholder="Search"

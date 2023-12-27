@@ -319,3 +319,40 @@ export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) =
 export const camelcaseToSnakecase = (value) => {
   return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
 };
+
+export const formatToTitleCase = (value) => {
+  if (typeof value === 'string') {
+    return value.substring(0, 1).toUpperCase().concat('', value.substring(1).toLowerCase());
+  }
+  return '';
+};
+
+const cellStyle = {
+  boxSizing: 'border-box',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
+const customBodyRenderStyle = {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  boxSizing: 'border-box',
+  display: 'block',
+  width: '120%',
+};
+
+export const ResizableCell = ({ value }) => (
+  <div style={{ position: 'relative', height: '20px' }}>
+    <div style={customBodyRenderStyle}>
+      <div style={cellStyle}>
+        <Tooltip title={value} arrow placement="top">
+          <span>{value}</span>
+        </Tooltip>
+      </div>
+    </div>
+  </div>
+);

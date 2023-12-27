@@ -235,6 +235,7 @@ type MesheryControllersStatusListItem struct {
 	ContextID  string                  `json:"contextId"`
 	Controller MesheryController       `json:"controller"`
 	Status     MesheryControllerStatus `json:"status"`
+	Version    *string                 `json:"version,omitempty"`
 }
 
 type MesheryResult struct {

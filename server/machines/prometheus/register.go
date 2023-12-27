@@ -22,7 +22,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[models.ConnectionPayload](data)
 	if err != nil {
@@ -51,7 +51,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth) // change this to accept credentials either basicauth or API Key.
 
-	if err != nil {
+	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)
 	}
 	return machines.NoOp, nil, nil

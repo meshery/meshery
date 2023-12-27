@@ -10,3 +10,5 @@ category:
 modelMetadata:
   svgColor: ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg
   svgWhite: ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg
+components: []
+relationships: []

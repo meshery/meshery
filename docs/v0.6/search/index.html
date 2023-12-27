@@ -27,8 +27,8 @@
     content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
 " />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="http://localhost:4000" />
-  <meta property="og:site_name" content="http://localhost:4000" />
+  <meta property="og:url" content="https://docs.meshery.io" />
+  <meta property="og:site_name" content="https://docs.meshery.io" />
   <meta property="og:image"
     content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
 
@@ -3115,11 +3115,11 @@ meshery-custom-end -->
 				
 					,
 					
-					"concepts-relationshps": {
-						"id": "concepts-relationshps",
+					"concepts-relationships": {
+						"id": "concepts-relationships",
 						"title": "Relationships",
 						"categories": "",
-						"url": " /concepts/relationshps",
+						"url": " /concepts/relationships",
 						"content": "Relationships define the nature of interaction between interconnected components in MeshModel. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.\n\nSemantic and Non-Semantic Relationships\nShapes (all styles) convertable to Components\n\nThe isAnnotation attribute of a Component determines whether the give Component reflects an infrastructure concern - is sematically meaningful, and whose lifecycle is managed by Meshery.\n\nCore Constructs of Relationships\n\n\n  Kinds\n  Subtypes\n\n\nKind - Subtypes of Relationships\n\n\n  Edge - Network\n\n\nExample\nService –&gt; Deployment\nService –&gt; Pod\nIngress Controller –&gt; Ingress –&gt; Service\n\n\n  Edge - Mount\n\n\nExample\nAssignment of Pods to Persistent Volumes via PVC.\n\nPod –&gt; Persisten Volume Claim –&gt; Persistent Volume\n\n\n  Edge - Permission\n\n\nExample\nThe set of Service Accounts that are entitled with the one or more Cluster Roles bound via Cluster Role Binding.\n\nCluster Role –&gt; Cluser Role Binding –&gt; Service Account\n\n\n  Edge - Firewall\n\n\nExample\nKubernetes Network Policy for controlling ingress and egress traffic from Pod-to-Pod\n\n\n  Heirarchical - Inventory\n\n\nExample\nWASM Filter (binary and configuration) –&gt; Istio WASM Plugin\nWASM Filter (Binary and Configuration) –&gt; Istio Envoy Filter\n\n\n  Heirarchical - Parent\n\n\nExample\nAny namespaced Kubernetes component –&gt; Kubernetes Namespace\n\nMeshery Registry\nYou can reference and search the full set of registered relationships in Meshery UI –&gt; Setttings –&gt; Registry\n\n\nFuture Feature\n\n\n\nmesheryctl model import -f [ oci:// | file:// ]`"
 					}
 					

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Grid, List, ListItem, ListItemText, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateProgress } from '../../lib/store';
+
 import {
   FormatId,
   FormatStructuredData,
@@ -10,12 +14,14 @@ import {
   createColumnUiSchema,
 } from '../DataFormatter';
 import useKubernetesHook, {
-  useGetOperatorInfoQuery,
+  useControllerStatus,
   useMesheryOperator,
   useMeshsSyncController,
   useNatsController,
 } from '../hooks/useKubernetesHook';
-import { ConnectionChip } from './ConnectionChip';
+import { TootltipWrappedConnectionChip } from './ConnectionChip';
+import { CONTROLLER_STATES } from '../../utils/Enum';
+import { formatToTitleCase } from '../../utils/utils';
 
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
@@ -110,7 +116,7 @@ const DefaultPropertyFormatters = {
   last_updated: (value) => customDateFormatter('Last Updated', value),
 };
 
-const KubernetesMetadataFormatter = ({ connection, metadata }) => {
+const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const classes = useKubernetesStyles();
   const contextID = metadata.id;
 
@@ -118,6 +124,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
   const { ping: pingNats } = useNatsController();
+  const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
 
   const handleKubernetesClick = () => {
     pingKubernetes(metadata.name, metadata.server, connection.id);
@@ -135,16 +142,8 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
     pingMeshSync({ connectionID: connection.id });
   };
 
-  const { operatorInfo: operatorStatus } = useGetOperatorInfoQuery({ contextID });
-  const {
-    isReachable: operatorState,
-    meshSyncStatus: meshSyncState,
-    natsStatus: natsState,
-  } = operatorStatus;
-
-  const operatorVersion = operatorStatus.operatorVersion || 'Not Available';
-  const meshSyncVersion = operatorStatus.meshSyncVersion || 'Not Available';
-  const NATSVersion = operatorStatus.NATSVersion || 'Not Available';
+  const { operatorState, meshSyncState, natsState, operatorVersion, meshSyncVersion, natsVersion } =
+    getControllerStatesByContexID(contextID);
 
   return (
     <Grid container spacing={1} className={classes.root}>
@@ -154,9 +153,9 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={5} className={classes.operationButton}>
               <List>
                 <ListItem>
-                  <ConnectionChip
+                  <TootltipWrappedConnectionChip
                     tooltip={`Server: ${metadata.server}`}
-                    title={metadata.name}
+                    title={connection.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={() => handleKubernetesClick(connection.id)}
@@ -169,7 +168,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Name" secondary={metadata.name} />
+                  <ListItemText primary="Name" secondary={connection.name} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="K8s Version" secondary={metadata.version} />
@@ -212,10 +211,10 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={4} className={classes.operationButton}>
               <List>
                 <ListItem>
-                  <ConnectionChip
+                  <TootltipWrappedConnectionChip
                     tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
                     title={'Operator'}
-                    disabled={!operatorState}
+                    disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
                     status={operatorState}
                     handlePing={() => handleOperatorClick(connection.id)}
                     iconSrc="/static/img/meshery-operator.svg"
@@ -229,10 +228,10 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <Grid item xs={12} md={4}>
                   <List>
                     <ListItem>
-                      <ConnectionChip
+                      <TootltipWrappedConnectionChip
                         tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
                         title={'MeshSync'}
-                        status={meshSyncState}
+                        status={meshSyncState?.toLowerCase()}
                         handlePing={handleMeshSyncClick}
                         iconSrc="/static/img/meshsync.svg"
                       />
@@ -242,10 +241,10 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <Grid item xs={12} md={4}>
                   <List>
                     <ListItem>
-                      <ConnectionChip
+                      <TootltipWrappedConnectionChip
                         tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
                         title={'NATS'}
-                        status={natsState}
+                        status={natsState?.toLowerCase()}
                         handlePing={() => handleNATSClick()}
                         iconSrc="/static/img/nats-icon-color.svg"
                       />
@@ -262,7 +261,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ListItemText
                     primary="Operator State"
-                    secondary={operatorState ? 'Active' : 'Undeployed'}
+                    secondary={formatToTitleCase(operatorState)}
                   />
                 </ListItem>
                 <ListItem>
@@ -275,7 +274,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                 <ListItem>
                   <ListItemText
                     primary="MeshSync State"
-                    secondary={meshSyncState || 'Undeployed'}
+                    secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
                   />
                 </ListItem>
                 <ListItem>
@@ -286,10 +285,13 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={natsState || 'Not Connected'} />
+                  <ListItemText
+                    primary="NATS State"
+                    secondary={formatToTitleCase(natsState) || 'Not Connected'}
+                  />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="NATS Version" secondary={NATSVersion} />
+                  <ListItemText primary="NATS Version" secondary={natsVersion} />
                 </ListItem>
               </List>
             </Grid>
@@ -337,10 +339,15 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
   );
 };
 
-export const FormatConnectionMetadata = ({ connection }) => {
+const FormatConnectionMetadata = (props) => {
+  const { connection, meshsyncControllerState } = props;
   const formatterByKind = {
     [KUBERNETES]: () => (
-      <KubernetesMetadataFormatter connection={connection} metadata={connection.metadata} />
+      <KubernetesMetadataFormatter
+        meshsyncControllerState={meshsyncControllerState}
+        connection={connection}
+        metadata={connection.metadata}
+      />
     ),
     [MESHERY]: () => <MesheryMetadataFormatter connection={connection} />,
     default: () => (
@@ -361,3 +368,11 @@ export const FormatConnectionMetadata = ({ connection }) => {
     </Box>
   );
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
+const mapStateToProps = () => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);

@@ -12,8 +12,8 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { updateVisibleColumns } from '../../../utils/responsive-column';
-import { useWindowDimensions } from '../../../utils/dimension';
+import { Slide } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -43,6 +43,7 @@ const ResourcesTable = (props) => {
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
+  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
@@ -50,8 +51,10 @@ const ResourcesTable = (props) => {
   };
 
   const tableConfig = submenu
-    ? resourceConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
-    : resourceConfig(switchView, meshSyncResources, k8sConfig);
+    ? resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState)[
+        workloadType
+      ]
+    : resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState);
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
@@ -169,8 +172,27 @@ const ResourcesTable = (props) => {
   };
   return (
     <>
-      {view === ALL_VIEW ? (
-        <>
+      <Slide
+        in={view !== ALL_VIEW}
+        timeout={400}
+        direction={'left'}
+        exit={true}
+        enter={true}
+        mountOnEnter
+        unmountOnExit
+      >
+        <div>
+          <View
+            type={`${tableConfig.name}`}
+            setView={setView}
+            resource={selectedResource}
+            classes={classes}
+          />
+        </div>
+      </Slide>
+
+      {view === ALL_VIEW && (
+        <div>
           <div
             className={StyleClass.toolWrapper}
             style={{ marginBottom: '5px', marginTop: '1rem' }}
@@ -198,7 +220,6 @@ const ResourcesTable = (props) => {
               />
             </div>
           </div>
-
           <ResponsiveDataTable
             data={meshSyncResources}
             columns={tableConfig.columns}
@@ -208,16 +229,7 @@ const ResourcesTable = (props) => {
             updateCols={updateCols}
             columnVisibility={columnVisibility}
           />
-        </>
-      ) : (
-        <>
-          <View
-            type={`${tableConfig.name}`}
-            setView={setView}
-            resource={selectedResource}
-            classes={classes}
-          />
-        </>
+        </div>
       )}
     </>
   );

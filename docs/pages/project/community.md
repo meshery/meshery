@@ -2,7 +2,7 @@
 layout: default
 title: Meshery Community
 permalink: project/community
-description: Meshery's open source, cloud native community
+abstract: Meshery's open source, cloud native community
 redirect_from: project/community/
 language: en
 type: project
@@ -58,7 +58,7 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 
 <div class="wrapper">
     <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview">Access slides and resources</div></a>
+    <a href="https://layer5.io/newcomers"><div class="overview">Access slides and resources</div></a>
 </div>
 
 <!-- 

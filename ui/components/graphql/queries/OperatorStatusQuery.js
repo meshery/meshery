@@ -9,16 +9,8 @@ export default function fetchMesheryOperatorStatus(variables) {
     query OperatorStatusQuery($k8scontextID: String!) {
       operator: getOperatorStatus(k8scontextID: $k8scontextID) {
         status
-        version
-        controllers {
-          name
-          version
-          status
-        }
-        error {
-          code
-          description
-        }
+        controller
+        contextId
       }
     }
   `;

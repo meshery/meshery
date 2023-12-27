@@ -69,8 +69,10 @@ const initialState = fromJS({
   },
   // global gql-subscriptions
   operatorState: null,
+  controllerState: null,
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
+  organization: '',
 });
 
 export const actionTypes = {
@@ -95,12 +97,14 @@ export const actionTypes = {
   SET_ADAPTER: 'SET_ADAPTER',
   SET_CATALOG_CONTENT: 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
+  SET_CONTROLLER_STATE: 'SET_CONTROLLER_STATE',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
+  SET_ORGANIZATION: 'SET_ORGANIZATION',
 };
 
 // REDUCERS
@@ -179,6 +183,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.SET_OPERATOR_SUBSCRIPTION:
       return state.merge({ operatorState: action.operatorState });
 
+    case actionTypes.SET_CONTROLLER_STATE:
+      return state.merge({ controllerState: action.controllerState });
+
     case actionTypes.SET_MESHSYNC_SUBSCRIPTION:
       return state.merge({ meshSyncState: action.meshSyncState });
 
@@ -192,7 +199,10 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
 
     case actionTypes.SET_CONNECTION_METADATA:
-      return state.mergeDeep({ connectionMetadataState: action.connectionMetadataState });
+      return state.merge({ connectionMetadataState: action.connectionMetadataState });
+
+    case actionTypes.SET_ORGANIZATION:
+      return state.mergeDeep({ organization: action.organization });
 
     default:
       return state;
@@ -361,6 +371,12 @@ export const setConnectionMetadata =
   ({ connectionMetadataState }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
+  };
+
+export const setOrganization =
+  ({ organization }) =>
+  (dispatch) => {
+    return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
   };
 
 export const makeStore = (initialState, options) => {

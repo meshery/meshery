@@ -219,6 +219,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		OrderOn:     queryParams.Get("order"),
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == "true",
+		Relationships: queryParams.Get("relationships") == "true",
 	}
 	if queryParams.Get("search") != "" {
 		filter.DisplayName = queryParams.Get("search")
@@ -301,6 +304,9 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		OrderOn:     queryParams.Get("order"),
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == "true",
+		Relationships: queryParams.Get("relationships") == "true",
 	})
 
 	var pgSize int64

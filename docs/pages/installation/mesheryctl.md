@@ -11,6 +11,7 @@ display-title: "true"
 language: en
 list: exclude
 # image: /assets/img/platforms/brew.png
+abstract: Install Meshery CLI
 ---
 
 Meshery's command line client is `mesheryctl` and is the recommended tool for configuring and deploying one or more Meshery deployments. To install `mesheryctl` on your system, you may choose from any of the following supported methods.

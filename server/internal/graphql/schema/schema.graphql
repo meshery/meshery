@@ -78,6 +78,7 @@ type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
+    version: String
   }
 
 type MeshSyncEvent {
@@ -436,6 +437,7 @@ type PatternResult {
   errmsg: String
   created_at: String
   updated_at: String
+  type: NullString
 }
 
 type Location {
@@ -594,7 +596,7 @@ type Query {
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus @KubernetesMiddleware
+  ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
