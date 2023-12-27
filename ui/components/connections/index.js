@@ -676,11 +676,15 @@ function Connections({
             (connection.kindLogo =
               connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
+
         const filteredConnections = res?.connections.filter((connection) => {
-          if (selectedFilters.status === 'All') {
-            return connection;
+          if (
+            (selectedFilters.status === 'All' || connection.status === selectedFilters.status) &&
+            (selectedFilters.kind === 'All' || connection.kind === selectedFilters.kind)
+          ) {
+            return true;
           }
-          return connection.status === selectedFilters.status;
+          return false;
         });
 
         setConnections(filteredConnections);
@@ -897,18 +901,19 @@ function Connections({
         { label: 'Not Found', value: 'not found' },
       ],
     },
+    kind: {
+      name: 'Kind',
+      options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+    },
   };
 
-  const [selectedFilters, setSelectedFilters] = useState({ status: 'All' });
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
 
   const handleApplyFilter = () => {
-    const columnName = Object.keys(selectedFilters)[0];
-    const columnValue = selectedFilters[columnName];
-    const filter = {
-      [columnName]: columnValue === 'All' ? null : [columnValue],
-    };
-    setFilter(filter);
-    getConnections(page, pageSize, search, sortOrder, 'filter');
+    const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+
+    getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
   };
 
   const [tableCols, updateCols] = useState(columns);
