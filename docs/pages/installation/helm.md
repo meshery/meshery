@@ -9,6 +9,7 @@ redirect_from:
 display-title: "false"
 language: en
 list: include
+abstract: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes in-cluster.
 ---
 # Install Meshery on Kubernetes Using Helm
 

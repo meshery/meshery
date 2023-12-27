@@ -87,6 +87,7 @@ export var darkTheme = createTheme({
       searchBorder: '#396679',
       tabs: '#202020',
       modalTabs: '#363636',
+      darkSlateGray: '#294957',
       tabHover: '#212121',
       confirmationModal: '#111111',
       focused: '#00b39f',
@@ -117,6 +118,8 @@ export var darkTheme = createTheme({
       disableButtonBg: '#666666',
       disableButton: '#9d9d9d',
       listItemHover: 'rgb(0, 187, 166, 0.5)',
+      white: '#202020',
+      btnDisabled: '#b0bec5',
     },
     tables: {
       head: {
@@ -368,6 +371,7 @@ let theme = createTheme({
       confirmationModal: 'rgb(234, 235, 236)',
       focused: '#607d8b',
       primaryModalText: '#FFF',
+      darkSlateGray: '#294957',
       default: '#51636B',
       success: '#00B39F',
       primary: '#477E96',
@@ -395,6 +399,8 @@ let theme = createTheme({
       disableButtonBg: '#e0e0e0',
       disableButton: '#9d9d9d',
       listItemHover: '#f9f9f9',
+      white: '#ffffff',
+      btnDisabled: '#b0bec5',
     },
     tables: {
       head: {

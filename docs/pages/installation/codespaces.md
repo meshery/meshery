@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/codespaces.png
+abstract: Build and contribute to Meshery using GitHub Codespaces
 ---
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>

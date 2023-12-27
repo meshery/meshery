@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Managing Events with Notification Center
-description: A Comprehensive Guide to Managing Events with Meshery
+abstract: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management
 type: guides
 language: en

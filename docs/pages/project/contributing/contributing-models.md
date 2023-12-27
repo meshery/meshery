@@ -3,29 +3,33 @@ layout: page
 title: Contributing to Models
 permalink: project/contributing/contributing-models
 redirect_from: project/contributing/contributing-models/
-description: How to contribute to Meshery Models, Components, Relationships, Policies...
+abstract: How to contribute to Meshery Models, Components, Relationships, Policies...
 language: en
 type: project
 category: contributing
 list: include
 ---
 
-Models serve as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of an architecture.
+Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as the unit of packaging for the object models that define a type of managed infrastructure and their relationships, and details specifics of how to manage them.
+
+Models typically represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). 
 
 ## Difference Between Model Schemas, Definition, and Instance
 
-Models are infrastructure and application deployment technologies. Model Definitions are read-only templates that contain instructions for creating a any given infrasture. A Model Definition is a snapshot or blueprint of the configuration, credentials(s) and dependencies required for an application to run.
+The lifecycle of a Model can be summarized under three states.
 
-Depending upon where they are in their lifecycle, Meshery Models can be referred to differently based on their are comprised of a handful of core constructs.
+<!-- Model Definitions are read-only templates that contain instructions for creating a any given infrasture. A Model Definition is a snapshot or blueprint of the configuration, credentials(s) and dependencies required for an application to run.
+
+Depending upon where they are in their lifecycle, Meshery Models can be referred to differently based on their are comprised of a handful of core constructs. -->
 
 1. `Schema` (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
 
 2. `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
 
-        Things to Keep in Mind while creating RelationshipDefinitions:
+        Things to keep in mind while creating RelationshipDefinitions:
 
-        a. Relationships are defined only between Components.
-        b. The values for Kind, Version  and Model are case-sensitive
+        a. Targets of a Relationship can be specific Components or entire Models.
+        b. The values for Kind, Version  and Model are case-sensitive.
         c. The convention is to use camel-casing for Kind and SubType values.
         d. Absence of a field means in the selector means “*” (or wildcard).
             - If we have a selector with {Kind: Pod, Model: Kubernetes}, the absence of the Version field here

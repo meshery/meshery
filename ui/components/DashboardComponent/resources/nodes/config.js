@@ -8,11 +8,17 @@ import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { ConnectionChip } from '../../../connections/ConnectionChip';
+import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
 
-export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const NodeTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   const ping = useKubernetesHook();
   return {
     name: 'Node',
@@ -129,9 +135,13 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
             let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
             return (
               <>
-                <ConnectionChip
+                <TootltipWrappedConnectionChip
                   title={clusterName}
-                  iconSrc="/static/img/kubernetes.svg"
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
                   handlePing={() => ping(clusterName, val, connectionId)}
                 />
               </>

@@ -174,6 +174,7 @@ class MesheryApp extends App {
 
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    this.loadOrg();
     this.initSubscriptions([]);
     dataFetch(
       '/api/user/prefs',
@@ -232,9 +233,9 @@ class MesheryApp extends App {
         };
       }
       this.setState({ connectionMetadata: connectionDef });
-      this.props.setConnectionMetadata({
-        connectionMetadataState: connectionDef,
-      });
+    });
+    this.props.setConnectionMetadata({
+      connectionMetadataState: connectionDef,
     });
   };
 
@@ -358,6 +359,26 @@ class MesheryApp extends App {
 
   updateExtensionType = (type) => {
     this.props.store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
+  };
+
+  loadOrg = async () => {
+    const { store } = this.props;
+    dataFetch(
+      '/api/identity/orgs',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          store.dispatch({
+            type: actionTypes.SET_ORGANIZATION,
+            organization: result?.organizations[0],
+          });
+        }
+      },
+      (err) => console.log('There was an error fetching available orgs:', err),
+    );
   };
 
   async loadConfigFromServer() {

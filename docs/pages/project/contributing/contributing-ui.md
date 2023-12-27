@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery UI
 permalink: project/contributing/contributing-ui
-description: How to contribute to Meshery UI (web-based user interface).
+abstract: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
 category: contributing
