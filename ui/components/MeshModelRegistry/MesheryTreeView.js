@@ -1,7 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from '@material-ui/core';
-import Checkbox from '@mui/material/Checkbox';
+import {
+  Box,
+  Typography,
+  IconButton,
+  FormControlLabel,
+  Switch,
+  useTheme,
+  Tooltip,
+} from '@material-ui/core';
+// import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -14,8 +22,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
-  const [checked, setChecked] = useState(false);
-  const [hover, setHover] = useState(false);
+  // const [checked, setChecked] = useState(false);
+  const [setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
@@ -51,7 +59,9 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             </div>
           )}
 
-          {check && (
+          {/* Currently the functionality of checkbox is not supported */}
+
+          {/* {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
               size="small"
@@ -64,7 +74,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
                 },
               }}
             />
-          )}
+          )} */}
           {search && (
             <SearchBar
               onSearch={debounce((value) => setSearchText(value), 200)}
@@ -179,19 +189,24 @@ const MesheryTreeView = ({
             <div>
               {width < 1370 && isSearchExpanded ? null : (
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton onClick={expandAll} size="large">
-                    {/* <PlusSquare /> */}
-                    <KeyboardArrowDownIcon />
-                  </IconButton>
+                  <Tooltip title="Expand All" placement="top">
+                    <IconButton onClick={expandAll} size="large" disableRipple>
+                      {/* <PlusSquare /> */}
+                      <KeyboardArrowDownIcon />
+                    </IconButton>
+                  </Tooltip>
 
-                  <IconButton
-                    onClick={() => setExpanded([])}
-                    style={{ marginRight: '4px' }}
-                    size="large"
-                  >
-                    {/* <MinusSquare /> */}
-                    <KeyboardArrowUpIcon />
-                  </IconButton>
+                  <Tooltip title="Collapse All" placement="top">
+                    <IconButton
+                      onClick={() => setExpanded([])}
+                      style={{ marginRight: '4px' }}
+                      size="large"
+                      disableRipple
+                    >
+                      {/* <MinusSquare /> */}
+                      <KeyboardArrowUpIcon />
+                    </IconButton>
+                  </Tooltip>
                   <FormControlLabel
                     control={
                       <Switch
@@ -217,7 +232,10 @@ const MesheryTreeView = ({
           </div>
           <div
             id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
+            style={{
+              overflowY: 'auto',
+              height: width < 960 ? '48rem' : '27rem',
+            }}
             onScroll={handleScroll(MODELS)}
           >
             <TreeView
