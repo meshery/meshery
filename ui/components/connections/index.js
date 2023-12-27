@@ -279,7 +279,7 @@ function Connections(props) {
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgID: organization?.id },
+    { orgId: organization?.id },
     {
       skip: !organization?.id,
     },
