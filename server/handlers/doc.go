@@ -603,3 +603,10 @@ type mesheryPatternSourceContentResponseWrapper struct {
 	// in: body
 	Body []byte
 }
+
+// Returns MeshSync Resources Kinds
+// swagger:response meshsyncResourcesKindsResponseWrapper
+type meshsyncResourcesKindsResponseWrapper struct {
+	// in: body
+	Body *models.MeshSyncResourcesKindsAPIResponse
+}
