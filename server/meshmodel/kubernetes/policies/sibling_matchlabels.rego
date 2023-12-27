@@ -102,5 +102,5 @@ sibling_matchlabels_relationship = result {
 	}
 
     # final evaluation result
-	result := {"annotation": annotations_result, "labels": labels_result}
+	result := {"annotations": annotations_result, "labels": labels_result}
 }
