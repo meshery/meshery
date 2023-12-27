@@ -73,7 +73,7 @@ func getSourceTypes() error {
 		utils.Log.Error(err)
 		return nil
 	}
-	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
+	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
 		utils.Log.Error(err)
@@ -88,7 +88,7 @@ func getSourceTypes() error {
 
 	defer resp.Body.Close()
 
-	var response []*models.ApplicationSourceTypesAPIResponse
+	var response []*models.PatternSourceTypesAPIResponse
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -102,7 +102,7 @@ func getSourceTypes() error {
 	}
 
 	for _, apiResponse := range response {
-		validSourceTypes = append(validSourceTypes, apiResponse.ApplicationType)
+		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
 	}
 
 	return nil

@@ -50,8 +50,8 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/types",
-					Response:     "view.applicationTypes.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -83,8 +83,8 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/types",
-					Response:     "view.applicationTypes.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
