@@ -607,16 +607,6 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
-    /api/identity/users/keys:
-        get:
-            description: Returns all keys for user
-            operationId: idGetAllUsersKeysHandler
-            responses:
-                "200":
-                    $ref: '#/responses/keys'
-            summary: Handles GET for all Keys for users
-            tags:
-                - UserKeysAPI
     /api/integrations/connections:
         get:
             description: |-
