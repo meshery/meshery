@@ -47,7 +47,7 @@
               >
             </li>
             {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
-             <ul>
+             <ul style="margin-bottom: 0;">
 
                   {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
                   }}{{ linkUrlSelected }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
@@ -61,7 +61,7 @@
                     >{{ child.title }}</a>
                   </li>
                   {% if child.grandchildren %}
-                  <ul>
+                  <ul style="margin-bottom: 0;">
                       {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
                       }}{{ linkUrlSelected }}/{{ grandchild.url }}{% else %}{{ grandchild.external_url }}{% endif %} {% endcapture %} {%
                       capture grandchildUrl %}{{grandchildUrl | strip}}{% endcapture %} {% capture grandchildTitle %}{{ grandchildUrl | replace:
