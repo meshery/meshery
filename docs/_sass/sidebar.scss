@@ -127,15 +127,18 @@
 
       & .sidebar-nav__section {
         list-style: none;
-        padding: 1.50rem 0;
+        padding: 1rem 0 0 0;
         margin: 0;
-        &-title {
-          font-weight: 600;
-          margin-bottom: 1rem;
+        &-title a {
+          font-weight: bold;
+          margin-bottom: .5rem;
 
           &:hover {
-            font-weight: 600;
+            font-weight: normal;
           }
+        }
+        &-link a {
+          font-weight: normal;
         }
         & a {
           color: var(--color-secondary-medium);
@@ -165,7 +168,7 @@
 
           &:hover {
             text-decoration: none;
-            color: #008979;
+            color: var(--sidenav-hover);
             &::after {
               width: 100%;
             }
