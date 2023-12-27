@@ -1,10 +1,11 @@
-import { Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
+import { Box, Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
 import { Provider, connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../assets/icons/DesignIcon';
+import classNames from 'classnames';
 
 import { store } from '../../store';
 import WorkspaceIcon from '../../assets/icons/Workspace';
@@ -39,6 +40,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import GenericModal from '../Environments/generic-modal';
 import TransferList from '../Environments/transfer-list/transfer-list';
+import { Delete } from '@material-ui/icons';
 
 const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
@@ -88,6 +90,8 @@ const Workspaces = ({ organization, classes }) => {
   const [designsOfWorkspacePage, setDesignsOfWorkspacePage] = useState(0);
   const [designsPage, setDesignsPage] = useState(0);
   const [designsPageSize, /*setDesignssPageSize*/] = useState(25);
+  const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
+  const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
 
   const ref = useRef(null);
   const { notify } = useNotification();
@@ -349,6 +353,32 @@ const Workspaces = ({ organization, classes }) => {
     setActionType('');
   };
 
+  const handleBulkDeleteWorkspace = () => {
+    selectedWorkspaces.map(workspaceId => {
+      handleDeleteWorkspace(workspaceId);
+    });
+    setSelectedWorkspaces([]);
+    handleDeleteWorkspacesModalClose();
+  };
+
+  const handleBulkSelect = (e, id) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      setSelectedWorkspaces([...selectedWorkspaces, id]);
+    } else {
+      const newSelectedEnv = selectedWorkspaces.filter(env => env !== id);
+      setSelectedWorkspaces(newSelectedEnv);
+    }
+  };
+
+  const handleDeleteWorkspacesModalClose = () => {
+    setDeleteWorkspacesModal(false);
+  };
+
+  const handleDeleteWorkspacesModalOpen = () => {
+    setDeleteWorkspacesModal(true);
+  };
+
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
     e.stopPropagation();
     let response = await ref.current.show({
@@ -502,9 +532,9 @@ const Workspaces = ({ organization, classes }) => {
     if (designs) {
       /* eslint-disable-next-line no-unsafe-optional-chaining */
       setDesignsData(prevData => [...prevData, ...designs?.patterns]);
-        if (designs?.total_count && designsPage < pagesCount - 1) {
-          setDesignsPage(prevDesignsPage => prevDesignsPage + 1);
-        }
+      if (designs?.total_count && designsPage < pagesCount - 1) {
+        setDesignsPage(prevDesignsPage => prevDesignsPage + 1);
+      }
     }
   }, [designs, designsPage, designsPageSize]);
 
@@ -560,22 +590,22 @@ const Workspaces = ({ organization, classes }) => {
           setExpanded={setIsSearchExpanded}
         />
       </div>
-      {/* {selectedEnvironments.length > 0 && (
+      {selectedWorkspaces.length > 0 && (
         <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
           <Typography>
-            {selectedEnvironments.length > 1
-              ? `${selectedEnvironments.length} environments selected`
-              : `${selectedEnvironments.length} environment selected`}
+            {selectedWorkspaces.length > 1
+              ? `${selectedWorkspaces.length} workspaces selected`
+              : `${selectedWorkspaces.length} workspace selected`}
           </Typography>
           <Button className={classes.iconButton}>
             <Delete
               style={{ color: 'red', margin: '0 2px' }}
-              onClick={handleBulkDeleteEnvironmentConfirm}
-              disabled={selectedEnvironments.length > 0 ? false : true}
+              onClick={handleDeleteWorkspacesModalOpen}
+              disabled={selectedWorkspaces.length > 0 ? false : true}
             />
           </Button>
         </Box>
-      )} */}
+      )}
       {workspaces.length > 0 ? (
         <>
           <Grid container spacing={2} sx={{ marginTop: '10px' }}>
@@ -585,8 +615,8 @@ const Workspaces = ({ organization, classes }) => {
                   workspaceDetails={workspace}
                   onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
                   onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                  // onSelect={e => handleBulkSelect(e, workspace.id)}
-                  // selectedWorkspaces={selectedWorkspaces}
+                  onSelect={e => handleBulkSelect(e, workspace.id)}
+                  selectedWorkspaces={selectedWorkspaces}
                   onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
                   onAssignDesign={e => handleAssignDesignModalOpen(e, workspace)}
                   classes={classes}
@@ -705,6 +735,13 @@ const Workspaces = ({ organization, classes }) => {
         }
         helpText="Assign designs to workspace"
         maxWidth="md"
+      />
+      <GenericModal
+        open={deleteWorkspacesModal}
+        handleClose={handleDeleteWorkspacesModalClose}
+        title={"Delete Workspace"}
+        body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
+        action={handleBulkDeleteWorkspace}
       />
       <PromptComponent ref={ref} />
     </NoSsr>

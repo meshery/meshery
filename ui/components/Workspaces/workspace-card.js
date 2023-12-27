@@ -133,12 +133,12 @@ const WorkspaceCard = ({
               minHeight: '390px',
             }}
           >
-            <Grid style={{ display: 'flex', flexDirection: 'row', paddingBottom: '10px' }}>
+            <Grid style={{ display: 'flex', flexDirection: 'row', paddingBottom: '5px' }}>
               <CardTitle variant="body2" onClick={(e) => e.stopPropagation()}>
                 {workspaceDetails?.name}
               </CardTitle>
             </Grid>
-            <Grid style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: "10px" }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginTop: '5px', marginBottom: "5px" }}>
               <StyledIconButton onClick={(e) => e.stopPropagation()}>
                 <OrgIcon width="24" height="24" />
               </StyledIconButton>

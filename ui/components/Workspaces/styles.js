@@ -78,7 +78,7 @@ export const DescriptionLabel = styled(EmptyDescription)({
 });
 
 export const AllocationButton = styled(Box)({
-  background: Colors.keppelGreen,
+  background: theme.palette.secondary.focused,
   padding: '10px 10px 1px 10px',
   borderRadius: '4px',
   height: '100%',
