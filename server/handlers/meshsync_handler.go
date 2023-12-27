@@ -89,8 +89,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-		Preload("KubernetesResourceMeta").
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id")
 
 	if kind != "" {
 		result = result.Where(&model.KubernetesResource{Kind: kind})
@@ -116,7 +116,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	if search != "" {
-		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
+		result = result.Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
 	}
 
 	result.Count(&totalCount)

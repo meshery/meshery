@@ -434,14 +434,14 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 }
 
 // Returns Keys from a user /api/identity/users/keys
-func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersKeys) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersKeys", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(UsersKeys)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistOrganizations)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + orgID + "/users/keys")
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -465,7 +465,7 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Users keys", http.StatusUnauthorized)
+		return nil, ErrFetch(nil, "Users keys", http.StatusUnauthorized)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -475,10 +475,10 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		return nil, ErrDataRead(err, "Users Keys")
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("user keys successfully retrived from remote provider")
+		logrus.Infof("user keys successfully retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(err, "Users Keys", resp.StatusCode)
+	err = ErrFetch(nil, "Users Keys", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
@@ -3666,7 +3666,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3679,6 +3679,20 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+
+	if len(status) > 0 {
+		for _, v := range status {
+			q.Add("status", v)
+		}
+	}
+	if len(kind) > 0 {
+		for _, v := range kind {
+			q.Add("kind", v)
+		}
+	}
 
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
