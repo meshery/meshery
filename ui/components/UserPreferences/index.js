@@ -447,21 +447,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-// const UserPreferenceWithErrorBoundary = (props) => {
-//   return (
-//     <NoSsr>
-//       <ErrorBoundary
-//         FallbackComponent={() => null}
-//         onError={(e) => console.error('Error in UserPrefs Page', e)}
-//       >
-//         <Provider store={store}>
-//           <UserPreference {...props} />
-//         </Provider>
-//       </ErrorBoundary>
-//     </NoSsr>
-//   );
-// };
-
 export default withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference)),
 );
