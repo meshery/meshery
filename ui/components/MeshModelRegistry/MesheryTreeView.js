@@ -23,7 +23,7 @@ import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   // const [checked, setChecked] = useState(false);
-  const [setHover] = useState(false);
+  // const [hover, setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
@@ -31,8 +31,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
 
   return (
     <StyledTreeItemRoot
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      // onMouseEnter={() => setHover(true)}
+      // onMouseLeave={() => setHover(false)}
       root={root}
       lineColor={theme.palette.secondary.text}
       label={
