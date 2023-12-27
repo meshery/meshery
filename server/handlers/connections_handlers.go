@@ -212,7 +212,6 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		order = "updated_at desc"
 	}
 
-	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order, filter))
 
 	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, filter)
 	obj := "connections"
