@@ -1,4 +1,5 @@
-import { Typography, Card, Checkbox, styled } from '@material-ui/core';
+import { Typography, Card, Checkbox, styled, Box, Button } from '@material-ui/core';
+import theme, { Colors } from '../../themes/app';
 
 /** Card Styles */
 export const CardWrapper = styled(Card)({
@@ -75,3 +76,67 @@ export const DescriptionLabel = styled(EmptyDescription)({
     cursor: 'default',
   },
 });
+
+export const AllocationButton = styled(Box)({
+  background: Colors.keppelGreen,
+  padding: '10px 10px 1px 10px',
+  borderRadius: '4px',
+  height: '100%',
+  display: 'flex',
+  width: '100%',
+});
+
+export const AllocationWorkspace = styled(AllocationButton)({
+  display: 'flex',
+  width: '100%',
+  gap: '10px',
+  ['@media (min-width : 600px)']: {
+    flexDirection: 'column',
+    gap: '0',
+  },
+});
+
+export const PopupButton = styled(Button)(() => ({
+  width: '100%',
+  borderRadius: '4px',
+  background: theme.palette.secondary.white,
+  boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+  display: 'flex',
+  flexDirection: 'column',
+  marginBottom: '10px',
+  color: Colors.charcoal,
+  '&:hover': {
+    background: theme.palette.secondary.white,
+  },
+  padding: '15px 10px',
+}));
+
+export const TabTitle = styled('p')({
+  margin: '0',
+  fontSize: '12px',
+  fontWeight: '400',
+  display: 'flex',
+});
+
+export const TabCount = styled('p')({
+  margin: '0',
+  fontSize: '30px',
+  fontWeight: '500',
+  lineHeight: 1,
+  marginBottom: '5px',
+});
+
+export const ViewButton = styled(Button)(() => ({
+  width: '100%',
+  borderRadius: '4px',
+  background: theme.palette.secondary.white,
+  boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+  display: 'flex',
+  flexDirection: 'column',
+  marginBottom: '10px',
+  color: `${Colors.charcoal}30 !important`,
+  '&:hover': {
+    background: theme.palette.secondary.white,
+  },
+  padding: '15px 10px',
+}));

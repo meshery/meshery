@@ -4,6 +4,7 @@ import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DesignsIcon from '../../assets/icons/DesignIcon';
 
 import { store } from '../../store';
 import WorkspaceIcon from '../../assets/icons/Workspace';
@@ -14,11 +15,19 @@ import SearchBar from '../../utils/custom-search';
 import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
 import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignEnvironmentToWorkspaceMutation,
   useCreateWorkspaceMutation,
   useDeleteWorkspaceMutation,
+  useGetDesignsOfWorkspaceQuery,
+  useGetEnvironmentsOfWorkspaceQuery,
   useGetWorkspacesQuery,
+  useUnassignDesignFromWorkspaceMutation,
+  useUnassignEnvironmentFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../rtk-query/workspace';
+import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
+import { useGetPatternsQuery } from '../../rtk-query/design';
 import dataFetch from '../../lib/data-fetch';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -27,6 +36,9 @@ import Modal from '../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../lib/event-types';
+import EnvironmentIcon from '../../assets/icons/Environment';
+import GenericModal from '../Environments/generic-modal';
+import TransferList from '../Environments/transfer-list/transfer-list';
 
 const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
@@ -58,6 +70,25 @@ const Workspaces = ({ organization, classes }) => {
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
 
+  const [assignEnvironmentModal, setAssignEnvironmentModal] = useState(false);
+  const [environmentAssignWorkspace, setEnvironmentAssignWorkspace] = useState({});
+  const [environmentsData, setEnvironmentsData] = useState([]);
+  const [environmentsPage, setEnvironmentsPage] = useState(0);
+  const [environmentsPageSize /*setEnvironmentsPageSize*/] = useState(25);
+  const [workspaceEnvironmentsData, setWorkspaceEnvironmentsData] = useState([]);
+  const [skipEnvironments, setSkipEnvironments] = useState(true);
+  const [assignedEnvironments, setAssignedEnvironments] = useState([]);
+  const [environmentsOfWorkspacePage, setEnvironmentsOfWorkspacePage] = useState(0);
+  const [assignDesignModal, setAssignDesignModal] = useState(false);
+  const [designAssignWorkspace, setDesignAssignWorkspace] = useState({});
+  const [designsData, setDesignsData] = useState([]);
+  const [workspaceDesignsData, setWorkspaceDesignsData] = useState([]);
+  const [assignedDesigns, setAssignedDesigns] = useState([]);
+  const [skipDesigns, setSkipDesigns] = useState(true);
+  const [designsOfWorkspacePage, setDesignsOfWorkspacePage] = useState(0);
+  const [designsPage, setDesignsPage] = useState(0);
+  const [designsPageSize, /*setDesignssPageSize*/] = useState(25);
+
   const ref = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -85,6 +116,71 @@ const Workspaces = ({ organization, classes }) => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
+
+  const {
+    data: environments,
+    // isLoading: isEnvironmentsLoading,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    {
+      orgId: environmentAssignWorkspace.organization_id,
+      page: environmentsPage,
+      pagesize: environmentsPageSize,
+    },
+    {
+      skip: skipEnvironments,
+    },
+  );
+
+  const {
+    data: environmentsOfWorkspace,
+    // isLoading: isEnvironmentsOfWorkspaceLoading,
+    isError: isEnvironmentsOfWorkspaceError,
+    error: environmentsOfWorkspaceError,
+  } = useGetEnvironmentsOfWorkspaceQuery(
+    {
+      workspaceId: environmentAssignWorkspace.id,
+      page: environmentsOfWorkspacePage,
+      pagesize: environmentsPageSize,
+    },
+    {
+      skip: skipEnvironments,
+    },
+  );
+
+  const [assignEnvironmentToWorkspace] = useAssignEnvironmentToWorkspaceMutation();
+
+  const [unassignEnvironmentFromWorkspace] = useUnassignEnvironmentFromWorkspaceMutation();
+
+  const { data: designs } = useGetPatternsQuery({
+    page: designsPage,
+    pagesize: designsPageSize
+  },
+    {
+      skip: skipDesigns
+    }
+  );
+
+  const {
+    data: designsOfWorkspace,
+    // isLoading: isDesignsOfWorkspaceLoading,
+    isError: isDesignsOfWorkspaceError,
+    error: designsOfWorkspaceError
+  } = useGetDesignsOfWorkspaceQuery({
+    workspaceId: designAssignWorkspace.id,
+    page: designsOfWorkspacePage,
+    pagesize: designsPageSize
+  },
+    {
+      skip: skipDesigns
+    }
+  );
+
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+
+  const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
+
 
   // const loading = isWorkspacesLoading;
 
@@ -132,7 +228,30 @@ const Workspaces = ({ organization, classes }) => {
     if (isWorkspacesError) {
       handleError(`Workspaces Fetching Error: ${workspacesError?.data}`);
     }
-  }, [isWorkspacesError, workspacesError, handleError]);
+    if (isEnvironmentsError) {
+      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+    }
+    if (isEnvironmentsOfWorkspaceError) {
+      handleError(
+        `Environments of Workspace Fetching Error: ${environmentsOfWorkspaceError?.data}`,
+      );
+    }
+    if (isDesignsOfWorkspaceError) {
+      handleError(
+        `Designs of Workspace Fetching Error: ${designsOfWorkspaceError?.data}`
+      );
+    }
+  }, [
+    isWorkspacesError,
+    workspacesError,
+    isEnvironmentsError,
+    environmentsError,
+    isEnvironmentsOfWorkspaceError,
+    environmentsOfWorkspaceError,
+    isDesignsOfWorkspaceError,
+    designsOfWorkspaceError,
+    handleError,
+  ]);
 
   useEffect(() => {
     setOrgId(organization?.id);
@@ -255,6 +374,155 @@ const Workspaces = ({ organization, classes }) => {
     </>
   );
 
+  useEffect(() => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(environments?.total_count) / environmentsPageSize),
+    );
+    if (environments) {
+      /* eslint-disable-next-line no-unsafe-optional-chaining */
+      setEnvironmentsData((prevData) => [...prevData, ...environments?.environments]);
+      if (environments?.total_count && environmentsPage < pagesCount - 1) {
+        setEnvironmentsPage((prevEnvironmentsPage) => prevEnvironmentsPage + 1);
+      }
+    }
+  }, [environments, environmentsPage, environmentsPageSize]);
+
+  useEffect(() => {
+    const pagesCount = 0;
+    parseInt(Math.ceil(parseInt(environmentsOfWorkspace?.total_count) / environmentsPageSize));
+    if (environmentsOfWorkspace) {
+      /* eslint-disable-next-line no-unsafe-optional-chaining */
+      setWorkspaceEnvironmentsData((prevWorkspaceEnvironmentsData) => [
+        ...prevWorkspaceEnvironmentsData,
+        ...environmentsOfWorkspace?.environments,
+      ]);
+      if (environmentsOfWorkspace?.total_count && environmentsOfWorkspacePage < pagesCount - 1) {
+        setEnvironmentsOfWorkspacePage(
+          (prevEnvironmentsOfWorkspacePage) => prevEnvironmentsOfWorkspacePage + 1,
+        );
+      }
+    }
+  }, [environmentsOfWorkspace, environmentsOfWorkspacePage, environmentsPageSize]);
+
+  const handleAssignEnvironmentModalClose = () => {
+    setAssignEnvironmentModal(false);
+    setSkipEnvironments(true);
+  };
+
+  const handleAssignEnvironmentModalOpen = (e, workspace) => {
+    e.stopPropagation();
+    setAssignEnvironmentModal(true);
+    if (environmentAssignWorkspace.id !== workspace.id) {
+      setWorkspaceEnvironmentsData([]);
+    }
+    setEnvironmentAssignWorkspace(workspace);
+    setSkipEnvironments(false);
+  };
+
+  const handleAssignEnvironmentsData = (updatedAssignedData) => {
+    setAssignedEnvironments(updatedAssignedData);
+  };
+
+  const handleAssignEnvironments = () => {
+    const originalEnvironmentsIds = workspaceEnvironmentsData.map((environment) => environment.id);
+    const updatedEnvironmentsIds = assignedEnvironments.map((environment) => environment.id);
+
+    const addedEnvironmentsIds = updatedEnvironmentsIds.filter(
+      (id) => !originalEnvironmentsIds.includes(id),
+    );
+    const removedTeamsIds = originalEnvironmentsIds.filter(
+      (id) => !updatedEnvironmentsIds.includes(id),
+    );
+
+    addedEnvironmentsIds.map((id) =>
+      assignEnvironmentToWorkspace({
+        workspaceId: environmentAssignWorkspace.id,
+        environmentId: id,
+      }).unwrap(),
+    );
+
+    removedTeamsIds.map((id) =>
+      unassignEnvironmentFromWorkspace({
+        workspaceId: environmentAssignWorkspace.id,
+        environmentId: id,
+      }).unwrap(),
+    );
+    setWorkspaceEnvironmentsData([]);
+    handleAssignEnvironmentModalClose();
+  };
+
+  const handleAssignDesignModalClose = () => {
+    setAssignDesignModal(false);
+    setDesignAssignWorkspace({});
+    setSkipDesigns(true);
+  };
+
+  const handleAssignDesignModalOpen = (e, workspace) => {
+    e.stopPropagation();
+    setAssignDesignModal(true);
+    setDesignAssignWorkspace(workspace);
+    setSkipDesigns(false);
+  };
+
+  const handleAssignDesignsData = updatedAssignedData => {
+    setAssignedDesigns(updatedAssignedData);
+  };
+
+  const handleAssignDesigns = () => {
+    const originalDesignsIds = workspaceDesignsData.map(design => design.id);
+    const updatedDesignsIds = assignedDesigns.map(design => design.id);
+
+    const addedDesignsIds = updatedDesignsIds.filter(
+      id => !originalDesignsIds.includes(id)
+    );
+    const removedDesignsIds = originalDesignsIds.filter(
+      id => !updatedDesignsIds.includes(id)
+    );
+
+    addedDesignsIds.map(id =>
+      assignDesignToWorkspace({
+        workspaceId: designAssignWorkspace.id,
+        designId: id
+      }).unwrap()
+    );
+
+    removedDesignsIds.map(id =>
+      unassignDesignFromWorkspace({
+        workspaceId: designAssignWorkspace.id,
+        designId: id
+      }).unwrap()
+    );
+    handleAssignDesignModalClose();
+  };
+
+  useEffect(() => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(designs?.total_count) / designsPageSize)
+    );
+    if (designs) {
+      /* eslint-disable-next-line no-unsafe-optional-chaining */
+      setDesignsData(prevData => [...prevData, ...designs?.patterns]);
+        if (designs?.total_count && designsPage < pagesCount - 1) {
+          setDesignsPage(prevDesignsPage => prevDesignsPage + 1);
+        }
+    }
+  }, [designs, designsPage, designsPageSize]);
+
+  useEffect(() => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(designsOfWorkspace?.total_count) / designsPageSize)
+    );
+    if (designsOfWorkspace) {
+      /* eslint-disable-next-line no-unsafe-optional-chaining */
+      setWorkspaceDesignsData(prevData => [...prevData, ...designsOfWorkspace?.designs]);
+      if (designsOfWorkspace?.total_count && designsOfWorkspacePage < pagesCount - 1) {
+        setDesignsOfWorkspacePage(
+          prevDesignsOfWorkspacePage => prevDesignsOfWorkspacePage + 1
+        );
+      }
+    }
+  }, [designsOfWorkspace, designsOfWorkspacePage, designsPageSize]);
+
   return (
     <NoSsr>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
@@ -319,6 +587,8 @@ const Workspaces = ({ organization, classes }) => {
                   onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
                   // onSelect={e => handleBulkSelect(e, workspace.id)}
                   // selectedWorkspaces={selectedWorkspaces}
+                  onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
+                  onAssignDesign={e => handleAssignDesignModalOpen(e, workspace)}
                 />
               </Grid>
             ))}
@@ -371,6 +641,70 @@ const Workspaces = ({ organization, classes }) => {
           initialData={initialData}
         />
       )}
+      <GenericModal
+        open={assignEnvironmentModal}
+        handleClose={handleAssignEnvironmentModalClose}
+        title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+        body={
+          <TransferList
+            name="Environments"
+            assignableData={environmentsData}
+            assignedData={handleAssignEnvironmentsData}
+            originalAssignedData={workspaceEnvironmentsData}
+            emptyStateIconLeft={
+              <EnvironmentIcon height="5rem" width="5rem" fill="#808080" secondaryFill="#979797" />
+            }
+            emtyStateMessageLeft="No environments available"
+            emptyStateIconRight={
+              <EnvironmentIcon height="5rem" width="5rem" fill="#808080" secondaryFill="#979797" />
+            }
+            emtyStateMessageRight="No environments assigned"
+          />
+        }
+        action={handleAssignEnvironments}
+        buttonTitle="Save"
+        leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+        helpText="Assign environment to workspace"
+        maxWidth="md"
+      />
+      <GenericModal
+        open={assignDesignModal}
+        handleClose={handleAssignDesignModalClose}
+        title={`Assign Designs to ${designAssignWorkspace.name}`}
+        body={
+          <TransferList
+            name="Designs"
+            assignableData={designsData}
+            assignedData={handleAssignDesignsData}
+            originalAssignedData={workspaceDesignsData}
+            emptyStateIconLeft={
+              <DesignsIcon
+                height="5rem"
+                width="5rem"
+              />
+            }
+            emtyStateMessageLeft="No designs available"
+            emptyStateIconRight={
+              <DesignsIcon
+                height="5rem"
+                width="5rem"
+              />
+            }
+            emtyStateMessageRight="No designs assigned"
+          />
+        }
+        action={handleAssignDesigns}
+        buttonTitle="Save"
+        leftHeaderIcon={
+          <DesignsIcon
+            height="2rem"
+            width="2rem"
+            fill="#ffffff"
+          />
+        }
+        helpText="Assign designs to workspace"
+        maxWidth="md"
+      />
       <PromptComponent ref={ref} />
     </NoSsr>
   );
