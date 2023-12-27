@@ -37,7 +37,7 @@ function StepperIcon(props) {
 
 /* eslint-disable */
 
-export default function CustomizedSteppers({ connectionData, onClose }) {
+export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
   const stepData = {
     stepContent: registerConnectionContent,
     stepIcons: registerConnectionIcons,
@@ -47,17 +47,20 @@ export default function CustomizedSteppers({ connectionData, onClose }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
-  const [sharedData, setSharedData] = React.useState(null);
-
   React.useEffect(() => {
     setSharedData({
       metadata: connectionData.metadata,
       capabilities: connectionData.capabilities,
       kind: connectionData.kind,
-      onClose: onClose,
     });
   }, [connectionData]);
 
+  React.useEffect(() => {
+    setSharedData((prevState) => ({
+      ...prevState,
+      onClose: onClose,
+    }));
+  }, [sharedData]);
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 
   const handleNext = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { DialogContent, Dialog } from '@material-ui/core';
 
 import theme from '../../../themes/app.js';
@@ -21,7 +21,11 @@ export const cancelConnectionRegister = (id) => {
   );
 };
 
-const RegisterConnectionModal = ({ openRegistrationModal, connectionData, handleRegistrationModalClose }) => {
+const RegisterConnectionModal = ({
+  openRegistrationModal,
+  connectionData,
+  handleRegistrationModalClose,
+}) => {
   const [sharedData, setSharedData] = React.useState(null);
   const handleClose = () => {
     handleRegistrationModalClose();
