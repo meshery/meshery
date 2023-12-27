@@ -243,7 +243,6 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 		PageSize:   limit,
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
