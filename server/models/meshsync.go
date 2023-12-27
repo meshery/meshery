@@ -12,8 +12,8 @@ type MeshSyncResourcesAPIResponse struct {
 }
 
 type MeshSyncResourcesKindsAPIResponse struct {
-	Kinds []string `json:"kinds"`
-	Page int      `json:"page"`
-	PageSize int  `json:"page_size"`
-	TotalCount int64 `json:"total_count"`
+	Kinds      []string `json:"kinds"`
+	Page       int      `json:"page"`
+	PageSize   int      `json:"page_size"`
+	TotalCount int64    `json:"total_count"`
 }

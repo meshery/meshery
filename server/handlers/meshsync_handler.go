@@ -164,7 +164,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 }
 
-
 // swagger:route GET /api/system/meshsync/resources/kinds GetMeshSyncResourcesKinds idGetMeshSyncResourcesKinds
 // Handle GET request for meshsync discovered resources kinds
 //
@@ -191,7 +190,7 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	filter := struct {
 		ClusterIds []string `json:"clusterIds"`
 	}{}
-	
+
 	var kinds []string
 	var totalCount int64
 
@@ -208,7 +207,7 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 	}
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).Distinct("kind").
-	Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
 	if search != "" {
 		result = result.Where("kubernetes_resources.kind LIKE ?", "%"+search+"%")
@@ -236,7 +235,6 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
 
 	response := &models.MeshSyncResourcesKindsAPIResponse{
 		Kinds:      kinds,
