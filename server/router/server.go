@@ -280,6 +280,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	
 	gMux.Handle("/api/system/meshsync/resources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResources), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/system/meshsync/resources/kinds", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResourcesKinds), models.ProviderAuth))).
+		Methods("GET")
 
 	// Handlers for User Credentials
 
