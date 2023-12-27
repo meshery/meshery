@@ -373,20 +373,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const operatorState = state.get('operatorState');
-  const connectionMetadataState = state.get('connectionMetadataState');
-  const meshsyncControllerState = state.get('controllerState');
-
-  return {
-    k8sconfig,
-    meshsyncControllerState,
-    selectedK8sContexts,
-    operatorState,
-    connectionMetadataState,
-  };
-};
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);
