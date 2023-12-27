@@ -74,21 +74,19 @@
                         >{{ grandchild.title }}</a
                       >
                       </li>
-                      {% endfor %}
+                      {% endfor %} <!-- grandchild -->
                   </ul>
-                  {% endif %} 
-
-                {% endfor %}
-                </ul>
-              {% endif %} 
-            
-            {% endif %} {% endfor %}
+                  
+                  {% endif %} <!-- end grandchild -->
+                {% endfor %} <!-- children -->
+              </ul> 
+              {% endif %}  <!-- end children -->
+              {% endif %}  <!-- end pageurl -->
+            {% endfor %} <!--  section.links -->
           </ul>
-
-      {% endif %}
-        
-      </li>
-</ul>
-    {% endfor %}
-  </nav>
+      {% endif %} <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  {% endfor %}
+</nav>
 </div>
