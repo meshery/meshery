@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/environments"
 )
 
 // swagger:response ConnectionStatus
@@ -70,7 +71,9 @@ type Connection struct {
 	CreatedAt    time.Time              `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt    time.Time              `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt    sql.NullTime           `json:"deleted_at,omitempty" db:"deleted_at"`
+	Environments []environments.EnvironmentData            `json:"environments,omitempty" db:"environments"`
 }
+
 
 // swagger:response ConnectionPage
 type ConnectionPage struct {

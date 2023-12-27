@@ -2507,6 +2507,9 @@ responses:
                 type: string
             credential_id: {}
             deleted_at: {}
+            environments:
+                items: {}
+                type: array
             id: {}
             kind:
                 type: string
