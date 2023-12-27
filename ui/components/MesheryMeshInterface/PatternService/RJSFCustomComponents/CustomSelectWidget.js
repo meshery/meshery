@@ -49,7 +49,6 @@ export default function CustomSelectWidget({
   const xRjsfGridArea = schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
-
   const emptyValue = multiple ? [] : '';
   const isEmpty =
     typeof value === 'undefined' ||
@@ -67,7 +66,9 @@ export default function CustomSelectWidget({
   return (
     <>
       {xRjsfGridArea && (
-        <InputLabel htmlFor={id}>{labelValue(label, hideLabel || !label, false)}</InputLabel>
+        <InputLabel required={required} htmlFor={id}>
+          {labelValue(label, hideLabel || !label, false)}
+        </InputLabel>
       )}
       <TextField
         id={id}
@@ -143,6 +144,22 @@ export default function CustomSelectWidget({
             return enumOptions[selected].label;
           },
           multiple,
+          MenuProps: {
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            getContentAnchorEl: null,
+            PaperProps: {
+              style: {
+                maxHeight: '400px',
+              },
+            },
+          },
         }}
         aria-describedby={ariaDescribedByIds(id)}
       >
@@ -151,7 +168,7 @@ export default function CustomSelectWidget({
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
-                <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />
+                {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
                 <ListItemText primary={label} />
               </MenuItem>
             );

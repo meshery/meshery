@@ -1573,12 +1573,12 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 	fmt.Fprint(rw, string(b))
 }
 
-// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetApplication
+// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetPatternSourceContent
 // Handle GET request for Meshery Patterns with of source content
 //
 // Get the pattern source-content
 // responses:
-//  200
+//  200: mesheryPatternSourceContentResponseWrapper
 
 // GetMesheryPatternHandler fetched the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
@@ -1588,12 +1588,11 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	applicationID := mux.Vars(r)["id"]
-	resp, err := provider.GetApplicationSourceContent(r, applicationID)
+	designID := mux.Vars(r)["id"]
+	resp, err := provider.GetDesignSourceContent(r, designID)
 	if err != nil {
-		obj := "download"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
 

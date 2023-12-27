@@ -199,7 +199,7 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
 
     case actionTypes.SET_CONNECTION_METADATA:
-      return state.mergeDeep({ connectionMetadataState: action.connectionMetadataState });
+      return state.merge({ connectionMetadataState: action.connectionMetadataState });
 
     case actionTypes.SET_ORGANIZATION:
       return state.mergeDeep({ organization: action.organization });

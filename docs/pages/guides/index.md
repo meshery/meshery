@@ -5,6 +5,7 @@ permalink: guides
 redirect_from: guides/
 language: en
 list: exclude
+abstract: Operating and troubleshooting Meshery deployments.
 ---
 
 Guides to using and troubleshooting Meshery's various features and components.

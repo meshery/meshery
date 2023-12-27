@@ -70,6 +70,16 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import MultiSelectWrapper from '../multi-select-wrapper';
+import {
+  useGetEnvironmentsQuery,
+  useAddConnectionToEnvironmentMutation,
+  useRemoveConnectionFromEnvironmentMutation,
+  useSaveEnvironmentMutation,
+} from '../../rtk-query/environments';
+import ErrorBoundary from '../ErrorBoundary';
+import { store } from '../../store';
+import { Provider } from 'react-redux';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -87,6 +97,14 @@ const ACTION_TYPES = {
   FETCH_CONNECTION_STATUS_TRANSITIONS: {
     name: 'FETCH_CONNECTION_STATUS_TRANSITIONS',
     error_msg: 'Failed to fetch connection transitions',
+  },
+  FETCH_ENVIRONMENT: {
+    name: 'FETCH_ENVIRONMENT',
+    error_msg: 'Failed to fetch environment',
+  },
+  CREATE_ENVIRONMENT: {
+    name: 'CREATE_ENVIRONMENT',
+    error_msg: 'Failed to create environment',
   },
 };
 
@@ -148,15 +166,18 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections({
-  classes,
-  updateProgress,
-  /*onOpenCreateConnectionModal,*/ operatorState,
-  selectedK8sContexts,
-  k8sconfig,
-  connectionMetadataState,
-  meshsyncControllerState,
-}) {
+function Connections(props) {
+  const {
+    classes,
+    updateProgress,
+    /*onOpenCreateConnectionModal,*/ operatorState,
+    selectedK8sContexts,
+    k8sconfig,
+    connectionMetadataState,
+    meshsyncControllerState,
+    organization,
+  } = props;
+  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -174,6 +195,96 @@ function Connections({
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
+  const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
+  const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const addConnectionToEnvironment = async (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  const removeConnectionFromEnvironment = (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder);
+        notify({
+          message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  const saveEnvironment = (connectionId, connectionName, environmentName) => {
+    saveEnvironmentMutator({
+      body: {
+        name: environmentName,
+        organization_id: organization?.id,
+      },
+    })
+      .unwrap()
+      .then((resp) => {
+        notify({
+          message: `Environment: ${resp.Name} saved`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
+        getConnections(page, pageSize, search, sortOrder);
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgID: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -196,8 +307,40 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
+  const handleEnvironmentSelect = (
+    connectionId,
+    connName,
+    assignedEnvironments,
+    selectedEnvironments,
+    unSelectedEnvironments,
+  ) => {
+    let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+      return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+    });
+
+    newlySelectedEnvironments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+      let isNew = environment.__isNew__ || false;
+
+      if (isNew) {
+        saveEnvironment(connectionId, connName, envName);
+        return;
+      }
+
+      addConnectionToEnvironment(environmentId, envName, connectionId, connName);
+    });
+    unSelectedEnvironments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+
+      removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
+    });
+  };
+
   let colViews = [
     ['name', 'xs'],
+    ['environments', 'm'],
     ['kind', 'm'],
     ['type', 's'],
     ['sub_type', 'm'],
@@ -260,7 +403,8 @@ function Connections({
                   getColumnValue(tableMeta.rowData, 'kind', columns),
                 )
               }
-              handlePing={() => {
+              handlePing={(e) => {
+                e.stopPropagation();
                 if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
@@ -268,6 +412,54 @@ function Connections({
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
               style={{ maxWidth: '120px' }}
             />
+          );
+        },
+      },
+    },
+    {
+      name: 'environments',
+      label: 'Environments',
+      options: {
+        sort: false,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
+          const getOptions = () => {
+            return environments.map((env) => ({ label: env.name, value: env.id })) || [];
+          };
+          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
+          return (
+            isEnvironmentsSuccess && (
+              <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                  <MultiSelectWrapper
+                    onChange={(selected, unselected) =>
+                      handleEnvironmentSelect(
+                        connections[tableMeta.rowIndex].id,
+                        connections[tableMeta.rowIndex].name,
+                        cleanedEnvs,
+                        selected,
+                        unselected,
+                      )
+                    }
+                    options={getOptions()}
+                    value={cleanedEnvs}
+                    placeholder={`Assigned Environments`}
+                    isSelectAll={true}
+                    menuPlacement={'bottom'}
+                  />
+                </Grid>
+              </Grid>
+            )
           );
         },
       },
@@ -628,7 +820,10 @@ function Connections({
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
                           <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <FormatConnectionMetadata connection={connection} />
+                            <FormatConnectionMetadata
+                              connection={connection}
+                              meshsyncControllerState={meshsyncControllerState}
+                            />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -644,14 +839,37 @@ function Connections({
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = showCols[col.name];
+    });
+    return initialVisibility;
+  });
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
+    updateCols(columns);
     if (!loading && connectionMetadataState) {
       getConnections(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder, connectionMetadataState]);
+  }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
+
+  useEffect(() => {
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: environmentsError.toString(),
+      });
+    }
+  }, [environmentsError]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
@@ -872,18 +1090,6 @@ function Connections({
     return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
-  const [tableCols, updateCols] = useState(columns);
-
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
-
   return (
     <>
       <NoSsr>
@@ -1045,6 +1251,7 @@ const mapStateToProps = (state) => {
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
+  const organization = state.get('organization');
 
   return {
     k8sconfig,
@@ -1052,10 +1259,26 @@ const mapStateToProps = (state) => {
     operatorState,
     connectionMetadataState,
     meshsyncControllerState,
+    organization,
   };
+};
+
+const ConnectionManagementPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in Connection Management', e)}
+      >
+        <Provider store={store}>
+          <ConnectionManagementPage {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
+  );
 };
 
 // @ts-ignore
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPage),
+  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPageWithErrorBoundary),
 );
