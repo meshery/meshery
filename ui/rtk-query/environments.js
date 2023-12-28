@@ -91,6 +91,15 @@ const connectionsApi = api
           { type: TAGS.ENVIRONMENT_CONNECTIONS, id: arg.environmentId },
         ],
       }),
+
+      saveEnvironment: builder.mutation({
+        query: (queryArg) => ({
+          url: `environments`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+        invalidatesTags: [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
+      }),
     }),
   });
 
@@ -102,4 +111,5 @@ export const {
   useGetEnvironmentConnectionsQuery,
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
+  useSaveEnvironmentMutation,
 } = connectionsApi;

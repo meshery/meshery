@@ -36,6 +36,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/models/events"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
@@ -526,14 +527,14 @@ type mesheryConnectionsStatusPage struct {
 // swagger:response environmentResponseWrapper
 type environmentResponseWrapper struct {
 	// in: body
-	Body *models.EnvironmentData
+	Body *environments.EnvironmentData
 }
 
 // Returns all environements
 // swagger:response environmentsResponseWrapper
 type environmentsResponseWrapper struct {
 	// in: body
-	Body *models.EnvironmentPage
+	Body *environments.EnvironmentPage
 }
 
 // Returns workspaces
@@ -601,4 +602,11 @@ type orgsResponseWrapper struct {
 type mesheryPatternSourceContentResponseWrapper struct {
 	// in: body
 	Body []byte
+}
+
+// Returns MeshSync Resources Kinds
+// swagger:response meshsyncResourcesKindsResponseWrapper
+type meshsyncResourcesKindsResponseWrapper struct {
+	// in: body
+	Body *models.MeshSyncResourcesKindsAPIResponse
 }

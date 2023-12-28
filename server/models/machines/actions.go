@@ -45,13 +45,18 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
-
-	credential, err := provider.SaveUserCredential(token, &models.Credential{
-		Name:   payload.Name,
-		UserID: &userUUID,
-		Type:   payload.Type,
-		Secret: payload.CredentialSecret,
-	})
+	_, ok := payload.CredentialSecret["id"]
+	credential := &models.Credential{}
+	// If existing credential is used do not persist again
+	if !ok {
+		credName, _ := payload.CredentialSecret["name"].(string)
+		credential, err = provider.SaveUserCredential(token, &models.Credential{
+			Name:   credName,
+			UserID: &userUUID,
+			Type:   payload.Kind,
+			Secret: payload.CredentialSecret,
+		})
+	}
 
 	if err != nil {
 		_err := models.ErrPersistCredential(err)
