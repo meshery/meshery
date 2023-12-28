@@ -37,7 +37,13 @@ function StepperIcon(props) {
 
 /* eslint-disable */
 
-export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+export default function CustomizedSteppers({
+  sharedData,
+  setSharedData,
+  connectionData,
+  onClose,
+  handleRegistrationComplete,
+}) {
   const stepData = {
     stepContent: registerConnectionContent,
     stepIcons: registerConnectionIcons,
