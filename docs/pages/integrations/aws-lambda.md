@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS Lambda
+permalink: integrations/aws-lambda
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-lambda.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-lambda-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. AWS Lambda enables you to run code without provisioning or managing servers, creating workload-aware cluster scaling logic, maintaining event integrations, or managing runtimes.
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS Lambda
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,11 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Run code for virtually any type of application or backend service. 
 
-6. Invite anyone to review and make changes to your private designs.
+6. Write Lambda functions in your favorite language 
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Bring your own code
 
 8. Collaborative Infrastructure as Code
 

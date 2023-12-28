@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS Managed Service for Prometheus
+permalink: integrations/aws-managed-service-for-prometheus
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-managed-service-for-prometheus.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-prometheusservice-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. Amazon Managed Service for Prometheus is a Prometheus-compatible service that monitors and provides alerts on containerized applications and infrastructure at scale. The service is integrated with Amazon Elastic Kubernetes Service (EKS), Amazon Elastic Container Service (ECS), and AWS Distro for OpenTelemetry.
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS Managed Service for Prometheus
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,11 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. No collection agents required
 
-6. Invite anyone to review and make changes to your private designs.
+6. Amazon Managed Service for Prometheus includes a remote write-compatible API that can ingest metrics from OpenTelemetry, Prometheus libraries, and existing Prometheus servers.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Amazon Managed Service for Prometheus includes a query-compatible HTTP API that allows you to query metrics, metric labels, metric metadata, and time series metrics. 
 
 8. Collaborative Infrastructure as Code
 

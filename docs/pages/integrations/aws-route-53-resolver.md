@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS Route 53 Resolver
+permalink: integrations/aws-route-53-resolver
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-route-53-resolver.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-route53resolver-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. Amazon Route 53 Resolver responds recursively to DNS queries from AWS resources for public records, Amazon VPC-specific DNS names, and Amazon Route 53 private hosted zones, and is available by default in all VPCs.
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS Route 53 Resolver
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,14 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Local VPC domain names for EC2 instances (for example, ec2-192-0-2-44.compute-1.amazonaws.com).
 
-6. Invite anyone to review and make changes to your private designs.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+6. Records in private hosted zones (for example, acme.example.com).
+
+
+7. For public domain names, Route 53 Resolver performs recursive lookups against public name servers on the internet.
+
 
 8. Collaborative Infrastructure as Code
 

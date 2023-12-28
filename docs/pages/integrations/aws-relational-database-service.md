@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS Relational Database Service
+permalink: integrations/aws-relational-database-service
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-relational-database-service.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-rds-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. Amazon Relational Database Service (Amazon RDS) is a collection of managed services that makes it simple to set up, operate, and scale databases in the cloud.
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS Relational Database Service
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,11 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance
 
-6. Invite anyone to review and make changes to your private designs.
+6. Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Amazon RDS provides Amazon CloudWatch metrics for your database instances at no additional charge.
 
 8. Collaborative Infrastructure as Code
 

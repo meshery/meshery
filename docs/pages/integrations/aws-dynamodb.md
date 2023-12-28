@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS DynamoDB
+permalink: integrations/aws-dynamodb
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-dynamodb.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-dynamodb-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. Amazon DynamoDB is a serverless, NoSQL, fully managed database with single-digit millisecond performance at any scale
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS DynamoDB
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,12 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
 
-6. Invite anyone to review and make changes to your private designs.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+6. Secure your data with encryption at rest, automatic backup and restore, and guaranteed reliability with an SLA of up to 99.999% availability.
+
+7. Fast and flexible NoSQL database service for any scale
 
 8. Collaborative Infrastructure as Code
 

@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS Identity and Access Management
+permalink: integrations/aws-identity-and-access-management
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-identity-and-access-management.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-iam-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. AWS Identity and Access Management securely manage identities and access to AWS services and resources
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS Identity and Access Management
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,11 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Manage per-account access or scale access across AWS accounts and applications
 
-6. Invite anyone to review and make changes to your private designs.
+6. Set, verify, and right-size permissions toward least privilege
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Establish organization-wide and preventative guardrails on AWS
 
 8. Collaborative Infrastructure as Code
 

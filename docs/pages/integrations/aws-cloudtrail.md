@@ -1,28 +1,27 @@
 ---
 layout: default
-title: Antrea
-permalink: integrations/antrea
+title: AWS CloudTrail
+permalink: integrations/aws-cloudtrail
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/antrea.svg
+image: /assets/img/integrations/aws-cloudtrail.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### Category: aws-cloudtrail-controller -->
 
 ### Overview & Features:
-1. Kubernetes networking based on Open vSwitch
+1. AWS CloudTrail monitors and records account activity across your AWS infrastructure, giving you control over storage, analysis, and remediation actions.
 
-2. Collaborative and visual infrastructure as code for Antrea
+2. Collaborative and visual infrastructure as code for AWS CloudTrail
 
-4. Antrea is a Kubernetes-native project that implements the Container Network Interface (CNI) and Kubernetes NetworkPolicy thereby providing network connectivity and security for pod workloads. Antrea extends the benefit of programmable networks from Open vSwitch (OVS) to Kubernetes.
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -31,11 +30,11 @@ image: /assets/img/integrations/antrea.svg
 
 
 
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
+5. Data events that capture data plane actions within a resource, such as reading or writing an Amazon S3 object.
 
-6. Invite anyone to review and make changes to your private designs.
+6. Configuration items from AWS Config that capture resource configuration history and resource compliance history as evaluated by AWS Config rules.
 
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Audit evidence from AWS Audit Manager that contains the information needed to demonstrate compliance with the requirements as specified by Audit Manager controls.
 
 8. Collaborative Infrastructure as Code
 
