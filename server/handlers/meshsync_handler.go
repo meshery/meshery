@@ -89,8 +89,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds).
-		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id")
+		Preload("KubernetesResourceMeta").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
 	if kind != "" {
 		result = result.Where(&model.KubernetesResource{Kind: kind})
