@@ -187,7 +187,7 @@ func ErrPatternFile(err error) error {
 }
 
 func ErrInvalidPattern(err error) error {
-	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Services/Traits definition is invalid or unable to process"}, []string{"Ensure that Services/Traits definition present in meshery design", "Ensure that Services/Traits definition is not invalid"})
+	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, unable to import design", err.Error()}, []string{err.Error()}, []string{"The services definition in your Meshery design is either missing or invalid"}, []string{"Please review your Meshery design to ensure that it includes valid services definitions.", "If you are unfamiliar with Meshery design, consider referring to: https://docs.meshery.io/concepts/designs for guidance."})
 }
 
 func ErrExecutionPlan(err error) error {
