@@ -607,16 +607,6 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
-    /api/identity/users/keys:
-        get:
-            description: Returns all keys for user
-            operationId: idGetAllUsersKeysHandler
-            responses:
-                "200":
-                    $ref: '#/responses/keys'
-            summary: Handles GET for all Keys for users
-            tags:
-                - UserKeysAPI
     /api/integrations/connections:
         get:
             description: |-
@@ -627,6 +617,12 @@ paths:
                 ```?page={page-number}``` Default page number is 0
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
+
+                ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
+
+                ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
             operationId: idGetConnections
             responses:
                 "200":
@@ -1796,6 +1792,25 @@ paths:
             summary: Handle GET request for meshsync discovered resources
             tags:
                 - GetMeshSyncResources
+    /api/system/meshsync/resources/kinds:
+        get:
+            description: |-
+                ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
+
+                ```?page = {page-number}``` Default page number is 1
+
+                ```?pagesize = {pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?search = {componentname}``` If search is non empty then a greedy search is performed
+
+                ```?order = {field}``` orders on the passed field
+            operationId: idGetMeshSyncResourcesKinds
+            responses:
+                "200":
+                    $ref: '#/responses/meshsyncResourcesKindsResponseWrapper'
+            summary: Handle GET request for meshsync discovered resources kinds
+            tags:
+                - GetMeshSyncResourcesKinds
     /api/system/sync:
         get:
             description: Used to send session data to the UI for initial sync
@@ -2709,6 +2724,8 @@ responses:
         description: Returns meshmodel registrants
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
+    meshsyncResourcesKindsResponseWrapper:
+        description: Returns MeshSync Resources Kinds
     meshsyncResourcesResponseWrapper:
         description: Returns MeshSync resources
     noContentWrapper:

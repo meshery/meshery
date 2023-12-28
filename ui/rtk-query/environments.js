@@ -92,16 +92,6 @@ const connectionsApi = api
         ],
       }),
 
-      getEnvironments: builder.query({
-        query: (queryArgs) => ({
-          url: `environments`,
-          params: {
-            orgID: queryArgs.orgID,
-          },
-        }),
-        providesTags: [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
-
       saveEnvironment: builder.mutation({
         query: (queryArg) => ({
           url: `environments`,

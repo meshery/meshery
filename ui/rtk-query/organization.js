@@ -18,7 +18,7 @@ const organizationsApi = api
             pagesize: queryArgs.pagesize || 10,
           },
         }),
-        providesTags: (_result, _error, _arg) => [{ type: TAGS.ORGANIZATION }],
+        providesTags: () => [{ type: TAGS.ORGANIZATION }],
       }),
     }),
   });

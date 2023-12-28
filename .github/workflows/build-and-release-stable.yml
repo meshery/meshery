@@ -156,7 +156,6 @@ jobs:
   call-helm-chart-releaser:
     needs:
       - build
-      - ctlrelease
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit

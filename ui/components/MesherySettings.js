@@ -291,19 +291,10 @@ class MesherySettings extends React.Component {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
-            if (self.state.tabVal == 0) newRoute += '#environment/outclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/grafana';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/models';
+            if (self.state.tabVal == 1) newRoute += '#metrics/grafana';
             break;
           case 1:
-            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/components';
-            break;
-          case 2:
-            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/relationships';
+            if (self.state.tabVal == 1) newRoute += '#metrics/prometheus';
             break;
         }
         if (this.props.router.route != newRoute) this.props.router.push(newRoute);
