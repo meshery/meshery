@@ -181,6 +181,15 @@ const styles = (theme) => ({
       color: `${theme.palette.secondary.primary} !important`,
     },
   },
+  register: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.primary,
+    },
+    background: `${theme.palette.secondary.primary}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.primary} !important`,
+    },
+  },
   discovered: {
     '& .MuiChip-label': {
       color: notificationColors.info,
