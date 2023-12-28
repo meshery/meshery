@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, Typography, Divider, Button } from '@material-ui/core';
-import { useStyles } from '../styles';
-import { useTheme } from '@material-ui/core/styles';
-import { Colors } from '../../../themes/app';
+import { useStyles } from '../../../Connect/styles';
 
 const ContentHeader = ({ title }) => (
   <>
-    <Typography style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{title}</Typography>
-    <Divider style={{ margin: '1rem 0 1.5rem 0' }} />
+    <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+      {title}
+    </Typography>
+    <Divider style={{ margin: '1rem 0 1rem 0' }} />
   </>
 );
 
@@ -22,7 +22,6 @@ const StepperContent = ({
   cancelCallback,
   disabled,
 }) => {
-  const theme = useTheme();
   const classes = useStyles();
   return (
     <Box className={classes.contentContainer}>
@@ -30,9 +29,7 @@ const StepperContent = ({
         <ContentHeader title={title} />
         {subtitle && (
           <Box className={classes.contentBody}>
-            <Typography variant="subtitle1" style={{ fontSize: '1rem' }}>
-              {subtitle}
-            </Typography>
+            <Typography variant="body2">{subtitle}</Typography>
           </Box>
         )}
         {children}
@@ -44,7 +41,7 @@ const StepperContent = ({
               margin: '2rem 0',
             }}
           >
-            <Typography variant="body1">{tips}</Typography>
+            <Typography style={{ fontSize: '1rem' }}>{tips}</Typography>
           </Box>
         )}
       </div>
@@ -58,8 +55,6 @@ const StepperContent = ({
           <Button
             className={classes.cancelButton}
             style={{
-              background: Colors.charcoal,
-              color: theme.palette.secondary.primaryModalText,
               margin: 0,
             }}
             onClick={cancelCallback}
