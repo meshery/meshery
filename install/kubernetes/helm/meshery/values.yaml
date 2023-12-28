@@ -70,7 +70,7 @@ ingress:
   ## apiVersion:
 
   hosts:
-    - host: meshery.local.com
+    - host: meshery.local
       paths:
         - path: /
           pathType: Prefix
