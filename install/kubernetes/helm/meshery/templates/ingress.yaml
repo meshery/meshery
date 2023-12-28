@@ -1,5 +1,4 @@
 {{- if .Values.ingress.enabled -}}
-    {{- $pathType := .Values.ingress.pathType | default "ImplementationSpecific" -}}
 {{- $fullName := include "meshery.name" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -29,16 +28,25 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ tpl .host $ | quote }}
       http:
         paths:
-        {{- range .paths }}
-          - path: {{ . }}
-            pathType: {{ $pathType }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (eq $apiVersion "networking.k8s.io/v1") }}
+            pathType: {{ .pathType }}
+            {{- end }}
             backend:
-              service.name: {{ $fullName }}
-              service.port.number: {{ $svcPort }}
-        {{- end }}
-  {{- end }}
+            {{- if eq $apiVersion "networking.k8s.io/v1" }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+            {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+            {{- end }}
+          {{- end }}
+    {{- end }}
 {{- end }}
