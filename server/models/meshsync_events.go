@@ -144,19 +144,19 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	switch event.EventType {
 	case broker.Add:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true }).Updates(&obj)
+			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 			if result.Error != nil {
 				return ErrDBPut(result.Error)
 			}
 		}
 	case broker.Update:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
-		
+		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 		if result.Error != nil {
 			return ErrDBPut(result.Error)
@@ -178,7 +178,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	mutils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.ComponentMetadata = mutils.MergeMaps(object.ComponentMetadata, compMetadata)
 	result := mh.dbHandler.Create(object)
 	if result.Error != nil {
 		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
