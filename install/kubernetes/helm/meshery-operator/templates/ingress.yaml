@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-    {{- $pathType := .Values.meshery-operator.ingress.pathType | default "ImplementationSpecific" -}}
+    {{- $pathType := .Values.ingress.pathType | default "ImplementationSpecific" -}}
 {{- $fullName := include "meshery-operator.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
