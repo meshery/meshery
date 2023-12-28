@@ -449,21 +449,23 @@ export default function MeshSyncTable(props) {
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  const [selectedKind, setSelectedKind] = useState('');
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
     if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder);
+      getMeshsyncResources(page, pageSize, search, sortOrder, selectedKind);
     }
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, selectedKind]);
 
-  const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
+  const getMeshsyncResources = (page, pageSize, search, sortOrder, selectedKind) => {
     setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      `/api/system/meshsync/resources?kind=${selectedKind}&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
@@ -482,6 +484,7 @@ export default function MeshSyncTable(props) {
         setPageSize(res?.page_size || 0);
         setLoading(false);
         setFilter(filter);
+        // setSelectedKind(selectedKind);
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
@@ -542,11 +545,17 @@ export default function MeshSyncTable(props) {
   const handleApplyFilter = () => {
     const columnName = Object.keys(selectedFilters)[0];
     const columnValue = selectedFilters[columnName];
+
+    // Check if the selected value is "All"
+    const newSelectedKind = columnValue === 'All' ? '' : columnValue;
+
     const filter = {
       [columnName]: columnValue === 'All' ? null : [columnValue],
     };
+
     setFilter(filter);
-    getMeshsyncResources(page, pageSize, search, sortOrder, 'filter');
+    setSelectedKind(newSelectedKind); // Update the selected kind
+    getMeshsyncResources(page, pageSize, search, sortOrder, newSelectedKind);
   };
 
   const [tableCols, updateCols] = useState(columns);
