@@ -197,6 +197,8 @@ function Connections(props) {
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [kindFilter, setKindFilter] = useState(null);
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -859,7 +861,7 @@ function Connections(props) {
   useEffect(() => {
     updateCols(columns);
     if (!loading && connectionMetadataState) {
-      getConnections(page, pageSize, search, sortOrder);
+      getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
     }
   }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
 
@@ -873,14 +875,17 @@ function Connections(props) {
     }
   }, [environmentsError]);
 
-  const getConnections = (page, pageSize, search, sortOrder) => {
+  const getConnections = (page, pageSize, search, sortOrder, statusFilter, kindFilter) => {
     setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+        (statusFilter ? `&status=${encodeURIComponent(JSON.stringify([statusFilter]))}` : '') +
+        (kindFilter ? `&kind=${encodeURIComponent(JSON.stringify([kindFilter]))}` : ''),
+
       {
         credentials: 'include',
         method: 'GET',
@@ -896,8 +901,8 @@ function Connections(props) {
 
         const filteredConnections = res?.connections.filter((connection) => {
           if (
-            (selectedFilters.status === 'All' || connection.status === selectedFilters.status) &&
-            (selectedFilters.kind === 'All' || connection.kind === selectedFilters.kind)
+            (statusFilter === null || connection.status === statusFilter) &&
+            (kindFilter === null || connection.kind === kindFilter)
           ) {
             return true;
           }
@@ -909,6 +914,8 @@ function Connections(props) {
         setLoading(false);
         setPageSize(res?.page_size);
         setPage(res?.page);
+        setStatusFilter(statusFilter);
+        setKindFilter(kindFilter);
         setFilter(filter);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
