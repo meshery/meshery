@@ -213,7 +213,7 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -237,7 +237,7 @@ function Connections(props) {
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -266,7 +266,7 @@ function Connections(props) {
           event_type: EVENT_TYPES.SUCCESS,
         });
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -941,7 +941,7 @@ function Connections(props) {
         body: requestBody,
       },
       () => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
     );

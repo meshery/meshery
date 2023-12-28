@@ -496,43 +496,43 @@ export default function MeshSyncTable(props) {
     });
   };
 
+  const [kindoptions, setKindOptions] = useState([]);
+
+  const getAllMeshsyncKind = (page, pageSize, search, sortOrder) => {
+    setLoading(true);
+    if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
+    dataFetch(
+      `/api/system/meshsync/resources/kinds?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        setKindOptions(res?.kinds || []);
+        console.log(res?.kinds);
+        setLoading(false);
+      },
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
+    );
+  };
+
+  console.log('options', kindoptions);
+
+  useEffect(() => {
+    getAllMeshsyncKind(page, pageSize, search, sortOrder);
+  }, [page, pageSize, search, sortOrder]);
+
   const filters = {
     kind: {
       name: 'Kind',
       options: [
-        { label: 'Deployment', value: 'Deployment' },
-        { label: 'Service', value: 'Service' },
-        { label: 'Pod', value: 'Pod' },
-        { label: 'Namespace', value: 'Namespace' },
-        { label: 'StatefulSet', value: 'StatefulSet' },
-        { label: 'DaemonSet', value: 'DaemonSet' },
-        { label: 'Job', value: 'Job' },
-        { label: 'CronJob', value: 'CronJob' },
-        { label: 'ReplicaSet', value: 'ReplicaSet' },
-        { label: 'ReplicationController', value: 'ReplicationController' },
-        { label: 'HorizontalPodAutoscaler', value: 'HorizontalPodAutoscaler' },
-        { label: 'Ingress', value: 'Ingress' },
-        { label: 'ConfigMap', value: 'ConfigMap' },
-        { label: 'Secret', value: 'Secret' },
-        { label: 'ServiceAccount', value: 'ServiceAccount' },
-        { label: 'PersistentVolume', value: 'PersistentVolume' },
-        { label: 'PersistentVolumeClaim', value: 'PersistentVolumeClaim' },
-        { label: 'StorageClass', value: 'StorageClass' },
-        { label: 'VolumeAttachment', value: 'VolumeAttachment' },
-        { label: 'CustomResourceDefinition', value: 'CustomResourceDefinition' },
-        { label: 'ClusterRole', value: 'ClusterRole' },
-        { label: 'ClusterRoleBinding', value: 'ClusterRoleBinding' },
-        { label: 'Role', value: 'Role' },
-        { label: 'RoleBinding', value: 'RoleBinding' },
-        { label: 'NetworkPolicy', value: 'NetworkPolicy' },
-        { label: 'PodSecurityPolicy', value: 'PodSecurityPolicy' },
-        { label: 'Node', value: 'Node' },
-        { label: 'CustomResource', value: 'CustomResource' },
-        { label: 'CustomResourceDefinition', value: 'CustomResourceDefinition' },
-        { label: 'Mesh', value: 'Mesh' },
-        { label: 'MeshSync', value: 'MeshSync' },
-        { label: 'MeshSyncResource', value: 'MeshSyncResource' },
-        { label: 'MeshSyncResourceType', value: 'MeshSyncResourceType' },
+        ...kindoptions.map((kind) => ({
+          value: kind,
+          label: kind,
+        })),
       ],
     },
   };
@@ -586,7 +586,6 @@ export default function MeshSyncTable(props) {
             selectedFilters={selectedFilters}
             setSelectedFilters={setSelectedFilters}
             handleApplyFilter={handleApplyFilter}
-            conditionForMaxHeight={true}
           />
 
           <CustomColumnVisibilityControl
