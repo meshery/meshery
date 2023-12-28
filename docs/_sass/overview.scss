@@ -45,6 +45,12 @@ div.wrapper {
   margin: auto;
 }
 
+div.container {
+  text-align: left;
+  padding: 1.6rem;
+  --col-gap: 1rem;
+}
+
 div.section {
   flex-basis: 47.5%;
 }
@@ -54,8 +60,9 @@ div.overview:hover {
   color: #eee;
 }
 
-a:hover, a > strong:hover {
-  color: #00D3A9 ;
+a:hover,
+a > strong:hover {
+  color: #00d3a9;
 }
 
 @media (max-width: 900px) {
@@ -71,6 +78,9 @@ a:hover, a > strong:hover {
 @media (max-width: 62rem) {
   div.wrapper {
     display: block;
+  }
+  div.container {
+    --col-gap: -40rem;
   }
   div.overview {
     margin-left: 0px;

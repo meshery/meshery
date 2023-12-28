@@ -30,7 +30,9 @@ const StepperContent = ({
         <ContentHeader title={title} />
         {subtitle && (
           <Box className={classes.contentBody}>
-            <Typography style={{ fontSize: '1rem' }}>{subtitle}</Typography>
+            <Typography variant="subtitle1" style={{ fontSize: '1rem' }}>
+              {subtitle}
+            </Typography>
           </Box>
         )}
         {children}
@@ -42,7 +44,7 @@ const StepperContent = ({
               margin: '2rem 0',
             }}
           >
-            <Typography style={{ fontSize: '1rem' }}>{tips}</Typography>
+            <Typography variant="body1">{tips}</Typography>
           </Box>
         )}
       </div>

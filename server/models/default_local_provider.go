@@ -20,6 +20,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
@@ -146,11 +147,11 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, _ string) ([]b
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
-	return ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *environments.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string) (*EnvironmentData, error) {
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, _ *environments.EnvironmentPayload, _ string) (*environments.EnvironmentData, error) {
 	return nil, ErrLocalProviderSupport
 }
 
@@ -167,7 +168,7 @@ func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _
 }
 
 
-func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
@@ -978,7 +979,7 @@ func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ 
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*connections.ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string, _ string, _ []string, _ []string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
@@ -1257,6 +1258,51 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
 }
+
+func (l *DefaultLocalProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, _ *WorkspacePayload, _ string, _ bool) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, _ *WorkspacePayload, _ string) (*Workspace, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _ , _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {

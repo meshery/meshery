@@ -30,7 +30,7 @@ const styles = (theme) => ({
   },
 });
 
-const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) => {
+const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes, id }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpen = (event) => {
@@ -49,7 +49,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
   };
 
   return (
-    <div>
+    <div id={id}>
       <Tooltip title="View Columns">
         <IconButton
           onClick={handleOpen}

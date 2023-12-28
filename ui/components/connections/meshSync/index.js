@@ -1,5 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, Tooltip, TableContainer, Table, Grid, TableRow } from '@material-ui/core';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  TableCell,
+  Tooltip,
+  TableContainer,
+  Table,
+  Grid,
+  TableRow,
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+} from '@material-ui/core';
 import Moment from 'react-moment';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -11,7 +22,12 @@ import SearchBar from '../../../utils/custom-search';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { camelcaseToSnakecase } from '../../../utils/utils';
+import { JsonParse, camelcaseToSnakecase, getColumnValue } from '../../../utils/utils';
+import RegisterConnectionModal from './RegisterConnectionModal';
+import classNames from 'classnames';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
+import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -22,6 +38,8 @@ const ACTION_TYPES = {
 
 export default function MeshSyncTable(props) {
   const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const callbackRef = useRef();
+  const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
@@ -31,8 +49,17 @@ export default function MeshSyncTable(props) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
-  const StyleClass = useStyles();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [registerConnection, setRegisterConnection] = useState({
+    metadata: {},
+    kind: '',
+  });
+  const StyleClass = useStyles();
+
+  const icons = {
+    [MESHSYNC_STATES.REGISTER]: () => <AssignmentTurnedInIcon />,
+    [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
+  };
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
@@ -40,6 +67,9 @@ export default function MeshSyncTable(props) {
 
   const { notify } = useNotification();
 
+  const handleRegistrationModalClose = () => {
+    setRegistrationModal(false);
+  };
   const columns = [
     {
       name: 'metadata.name',
@@ -182,6 +212,121 @@ export default function MeshSyncTable(props) {
             </Tooltip>
           );
         },
+      },
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      options: {
+        sort: false,
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
+        },
+        customBodyRender: function CustomBody(value, tableMeta) {
+          const componentMetadata = getColumnValue(
+            tableMeta.rowData,
+            'component_metadata',
+            columns,
+          );
+          const DISCOVERED = {
+            DISCOVERED: MESHSYNC_STATES.DISCOVERED,
+          };
+          const meshSyncStates =
+            componentMetadata?.capabilities?.connection === true ? MESHSYNC_STATES : DISCOVERED;
+          const disabled =
+            componentMetadata?.capabilities?.connection === true &&
+            value !== CONNECTION_STATES.REGISTERED
+              ? false
+              : true;
+          return (
+            <>
+              <FormControl className={classes.chipFormControl}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  defaultValue={MESHSYNC_STATES.DISCOVERED}
+                  disabled={disabled}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const clickedValue = e.target.value;
+                    if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
+                      setRegistrationModal((open) => !open);
+                    }
+                  }}
+                  onChange={() => {
+                    callbackRef?.current?.(tableMeta);
+                    setRegisterConnection({
+                      capabilities: componentMetadata?.capabilities,
+                      metadata: JsonParse(componentMetadata.metadata),
+                      resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
+                    });
+                  }}
+                  className={classes.statusSelect}
+                  disableUnderline
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                    MenuListProps: { disablePadding: true },
+                    PaperProps: { square: true },
+                  }}
+                >
+                  {Object.keys(meshSyncStates).map((s) => (
+                    <MenuItem
+                      disabled={
+                        meshSyncStates[s] === value ||
+                        meshSyncStates[s] === CONNECTION_STATES.REGISTERED
+                          ? true
+                          : false
+                      }
+                      value={meshSyncStates[s]}
+                      key={meshSyncStates[s]}
+                      style={{ padding: '0' }}
+                    >
+                      <Chip
+                        className={classNames(classes.statusChip, classes[meshSyncStates[s]])}
+                        avatar={icons[meshSyncStates[s]]()}
+                        label={meshSyncStates[s]}
+                      />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          );
+        },
+      },
+    },
+    {
+      name: 'component_metadata',
+      label: 'Component Metadata',
+      options: {
+        sort: false,
+        sortThirdClickReset: false,
+        display: false,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'id',
+      label: 'Resource ID',
+      options: {
+        display: false,
       },
     },
   ];
@@ -374,6 +519,7 @@ export default function MeshSyncTable(props) {
           />
 
           <CustomColumnVisibilityControl
+            id="ref"
             columns={columns}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
@@ -387,6 +533,11 @@ export default function MeshSyncTable(props) {
         tableCols={tableCols}
         updateCols={updateCols}
         columnVisibility={columnVisibility}
+      />
+      <RegisterConnectionModal
+        handleRegistrationModalClose={handleRegistrationModalClose}
+        openRegistrationModal={openRegistrationModal}
+        connectionData={registerConnection}
       />
     </>
   );

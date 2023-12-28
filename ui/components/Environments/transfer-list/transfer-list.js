@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Checkbox from '@mui/material/Checkbox';
+import { List, ListItem, Grid } from '@material-ui/core';
 
 import KubernetesIcon from '../../../assets/icons/KubernetesIcon';
 import SMPIcon from '../../../assets/icons/SMPIcon';
@@ -12,6 +9,7 @@ import {
   ButtonGrid,
   ListGrid,
   ListHeading,
+  StyledCheckbox,
   StyledChip,
   StyledPaper,
   TransferButton,
@@ -53,10 +51,25 @@ export default function TransferList({
   emptyStateIconRight,
   emtyStateMessageRight,
   transferComponentType = TRANSFER_COMPONET.OTHER,
+  // assignablePage,
+  // assignedPage,
+  // originalLeftCount,
+  // originalRightCount,
 }) {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = useState([]);
-  const [right, setRight] = useState(originalAssignedData);
+  const [right, setRight] = useState([]);
+  // const [leftCount, setLeftCount] = useState(0);
+  // const [rightCount, setRightCount] = useState(0);
+
+  useEffect(() => {
+    setRight(originalAssignedData);
+  }, [originalAssignedData]);
+
+  // useEffect(() => {
+  //   setLeftCount(originalLeftCount - originalRightCount);
+  //   setRightCount(originalRightCount);
+  // }, [originalLeftCount, originalRightCount]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -67,6 +80,48 @@ export default function TransferList({
     const filteredLeft = assignableData.filter((item) => !idsToRemove.has(item.id));
     setLeft(filteredLeft);
   }, [right, assignableData]);
+
+  // useEffect(() => {
+  //   const handleScroll = (entries) => {
+  //     const target = entries[0];
+  //     if (target.isIntersecting) {
+  //       assignablePage();
+  //     }
+  //   };
+
+  //   const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
+  //   const sentinel = document.getElementById('leftList');
+  //   if (sentinel) {
+  //     observer.observe(sentinel);
+  //   }
+
+  //   return () => {
+  //     if (sentinel) {
+  //       observer.unobserve(sentinel);
+  //     }
+  //   };
+  // }, [assignablePage]);
+
+  // useEffect(() => {
+  //   const handleScroll = (entries) => {
+  //     const target = entries[0];
+  //     if (target.isIntersecting) {
+  //       assignedPage();
+  //     }
+  //   };
+
+  //   const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
+  //   const sentinel = document.getElementById('rightList');
+  //   if (sentinel) {
+  //     observer.observe(sentinel);
+  //   }
+
+  //   return () => {
+  //     if (sentinel) {
+  //       observer.unobserve(sentinel);
+  //     }
+  //   };
+  // }, [assignedPage]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -84,26 +139,34 @@ export default function TransferList({
   const handleAllRight = () => {
     setRight(right.concat(left));
     setLeft([]);
+    // setLeftCount(0);
+    // setRightCount(originalLeftCount);
   };
 
   const handleCheckedRight = () => {
     setRight(right.concat(leftChecked));
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
+    // setLeftCount((prevLeftCount) => prevLeftCount - leftChecked.length);
+    // setRightCount((prevRightCount) => prevRightCount + leftChecked.length);
   };
 
   const handleCheckedLeft = () => {
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
+    // setRightCount((prevRightCount) => prevRightCount - rightChecked.length);
+    // setLeftCount((prevLeftCount) => prevLeftCount + rightChecked.length);
   };
 
   const handleAllLeft = () => {
     setLeft(left.concat(right));
     setRight([]);
+    // setRightCount(0);
+    // setLeftCount(originalLeftCount);
   };
 
-  const customList = (items, emptyStateIcon, emtyStateMessage) => (
+  const customList = (items, emptyStateIcon, emtyStateMessage, listId) => (
     <StyledPaper>
       <List dense component="div" role="list">
         {items?.length > 0 ? (
@@ -113,7 +176,7 @@ export default function TransferList({
               <ListItem
                 key={item.id}
                 role="listitem"
-                sx={{
+                style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   '&:hover': {
@@ -125,7 +188,7 @@ export default function TransferList({
                 {transferComponentType === TRANSFER_COMPONET.CHIP ? (
                   <Tooltip title={item.name} placement="top">
                     <StyledChip
-                      sx={{ paddingY: '10px' }}
+                      style={{ padding: '10px 0' }}
                       variant="outlined"
                       label={item.name}
                       onDelete={() => {}}
@@ -135,12 +198,12 @@ export default function TransferList({
                   </Tooltip>
                 ) : (
                   <Tooltip title={item.name} placement="top">
-                    <Typography sx={{ maxWidth: '230px', height: '1.5rem', overflow: 'hidden' }}>
+                    <Typography style={{ maxWidth: '230px', height: '1.5rem', overflow: 'hidden' }}>
                       {item.name}
                     </Typography>
                   </Tooltip>
                 )}
-                <Checkbox
+                <StyledCheckbox
                   checked={checked.indexOf(item) !== -1}
                   tabIndex={-1}
                   disableRipple
@@ -163,12 +226,13 @@ export default function TransferList({
             }}
           >
             {emptyStateIcon}
-            <Typography sx={{ color: '#979797', px: 5, py: 2, lineHeight: 1 }}>
+            <Typography style={{ color: '#979797', padding: '24px 5px', lineHeight: 1 }}>
               {emtyStateMessage}
             </Typography>
           </div>
         )}
       </List>
+      <div id={listId}></div>
     </StyledPaper>
   );
 
@@ -178,15 +242,16 @@ export default function TransferList({
         <ListHeading>
           Available {name} ({left?.length})
         </ListHeading>
-        {customList(left, emptyStateIconLeft, emtyStateMessageLeft)}
+        {customList(left, emptyStateIconLeft, emtyStateMessageLeft, 'leftList')}
       </ListGrid>
       <ButtonGrid>
         <Grid container direction="column" alignItems="center">
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleAllRight}
-            disabled={left?.length === 0}
+            disabled={left?.length === 0 /*|| left.length < leftCount*/}
             aria-label="move all right"
           >
             <RightArrowIcon width={18} height={18} />
@@ -195,6 +260,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleCheckedRight}
             disabled={leftChecked.length === 0}
             aria-label="move selected right"
@@ -204,6 +270,7 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleCheckedLeft}
             disabled={rightChecked.length === 0}
             aria-label="move selected left"
@@ -213,8 +280,9 @@ export default function TransferList({
           <TransferButton
             variant="outlined"
             size="small"
+            color="primary"
             onClick={handleAllLeft}
-            disabled={right.length === 0}
+            disabled={right.length === 0 /*|| right.length < rightCount*/}
             aria-label="move all left"
           >
             <LeftArrowIcon width={18} height={18} />
@@ -226,7 +294,7 @@ export default function TransferList({
         <ListHeading>
           Assigned {name} ({right.length})
         </ListHeading>
-        {customList(right, emptyStateIconRight, emtyStateMessageRight)}
+        {customList(right, emptyStateIconRight, emtyStateMessageRight, 'rightList')}
       </ListGrid>
     </Grid>
   );

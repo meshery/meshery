@@ -8,6 +8,7 @@ const KeyValue = ({ property, value }) => (
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
         margin: '0.3rem 0',
       }}
     >
@@ -15,13 +16,13 @@ const KeyValue = ({ property, value }) => (
         style={{
           padding: '0',
           margin: '0 0.5rem 0 0',
-          fontSize: '14px',
+          fontSize: '16px',
           fontWeight: '600',
         }}
       >
         {property}
       </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{value}</p>
+      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{value}</p>
     </div>
   </>
 );

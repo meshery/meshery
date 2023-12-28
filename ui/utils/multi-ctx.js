@@ -97,6 +97,20 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
  *
  * @param {string} clusterId Kubernetes Cluster ID
  * @param {Array<Object>} k8sConfig Kubernetes config
+ * @returns {string} Kubernetes context
+ */
+export function getK8sContextFromClusterId(clusterId, k8sConfig) {
+  const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
+  if (!cluster) {
+    return {};
+  }
+  return cluster;
+}
+
+/**
+ *
+ * @param {string} clusterId Kubernetes Cluster ID
+ * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes cluster name
  */
 export function getClusterNameFromClusterId(clusterId, k8sConfig) {
