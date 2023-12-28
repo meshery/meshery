@@ -40,7 +40,8 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import GenericModal from '../Environments/generic-modal';
 import TransferList from '../Environments/transfer-list/transfer-list';
-import { Delete } from '@material-ui/icons';
+import { DeleteIcon } from '@layer5/sistent-svg';
+import theme from '../../themes/app';
 
 const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
@@ -89,7 +90,7 @@ const Workspaces = ({ organization, classes }) => {
   const [skipDesigns, setSkipDesigns] = useState(true);
   const [designsOfWorkspacePage, setDesignsOfWorkspacePage] = useState(0);
   const [designsPage, setDesignsPage] = useState(0);
-  const [designsPageSize, /*setDesignssPageSize*/] = useState(25);
+  const [designsPageSize /*setDesignssPageSize*/] = useState(25);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
 
@@ -157,34 +158,35 @@ const Workspaces = ({ organization, classes }) => {
 
   const [unassignEnvironmentFromWorkspace] = useUnassignEnvironmentFromWorkspaceMutation();
 
-  const { data: designs } = useGetPatternsQuery({
-    page: designsPage,
-    pagesize: designsPageSize
-  },
+  const { data: designs } = useGetPatternsQuery(
     {
-      skip: skipDesigns
-    }
+      page: designsPage,
+      pagesize: designsPageSize,
+    },
+    {
+      skip: skipDesigns,
+    },
   );
 
   const {
     data: designsOfWorkspace,
     // isLoading: isDesignsOfWorkspaceLoading,
     isError: isDesignsOfWorkspaceError,
-    error: designsOfWorkspaceError
-  } = useGetDesignsOfWorkspaceQuery({
-    workspaceId: designAssignWorkspace.id,
-    page: designsOfWorkspacePage,
-    pagesize: designsPageSize
-  },
+    error: designsOfWorkspaceError,
+  } = useGetDesignsOfWorkspaceQuery(
     {
-      skip: skipDesigns
-    }
+      workspaceId: designAssignWorkspace.id,
+      page: designsOfWorkspacePage,
+      pagesize: designsPageSize,
+    },
+    {
+      skip: skipDesigns,
+    },
   );
 
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
 
   const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
-
 
   // const loading = isWorkspacesLoading;
 
@@ -241,9 +243,7 @@ const Workspaces = ({ organization, classes }) => {
       );
     }
     if (isDesignsOfWorkspaceError) {
-      handleError(
-        `Designs of Workspace Fetching Error: ${designsOfWorkspaceError?.data}`
-      );
+      handleError(`Designs of Workspace Fetching Error: ${designsOfWorkspaceError?.data}`);
     }
   }, [
     isWorkspacesError,
@@ -354,7 +354,7 @@ const Workspaces = ({ organization, classes }) => {
   };
 
   const handleBulkDeleteWorkspace = () => {
-    selectedWorkspaces.map(workspaceId => {
+    selectedWorkspaces.map((workspaceId) => {
       handleDeleteWorkspace(workspaceId);
     });
     setSelectedWorkspaces([]);
@@ -366,7 +366,7 @@ const Workspaces = ({ organization, classes }) => {
     if (isChecked) {
       setSelectedWorkspaces([...selectedWorkspaces, id]);
     } else {
-      const newSelectedEnv = selectedWorkspaces.filter(env => env !== id);
+      const newSelectedEnv = selectedWorkspaces.filter((env) => env !== id);
       setSelectedWorkspaces(newSelectedEnv);
     }
   };
@@ -418,14 +418,11 @@ const Workspaces = ({ organization, classes }) => {
   }, [environments, environmentsPage, environmentsPageSize]);
 
   useEffect(() => {
-    const pagesCount = 0;
-    parseInt(Math.ceil(parseInt(environmentsOfWorkspace?.total_count) / environmentsPageSize));
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(environmentsOfWorkspace?.total_count) / environmentsPageSize),
+    );
     if (environmentsOfWorkspace) {
-      /* eslint-disable-next-line no-unsafe-optional-chaining */
-      setWorkspaceEnvironmentsData((prevWorkspaceEnvironmentsData) => [
-        ...prevWorkspaceEnvironmentsData,
-        ...environmentsOfWorkspace?.environments,
-      ]);
+      setWorkspaceEnvironmentsData(environmentsOfWorkspace?.environments);
       if (environmentsOfWorkspace?.total_count && environmentsOfWorkspacePage < pagesCount - 1) {
         setEnvironmentsOfWorkspacePage(
           (prevEnvironmentsOfWorkspacePage) => prevEnvironmentsOfWorkspacePage + 1,
@@ -494,61 +491,53 @@ const Workspaces = ({ organization, classes }) => {
     setSkipDesigns(false);
   };
 
-  const handleAssignDesignsData = updatedAssignedData => {
+  const handleAssignDesignsData = (updatedAssignedData) => {
     setAssignedDesigns(updatedAssignedData);
   };
 
   const handleAssignDesigns = () => {
-    const originalDesignsIds = workspaceDesignsData.map(design => design.id);
-    const updatedDesignsIds = assignedDesigns.map(design => design.id);
+    const originalDesignsIds = workspaceDesignsData.map((design) => design.id);
+    const updatedDesignsIds = assignedDesigns.map((design) => design.id);
 
-    const addedDesignsIds = updatedDesignsIds.filter(
-      id => !originalDesignsIds.includes(id)
-    );
-    const removedDesignsIds = originalDesignsIds.filter(
-      id => !updatedDesignsIds.includes(id)
-    );
+    const addedDesignsIds = updatedDesignsIds.filter((id) => !originalDesignsIds.includes(id));
+    const removedDesignsIds = originalDesignsIds.filter((id) => !updatedDesignsIds.includes(id));
 
-    addedDesignsIds.map(id =>
+    addedDesignsIds.map((id) =>
       assignDesignToWorkspace({
         workspaceId: designAssignWorkspace.id,
-        designId: id
-      }).unwrap()
+        designId: id,
+      }).unwrap(),
     );
 
-    removedDesignsIds.map(id =>
+    removedDesignsIds.map((id) =>
       unassignDesignFromWorkspace({
         workspaceId: designAssignWorkspace.id,
-        designId: id
-      }).unwrap()
+        designId: id,
+      }).unwrap(),
     );
     handleAssignDesignModalClose();
   };
 
   useEffect(() => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(designs?.total_count) / designsPageSize)
-    );
+    const pagesCount = parseInt(Math.ceil(parseInt(designs?.total_count) / designsPageSize));
     if (designs) {
       /* eslint-disable-next-line no-unsafe-optional-chaining */
-      setDesignsData(prevData => [...prevData, ...designs?.patterns]);
+      setDesignsData((prevData) => [...prevData, ...designs?.patterns]);
       if (designs?.total_count && designsPage < pagesCount - 1) {
-        setDesignsPage(prevDesignsPage => prevDesignsPage + 1);
+        setDesignsPage((prevDesignsPage) => prevDesignsPage + 1);
       }
     }
   }, [designs, designsPage, designsPageSize]);
 
   useEffect(() => {
     const pagesCount = parseInt(
-      Math.ceil(parseInt(designsOfWorkspace?.total_count) / designsPageSize)
+      Math.ceil(parseInt(designsOfWorkspace?.total_count) / designsPageSize),
     );
     if (designsOfWorkspace) {
       /* eslint-disable-next-line no-unsafe-optional-chaining */
-      setWorkspaceDesignsData(prevData => [...prevData, ...designsOfWorkspace?.designs]);
+      setWorkspaceDesignsData((prevData) => [...prevData, ...designsOfWorkspace?.designs]);
       if (designsOfWorkspace?.total_count && designsOfWorkspacePage < pagesCount - 1) {
-        setDesignsOfWorkspacePage(
-          prevDesignsOfWorkspacePage => prevDesignsOfWorkspacePage + 1
-        );
+        setDesignsOfWorkspacePage((prevDesignsOfWorkspacePage) => prevDesignsOfWorkspacePage + 1);
       }
     }
   }, [designsOfWorkspace, designsOfWorkspacePage, designsPageSize]);
@@ -598,8 +587,8 @@ const Workspaces = ({ organization, classes }) => {
               : `${selectedWorkspaces.length} workspace selected`}
           </Typography>
           <Button className={classes.iconButton}>
-            <Delete
-              style={{ color: 'red', margin: '0 2px' }}
+            <DeleteIcon
+              fill={theme.palette.secondary.error}
               onClick={handleDeleteWorkspacesModalOpen}
               disabled={selectedWorkspaces.length > 0 ? false : true}
             />
@@ -615,10 +604,10 @@ const Workspaces = ({ organization, classes }) => {
                   workspaceDetails={workspace}
                   onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
                   onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                  onSelect={e => handleBulkSelect(e, workspace.id)}
+                  onSelect={(e) => handleBulkSelect(e, workspace.id)}
                   selectedWorkspaces={selectedWorkspaces}
                   onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
-                  onAssignDesign={e => handleAssignDesignModalOpen(e, workspace)}
+                  onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
                   classes={classes}
                 />
               </Grid>
@@ -708,38 +697,22 @@ const Workspaces = ({ organization, classes }) => {
             assignableData={designsData}
             assignedData={handleAssignDesignsData}
             originalAssignedData={workspaceDesignsData}
-            emptyStateIconLeft={
-              <DesignsIcon
-                height="5rem"
-                width="5rem"
-              />
-            }
+            emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
             emtyStateMessageLeft="No designs available"
-            emptyStateIconRight={
-              <DesignsIcon
-                height="5rem"
-                width="5rem"
-              />
-            }
+            emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
             emtyStateMessageRight="No designs assigned"
           />
         }
         action={handleAssignDesigns}
         buttonTitle="Save"
-        leftHeaderIcon={
-          <DesignsIcon
-            height="2rem"
-            width="2rem"
-            fill="#ffffff"
-          />
-        }
+        leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
         helpText="Assign designs to workspace"
         maxWidth="md"
       />
       <GenericModal
         open={deleteWorkspacesModal}
         handleClose={handleDeleteWorkspacesModalClose}
-        title={"Delete Workspace"}
+        title={'Delete Workspace'}
         body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
         action={handleBulkDeleteWorkspace}
       />

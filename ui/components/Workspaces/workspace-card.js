@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid } from '@material-ui/core';
-import { ArrowForward, Delete, Edit } from '@material-ui/icons';
-
+import { Box, Button, Grid } from '@material-ui/core';
+import { ArrowForward, Edit } from '@material-ui/icons';
+import { DeleteIcon } from '@layer5/sistent-svg';
 import OrgIcon from '../../assets/icons/OrgIcon';
 import {
-  AllocationWorkspace,
   BulkSelectCheckbox,
   CardTitle,
   CardWrapper,
@@ -19,7 +18,10 @@ import {
 import theme from '../../themes/app';
 import FlipCard from '../Environments/flip-card';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import { useGetDesignsOfWorkspaceQuery, useGetEnvironmentsOfWorkspaceQuery } from '../../rtk-query/workspace';
+import {
+  useGetDesignsOfWorkspaceQuery,
+  useGetEnvironmentsOfWorkspaceQuery,
+} from '../../rtk-query/workspace';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -41,7 +43,7 @@ export const TransferButton = ({ title, count, onAssign, disabled, classes }) =>
   );
 };
 
-export const RedirectButton = ({ title, count, disabled=true, classes }) => {
+export const RedirectButton = ({ title, count, disabled = true, classes }) => {
   return (
     <Button disabled={disabled} color="primary" className={classes.popupButton}>
       <Grid>
@@ -64,18 +66,16 @@ export const RedirectButton = ({ title, count, disabled=true, classes }) => {
  * @param {Function} props.onEdit - Function to edit the workspace.
  * @param {Function} props.onSelect - Function to select workspace for bulk actions.
  * @param {Array} props.selectedWorkspaces - Selected workspace list for delete.
- * @param {Function} props.onAssignTeam - Function to open team assignment modal open.
  * @param {Function} props.onAssignDesign - Function to open design assignment modal open.
  *
  */
 
 const WorkspaceCard = ({
   workspaceDetails,
-  // onDelete,
+  onDelete,
   onEdit,
   onSelect,
   selectedWorkspaces,
-  onAssignTeam,
   onAssignEnvironment,
   onAssignDesign,
   classes,
@@ -93,12 +93,13 @@ const WorkspaceCard = ({
     },
   );
 
-  const { data: designsOfWorkspace } = useGetDesignsOfWorkspaceQuery({
-      workspaceId: workspaceDetails.id
+  const { data: designsOfWorkspace } = useGetDesignsOfWorkspaceQuery(
+    {
+      workspaceId: workspaceDetails.id,
     },
     {
-      skip
-    }
+      skip,
+    },
   );
 
   useEffect(() => {
@@ -108,8 +109,6 @@ const WorkspaceCard = ({
       setSkip(true);
     }
   }, [workspaceDetails, deleted]);
-
-  const teamsOfWorkspaceCount = 0;
 
   const environmentsOfWorkspaceCount = environmentsOfWorkspace?.total_count
     ? environmentsOfWorkspace.total_count
@@ -128,9 +127,8 @@ const WorkspaceCard = ({
         frontComponents={
           <CardWrapper
             elevation={2}
-            // minHeight={{ xs: "520px", sm: "390px" }}
             style={{
-              minHeight: '390px',
+              minHeight: '300px',
             }}
           >
             <Grid style={{ display: 'flex', flexDirection: 'row', paddingBottom: '5px' }}>
@@ -138,7 +136,14 @@ const WorkspaceCard = ({
                 {workspaceDetails?.name}
               </CardTitle>
             </Grid>
-            <Grid style={{ display: 'flex', alignItems: 'center', marginTop: '5px', marginBottom: "5px" }}>
+            <Grid
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '5px',
+                marginBottom: '5px',
+              }}
+            >
               <StyledIconButton onClick={(e) => e.stopPropagation()}>
                 <OrgIcon width="24" height="24" />
               </StyledIconButton>
@@ -154,31 +159,25 @@ const WorkspaceCard = ({
                 flexDirection: { xs: 'column', sm: 'row' },
               }}
             >
-              <Grid xs={12} sm={4}>
-                <AllocationWorkspace onClick={(e) => e.stopPropagation()}>
-                  <RedirectButton title="Connections" count={0} classes={classes} />
+              <Grid
+                xs={12}
+                style={{
+                  paddingTop: '15px',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                  gap: '10px',
+                }}
+              >
+                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
                   <TransferButton
                     title="Environments"
                     count={environmentsOfWorkspaceCount}
                     onAssign={onAssignEnvironment}
                     classes={classes}
                   />
-                </AllocationWorkspace>
-              </Grid>
-              <Grid xs={12} sm={4} style={{ display: 'flex', justifyContent: 'center' }}>
-                <AllocationWorkspace onClick={(e) => e.stopPropagation()}>
-                  <RedirectButton disabled={true} title="Users" count={0} link="/identity/users" classes={classes} />
-                  <TransferButton
-                    title="Teams"
-                    count={teamsOfWorkspaceCount}
-                    onAssign={onAssignTeam}
-                    disabled={true}
-                    classes={classes}
-                  />
-                </AllocationWorkspace>
-              </Grid>
-              <Grid xs={12} sm={4} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <AllocationWorkspace onClick={(e) => e.stopPropagation()}>
+                </Box>
+                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
                   <TransferButton
                     title="Designs"
                     count={designsOfWorkspaceCount}
@@ -186,8 +185,7 @@ const WorkspaceCard = ({
                     disabled={true}
                     classes={classes}
                   />
-                  <RedirectButton title="Deployments" count={0} classes={classes} />
-                </AllocationWorkspace>
+                </Box>
               </Grid>
             </Grid>
           </CardWrapper>
@@ -195,10 +193,9 @@ const WorkspaceCard = ({
         backComponents={
           <CardWrapper
             elevation={2}
-            // minHeight={{ xs: "520px", sm: "390px" }}
             style={{
               background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
-              minHeight: '390px',
+              minHeight: '300px',
             }}
           >
             <Grid xs={12}>
@@ -246,14 +243,14 @@ const WorkspaceCard = ({
                       },
                       padding: 0,
                     }}
-                    onClick={onEdit}
+                    onClick={onDelete}
                     disabled={
                       selectedWorkspaces?.filter((id) => id == workspaceDetails.id).length === 1
                         ? true
                         : false
                     }
                   >
-                    <Delete style={{ color: 'white', margin: '0 2px' }} />
+                    <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
                   </Button>
                 </Grid>
               </Grid>
@@ -261,7 +258,11 @@ const WorkspaceCard = ({
                 {workspaceDetails.description ? (
                   <DescriptionLabel
                     onClick={(e) => e.stopPropagation()}
-                    style={{ padding: '10px 0', color: theme.palette.secondary.white, maxHeight: '105px' }}
+                    style={{
+                      padding: '10px 0',
+                      color: theme.palette.secondary.white,
+                      maxHeight: '105px',
+                    }}
                   >
                     {workspaceDetails.description}
                   </DescriptionLabel>

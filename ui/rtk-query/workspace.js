@@ -61,7 +61,7 @@ const workspacesApi = api
             order: queryArg.order,
             page: queryArg.page,
             pagesize: queryArg.pagesize,
-            filter: queryArg.filter
+            filter: queryArg.filter,
           },
           method: 'GET',
         }),
@@ -74,9 +74,7 @@ const workspacesApi = api
           method: 'POST',
         }),
 
-        invalidatesTags: () => [
-          { type: TAGS.WORKSPACES },
-        ],
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
       unassignEnvironmentFromWorkspace: builder.mutation({
@@ -85,9 +83,7 @@ const workspacesApi = api
           method: 'DELETE',
         }),
 
-        invalidatesTags: () => [
-          { type: TAGS.WORKSPACES },
-        ],
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
       getDesignsOfWorkspace: builder.query({
@@ -98,7 +94,7 @@ const workspacesApi = api
             order: queryArg.order,
             page: queryArg.page,
             pagesize: queryArg.pagesize,
-            filter: queryArg.filter
+            filter: queryArg.filter,
           },
           method: 'GET',
         }),
@@ -111,9 +107,7 @@ const workspacesApi = api
           method: 'POST',
         }),
 
-        invalidatesTags: () => [
-          { type: TAGS.WORKSPACES },
-        ],
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
       unassignDesignFromWorkspace: builder.mutation({
@@ -122,11 +116,8 @@ const workspacesApi = api
           method: 'DELETE',
         }),
 
-        invalidatesTags: () => [
-          { type: TAGS.WORKSPACES },
-        ],
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
-
     }),
   });
 

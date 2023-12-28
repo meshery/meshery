@@ -25,6 +25,4 @@ const designs = api
     }),
   });
 
-export const {
-  useGetPatternsQuery,
-} = designs;
+export const { useGetPatternsQuery } = designs;
