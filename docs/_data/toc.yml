@@ -4,14 +4,14 @@
     - title: Supported Platforms ↆ
       url: installation
       children:
-        - title: Docker
+        - title: Docker ↆ
           url: installation/docker
           grandchildren:
             - title: Docker Extension
               url: installation/docker/docker-extension
         - title: GitHub Codespaces
           url: installation/codespaces
-        - title: Kubernetes
+        - title: Kubernetes ↆ
           url: installation/kubernetes
           grandchildren:
             - title: "AKS"

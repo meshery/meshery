@@ -61,7 +61,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/identity/users", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsers), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/identity/users/keys", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsersKeys), models.ProviderAuth))).
+	gMux.Handle("/api/identity/orgs/{orgID}/users/keys", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsersKeys), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserPrefsHandler), models.ProviderAuth))).
@@ -280,6 +280,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/system/meshsync/resources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResources), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/system/meshsync/resources/kinds", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResourcesKinds), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/system/meshsync/resources/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMeshSyncResource), models.ProviderAuth))).
 		Methods("DELETE")
 
@@ -318,7 +320,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspacesHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveWorkspaceHandler), models.ProviderAuth))).
-		Methods("POST") 
+		Methods("POST")
 	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateWorkspaceHandler), models.ProviderAuth))).
 		Methods("PUT")
 	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteWorkspaceHandler), models.ProviderAuth))).

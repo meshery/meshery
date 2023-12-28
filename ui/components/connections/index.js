@@ -279,7 +279,7 @@ function Connections(props) {
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgID: organization?.id },
+    { orgId: organization?.id },
     {
       skip: !organization?.id,
     },
@@ -1167,6 +1167,7 @@ function Connections(props) {
               />
 
               <CustomColumnVisibilityControl
+                id="ref"
                 columns={getVisibilityColums(columns)}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />

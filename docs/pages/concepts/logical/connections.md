@@ -15,7 +15,7 @@ Each Meshery Model can contain one more ConnectionDefinitions (files), each Defi
 
 Connections can be:
 
-1) a ConnectionDefinition based Meshery's Connection Schema with hand-curated Connection attributes. 
+1) a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/connections.yml) with hand-curated Connection attributes. 
 2) a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
 
 ### Managed Connections
