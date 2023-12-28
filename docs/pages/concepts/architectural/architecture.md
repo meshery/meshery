@@ -25,7 +25,7 @@ Meshery and its components are written using the following languages and technol
 | &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync) | Golang                                                                            |
 | &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker)     | Golang, NATS                                                                      |
 | [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   | 
-| [Meshery CLI](/guides/mesheryctl/working-with-mesheryctl#using-meshery-cli) | Golang                                                                            |
+| [Meshery CLI](#meshery-cli) | Golang                                                                            |
 
 ## Deployments
 
