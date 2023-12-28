@@ -110,7 +110,7 @@ const ResponsiveDataTable = ({
   };
 
   return (
-    <div id="searchClick">
+    <div>
       <StyledMUIDataTable
         components={components}
         columns={tableCols}

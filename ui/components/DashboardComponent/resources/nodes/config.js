@@ -1,9 +1,6 @@
 import React from 'react';
 import { getResourceStr, resourceParsers, timeAgo } from '../../../../utils/k8s-utils';
-import {
-  getClusterNameFromClusterId,
-  getConnectionIdFromClusterId,
-} from '../../../../utils/multi-ctx';
+import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
@@ -131,18 +128,18 @@ export const NodeTableConfig = (
             );
           },
           customBodyRender: function CustomBody(val) {
-            let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-            let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+            let context = getK8sContextFromClusterId(val, k8sConfig);
+
             return (
               <>
                 <TootltipWrappedConnectionChip
-                  title={clusterName}
+                  title={context.name}
                   iconSrc={
                     connectionMetadataState
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(clusterName, val, connectionId)}
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
                 />
               </>
             );

@@ -15,7 +15,7 @@ language: en
   </div>
   <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
 </div>
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
   <!-- OVERVIEW -->
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
@@ -48,6 +48,7 @@ language: en
   </div>
 
     <!-- CONCEPTS -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/concepts">
         <div class="btn-primary">Concepts</div>
@@ -100,7 +101,7 @@ language: en
   </div>
 </div>
 
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
   <!-- TASKS -->
   <div class="section">
@@ -135,9 +136,9 @@ language: en
     </ul>
   </div>
 
-</div> 
+</div>
 
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
 <!-- GUIDES -->
   <div class="section">
@@ -185,10 +186,10 @@ language: en
       {% endif -%}
       {% endfor %}
     </ul> -->
-  </div> 
-
+  </div>
 
     <!-- CONTRIBUTING -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/project">
         <div class="btn-primary">Contributing and Community</div>
@@ -218,9 +219,10 @@ language: en
   </div>
     
 </div>
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
     <!-- PROJECT -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Project</div>
@@ -236,9 +238,11 @@ language: en
         {% endif %}
       {% endfor %}
     </ul>
+
   </div>
 
     <!-- REFERENCE -->
+
   <div class="section">
   <a href="{{ site.baseurl }}/installation/quick-start">
         <div class="btn-primary">Reference</div>
@@ -257,10 +261,6 @@ language: en
 </div>
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
-
-
-
-
 
 <!-- <div style="text-align:center;padding:0;margin:0;">
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />

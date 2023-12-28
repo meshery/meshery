@@ -79,15 +79,15 @@ func writeK8sMetadata(comp *v1alpha1.ComponentDefinition, reg *meshmodel.Registr
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+		comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(v1alpha1.ComponentDefinition)
 		if !ok {
-			utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+			comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 			return
 		}
-		utils.MergeMaps(comp.Metadata, existingComp.Metadata)
+		comp.Metadata = utils.MergeMaps(comp.Metadata, existingComp.Metadata)
 		comp.Model = existingComp.Model
 	}
 }
