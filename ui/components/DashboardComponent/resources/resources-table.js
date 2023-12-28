@@ -215,6 +215,7 @@ const ResourcesTable = (props) => {
               />
 
               <CustomColumnVisibilityControl
+                id="ref"
                 columns={tableConfig.columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />

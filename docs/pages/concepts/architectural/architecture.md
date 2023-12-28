@@ -24,7 +24,8 @@ Meshery and its components are written using the following languages and technol
 | [Meshery Operator](/concepts/architecture/operator)                  | Golang                                                                            |
 | &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync) | Golang                                                                            |
 | &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker)     | Golang, NATS                                                                      |
-| [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   |
+| [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   | 
+| [Meshery CLI](#meshery-cli) | Golang                                                                            |
 
 ## Deployments
 
@@ -118,6 +119,10 @@ Meshery's Docker extension provides a simple and flexible way to design and oper
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
+
+## Meshery CLI 
+
+The Command Line Interface ( also known as [mesheryctl](/guides/mesheryctl/working-with-mesheryctl) ) that is used to manage Meshery. Use `mesheryctl` to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions.
 
 
 ### **Statefulness in Meshery components**
