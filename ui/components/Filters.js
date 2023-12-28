@@ -1253,6 +1253,7 @@ function MesheryFilters({
             />
             {viewType === 'table' && (
               <CustomColumnVisibilityControl
+                id="ref"
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />

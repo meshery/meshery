@@ -570,6 +570,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             />
             {viewType === 'table' && (
               <CustomColumnVisibilityControl
+                id="ref"
                 classes={classes}
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
