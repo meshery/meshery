@@ -681,7 +681,9 @@ function Connections(props) {
                           className={classNames(classes.statusChip, classes[status])}
                           avatar={icons[status] ? icons[status]() : ''}
                           label={
-                            status == value ? status : CONNECTION_STATE_TO_TRANSITION_MAP[status]
+                            status == value
+                              ? status
+                              : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
                           }
                         />
                       </MenuItem>
