@@ -28,6 +28,7 @@ import classNames from 'classnames';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
+import UniversalFilter from '../../../utils/custom-filter';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -44,6 +45,7 @@ export default function MeshSyncTable(props) {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
@@ -447,21 +449,23 @@ export default function MeshSyncTable(props) {
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  const [selectedKind, setSelectedKind] = useState('');
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
     if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder);
+      getMeshsyncResources(page, pageSize, search, sortOrder, selectedKind);
     }
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, selectedKind]);
 
-  const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
+  const getMeshsyncResources = (page, pageSize, search, sortOrder, selectedKind) => {
     setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      `/api/system/meshsync/resources?kind=${selectedKind}&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
@@ -469,10 +473,18 @@ export default function MeshSyncTable(props) {
         method: 'GET',
       },
       (res) => {
-        setMeshSyncResources(res?.resources || []);
+        const filteredData = res?.resources?.filter((item) => {
+          if (selectedFilters.kind === 'All') {
+            return true;
+          }
+          return item.kind === selectedFilters.kind;
+        });
+        setMeshSyncResources(filteredData);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
+        setFilter(filter);
+        // setSelectedKind(selectedKind);
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
@@ -485,6 +497,65 @@ export default function MeshSyncTable(props) {
       event_type: EVENT_TYPES.ERROR,
       details: error.toString(),
     });
+  };
+
+  const [kindoptions, setKindOptions] = useState([]);
+
+  const getAllMeshsyncKind = (page, pageSize, search, sortOrder) => {
+    setLoading(true);
+    if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
+    dataFetch(
+      `/api/system/meshsync/resources/kinds?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        setKindOptions(res?.kinds || []);
+        console.log(res?.kinds);
+        setLoading(false);
+      },
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
+    );
+  };
+
+  console.log('options', kindoptions);
+
+  useEffect(() => {
+    getAllMeshsyncKind(page, pageSize, search, sortOrder);
+  }, [page, pageSize, search, sortOrder]);
+
+  const filters = {
+    kind: {
+      name: 'Kind',
+      options: [
+        ...kindoptions.map((kind) => ({
+          value: kind,
+          label: kind,
+        })),
+      ],
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
+
+  const handleApplyFilter = () => {
+    const columnName = Object.keys(selectedFilters)[0];
+    const columnValue = selectedFilters[columnName];
+
+    // Check if the selected value is "All"
+    const newSelectedKind = columnValue === 'All' ? '' : columnValue;
+
+    const filter = {
+      [columnName]: columnValue === 'All' ? null : [columnValue],
+    };
+
+    setFilter(filter);
+    setSelectedKind(newSelectedKind); // Update the selected kind
+    getMeshsyncResources(page, pageSize, search, sortOrder, newSelectedKind);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -516,6 +587,14 @@ export default function MeshSyncTable(props) {
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search connections..."
+          />
+
+          <UniversalFilter
+            id="ref"
+            filters={filters}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            handleApplyFilter={handleApplyFilter}
           />
 
           <CustomColumnVisibilityControl
