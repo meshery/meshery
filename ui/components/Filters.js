@@ -245,7 +245,7 @@ function MesheryFilters({
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
-  const [meshModels, setMeshModels] = useState([])
+  const [meshModels, setMeshModels] = useState([]);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -360,7 +360,7 @@ function MesheryFilters({
             modelNames,
           );
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models)
+          setMeshModels(models);
         } catch (err) {
           console.error(err);
           setPublishSchema(result);

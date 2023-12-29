@@ -254,26 +254,7 @@ const InfoModal_ = (props) => {
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
                       }`}
                     >
-                      <Chip
-                        avatar={
-                          <Avatar
-                            src={resourceUserProfile?.avatar_url}
-                            className={classes.chipIcon}
-                          />
-                        }
-                        label={
-                          resourceUserProfile ? (
-                            resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
-                          ) : (
-                            <Box sx={{ display: 'flex' }}>
-                              <CircularProgress color="inherit" size="1rem" />
-                            </Box>
-                          )
-                        }
-                        variant="outlined"
-                        data-cy="chipDesignDetails"
-                        className={classes.chip}
-                      />
+                      <OwnerChip userProfile={resourceUserProfile} />
                     </Tooltip>
                   </Typography>
                 </Grid>
@@ -369,6 +350,27 @@ const InfoModal_ = (props) => {
         </DialogActions>
       </Dialog>
     </div>
+  );
+};
+
+const OwnerChip = ({ userProfile }) => {
+  const classes = useStyles();
+  return (
+    <Chip
+      avatar={<Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />}
+      label={
+        userProfile ? (
+          `${userProfile?.first_name} ${userProfile?.last_name}`
+        ) : (
+          <Box sx={{ display: 'flex' }}>
+            <CircularProgress color="inherit" size="1rem" />
+          </Box>
+        )
+      }
+      variant="outlined"
+      data-cy="chipDesignDetails"
+      className={classes.chip}
+    />
   );
 };
 
