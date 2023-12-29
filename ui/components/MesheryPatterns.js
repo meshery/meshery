@@ -328,6 +328,7 @@ function MesheryPatterns({
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
+  const [meshModels, setMeshModels] = useState([])
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -582,6 +583,7 @@ function MesheryPatterns({
           );
 
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models)
         } catch (err) {
           console.error(err);
           handleError(ACTION_TYPES.SCHEMA_FETCH);
@@ -1666,6 +1668,7 @@ function MesheryPatterns({
             resourceOwnerID={infoModal.ownerID}
             currentUserID={user?.id}
             formSchema={publishSchema}
+            meshModels={meshModels}
           />
         )}
         <PromptComponent ref={modalRef} />

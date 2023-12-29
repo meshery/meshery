@@ -245,6 +245,7 @@ function MesheryFilters({
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
+  const [meshModels, setMeshModels] = useState([])
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -349,7 +350,7 @@ function MesheryFilters({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -359,6 +360,7 @@ function MesheryFilters({
             modelNames,
           );
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models)
         } catch (err) {
           console.error(err);
           setPublishSchema(result);
@@ -1358,6 +1360,7 @@ function MesheryFilters({
             resourceOwnerID={infoModal.ownerID}
             currentUserID={user?.id}
             formSchema={publishSchema}
+            meshModels={meshModels}
           />
         )}
       </NoSsr>
