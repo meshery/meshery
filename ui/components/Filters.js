@@ -1344,6 +1344,7 @@ function MesheryFilters({
             meshModels={meshModels}
           />
         )}
+        <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
   );
@@ -1376,7 +1377,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, meshModels, title } = props;
+  const { publishFormSchema, handleClose, handlePublish, title } = props;
 
   return (
     <Modal

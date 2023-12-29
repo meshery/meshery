@@ -1662,45 +1662,49 @@ const ImportModal = React.memo((props) => {
   const classes = useStyles();
 
   return (
-    <Modal
-      open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
-      handleClose={handleClose}
-      handleSubmit={handleImportDesign}
-      title="Import Design"
-      submitBtnText="Import"
-      leftHeaderIcon={
-        <Pattern
-          fill="#fff"
-          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-          className={undefined}
-        />
-      }
-      submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-    />
+    <>
+      <Modal
+        open={true}
+        schema={importFormSchema.rjsfSchema}
+        uiSchema={importFormSchema.uiSchema}
+        handleClose={handleClose}
+        handleSubmit={handleImportDesign}
+        title="Import Design"
+        submitBtnText="Import"
+        leftHeaderIcon={
+          <Pattern
+            fill="#fff"
+            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            className={undefined}
+          />
+        }
+        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+      />
+    </>
   );
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, meshModels, title } = props;
+  const { publishFormSchema, handleClose, handlePublish, title } = props;
 
   return (
-    <Modal
-      open={true}
-      schema={publishFormSchema.rjsfSchema}
-      uiSchema={publishFormSchema.uiSchema}
-      handleClose={handleClose}
-      aria-label="catalog publish"
-      title={title}
-      handleSubmit={handlePublish}
-      showInfoIcon={{
-        text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-        link: 'https://docs.meshery.io/concepts/catalog',
-      }}
-      submitBtnText="Submit for Approval"
-      submitBtnIcon={<PublicIcon />}
-    />
+    <>
+      <Modal
+        open={true}
+        schema={publishFormSchema.rjsfSchema}
+        uiSchema={publishFormSchema.uiSchema}
+        handleClose={handleClose}
+        aria-label="catalog publish"
+        title={title}
+        handleSubmit={handlePublish}
+        showInfoIcon={{
+          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
+          link: 'https://docs.meshery.io/concepts/catalog',
+        }}
+        submitBtnText="Submit for Approval"
+        submitBtnIcon={<PublicIcon />}
+      />
+    </>
   );
 });
 
