@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import { createTheme } from '@material-ui/core/styles';

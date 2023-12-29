@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useEffect, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
