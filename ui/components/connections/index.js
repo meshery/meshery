@@ -443,26 +443,28 @@ function Connections(props) {
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
           return (
             isEnvironmentsSuccess && (
-              <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                  <MultiSelectWrapper
-                    onChange={(selected, unselected) =>
-                      handleEnvironmentSelect(
-                        connections[tableMeta.rowIndex].id,
-                        connections[tableMeta.rowIndex].name,
-                        cleanedEnvs,
-                        selected,
-                        unselected,
-                      )
-                    }
-                    options={getOptions()}
-                    value={cleanedEnvs}
-                    placeholder={`Assigned Environments`}
-                    isSelectAll={true}
-                    menuPlacement={'bottom'}
-                  />
+              <div onClick={(e) => e.stopPropagation()}>
+                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          connections[tableMeta.rowIndex].id,
+                          connections[tableMeta.rowIndex].name,
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={getOptions()}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              </div>
             )
           );
         },
