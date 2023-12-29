@@ -1318,37 +1318,18 @@ function MesheryFilters({
           tab={modalOpen.deploy ? 2 : 1}
         />
         {canPublishFilter && publishModal.open && (
-          <Modal
-            open={true}
-            schema={publishSchema.rjsfSchema}
-            uiSchema={publishSchema.uiSchema}
-            title={publishModal.filter?.name}
+          <PublishModal
+            publishFormSchema={publishSchema}
             handleClose={handlePublishModalClose}
+            title={publishModal.filter?.name}
             handleSubmit={handlePublish}
-            showInfoIcon={{
-              text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-              link: 'https://docs.meshery.io/concepts/catalog',
-            }}
-            submitBtnText="Submit for Approval"
-            submitBtnIcon={
-              <PublicIcon style={iconMedium} className={classes.addIcon} data-cy="import-button" />
-            }
           />
         )}
-        <PromptComponent ref={modalRef} />
         {importModal.open && (
-          <Modal
-            open={true}
-            schema={importSchema.rjsfSchema}
-            uiSchema={importSchema.uiSchema}
+          <ImportModal
+            importFormSchema={importSchema}
             handleClose={handleUploadImportClose}
-            handleSubmit={handleImportFilter}
-            title="Import Filter"
-            submitBtnText="Import"
-            leftHeaderIcon={
-              <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-            }
-            submitBtnIcon={<PublishIcon />}
+            handleImportFilter={handleImportFilter}
           />
         )}
         {infoModal.open && (
@@ -1367,6 +1348,54 @@ function MesheryFilters({
     </>
   );
 }
+
+const ImportModal = React.memo((props) => {
+  const { importFormSchema, handleClose, handleImportFilter } = props;
+
+  const classes = useStyles();
+
+  return (
+    <Modal
+      open={true}
+      schema={importFormSchema.rjsfSchema}
+      uiSchema={importFormSchema.uiSchema}
+      handleClose={handleClose}
+      handleSubmit={handleImportFilter}
+      title="Import Design"
+      submitBtnText="Import"
+      leftHeaderIcon={
+        <Filter
+          fill="#fff"
+          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+          className={undefined}
+        />
+      }
+      submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+    />
+  );
+});
+
+const PublishModal = React.memo((props) => {
+  const { publishFormSchema, handleClose, handlePublish, meshModels, title } = props;
+
+  return (
+    <Modal
+      open={true}
+      schema={publishFormSchema.rjsfSchema}
+      uiSchema={publishFormSchema.uiSchema}
+      handleClose={handleClose}
+      aria-label="catalog publish"
+      title={title}
+      handleSubmit={handlePublish}
+      showInfoIcon={{
+        text: 'Upon submitting your catalog item, an approval flow will be initiated.',
+        link: 'https://docs.meshery.io/concepts/catalog',
+      }}
+      submitBtnText="Submit for Approval"
+      submitBtnIcon={<PublicIcon />}
+    />
+  );
+});
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

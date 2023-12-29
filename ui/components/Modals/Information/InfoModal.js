@@ -39,7 +39,7 @@ const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
 const PATTERN_PLURAL = 'patterns';
 
-const InfoModal_ = (props) => {
+const InfoModal_ = React.memo((props) => {
   const {
     infoModalOpen,
     handleInfoModalClose,
@@ -351,7 +351,7 @@ const InfoModal_ = (props) => {
       </Dialog>
     </div>
   );
-};
+});
 
 const OwnerChip = ({ userProfile }) => {
   const classes = useStyles();
