@@ -57,6 +57,7 @@ import {
   CONNECTION_STATES,
   CONTROLLERS,
   CONTROLLER_STATES,
+  CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -679,7 +680,11 @@ function Connections(props) {
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
                           avatar={icons[status] ? icons[status]() : ''}
-                          label={status}
+                          label={
+                            status == value
+                              ? status
+                              : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                          }
                         />
                       </MenuItem>
                     ))}
