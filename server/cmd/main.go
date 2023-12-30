@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -26,7 +24,6 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
@@ -276,46 +273,6 @@ func main() {
 	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
-	if err != nil {
-		log.Error(err)
-	}
-	for _, host := range hosts {
-		summary := host.Summary
-		log.Info(fmt.Sprintf("For registrant %s successfully imported %d models %d components %d relationships %d policy",
-			host.Hostname, summary.Models, summary.Components, summary.Relationships, summary.Policies))
-
-		nonImportModel := meshmodel.NonImportModel[host.Hostname]
-		if nonImportModel.Models > 0 || nonImportModel.Components > 0 || nonImportModel.Relationships > 0 || nonImportModel.Policies > 0 {
-			failedMsg := "failed to import"
-			appendIfNonZero := func(msg string, count int64, entityName string) string {
-				if count > 0 {
-					return fmt.Sprintf("%s %d %s", msg, count, entityName)
-				}
-				return msg
-			}
-
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Models, "models")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Components, "components")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Relationships, "relationships")
-			failedMsg = appendIfNonZero(failedMsg, nonImportModel.Policies, "policies")
-
-			log.Error(ErrRegisteringEntity(failedMsg, host.Hostname))
-		}
-	}
-
-	filePath := "register_attempts.json"
-	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
-	if err != nil {
-		log.Error(ErrMarshalingRegisteryAttempts(err))
-		return
-	}
-
-	err = writeToFile(filePath, jsonData)
-	if err != nil {
-		log.Error(ErrWritingRegisteryAttempts(err))
-		return
-	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
@@ -378,18 +335,4 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
-}
-func writeToFile(filePath string, data []byte) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(data)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -22,9 +20,6 @@ const (
 	ErrCleaningUpLocalProviderCode                = "1011"
 	ErrClosingDatabaseInstanceCode                = "1012"
 	ErrInitializingRegistryManagerCode            = "1013"
-	ErrMarshalingRegisteryAttemptsCode            = "1014"
-	ErrWritingRegisteryAttemptsCode               = "1015"
-	ErrRegisteringEntityCode                      = "1016"
 )
 
 func ErrInitializingRegistryManager(err error) error {
@@ -73,13 +68,4 @@ func ErrCleaningUpLocalProvider(err error) error {
 
 func ErrClosingDatabaseInstance(err error) error {
 	return errors.New(ErrClosingDatabaseInstanceCode, errors.Alert, []string{"Error closing database instance"}, []string{"Error closing database instance: ", err.Error()}, []string{}, []string{})
-}
-func ErrMarshalingRegisteryAttempts(err error) error {
-	return errors.New(ErrMarshalingRegisteryAttemptsCode, errors.Alert, []string{"Error marshaling RegisterAttempts to JSON"}, []string{"Error marshaling RegisterAttempts to JSON: ", err.Error()}, []string{}, []string{})
-}
-func ErrWritingRegisteryAttempts(err error) error {
-	return errors.New(ErrWritingRegisteryAttemptsCode, errors.Alert, []string{"Error writing RegisteryAttempts JSON data to file"}, []string{"Error writing RegisteryAttempts JSON data to file:", err.Error()}, []string{}, []string{})
-}
-func ErrRegisteringEntity(failedMsg string, hostName string) error {
-	return errors.New(ErrRegisteringEntityCode, errors.Alert, []string{fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", hostName, failedMsg)}, []string{fmt.Sprintf("For registrant %s %s", hostName, failedMsg)}, []string{"Could be because of empty schema or some issue with the json or yaml file"}, []string{"Check /server/cmd/registery_attempts.json for futher details"})
 }
