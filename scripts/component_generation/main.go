@@ -13,6 +13,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/artifacthub"
 	"gopkg.in/yaml.v3"
@@ -83,6 +84,11 @@ var (
 
 var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
 
+var log, _ = logger.New("mesheryctl", logger.Options{
+	Format:     logger.SyslogLogFormat,
+	DebugLevel: false,
+})
+
 // returns pkgs with sorted pkgs at the front
 func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPackage, official []artifacthub.AhPackage, cncf []artifacthub.AhPackage, priority []artifacthub.AhPackage, unverified []artifacthub.AhPackage) {
 	for _, pkg := range pkgs {
@@ -108,14 +114,14 @@ func main() {
 	if _, err := os.Stat(OutputDirectoryPath); err != nil {
 		err := os.Mkdir(OutputDirectoryPath, 0744)
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			return
 		}
 	}
 
 	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 
@@ -124,23 +130,23 @@ func main() {
 	pkgs := make([]artifacthub.AhPackage, 0)
 	content, err := io.ReadAll(modelsFd)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	err = yaml.Unmarshal(content, &pkgs)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	if len(pkgs) == 0 {
 		pkgs, err = artifacthub.GetAllAhHelmPackages()
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			return
 		}
 		err = writeComponentModels(pkgs, modelsFd)
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			return
 		}
 	}
@@ -152,7 +158,7 @@ func main() {
 	// Convert sheet ID to sheet name.
 	response1, err := srv.Spreadsheets.Get(spreadsheetID).Fields("sheets(properties(sheetId,title))").Do()
 	if err != nil || response1.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	sheetName := ""
@@ -170,7 +176,7 @@ func main() {
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
-		fmt.Println("Unable to retrieve data from sheet: ", err)
+		log.Error(ErrorFailedRetreiving(err))
 		return
 	}
 	availableModels := make(map[string][]interface{})
@@ -222,7 +228,7 @@ func main() {
 func dumpCsv(compsCSV chan componentWrapper) {
 	f, err := os.Create(dumpFile)
 	if err != nil {
-		fmt.Printf("Error creating file: %s\n", err)
+		log.Error(err)
 		return
 	}
 	f.Write([]byte("model,component_count,components\n"))
@@ -252,14 +258,14 @@ func executeInStages(pipeline pipelineFunc, compsCSV chan componentWrapper,
 			go func() {
 				defer wg.Done()
 				pipeline(input, compsCSV, spreadsheetChan, dp) //synchronous
-				fmt.Println("Pipeline exited for a go routine")
+				log.Debug("Pipeline exited for a go routine")
 			}()
 		}
 		for _, p := range pkg {
 			input <- p
 		}
 		wg.Wait()
-		fmt.Println("[DEBUG] Completed stage", stageno)
+		log.Debug("Completed stage", stageno)
 	}
 }
 
@@ -285,26 +291,26 @@ func (d *dedup) check(key string) bool {
 func StartPipeline(pkgChan chan artifacthub.AhPackage, compsCSV chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error {
 	for pkg := range pkgChan {
 		if err := pkg.UpdatePackageData(); err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			continue
 		}
-		fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", pkg.Name, pkg.VerifiedPublisher)
+		log.Debug(fmt.Sprintf("Generating components for: %s with verified status %v", pkg.Name, pkg.VerifiedPublisher))
 		comps, err := pkg.GenerateComponents()
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			continue
 		}
 		var newcomps []v1alpha1.ComponentDefinition
 		for _, comp := range comps {
 			key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
 			if !dp.check(key) {
-				fmt.Println("SETTING FOR: ", key)
+				log.Debug("SETTING FOR: ", key)
 				newcomps = append(newcomps, comp)
 				dp.set(key)
 			}
 		}
 		if err := writeComponents(comps); err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 		compsCSV <- componentWrapper{
 			comps: newcomps,
@@ -340,7 +346,7 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println("created directory ", comp.Model.Name)
+			log.Debug("created directory ", comp.Model.Name)
 		}
 		componentPath := filepath.Join(modelPath, comp.Model.Version)
 		if _, err := os.Stat(componentPath); errors.Is(err, os.ErrNotExist) {
@@ -348,7 +354,7 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println("created versioned directory ", comp.Model.Version)
+			log.Debug("created versioned directory ", comp.Model.Version)
 		}
 		relationshipsPath := filepath.Join(modelPath, "relationships")
 		policiesPath := filepath.Join(modelPath, "policies")
