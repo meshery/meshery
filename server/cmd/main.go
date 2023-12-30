@@ -296,7 +296,6 @@ func main() {
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-
 	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
 	if err != nil {
 		log.Error(err)
@@ -399,18 +398,4 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
-}
-func writeToFile(filePath string, data []byte) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(data)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

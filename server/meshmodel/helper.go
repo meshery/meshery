@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
@@ -162,6 +163,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 // If an error occurs, it logs the error
 func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	var err error
+	meshmodel.Mutex.Lock()
 	for {
 		select {
 		case comp := <-erh.componentChan:
@@ -180,11 +182,63 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
+			registryLog(erh.regManager)
+			meshmodel.Mutex.Unlock()
 			return
 		}
 
 		if err != nil {
 			erh.errorChan <- err
 		}
+	}
+}
+func writeToFile(filePath string, data []byte) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func registryLog(regManager *meshmodel.RegistryManager) {
+	log, err := logger.New("meshery", logger.Options{
+		Format: logger.SyslogLogFormat,
+	})
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
+	}
+
+	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
+	if err != nil {
+		log.Error(err)
+	}
+	for _, host := range hosts {
+		summary := host.Summary
+		log.Info(fmt.Sprintf("For registrant %s successfully imported %d models %d components %d relationships %d policy",
+			host.Hostname, summary.Models, summary.Components, summary.Relationships, summary.Policies))
+		failedMsg, _ := meshmodel.FailedMsgCompute("", host.Hostname)
+		if failedMsg != "" {
+			log.Error(meshmodel.ErrRegisteringEntity(failedMsg, host.Hostname))
+		}
+	}
+
+	filePath := "register_attempts.json"
+	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
+	if err != nil {
+		log.Error(meshmodel.ErrMarshalingRegisteryAttempts(err))
+		return
+	}
+
+	err = writeToFile(filePath, jsonData)
+	if err != nil {
+		log.Error(meshmodel.ErrWritingRegisteryAttempts(err))
+		return
 	}
 }
