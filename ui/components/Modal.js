@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IconButton, Menu, MenuItem, Tooltip, Button, Typography, CircularProgress } from '@material-ui/core'
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Button,
+  Typography,
+  CircularProgress,
+} from '@material-ui/core';
 import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import CloseIcon from '@material-ui/icons/Close';
