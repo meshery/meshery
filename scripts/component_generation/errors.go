@@ -8,14 +8,54 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrorFailedRetreivingCode = "1233"
+	ErrorFailedRetreivingSheetCode      = "1233"
+	ErrorFailedWritingComponentsCode    = "1234"
+	ErrorFailedRetreivingAHPackagesCode = "1235"
+	ErrorIOCode                         = "1236"
+	ErrorFailedGeneratingComponentsCode = "1237"
 )
 
-func ErrorFailedRetreiving(err error) error {
+func ErrorFailedRetreivingSheet(err error) error {
 	return errors.New(
-		ErrorFailedRetreivingCode,
+		ErrorFailedRetreivingSheetCode,
 		errors.Fatal,
 		[]string{"Unable to retrieve data from sheet"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorFailedWritingComponents(err error) error {
+	return errors.New(
+		ErrorFailedWritingComponentsCode,
+		errors.Fatal,
+		[]string{"Failed to write components"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorFailedGeneratingComponents(err error) error {
+	return errors.New(
+		ErrorFailedGeneratingComponentsCode,
+		errors.Fatal,
+		[]string{"Failed to generate components"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorFailedRetreivingAHPackages(err error) error {
+	return errors.New(
+		ErrorFailedRetreivingAHPackagesCode,
+		errors.Fatal,
+		[]string{"Failed to retreive ArtifactHub packaged"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorIOException(err error) error {
+	return errors.New(
+		ErrorIOCode,
+		errors.Fatal,
+		[]string{"I/O Error"},
 		[]string{err.Error()}, nil, nil,
 	)
 }

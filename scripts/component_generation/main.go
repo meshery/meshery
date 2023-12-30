@@ -114,14 +114,14 @@ func main() {
 	if _, err := os.Stat(OutputDirectoryPath); err != nil {
 		err := os.Mkdir(OutputDirectoryPath, 0744)
 		if err != nil {
-			log.Error(err)
+			log.Error(ErrorIOException(err))
 			return
 		}
 	}
 
 	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrorIOException(err))
 		return
 	}
 
@@ -130,23 +130,23 @@ func main() {
 	pkgs := make([]artifacthub.AhPackage, 0)
 	content, err := io.ReadAll(modelsFd)
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrorIOException(err))
 		return
 	}
 	err = yaml.Unmarshal(content, &pkgs)
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrorIOException(err))
 	}
 
 	if len(pkgs) == 0 {
 		pkgs, err = artifacthub.GetAllAhHelmPackages()
 		if err != nil {
-			log.Error(err)
+			log.Error(ErrorFailedRetreivingAHPackages(err))
 			return
 		}
 		err = writeComponentModels(pkgs, modelsFd)
 		if err != nil {
-			log.Error(err)
+			log.Error(ErrorFailedWritingComponents(err))
 			return
 		}
 	}
@@ -158,7 +158,7 @@ func main() {
 	// Convert sheet ID to sheet name.
 	response1, err := srv.Spreadsheets.Get(spreadsheetID).Fields("sheets(properties(sheetId,title))").Do()
 	if err != nil || response1.HTTPStatusCode != 200 {
-		log.Error(err)
+		log.Error(ErrorFailedRetreivingSheet(err))
 		return
 	}
 	sheetName := ""
@@ -176,7 +176,7 @@ func main() {
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
-		log.Error(ErrorFailedRetreiving(err))
+		log.Error(ErrorFailedRetreivingSheet(err))
 		return
 	}
 	availableModels := make(map[string][]interface{})
@@ -228,7 +228,7 @@ func main() {
 func dumpCsv(compsCSV chan componentWrapper) {
 	f, err := os.Create(dumpFile)
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrorIOException(err))
 		return
 	}
 	f.Write([]byte("model,component_count,components\n"))
@@ -291,13 +291,13 @@ func (d *dedup) check(key string) bool {
 func StartPipeline(pkgChan chan artifacthub.AhPackage, compsCSV chan componentWrapper, spreadsheet chan componentWrapper, dp *dedup) error {
 	for pkg := range pkgChan {
 		if err := pkg.UpdatePackageData(); err != nil {
-			log.Error(err)
+			log.Error(ErrorFailedRetreivingAHPackages(err))
 			continue
 		}
 		log.Debug(fmt.Sprintf("Generating components for: %s with verified status %v", pkg.Name, pkg.VerifiedPublisher))
 		comps, err := pkg.GenerateComponents()
 		if err != nil {
-			log.Error(err)
+			log.Error(ErrorFailedGeneratingComponents(err))
 			continue
 		}
 		var newcomps []v1alpha1.ComponentDefinition
@@ -310,7 +310,7 @@ func StartPipeline(pkgChan chan artifacthub.AhPackage, compsCSV chan componentWr
 			}
 		}
 		if err := writeComponents(comps); err != nil {
-			log.Error(err)
+			log.Error(ErrorFailedWritingComponents(err))
 		}
 		compsCSV <- componentWrapper{
 			comps: newcomps,
