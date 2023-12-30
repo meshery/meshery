@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -1278,39 +1281,64 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 
 // request body should be json
 // request body should be of Host format
-func (h *Handler) NonRegisterEntity(rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Set("Content-Type", "application/json")
-	defer r.Body.Close()
 
-	var host registry.Host
-	if err := json.NewDecoder(r.Body).Decode(&host); err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+func (handler *Handler) NonRegisterEntity(responseWriter http.ResponseWriter, request *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	responseWriter.Header().Set("Content-Type", "application/json")
+	defer request.Body.Close()
+	registry.Mutex.Lock()
+
+	var receivedHost registry.Host
+	if err := json.NewDecoder(request.Body).Decode(&receivedHost); err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	nonImportModel, exists := registry.NonImportModel[host.Hostname]
-	if !exists {
-		http.NotFound(rw, r)
-		return
+	filter := &v1alpha1.HostFilter{
+		DisplayName: receivedHost.Hostname,
 	}
 
-	res := v1alpha1.MeshModelHostsWithEntitySummary{
-		Hostname: host.Hostname,
-		Summary: v1alpha1.EntitySummary{
-			Models:        nonImportModel.Models,
-			Components:    nonImportModel.Components,
-			Relationships: nonImportModel.Relationships,
-			Policies:      nonImportModel.Policies,
-		},
+	hosts, _, _ := handler.registryManager.GetRegistrants(filter)
+
+	successMessage := ""
+	for _, host := range hosts {
+		successMessage = fmt.Sprintf("For registrant %s successfully imported %d models %d components %d relationships %d policy",
+			receivedHost.Hostname, host.Summary.Models, host.Summary.Components, host.Summary.Relationships, host.Summary.Policies)
 	}
 
-	responseJSON, err := json.Marshal(res)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
+	failedMessage, _ := registry.FailedMsgCompute("", receivedHost.Hostname)
+	if failedMessage != "" {
+		failedMessage = fmt.Sprintf("For registrant %s %s", receivedHost.Hostname, failedMessage)
 	}
 
-	rw.Write(responseJSON)
+	// Event creation
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+
+	// Adding metadata for the event
+	eventBuilder.WithMetadata(map[string]interface{}{
+		"Hostname": receivedHost.Hostname,
+	})
+
+	// Success event
+	eventBuilder.WithSeverity(events.Success).WithDescription(successMessage)
+	successEvent := eventBuilder.Build()
+
+	// Error event
+	errorEventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+	errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMessage)
+	errorEvent := errorEventBuilder.Build()
+	errorEventBuilder.WithMetadata(map[string]interface{}{
+		"Hostname":              receivedHost.Hostname,
+		"Details":               fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", receivedHost.Hostname, failedMessage),
+		"Suggested-remediation": "Check /server/cmd/registery_attempts.json for futher details",
+	})
+
+	// Build and publish the events
+	_ = provider.PersistEvent(successEvent)
+
+	go handler.config.EventBroadcaster.Publish(userID, successEvent)
+	_ = provider.PersistEvent(errorEvent)
+	go handler.config.EventBroadcaster.Publish(userID, errorEvent)
 }
 
 // swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
