@@ -25,7 +25,7 @@ func NewSheetSRV() *sheets.Service {
 	// authenticate and get configuration
 	config, err := google.JWTConfigFromJSON(byt, "https://www.googleapis.com/auth/spreadsheets")
 	if err != nil {
-		fmt.Println("ERR2", err)
+		log.Error(ErrorFailedConnectingGCP(err))
 		return nil
 	}
 	// create client with config and context
@@ -33,7 +33,7 @@ func NewSheetSRV() *sheets.Service {
 	// create new service using client
 	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
-		fmt.Println("ERR3", err)
+		log.Error(ErrorFailedConnectingGCP(err))
 		return nil
 	}
 	return srv
@@ -44,7 +44,7 @@ func (updater *spreadsheetUpdater) update(srv *sheets.Service) {
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(updater.spreadsheetID, rangeString).Do()
 	if err != nil {
-		fmt.Println("Unable to retrieve data from sheet: ", err)
+		log.Error(ErrorFailedRetreivingSheet(err))
 		return
 	}
 	values := make([][]interface{}, 0)
@@ -54,7 +54,7 @@ func (updater *spreadsheetUpdater) update(srv *sheets.Service) {
 		}
 		for _, comp := range entry.comps {
 			if updater.availableComponentsPerModel[entry.model][comp.Kind] {
-				fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model, comp.Kind)
+				log.Debug(fmt.Sprintf("Skipping spreadsheet updation for %s %s", entry.model, comp.Kind))
 				continue
 			}
 			var newValues []interface{}
@@ -81,7 +81,7 @@ func (updater *spreadsheetUpdater) update(srv *sheets.Service) {
 			}
 		}
 		if updater.availableModels[entry.model] != nil {
-			fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model)
+			log.Debug(fmt.Sprintf("Skipping spreadsheet updation for %s %s", entry.model))
 			continue
 		}
 		newValues := make([]interface{}, len(resp.Values[0]))
@@ -107,7 +107,7 @@ func (updater *spreadsheetUpdater) flushBatch(srv *sheets.Service, values [][]in
 	response, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 	values = make([][]interface{}, 0)
 	if err != nil || response.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		log.Error(ErrorFailedUpdatingSheet(err))
 	}
 	return make([][]interface{}, 0)
 }

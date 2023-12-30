@@ -9,10 +9,12 @@ import (
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrorFailedRetreivingSheetCode      = "1233"
-	ErrorFailedWritingComponentsCode    = "1234"
+	ErrorFailedUpdatingSheetCode        = "1234"
 	ErrorFailedRetreivingAHPackagesCode = "1235"
 	ErrorIOCode                         = "1236"
 	ErrorFailedGeneratingComponentsCode = "1237"
+	ErrorFailedWritingComponentsCode    = "1238"
+	ErrorFailedConnectingGCPCode        = "1239"
 )
 
 func ErrorFailedRetreivingSheet(err error) error {
@@ -20,6 +22,24 @@ func ErrorFailedRetreivingSheet(err error) error {
 		ErrorFailedRetreivingSheetCode,
 		errors.Fatal,
 		[]string{"Unable to retrieve data from sheet"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorFailedConnectingGCP(err error) error {
+	return errors.New(
+		ErrorFailedConnectingGCPCode,
+		errors.Fatal,
+		[]string{"Unable to connect to google api"},
+		[]string{err.Error()}, nil, nil,
+	)
+}
+
+func ErrorFailedUpdatingSheet(err error) error {
+	return errors.New(
+		ErrorFailedUpdatingSheetCode,
+		errors.Fatal,
+		[]string{"Unable to update data in sheet"},
 		[]string{err.Error()}, nil, nil,
 	)
 }
