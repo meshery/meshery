@@ -340,23 +340,6 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionKind}/transitions GetAvailableTransitionsByKind idGetConnectionsStatus
-// Handle GET request for getting all possible connection transitions
-//
-// Get all possible state transitions for a particular connection kind.
-// responses:
-// 200: mesheryConnectionsStatusPage
-func (h *Handler) GetPossibleTransitionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionKind := mux.Vars(req)["connectionKind"]
-	transitions := connections.PossibleTransitionnsMap[connectionKind]
-
-	err := json.NewEncoder(w).Encode(transitions)
-	if err != nil {
-		http.Error(w, models.ErrMarshal(err, "connection transitions").Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionStatusPayload := &connectionStatusPayload{}
 	defer func() {
