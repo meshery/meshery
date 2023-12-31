@@ -2,7 +2,6 @@ package models
 
 import (
 	mutils "github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models/machines/helpers"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -22,7 +21,6 @@ type MeshsyncDataHandler struct {
 	broker    broker.Handler
 	dbHandler database.Handler
 	log       logger.Handler
-	arh       helpers.AutoRegistrationHelper
 }
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler) *MeshsyncDataHandler {
@@ -145,7 +143,6 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 
 	switch event.EventType {
 	case broker.Add:
-		go mh.arh.Send(obj)
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)

@@ -8,10 +8,10 @@ import (
 	"net/url"
 
 	"github.com/gofrs/uuid"
-	mhelpers "github.com/layer5io/meshery/server/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/machines"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

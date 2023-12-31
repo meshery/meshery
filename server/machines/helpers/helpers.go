@@ -1,4 +1,4 @@
-package machines
+package helpers
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/grafana"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshsync/pkg/model"
 )
@@ -24,7 +24,7 @@ func getMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 	case "kubernetes":
 		return kubernetes.New(id, log)
 	case "grafana":
-		mch, err := New(initialState, id, log, mtype)
+		mch, err := machines.New(initialState, id, log, mtype)
 		if err != nil {
 			return mch, err
 		}
@@ -35,7 +35,7 @@ func getMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
 		return mch, nil
 	case "prometheus":
-		mch, err := New(initialState, id, log, mtype)
+		mch, err := machines.New(initialState, id, log, mtype)
 		if err != nil {
 			return mch, err
 		}
@@ -50,7 +50,6 @@ func getMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
 }
 
-
 func InitializeMachineWithContext(
 	machineCtx interface{},
 	ctx context.Context,
@@ -64,7 +63,7 @@ func InitializeMachineWithContext(
 ) (*machines.StateMachine, error) {
 	smInstanceTracker.Mx.Lock()
 	defer smInstanceTracker.Mx.Unlock()
-	
+
 	inst, ok := smInstanceTracker.ConnectToInstanceMap[ID]
 	if ok {
 		return inst, nil
@@ -84,7 +83,6 @@ func InitializeMachineWithContext(
 
 	return inst, nil
 }
-
 
 // func processRegistration() {
 // 	arh := helpers.GetAutoRegistrationHelperSingleton()
@@ -115,7 +113,7 @@ func InitializeMachineWithContext(
 // 			connType := getTypeOfConnection(obj)
 // 			if connType != "" {
 // 				id, _ := uuid.NewV4() // id should be hash of somehting.
-// 				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, arh.SMInstanceTracker, arh.Log, nil, machines.DISCOVERED, connType, nil)
+// 				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, arh.SMInstanceTracker, arh.Log, nil, DISCOVERED, connType, nil)
 // 				if err != nil {
 // 					arh.Log.Error(ErrAutoRegister(err, connType))
 // 				}
@@ -124,7 +122,6 @@ func InitializeMachineWithContext(
 // 		}(&obj)
 // 	}
 // }
-
 
 func getTypeOfConnection(obj *model.KubernetesResource) string {
 	if strings.Contains(strings.ToLower(obj.KubernetesResourceMeta.Name), "grafana") {

@@ -10,11 +10,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	helpers "github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
@@ -431,7 +431,6 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				h.config.EventBroadcaster.Publish(userID, event)
 			}(inst, status)
 		}
-		smInstanceTracker.Mx.Unlock()
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		for id, status := range *connectionStatusPayload {

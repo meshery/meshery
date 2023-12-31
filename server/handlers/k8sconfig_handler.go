@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"path/filepath"
 
-	mhelpers "github.com/layer5io/meshery/server/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models/machines"
+	"github.com/layer5io/meshery/server/machines"
 
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
