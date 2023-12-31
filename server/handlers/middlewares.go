@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"sync"
 
 	"github.com/gofrs/uuid"
+	mhelpers "github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/machines"
@@ -17,11 +17,6 @@ import (
 )
 
 const providerQParamName = "provider"
-
-type ConnectionToStateMachineInstanceTracker struct {
-	ConnectToInstanceMap map[uuid.UUID]*machines.StateMachine
-	mx                   sync.RWMutex
-}
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
@@ -271,24 +266,22 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-		smInstanceTracker.mx.Lock()
-		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
-		if !ok {
-			inst, err = InitializeMachineWithContext(
-				machineCtx,
-				ctx,
-				connectionUUID,
-				smInstanceTracker,
-				h.log,
-				provider,
-				machines.DefaultState,
-				"kubernetes",
-				kubernetes.AssignInitialCtx,
-			)
-			if err != nil {
-				h.log.Error(err)
-			}
+
+		inst, err := mhelpers.InitializeMachineWithContext(
+			machineCtx,
+			ctx,
+			connectionUUID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.DefaultState,
+			"kubernetes",
+			kubernetes.AssignInitialCtx,
+		)
+		if err != nil {
+			h.log.Error(err)
 		}
+
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
@@ -297,7 +290,6 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
-		smInstanceTracker.mx.Unlock()
 	}
 
 	for _, k8sContext := range k8sContextsFromKubeConfig {
@@ -312,24 +304,22 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-		smInstanceTracker.mx.Lock()
-		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
-		if !ok {
-			inst, err = InitializeMachineWithContext(
-				machineCtx,
-				ctx,
-				connectionUUID,
-				smInstanceTracker,
-				h.log,
-				provider,
-				machines.DefaultState,
-				"kubernetes",
-				kubernetes.AssignInitialCtx,
-			)
-			if err != nil {
-				h.log.Error(err)
-			}
+
+		inst, err := mhelpers.InitializeMachineWithContext(
+			machineCtx,
+			ctx,
+			connectionUUID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.DefaultState,
+			"kubernetes",
+			kubernetes.AssignInitialCtx,
+		)
+		if err != nil {
+			h.log.Error(err)
 		}
+
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
@@ -338,7 +328,6 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
-		smInstanceTracker.mx.Unlock()
 	}
 	return ctx, nil
 }

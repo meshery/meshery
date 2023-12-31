@@ -41,31 +41,27 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-		smInstanceTracker.mx.Lock()
-		defer smInstanceTracker.mx.Unlock()
 
-		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionRegisterPayload.ID]
-		if !ok {
-			machineCtx := make(map[string]string, 0)
-			inst, err = InitializeMachineWithContext(
-				machineCtx,
-				req.Context(),
-				connectionRegisterPayload.ID,
-				smInstanceTracker,
-				h.log,
-				nil,
-				machines.DISCOVERED,
-				strings.ToLower(connectionRegisterPayload.Kind),
-				nil,
-			)
-			if err != nil {
-				event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
-					"error": err,
-				}).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+		machineCtx := make(map[string]string, 0)
+		inst, err := helpers.InitializeMachineWithContext(
+			machineCtx,
+			req.Context(),
+			connectionRegisterPayload.ID,
+			smInstanceTracker,
+			h.log,
+			nil,
+			machines.DISCOVERED,
+			strings.ToLower(connectionRegisterPayload.Kind),
+			nil,
+		)
+		if err != nil {
+			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
+
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
@@ -87,8 +83,8 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
 
-	smInstancetracker.mx.Lock()
-	defer smInstancetracker.mx.Unlock()
+	smInstancetracker.Mx.Lock()
+	defer smInstancetracker.Mx.Unlock()
 	id, ok := body["id"]
 	if ok {
 		delete(smInstancetracker.ConnectToInstanceMap, uuid.FromStringOrNil(id))
@@ -97,8 +93,8 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
 	compFilter := &v1alpha1.ComponentFilter{
-		Name:      fmt.Sprintf("%sConnection", payload.Kind),
-		Limit:     1,
+		Name:  fmt.Sprintf("%sConnection", payload.Kind),
+		Limit: 1,
 	}
 	schema := make(map[string]interface{}, 1)
 	connectionComponent, _, _ := h.registryManager.GetEntities(compFilter)
@@ -109,8 +105,8 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 
 	schema["connection"] = connectionComponent[0]
 	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:      fmt.Sprintf("%sCredential", payload.Kind),
-		Limit:     1,
+		Name:  fmt.Sprintf("%sCredential", payload.Kind),
+		Limit: 1,
 	})
 
 	if len(credential) > 0 {
@@ -366,7 +362,6 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	if connKind == "kubernetes" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		smInstanceTracker.mx.Lock()
 		for id, status := range *connectionStatusPayload {
 			eventBuilder.ActedUpon(id)
 			k8scontext, err := provider.GetK8sContext(token, id.String())
@@ -396,27 +391,25 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
 			}
-			inst, ok := smInstanceTracker.ConnectToInstanceMap[id]
-			if !ok {
-				inst, err = InitializeMachineWithContext(
-					machineCtx,
-					req.Context(),
-					id,
-					smInstanceTracker,
-					h.log,
-					provider,
-					machines.InitialState,
-					"kubernetes",
-					kubernetes.AssignInitialCtx,
-				)
-				if err != nil {
-					event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
-						"error": err,
-					}).Build()
-					_ = provider.PersistEvent(event)
-					go h.config.EventBroadcaster.Publish(userID, event)
-					continue
-				}
+
+			inst, err := helpers.InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				id,
+				smInstanceTracker,
+				h.log,
+				provider,
+				machines.InitialState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
+			)
+			if err != nil {
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
 			}
 
 			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
@@ -429,14 +422,16 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				}
 
 				if status == connections.DELETED {
+					smInstanceTracker.Mx.Lock()
 					delete(smInstanceTracker.ConnectToInstanceMap, inst.ID)
+					smInstanceTracker.Mx.Unlock()
 				}
 
 				_ = provider.PersistEvent(event)
 				h.config.EventBroadcaster.Publish(userID, event)
 			}(inst, status)
 		}
-		smInstanceTracker.mx.Unlock()
+		smInstanceTracker.Mx.Unlock()
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		for id, status := range *connectionStatusPayload {

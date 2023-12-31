@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	mhelpers "github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/machines"
@@ -111,33 +112,35 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		EventBroadcaster:   h.config.EventBroadcaster,
 		RegistryManager:    h.registryManager,
 	}
-	smInstanceTracker.mx.Lock()
+
 	connectionUUID := uuid.FromStringOrNil(contextID)
-	inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
-	if !ok {
-		inst, err = InitializeMachineWithContext(
-			machineCtx,
-			req.Context(),
-			connectionUUID,
-			smInstanceTracker,
-			h.log,
-			provider,
-			machines.InitialState,
-			"kubernetes",
-			kubernetes.AssignInitialCtx,
-		)
-		if err != nil {
-			h.log.Error(err)
-		}
-	}
+
+	inst, err := mhelpers.InitializeMachineWithContext(
+		machineCtx,
+		req.Context(),
+		connectionUUID,
+		smInstanceTracker,
+		h.log,
+		provider,
+		machines.InitialState,
+		"kubernetes",
+		kubernetes.AssignInitialCtx,
+	)
+	
 	go func(inst *machines.StateMachine) {
 		event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
-		h.log.Error(err)
-		h.log.Debug(event)
+		if err != nil {
+			h.log.Error(err)
+			h.log.Debug(event)
+			return
+		}
+		smInstanceTracker.Mx.Lock()
+		delete(smInstanceTracker.ConnectToInstanceMap, connectionUUID)
+		smInstanceTracker.Mx.Unlock()
 	}(inst)
-	smInstanceTracker.mx.Unlock()
 
 	if err != nil {
+		h.log.Error(err)
 		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
 			"error": err,
 		})
@@ -148,5 +151,4 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// go h.config.EventBroadcaster.Publish(userID, event)
 
 	// h.config.K8scontextChannel.PublishContext()
-	// go models.FlushMeshSyncData(req.Context(), deletedContext, provider, h.config.EventBroadcaster, user.ID, h.SystemID)
 }

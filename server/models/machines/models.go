@@ -39,6 +39,12 @@ var (
 	InitialState StateType = "initialized"
 )
 
+
+type ConnectionToStateMachineInstanceTracker struct {
+	ConnectToInstanceMap map[uuid.UUID]*StateMachine
+	Mx                   sync.RWMutex
+}
+
 type Payload struct {
 	Connection connections.Connection
 	Credential models.Credential

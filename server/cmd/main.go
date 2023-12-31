@@ -272,7 +272,7 @@ func main() {
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
-	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
+	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
 

@@ -1,11 +1,14 @@
 package machines
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines/grafana"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/machines/prometheus"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
@@ -31,7 +34,7 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	return machines.EventType(machines.DefaultState)
 }
 
-func GetMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
+func getMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 	case "kubernetes":
 		return kubernetes.New(id, log)
@@ -60,4 +63,39 @@ func GetMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 		return mch, nil
 	}
 	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
+}
+
+
+func InitializeMachineWithContext(
+	machineCtx interface{},
+	ctx context.Context,
+	ID uuid.UUID,
+	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
+	log logger.Handler,
+	provider models.Provider,
+	initialState machines.StateType,
+	mtype string,
+	initFunc models.InitFunc,
+) (*machines.StateMachine, error) {
+	smInstanceTracker.Mx.Lock()
+	defer smInstanceTracker.Mx.Unlock()
+
+	inst, ok := smInstanceTracker.ConnectToInstanceMap[ID]
+	if ok {
+		return inst, nil
+	}
+
+	inst, err := getMachine(initialState, mtype, ID.String(), log)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	inst.Provider = provider
+	_, err = inst.Start(ctx, machineCtx, log, initFunc)
+	smInstanceTracker.ConnectToInstanceMap[ID] = inst
+	if err != nil {
+		return nil, err
+	}
+
+	return inst, nil
 }
