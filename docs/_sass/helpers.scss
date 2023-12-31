@@ -139,24 +139,7 @@ summary:before {
   right: 0;
   top: 0;
   bottom: 0;
-  margin: auto;
-  height: .35rem;
-  transform: rotate(0);
-  transform-origin: .2rem 50%;
-  transition: .25s transform ease;
-}
-
-summary:before {
-  content: '';
-  border-width: .4rem;
-  border-style: solid;
-  border-color: transparent transparent transparent var( --color-secondary-dark);
-  position: absolute;
-  left: 1rem;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  height: .35rem;
+  height: .02rem;
   margin: auto;
   transform: rotate(0);
   transform-origin: .2rem 50%;
