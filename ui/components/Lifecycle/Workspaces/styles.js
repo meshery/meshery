@@ -1,5 +1,5 @@
 import { Typography, Card, Checkbox, styled, Box, Button } from '@material-ui/core';
-import theme, { Colors } from '../../themes/app';
+import theme, { Colors } from '../../../themes/app';
 
 /** Card Styles */
 export const CardWrapper = styled(Card)({
@@ -120,7 +120,7 @@ export const TabTitle = styled('p')({
 
 export const TabCount = styled('p')({
   margin: '0',
-  fontSize: '30px',
+  fontSize: '60px',
   fontWeight: '500',
   lineHeight: 1,
   marginBottom: '5px',

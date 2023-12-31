@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
 import { ArrowForward, Edit } from '@material-ui/icons';
 import { DeleteIcon } from '@layer5/sistent-svg';
-import OrgIcon from '../../assets/icons/OrgIcon';
+import OrgIcon from '../../../assets/icons/OrgIcon';
 import {
   BulkSelectCheckbox,
   CardTitle,
@@ -15,13 +15,13 @@ import {
   TabCount,
   TabTitle,
 } from './styles';
-import theme from '../../themes/app';
-import FlipCard from '../Environments/flip-card';
+import theme from '../../../themes/app';
+import FlipCard from '../../Environments/flip-card';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import {
   useGetDesignsOfWorkspaceQuery,
   useGetEnvironmentsOfWorkspaceQuery,
-} from '../../rtk-query/workspace';
+} from '../../../rtk-query/workspace';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -37,7 +37,7 @@ export const TransferButton = ({ title, count, onAssign, disabled, classes }) =>
       <Grid>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
-        <SyncAltIcon />
+        <SyncAltIcon style={{ position: 'absolute', top: '10px', right: '10px' }} />
       </Grid>
     </Button>
   );

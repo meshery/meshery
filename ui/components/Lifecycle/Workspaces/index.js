@@ -4,16 +4,16 @@ import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DesignsIcon from '../../assets/icons/DesignIcon';
+import DesignsIcon from '../../../assets/icons/DesignIcon';
 import classNames from 'classnames';
 
-import { store } from '../../store';
-import WorkspaceIcon from '../../assets/icons/Workspace';
-import EmptyState from '../Environments/empty-state';
-import useStyles from '../../assets/styles/general/tool.styles';
-import styles from '../Environments/styles';
-import SearchBar from '../../utils/custom-search';
-import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
+import { store } from '../../../store';
+import WorkspaceIcon from '../../../assets/icons/Workspace';
+import EmptyState from '../../Environments/empty-state';
+import useStyles from '../../../assets/styles/general/tool.styles';
+import styles from '../../Environments/styles';
+import SearchBar from '../../../utils/custom-search';
+import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
 import {
   useAssignDesignToWorkspaceMutation,
@@ -26,22 +26,22 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignEnvironmentFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
-} from '../../rtk-query/workspace';
-import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
-import { useGetPatternsQuery } from '../../rtk-query/design';
-import dataFetch from '../../lib/data-fetch';
-import { updateProgress } from '../../lib/store';
-import { useNotification } from '../../utils/hooks/useNotification';
+} from '../../../rtk-query/workspace';
+import { useGetEnvironmentsQuery } from '../../../rtk-query/environments';
+import { useGetPatternsQuery } from '../../../rtk-query/design';
+import dataFetch from '../../../lib/data-fetch';
+import { updateProgress } from '../../../lib/store';
+import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
-import Modal from '../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
+import Modal from '../../Modal';
+import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
-import { EVENT_TYPES } from '../../lib/event-types';
-import EnvironmentIcon from '../../assets/icons/Environment';
-import GenericModal from '../Environments/generic-modal';
-import TransferList from '../Environments/transfer-list/transfer-list';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import EnvironmentIcon from '../../../assets/icons/Environment';
+import GenericModal from '../../Environments/generic-modal';
+import TransferList from '../../Environments/transfer-list/transfer-list';
 import { DeleteIcon } from '@layer5/sistent-svg';
-import theme from '../../themes/app';
+import theme from '../../../themes/app';
 
 const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
