@@ -66,6 +66,7 @@ export const RedirectButton = ({ title, count, disabled = true, classes }) => {
  * @param {Function} props.onEdit - Function to edit the workspace.
  * @param {Function} props.onSelect - Function to select workspace for bulk actions.
  * @param {Array} props.selectedWorkspaces - Selected workspace list for delete.
+ * @param {Function} props.onAssignEnvironment - Function to open environment assignment modal open.
  * @param {Function} props.onAssignDesign - Function to open design assignment modal open.
  *
  */
@@ -125,179 +126,29 @@ const WorkspaceCard = ({
           selectedWorkspaces?.filter((id) => id == workspaceDetails.id).length === 1 ? true : false
         }
         frontComponents={
-          <CardWrapper
-            elevation={2}
-            style={{
-              minHeight: '300px',
-            }}
-          >
-            <Grid style={{ display: 'flex', flexDirection: 'row', paddingBottom: '5px' }}>
-              <CardTitle variant="body2" onClick={(e) => e.stopPropagation()}>
-                {workspaceDetails?.name}
-              </CardTitle>
-            </Grid>
-            <Grid
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: '5px',
-                marginBottom: '5px',
-              }}
-            >
-              <StyledIconButton onClick={(e) => e.stopPropagation()}>
-                <OrgIcon width="24" height="24" />
-              </StyledIconButton>
-              <OrganizationName variant="span" onClick={(e) => e.stopPropagation()}>
-                {workspaceDetails?.owner}
-              </OrganizationName>
-            </Grid>
-            <Grid
-              pt={{ xs: 1.5, md: 3 }}
-              style={{
-                display: 'flex',
-                gap: '10px',
-                flexDirection: { xs: 'column', sm: 'row' },
-              }}
-            >
-              <Grid
-                xs={12}
-                style={{
-                  paddingTop: '15px',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                  gap: '10px',
-                }}
-              >
-                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
-                  <TransferButton
-                    title="Environments"
-                    count={environmentsOfWorkspaceCount}
-                    onAssign={onAssignEnvironment}
-                    classes={classes}
-                  />
-                </Box>
-                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
-                  <TransferButton
-                    title="Designs"
-                    count={designsOfWorkspaceCount}
-                    onAssign={onAssignDesign}
-                    disabled={true}
-                    classes={classes}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </CardWrapper>
+          <CardFront
+            classes={classes}
+            name={workspaceDetails?.name}
+            workspaceOwner={workspaceDetails?.owner}
+            environmentsCount={environmentsOfWorkspaceCount}
+            onAssignEnvironment={onAssignEnvironment}
+            designsCount={designsOfWorkspaceCount}
+            onAssignDesign={onAssignDesign}
+          />
         }
         backComponents={
-          <CardWrapper
-            elevation={2}
-            style={{
-              background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
-              minHeight: '300px',
-            }}
-          >
-            <Grid xs={12}>
-              <Grid xs={12} style={{ display: 'flex', flexDirection: 'row' }}>
-                <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
-                  <CardTitle
-                    style={{ color: theme.palette.secondary.white }}
-                    variant="body2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {workspaceDetails?.name}
-                  </CardTitle>
-                </Grid>
-                <Grid
-                  xs={6}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  <Button
-                    style={{
-                      minWidth: 'fit-content',
-                      '&.MuiButtonBase-root:hover': {
-                        background: 'transparent',
-                      },
-                      padding: 0,
-                    }}
-                    onClick={onEdit}
-                    disabled={
-                      selectedWorkspaces?.filter((id) => id == workspaceDetails.id).length === 1
-                        ? true
-                        : false
-                    }
-                  >
-                    <Edit style={{ color: 'white', margin: '0 2px' }} />
-                  </Button>
-                  <Button
-                    style={{
-                      minWidth: 'fit-content',
-                      '&.MuiButtonBase-root:hover': {
-                        background: 'transparent',
-                      },
-                      padding: 0,
-                    }}
-                    onClick={onDelete}
-                    disabled={
-                      selectedWorkspaces?.filter((id) => id == workspaceDetails.id).length === 1
-                        ? true
-                        : false
-                    }
-                  >
-                    <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
-                  </Button>
-                </Grid>
-              </Grid>
-              <Grid>
-                {workspaceDetails.description ? (
-                  <DescriptionLabel
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      padding: '10px 0',
-                      color: theme.palette.secondary.white,
-                      maxHeight: '105px',
-                    }}
-                  >
-                    {workspaceDetails.description}
-                  </DescriptionLabel>
-                ) : (
-                  <EmptyDescription
-                    onClick={(e) => e.stopPropagation()}
-                    style={{ padding: '10px 0', color: `${theme.palette.secondary.white}90` }}
-                  >
-                    No description
-                  </EmptyDescription>
-                )}
-              </Grid>
-            </Grid>
-            <Grid
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                position: 'absolute',
-                bottom: '20px',
-                width: '100%',
-                color: `${theme.palette.secondary.white}99`,
-              }}
-            >
-              <Grid xs={6} style={{ textAlign: 'left' }}>
-                <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
-                  Updated At: {formattoLongDate(workspaceDetails?.updated_at)}
-                </DateLabel>
-              </Grid>
-              <Grid xs={6} style={{ textAlign: 'left' }}>
-                <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
-                  Created At: {formattoLongDate(workspaceDetails?.created_at)}
-                </DateLabel>
-              </Grid>
-            </Grid>
-          </CardWrapper>
+          <CardBack
+            classes={classes}
+            name={workspaceDetails?.name}
+            description={workspaceDetails?.description}
+            workspaceId={workspaceDetails?.id}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            selectedWorkspaces={selectedWorkspaces}
+            updatedDate={workspaceDetails?.updated_at}
+            createdDate={workspaceDetails?.created_at}
+            onSelect={onSelect}
+          />
         }
       />
     </>
@@ -305,3 +156,198 @@ const WorkspaceCard = ({
 };
 
 export default WorkspaceCard;
+
+const CardFront = ({
+  classes,
+  name,
+  workspaceOwner,
+  environmentsCount,
+  onAssignEnvironment,
+  designsCount,
+  onAssignDesign,
+}) => {
+  return (
+    <CardWrapper
+      elevation={2}
+      style={{
+        minHeight: '300px',
+      }}
+    >
+      <Grid style={{ display: 'flex', flexDirection: 'row', paddingBottom: '5px' }}>
+        <CardTitle variant="body2" onClick={(e) => e.stopPropagation()}>
+          {name}
+        </CardTitle>
+      </Grid>
+      <Grid
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          marginTop: '5px',
+          marginBottom: '5px',
+        }}
+      >
+        <StyledIconButton onClick={(e) => e.stopPropagation()}>
+          <OrgIcon width="24" height="24" />
+        </StyledIconButton>
+        <OrganizationName variant="span" onClick={(e) => e.stopPropagation()}>
+          {workspaceOwner}
+        </OrganizationName>
+      </Grid>
+      <Grid
+        pt={{ xs: 1.5, md: 3 }}
+        style={{
+          display: 'flex',
+          gap: '10px',
+          flexDirection: { xs: 'column', sm: 'row' },
+        }}
+      >
+        <Grid
+          xs={12}
+          style={{
+            paddingTop: '15px',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+            gap: '10px',
+          }}
+        >
+          <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+            <TransferButton
+              title="Environments"
+              count={environmentsCount}
+              onAssign={onAssignEnvironment}
+              classes={classes}
+            />
+          </Box>
+          <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+            <TransferButton
+              title="Designs"
+              count={designsCount}
+              onAssign={onAssignDesign}
+              disabled={true}
+              classes={classes}
+            />
+          </Box>
+        </Grid>
+      </Grid>
+    </CardWrapper>
+  );
+};
+
+const CardBack = ({
+  onSelect,
+  name,
+  onEdit,
+  onDelete,
+  selectedWorkspaces,
+  workspaceId,
+  description,
+  updatedDate,
+  createdDate,
+}) => {
+  return (
+    <CardWrapper
+      elevation={2}
+      style={{
+        background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
+        minHeight: '300px',
+      }}
+    >
+      <Grid xs={12}>
+        <Grid xs={12} style={{ display: 'flex', flexDirection: 'row' }}>
+          <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
+            <CardTitle
+              style={{ color: theme.palette.secondary.white }}
+              variant="body2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {name}
+            </CardTitle>
+          </Grid>
+          <Grid
+            xs={6}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Button
+              style={{
+                minWidth: 'fit-content',
+                '&.MuiButtonBase-root:hover': {
+                  background: 'transparent',
+                },
+                padding: 0,
+              }}
+              onClick={onEdit}
+              disabled={
+                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1 ? true : false
+              }
+            >
+              <Edit style={{ color: 'white', margin: '0 2px' }} />
+            </Button>
+            <Button
+              style={{
+                minWidth: 'fit-content',
+                '&.MuiButtonBase-root:hover': {
+                  background: 'transparent',
+                },
+                padding: 0,
+              }}
+              onClick={onDelete}
+              disabled={
+                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1 ? true : false
+              }
+            >
+              <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid>
+          {description ? (
+            <DescriptionLabel
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                padding: '10px 0',
+                color: theme.palette.secondary.white,
+                maxHeight: '105px',
+              }}
+            >
+              {description}
+            </DescriptionLabel>
+          ) : (
+            <EmptyDescription
+              onClick={(e) => e.stopPropagation()}
+              style={{ padding: '10px 0', color: `${theme.palette.secondary.white}90` }}
+            >
+              No description
+            </EmptyDescription>
+          )}
+        </Grid>
+      </Grid>
+      <Grid
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          position: 'absolute',
+          bottom: '20px',
+          width: '100%',
+          color: `${theme.palette.secondary.white}99`,
+        }}
+      >
+        <Grid xs={6} style={{ textAlign: 'left' }}>
+          <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
+            Updated At: {formattoLongDate(updatedDate)}
+          </DateLabel>
+        </Grid>
+        <Grid xs={6} style={{ textAlign: 'left' }}>
+          <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
+            Created At: {formattoLongDate(createdDate)}
+          </DateLabel>
+        </Grid>
+      </Grid>
+    </CardWrapper>
+  );
+};
