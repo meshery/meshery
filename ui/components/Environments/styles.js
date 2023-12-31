@@ -84,7 +84,7 @@ const styles = (theme) => ({
 
   tabCount: {
     margin: '0',
-    fontSize: '30px',
+    fontSize: '60px',
     fontWeight: '500',
     lineHeight: 1,
     marginBottom: '5px',
