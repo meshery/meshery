@@ -177,6 +177,7 @@ func main() {
 		&models.SmiResultWithID{},
 		models.K8sContext{},
 		models.Organization{},
+		models.Key{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -197,6 +198,7 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,

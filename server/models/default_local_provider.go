@@ -48,6 +48,7 @@ type DefaultLocalProvider struct {
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	OrganizationPersister          *OrganizationPersister
+	KeyPersister                    *KeyPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 	Log                             logger.Handler
@@ -168,9 +169,9 @@ func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _
 }
 
 
-func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
-}
+// func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
+// 	return []byte(""), ErrLocalProviderSupport
+// }
 
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
@@ -1133,6 +1134,31 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
+	go func() {
+		keys := []*Key{
+			{
+				ID:          uuid.FromStringOrNil("3090a03b-70b3-4956-afb4-a6b7935cd4f4"),
+				Owner:       uuid.Nil,
+				Function:    "Create new design",
+				Category:    "Catalog Management",
+				Description: "Create new Meshery design",
+				Subcategory: "Designs",
+			},
+			{
+				ID:          uuid.FromStringOrNil("9030a03b-70b3-4956-afb4-a6b7935cd478"),
+				Owner:       uuid.Nil,
+				Function:    "Create new design",
+				Category:    "Catalog Management",
+				Description: "Create new Meshery design",
+				Subcategory: "Designs",
+			},
+		}
+		_, err := l.KeyPersister.SaveUsersKey(keys)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "key"))
+		}
+	}()
+
 	// seed default organization
 	go func() {
 		id, _ := uuid.NewV4()
@@ -1257,6 +1283,27 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 	}
 
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+}
+
+// GetKeys returns the list of keys
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
+    keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
+    if err != nil {
+        return nil, err
+    }
+    return keys, nil
+}
+
+// GetKey returns the key for the given keyID
+func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(keyID)
+	return l.KeyPersister.GetUsersKey(id)
+}
+
+// SaveKey saves the given key with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
+	// fmt.Printf(keys)
+	return l.KeyPersister.SaveUsersKey(keys)
 }
 
 func (l *DefaultLocalProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
