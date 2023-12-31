@@ -10,22 +10,20 @@ import { debounce } from 'lodash';
 import { Delete } from '@material-ui/icons';
 import classNames from 'classnames';
 
-import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
+import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
-import EnvironmentIcon from '../../assets/icons/Environment';
-import dataFetch from '../../lib/data-fetch';
-import { EVENT_TYPES } from '../../lib/event-types';
-import { updateProgress } from '../../lib/store';
-import { useNotification } from '../../utils/hooks/useNotification';
-import useStyles from '../../assets/styles/general/tool.styles';
-import SearchBar from '../../utils/custom-search';
-import Modal from '../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
-import EmptyState from './empty-state';
-import TransferList from './transfer-list/transfer-list';
-import GenericModal from './generic-modal';
-import ConnectionIcon from '../../assets/icons/Connection';
-import { TRANSFER_COMPONET } from '../../utils/Enum';
+import EnvironmentIcon from '../../../assets/icons/Environment';
+import dataFetch from '../../../lib/data-fetch';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import { updateProgress } from '../../../lib/store';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import useStyles from '../../../assets/styles/general/tool.styles';
+import SearchBar from '../../../utils/custom-search';
+import Modal from '../../Modal';
+import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import { EmptyState, TransferList, GenericModal } from '../General';
+import ConnectionIcon from '../../../assets/icons/Connection';
+import { TRANSFER_COMPONET } from '../../../utils/Enum';
 import {
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
@@ -34,10 +32,10 @@ import {
   useCreateEnvironmentMutation,
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
-} from '../../rtk-query/environments';
-import { store } from '../../store';
+} from '../../../rtk-query/environments';
+import { store } from '../../../store';
 import styles from './styles';
-import { useGetConnectionsQuery } from '../../rtk-query/connection';
+import { useGetConnectionsQuery } from '../../../rtk-query/connection';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {

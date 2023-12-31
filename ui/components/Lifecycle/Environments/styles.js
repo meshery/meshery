@@ -1,4 +1,4 @@
-import { Colors } from '../../themes/app';
+import { Colors } from '../../../themes/app';
 
 const styles = (theme) => ({
   /** Bulk action bar styles */

@@ -3,8 +3,8 @@ import { Button, Card, Grid, Typography, Box, Checkbox } from '@material-ui/core
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Delete, Edit } from '@material-ui/icons';
 
-import FlipCard from './flip-card';
-import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
+import { FlipCard } from '../General';
+import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import classNames from 'classnames';
 
 export const formattoLongDate = (date) => {

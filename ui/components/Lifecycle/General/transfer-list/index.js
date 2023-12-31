@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, Grid } from '@material-ui/core';
 
-import KubernetesIcon from '../../../assets/icons/KubernetesIcon';
-import SMPIcon from '../../../assets/icons/SMPIcon';
-import LeftArrowIcon from '../../../assets/icons/LeftArrowIcon';
-import RightArrowIcon from '../../../assets/icons/RightArrowIcon';
+import KubernetesIcon from '../../../../assets/icons/KubernetesIcon';
+import SMPIcon from '../../../../assets/icons/SMPIcon';
+import LeftArrowIcon from '../../../../assets/icons/LeftArrowIcon';
+import RightArrowIcon from '../../../../assets/icons/RightArrowIcon';
 import {
   ButtonGrid,
   ListGrid,
@@ -16,7 +16,7 @@ import {
 } from './style';
 import { Typography } from '@mui/material';
 import { Tooltip } from '@mui/material';
-import { TRANSFER_COMPONET } from '../../../utils/Enum';
+import { TRANSFER_COMPONET } from '../../../../utils/Enum';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);

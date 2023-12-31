@@ -9,9 +9,9 @@ import classNames from 'classnames';
 
 import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import EmptyState from '../../Environments/empty-state';
+import { EmptyState, GenericModal, TransferList } from '../General';
 import useStyles from '../../../assets/styles/general/tool.styles';
-import styles from '../../Environments/styles';
+import styles from '../Environments/styles';
 import SearchBar from '../../../utils/custom-search';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -38,8 +38,6 @@ import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import GenericModal from '../../Environments/generic-modal';
-import TransferList from '../../Environments/transfer-list/transfer-list';
 import { DeleteIcon } from '@layer5/sistent-svg';
 import theme from '../../../themes/app';
 
