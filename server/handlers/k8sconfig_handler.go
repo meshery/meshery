@@ -154,7 +154,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			}
 
 			go func(inst *machines.StateMachine) {
-				event, err := inst.SendEvent(req.Context(), mhelpers.StatusToEvent(status), nil)
+				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(string(status))), nil)
 				if err != nil {
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)

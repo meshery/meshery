@@ -12,6 +12,7 @@ const (
 	ErrInititalizeK8sMachineCode  = "1543"
 	ErrAssetMachineCtxCode        = "1544"
 	ErrInvalidTypeCode            = "1551"
+	ErrAutoRegisterCode           = "replace_me"
 )
 
 func ErrInvalidTransition(from, to StateType) error {
