@@ -149,7 +149,6 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
-			fmt.Printf("rel: %+v\n", rel)
 			erh.relationshipChan <- rel
 		}
 		return nil
