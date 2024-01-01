@@ -56,7 +56,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application/Kubernetes%20Manifest",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
 					Response:     "onboard.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
