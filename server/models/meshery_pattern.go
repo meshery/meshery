@@ -34,6 +34,10 @@ func GetDesignsTypes() (r []DesignTypeResponse) {
 		DesignTypeResponse{
 			Type:                Design,
 			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                OCI,
+			SupportedExtensions: []string{".yaml", ".yml"}, // TODO: update this extensions
 		})
 	return
 }
@@ -43,6 +47,7 @@ const (
 	DockerCompose DesignType = "Docker Compose"
 	K8sManifest   DesignType = "Kubernetes Manifest"
 	Design        DesignType = "Design"
+	OCI           DesignType = "OCI"
 )
 
 // reason for adding this constucts is because these has been removed in latest client-go
