@@ -97,8 +97,8 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
 	compFilter := &v1alpha1.ComponentFilter{
-		Name:      fmt.Sprintf("%sConnection", payload.Kind),
-		Limit:     1,
+		Name:  fmt.Sprintf("%sConnection", payload.Kind),
+		Limit: 1,
 	}
 	schema := make(map[string]interface{}, 1)
 	connectionComponent, _, _ := h.registryManager.GetEntities(compFilter)
@@ -109,8 +109,8 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 
 	schema["connection"] = connectionComponent[0]
 	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:      fmt.Sprintf("%sCredential", payload.Kind),
-		Limit:     1,
+		Name:  fmt.Sprintf("%sCredential", payload.Kind),
+		Limit: 1,
 	})
 
 	if len(credential) > 0 {
