@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import {
   Avatar,
   Box,
@@ -331,6 +332,7 @@ function MesheryPatterns({
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
+  const [meshModels, setMeshModels] = useState([]);
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -585,6 +587,7 @@ function MesheryPatterns({
           );
 
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models);
         } catch (err) {
           console.error(err);
           handleError(ACTION_TYPES.SCHEMA_FETCH);
@@ -1568,125 +1571,104 @@ function MesheryPatterns({
                 setExpanded={setIsSearchExpanded}
                 placeholder="Search designs..."
               />
-              {viewType === 'table' && (
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              )}
-
-              {!selectedPattern.show && (
-                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-              )}
-            </div>
-          </div>
-          {!selectedPattern.show && viewType === 'table' && (
-            <ResponsiveDataTable
-              data={patterns}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
-          )}
-          {!selectedPattern.show && viewType === 'grid' && (
-            // grid vieww
-            <MesheryPatternGrid
-              selectedK8sContexts={selectedK8sContexts}
-              canPublishPattern={canPublishPattern}
-              patterns={patterns}
-              handleDeploy={handleDeploy}
-              handleVerify={handleVerify}
-              handlePublish={handlePublish}
-              handleUnpublishModal={handleUnpublishModal}
-              handleUnDeploy={handleUnDeploy}
-              handleClone={handleClone}
-              supportedTypes="null"
-              handleSubmit={handleSubmit}
-              setSelectedPattern={setSelectedPattern}
-              selectedPattern={selectedPattern}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-              patternErrors={patternErrors}
-              publishModal={publishModal}
-              setPublishModal={setPublishModal}
-              publishSchema={publishSchema}
-              user={user}
-              handleInfoModal={handleInfoModal}
-            />
-          )}
-          <ConfirmationModal
-            open={modalOpen.open}
-            handleClose={handleModalClose}
-            submit={{
-              deploy: () =>
-                handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              unDeploy: () =>
-                handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
-            }}
-            title={modalOpen.name}
-            componentCount={modalOpen.count}
-            tab={modalOpen.action}
-            validationBody={modalOpen.validationBody}
-            dryRunComponent={modalOpen.dryRunComponent}
-            errors={modalOpen.errors}
-          />
-          {canPublishPattern &&
-            publishModal.open &&
-            CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action) && (
-              <Modal
-                open={true}
-                schema={publishSchema.rjsfSchema}
-                uiSchema={publishSchema.uiSchema}
-                handleClose={handlePublishModalClose}
-                aria-label="catalog publish"
-                title={publishModal.pattern?.name}
-                handleSubmit={handlePublish}
-                showInfoIcon={{
-                  text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-                  link: 'https://docs.meshery.io/concepts/catalog',
-                }}
-                submitBtnText="Submit for Approval"
-                submitBtnIcon={<PublicIcon />}
+            {viewType === 'table' && (
+              <CustomColumnVisibilityControl
+                id="ref"
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             )}
-          {importModal.open && CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action) && (
-            <Modal
-              open={true}
-              schema={importSchema.rjsfSchema}
-              uiSchema={importSchema.uiSchema}
-              handleClose={handleUploadImportClose}
-              handleSubmit={handleImportDesign}
-              title="Import Design"
-              submitBtnText="Import"
-              leftHeaderIcon={
-                <Pattern
-                  fill="#fff"
-                  style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                  className={undefined}
-                />
-              }
-              submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-            />
-          )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action) && (
-            <InfoModal
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              formSchema={publishSchema}
-            />
-          )}
-          <PromptComponent ref={modalRef} />
+
+            {!selectedPattern.show && (
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+            )}
+          </div>
+        </div>
+        {!selectedPattern.show && viewType === 'table' && (
+          <ResponsiveDataTable
+            data={patterns}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        )}
+        {!selectedPattern.show && viewType === 'grid' && (
+          // grid vieww
+          <MesheryPatternGrid
+            selectedK8sContexts={selectedK8sContexts}
+            canPublishPattern={canPublishPattern}
+            patterns={patterns}
+            handleDeploy={handleDeploy}
+            handleVerify={handleVerify}
+            handlePublish={handlePublish}
+            handleUnpublishModal={handleUnpublishModal}
+            handleUnDeploy={handleUnDeploy}
+            handleClone={handleClone}
+            supportedTypes="null"
+            handleSubmit={handleSubmit}
+            setSelectedPattern={setSelectedPattern}
+            selectedPattern={selectedPattern}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            selectedPage={page}
+            patternErrors={patternErrors}
+            publishModal={publishModal}
+            setPublishModal={setPublishModal}
+            publishSchema={publishSchema}
+            user={user}
+            handleInfoModal={handleInfoModal}
+          />
+        )}
+        <ConfirmationModal
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={{
+            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            unDeploy: () =>
+              handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
+          }}
+          title={modalOpen.name}
+          componentCount={modalOpen.count}
+          tab={modalOpen.action}
+          validationBody={modalOpen.validationBody}
+          dryRunComponent={modalOpen.dryRunComponent}
+          errors={modalOpen.errors}
+        />
+        {(canPublishPattern &&
+            publishModal.open &&
+            CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action)) && (
+          <PublishModal
+            publishFormSchema={publishSchema}
+            handleClose={handlePublishModalClose}
+            title={publishModal.pattern?.name}
+            handleSubmit={handlePublish}
+          />
+        )}
+        {(importModal.open && CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action)) && (
+          <ImportModal
+            importFormSchema={importSchema}
+            handleClose={handleUploadImportClose}
+            handleImportDesign={handleImportDesign}
+          />
+        )}
+        {(infoModal.open && CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action)) && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="patterns"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
+            meshModels={meshModels}
+          />
+        )}
+        <PromptComponent ref={modalRef} />
         </>
       ) : (
         <DefaultError />
@@ -1694,6 +1676,58 @@ function MesheryPatterns({
     </NoSsr>
   );
 }
+
+const ImportModal = React.memo((props) => {
+  const { importFormSchema, handleClose, handleImportDesign } = props;
+
+  const classes = useStyles();
+
+  return (
+    <>
+      <Modal
+        open={true}
+        schema={importFormSchema.rjsfSchema}
+        uiSchema={importFormSchema.uiSchema}
+        handleClose={handleClose}
+        handleSubmit={handleImportDesign}
+        title="Import Design"
+        submitBtnText="Import"
+        leftHeaderIcon={
+          <Pattern
+            fill="#fff"
+            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            className={undefined}
+          />
+        }
+        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+      />
+    </>
+  );
+});
+
+const PublishModal = React.memo((props) => {
+  const { publishFormSchema, handleClose, handlePublish, title } = props;
+
+  return (
+    <>
+      <Modal
+        open={true}
+        schema={publishFormSchema.rjsfSchema}
+        uiSchema={publishFormSchema.uiSchema}
+        handleClose={handleClose}
+        aria-label="catalog publish"
+        title={title}
+        handleSubmit={handlePublish}
+        showInfoIcon={{
+          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
+          link: 'https://docs.meshery.io/concepts/catalog',
+        }}
+        submitBtnText="Submit for Approval"
+        submitBtnIcon={<PublicIcon />}
+      />
+    </>
+  );
+});
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

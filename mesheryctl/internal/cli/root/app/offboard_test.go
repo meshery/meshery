@@ -49,7 +49,7 @@ func TestOffboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/application/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "offboard.response.golden",
 					ResponseCode: 200,
 				},

@@ -74,8 +74,8 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			return nil
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
-		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		appURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// app name has been passed
 		if len(args) > 0 {
@@ -97,7 +97,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 				return nil
 			}
 
-			var response *models.ApplicationsAPIResponse
+			var response *models.PatternsAPIResponse
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -111,15 +111,15 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			}
 
 			index := 0
-			if len(response.Applications) == 0 {
+			if len(response.Patterns) == 0 {
 				utils.Log.Error(utils.ErrNotFound(errors.New("no app found with the given name")))
 				return nil
-			} else if len(response.Applications) == 1 {
-				appFile = response.Applications[0].ApplicationFile
+			} else if len(response.Patterns) == 1 {
+				appFile = response.Patterns[0].PatternFile
 			} else {
 				// Multiple apps with same name
-				index = multipleApplicationsConfirmation(response.Applications)
-				appFile = response.Applications[index].ApplicationFile
+				index = multipleApplicationsConfirmation(response.Patterns)
+				appFile = response.Patterns[index].PatternFile
 			}
 		} else {
 			// Check if a valid source type is set
@@ -132,7 +132,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 				return nil
 			}
 
-			appFile = app.ApplicationFile
+			appFile = app.PatternFile
 		}
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
@@ -162,7 +162,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 	},
 }
 
-func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int {
+func multipleApplicationsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -170,7 +170,7 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("ApplicationFile:\n")
-		fmt.Printf(a.ApplicationFile)
+		fmt.Printf(a.PatternFile)
 		fmt.Println("---------------------")
 	}
 
