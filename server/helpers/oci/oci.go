@@ -10,7 +10,7 @@ import (
 )
 
 // generate OCI Descriptor for the given design
-func generateDescriptor(mediaType string, blob []byte, target oras.Target) (desc ocispec.Descriptor) {
+func GenerateDescriptor(mediaType string, blob []byte, target oras.Target) (desc ocispec.Descriptor) {
 	desc = ocispec.Descriptor{ // Generate descriptor based on the media type and blob content
 		MediaType: mediaType,
 		Digest:    digest.FromBytes(blob), // Calculate digest
@@ -19,7 +19,7 @@ func generateDescriptor(mediaType string, blob []byte, target oras.Target) (desc
 	return desc
 }
 
-func generateManifestContent(config ocispec.Descriptor, layers ...ocispec.Descriptor) ([]byte, error) {
+func GenerateManifestContent(config ocispec.Descriptor, layers ...ocispec.Descriptor) ([]byte, error) {
 	content := ocispec.Manifest{
 		Config:    config, // Set config blob
 		Layers:    layers, // Set layer blobs
