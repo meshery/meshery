@@ -74,7 +74,7 @@ mesheryctl app offboard -f [filepath]
 			return nil
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// Read file
