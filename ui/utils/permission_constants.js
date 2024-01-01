@@ -163,4 +163,221 @@ export const keys = {
     subject: "View Filters",
     action: "df41c45f-7c73-49c2-a055-0584fdcec1c1"
   },
+
+  CREATE_NEW_DESIGN: {
+    subject: "Create new design",
+    action: "14bd933e-83b7-464d-9a4d-d8c8eb9682ab"
+  },
+  IMPORT_DESIGN: {
+    subject: "Import Design",
+    action: "cc040d21-3160-4a96-8efa-833487a234cd"
+  },
+  PUBLISH_DESIGN: {
+    subject: "Publish Design",
+    action: "9e66bdec-4177-42f9-8cec-d9eb52a12c38"
+  },
+  UNPUBLISH_DESIGN: {
+    subject: "Unpublish Design",
+    action: "c1595c90-b85b-4ac7-b921-f08959926db3"
+  },
+  VALIDATE_DESIGN: {
+    subject: "Validate Design",
+    action: "da5339dd-a4bc-4b91-8865-d8a703656516"
+  },
+  DEPLOY_DESIGN: {
+    subject: "Deploy Design",
+    action: "595b921a-ea1e-4611-83f0-503db0eeb94d"
+  },
+  DETAILS_OF_DESIGN: {
+    subject: "Details of design",
+    action: "10a03036-53a0-40b3-9f69-6daab852e434"
+  },
+  EDIT_DESIGN: {
+    subject: "Edit design",
+    action: "7f2b7084-4533-4824-b688-50cf35de7ef8"
+  },
+  DELETE_DESIGN: {
+    subject: "Delete a design",
+    action: "f024fcf7-3c3d-4521-b83e-6d659353ca0e"
+  },
+  DOWNLOAD_DESIGN: {
+    subject: "Download a design",
+    action: "64de96b7-60db-4aab-b311-afc64066b2c4"
+  },
+  IMPORT_FILTER: {
+    subject: "Import Filter",
+    action: "cb79d7fb-19de-45fa-aaf5-0a0afc832bf8"
+  },
+  PUBLISH_WASM_FILTER: {
+    subject: "Publish WASM Filter",
+    action: "173d99b7-3820-4c0c-88b2-a8455bd7a6b5"
+  },
+  UNPUBLISH_WASM_FILTER: {
+    subject: "Unpublish WASM Filter",
+    action: "773f0a4d-ba04-40ed-9298-59ac8749804a"
+  },
+  DOWNLOAD_WASM_FILTER: {
+    subject: "Download a WASM filter",
+    action: "24325b2c-5e08-4ba8-809f-8a4a1bf91084"
+  },
+  DETAILS_OF_WASM_FILTER: {
+    subject: "Details of WASM Filter",
+    action: "86c457b5-b9ec-4223-af1f-30a5be67d69d"
+  },
+  EDIT_WASM_FILTER: {
+    subject: "Edit WASM filter",
+    action: "88cd144e-806e-472a-a31a-ef6d64643291"
+  },
+  ADD_CLUSTER: {
+    subject: "Add Kubernetes cluster",
+    action: "fce15b20-78ac-42af-b79c-b8f19bdb0802"
+  },
+  CHANGE_CONNECTION_STATE: {
+    subject: "Change connection state",
+    action: "14ac9622-3170-4580-8403-ed7a584f90ef"
+  },
+  FLUSH_MESHSYNC_DATA: {
+    subject: "Clearing the database by clicking on the `Flush MeshSync`",
+    action: "8dd4c54a-bccd-4fb3-a18c-269195653a91"
+  },
+  REGISTER_DISCOVERED_MESHSYNC_RESOURCE: {
+    subject: "Register discovered MeshSync resource to change state to connection",
+    action: "214ad6b1-df4d-44a6-8872-8ad1f751ef68"
+  },
+  DELETE_CONNECTION: {
+    subject: "Delete a connection",
+    action: "61afb8c2-cda6-4175-aad9-74ff87fed323"
+  },
+  INSTALL_EXTENSION: {
+    subject: "Install extension",
+    action: "24f41e98-7ce1-40c4-a82d-4ae0294d237d"
+  },
+  UNINSTALL_EXTENSION: { // not seeded
+    subject: "Uninstall extension from Meshery",
+    action: "d25e0950-bcd5-4f31-9d19-26c91d17d89b"
+  },
+  VIEW_EXTENSIONS: {
+    subject: "View Extensions",
+    action: "d25e0950-bcd5-4f31-9d19-26c91d17d89b"
+  },
+  USER_PREFERENCES: {
+    subject: "Meshery UI: Menu, User Prefs",
+    action: "eb1d8db3-e110-41b9-9f5f-cd271f7fc4a9"
+  },
+  VIEW_SETTINGS: {
+    subject: "View Settings",
+    action: "fdc038e3-1fdf-403a-af8a-53c0de8d7820"
+  },
+  CONNECT_ADAPTER: {
+    subject: "Connect Adapter",
+    action: "c93bd211-1dac-42cc-9086-859288826d1b"
+  },
+  CONNECT_MATRICS: {
+    subject: "Connect Matrics",
+    action: "b0aee906-c549-445f-be0c-b98b04d47d09"
+  },
+  VIEW_MATRICIES: {
+    subject: "View Matricies",
+    action: "7fe36f60-fd0a-4fda-84e5-c64a04c3ad06"
+  },
+  VIEW_REGISTRY: {
+    subject: "View Registry",
+    action: "cc069117-08cc-44e3-9c61-ae0eeca0bcf1"
+  },
+  ADD_PERFORMANCE_PROFILE: {
+    subject: "Add performace profile",
+    action: "b2861578-c573-45fe-a95e-0356d56e1d1b"
+  },
+  RUN_TEST: {
+    subject: "Run test",
+    action: "06de2b07-b4f4-4701-b87f-d92ebb66ba42"
+  },
+  VIEW_RESULTS: {
+    subject: "View Results",
+    action: "0c757cc7-4038-4d9b-9b60-fa8d9fc9d27e"
+  },
+  EDIT_PERFORMANCE_TEST: {
+    subject: "Edit performance test",
+    action: "33aa5c47-a8aa-4ad5-9950-7c17042c001d"
+  },
+  DELETE_PERFORMANCE_TEST: {
+    subject: "Delete performance test",
+    action: "84aa9d3c-3d4b-4587-947d-ae17b2dcd5f5"
+  },
+  VIEW_VIEWS: {
+    subject: "View Views",
+    action: "4b3117e6-176c-4d9b-8e09-4278d2f48280"
+  },
+  CREATE_VIEW: {
+    subject: "Create View",
+    action: "a7392c29-34af-4ee9-af1c-71e83876a8aa"
+  },
+  DELETE_VIEW: {
+    subject: "Delete View",
+    action: "b2b9c027-0f39-4a26-b3ed-5b30aaf82060"
+  },
+  EDIT_VIEW: {
+    subject: "Edit View",
+    action: "f2e04b59-42ee-4af6-b488-7bc7047fc01b"
+  },
+  ASSIGN_VIEWS_TO_WORKSPACE: {
+    subject: "Assign views to workspace",
+    action: "5a26b21b-bf15-4622-9681-d907fc5154fd"
+  },
+  REMOVE_VIEWS_FROM_WORKSPACE: {
+    subject: "Remove views from workspace",
+    action: "5b48eded-15d8-4c51-9ac4-b11097dbdd75"
+  },
+  INVITE_COLLABORATORS_PUBLIC_DESIGNS: {
+    subject: "Invite any Meshery Cloud user, or all Meshery users",
+    action: "ccc4bc8d-f484-42b3-8a62-2667284605c3"
+  },
+  INVITE_COLLABORATORS_PRIVATE_DESIGNS: {
+    subject: "Invite any Meshery Cloud user to on a private design",
+    action: "e28b851f-9a49-4ecf-a86e-493db1a27540"
+  },
+  TEAM_CHAT: {
+    subject: "Message in real-time",
+    action: "c42d08b2-c3e0-47b6-9e47-cfb149c0a5af"
+  },
+  DESIGN_REVIEWS: {
+    subject: "Discuss any design by leaving review comments",
+    action: "da5adf96-9fb5-49b2-a55e-dec9c9c4acba"
+  },
+  ORGANIZATION_TEAM_MANAGEMENT: {
+    subject: "Manage access to designs",
+    action: "7a17c8d3-bba2-474b-bb1e-be5b5eee5dad"
+  },
+  COLLABORATIVE_DESIGN: {
+    subject: "Create and collaborate in online designs in real-time",
+    action: "d5267c04-b3ee-43fe-8b97-2a3321eb7f8e"
+  },
+  MANAGE_SERVICE_MESH_LIFE_CYCLE: {
+    subject: "Manage service mesh life cycle",
+    action: "255fd148-e3fd-4408-a48c-0d157a57d4d9"
+  },
+  MANAGE_SERVICE_MESH_CONFIGURATION: {
+    subject: "Manage service mesh configuration",
+    action: "0eb0558d-9b21-4e50-b4c6-bd8e9e3414f5"
+  },
+  APPLY_SERVICE_MESH_CONFIGURATION: {
+    subject: "Apply service mesh configuration",
+    action: "3f20a106-24f5-4da6-a8eb-6eddaad50944"
+  },
+  VALIDATE_SERVICE_MESH_CONFIGURATION: {
+    subject: "Validate service mesh configuration",
+    action: "8bb93f97-fcfb-4827-9fed-f931fdca7b95"
+  },
+  APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION: {
+    subject: "Apply custom service mesh configuration",
+    action: "2f4e2300-4c7e-4d48-95aa-74614a4826fe"
+  },
+  DEPLOY_SERVICE_MESH: {
+    subject: "Deploy service mesh",
+    action: "f7e70ffb-333d-43b3-a76e-0e6c63b9fbfa"
+  },
+  UNDEPLOY_SERVICE_MESH: {
+    subject: "Undeploy service mesh",
+    action: "6e7f6f4f-4321-4e42-9eff-6a8323f32e84"
+  }
 };
