@@ -64,7 +64,7 @@ export default function ConnectionStatsChart({ classes }) {
           <Tooltip title="Learn more about Connections" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
