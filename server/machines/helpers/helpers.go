@@ -60,10 +60,7 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc models.InitFunc,
 ) (*machines.StateMachine, error) {
-	smInstanceTracker.Mx.Lock()
-	defer smInstanceTracker.Mx.Unlock()
-
-	inst, ok := smInstanceTracker.ConnectToInstanceMap[ID]
+	inst, ok := smInstanceTracker.Get(ID)
 	if ok {
 		return inst, nil
 	}
@@ -75,7 +72,7 @@ func InitializeMachineWithContext(
 	}
 	inst.Provider = provider
 	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.ConnectToInstanceMap[ID] = inst
+	smInstanceTracker.Add(ID, inst)
 	if err != nil {
 		return nil, err
 	}

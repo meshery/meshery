@@ -134,9 +134,8 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			h.log.Debug(event)
 			return
 		}
-		smInstanceTracker.Mx.Lock()
-		delete(smInstanceTracker.ConnectToInstanceMap, connectionUUID)
-		smInstanceTracker.Mx.Unlock()
+		
+		smInstanceTracker.Remove(connectionUUID)
 	}(inst)
 
 	if err != nil {

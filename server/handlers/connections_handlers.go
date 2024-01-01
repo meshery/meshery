@@ -83,11 +83,9 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
 
-	smInstancetracker.Mx.Lock()
-	defer smInstancetracker.Mx.Unlock()
 	id, ok := body["id"]
 	if ok {
-		delete(smInstancetracker.ConnectToInstanceMap, uuid.FromStringOrNil(id))
+		smInstancetracker.Remove(uuid.FromStringOrNil(id))
 	}
 }
 
@@ -422,9 +420,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				}
 
 				if status == connections.DELETED {
-					smInstanceTracker.Mx.Lock()
-					delete(smInstanceTracker.ConnectToInstanceMap, inst.ID)
-					smInstanceTracker.Mx.Unlock()
+					smInstanceTracker.Remove(inst.ID)
 				}
 
 				_ = provider.PersistEvent(event)
