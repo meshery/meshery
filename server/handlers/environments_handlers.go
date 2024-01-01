@@ -236,7 +236,7 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 //
 // ```?search={environments_name}``` If search is non empty then a greedy search is performed
 //
-// ```?filter={{assigned: true/false, deleted_at: true/false}}``` defaults to assigned: false, deleted_at: false
+// ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
 //
 // Returns all connections of environment
 // responses:
