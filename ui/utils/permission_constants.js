@@ -1,5 +1,6 @@
 /**
  * Constants for Identity & Access Management Keys
+ * When add new key make sure that subject property matches with key function property
  */
 
 export const keys = {
@@ -35,7 +36,7 @@ export const keys = {
     subject: "View Sessions",
     action: "26cf042a-91db-4237-8644-4d617a0d49e1"
   },
-  LOGOUT_SESSION: {
+  LOGOUT_SESSION_FROM_A_SESSION: {
     subject: "Logout from a Session",
     action: "177b928b-71ee-4ecd-a30b-3154ff4ba0d9"
   },
@@ -147,9 +148,9 @@ export const keys = {
     subject: "Share Design", // not seeded
     action: "d9ae2b08-762f-418f-916f-43de736b53e2"
   },
-  DOWNLOAD_DESIGN: {
-    subject: "Download Design", // not seeded
-    action: "7a7d3cad-4cf4-48fa-b69c-e6a5abc97a07"
+  DOWNLOAD_A_DESIGN: {
+    subject: "Download a design",
+    action: "64de96b7-60db-4aab-b311-afc64066b2c4"
   },
   CLONE_DESIGN: {
     subject: "Clone Design", // not seeded
@@ -163,7 +164,6 @@ export const keys = {
     subject: "View Filters",
     action: "df41c45f-7c73-49c2-a055-0584fdcec1c1"
   },
-
   CREATE_NEW_DESIGN: {
     subject: "Create new design",
     action: "14bd933e-83b7-464d-9a4d-d8c8eb9682ab"
@@ -196,11 +196,11 @@ export const keys = {
     subject: "Edit design",
     action: "7f2b7084-4533-4824-b688-50cf35de7ef8"
   },
-  DELETE_DESIGN: {
+  DELETE_A_DESIGN: {
     subject: "Delete a design",
     action: "f024fcf7-3c3d-4521-b83e-6d659353ca0e"
   },
-  DOWNLOAD_DESIGN: {
+  DOWNLOAD_A_DESIGN: {
     subject: "Download a design",
     action: "64de96b7-60db-4aab-b311-afc64066b2c4"
   },
@@ -216,7 +216,7 @@ export const keys = {
     subject: "Unpublish WASM Filter",
     action: "773f0a4d-ba04-40ed-9298-59ac8749804a"
   },
-  DOWNLOAD_WASM_FILTER: {
+  DOWNLOAD_A_WASM_FILTER: {
     subject: "Download a WASM filter",
     action: "24325b2c-5e08-4ba8-809f-8a4a1bf91084"
   },
@@ -229,7 +229,7 @@ export const keys = {
     action: "88cd144e-806e-472a-a31a-ef6d64643291"
   },
   ADD_CLUSTER: {
-    subject: "Add Kubernetes cluster",
+    subject: "Add cluster",
     action: "fce15b20-78ac-42af-b79c-b8f19bdb0802"
   },
   CHANGE_CONNECTION_STATE: {
@@ -237,14 +237,14 @@ export const keys = {
     action: "14ac9622-3170-4580-8403-ed7a584f90ef"
   },
   FLUSH_MESHSYNC_DATA: {
-    subject: "Clearing the database by clicking on the `Flush MeshSync`",
+    subject: "Flush Meshsync data",
     action: "8dd4c54a-bccd-4fb3-a18c-269195653a91"
   },
   REGISTER_DISCOVERED_MESHSYNC_RESOURCE: {
-    subject: "Register discovered MeshSync resource to change state to connection",
+    subject: "Register discovered Meshsync resource",
     action: "214ad6b1-df4d-44a6-8872-8ad1f751ef68"
   },
-  DELETE_CONNECTION: {
+  DELETE_A_CONNECTION: {
     subject: "Delete a connection",
     action: "61afb8c2-cda6-4175-aad9-74ff87fed323"
   },
@@ -336,19 +336,19 @@ export const keys = {
     subject: "Invite any Meshery Cloud user to on a private design",
     action: "e28b851f-9a49-4ecf-a86e-493db1a27540"
   },
-  TEAM_CHAT: {
+  MESSAGE_IN_REAL_TIME: {
     subject: "Message in real-time",
     action: "c42d08b2-c3e0-47b6-9e47-cfb149c0a5af"
   },
-  DESIGN_REVIEWS: {
+  DISCUSS_ANY_DESIGN_BY_LEAVING_REVIEW_COMMENTS: {
     subject: "Discuss any design by leaving review comments",
     action: "da5adf96-9fb5-49b2-a55e-dec9c9c4acba"
   },
-  ORGANIZATION_TEAM_MANAGEMENT: {
+  MANAGE_ACCESS_TO_DESIGN: {
     subject: "Manage access to designs",
     action: "7a17c8d3-bba2-474b-bb1e-be5b5eee5dad"
   },
-  COLLABORATIVE_DESIGN: {
+  CREATE_AND_COLLABORATE_IN_ONLINE_DESIGNS_IN_REAL_TIME: { // seed new function name for this key
     subject: "Create and collaborate in online designs in real-time",
     action: "d5267c04-b3ee-43fe-8b97-2a3321eb7f8e"
   },
