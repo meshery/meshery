@@ -33,8 +33,8 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 	return &EntityRegistrationHelper{
 		handlerConfig:    hc,
 		regManager:       rm,
-		componentChan:    make(chan v1alpha1.ComponentDefinition, 1),
-		relationshipChan: make(chan v1alpha1.RelationshipDefinition, 1),
+		componentChan:    make(chan v1alpha1.ComponentDefinition),
+		relationshipChan: make(chan v1alpha1.RelationshipDefinition),
 		errorChan:        make(chan error),
 		log:              log,
 	}
@@ -149,6 +149,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
+			fmt.Printf("rel: %+v\n", rel)
 			erh.relationshipChan <- rel
 		}
 		return nil
