@@ -1,3 +1,4 @@
 import WorkspacesComponent from './Workspaces';
+import EnvironmentComponent from './Environments';
 
-export { WorkspacesComponent };
+export { WorkspacesComponent, EnvironmentComponent };

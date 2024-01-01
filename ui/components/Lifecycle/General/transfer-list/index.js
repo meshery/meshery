@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, Grid } from '@material-ui/core';
 
-import KubernetesIcon from '../../../assets/icons/KubernetesIcon';
-import SMPIcon from '../../../assets/icons/SMPIcon';
-import LeftArrowIcon from '../../../assets/icons/LeftArrowIcon';
-import RightArrowIcon from '../../../assets/icons/RightArrowIcon';
+import KubernetesIcon from '../../../../assets/icons/KubernetesIcon';
+import SMPIcon from '../../../../assets/icons/SMPIcon';
+import LeftArrowIcon from '../../../../assets/icons/LeftArrowIcon';
+import RightArrowIcon from '../../../../assets/icons/RightArrowIcon';
 import {
   ButtonGrid,
   ListGrid,
@@ -16,7 +16,7 @@ import {
 } from './style';
 import { Typography } from '@mui/material';
 import { Tooltip } from '@mui/material';
-import { TRANSFER_COMPONET } from '../../../utils/Enum';
+import { TRANSFER_COMPONENT } from '../../../../utils/Enum';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -50,78 +50,79 @@ export default function TransferList({
   emtyStateMessageLeft,
   emptyStateIconRight,
   emtyStateMessageRight,
-  transferComponentType = TRANSFER_COMPONET.OTHER,
-  // assignablePage,
-  // assignedPage,
-  // originalLeftCount,
-  // originalRightCount,
+  transferComponentType = TRANSFER_COMPONENT.OTHER,
+  assignablePage,
+  assignedPage,
+  originalLeftCount,
+  originalRightCount,
 }) {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = useState([]);
   const [right, setRight] = useState([]);
-  // const [leftCount, setLeftCount] = useState(0);
-  // const [rightCount, setRightCount] = useState(0);
+  const [leftCount, setLeftCount] = useState(0);
+  const [rightCount, setRightCount] = useState(0);
 
   useEffect(() => {
     setRight(originalAssignedData);
   }, [originalAssignedData]);
 
-  // useEffect(() => {
-  //   setLeftCount(originalLeftCount - originalRightCount);
-  //   setRightCount(originalRightCount);
-  // }, [originalLeftCount, originalRightCount]);
+  useEffect(() => {
+    setLeft(assignableData);
+  }, [assignableData]);
+
+  useEffect(() => {
+    setLeftCount(originalLeftCount);
+    setRightCount(originalRightCount);
+  }, [originalLeftCount, originalRightCount]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
 
   useEffect(() => {
     assignedData(right);
-    const idsToRemove = new Set(right.map((item) => item.id));
-    const filteredLeft = assignableData.filter((item) => !idsToRemove.has(item.id));
-    setLeft(filteredLeft);
-  }, [right, assignableData]);
+  }, [right]);
 
-  // useEffect(() => {
-  //   const handleScroll = (entries) => {
-  //     const target = entries[0];
-  //     if (target.isIntersecting) {
-  //       assignablePage();
-  //     }
-  //   };
+  useEffect(() => {
+    const handleScroll = (entries) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        assignablePage();
+      }
+    };
 
-  //   const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
-  //   const sentinel = document.getElementById('leftList');
-  //   if (sentinel) {
-  //     observer.observe(sentinel);
-  //   }
+    const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
+    const sentinel = document.getElementById('leftList');
+    if (sentinel) {
+      observer.observe(sentinel);
+    }
 
-  //   return () => {
-  //     if (sentinel) {
-  //       observer.unobserve(sentinel);
-  //     }
-  //   };
-  // }, [assignablePage]);
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+    };
+  }, [assignablePage]);
 
-  // useEffect(() => {
-  //   const handleScroll = (entries) => {
-  //     const target = entries[0];
-  //     if (target.isIntersecting) {
-  //       assignedPage();
-  //     }
-  //   };
+  useEffect(() => {
+    const handleScroll = (entries) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        assignedPage();
+      }
+    };
 
-  //   const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
-  //   const sentinel = document.getElementById('rightList');
-  //   if (sentinel) {
-  //     observer.observe(sentinel);
-  //   }
+    const observer = new IntersectionObserver(handleScroll, { threshold: 1 });
+    const sentinel = document.getElementById('rightList');
+    if (sentinel) {
+      observer.observe(sentinel);
+    }
 
-  //   return () => {
-  //     if (sentinel) {
-  //       observer.unobserve(sentinel);
-  //     }
-  //   };
-  // }, [assignedPage]);
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+    };
+  }, [assignedPage]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -139,31 +140,31 @@ export default function TransferList({
   const handleAllRight = () => {
     setRight(right.concat(left));
     setLeft([]);
-    // setLeftCount(0);
-    // setRightCount(originalLeftCount);
+    setLeftCount(0);
+    setRightCount(originalLeftCount);
   };
 
   const handleCheckedRight = () => {
     setRight(right.concat(leftChecked));
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
-    // setLeftCount((prevLeftCount) => prevLeftCount - leftChecked.length);
-    // setRightCount((prevRightCount) => prevRightCount + leftChecked.length);
+    setLeftCount((prevLeftCount) => prevLeftCount - leftChecked.length);
+    setRightCount((prevRightCount) => prevRightCount + leftChecked.length);
   };
 
   const handleCheckedLeft = () => {
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
-    // setRightCount((prevRightCount) => prevRightCount - rightChecked.length);
-    // setLeftCount((prevLeftCount) => prevLeftCount + rightChecked.length);
+    setRightCount((prevRightCount) => prevRightCount - rightChecked.length);
+    setLeftCount((prevLeftCount) => prevLeftCount + rightChecked.length);
   };
 
   const handleAllLeft = () => {
     setLeft(left.concat(right));
     setRight([]);
-    // setRightCount(0);
-    // setLeftCount(originalLeftCount);
+    setRightCount(0);
+    setLeftCount(originalLeftCount);
   };
 
   const customList = (items, emptyStateIcon, emtyStateMessage, listId) => (
@@ -185,7 +186,7 @@ export default function TransferList({
                 }}
                 onClick={handleToggle(item)}
               >
-                {transferComponentType === TRANSFER_COMPONET.CHIP ? (
+                {transferComponentType === TRANSFER_COMPONENT.CHIP ? (
                   <Tooltip title={item.name} placement="top">
                     <StyledChip
                       style={{ padding: '10px 0' }}
@@ -240,7 +241,7 @@ export default function TransferList({
     <Grid container justifyContent="center" alignItems="center">
       <ListGrid>
         <ListHeading>
-          Available {name} ({left?.length})
+          Available {name} ({leftCount ? leftCount : 0})
         </ListHeading>
         {customList(left, emptyStateIconLeft, emtyStateMessageLeft, 'leftList')}
       </ListGrid>
@@ -251,7 +252,7 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleAllRight}
-            disabled={left?.length === 0 /*|| left.length < leftCount*/}
+            disabled={left?.length === 0 || left.length < leftCount}
             aria-label="move all right"
           >
             <RightArrowIcon width={18} height={18} />
@@ -282,7 +283,7 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleAllLeft}
-            disabled={right.length === 0 /*|| right.length < rightCount*/}
+            disabled={right.length === 0 || right.length < rightCount}
             aria-label="move all left"
           >
             <LeftArrowIcon width={18} height={18} />
@@ -292,7 +293,7 @@ export default function TransferList({
       </ButtonGrid>
       <ListGrid>
         <ListHeading>
-          Assigned {name} ({right.length})
+          Assigned {name} ({rightCount ? rightCount : 0})
         </ListHeading>
         {customList(right, emptyStateIconRight, emtyStateMessageRight, 'rightList')}
       </ListGrid>
