@@ -268,33 +268,37 @@ const MesheryTreeView = ({
                     labelText={`Components (${model.components ? model.components.length : 0})`}
                   >
                     {model.components &&
-                      model.components.map((component, subIndex) => (
-                        <StyledTreeItem
-                          key={subIndex}
-                          nodeId={`${index}.1.${subIndex}`}
-                          check
-                          labelText={component.displayName}
-                          onClick={() => {
-                            setShow((prevShow) => {
-                              const { components } = prevShow;
-                              const compIndex = components.findIndex((item) => item === component);
-                              if (compIndex !== -1) {
-                                return {
-                                  ...prevShow,
-                                  model: model,
-                                  components: components.filter((item) => item !== component),
-                                };
-                              } else {
-                                return {
-                                  ...prevShow,
-                                  model: model,
-                                  components: [...components, component],
-                                };
-                              }
-                            });
-                          }}
-                        />
-                      ))}
+                      model.components.map((component, subIndex) => {
+                        return (
+                          <StyledTreeItem
+                            key={subIndex}
+                            nodeId={`${index}.1.${subIndex}`}
+                            check
+                            labelText={component.displayName}
+                            onClick={() => {
+                              setShow((prevShow) => {
+                                const { components } = prevShow;
+                                const compIndex = components.findIndex(
+                                  (item) => item === component,
+                                );
+                                if (compIndex !== -1) {
+                                  return {
+                                    ...prevShow,
+                                    model: model,
+                                    components: components.filter((item) => item !== component),
+                                  };
+                                } else {
+                                  return {
+                                    ...prevShow,
+                                    model: model,
+                                    components: [...components, component],
+                                  };
+                                }
+                              });
+                            }}
+                          />
+                        );
+                      })}
                   </StyledTreeItem>
                   <StyledTreeItem
                     nodeId={`${index}.2`}
@@ -369,8 +373,8 @@ const MesheryTreeView = ({
           </div>
           <div
             id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
-            onScroll={handleScroll(MODELS)}
+            style={{ overflowY: 'auto', height: width < 960 ? '44rem' : '27rem' }}
+            onScroll={handleScroll(REGISTRANTS)}
           >
             <TreeView
               aria-label="controlled"
@@ -385,10 +389,16 @@ const MesheryTreeView = ({
               {data?.map((registrant) => (
                 <StyledTreeItem
                   key={registrant.id}
-                  nodeId={0}
+                  nodeId={registrant.id}
                   top
                   labelText={registrant.hostname}
-                  onClick={() => setRegi(registrant)}
+                  onClick={() => {
+                    setShow({
+                      model: {},
+                      components: [],
+                      relationships: [],
+                    });
+                  }}
                 >
                   <div>
                     <StyledTreeItem
@@ -421,7 +431,7 @@ const MesheryTreeView = ({
                                   return (
                                     <StyledTreeItem
                                       key={subIndex}
-                                      nodeId={`${index + 2}.1.${subIndex}`}
+                                      nodeId={`${index + 1}.1.${subIndex}`}
                                       check
                                       labelText={component.displayName}
                                       onClick={() => {

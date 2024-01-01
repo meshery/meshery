@@ -174,7 +174,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       width: '90%',

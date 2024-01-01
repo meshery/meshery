@@ -448,16 +448,15 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
     >
       {((view === MODELS && !show.model.displayName) ||
         (view === COMPONENTS && !comp.displayName) ||
-        (view === RELATIONSHIPS && !rela.kind) ||
-        (view === REGISTRANTS && !regi.hostname)) && (
+        (view === RELATIONSHIPS && !rela.kind)) && (
         <p style={{ color: '#969696' }}>No {view} selected</p>
       )}
       {view === REGISTRANTS && regi.hostname && (
         <div>
           <Title title={regi.hostname} />
-          <div className={StyleClass.segment}>
-            <RegistrantContent registrant={regi} />
-          </div>
+
+          <RegistrantContent registrant={regi} />
+
           {show.model.displayName && <hr style={{ margin: '1rem 0' }} />}
         </div>
       )}
