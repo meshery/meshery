@@ -2673,11 +2673,10 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 
 // GetDesignSourceContent returns design source-content from provider
 func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID string) ([]byte, error) {
-		if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
 	}
-
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, designID)
@@ -4606,7 +4605,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environments.
 }
 
 func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
-  if !l.Capabilities.IsSupported(PersistEnvironments) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
@@ -4645,13 +4644,13 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 }
 
 func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
-if !l.Capabilities.IsSupported(PersistEnvironments) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep +  "/" + environmentID + "/connections/" + connectionID)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID + "/connections/" + connectionID)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4680,11 +4679,11 @@ if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Infof("Connection successfully removed from environment")
 		return bdr, nil
 	}
-	
+
 	return nil, ErrFetch(fmt.Errorf("failed to unassign connection from environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
@@ -4705,6 +4704,9 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
@@ -4788,7 +4790,7 @@ func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, 
 		logrus.Infof("user data successfully retrieved from remote provider")
 		return bd, nil
 	}
-	
+
 	return nil, ErrFetch(fmt.Errorf("failed to get organizations"), "Organization", resp.StatusCode)
 }
 
@@ -5272,4 +5274,3 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get designs of workspace"), "Workspace", resp.StatusCode)
 }
-
