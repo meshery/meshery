@@ -392,17 +392,16 @@ const MesheryTreeView = ({
                 >
                   <div>
                     <StyledTreeItem
-                      nodeId={1}
+                      nodeId={`${registrant.id}.1`}
                       labelText={`Models (${registrant?.summary?.models})`}
                     >
                       {registrant?.models.map((model, index) => (
                         <StyledTreeItem
                           key={index}
-                          nodeId={index + 2}
+                          nodeId={`${registrant.id}.1.${index}`}
                           check
                           labelText={model.displayName}
                           onClick={() => {
-                            setRegi(registrant);
                             setShow({
                               model: model,
                               components: [],
