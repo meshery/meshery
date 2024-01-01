@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/gorilla/mux"
+	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
 )
