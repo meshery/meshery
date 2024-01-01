@@ -23,7 +23,7 @@ import Modal from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { EmptyState, TransferList, GenericModal } from '../General';
 import ConnectionIcon from '../../../assets/icons/Connection';
-import { TRANSFER_COMPONET } from '../../../utils/Enum';
+import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
@@ -35,7 +35,6 @@ import {
 } from '../../../rtk-query/environments';
 import { store } from '../../../store';
 import styles from './styles';
-import { useGetConnectionsQuery } from '../../../rtk-query/connection';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -125,13 +124,14 @@ const Environments = ({ organization, classes }) => {
 
   const {
     data: connections,
-    // isLoading: isConnectionsLoading,
     isError: isConnectionsError,
     error: connectionsError,
-  } = useGetConnectionsQuery(
+  } = useGetEnvironmentConnectionsQuery(
     {
-      page: connectionsPage,
+      environmentId: connectionAssignEnv.id,
+      page: connectionsData.length === 0 ? 0 : connectionsPage,
       pagesize: connectionPageSize,
+      filter: '{"assigned":false}',
     },
     {
       skip,
@@ -140,35 +140,32 @@ const Environments = ({ organization, classes }) => {
 
   const {
     data: environmentConnections,
-    // isLoading: isEnvironmentConnectionsLoading,
     isError: isEnvironmentConnectionsError,
     error: environmentConnectionsError,
   } = useGetEnvironmentConnectionsQuery(
     {
-      page: connectionsOfEnvironmentPage,
-      pagesize: connectionPageSize,
       environmentId: connectionAssignEnv.id,
+      page: environmentConnectionsData.length === 0 ? 0 : connectionsOfEnvironmentPage,
+      pagesize: connectionPageSize,
     },
     {
       skip,
     },
   );
 
-  // const loading = isEnvironmentsLoading || isEnvironmentConnectionsLoading || isConnectionsLoading;
-
   const environments = environmentsData?.environments ? environmentsData.environments : [];
-  // const connectionsDataRtk = connections?.connections ? connections.connections : [];
-  // const environmentConnectionsDataRtk = environmentConnections?.connections
-  //   ? environmentConnections.connections
-  //   : [];
+  const connectionsDataRtk = connections?.connections ? connections.connections : [];
+  const environmentConnectionsDataRtk = environmentConnections?.connections
+    ? environmentConnections.connections
+    : [];
 
-  // useEffect(() => {
-  //   setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
-  // }, [connections]);
+  useEffect(() => {
+    setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
+  }, [connections]);
 
-  // useEffect(() => {
-  //   setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
-  // }, [environmentConnections]);
+  useEffect(() => {
+    setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
+  }, [environmentConnections]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
@@ -257,33 +254,6 @@ const Environments = ({ organization, classes }) => {
       },
     );
   };
-
-  useEffect(() => {
-    const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
-    if (connections) {
-      setConnectionsData((prevData) => [...prevData, ...connections.connections]);
-      if (connections?.total_count && connectionsPage < pagesCount - 1) {
-        setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
-      }
-    }
-  }, [connections, connectionsPage, connectionPageSize]);
-
-  useEffect(() => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
-    );
-    if (environmentConnections) {
-      setEnvironmentConnectionsData((prevData) => [
-        ...prevData,
-        ...environmentConnections.connections,
-      ]);
-      if (environmentConnections?.total_count && connectionsOfEnvironmentPage < pagesCount - 1) {
-        setConnectionsOfEnvironmentPage(
-          (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
-        );
-      }
-    }
-  }, [environmentConnections, connectionPageSize, connectionsOfEnvironmentPage]);
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -434,6 +404,7 @@ const Environments = ({ organization, classes }) => {
 
     removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
     setEnvironmentConnectionsData([]);
+    setConnectionsData([]);
     handleonAssignConnectionModalClose();
   };
 
@@ -441,6 +412,7 @@ const Environments = ({ organization, classes }) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
     if (connectionAssignEnv.id !== environment.id) {
+      setConnectionsData([]);
       setEnvironmentConnectionsData([]);
     }
     setConnectionAssignEnv(environment);
@@ -456,23 +428,23 @@ const Environments = ({ organization, classes }) => {
     setAssignedConnections(updatedAssignedData);
   };
 
-  // const handleAssignablePage = () => {
-  //   const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
-  //   if (connectionsPage < pagesCount - 1) {
-  //     setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
-  //   }
-  // };
+  const handleAssignablePage = () => {
+    const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
+    if (connectionsPage < pagesCount - 1) {
+      setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
+    }
+  };
 
-  // const handleAssignedPage = () => {
-  //   const pagesCount = parseInt(
-  //     Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
-  //   );
-  //   if (connectionsOfEnvironmentPage < pagesCount - 1) {
-  //     setConnectionsOfEnvironmentPage(
-  //       (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
-  //     );
-  //   }
-  // };
+  const handleAssignedPage = () => {
+    const pagesCount = parseInt(
+      Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
+    );
+    if (connectionsOfEnvironmentPage < pagesCount - 1) {
+      setConnectionsOfEnvironmentPage(
+        (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
+      );
+    }
+  };
 
   return (
     <NoSsr>
@@ -615,11 +587,11 @@ const Environments = ({ organization, classes }) => {
               <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
             }
             emtyStateMessageRight="No connections assigned"
-            transferComponentType={TRANSFER_COMPONET.CHIP}
-            // assignablePage={handleAssignablePage}
-            // assignedPage={handleAssignedPage}
-            // originalLeftCount={connections?.total_count}
-            // originalRightCount={environmentConnections?.total_count}
+            transferComponentType={TRANSFER_COMPONENT.CHIP}
+            assignablePage={handleAssignablePage}
+            assignedPage={handleAssignedPage}
+            originalLeftCount={connections?.total_count}
+            originalRightCount={environmentConnections?.total_count}
           />
         }
         action={handleAssignConnection}
