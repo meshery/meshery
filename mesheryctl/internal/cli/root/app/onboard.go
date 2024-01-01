@@ -132,7 +132,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 				return nil
 			}
 
-			appFile = app.ApplicationFile
+			appFile = app.PatternFile
 		}
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
