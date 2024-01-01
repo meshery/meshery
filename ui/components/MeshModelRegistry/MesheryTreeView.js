@@ -131,7 +131,7 @@ const MesheryTreeView = ({
 
   const handleScroll = (scrollingView) => (event) => {
     const div = event.target;
-    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 1) {
       setPage((prevPage) => ({
         ...prevPage, // Keep the current values for other keys
         [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
@@ -234,7 +234,7 @@ const MesheryTreeView = ({
             id="scrollElement"
             style={{
               overflowY: 'auto',
-              height: width < 960 ? '44rem' : '27rem',
+              height: '27rem',
             }}
             onScroll={handleScroll(MODELS)}
           >
@@ -373,7 +373,7 @@ const MesheryTreeView = ({
           </div>
           <div
             id="scrollElement"
-            style={{ overflowY: 'auto', height: width < 960 ? '44rem' : '27rem' }}
+            style={{ overflowY: 'auto', height: '27rem' }}
             onScroll={handleScroll(REGISTRANTS)}
           >
             <TreeView
