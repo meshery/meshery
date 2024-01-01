@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshsync/pkg/model"
 )
 
 func StatusToEvent(status string) string {
@@ -82,52 +81,4 @@ func InitializeMachineWithContext(
 	}
 
 	return inst, nil
-}
-
-// func processRegistration() {
-// 	arh := helpers.GetAutoRegistrationHelperSingleton()
-// 	if arh == nil {
-// 		return
-// 	}
-
-// 	for obj := range arh.Queue.Ch {
-// 		go func(obj *model.KubernetesResource) {
-// 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
-// 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
-
-// 			// connectionDefs, _, _ := v1alpha1.GetMeshModelComponents(&arh.dbHandler, *connectionCompFilter)
-// 			// for _, connectionDef := range connectionDefs {
-// 			// 	capabilities, err := utils.Cast[map[string]interface{}](connectionDef.Metadata["capabilities"])
-// 			// 	if err != nil {
-// 			// 		arh.log.Error(err)
-// 			// 		continue
-// 			// 	}
-// 			// 	autoRegister, ok := capabilities["autoRegister"].(bool)
-// 			// 	if ok && autoRegister {
-// 			// 		fmt.Println("TEST:: inside for loop extracted capabilities.autoRegister")
-// 			// 		// ch
-// 			// 	}
-// 			// }
-
-// 			// For now, the auto-registration for Prometheus/Grafana is hard-coded.
-// 			connType := getTypeOfConnection(obj)
-// 			if connType != "" {
-// 				id, _ := uuid.NewV4() // id should be hash of somehting.
-// 				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, arh.SMInstanceTracker, arh.Log, nil, DISCOVERED, connType, nil)
-// 				if err != nil {
-// 					arh.Log.Error(ErrAutoRegister(err, connType))
-// 				}
-// 				machineInst.Provider = nil // set provider somehow
-// 			}
-// 		}(&obj)
-// 	}
-// }
-
-func getTypeOfConnection(obj *model.KubernetesResource) string {
-	if strings.Contains(strings.ToLower(obj.KubernetesResourceMeta.Name), "grafana") {
-		return "grafana"
-	} else if strings.Contains(strings.ToLower(obj.KubernetesResourceMeta.Name), "grafana") {
-		return "prometheus"
-	}
-	return ""
 }

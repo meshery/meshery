@@ -283,7 +283,6 @@ func main() {
 	}
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
-	// helpers.SetAutoRegistrationHelperSingleton(dbHandler, &connToInstanceTracker)
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
 
