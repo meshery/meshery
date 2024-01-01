@@ -21,7 +21,7 @@ export const TransferButton = ({ title, count, onAssign, classes }) => {
       <Grid>
         <Typography className={classes.tabCount}>{count}</Typography>
         <Typography className={classes.tabTitle}>{title}</Typography>
-        <SyncAltIcon />
+        <SyncAltIcon style={{ position: 'absolute', top: '10px', right: '10px' }} />
       </Grid>
     </Button>
   );

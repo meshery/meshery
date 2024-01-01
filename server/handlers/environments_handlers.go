@@ -238,7 +238,8 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 //
 // Returns all connections of environment
 // responses:
-//   200: mesheryConnectionsResponseWrapper
+//
+//	200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["environmentID"]
 	q := r.URL.Query()

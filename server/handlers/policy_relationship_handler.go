@@ -89,7 +89,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	eventBuilder.ActedUpon(patternUUID)
 
 	var evalResults interface{}
-	
+
 	// evaluate specified relationship policies
 	verifiedRegoQueriesToEval := h.verifyRegoQueries(regoQueriesToEval)
 	if len(verifiedRegoQueriesToEval) == 0 {
@@ -98,7 +98,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return
 	}
-	
+
 	evalresults := make(map[string]interface{}, 0)
 	for _, query := range verifiedRegoQueriesToEval {
 		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
@@ -140,7 +140,7 @@ func (h *Handler) verifyRegoQueries(reqoQueries []string) (verifiedRegoQueries [
 		}
 	} else {
 		for _, regoQuery := range reqoQueries {
-			for _, relationship := range relationships {				
+			for _, relationship := range relationships {
 				if strings.TrimSuffix(regoQuery, siffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
 					verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
 					break

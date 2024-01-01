@@ -251,23 +251,19 @@ const MeshModelComponent = ({
         );
       });
 
-  useEffect(
-    () => {
-      filteredData = checked
-        ? resourcesDetail // Show all data, including duplicates
-        : resourcesDetail.filter((item, index, self) => {
-            // Filter out duplicates based on your criteria (e.g., name and version)
-            return (
-              index ===
-              self.findIndex(
-                (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-              )
-            );
-          });
-    },
-    resourcesDetail,
-    checked,
-  );
+  useEffect(() => {
+    filteredData = checked
+      ? resourcesDetail // Show all data, including duplicates
+      : resourcesDetail.filter((item, index, self) => {
+          // Filter out duplicates based on your criteria (e.g., name and version)
+          return (
+            index ===
+            self.findIndex(
+              (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+            )
+          );
+        });
+  }, [checked]);
 
   useEffect(() => {
     setRequestCancelled(false);
