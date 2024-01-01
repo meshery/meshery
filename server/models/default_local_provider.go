@@ -163,7 +163,7 @@ func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, 
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 

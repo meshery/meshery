@@ -4683,7 +4683,7 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 	return nil, ErrFetch(fmt.Errorf("failed to unassign connection from environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
@@ -4704,6 +4704,9 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
