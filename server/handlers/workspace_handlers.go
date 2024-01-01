@@ -194,7 +194,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 //
 // ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
 //
-// ```?filter={condition}```
+// ```?filter={{assigned: true/false, deleted_at: true/false}}``` defaults to assigned: false, deleted_at: false
 // responses:
 //
 //	200: environmentsResponseWrapper
@@ -223,7 +223,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 //
 // ```?search={name}``` If search is non empty then a greedy search is performed
 //
-// ```?filter={condition}```
+// ```?filter={{assigned: true/false, deleted_at: true/false}}``` defaults to assigned: false, deleted_at: false
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
