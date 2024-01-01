@@ -1,4 +1,4 @@
-import {Tooltip, Fade} from "@material-ui/core";
+import { Tooltip, Fade } from '@material-ui/core';
 import {
   DockerIcon,
   GithubIcon,
@@ -7,8 +7,8 @@ import {
   SocialContainer,
   SocialMain,
   TwitterIcon,
-  YoutubeIcon
-} from "./styles";
+  YoutubeIcon,
+} from './styles';
 
 export default function Socials() {
   return (

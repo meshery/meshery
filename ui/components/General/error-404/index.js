@@ -1,14 +1,14 @@
-import { Typography } from "@material-ui/core";
-import { ErrorTypes } from "@/constants/common"
+import { Typography } from '@material-ui/core';
+import { ErrorTypes } from '@/constants/common';
 // import InstallMeshery, { MesheryAction } from "../../dashboard/install-meshery-card";
-import Socials from "./socials";
+import Socials from './socials';
 import {
   ErrorComponent,
   ErrorContainer,
   ErrorContentContainer,
   ErrorLink,
-  ErrorMain
-} from "./styles";
+  ErrorMain,
+} from './styles';
 
 //TODO: Add component for meshery version compatiblity error
 // const MesheryVersionCompatiblity = () => {
@@ -21,7 +21,7 @@ import {
 //   );
 // };
 
-const UnknownServerSideError = props => {
+const UnknownServerSideError = (props) => {
   const { errorContent } = props;
   return (
     <div>
@@ -34,7 +34,7 @@ const UnknownServerSideError = props => {
   );
 };
 
-const DefaultError = props => {
+const DefaultError = (props) => {
   const { errorTitle, errorContent, errorType } = props;
 
   return (
@@ -50,27 +50,23 @@ const DefaultError = props => {
           <Typography variant="h4" component="h4" align="center" className="errormsg">
             {errorTitle
               ? errorTitle
-              : "You are not authorized to view this page. Contact your administrator"}
+              : 'You are not authorized to view this page. Contact your administrator'}
           </Typography>
           {errorType === ErrorTypes.MESHERY_DEPLOYMENT_INCOMPATIBLE ? (
             <MesheryVersionCompatiblity errorContent={errorContent} />
           ) : errorType === ErrorTypes.UNKNOWN ? (
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}
-          <div style={{ marginTop: "3rem" }}>
+          <div style={{ marginTop: '3rem' }}>
             <div>
               <Typography variant="p" component="p" align="center">
                 Navigate to <ErrorLink href="/">Dashboard</ErrorLink>
               </Typography>
             </div>
-            <div style={{ marginTop: "0.8rem" }}>
+            <div style={{ marginTop: '0.8rem' }}>
               <Typography variant="p" component="p" align="center">
                 For help, please inquire on the
-                <ErrorLink href="https://discuss.layer5.io">
-                  {" "}
-                  discussion forum
-                </ErrorLink>{" "}
-                or the{" "}
+                <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
                 <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
               </Typography>
             </div>
@@ -82,4 +78,4 @@ const DefaultError = props => {
   );
 };
 
-export default DefaultError
+export default DefaultError;

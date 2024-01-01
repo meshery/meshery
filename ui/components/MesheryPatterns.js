@@ -1018,8 +1018,7 @@ function MesheryPatterns({
 
   const userCanEdit = (pattern) => {
     return (
-      CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action) &&
-      user?.user_id == pattern?.user_id
+      CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action) && user?.user_id == pattern?.user_id
     );
   };
 
