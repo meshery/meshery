@@ -56,7 +56,7 @@ mesheryctl app offboard -f [filepath]
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
+			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -65,7 +65,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Delete the app using the id
 		if isID {
-			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "pattern")
 			if err != nil {
 				utils.Log.Error(err)
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
