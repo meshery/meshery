@@ -411,7 +411,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			}
 
 			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(string(status))), nil)
+				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
 					_ = provider.PersistEvent(event)
