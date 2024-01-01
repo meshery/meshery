@@ -24,6 +24,8 @@ import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -215,6 +217,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   className={classes.testsButton}
+                  disabled={!CAN(keys.CLONE_DESIGN.subject, keys.CLONE_DESIGN.action)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}> Clone </span>

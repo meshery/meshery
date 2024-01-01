@@ -72,7 +72,7 @@ const initialState = fromJS({
   controllerState: null,
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
-  organization: '',
+  organization: null,
 });
 
 export const actionTypes = {

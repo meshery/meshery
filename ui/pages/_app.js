@@ -61,6 +61,7 @@ import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
+import { ability } from '../utils/can';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -116,6 +117,8 @@ class MesheryApp extends App {
       isOpen: false,
       relayEnvironment: createRelayEnvironment(),
       connectionMetadata: {},
+      keys: [],
+      abilities: [],
     };
   }
 
@@ -373,10 +376,46 @@ class MesheryApp extends App {
             type: actionTypes.SET_ORGANIZATION,
             organization: result?.organizations[0],
           });
+          this.loadAbility(result?.organizations[0]?.id);
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
+  };
+
+  loadAbility = async (orgID) => {
+    console.log('org id', orgID);
+    const storedKeys = sessionStorage.getItem('keys');
+    if (storedKeys !== null && storedKeys !== undefined) {
+      this.setState({ keys: JSON.parse(sessionStorage.getItem('keys')) });
+    } else {
+      dataFetch(
+        `/api/identity/orgs/${orgID}/users/keys`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          if (result) {
+            this.setState({ keys: result.keys });
+            sessionStorage.clear();
+            sessionStorage.setItem('keys', JSON.stringify(result.keys));
+          }
+        },
+        (err) => console.log('There was an error fetching available orgs:', err),
+      );
+    }
+    this.setState({
+      abilities: [...this.state.keys]?.map((key) => {
+        return {
+          action: key.function,
+          subject: key.id,
+        };
+      }),
+    });
+    ability.update(this.state.abilities);
+    console.log('ability', ability);
+    console.log('ability', this.state.abilities);
   };
 
   async loadConfigFromServer() {
