@@ -115,7 +115,7 @@
     "styled-jsx": "^5.1.2",
     "tar": "^6.1.15",
     "universal-cookie": "^4.0.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
