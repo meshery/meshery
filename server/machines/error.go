@@ -7,16 +7,12 @@ import (
 )
 
 const (
-	ErrAutoRegisterCode           = "replace_me"
 	ErrInvalidTransitionCode      = "1541"
 	ErrInvalidTransitionEventCode = "1542"
 	ErrInititalizeK8sMachineCode  = "1543"
 	ErrAssetMachineCtxCode        = "1544"
 	ErrInvalidTypeCode            = "1551"
 )
-func ErrAutoRegister(err error, connType string) error {
-	return errors.New(ErrAutoRegisterCode, errors.Alert, []string{}, []string{err.Error()}, []string{""}, []string{""})
-}
 
 func ErrInvalidTransition(from, to StateType) error {
 	return errors.New(ErrInvalidTransitionCode, errors.Alert, []string{fmt.Sprintf("transition restricted from \"%s\" to \"%s\"", from, to)}, []string{}, []string{}, []string{})
