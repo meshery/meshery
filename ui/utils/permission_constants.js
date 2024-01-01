@@ -188,6 +188,10 @@ export const keys = {
     subject: "Deploy Design",
     action: "595b921a-ea1e-4611-83f0-503db0eeb94d"
   },
+  UNDEPLOY_DESIGN: { // not seeded
+    subject: "Undeploy Design",
+    action: "595b921a-ea1e-4611-83f0-503db0eeb94d"
+  },
   DETAILS_OF_DESIGN: {
     subject: "Details of design",
     action: "10a03036-53a0-40b3-9f69-6daab852e434"
