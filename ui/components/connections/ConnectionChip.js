@@ -12,6 +12,7 @@ import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
 import theme from '../../themes/app';
+import { LIGHTINDICATORS_CONNECTION_STATES_MAPPING } from '../NotificationCenter/constants';
 
 const useChipStyles = makeStyles(() => ({
   Chip: {
@@ -33,7 +34,7 @@ const useChipStyles = makeStyles(() => ({
   },
 }));
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }) => {
+export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, indicator }) => {
   const classes = useChipStyles();
   return (
     // <Tooltip title={tooltip || title} placement="bottom">
@@ -45,9 +46,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }
         status ? (
           <BadgeAvatars
             color={
-              status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                ? theme.palette.secondary.success
-                : theme.palette.secondary.penColorSecondary
+              theme.palette.secondary[indicator]
             }
           >
             <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />

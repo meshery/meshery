@@ -397,6 +397,7 @@ function Connections(props) {
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
+          const indicator = getIndicatorByConnectionkindAndStatus(tableMeta.rowData[4], getColumnValue(tableMeta.rowData, 'status', columns))
           return (
             <TootltipWrappedConnectionChip
               tooltip={'Server: ' + server}
@@ -414,6 +415,7 @@ function Connections(props) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
+              indicator={indicator}
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
               style={{ maxWidth: '120px' }}
             />
