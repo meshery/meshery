@@ -17,7 +17,7 @@ export const useGetCurrentAbilities = (org, skip) => {
 
   /**
    * RTk Lazy Query
-  */
+   */
   const [getUserQuery] = useLazyGetUserKeysQuery();
 
   useEffect(() => {
@@ -37,8 +37,9 @@ export const useGetCurrentAbilities = (org, skip) => {
           ...res,
           abilities: abilities,
         });
-      }).catch((error)=>{
-        console.error("Error when fetching keys in useGetUserAbilities custom hook", error)
+      })
+      .catch((error) => {
+        console.error('Error when fetching keys in useGetUserAbilities custom hook', error);
       });
   }, [org.id, getUserQuery, skip]);
 
