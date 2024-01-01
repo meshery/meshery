@@ -1,6 +1,6 @@
 import { Button, Checkbox, Chip, Grid, Paper, Typography } from '@material-ui/core';
 import { styled } from '@mui/system';
-import theme, { Colors } from '../../../themes/app';
+import theme, { Colors } from '../../../../themes/app';
 
 export const StyledChip = styled(Chip)({
   padding: '5px 6px !important',

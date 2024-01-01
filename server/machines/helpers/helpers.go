@@ -3,7 +3,6 @@ package helpers
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -11,13 +10,29 @@ import (
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/logger"
 )
 
-func StatusToEvent(status string) string {
-	return strings.TrimSuffix(strings.ToLower(status), "ed")
+func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
+	switch status {
+	case connections.DISCOVERED:
+		return machines.Discovery
+	case connections.REGISTERED:
+		return machines.Register
+	case connections.CONNECTED:
+		return machines.Connect
+	case connections.DISCONNECTED:
+		return machines.Disconnect
+	case connections.IGNORED:
+		return machines.Ignore
+	case connections.DELETED:
+		return machines.Delete
+	case connections.NOTFOUND:
+		return machines.NotFound
+	}
+	return machines.EventType(machines.DefaultState)
 }
-
 func getMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 	case "kubernetes":
