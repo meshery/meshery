@@ -16,6 +16,7 @@ import (
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
+	"github.com/layer5io/meshery/server/helpers/oci"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
@@ -27,6 +28,8 @@ import (
 	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
+		"oras.land/oras-go/v2/content/memory"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -1589,17 +1592,43 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	provider models.Provider,
 ) {
 	designID := mux.Vars(r)["id"]
-	resp, err := provider.GetDesignSourceContent(r, designID)
-	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
-		return
-	}
+
 
 	var mimeType string
 	sourcetype := mux.Vars(r)["sourcetype"]
+	var resp []byte
+	var err error
 
-	if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
+	if models.DesignType(sourcetype) == models.OCI {
+			resp, err = provider.GetMesheryPattern(r, designID)
+			if err != nil {
+				h.log.Error(ErrGetPattern(err))
+				http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+				return
+			}
+
+			exampleMemoryStore := memory.New()
+
+			desc := oci.GenerateDescriptor(ocispec.MediaTypeImageManifest, resp, exampleMemoryStore)
+			resp, err = oci.GenerateManifestContent(desc) // generate a image manifest
+				if err != nil {
+					h.log.Error(ErrGetPattern(err))
+					http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+					return
+				}
+
+	} else {
+			resp, err = provider.GetDesignSourceContent(r, designID)
+			if err != nil {
+				h.log.Error(ErrGetPattern(err))
+				http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+				return
+			}
+	}
+
+	if models.DesignType(sourcetype) == models.OCI {
+		mimeType = "application/json"
+	} else if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
 		mimeType = "application/x-tar"
 	} else { // serve the content in yaml file
 		mimeType = "application/x-yaml"
