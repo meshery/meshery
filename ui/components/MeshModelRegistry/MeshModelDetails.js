@@ -449,7 +449,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
       {((view === MODELS && !show.model.displayName) ||
         (view === COMPONENTS && !comp.displayName) ||
         (view === RELATIONSHIPS && !rela.kind)) && (
-        <p style={{ color: '#969696' }}>No {view} selected</p>
+        <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>
       )}
       {view === REGISTRANTS && regi.hostname && (
         <div>
