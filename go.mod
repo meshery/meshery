@@ -32,7 +32,7 @@ require (
 	github.com/gosimple/slug v1.13.1
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/jinzhu/copier v0.3.5
+	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.15
 	github.com/layer5io/meshkit v0.7.1
