@@ -224,7 +224,6 @@ const CardFront = ({
               title="Designs"
               count={designsCount}
               onAssign={onAssignDesign}
-              disabled={true}
               classes={classes}
             />
           </Box>
