@@ -8,7 +8,12 @@ import (
 	"github.com/layer5io/meshkit/utils/csv"
 )
 
-var rowIndex = 1
+var (
+	rowIndex = 1
+	// The column in the spreadsheet which tracks whether the key should be registerd with Local Provider or not.
+	shouldRegister = "Local Provider"
+	shouldRegisterColIndex = -1
+)
 
 type KeysRegistrationHelper struct {
 	log          logger.Handler
@@ -26,14 +31,29 @@ func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) 
 	}
 }
 
-func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
-	ch := make(chan Key)
+// returns the spreadsheet column index that captures whether the key should be registered.
+func(kh *KeysRegistrationHelper) GetIndexForRegisterCol(cols[] string) int {
+	if shouldRegisterColIndex != -1 {
+		return shouldRegisterColIndex
+	}
 
+	for index, col := range cols {
+		if col == shouldRegister {
+			return index
+		}
+	}
+	return shouldRegisterColIndex
+}
+
+func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
+	ch := make(chan Key, 1)
+	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[Key](filePath, rowIndex, map[string]string{
 		"Key ID": "id",
 	}, func(columns []string, currentRow []string) bool {
-		if len(columns) == len(currentRow) {
-			shouldRegister := currentRow[len(columns)-1]
+		index := kh.GetIndexForRegisterCol(columns)
+		if index != -1 && index < len(currentRow) {
+			shouldRegister := currentRow[index]
 			return strings.ToLower(shouldRegister) == "true"
 		}
 		return false
@@ -45,7 +65,7 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 	}
 
 	go func() {
-		err := csvReader.Parse(ch)
+		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			kh.log.Error(err)
 		}
@@ -56,8 +76,12 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 		case data := <-ch:
 			_, err := kh.keyPersister.SaveUsersKey(&data)
 			if err != nil {
-				kh.log.Error(err)
+				// Add meshkit err in the keys_persister.go files
+				// kh.log.Error(err)
 			}
+		case err := <- errorChan:
+				kh.log.Error(err)
+
 		case <-csvReader.Context.Done():
 			return
 		}
