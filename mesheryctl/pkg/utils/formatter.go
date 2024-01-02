@@ -28,7 +28,7 @@ func SetupLogrusFormatter() {
 // Initialize Meshkit Logger instance
 func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 	logLevel := viper.GetInt("LOG_LEVEL")
-	if viper.GetBool("DEBUG") {
+	if debugLevel {
 		logLevel = int(logrus.DebugLevel)
 	}
 
