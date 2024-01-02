@@ -165,7 +165,6 @@ function Modal(props) {
     leftHeaderIcon,
     submitBtnIcon,
     uiSchema = {},
-    RJSFWrapperComponent = null,
     initialData = {},
   } = props;
   const classes = useStyles();
@@ -263,7 +262,6 @@ function Modal(props) {
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}
-            RJSFWrapperComponent={RJSFWrapperComponent || RJSFWrapperComponentDefault(uiSchema)}
           />
         )}
 
