@@ -117,18 +117,6 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
-const RJSFWrapperComponentDefault =
-  (uiSchema) =>
-  (
-    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props,
-  ) => {
-    // Clone the child to pass in additional props
-    return React.cloneElement(props.children, {
-      ...(props.children?.props || {}),
-      uiSchema,
-    });
-  };
-
 /**
  * Renders common dialog component.
  *
@@ -165,6 +153,7 @@ function Modal(props) {
     leftHeaderIcon,
     submitBtnIcon,
     uiSchema = {},
+    RJSFWrapperComponent = null,
     initialData = {},
   } = props;
   const classes = useStyles();
@@ -262,6 +251,7 @@ function Modal(props) {
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}
+            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
           />
         )}
 
