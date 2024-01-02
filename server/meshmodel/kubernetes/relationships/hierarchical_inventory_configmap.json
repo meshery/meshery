@@ -39,7 +39,7 @@
                     "model": "kubernetes",
                     "patch": {
                         "patchStrategy": "replace",
-                        "mutatorRef": [
+                        "mutatedRef": [
                             [
                                 "spec",
                                 "spec",
