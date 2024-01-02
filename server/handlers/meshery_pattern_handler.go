@@ -850,7 +850,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -886,7 +886,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -933,7 +933,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, event)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1009,7 +1009,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1085,7 +1085,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
@@ -1162,7 +1162,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1196,7 +1196,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1224,7 +1224,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1286,7 +1286,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 		return
 	}
 	eventBuilder.WithDescription(fmt.Sprintf("Design %s saved", strings.Join(names, ",")))
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
 	res.Details = "\"" + strings.Join(names, ",") + "\" design saved"
 	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
@@ -1573,12 +1573,12 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 	fmt.Fprint(rw, string(b))
 }
 
-// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetApplication
+// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetPatternSourceContent
 // Handle GET request for Meshery Patterns with of source content
 //
 // Get the pattern source-content
 // responses:
-//  200
+//  200: mesheryPatternSourceContentResponseWrapper
 
 // GetMesheryPatternHandler fetched the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
@@ -1588,12 +1588,11 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	applicationID := mux.Vars(r)["id"]
-	resp, err := provider.GetApplicationSourceContent(r, applicationID)
+	designID := mux.Vars(r)["id"]
+	resp, err := provider.GetDesignSourceContent(r, designID)
 	if err != nil {
-		obj := "download"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
 

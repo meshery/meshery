@@ -68,6 +68,8 @@ import {
   PROFILES,
   TOGGLER,
   CONNECTION,
+  ENVIRONMENT,
+  WORKSPACE,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 
@@ -358,8 +360,22 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
       },
       {
+        id: ENVIRONMENT,
+        href: '/management/environments',
+        title: 'Environments',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
+        link: true,
+      },
+      {
+        id: WORKSPACE,
+        href: '/management/workspaces',
+        title: 'Workspaces',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
+        link: true,
+      },
+      {
         id: SERVICE_MESH,
-        href: '/management',
+        href: '/management/service-mesh',
         title: 'Service Mesh',
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,

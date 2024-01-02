@@ -2,7 +2,7 @@
 layout: page
 title: Frequently Asked Questions
 permalink: project/faq
-description: General commonly asked questions and answers about Meshery.
+abstract: General commonly asked questions and answers about Meshery.
 language: en
 type: project
 ---

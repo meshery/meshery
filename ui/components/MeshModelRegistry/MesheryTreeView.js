@@ -1,7 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from '@material-ui/core';
-import Checkbox from '@mui/material/Checkbox';
+import {
+  Box,
+  Typography,
+  IconButton,
+  FormControlLabel,
+  Switch,
+  useTheme,
+  Tooltip,
+} from '@material-ui/core';
+// import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -14,8 +22,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
-  const [checked, setChecked] = useState(false);
-  const [hover, setHover] = useState(false);
+  // const [checked, setChecked] = useState(false);
+  // const [hover, setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
@@ -23,8 +31,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
 
   return (
     <StyledTreeItemRoot
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      // onMouseEnter={() => setHover(true)}
+      // onMouseLeave={() => setHover(false)}
       root={root}
       lineColor={theme.palette.secondary.text}
       label={
@@ -51,7 +59,9 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             </div>
           )}
 
-          {check && (
+          {/* Currently the functionality of checkbox is not supported */}
+
+          {/* {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
               size="small"
@@ -64,7 +74,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
                 },
               }}
             />
-          )}
+          )} */}
           {search && (
             <SearchBar
               onSearch={debounce((value) => setSearchText(value), 200)}
@@ -121,7 +131,7 @@ const MesheryTreeView = ({
 
   const handleScroll = (scrollingView) => (event) => {
     const div = event.target;
-    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 1) {
       setPage((prevPage) => ({
         ...prevPage, // Keep the current values for other keys
         [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
@@ -179,19 +189,24 @@ const MesheryTreeView = ({
             <div>
               {width < 1370 && isSearchExpanded ? null : (
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton onClick={expandAll} size="large">
-                    {/* <PlusSquare /> */}
-                    <KeyboardArrowDownIcon />
-                  </IconButton>
+                  <Tooltip title="Expand All" placement="top">
+                    <IconButton onClick={expandAll} size="large" disableRipple>
+                      {/* <PlusSquare /> */}
+                      <KeyboardArrowDownIcon />
+                    </IconButton>
+                  </Tooltip>
 
-                  <IconButton
-                    onClick={() => setExpanded([])}
-                    style={{ marginRight: '4px' }}
-                    size="large"
-                  >
-                    {/* <MinusSquare /> */}
-                    <KeyboardArrowUpIcon />
-                  </IconButton>
+                  <Tooltip title="Collapse All" placement="top">
+                    <IconButton
+                      onClick={() => setExpanded([])}
+                      style={{ marginRight: '4px' }}
+                      size="large"
+                      disableRipple
+                    >
+                      {/* <MinusSquare /> */}
+                      <KeyboardArrowUpIcon />
+                    </IconButton>
+                  </Tooltip>
                   <FormControlLabel
                     control={
                       <Switch
@@ -217,7 +232,10 @@ const MesheryTreeView = ({
           </div>
           <div
             id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
+            style={{
+              overflowY: 'auto',
+              height: '27rem',
+            }}
             onScroll={handleScroll(MODELS)}
           >
             <TreeView
@@ -250,33 +268,37 @@ const MesheryTreeView = ({
                     labelText={`Components (${model.components ? model.components.length : 0})`}
                   >
                     {model.components &&
-                      model.components.map((component, subIndex) => (
-                        <StyledTreeItem
-                          key={subIndex}
-                          nodeId={`${index}.1.${subIndex}`}
-                          check
-                          labelText={component.displayName}
-                          onClick={() => {
-                            setShow((prevShow) => {
-                              const { components } = prevShow;
-                              const compIndex = components.findIndex((item) => item === component);
-                              if (compIndex !== -1) {
-                                return {
-                                  ...prevShow,
-                                  model: model,
-                                  components: components.filter((item) => item !== component),
-                                };
-                              } else {
-                                return {
-                                  ...prevShow,
-                                  model: model,
-                                  components: [...components, component],
-                                };
-                              }
-                            });
-                          }}
-                        />
-                      ))}
+                      model.components.map((component, subIndex) => {
+                        return (
+                          <StyledTreeItem
+                            key={subIndex}
+                            nodeId={`${index}.1.${subIndex}`}
+                            check
+                            labelText={component.displayName}
+                            onClick={() => {
+                              setShow((prevShow) => {
+                                const { components } = prevShow;
+                                const compIndex = components.findIndex(
+                                  (item) => item === component,
+                                );
+                                if (compIndex !== -1) {
+                                  return {
+                                    ...prevShow,
+                                    model: model,
+                                    components: components.filter((item) => item !== component),
+                                  };
+                                } else {
+                                  return {
+                                    ...prevShow,
+                                    model: model,
+                                    components: [...components, component],
+                                  };
+                                }
+                              });
+                            }}
+                          />
+                        );
+                      })}
                   </StyledTreeItem>
                   <StyledTreeItem
                     nodeId={`${index}.2`}
@@ -352,7 +374,7 @@ const MesheryTreeView = ({
           <div
             id="scrollElement"
             style={{ overflowY: 'auto', height: '27rem' }}
-            onScroll={handleScroll(MODELS)}
+            onScroll={handleScroll(REGISTRANTS)}
           >
             <TreeView
               aria-label="controlled"
@@ -367,24 +389,29 @@ const MesheryTreeView = ({
               {data?.map((registrant) => (
                 <StyledTreeItem
                   key={registrant.id}
-                  nodeId={0}
+                  nodeId={registrant.id}
                   top
                   labelText={registrant.hostname}
-                  onClick={() => setRegi(registrant)}
+                  onClick={() => {
+                    setShow({
+                      model: {},
+                      components: [],
+                      relationships: [],
+                    });
+                  }}
                 >
                   <div>
                     <StyledTreeItem
-                      nodeId={1}
+                      nodeId={`${registrant.id}.1`}
                       labelText={`Models (${registrant?.summary?.models})`}
                     >
                       {registrant?.models.map((model, index) => (
                         <StyledTreeItem
                           key={index}
-                          nodeId={index + 2}
+                          nodeId={`${registrant.id}.1.${index}`}
                           check
                           labelText={model.displayName}
                           onClick={() => {
-                            setRegi(registrant);
                             setShow({
                               model: model,
                               components: [],
@@ -404,7 +431,7 @@ const MesheryTreeView = ({
                                   return (
                                     <StyledTreeItem
                                       key={subIndex}
-                                      nodeId={`${index + 2}.1.${subIndex}`}
+                                      nodeId={`${index + 1}.1.${subIndex}`}
                                       check
                                       labelText={component.displayName}
                                       onClick={() => {

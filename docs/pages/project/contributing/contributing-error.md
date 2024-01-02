@@ -2,7 +2,7 @@
 layout: page
 title: How to write MeshKit compatible errors
 permalink: project/contributing/contributing-error
-description: How to declare errors in Meshery components.
+abstract: How to declare errors in Meshery components.
 language: en
 type: project
 category: contributing

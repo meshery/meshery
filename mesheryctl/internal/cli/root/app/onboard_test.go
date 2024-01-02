@@ -50,13 +50,13 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/types",
-					Response:     "view.applicationTypes.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application/Kubernetes%20Manifest",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
 					Response:     "onboard.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
@@ -68,7 +68,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "onboard.applicationdeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -83,8 +83,8 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/types",
-					Response:     "view.applicationTypes.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -95,7 +95,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "onboard.applicationdeploy.response.golden",
 					ResponseCode: 200,
 				},

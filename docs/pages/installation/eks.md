@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/eks.png
+abstract: Install Meshery on Elastic Kubernetes Service. Deploy Meshery in EKS in-cluster or outside of EKS out-of-cluster.
 ---
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>

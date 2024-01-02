@@ -3,7 +3,7 @@ layout: page
 title: Contributing to Meshery Docker Extension
 permalink: project/contributing/contributing-docker-extension
 redirect_from: project/contributing/contributing-docker-extension/
-description: How to contribute to Meshery Docker Extension
+abstract: How to contribute to Meshery Docker Extension
 language: en
 type: project
 category: contributing

@@ -8,11 +8,16 @@ type: integrations
 display-title: "true"
 language: en
 list: exclude
+abstract: Integrations with other platforms and services.
 ---
 
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
-### All Integrations by Name (forloop.length)
+{% assign total = sorted_index | size %}
+{% capture totalled %}
+### All Integrations by Name ({{ total }})
+{% endcapture %}
+{{totalled}}
 
 <!-- 
 UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY

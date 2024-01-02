@@ -49,7 +49,7 @@ function CatalogCard({ pattern, patternType, catalog }) {
             <ServiceMeshIcon width={120} height={100} />
             <DesignId>
               <DesignIcon width={20} height={20} />
-              {` MESHERY${pattern.id.split("-")[2]}`}
+              {`MESHERY${pattern.id.split("-")[2]}`}
             </DesignId>
           </CardFront>
           <CardBack>
