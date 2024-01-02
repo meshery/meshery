@@ -54,7 +54,10 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 		select {
 
 		case data := <-ch:
-			kh.keyPersister.SaveUsersKey(&data)
+			_, err := kh.keyPersister.SaveUsersKey(&data)
+			if err != nil {
+				kh.log.Error(err)
+			}
 		case <-csvReader.Context.Done():
 			return
 		}
