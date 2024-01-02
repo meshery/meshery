@@ -3,8 +3,8 @@ import { Button, Card, Grid, Typography, Box, Checkbox } from '@material-ui/core
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Delete, Edit } from '@material-ui/icons';
 
-import FlipCard from './flip-card';
-import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
+import { FlipCard } from '../General';
+import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import classNames from 'classnames';
 
 export const formattoLongDate = (date) => {
@@ -21,7 +21,7 @@ export const TransferButton = ({ title, count, onAssign, classes }) => {
       <Grid>
         <Typography className={classes.tabCount}>{count}</Typography>
         <Typography className={classes.tabTitle}>{title}</Typography>
-        <SyncAltIcon />
+        <SyncAltIcon style={{ position: 'absolute', top: '10px', right: '10px' }} />
       </Grid>
     </Button>
   );

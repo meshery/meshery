@@ -89,7 +89,7 @@ export const MESHSYNC_STATES = {
   REGISTER: 'register',
 };
 
-export const TRANSFER_COMPONET = {
+export const TRANSFER_COMPONENT = {
   CHIP: 'chip',
   OTHER: 'other',
 };

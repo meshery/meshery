@@ -49,6 +49,9 @@ type DefaultLocalProvider struct {
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	OrganizationPersister          *OrganizationPersister
 	KeyPersister                    *KeyPersister
+
+	OrganizationPersister           *OrganizationPersister
+
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 	Log                             logger.Handler
@@ -164,14 +167,13 @@ func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, 
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
-
-// func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
-// 	return []byte(""), ErrLocalProviderSupport
-// }
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
 
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
@@ -1166,9 +1168,9 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			ID:          &id,
 			Name:        "My Org",
 			Country:     "",
-			Region: 		"",
+			Region:      "",
 			Description: "This is default organization",
-			Owner: 		 uuid.Nil,
+			Owner:       uuid.Nil,
 		}
 		_, err := l.OrganizationPersister.SaveOrganization(org)
 		if err != nil {
@@ -1342,14 +1344,13 @@ func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _ , _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
-
 
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
