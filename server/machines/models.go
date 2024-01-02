@@ -103,13 +103,13 @@ func (sm *StateMachine) ResetState() {
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
-	sm.Log.Info("inside getNextState: ", event, ok)
+	sm.Log.Debug("inside getNextState: ", event, ok)
 	if ok {
 		events := state.Events
 		if events != nil {
 			nextState, ok := events[event]
 			if ok {
-				sm.Log.Info("next state: ", nextState)
+				sm.Log.Debug("next state: ", nextState)
 				return nextState, nil
 			}
 		}
@@ -137,18 +137,18 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if err != nil {
 			sm.Log.Error(err)
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build()
-			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
+			sm.Log.Debug(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
 			break
 		}
 
-		sm.Log.Info("transitioning to next state: ", nextState)
+		sm.Log.Debug("transitioning to next state: ", nextState)
 
 		// next state to transition
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
 			sm.Log.Error(err)
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
-			sm.Log.Info(event)
+			sm.Log.Debug(event)
 			break
 		}
 
@@ -165,20 +165,20 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
 			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
-			sm.Log.Info("entry action executed, event emitted ", eventType)
+			sm.Log.Debug("entry action executed, event emitted ", eventType)
 
 			if err != nil {
 				sm.Log.Error(err)
-				sm.Log.Info(event)
+				sm.Log.Debug(event)
 				if eventType == NoOp {
 					return event, err
 				}
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
-				sm.Log.Info("inside action executed, event emitted ", eventType)
+				sm.Log.Debug("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
-					sm.Log.Info(event)
+					sm.Log.Debug(event)
 					if eventType == NoOp {
 						return event, err
 					}
