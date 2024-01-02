@@ -76,8 +76,7 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 		case data := <-ch:
 			_, err := kh.keyPersister.SaveUsersKey(&data)
 			if err != nil {
-				// Add meshkit err in the keys_persister.go files
-				// kh.log.Error(err)
+				kh.log.Error(err)
 			}
 		case err := <- errorChan:
 				kh.log.Error(err)
