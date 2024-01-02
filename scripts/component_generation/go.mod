@@ -3,7 +3,7 @@ module github.com/layer5io/meshmodel_ahub_gen
 go 1.21
 
 require (
-	github.com/layer5io/meshkit v0.7.0
+	github.com/layer5io/meshkit v0.7.2
 	golang.org/x/oauth2 v0.15.0
 	google.golang.org/api v0.154.0
 	gopkg.in/yaml.v3 v3.0.1
