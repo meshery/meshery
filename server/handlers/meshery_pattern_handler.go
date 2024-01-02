@@ -850,7 +850,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -886,7 +886,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -933,7 +933,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, event)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1009,7 +1009,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1085,7 +1085,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
@@ -1162,7 +1162,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1196,7 +1196,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1224,7 +1224,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -1286,7 +1286,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 		return
 	}
 	eventBuilder.WithDescription(fmt.Sprintf("Design %s saved", strings.Join(names, ",")))
-	rw.Header().Set("Content-Type", "Pattern/json")
+	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
 	res.Details = "\"" + strings.Join(names, ",") + "\" design saved"
 	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."

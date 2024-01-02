@@ -47,7 +47,7 @@ func TestAppCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application",
+					URL:          testContext.BaseURL + "/api/pattern",
 					Response:     "app.list.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -66,7 +66,7 @@ func TestAppCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/application/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "app.offboard.response.golden",
 					ResponseCode: 200,
 				},
@@ -96,7 +96,7 @@ func TestAppCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/41f81b3d-64dc-42de-8b68-fa904ec46da9",
+					URL:          testContext.BaseURL + "/api/pattern/41f81b3d-64dc-42de-8b68-fa904ec46da9",
 					Response:     "app.viewid.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -111,7 +111,7 @@ func TestAppCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/application/bbf81b3d-64dc-42de-8b68-uy904ec46da9",
+					URL:          testContext.BaseURL + "/api/pattern/bbf81b3d-64dc-42de-8b68-uy904ec46da9",
 					Response:     "app.view.invalidid.response.golden",
 					ResponseCode: 200,
 				},

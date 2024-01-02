@@ -321,7 +321,6 @@ function ConfirmationMsg(props) {
   return (
     <div className={classes.root}>
       <Dialog
-        id="searchClick"
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"

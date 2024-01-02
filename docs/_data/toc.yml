@@ -4,41 +4,41 @@
     - title: Supported Platforms ↆ
       url: installation
       children:
-        - title: Docker
+        - title: Docker ↆ
           url: installation/docker
           grandchildren:
             - title: Docker Extension
               url: installation/docker/docker-extension
         - title: GitHub Codespaces
           url: installation/codespaces
-        - title: Kubernetes
+        - title: Kubernetes ↆ
           url: installation/kubernetes
           grandchildren:
-            - title: "- AKS"
+            - title: "AKS"
               url: installation/kubernetes/aks
-            - title: "- EKS"
+            - title: "EKS"
               url: installation/kubernetes/eks
-            - title: "- GKE"
+            - title: "GKE"
               url: installation/kubernetes/gke
-            - title: "- Helm"
+            - title: "Helm"
               url: installation/kubernetes/helm
-            - title: "- KinD"
+            - title: "KinD"
               url: installation/kubernetes/kind
-            - title: "- Minikube"
+            - title: "Minikube"
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
         - title: Linux or macOS ↆ
           url: installation/linux-mac
           grandchildren: 
-            - title: "- Bash"
+            - title: "Bash"
               url: installation/linux-mac/bash
-            - title: "- Brew"
+            - title: "Brew"
               url: installation/linux-mac/brew
         - title: Windows ↆ
           url: installation/windows 
           grandchildren: 
-            - title: "- Scoop"
+            - title: "Scoop"
               url: installation/windows/scoop 
     - title: Compatibility Matrix
       url: installation/compatibility-matrix
@@ -62,28 +62,30 @@
         - title: "Build & Release (CI) ↆ"
           url: project/contributing/build-and-release
           grandchildren:
-          - title: "- End-to-End Testing"
+          - title: "End-to-End Testing"
             url: project/contributing/contributing-cypress
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
-          - title: "- Design Principles"
+          - title: "Design Principles"
             url: project/contributing/contributing-cli-guide
         - title: Docs
           url: project/contributing/contributing-docs
         - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
-          - title: "- Server Events"
+          - title: "Server Events"
             url: project/contributing/contributing-server-events
-          - title: "- Server Errors"
+          - title: "Server Errors"
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Models
+          url: project/contributing/contributing-models
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -97,9 +99,9 @@
         - title: "Operator ↆ"
           url: concepts/architecture/operator
           grandchildren:
-          - title: "- Broker"
+          - title: "Broker"
             url: concepts/architecture/broker
-          - title: "- Meshsync"
+          - title: "Meshsync"
             url: concepts/architecture/meshsync     
     - title: Logical ↆ
       url: concepts/logical
@@ -111,15 +113,15 @@
         - title: "Models ↆ"
           url: concepts/models
           grandchildren: 
-          - title: "- Components"
+          - title: "Components"
             url: concepts/components
-          - title: "- Relationships"
+          - title: "Relationships"
             url: concepts/relationships
-          - title: "- Policies"
+          - title: "Policies"
             url: concepts/policies
-          - title: "- Connections"
+          - title: "Connections"
             url: concepts/connections
-          - title: "- Credentials"
+          - title: "Credentials"
             url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
