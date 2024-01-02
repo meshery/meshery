@@ -22,7 +22,8 @@ assignees: ''
 ## How to make updates to MeshModel
 
 ### Instructions for Models
-1. _Forthcoming_
+
+Review https://docs.meshery.io/project/contributing/contributing-models#contributing-to-models
 
 ### Instructions for Components
 While the default shape for new components is a circle, each component should be considered for its best-fit shape.
@@ -33,9 +34,10 @@ While the default shape for new components is a circle, each component should be
 ### Instructions for Relationships
 1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models or potentially other components, models, or environmental considerations.
 1. Propose a specific visual representation for the relationship. Visual representation examples:
-    - [Hierarchical](https://github.com/meshery/meshery/blob/master/.github/assets/images/hierarchical_relationship.png)
-    - [Sibling](https://github.com/meshery/meshery/blob/master/.github/assets/images/sibling_relationship.png)
-    - [Binding](https://github.com/meshery/meshery/blob/master/.github/assets/images/binding_relationship.png)
+    - [Hierarchical](https://docs.meshery.io/assets/img/meshmodel/relationships/hierarchical_relationship.png)
+    - [Sibling](https://docs.meshery.io/assets/img/meshmodel/relationships/sibling_relationship.png)
+    - [Binding](https://docs.meshery.io/assets/img/meshmodel/relationships/binding_relationship.png)
+    - [Edge](https://docs.meshery.io/assets/img/meshmodel/relationships/mount_edge_relationship.png)
 1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 1. Create a Relationship Definition (yaml). See the [Relationship Schema](https://github.com/meshery/meshery/tree/master/server/meshmodel/schemas) in MeshModel and [examples]([url](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships)).
 1. Create a policy for evaluation of the relationship (rego). See examples.
