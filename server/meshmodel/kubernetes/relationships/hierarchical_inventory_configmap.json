@@ -25,7 +25,7 @@
           "patch": {
             "patchStrategy": "replace",
             "mutatorRef": [["name"]],
-            "description": "A relationship that assigns configuration data for applications deployed in a cluster."
+            "description": "A relationship that assigns configuration data for resources deployed in a cluster by environment variable.\n\nIn Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
           }
         }
       ],
