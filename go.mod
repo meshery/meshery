@@ -14,7 +14,7 @@ replace (
 require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.60.3
-	github.com/99designs/gqlgen v0.17.39
+	github.com/99designs/gqlgen v0.17.42
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.0
 	github.com/docker/cli v24.0.6+incompatible
