@@ -9,6 +9,7 @@
       "@/constants/*": ["constants/*"],
       "@/api/*": ["api/*"],
       "@/assets/*": ["assets/*"],
+      "@/themes/*": ["themes/*"],
     }
   },
   "exclude": ["node_modules", "out"]

@@ -6,13 +6,13 @@ import Slack from '@/assets/icons/social/slack';
 import Twitter from '@/assets/icons/social/twitter';
 import Youtube from '@/assets/icons/social/youtube';
 
-export const SocialMain = styled('div')(({ theme }) => ({
+export const SocialMain = styled('div')(() => ({
   padding: '1.3rem 2rem',
   display: 'flex',
   justifyContent: 'center',
 }));
 
-export const SocialContainer = styled('div')(({ theme }) => ({
+export const SocialContainer = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

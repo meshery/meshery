@@ -149,7 +149,7 @@ export const keys = {
     action: 'd9ae2b08-762f-418f-916f-43de736b53e2',
   },
   CLONE_DESIGN: {
-    subject: 'Clone Design', // not seeded
+    subject: 'Clone Design',
     action: '94a12f80-3c45-4a1f-afb2-a68b909d0d7f',
   },
   OPEN_IN_PLAYGROUND: {

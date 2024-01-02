@@ -52,9 +52,7 @@ const DefaultError = (props) => {
               ? errorTitle
               : 'You are not authorized to view this page. Contact your administrator'}
           </Typography>
-          {errorType === ErrorTypes.MESHERY_DEPLOYMENT_INCOMPATIBLE ? (
-            <MesheryVersionCompatiblity errorContent={errorContent} />
-          ) : errorType === ErrorTypes.UNKNOWN ? (
+          {errorType === ErrorTypes.UNKNOWN ? (
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}
           <div style={{ marginTop: '3rem' }}>

@@ -20,12 +20,12 @@ export const ErrorContainer = styled('div')(({ theme }) => ({
   alignItems: 'center',
 }));
 
-export const ErrorComponent = styled('div')(({ theme }) => ({
+export const ErrorComponent = styled('div')(() => ({
   paddingTop: '2rem',
   width: '100%',
 }));
 
-export const ErrorContentContainer = styled('div')(({ theme }) => ({
+export const ErrorContentContainer = styled('div')(() => ({
   textAlign: 'center',
   backgroundColor: '#fafafa',
   margin: '2rem',
@@ -40,6 +40,6 @@ export const ErrorLink = styled('a')(({ theme }) => ({
   textDecoration: 'none',
 }));
 
-export const ErrorMsg = styled('errormsg')(({ theme }) => ({
+export const ErrorMsg = styled('errormsg')(() => ({
   fontWeight: '600',
 }));

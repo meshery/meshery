@@ -1571,104 +1571,105 @@ function MesheryPatterns({
                 setExpanded={setIsSearchExpanded}
                 placeholder="Search designs..."
               />
-            {viewType === 'table' && (
-              <CustomColumnVisibilityControl
-                id="ref"
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              {viewType === 'table' && (
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              )}
+
+              {!selectedPattern.show && (
+                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+              )}
+            </div>
+          </div>
+          {!selectedPattern.show && viewType === 'table' && (
+            <ResponsiveDataTable
+              data={patterns}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          )}
+          {!selectedPattern.show && viewType === 'grid' && (
+            // grid vieww
+            <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
+              canPublishPattern={canPublishPattern}
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleVerify={handleVerify}
+              handlePublish={handlePublish}
+              handleUnpublishModal={handleUnpublishModal}
+              handleUnDeploy={handleUnDeploy}
+              handleClone={handleClone}
+              supportedTypes="null"
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              patternErrors={patternErrors}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
+              user={user}
+              handleInfoModal={handleInfoModal}
+            />
+          )}
+          <ConfirmationModal
+            open={modalOpen.open}
+            handleClose={handleModalClose}
+            submit={{
+              deploy: () =>
+                handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+              unDeploy: () =>
+                handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+              verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
+            }}
+            title={modalOpen.name}
+            componentCount={modalOpen.count}
+            tab={modalOpen.action}
+            validationBody={modalOpen.validationBody}
+            dryRunComponent={modalOpen.dryRunComponent}
+            errors={modalOpen.errors}
+          />
+          {canPublishPattern &&
+            publishModal.open &&
+            CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action) && (
+              <PublishModal
+                publishFormSchema={publishSchema}
+                handleClose={handlePublishModalClose}
+                title={publishModal.pattern?.name}
+                handleSubmit={handlePublish}
               />
             )}
-
-            {!selectedPattern.show && (
-              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-            )}
-          </div>
-        </div>
-        {!selectedPattern.show && viewType === 'table' && (
-          <ResponsiveDataTable
-            data={patterns}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
-        )}
-        {!selectedPattern.show && viewType === 'grid' && (
-          // grid vieww
-          <MesheryPatternGrid
-            selectedK8sContexts={selectedK8sContexts}
-            canPublishPattern={canPublishPattern}
-            patterns={patterns}
-            handleDeploy={handleDeploy}
-            handleVerify={handleVerify}
-            handlePublish={handlePublish}
-            handleUnpublishModal={handleUnpublishModal}
-            handleUnDeploy={handleUnDeploy}
-            handleClone={handleClone}
-            supportedTypes="null"
-            handleSubmit={handleSubmit}
-            setSelectedPattern={setSelectedPattern}
-            selectedPattern={selectedPattern}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-            patternErrors={patternErrors}
-            publishModal={publishModal}
-            setPublishModal={setPublishModal}
-            publishSchema={publishSchema}
-            user={user}
-            handleInfoModal={handleInfoModal}
-          />
-        )}
-        <ConfirmationModal
-          open={modalOpen.open}
-          handleClose={handleModalClose}
-          submit={{
-            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-            unDeploy: () =>
-              handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
-          }}
-          title={modalOpen.name}
-          componentCount={modalOpen.count}
-          tab={modalOpen.action}
-          validationBody={modalOpen.validationBody}
-          dryRunComponent={modalOpen.dryRunComponent}
-          errors={modalOpen.errors}
-        />
-        {(canPublishPattern &&
-            publishModal.open &&
-            CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action)) && (
-          <PublishModal
-            publishFormSchema={publishSchema}
-            handleClose={handlePublishModalClose}
-            title={publishModal.pattern?.name}
-            handleSubmit={handlePublish}
-          />
-        )}
-        {(importModal.open && CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action)) && (
-          <ImportModal
-            importFormSchema={importSchema}
-            handleClose={handleUploadImportClose}
-            handleImportDesign={handleImportDesign}
-          />
-        )}
-        {(infoModal.open && CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action)) && (
-          <InfoModal
-            infoModalOpen={true}
-            handleInfoModalClose={handleInfoModalClose}
-            dataName="patterns"
-            selectedResource={infoModal.selectedResource}
-            resourceOwnerID={infoModal.ownerID}
-            currentUserID={user?.id}
-            formSchema={publishSchema}
-            meshModels={meshModels}
-          />
-        )}
-        <PromptComponent ref={modalRef} />
+          {importModal.open && CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action) && (
+            <ImportModal
+              importFormSchema={importSchema}
+              handleClose={handleUploadImportClose}
+              handleImportDesign={handleImportDesign}
+            />
+          )}
+          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action) && (
+            <InfoModal
+              infoModalOpen={true}
+              handleInfoModalClose={handleInfoModalClose}
+              dataName="patterns"
+              selectedResource={infoModal.selectedResource}
+              resourceOwnerID={infoModal.ownerID}
+              currentUserID={user?.id}
+              formSchema={publishSchema}
+              meshModels={meshModels}
+            />
+          )}
+          <PromptComponent ref={modalRef} />
         </>
       ) : (
         <DefaultError />
