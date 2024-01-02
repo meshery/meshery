@@ -84,6 +84,8 @@
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Models
+          url: project/contributing/contributing-models
 - title: 🧠 Concepts
   url: concepts
   links:
