@@ -3,7 +3,6 @@ package models
 import (
 	"encoding/json"
 	"strings"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -46,8 +45,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 
 
 // SaveUsersKey saves a key to the database
-func (kp *KeyPersister) SaveUsersKey(keys []*Key) ([]*Key, error) {
-	fmt.Printf("keys: %p\n", keys)
+func (kp *KeyPersister) SaveUsersKey(keys *Key) (*Key, error) {
 	if err := kp.DB.Save(keys).Error; err != nil {
 		return nil, err
 	}

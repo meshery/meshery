@@ -233,11 +233,12 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-
+	krh := models.NewKeysRegistrationHelper(dbHandler, log)
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {
 		ch.SeedComponents()
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
