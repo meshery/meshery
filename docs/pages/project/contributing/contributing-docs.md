@@ -35,9 +35,9 @@ Meshery documentation is made of these components:
 
 {% capture code_content %}sudo apt update
 sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
- 	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
- 	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
- 	libreadline-dev libssl-dev
+ libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
+ libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
+ libreadline-dev libssl-dev
 sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 curl -sSL https://get.rvm.io | sudo bash -s stable
 sudo usermod -a -G rvm `whoami`{% endcapture %}
@@ -61,54 +61,52 @@ Restart your WSL VM before moving forward.
     gem update
     gem install jekyll bundler
   ```
-  
+
 - Update the Gemfile located in meshery/docs directory
   ```
     ruby '3.0.2'
   ```
   <strong>Note:</strong> In place of `3.0.2` add your installed version
-  
 - Also add this to the next line in the Gemfile
   ```
     gem 'wdm','>=0.1.0' if Gem.win_platform?
   ```
   <strong>Note:</strong> This is just a workaround for your local machine so do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests
-  
 - Next, go to this folder on your device
-  ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
-  
-- Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
+  `C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib`
+- Add `require 'em/pure_ruby' ` in the first line of the <strong>eventmachine.rb</strong> file
 
 ### For Linux
 
 - Prerequisites
-{% capture code_content %}sudo apt-get update
-sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}sudo apt-get update
+  sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev{% endcapture %}
+  {% include code.html code=code_content %}
+
 #### Installing rbenv
 
 - Cloning the rbenv repository
-{% capture code_content %}git clone https://github.com/rbenv/rbenv.git ~/.rbenv{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}git clone https://github.com/rbenv/rbenv.git ~/.rbenv{% endcapture %}
+  {% include code.html code=code_content %}
   <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
 - Setting the path
-{% capture code_content %}echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc{% endcapture %}
+  {% include code.html code=code_content %}
 - rbenv init
-{% capture code_content %}echo 'eval "$(rbenv init -)"' >> ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}echo 'eval "$(rbenv init -)"' >> ~/.bashrc{% endcapture %}
+  {% include code.html code=code_content %}
 - Reload your bashrc
-{% capture code_content %}source ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}source ~/.bashrc{% endcapture %}
+  {% include code.html code=code_content %}
 - Check installation
-{% capture code_content %}type rbenv{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}type rbenv{% endcapture %}
+  {% include code.html code=code_content %}
 
 #### Install Ruby
 
 - rbenv install version
 
-{% capture code_content %}rbenv install 2.7.5{% endcapture %}
+{% capture code_content %}rbenv install 3.2.2{% endcapture %}
 {% include code.html code=code_content %}
 
 - To list all the versions that can be installed
@@ -135,26 +133,26 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 ### Get the code
 
 - Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
-{% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
+  {% include code.html code=code_content %}
 - Change to the docs directory
-{% capture code_content %}cd docs{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}cd docs{% endcapture %}
+  {% include code.html code=code_content %}
 - Install any Ruby dependencies
-{% capture code_content %}gem install bundler
-bundle install{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}gem install bundler
+  bundle install{% endcapture %}
+  {% include code.html code=code_content %}
 
   <strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
 
 ### Serve the site
 
 - Serve the code locally
-{% capture code_content %}make docs{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}make docs{% endcapture %}
+  {% include code.html code=code_content %}
 - If that gives an error run:
-{% capture code_content %}bundle exec jekyll serve --drafts --config _config_dev.yml{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}bundle exec jekyll serve --drafts --config \_config_dev.yml{% endcapture %}
+  {% include code.html code=code_content %}
 
   _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
 
@@ -192,23 +190,23 @@ Automatically the `Gemfile.lock` will update once the `make docs` is given (for 
 
 **WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
-
 ### Make Necessary Changes
+
 - Make changes as required by the issue you are solving
 - Be sure check that your changes appear correctly locally by serving the site using `make docs`
 
 #### Note
-- If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
 
+- If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
 
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
-{% capture code_content %}git commit -s -m “my commit message w/signoff”{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}git commit -s -m “my commit message w/signoff”{% endcapture %}
+  {% include code.html code=code_content %}
 - Once all changes have been committed, push the changes.
-{% capture code_content %}git push origin <branch-name>{% endcapture %}
-{% include code.html code=code_content %}
+  {% capture code_content %}git push origin <branch-name>{% endcapture %}
+  {% include code.html code=code_content %}
 - Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
 
 ---
@@ -223,6 +221,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 
 {% capture code_content %}<pre class="codeblock-pre"><div class="codeblock">
 <code class="clipboardjs">code_snippet_here</code>
+
 </div></pre>{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -236,7 +235,7 @@ If the code snippet has special characters then we need to capture it first in v
 **NOTE:** Don't use `code` component when the snippet is in between an ordered list, it breaks the order and next item in the list will have numbering from 1. So better use `<pre class="codeblock_pre">...</pre>` method above instead when the snippet is in between an ordered list.
 
 **A full block:**
-{% capture code_content %}```code snippet```{% endcapture %}
+{% capture code_content %}`code snippet`{% endcapture %}
 {% include code.html code=code_content %}
 
 **Inline formatting:**
@@ -248,6 +247,7 @@ If the code snippet has special characters then we need to capture it first in v
 
 {% capture code_content %}```(language name)
 code snippet
+
 ```{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -279,24 +279,29 @@ The following is a concise summary of the steps to contribute to Meshery documen
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
 ```
+
     toc:
-  - title: Group 1
-    subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+
+- title: Group 1
+  subfolderitems:
+  - page: Thing 1
+    url: /thing1.html
+  - page: Thing 2
+    url: /thing2.html
+  - page: Thing 3
+    url: /thing3.html
+
 ```
 
 The output of the code snippet would be:
 
 ```
+
     Group 1
       Thing 1
       Thing 2
       Thing 3
+
 ```
 
 In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
@@ -304,31 +309,36 @@ In this example, **Group 1** is a ``parent`` section within the Table of Content
 ``Grandchildren`` are added in the sidebars in the following manner:
 
 ```
+
     toc:
-  - title: Group 1
+
+- title: Group 1
+  subfolderitems:
+  - page: Thing 1
+    url: /thing1.html
     subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-        subfolderitems:
-          - page: Subthing 1.1
-            url: /subthing1_1.html
-          - page: Subthing 1.2
-            url: /subthing1_2.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+    - page: Subthing 1.1
+      url: /subthing1_1.html
+    - page: Subthing 1.2
+      url: /subthing1_2.html
+  - page: Thing 2
+    url: /thing2.html
+  - page: Thing 3
+    url: /thing3.html
+
 ```
 
 The output of the code snippet would be:
 
 ```
+
     Group 1
       Thing 1
        Subthing 1.1
        Subthing 1.2
       Thing 2
       Thing 3
+
 ```
 
 Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
@@ -336,7 +346,7 @@ Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing
 In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
 
 - **Parent**: It serves as a top level category for related content.
-- **Children**: They are immediate subsections or topics that fall under the parent section. 
+- **Children**: They are immediate subsections or topics that fall under the parent section.
 - **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
 
 These sections create a hierarchical and organized navigation experience for readers.
@@ -346,7 +356,9 @@ These sections create a hierarchical and organized navigation experience for rea
 {% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
 
 ```
+
 {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+
 ```
 
 Just for fun, here are all the types:
@@ -366,8 +378,10 @@ Just for fun, here are all the types:
 Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
 
 To use the `alert.html` feature in our documentation include the following code:
-``` 
-  {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+```
+
+{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+
 ```
 
 
@@ -375,7 +389,7 @@ Other supported alert types include `warning`, `danger`,`success`,`primary`, `se
 
 ### Quotes
 
-You can include block quotes to emphasize text. 
+You can include block quotes to emphasize text.
 
 > Here is an example. Isn't this much more prominent to the user?
 
@@ -403,7 +417,9 @@ This executes the block of code only if the given condition is true. It is execu
 If the condition is true, the output would be:
 
 ```
+
     These shoes are awesome!
+
 ```
 
 ### `for` loop
@@ -418,7 +434,9 @@ The for statement executes a block of code repeatedly. It is wriiten in the foll
 The output produced by the above code snippet:
 
 ```
+
     Sam Ham Ethan
+
 ```
 
 ### Comment
@@ -440,4 +458,6 @@ The assign tag is used to create a new variable. It is written in the following 
 {% include code.html code=code_content %}
 
 {% include suggested-reading.html %}
+
+```
 
