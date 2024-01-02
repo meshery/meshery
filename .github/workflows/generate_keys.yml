@@ -1,4 +1,4 @@
-name: Generate Keys
+name: Import Keys
 on: 
   workflow_dispatch:
     inputs:
