@@ -16,7 +16,7 @@ import {
   TabTitle,
 } from './styles';
 import theme from '../../../themes/app';
-import FlipCard from '../../Environments/flip-card';
+import { FlipCard } from '../General';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import {
   useGetDesignsOfWorkspaceQuery,
@@ -224,7 +224,6 @@ const CardFront = ({
               title="Designs"
               count={designsCount}
               onAssign={onAssignDesign}
-              disabled={true}
               classes={classes}
             />
           </Box>
