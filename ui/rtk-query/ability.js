@@ -2,17 +2,7 @@ import { useState, useEffect } from 'react';
 import { ability } from '../utils/can';
 import { useLazyGetUserKeysQuery } from './userKeys';
 
-/**
- * Custom hook to fetch and retrieve user abilities based on the provided organization.
- * Uses the useGetUserKeysQuery hook internally to fetch user keys.
- *
- * @param {Object} org - The organization object.
- * @param {string} org.id - The unique identifier of the organization.
- * @param {boolean} skip - Flag to determine whether to skip fetching.
- *
- * @returns {Object} An object containing the response from useGetUserKeysQuery and additional `data` property with mapped abilities.
- */
-export const useGetCurrentAbilities = (org, skip) => {
+export const useGetUserAbilities = (org, skip) => {
   const [data, setData] = useState(null);
 
   /**
@@ -29,10 +19,6 @@ export const useGetCurrentAbilities = (org, skip) => {
           subject: key.id,
         }));
 
-        if (res.keys.length > 0) {
-          ability.update(res.keys);
-          sessionStorage.setItem('keys', JSON.stringify(res.keys));
-        }
         setData({
           ...res,
           abilities: abilities,
@@ -45,3 +31,14 @@ export const useGetCurrentAbilities = (org, skip) => {
 
   return data;
 };
+
+export const useGetCurrentAbilities = (org, skip) => {
+  const res = useGetUserAbilities(org, skip)
+  if(res?.abilities){
+    ability.update(res.abilities);
+
+    // set keys to session storage
+    sessionStorage.setItem('keys', JSON.stringify(res.keys));
+  }
+  return res
+}
