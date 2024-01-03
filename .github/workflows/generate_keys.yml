@@ -17,7 +17,7 @@ jobs:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         fetch-depth: 1
     - name: Set spreadsheet_uri as environment variable
-      run: echo "spreadsheet_uri=https://docs.google.com/spreadsheets/d/e/2PACX-1vT66uDq7Fan9GIjba7qS8jwpr7hu69P_iF4RR52hD-yVVtm2Pybbi67iq9tfYWwO4KtBPb7OiP4ImQn/pub?gid=829069645&single=true&output=csv" >> $GITHUB_ENV
+      run: echo "spreadsheet_uri=" >> $GITHUB_ENV
       if: inputs.spreadshet_uri != ''
           echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
       
