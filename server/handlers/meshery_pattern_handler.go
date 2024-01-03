@@ -16,7 +16,7 @@ import (
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/helpers/oci"
+	"github.com/layer5io/meshery/server/models/oci"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
