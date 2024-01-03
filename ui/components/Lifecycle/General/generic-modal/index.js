@@ -13,8 +13,8 @@ import {
 } from '@material-ui/core';
 import useStyles from './styles';
 import { CustomTooltip } from './styles';
-import HelpOutlineIcon from '../../../assets/icons/HelpOutlineIcon';
-import theme from '../../../themes/app';
+import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
+import theme from '../../../../themes/app';
 
 const GenericModal = ({
   open,

@@ -110,7 +110,7 @@ const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
 
-  const resourceCategory = query.resourceCategory || 'overview';
+  const resourceCategory = query.resourceCategory || 'Overview';
   const selectedResource = query.resource;
 
   const changeResourceTab = (resourceCategory) => {
@@ -136,7 +136,7 @@ const useDashboardRouter = () => {
   return { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource };
 };
 
-const ResourceCategoryTabs = ['overview', ...Object.keys(ResourcesConfig)];
+const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
@@ -173,7 +173,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     key={resource}
                     className={classes.tab}
                     icon={
-                      resource === 'overview' ? (
+                      resource === 'Overview' ? (
                         <MesheryIcon style={{ width: '28px', height: '28px' }} />
                       ) : (
                         <KubernetesIcon style={{ width: '28px', height: '28px' }} />
@@ -187,7 +187,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
           </Tabs>
         </Paper>
 
-        <TabPanel value={resourceCategory} index={'overview'}>
+        <TabPanel value={resourceCategory} index={'Overview'}>
           <Overview />
         </TabPanel>
         {Object.keys(ResourcesConfig).map((resource, idx) => (
