@@ -77,7 +77,7 @@ function MesheryPatternCard_({
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
   const userCanEdit =
-    CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action) || user?.user_id == pattern?.user_id; // allow if owner
+    CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || user?.user_id == pattern?.user_id; // allow if owner
 
   return (
     <>
@@ -147,7 +147,7 @@ function MesheryPatternCard_({
                   title="Publish"
                   className={classes.testsButton}
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-                  disabled={!CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action)}
+                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Publish </span>
@@ -158,7 +158,7 @@ function MesheryPatternCard_({
                   title="Unpublish"
                   className={classes.testsButton}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
-                  disabled={!CAN(keys.UNPUBLISH_DESIGN.subject, keys.UNPUBLISH_DESIGN.action)}
+                  disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Unpublish </span>
@@ -170,7 +170,7 @@ function MesheryPatternCard_({
                 variant="contained"
                 className={classes.testsButton}
                 onClick={(e) => genericClickHandler(e, handleVerify)}
-                disabled={!CAN(keys.VALIDATE_DESIGN.subject, keys.VALIDATE_DESIGN.action)}
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
               >
                 <DoneIcon className={classes.iconPatt} />
                 <span className={classes.btnText}> Validate </span>
@@ -181,7 +181,7 @@ function MesheryPatternCard_({
                 variant="contained"
                 onClick={(ev) => genericClickHandler(ev, handleDeploy)}
                 className={classes.testsButton}
-                disabled={!CAN(keys.DEPLOY_DESIGN.subject, keys.DEPLOY_DESIGN.action)}
+                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)}
               >
                 <DoneAllIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
@@ -191,7 +191,7 @@ function MesheryPatternCard_({
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) => genericClickHandler(ev, handleUnDeploy)}
-                disabled={!CAN(keys.DEPLOY_DESIGN.subject, keys.DEPLOY_DESIGN.action)} // use undeploy keys after it get seeded
+                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)} // use undeploy keys after it get seeded
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
@@ -204,7 +204,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
                   className={classes.testsButton}
-                  disabled={!CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
                   <Avatar
                     src="/static/img/pattern_trans.svg"
@@ -220,7 +220,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   className={classes.testsButton}
-                  // disabled={!CAN(keys.CLONE_DESIGN.subject, keys.CLONE_DESIGN.action)} // TODO: uncomment when key get seeded
+                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} // TODO: uncomment when key get seeded
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}> Clone </span>
@@ -245,7 +245,7 @@ function MesheryPatternCard_({
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 className={classes.testsButton}
-                disabled={!CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action)}
+                disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >
                 <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
                 <span className={classes.btnText}> Info </span>
@@ -339,7 +339,7 @@ function MesheryPatternCard_({
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action)}
+                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
                     <Save color="primary" />
@@ -349,7 +349,7 @@ function MesheryPatternCard_({
                 {/* Delete Button */}
                 <Tooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.DELETE_A_DESIGN.subject, keys.DELETE_A_DESIGN.action)}
+                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
                     <DeleteIcon color="primary" />

@@ -73,7 +73,7 @@ import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import DefaultError from './General/error-404/index';
-import CAN from '@/utils/can';
+import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
 const genericClickHandler = (ev, fn) => {
@@ -373,6 +373,8 @@ function MesheryPatterns({
     pattern: {},
     name: '',
   });
+
+  console.log('updated ability in pattern', ability);
 
   const [loading, stillLoading] = useState(true);
   const { width } = useWindowDimensions();
@@ -1021,7 +1023,7 @@ function MesheryPatterns({
 
   const userCanEdit = (pattern) => {
     return (
-      CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action) && user?.user_id == pattern?.user_id
+      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.user_id == pattern?.user_id
     );
   };
 
@@ -1162,7 +1164,7 @@ function MesheryPatterns({
                     e.stopPropagation();
                     handleOpenInConfigurator(rowData.id);
                   }}
-                  disabled={!CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
                   <EditIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
@@ -1175,7 +1177,7 @@ function MesheryPatterns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  // disabled={!CAN(keys.CLONE_DESIGN.subject, keys.CLONE_DESIGN.action)} TODO: uncomment when clone key will get seeded
+                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} TODO: uncomment when clone key will get seeded
                 >
                   <CloneIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
@@ -1187,7 +1189,7 @@ function MesheryPatterns({
                     e.stopPropagation();
                     setSelectedPattern({ pattern: patterns[tableMeta.rowIndex], show: true });
                   }}
-                  disabled={!CAN(keys.EDIT_DESIGN.subject, keys.EDIT_DESIGN.action)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
                   <Avatar
                     src="/static/img/pattwhite.svg"
@@ -1200,7 +1202,7 @@ function MesheryPatterns({
                 placement="top"
                 title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
-                disabled={!CAN(keys.VALIDATE_DESIGN.subject, keys.VALIDATE_DESIGN.action)}
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
               >
                 <DoneIcon data-cy="verify-button" />
               </TooltipIcon>
@@ -1208,7 +1210,7 @@ function MesheryPatterns({
               <TooltipIcon
                 placement="top"
                 title="Undeploy"
-                disabled={!CAN(keys.UNDEPLOY_DESIGN.subject, keys.UNDEPLOY_DESIGN.action)}
+                disabled={!CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject)}
                 onClick={(e) =>
                   handleModalOpen(
                     e,
@@ -1225,7 +1227,7 @@ function MesheryPatterns({
               <TooltipIcon
                 placement="bottom"
                 title="Deploy"
-                disabled={!CAN(keys.DEPLOY_DESIGN.subject, keys.DEPLOY_DESIGN.action)}
+                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)}
                 onClick={(e) => {
                   handleModalOpen(
                     e,
@@ -1241,7 +1243,7 @@ function MesheryPatterns({
               </TooltipIcon>
               <TooltipIcon
                 title="Download"
-                disabled={!CAN(keys.DOWNLOAD_A_DESIGN.subject, keys.DOWNLOAD_A_DESIGN.action)}
+                disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
               >
                 <GetAppIcon data-cy="download-button" />
@@ -1249,7 +1251,7 @@ function MesheryPatterns({
 
               <TooltipIcon
                 title="Design Information"
-                disabled={!CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action)}
+                disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
               >
                 <InfoOutlinedIcon data-cy="information-button" />
@@ -1259,7 +1261,7 @@ function MesheryPatterns({
                 <TooltipIcon
                   placement="bottom"
                   title="Publish"
-                  disabled={!CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action)}
+                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
                   onClick={(ev) => handlePublishModal(ev, rowData)}
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
@@ -1267,7 +1269,7 @@ function MesheryPatterns({
               ) : (
                 <TooltipIcon
                   title="Unpublish"
-                  disabled={!CAN(keys.UNPUBLISH_DESIGN.subject, keys.UNPUBLISH_DESIGN.action)}
+                  disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   onClick={(ev) => handleUnpublishModal(ev, rowData)()}
                 >
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
@@ -1497,7 +1499,7 @@ function MesheryPatterns({
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_DESIGNS.subject, keys.VIEW_DESIGNS.action) ? (
+      {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
         <>
           {selectedRowData && Object.keys(selectedRowData).length > 0 && (
             <YAMLEditor
@@ -1527,7 +1529,7 @@ function MesheryPatterns({
                         // @ts-ignore
                         onClick={() => router.push('designs/configurator')}
                         style={{ display: 'flex', marginRight: '2rem' }}
-                        disabled={!CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action)}
+                        disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                       >
                         <AddIcon className={classes.addIcon} />
                         <span className={classes.btnText}> Create Design </span>
@@ -1541,7 +1543,7 @@ function MesheryPatterns({
                         onClick={handleUploadImport}
                         style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
                         disabled={
-                          !CAN(keys.CREATE_NEW_DESIGN.subject, keys.CREATE_NEW_DESIGN.action)
+                          !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
                         }
                       >
                         <PublishIcon className={classes.addIcon} />
@@ -1635,14 +1637,14 @@ function MesheryPatterns({
             }}
             title={modalOpen.name}
             componentCount={modalOpen.count}
-            tab={modalOpen.action}
+            tab={modalOpen.subject}
             validationBody={modalOpen.validationBody}
             dryRunComponent={modalOpen.dryRunComponent}
             errors={modalOpen.errors}
           />
           {canPublishPattern &&
             publishModal.open &&
-            CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action) && (
+            CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
               <PublishModal
                 publishFormSchema={publishSchema}
                 handleClose={handlePublishModalClose}
@@ -1650,14 +1652,14 @@ function MesheryPatterns({
                 handleSubmit={handlePublish}
               />
             )}
-          {importModal.open && CAN(keys.IMPORT_DESIGN.subject, keys.IMPORT_DESIGN.action) && (
+          {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
               importFormSchema={importSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
           )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.subject, keys.DETAILS_OF_DESIGN.action) && (
+          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
             <InfoModal
               infoModalOpen={true}
               handleInfoModalClose={handleInfoModalClose}

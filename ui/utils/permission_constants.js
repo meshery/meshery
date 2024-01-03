@@ -156,7 +156,7 @@ export const keys = {
     subject: 'Open in Playground', // not seeded
     action: 'c4d6c676-6e26-4b0c-9fdd-5eea1b780e98',
   },
-  VIEW_FILTER: {
+  VIEW_FILTERS: {
     subject: 'View Filters',
     action: 'df41c45f-7c73-49c2-a055-0584fdcec1c1',
   },
