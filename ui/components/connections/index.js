@@ -82,6 +82,9 @@ import {
 import ErrorBoundary from '../ErrorBoundary';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import DefaultError from '../General/error-404/index';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -462,6 +465,12 @@ function Connections(props) {
                       placeholder={`Assigned Environments`}
                       isSelectAll={true}
                       menuPlacement={'bottom'}
+                      disabled={
+                        !CAN(
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                        )
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -635,7 +644,10 @@ function Connections(props) {
           } else {
             nextStatus.push(value);
           }
-          const disabled = value === 'deleted' ? true : false;
+          const disabled =
+            value === 'deleted'
+              ? true
+              : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -774,6 +786,7 @@ function Connections(props) {
           // @ts-ignore
           onClick={() => handleDeleteConnections(selected)}
           style={{ background: '#8F1F00', marginRight: '10px' }}
+          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
         >
           <DeleteForeverIcon style={iconMedium} />
           Delete
@@ -1148,51 +1161,52 @@ function Connections(props) {
   };
 
   return (
-    <>
-      <NoSsr>
-        <AppBar position="static" color="default" className={classes.appBar}>
-          <Tabs
-            value={tab}
-            className={classes.tabs}
-            onChange={(e, newTab) => {
-              e.stopPropagation();
-              setTab(newTab);
-            }}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-            sx={{
-              height: '10%',
-            }}
-          >
-            <Tab
-              className={classes.tab}
-              label={
-                <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                  <ConnectionIcon width="20" height="20" />
-                  {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
-                </div>
-              }
-            />
-            <Tab
-              className={classes.tab}
-              label={
-                <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                  <MeshsyncIcon width="20" height="20" />
-                </div>
-              }
-            />
-          </Tabs>
-        </AppBar>
-        {tab === 0 && (
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '-30px' }}
-          >
-            <div className={classes.createButton}>
-              {/* <div>
+    <NoSsr>
+      {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
+        <>
+          <AppBar position="static" color="default" className={classes.appBar}>
+            <Tabs
+              value={tab}
+              className={classes.tabs}
+              onChange={(e, newTab) => {
+                e.stopPropagation();
+                setTab(newTab);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{
+                height: '10%',
+              }}
+            >
+              <Tab
+                className={classes.tab}
+                label={
+                  <div className={classes.iconText}>
+                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                    <ConnectionIcon width="20" height="20" />
+                    {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
+                  </div>
+                }
+              />
+              <Tab
+                className={classes.tab}
+                label={
+                  <div className={classes.iconText}>
+                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                    <MeshsyncIcon width="20" height="20" />
+                  </div>
+                }
+              />
+            </Tabs>
+          </AppBar>
+          {tab === 0 && (
+            <div
+              className={StyleClass.toolWrapper}
+              style={{ marginBottom: '5px', marginTop: '-30px' }}
+            >
+              <div className={classes.createButton}>
+                {/* <div>
               <Button
                 aria-label="Rediscover"
                 variant="contained"
@@ -1205,105 +1219,114 @@ function Connections(props) {
                 Connect Helm Repository
               </Button>
             </div> */}
-              <MesherySettingsEnvButtons />
-            </div>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display: 'flex',
-                borderRadius: '0.5rem 0.5rem 0 0',
-              }}
-            >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
+                <MesherySettingsEnvButtons />
+              </div>
+              <div
+                className={classes.searchAndView}
+                style={{
+                  display: 'flex',
+                  borderRadius: '0.5rem 0.5rem 0 0',
                 }}
-                placeholder="Search connections..."
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-              />
+              >
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                  placeholder="Search connections..."
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                />
 
-              <UniversalFilter
-                id="ref"
-                filters={filters}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-                handleApplyFilter={handleApplyFilter}
-              />
+                <UniversalFilter
+                  id="ref"
+                  filters={filters}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
 
-              <CustomColumnVisibilityControl
-                id="ref"
-                columns={getVisibilityColums(columns)}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={getVisibilityColums(columns)}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              </div>
             </div>
-          </div>
-        )}
-        {tab === 0 && (
-          <ResponsiveDataTable
-            data={connections}
-            columns={columns}
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
-        )}
-        {tab === 1 && (
-          <MeshSyncTable
-            classes={classes}
-            updateProgress={updateProgress}
-            search={search}
-            selectedK8sContexts={selectedK8sContexts}
-            k8sconfig={k8sconfig}
-          />
-        )}
-        <PromptComponent ref={modalRef} />
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleActionMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <Grid style={{ margin: '10px' }}>
-            <div className={classNames(classes.list, classes.listButton)}>
-              <Box className={classes.listItem} sx={{ width: '100%' }}>
-                <Button
-                  type="submit"
-                  onClick={handleFlushMeshSync(rowData.rowIndex)}
-                  data-cy="btnResetDatabase"
-                  className={classes.button}
-                >
-                  <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                  <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-                    Flush MeshSync
-                  </Typography>
-                </Button>
-              </Box>
-            </div>
-            <div className={classes.list}>
-              <Box className={classes.listItem} sx={{ width: '100%' }}>
-                <div className={classes.listContainer}>
-                  <Switch
-                    defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                    onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                    name="OperatorSwitch"
-                    color="primary"
-                    className={classes.OperatorSwitch}
-                  />
-                  <Typography variant="body1">Operator</Typography>
-                </div>
-              </Box>
-            </div>
-          </Grid>
-        </Popover>
-        <PromptComponent ref={meshSyncResetRef} />
-      </NoSsr>
-    </>
+          )}
+          {(tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)) && (
+            <ResponsiveDataTable
+              data={connections}
+              columns={columns}
+              options={options}
+              className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          )}
+          {tab === 1 && (
+            <MeshSyncTable
+              classes={classes}
+              updateProgress={updateProgress}
+              search={search}
+              selectedK8sContexts={selectedK8sContexts}
+              k8sconfig={k8sconfig}
+            />
+          )}
+          <PromptComponent ref={modalRef} />
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleActionMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <Grid style={{ margin: '10px' }}>
+              <div className={classNames(classes.list, classes.listButton)}>
+                <Box className={classes.listItem} sx={{ width: '100%' }}>
+                  <Button
+                    type="submit"
+                    onClick={handleFlushMeshSync(rowData.rowIndex)}
+                    data-cy="btnResetDatabase"
+                    className={classes.button}
+                    disabled={
+                      !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
+                    }
+                  >
+                    <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                    <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                      Flush MeshSync
+                    </Typography>
+                  </Button>
+                </Box>
+              </div>
+              <div className={classes.list}>
+                <Box className={classes.listItem} sx={{ width: '100%' }}>
+                  <div className={classes.listContainer}>
+                    <Switch
+                      defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                      onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                      name="OperatorSwitch"
+                      color="primary"
+                      className={classes.OperatorSwitch}
+                      disabled={ // TODO: update keys here for operator action 
+                        !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
+                      }
+                    />
+                    <Typography variant="body1">Operator</Typography>
+                  </div>
+                </Box>
+              </div>
+            </Grid>
+          </Popover>
+          <PromptComponent ref={meshSyncResetRef} />
+        </>
+      ) : (
+        <DefaultError />
+      )}
+    </NoSsr>
   );
 }
 

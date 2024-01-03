@@ -33,7 +33,8 @@ const useChipStyles = makeStyles(() => ({
   },
 }));
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }) => {
+export const _ConnectionChip = (props) => {
+  const { handlePing, onDelete, iconSrc, status, title } = props
   const classes = useChipStyles();
   return (
     // <Tooltip title={tooltip || title} placement="bottom">
@@ -59,6 +60,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title }
       variant="filled"
       className={classes.Chip}
       data-cy="chipContextName"
+      {...props}
     />
     // </Tooltip>
   );
