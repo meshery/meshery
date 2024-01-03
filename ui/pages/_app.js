@@ -408,8 +408,8 @@ class MesheryApp extends App {
     this.setState({
       abilities: [...this.state.keys]?.map((key) => {
         return {
-          action: key.function,
-          subject: key.id,
+          action: key.id,
+          subject: key.function,
         };
       }),
     });

@@ -15,8 +15,8 @@ export const useGetUserAbilities = (org, skip) => {
       .unwrap()
       .then((res) => {
         const abilities = res.keys?.map((key) => ({
-          action: key.function,
-          subject: key.id,
+          action: key.id,
+          subject: key.function,
         }));
 
         setData({
