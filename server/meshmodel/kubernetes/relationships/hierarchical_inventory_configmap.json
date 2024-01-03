@@ -6,7 +6,7 @@
     "styles": {}
   },
   "model": {
-    "name": "v1.25.2",
+    "name": "kubernetes",
     "version": "v1.25.2",
     "category": {
       "name": "Orchestration \u0026 Management",
