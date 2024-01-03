@@ -72,8 +72,7 @@ The server log levels can be configured at runtime by changing the env variable 
 
 ___Should there be any alterations to the location or name of the environment file, it will result in the inability to configure log levels during runtime. In the event of such modifications, it is essential to update the server to preserve proper functionality.___
 
-```
-Available Meshery Server log levels are:
+```Available Meshery Server log levels are:
  - Panic - 0
  - Fatal - 1
  - Error - 2
@@ -82,4 +81,4 @@ Available Meshery Server log levels are:
  - Debug - 5
  - Trace level - 6
  ```
-The default setting for the LOG_LEVEL is  `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug). 
+The default setting for the `LOG_LEVEL` is  `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug). 
