@@ -423,7 +423,7 @@ function K8sContextMenu({
                             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
                             iconSrc={
                               connectionMetadataState
-                                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                                 : ''
                             } // chnage to use connection def
                             status={operatorState}

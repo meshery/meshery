@@ -60,9 +60,9 @@ mesheryctl perf result -o yaml
 
 			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
 			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
-				return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
+				return errors.New(utils.PerfError(fmt.Sprintf("'%s' is an invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
 			}
-			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
+			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is an invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
 		}
 		return nil
 	},

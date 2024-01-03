@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
@@ -31,7 +32,7 @@ type Handler struct {
 	registryManager                         *meshmodel.RegistryManager
 	EventsBuffer                            *events.EventStreamer
 	Rego                                    *policies.Rego
-	ConnectionToStateMachineInstanceTracker *ConnectionToStateMachineInstanceTracker
+	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -47,7 +48,7 @@ func NewHandlerInstance(
 	regManager *meshmodel.RegistryManager,
 	provider string,
 	rego *policies.Rego,
-	connToInstanceTracker *ConnectionToStateMachineInstanceTracker,
+	connToInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
 ) models.HandlerInterface {
 
 	h := &Handler{

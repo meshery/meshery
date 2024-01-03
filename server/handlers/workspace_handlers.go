@@ -181,10 +181,8 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	}
 }
 
-
 // swagger:route GET /api/workspaces/{id}/environments WorkspacesAPI idGetWorkspaceEnvironments
 // Handles GET for all Environments in a Workspace
-//
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -196,9 +194,10 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 //
 // ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
 //
-// ```?filter={condition}```
+// ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
 // responses:
-// 	200: environmentsResponseWrapper
+//
+//	200: environmentsResponseWrapper
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
@@ -216,7 +215,6 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 // swagger:route GET /api/workspaces/{id}/designs WorkspacesAPI idGetWorkspaceMesheryDesigns
 // Handles GET for all Meshery Designs in a Workspace
 //
-//
 // ```?order={field}``` orders on the passed field
 //
 // ```?page={page-number}``` Default page number is 0
@@ -225,9 +223,10 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 //
 // ```?search={name}``` If search is non empty then a greedy search is performed
 //
-// ```?filter={condition}```
+// ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
 // responses:
-// 	200: mesheryPatternsResponseWrapper
+//
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()

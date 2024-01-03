@@ -69,28 +69,28 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return ErrViewAppFlag()
 			}
-			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
+			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return ErrInvalidAppNameOrID(err)
 			}
 		}
 		var req *http.Request
 		url := mctlCfg.GetBaseMesheryURL()
-		var response *models.ApplicationsAPIResponse
+		var response *models.PatternsAPIResponse
 		// Merge args to get app-name
 		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
-				url += "/api/application?pagesize=10000"
+				url += "/api/pattern?pagesize=10000"
 			} else {
 				return errors.New(utils.AppViewError("Application name or ID is not specified. Use `-a` to view all applications"))
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
-			url += "/api/application/" + applicationID
+			url += "/api/pattern/" + applicationID
 		} else {
 			// else search application by name
-			url += "/api/application?search=" + application
+			url += "/api/pattern?search=" + application
 		}
 
 		req, err = utils.NewRequest("GET", url, nil)
@@ -137,8 +137,8 @@ mesheryctl app view --all
 				return nil
 			}
 			// Manage more than one apps with similar name
-			for _, app := range response.Applications {
-				if response.Applications == nil {
+			for _, app := range response.Patterns {
+				if response.Patterns == nil {
 					utils.Log.Error(ErrAppFound())
 					return nil
 				}
