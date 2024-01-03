@@ -48,17 +48,17 @@ var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
 	Long: `As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
-	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Base command:
-  mesheryctl
+mesheryctl
 
 // Display help about command/subcommand:
-  mesheryctl --help
-  mesheryctl system start --help
+mesheryctl --help
+mesheryctl system start --help
 
 // For viewing verbose output:
-  mesheryctl -v [or] --verbose
+mesheryctl -v [or] --verbose
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
