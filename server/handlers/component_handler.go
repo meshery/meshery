@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -1275,6 +1278,85 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	go h.config.MeshModelSummaryChannel.Publish()
 }
 
+// swagger:route POST /api/meshmodel/nonRegisterEntity
+// Handle POST request for registering meshmodel components.
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:MeshModelHostsWithEntitySummary
+
+// request body should be json
+// request body should be of Host format
+
+func (handler *Handler) NonRegisterEntity(responseWriter http.ResponseWriter, request *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	responseWriter.Header().Set("Content-Type", "application/json")
+	defer request.Body.Close()
+
+	var receivedHost registry.Host
+	if err := json.NewDecoder(request.Body).Decode(&receivedHost); err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	filter := &v1alpha1.HostFilter{
+		DisplayName: receivedHost.Hostname,
+	}
+
+	hosts, _, _ := handler.registryManager.GetRegistrants(filter)
+
+	successMessage := ""
+	for _, host := range hosts {
+		successMessage = fmt.Sprintf("For registrant %s successfully imported", receivedHost.Hostname)
+
+		appendIfNonZero := func(value int64, label string) {
+			if value != 0 {
+				successMessage += fmt.Sprintf(" %d %s", value, label)
+			}
+		}
+
+		appendIfNonZero(host.Summary.Models, "models")
+		appendIfNonZero(host.Summary.Components, "components")
+		appendIfNonZero(host.Summary.Relationships, "relationships")
+		appendIfNonZero(host.Summary.Policies, "policies")
+
+	}
+
+	// Event creation
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+
+	// Adding metadata for the event
+	eventBuilder.WithMetadata(map[string]interface{}{
+		"Hostname": receivedHost.Hostname,
+	})
+
+	// Success event
+	eventBuilder.WithSeverity(events.Success).WithDescription(successMessage)
+	successEvent := eventBuilder.Build()
+
+	// Build and publish the events
+	_ = provider.PersistEvent(successEvent)
+
+	go handler.config.EventBroadcaster.Publish(userID, successEvent)
+
+	failedMessage, _ := registry.FailedMsgCompute("", receivedHost.Hostname)
+	if failedMessage != "" {
+		failedMessage = fmt.Sprintf("For registrant %s %s", receivedHost.Hostname, failedMessage)
+		// Error event
+		errorEventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMessage)
+		errorEvent := errorEventBuilder.Build()
+		errorEventBuilder.WithMetadata(map[string]interface{}{
+			"Hostname":              receivedHost.Hostname,
+			"Details":               fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", receivedHost.Hostname, failedMessage),
+			"Suggested-remediation": "Check /server/cmd/registery_attempts.json for futher details",
+		})
+		_ = provider.PersistEvent(errorEvent)
+		go handler.config.EventBroadcaster.Publish(userID, errorEvent)
+	}
+
+}
+
 // swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
 // Handle GET request for getting all meshmodel registrants
 //
@@ -1296,7 +1378,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-
+	registry.Mutex.Lock()
 	limitstr := r.URL.Query().Get("pagesize")
 	pagestr := r.URL.Query().Get("page")
 
@@ -1330,7 +1412,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
+	registry.Mutex.Unlock()
 	var pgSize int64
 
 	if limitstr == "all" {
