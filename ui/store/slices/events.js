@@ -2,6 +2,7 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS, validateEvents } from '../../components/NotificationCenter/constants';
 
 const initialState = {
+  events: [],
   current_view: {
     page: 1,
     page_size: 10,
