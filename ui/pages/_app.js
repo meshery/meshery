@@ -59,8 +59,11 @@ import './styles/charts.css';
 
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
-import { getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
+import { getMeshModelComponent } from '../api/meshmodel';
+import { CONNECTION_KINDS } from '../utils/Enum';
+import NotifyRegistrant from '../components/DashboardComponent/notifyRegistrant';
+
+import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -646,6 +649,8 @@ const MesheryAppWrapper = (props) => {
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
       </Head>
+      <NotifyRegistrant />
+
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <MesheryWithRedux {...props} />
       </MuiPickersUtilsProvider>
