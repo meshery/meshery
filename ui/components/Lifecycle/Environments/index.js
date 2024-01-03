@@ -35,6 +35,9 @@ import {
 } from '../../../rtk-query/environments';
 import { store } from '../../../store';
 import styles from './styles';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
+import DefaultError from '../../General/error-404/index';
 
 const ERROR_MESSAGE = {
   FETCH_ENVIRONMENTS: {
@@ -448,159 +451,170 @@ const Environments = ({ organization, classes }) => {
 
   return (
     <NoSsr>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-        <div className={classes.createButtonWrapper}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
-            style={{
-              padding: '8px',
-              borderRadius: 5,
-              marginRight: '2rem',
-            }}
-            data-cy="btnResetDatabase"
-          >
-            <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-            <Typography
-              style={{
-                paddingLeft: '4px',
-                marginRight: '4px',
-              }}
-            >
-              Create
-            </Typography>
-          </Button>
-        </div>
-        <SearchBar
-          onSearch={(value) => {
-            setSearch(value);
-          }}
-          placeholder="Search connections..."
-          expanded={isSearchExpanded}
-          setExpanded={setIsSearchExpanded}
-        />
-      </div>
-      {selectedEnvironments.length > 0 && (
-        <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
-          <Typography>
-            {selectedEnvironments.length > 1
-              ? `${selectedEnvironments.length} environments selected`
-              : `${selectedEnvironments.length} environment selected`}
-          </Typography>
-          <Button className={classes.iconButton}>
-            <Delete
-              style={{ color: 'red', margin: '0 2px' }}
-              onClick={handleBulkDeleteEnvironmentConfirm}
-              disabled={selectedEnvironments.length > 0 ? false : true}
-            />
-          </Button>
-        </Box>
-      )}
-      {environments.length > 0 ? (
+      {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
         <>
-          <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-            {environments.map((environment) => (
-              <Grid item xs={12} md={6} key={environment.id}>
-                <EnvironmentCard
-                  classes={classes}
-                  environmentDetails={environment}
-                  selectedEnvironments={selectedEnvironments}
-                  onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
-                  onDelete={(e) => handleDeleteEnvironmentConfirm(e, environment)}
-                  onSelect={(e) => handleBulkSelect(e, environment.id)}
-                  onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
+          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
+            <div className={classes.createButtonWrapper}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
+                style={{
+                  padding: '8px',
+                  borderRadius: 5,
+                  marginRight: '2rem',
+                }}
+                data-cy="btnResetDatabase"
+              >
+                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <Typography
+                  style={{
+                    paddingLeft: '4px',
+                    marginRight: '4px',
+                  }}
+                >
+                  Create
+                </Typography>
+              </Button>
+            </div>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              placeholder="Search connections..."
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+            />
+          </div>
+          {selectedEnvironments.length > 0 && (
+            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+              <Typography>
+                {selectedEnvironments.length > 1
+                  ? `${selectedEnvironments.length} environments selected`
+                  : `${selectedEnvironments.length} environment selected`}
+              </Typography>
+              <Button className={classes.iconButton}>
+                <Delete
+                  style={{ color: 'red', margin: '0 2px' }}
+                  onClick={handleBulkDeleteEnvironmentConfirm}
+                  disabled={selectedEnvironments.length > 0 ? false : true}
+                />
+              </Button>
+            </Box>
+          )}
+          {environments.length > 0 ? (
+            <>
+              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+                {environments.map((environment) => (
+                  <Grid item xs={12} md={6} key={environment.id}>
+                    <EnvironmentCard
+                      classes={classes}
+                      environmentDetails={environment}
+                      selectedEnvironments={selectedEnvironments}
+                      onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
+                      onDelete={(e) => handleDeleteEnvironmentConfirm(e, environment)}
+                      onSelect={(e) => handleBulkSelect(e, environment.id)}
+                      onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <Grid
+                container
+                sx={{ padding: '2rem 0' }}
+                style={{ marginTop: '20px' }}
+                flex
+                justifyContent="center"
+                spacing={2}
+              >
+                <Pagination
+                  count={Math.ceil(environmentsData?.total_count / pageSize)}
+                  page={page + 1}
+                  sx={{
+                    backgroundColor: 'white',
+                    borderRadius: '1rem',
+                    padding: '0.5rem',
+                  }}
+                  onChange={debounce((_, page) => setPage(page - 1), 150)}
+                  boundaryCount={3}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                      {...item}
+                    />
+                  )}
                 />
               </Grid>
-            ))}
-          </Grid>
-          <Grid
-            container
-            sx={{ padding: '2rem 0' }}
-            style={{ marginTop: '20px' }}
-            flex
-            justifyContent="center"
-            spacing={2}
-          >
-            <Pagination
-              count={Math.ceil(environmentsData?.total_count / pageSize)}
-              page={page + 1}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: '1rem',
-                padding: '0.5rem',
-              }}
-              onChange={debounce((_, page) => setPage(page - 1), 150)}
-              boundaryCount={3}
-              renderItem={(item) => (
-                <PaginationItem
-                  slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                  {...item}
+            </>
+          ) : (
+            <EmptyState
+              icon={
+                <EnvironmentIcon
+                  height="6rem"
+                  width="6rem"
+                  fill="#808080"
+                  secondaryFill="#979797"
                 />
-              )}
+              }
+              message="No environment available"
+              pointerLabel="Click “Create” to establish your first environment."
             />
-          </Grid>
+          )}
+
+          {environmentModal.open && (
+            <Modal
+              open={environmentModal.open}
+              schema={environmentModal.schema.rjsfSchema}
+              uiSchema={environmentModal.schema.uiSchema}
+              handleClose={handleEnvironmentModalClose}
+              handleSubmit={
+                actionType === ACTION_TYPES.CREATE ? handleCreateEnvironment : handleEditEnvironment
+              }
+              title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
+              submitBtnText={
+                actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+              }
+              initialData={initialData}
+            />
+          )}
+          <GenericModal
+            open={assignConnectionModal}
+            handleClose={handleonAssignConnectionModalClose}
+            title={`${connectionAssignEnv.name} Resources`}
+            body={
+              <TransferList
+                name="Connections"
+                assignableData={connectionsData}
+                assignedData={handleAssignConnectionData}
+                originalAssignedData={environmentConnectionsData}
+                emptyStateIconLeft={
+                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                }
+                emtyStateMessageLeft="No connections available"
+                emptyStateIconRight={
+                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                }
+                emtyStateMessageRight="No connections assigned"
+                transferComponentType={TRANSFER_COMPONENT.CHIP}
+                assignablePage={handleAssignablePage}
+                assignedPage={handleAssignedPage}
+                originalLeftCount={connections?.total_count}
+                originalRightCount={environmentConnections?.total_count}
+              />
+            }
+            action={handleAssignConnection}
+            buttonTitle="Save"
+            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            helpText="Assign connections to environment"
+            maxWidth="md"
+          />
+          <PromptComponent ref={modalRef} />
         </>
       ) : (
-        <EmptyState
-          icon={
-            <EnvironmentIcon height="6rem" width="6rem" fill="#808080" secondaryFill="#979797" />
-          }
-          message="No environment available"
-          pointerLabel="Click “Create” to establish your first environment."
-        />
+        <DefaultError />
       )}
-
-      {environmentModal.open && (
-        <Modal
-          open={environmentModal.open}
-          schema={environmentModal.schema.rjsfSchema}
-          uiSchema={environmentModal.schema.uiSchema}
-          handleClose={handleEnvironmentModalClose}
-          handleSubmit={
-            actionType === ACTION_TYPES.CREATE ? handleCreateEnvironment : handleEditEnvironment
-          }
-          title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
-          submitBtnText={
-            actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-          }
-          initialData={initialData}
-        />
-      )}
-      <GenericModal
-        open={assignConnectionModal}
-        handleClose={handleonAssignConnectionModalClose}
-        title={`${connectionAssignEnv.name} Resources`}
-        body={
-          <TransferList
-            name="Connections"
-            assignableData={connectionsData}
-            assignedData={handleAssignConnectionData}
-            originalAssignedData={environmentConnectionsData}
-            emptyStateIconLeft={
-              <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-            }
-            emtyStateMessageLeft="No connections available"
-            emptyStateIconRight={
-              <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-            }
-            emtyStateMessageRight="No connections assigned"
-            transferComponentType={TRANSFER_COMPONENT.CHIP}
-            assignablePage={handleAssignablePage}
-            assignedPage={handleAssignedPage}
-            originalLeftCount={connections?.total_count}
-            originalRightCount={environmentConnections?.total_count}
-          />
-        }
-        action={handleAssignConnection}
-        buttonTitle="Save"
-        leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-        helpText="Assign connections to environment"
-        maxWidth="md"
-      />
-      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 };
