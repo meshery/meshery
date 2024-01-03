@@ -276,7 +276,7 @@ function Connections(props) {
       .unwrap()
       .then((resp) => {
         notify({
-          message: `Environment: ${resp.name} saved`,
+          message: `Environment "${resp.name}" created`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         environments = [...environments, resp];
