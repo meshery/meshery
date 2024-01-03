@@ -17,7 +17,6 @@ search models
 ## Synopsis
 
 search a models by search string
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model search [flags]
@@ -48,7 +47,7 @@ mesheryctl exp model search [query-text]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

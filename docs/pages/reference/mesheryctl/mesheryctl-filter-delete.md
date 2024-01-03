@@ -17,7 +17,6 @@ Delete a filter file
 ## Synopsis
 
 Delete a filter file using the name or ID of a filter
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter delete [filter-name | ID] [flags]
@@ -49,7 +48,7 @@ mesheryctl filter delete [filter-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 

@@ -17,7 +17,6 @@ view current context
 ## Synopsis
 
 Display active Meshery context
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view [context-name | --context context-name| --all] --flags [flags]
@@ -74,7 +73,7 @@ mesheryctl system context view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 

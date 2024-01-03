@@ -17,7 +17,6 @@ Configure your Meshery deployment(s)
 ## Synopsis
 
 Configure and switch between different named Meshery server and component versions and deployments.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context [command] [flags]
@@ -49,7 +48,7 @@ mesheryctl system context
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 

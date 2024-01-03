@@ -16,8 +16,8 @@ Cloud Native Lifecycle Management
 
 ## Synopsis
 
-Provisioning, configuration, and on-going operational management of service meshes
-
+Provisioning, configuration, and on-going operational management of service meshes.
+		
 ## Options
 
 <pre class='codeblock-pre'>
@@ -32,7 +32,7 @@ Provisioning, configuration, and on-going operational management of service mesh
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

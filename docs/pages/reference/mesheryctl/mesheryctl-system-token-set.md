@@ -17,7 +17,6 @@ Set token for context
 ## Synopsis
 
 Set token for current context or context specified with --context flag.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token set [flags]
@@ -48,7 +47,7 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 

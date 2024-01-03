@@ -148,7 +148,15 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 	buf.WriteString(cmd.Short + "\n\n")
 	if len(cmd.Long) > 0 {
 		buf.WriteString("## Synopsis\n\n")
-		buf.WriteString(cmd.Long + "\n\n")
+		longContent := cmd.Long
+		// Since the long description is used for synopsis, we need to remove the "Find more information at:" line
+		findIndex := strings.Index(longContent, "Find")
+		if findIndex != -1 {
+			buf.WriteString(longContent[:findIndex])
+		} else {
+			buf.WriteString(longContent)
+		}
+		buf.WriteString("\n")
 	}
 
 	// check if the command is runnable

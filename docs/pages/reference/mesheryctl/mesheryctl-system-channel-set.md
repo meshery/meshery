@@ -17,7 +17,6 @@ set release channel and version
 ## Synopsis
 
 Set release channel and version of context in focus
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
@@ -48,7 +47,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.

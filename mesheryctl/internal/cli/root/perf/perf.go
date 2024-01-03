@@ -34,22 +34,22 @@ var (
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Management",
-	Long:  `Performance Management & Benchmarking`,
+	Long: `Performance Management & Benchmarking.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-Run performance test:
+// Run performance test:
   mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 	
-List performance profiles:
+// List performance profiles:
   mesheryctl perf profile sam-test
 
-List performance results:
+// List performance results:
   mesheryctl perf result sam-test
 
-Display Perf profile in JSON or YAML:
+// Display Perf profile in JSON or YAML:
   mesheryctl perf result -o json
   mesheryctl perf result -o yaml
-	
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

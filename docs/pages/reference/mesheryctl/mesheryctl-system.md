@@ -17,7 +17,6 @@ Meshery Lifecycle Management
 ## Synopsis
 
 Manage the state and configuration of Meshery server, components, and client.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system [flags]
@@ -40,7 +39,7 @@ mesheryctl system [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

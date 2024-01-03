@@ -17,7 +17,6 @@ Validate conformance to service mesh standards
 ## Synopsis
 
 Validate service mesh conformance to different standard specifications
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh validate [flags]
@@ -60,7 +59,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

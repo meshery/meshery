@@ -20,7 +20,6 @@ Authenticate to a Meshery Server
 Authenticate to the Local or a Remote Provider of a Meshery Server
 
 The authentication mode is web-based browser flow
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system login [flags]
@@ -60,7 +59,7 @@ mesheryctl system login -p Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.

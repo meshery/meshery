@@ -17,7 +17,6 @@ Import a WASM filter
 ## Synopsis
 
 Import a WASM filter from a URI (http/s) or local filesystem path
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter import [URI] [flags]
@@ -76,7 +75,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 

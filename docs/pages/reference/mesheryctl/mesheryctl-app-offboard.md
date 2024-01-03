@@ -17,7 +17,6 @@ Offboard application
 ## Synopsis
 
 Offboard application will trigger undeploy of application
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app offboard [flags]
@@ -49,7 +48,7 @@ mesheryctl app offboard -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 

@@ -17,7 +17,6 @@ Delete pattern file
 ## Synopsis
 
 delete pattern file will trigger deletion of the pattern file
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern delete [flags]
@@ -49,7 +48,7 @@ mesheryctl pattern delete [file | URL]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 

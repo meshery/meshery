@@ -17,7 +17,6 @@ Deploy a service mesh to the Kubernetes cluster
 ## Synopsis
 
 Deploy a service mesh to the connected Kubernetes cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy [flags]
@@ -82,7 +81,7 @@ mesheryctl mesh deploy linkerd --watch
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

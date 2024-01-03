@@ -14,6 +14,10 @@ subcommand: nil
 
 Cloud Native Filter Management
 
+## Synopsis
+
+Cloud Native Filter Management
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter [flags]
@@ -23,10 +27,10 @@ mesheryctl filter [flags]
 
 ## Examples
 
-Base command for WASM filters
+Base command for WASM filters:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter [subcommands]	
+  mesheryctl filter [subcommands]
 
 </div>
 </pre> 
@@ -45,7 +49,7 @@ mesheryctl filter [subcommands]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

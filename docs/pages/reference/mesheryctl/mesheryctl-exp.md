@@ -17,7 +17,6 @@ Experimental commands for mesheryctl
 ## Synopsis
 
 List of experimental commands for testing and evaluation purpose.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp [flags]
@@ -38,7 +37,7 @@ mesheryctl exp [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
