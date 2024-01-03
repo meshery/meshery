@@ -48,7 +48,7 @@ mesheryctl system context delete [context name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
+      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.

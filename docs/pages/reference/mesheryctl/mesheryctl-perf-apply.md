@@ -164,7 +164,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/admin-pc/.meshery/config.yaml")
+      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output

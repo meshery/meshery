@@ -48,7 +48,7 @@ mesheryctl app list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
