@@ -68,7 +68,7 @@ For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-
 {% include suggested-reading.html %}
 
 ### Configuring Log levels at Runtime
-The server logs can be configured at runtime by changing the env variables defined in file [`runtime_logs_config.env`](https://github.com/meshery/meshery/blob/fbc59a8ba9ca91c2714ac38fd80ae6f82f6de43b/server/cmd/runtime_logs_config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
+The server logs can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`runtime_logs_config.env`](https://github.com/meshery/meshery/blob/fbc59a8ba9ca91c2714ac38fd80ae6f82f6de43b/server/cmd/runtime_logs_config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
 
 ___Should there be any alterations to the location or name of the environment file, it will result in the inability to configure logs during runtime. In the event of such modifications, it is essential to update the server to preserve proper functionality.___
 
@@ -78,6 +78,8 @@ Available Meshery Server logs are:
  - Fatal - 1
  - Error - 2
  - Warn  - 3
- - Info  - 4 (This is the default log level).
+ - Info  - 4
  - Debug - 5
  - Trace level - 6
+ ```
+The default setting for the LOG_LEVEL is  `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug). 
