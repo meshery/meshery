@@ -138,13 +138,6 @@ type: project
 
 </details>
 
-<details>
-    <summary>
-<h6>Question: Why are images invisible for some designs in the Meshery Catalog?</h6>
-</summary>
-<p><strong>Answer:</strong> In certain instances, the images of published designs in <a href="https://meshery.io/catalog">Meshery Catalog</a> may not be visible due to bandwidth issues. This can occur when there are network constraints affecting the retrieval of image data. However, rest assured that the design information and other relevant details are still accessible.</p>
-</details>
-
 ## Contributing FAQs
 
 <details>
