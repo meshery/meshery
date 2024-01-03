@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -118,7 +118,7 @@ const (
 	machineName = "kubernetes"
 )
 
-func New(ID string, log logger.Handler) (*machines.StateMachine, error) {
+func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
@@ -127,6 +127,7 @@ func New(ID string, log logger.Handler) (*machines.StateMachine, error) {
 
 	return &machines.StateMachine{
 		ID:            connectionID,
+		UserID:        userID,
 		Name:          machineName,
 		PreviousState: machines.DefaultState,
 		InitialState:  machines.InitialState,

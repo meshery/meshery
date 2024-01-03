@@ -119,6 +119,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		machineCtx,
 		req.Context(),
 		connectionUUID,
+		userID,
 		smInstanceTracker,
 		h.log,
 		provider,

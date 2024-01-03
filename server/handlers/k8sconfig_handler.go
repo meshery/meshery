@@ -142,6 +142,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				machineCtx,
 				req.Context(),
 				connection.ID,
+				userID,
 				smInstanceTracker,
 				h.log,
 				provider,
