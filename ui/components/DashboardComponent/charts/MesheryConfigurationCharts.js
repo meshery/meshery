@@ -107,7 +107,7 @@ export default function MesheryConfigurationChart({ classes }) {
           <Tooltip title="Learn more about Configuration Management in Meshery" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
