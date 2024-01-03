@@ -288,6 +288,8 @@ paths:
 
                 ```?search={environments_name}``` If search is non empty then a greedy search is performed
 
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
+
                 Returns all connections of environment
             operationId: idGetConnectionsOfEnvironmentHandler
             responses:
@@ -684,16 +686,6 @@ paths:
             summary: Handle PUT request for updating an existing connection
             tags:
                 - PutConnection
-    /api/integrations/connections/{connectionKind}/transitions:
-        get:
-            description: Get all possible state transitions for a particular connection kind.
-            operationId: idGetConnectionsStatus
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryConnectionsStatusPage'
-            summary: Handle GET request for getting all possible connection transitions
-            tags:
-                - GetAvailableTransitionsByKind
     /api/integrations/connections/status:
         get:
             description: Get all connections status
@@ -2394,7 +2386,7 @@ paths:
                 - PostWorkspace
     /api/workspaces/{id}/designs:
         get:
-            description: |4-
+            description: |-
                 ```?order={field}``` orders on the passed field
 
                 ```?page={page-number}``` Default page number is 0
@@ -2403,7 +2395,7 @@ paths:
 
                 ```?search={name}``` If search is non empty then a greedy search is performed
 
-                ```?filter={condition}```
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
             operationId: idGetWorkspaceMesheryDesigns
             responses:
                 "200":
@@ -2432,7 +2424,7 @@ paths:
                 - WorkspacesAPI
     /api/workspaces/{id}/environments:
         get:
-            description: |4-
+            description: |-
                 ```?order={field}``` orders on the passed field
 
                 ```?page={page-number}``` Default page number is 0
@@ -2443,7 +2435,7 @@ paths:
 
                 ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
 
-                ```?filter={condition}```
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
             operationId: idGetWorkspaceEnvironments
             responses:
                 "200":
