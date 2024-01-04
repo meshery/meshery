@@ -57,6 +57,7 @@ import {
   CONNECTION_STATES,
   CONTROLLERS,
   CONTROLLER_STATES,
+  CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -70,6 +71,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import UniversalFilter from '../../utils/custom-filter';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import {
   useGetEnvironmentsQuery,
@@ -192,13 +194,29 @@ function Connections(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
+  const [filter, setFilter] = useState('');
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [kindFilter, setKindFilter] = useState(null);
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
 
   const addConnectionToEnvironment = async (
     environmentId,
@@ -209,7 +227,7 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -233,7 +251,7 @@ function Connections(props) {
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -258,11 +276,12 @@ function Connections(props) {
       .unwrap()
       .then((resp) => {
         notify({
-          message: `Environment: ${resp.Name} saved`,
+          message: `Environment "${resp.name}" created`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+        environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -272,19 +291,6 @@ function Connections(props) {
         });
       });
   };
-
-  const {
-    data: environmentsResponse,
-    isSuccess: isEnvironmentsSuccess,
-    isError: isEnvironmentsError,
-    error: environmentsError,
-  } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
-    {
-      skip: !organization?.id,
-    },
-  );
-  let environments = environmentsResponse?.environments || [];
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -434,31 +440,33 @@ function Connections(props) {
         },
         customBodyRender: (value, tableMeta) => {
           const getOptions = () => {
-            return environments.map((env) => ({ label: env.name, value: env.id })) || [];
+            return environments.map((env) => ({ label: env.name, value: env.id }));
           };
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
           return (
             isEnvironmentsSuccess && (
-              <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                  <MultiSelectWrapper
-                    onChange={(selected, unselected) =>
-                      handleEnvironmentSelect(
-                        connections[tableMeta.rowIndex].id,
-                        connections[tableMeta.rowIndex].name,
-                        cleanedEnvs,
-                        selected,
-                        unselected,
-                      )
-                    }
-                    options={getOptions()}
-                    value={cleanedEnvs}
-                    placeholder={`Assigned Environments`}
-                    isSelectAll={true}
-                    menuPlacement={'bottom'}
-                  />
+              <div onClick={(e) => e.stopPropagation()}>
+                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          connections[tableMeta.rowIndex].id,
+                          connections[tableMeta.rowIndex].name,
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={getOptions()}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              </div>
             )
           );
         },
@@ -673,7 +681,11 @@ function Connections(props) {
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
                           avatar={icons[status] ? icons[status]() : ''}
-                          label={status}
+                          label={
+                            status == value
+                              ? status
+                              : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                          }
                         />
                       </MenuItem>
                     ))}
@@ -857,7 +869,7 @@ function Connections(props) {
   useEffect(() => {
     updateCols(columns);
     if (!loading && connectionMetadataState) {
-      getConnections(page, pageSize, search, sortOrder);
+      getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
     }
   }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
 
@@ -871,14 +883,17 @@ function Connections(props) {
     }
   }, [environmentsError]);
 
-  const getConnections = (page, pageSize, search, sortOrder) => {
+  const getConnections = (page, pageSize, search, sortOrder, statusFilter, kindFilter) => {
     setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+        (statusFilter ? `&status=${encodeURIComponent(JSON.stringify([statusFilter]))}` : '') +
+        (kindFilter ? `&kind=${encodeURIComponent(JSON.stringify([kindFilter]))}` : ''),
+
       {
         credentials: 'include',
         method: 'GET',
@@ -891,11 +906,25 @@ function Connections(props) {
             (connection.kindLogo =
               connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
-        setConnections(res?.connections || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
+
+        const filteredConnections = res?.connections.filter((connection) => {
+          if (
+            (statusFilter === null || connection.status === statusFilter) &&
+            (kindFilter === null || connection.kind === kindFilter)
+          ) {
+            return true;
+          }
+          return false;
+        });
+
+        setConnections(filteredConnections);
+        setCount(res?.total_count);
         setLoading(false);
+        setPageSize(res?.page_size);
+        setPage(res?.page);
+        setStatusFilter(statusFilter);
+        setKindFilter(kindFilter);
+        setFilter(filter);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
@@ -920,7 +949,7 @@ function Connections(props) {
         body: requestBody,
       },
       () => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
     );
@@ -1090,6 +1119,35 @@ function Connections(props) {
     return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
+  const filters = {
+    status: {
+      name: 'Status',
+      options: [
+        { label: 'Connected', value: 'connected' },
+        { label: 'Registered', value: 'registered' },
+        { label: 'Discovered', value: 'discovered' },
+        { label: 'Ignored', value: 'ignored' },
+        { label: 'Deleted', value: 'deleted' },
+        { label: 'Maintenance', value: 'maintenance' },
+        { label: 'Disconnected', value: 'disconnected' },
+        { label: 'Not Found', value: 'not found' },
+      ],
+    },
+    kind: {
+      name: 'Kind',
+      options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
+
+  const handleApplyFilter = () => {
+    const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+
+    getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+  };
+
   return (
     <>
       <NoSsr>
@@ -1164,6 +1222,14 @@ function Connections(props) {
                 placeholder="Search connections..."
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
+              />
+
+              <UniversalFilter
+                id="ref"
+                filters={filters}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                handleApplyFilter={handleApplyFilter}
               />
 
               <CustomColumnVisibilityControl

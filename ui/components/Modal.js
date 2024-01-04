@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from '@material-ui/core';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Button,
+  Typography,
+  CircularProgress,
+} from '@material-ui/core';
 import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import CloseIcon from '@material-ui/icons/Close';
@@ -109,18 +117,6 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
-const RJSFWrapperComponentDefault =
-  (uiSchema) =>
-  (
-    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props,
-  ) => {
-    // Clone the child to pass in additional props
-    return React.cloneElement(props.children, {
-      ...(props.children?.props || {}),
-      uiSchema,
-    });
-  };
-
 /**
  * Renders common dialog component.
  *
@@ -166,6 +162,7 @@ function Modal(props) {
   const [snackbar, setSnackbar] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
+  const [loadingSchema, setLoadingSchema] = useState(true);
 
   const renderTooltipContent = () => (
     <div>
@@ -212,6 +209,12 @@ function Modal(props) {
     formStateRef.current = data;
   };
 
+  useEffect(() => {
+    if (schema) {
+      setLoadingSchema(false);
+    }
+  }, [schema]);
+
   return (
     <>
       <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
@@ -234,17 +237,23 @@ function Modal(props) {
           </IconButton>
         </div>
 
-        <RJSFWrapper
-          key={type}
-          formData={initialData || formStateRef}
-          jsonSchema={schema || getSchema(type)}
-          uiSchema={uiSchema}
-          onChange={handleFormChange}
-          liveValidate={false}
-          formRef={formRef}
-          hideTitle={true}
-          RJSFWrapperComponent={RJSFWrapperComponent || RJSFWrapperComponentDefault(uiSchema)}
-        />
+        {loadingSchema ? (
+          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            key={type}
+            formData={initialData || formStateRef}
+            jsonSchema={schema || getSchema(type)}
+            uiSchema={uiSchema}
+            onChange={handleFormChange}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+          />
+        )}
 
         <DialogActions className={classes.dialogAction}>
           <Button

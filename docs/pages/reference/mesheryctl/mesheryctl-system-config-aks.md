@@ -17,7 +17,6 @@ Configure Meshery to use AKS cluster
 ## Synopsis
 
 Configure Meshery to connect to AKS cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config aks [flags]

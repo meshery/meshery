@@ -154,8 +154,8 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.MesheryControllersStatusListItem, error) {
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	unknowStatus := &model.MesheryControllersStatusListItem{
-		ContextID: ctxID,
-		Status: model.MesheryControllerStatusUnkown,
+		ContextID:  ctxID,
+		Status:     model.MesheryControllerStatusUnkown,
 		Controller: model.GetInternalController(models.MesheryOperator),
 	}
 	if !ok {
@@ -173,8 +173,8 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 	}
 	status := controllerhandler[models.MesheryOperator].GetStatus()
 	return &model.MesheryControllersStatusListItem{
-		ContextID: ctxID,
-		Status: model.GetInternalControllerStatus(status),
+		ContextID:  ctxID,
+		Status:     model.GetInternalControllerStatus(status),
 		Controller: model.GetInternalController(models.MesheryOperator),
 	}, nil
 }

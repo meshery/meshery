@@ -21,7 +21,7 @@ const styles = makeStyles((theme) => ({
     ['@media (max-width: 455px)']: {
       width: '100%',
     },
-    zIndex: 5,
+    zIndex: 1201,
   },
   grid: {
     width: '100%',
@@ -57,6 +57,7 @@ const styles = makeStyles((theme) => ({
   headerWrapper: {
     marginBottom: 12,
     display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 
