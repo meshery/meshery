@@ -17,7 +17,6 @@ Delete pattern file
 ## Synopsis
 
 delete pattern file will trigger deletion of the pattern file
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern delete [flags]

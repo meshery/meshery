@@ -17,7 +17,6 @@ list models
 ## Synopsis
 
 list name of all registered models
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model list [flags]

@@ -17,7 +17,6 @@ View list of models and detail of models
 ## Synopsis
 
 View list of models and detailed information of a specific model
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model [flags]
