@@ -74,11 +74,6 @@ func marshalKey(k *Key) []byte {
 	return res
 }
 
-func marshalKeys(ks []Key) []byte {
-	res, _ := json.Marshal(ks)
-	return res
-}
-
 func marshalKeysPage(ksPage *KeysPage) []byte {
 	res, _ := json.Marshal(ksPage)
 	return res

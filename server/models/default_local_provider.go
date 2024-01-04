@@ -1130,31 +1130,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	go func() {
-		keys := []*Key{
-			{
-				ID:          uuid.FromStringOrNil("3090a03b-70b3-4956-afb4-a6b7935cd4f4"),
-				Owner:       uuid.Nil,
-				Function:    "Create new design",
-				Category:    "Catalog Management",
-				Description: "Create new Meshery design",
-				Subcategory: "Designs",
-			},
-			{
-				ID:          uuid.FromStringOrNil("9030a03b-70b3-4956-afb4-a6b7935cd478"),
-				Owner:       uuid.Nil,
-				Function:    "Create new design",
-				Category:    "Catalog Management",
-				Description: "Create new Meshery design",
-				Subcategory: "Designs",
-			},
-		}
-		_, err := l.KeyPersister.SaveUsersKeys(keys)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "key"))
-		}
-	}()
-
 	// seed default organization
 	go func() {
 		id, _ := uuid.NewV4()
