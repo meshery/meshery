@@ -17,7 +17,6 @@ Configure Meshery
 ## Synopsis
 
 Configure the Kubernetes cluster used by Meshery.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config [flags]

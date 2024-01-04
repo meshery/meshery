@@ -89,7 +89,18 @@ export const MESHSYNC_STATES = {
   REGISTER: 'register',
 };
 
-export const TRANSFER_COMPONET = {
+export const TRANSFER_COMPONENT = {
   CHIP: 'chip',
   OTHER: 'other',
+};
+
+export const CONNECTION_STATE_TO_TRANSITION_MAP = {
+  [CONNECTION_STATES.IGNORED]: 'Ignore',
+  [CONNECTION_STATES.CONNECTED]: 'Connect',
+  [CONNECTION_STATES.REGISTERED]: 'Register',
+  [CONNECTION_STATES.DISCOVERED]: 'Discover',
+  [CONNECTION_STATES.DELETED]: 'Delete',
+  [CONNECTION_STATES.MAINTENANCE]: 'Maintenance',
+  [CONNECTION_STATES.DISCONNECTED]: 'Disconnect',
+  [CONNECTION_STATES.NOTFOUND]: 'Not Found',
 };

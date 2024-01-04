@@ -27,7 +27,7 @@ mesheryctl [flags]
 
 ## Examples
 
-Base command
+Base command:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl
@@ -35,7 +35,7 @@ mesheryctl
 </div>
 </pre> 
 
-Display help about command/subcommand
+Display help about command/subcommand:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl --help
@@ -50,7 +50,7 @@ mesheryctl system start --help
 </div>
 </pre> 
 
-For viewing verbose output
+For viewing verbose output:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl -v [or] --verbose

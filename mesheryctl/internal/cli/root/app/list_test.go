@@ -45,7 +45,7 @@ func TestAppList(t *testing.T) {
 			Args:             []string{"list"},
 			ExpectedResponse: "list.application.output.golden",
 			Fixture:          "list.application.api.response.golden",
-			URL:              testContext.BaseURL + "/api/application",
+			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},

@@ -17,7 +17,6 @@ Import app manifests
 ## Synopsis
 
 Import the app manifest into Meshery
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app import [flags]

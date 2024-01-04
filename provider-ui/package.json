@@ -22,11 +22,11 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.22.15",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.14.19",
+    "@mui/material": "^5.15.2",
     "babel-plugin-istanbul": "^6.1.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
@@ -36,10 +36,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.7",
-    "cypress": "^13.6.1",
+    "@cypress/code-coverage": "^3.12.17",
+    "cypress": "^13.6.2",
     "eslint": "^8.55.0",
-    "eslint-config-next": "^14.0.3",
+    "eslint-config-next": "^14.0.4",
     "eslint-plugin-cypress": "^2.15.1",
     "start-server-and-test": "^2.0.3"
   },

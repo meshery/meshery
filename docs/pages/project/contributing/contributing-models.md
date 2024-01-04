@@ -51,6 +51,10 @@ If a specific attribute is not provided with a value in the definition, it means
 
 _Figure: MeshModel Contruct Classification_
 
+### Generating Models does not require Meshery Server
+
+Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components.
+
 ### Contribute to MeshModel Relationships
 
 Relationships within MeshModel play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected Components.

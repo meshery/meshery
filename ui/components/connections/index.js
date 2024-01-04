@@ -57,6 +57,7 @@ import {
   CONNECTION_STATES,
   CONTROLLERS,
   CONTROLLER_STATES,
+  CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -204,6 +205,19 @@ function Connections(props) {
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
+
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -262,9 +276,10 @@ function Connections(props) {
       .unwrap()
       .then((resp) => {
         notify({
-          message: `Environment: ${resp.Name} saved`,
+          message: `Environment "${resp.name}" created`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+        environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
         getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
@@ -276,19 +291,6 @@ function Connections(props) {
         });
       });
   };
-
-  const {
-    data: environmentsResponse,
-    isSuccess: isEnvironmentsSuccess,
-    isError: isEnvironmentsError,
-    error: environmentsError,
-  } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
-    {
-      skip: !organization?.id,
-    },
-  );
-  let environments = environmentsResponse?.environments || [];
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -438,7 +440,7 @@ function Connections(props) {
         },
         customBodyRender: (value, tableMeta) => {
           const getOptions = () => {
-            return environments.map((env) => ({ label: env.name, value: env.id })) || [];
+            return environments.map((env) => ({ label: env.name, value: env.id }));
           };
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
           return (
@@ -679,7 +681,11 @@ function Connections(props) {
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
                           avatar={icons[status] ? icons[status]() : ''}
-                          label={status}
+                          label={
+                            status == value
+                              ? status
+                              : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                          }
                         />
                       </MenuItem>
                     ))}

@@ -38,11 +38,12 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Cloud Native Apps Management",
-	Long:  `All apps operations: import, list, view, onboard and offboard`,
+	Long: `All apps operations: import, list, view, onboard and offboard.
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Base command
+// Base command:
 mesheryctl app [subcommand]
-	`,
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -52,9 +53,9 @@ mesheryctl app [subcommand]
 
 			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
 			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
-				return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
+				return errors.New(utils.AppError(fmt.Sprintf("'%s' is an invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
 			}
-			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
+			return errors.New(utils.AppError(fmt.Sprintf("'%s' is an invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
 		}
 		return nil
 	},
@@ -73,7 +74,7 @@ func getSourceTypes() error {
 		utils.Log.Error(err)
 		return nil
 	}
-	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
+	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
 		utils.Log.Error(err)
@@ -88,7 +89,7 @@ func getSourceTypes() error {
 
 	defer resp.Body.Close()
 
-	var response []*models.ApplicationSourceTypesAPIResponse
+	var response []*models.PatternSourceTypesAPIResponse
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -102,7 +103,7 @@ func getSourceTypes() error {
 	}
 
 	for _, apiResponse := range response {
-		validSourceTypes = append(validSourceTypes, apiResponse.ApplicationType)
+		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
 	}
 
 	return nil
