@@ -17,7 +17,7 @@ Cloud Native Filter Management
 ## Synopsis
 
 Cloud Native Filter Management
-	
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter [flags]
@@ -30,7 +30,7 @@ mesheryctl filter [flags]
 Base command for WASM filters:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  mesheryctl filter [subcommands]
+mesheryctl filter [subcommands]
 
 </div>
 </pre> 
