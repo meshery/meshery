@@ -17,7 +17,6 @@ Deploy a service mesh to the Kubernetes cluster
 ## Synopsis
 
 Deploy a service mesh to the connected Kubernetes cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy [flags]

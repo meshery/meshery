@@ -17,7 +17,7 @@ Meshery Command Line tool
 ## Synopsis
 
 As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
-
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl [flags]
@@ -27,33 +27,33 @@ mesheryctl [flags]
 
 ## Examples
 
-Base command
+Base command:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl
+  mesheryctl
 
 </div>
 </pre> 
 
-Display help about command/subcommand
+Display help about command/subcommand:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl --help
+  mesheryctl --help
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system start --help
+  mesheryctl system start --help
 
 </div>
 </pre> 
 
-For viewing verbose output
+For viewing verbose output:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl -v [or] --verbose
+  mesheryctl -v [or] --verbose
 
 </div>
 </pre> 

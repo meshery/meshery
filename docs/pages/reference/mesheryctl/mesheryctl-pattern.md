@@ -16,8 +16,8 @@ Cloud Native Patterns Management
 
 ## Synopsis
 
-Manage service meshes using predefined patterns
-
+Manage service meshes using predefined patterns.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern [flags]
@@ -27,34 +27,34 @@ mesheryctl pattern [flags]
 
 ## Examples
 
-Apply pattern file
+Apply pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply --file [path to pattern file | URL of the file]
+  mesheryctl pattern apply --file [path to pattern file | URL of the file]
 
 </div>
 </pre> 
 
-Delete pattern file
+Delete pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern delete --file [path to pattern file]
+  mesheryctl pattern delete --file [path to pattern file]
 
 </div>
 </pre> 
 
-View pattern file
+View pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern view [pattern name | ID]
+  mesheryctl pattern view [pattern name | ID]
 
 </div>
 </pre> 
 
-List all patterns
+List all patterns:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list
+  mesheryctl pattern list
 
 </div>
 </pre> 

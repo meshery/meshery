@@ -17,7 +17,6 @@ view provider
 ## Synopsis
 
 View provider of context in focus
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider view [flags]

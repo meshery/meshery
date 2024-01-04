@@ -17,7 +17,6 @@ Check Meshery status
 ## Synopsis
 
 Check status of Meshery and Meshery components.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system status [flags]

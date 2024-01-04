@@ -17,7 +17,6 @@ Experimental commands for mesheryctl
 ## Synopsis
 
 List of experimental commands for testing and evaluation purpose.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp [flags]
