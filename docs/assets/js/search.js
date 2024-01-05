@@ -83,13 +83,17 @@ excluded_in_search: true
 		}
 	}
 
-	window.index = lunr(function () {
-		this.field("id");
-		this.field("title", {boost: 10});
+	var index = lunr(function () {
+		this.ref("id");
+		this.field("title", { boost: 10 });
 		this.field("categories");
 		this.field("url");
 		this.field("content");
-	});
+	
+		for (var key in window.data) {
+		  this.add(window.data[key]);
+		}
+	  });
 
 	var query = decodeURIComponent((getQueryVariable("q") || "").replace(/\+/g, "%20")),
 		searchQueryContainerEl = document.getElementById("search-query-container"),
@@ -103,9 +107,7 @@ excluded_in_search: true
 	searchInput.value = query;
 	searchInput.focus();
 
-	for (var key in window.data) {
-		window.index.add(window.data[key]);
-	}
+	var results = index.search(query);
 
-	displaySearchResults(window.index.search(query), query); // Hand the results off to be displayed
+	displaySearchResults(results, query); // Hand the results off to be displayed
 })();
