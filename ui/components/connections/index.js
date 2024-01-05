@@ -350,6 +350,7 @@ function Connections(props) {
     ['kind', 'm'],
     ['type', 's'],
     ['sub_type', 'na'],
+    ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
   ];
@@ -570,7 +571,6 @@ function Connections(props) {
       options: {
         sort: true,
         sortThirdClickReset: true,
-        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
