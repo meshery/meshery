@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery's End-to-End Tests using Cypress
 permalink: project/contributing/contributing-cypress
-description: How to contribute to End-to-End Tests using Cypress.
+abstract: How to contribute to End-to-End Tests using Cypress.
 language: en
 type: project
 category: contributing

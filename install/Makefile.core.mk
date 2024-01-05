@@ -23,6 +23,7 @@ LOCAL_PROVIDER="None"
 GOVERSION = 1.21
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
+KEYS_PATH="../../permissions/keys.csv"
 
 SHELL :=/bin/bash -o pipefail
 

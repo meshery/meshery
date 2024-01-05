@@ -52,15 +52,15 @@ import Router from 'next/router';
 import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyncEventsSubscription';
 import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
 import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
-import { updateURLs } from '../utils/utils';
+import { formatToTitleCase, updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
-import { getMeshModelComponent } from '../api/meshmodel';
-import { CONNECTION_KINDS } from '../utils/Enum';
+import { getMeshModelComponentByName } from '../api/meshmodel';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -174,6 +174,7 @@ class MesheryApp extends App {
 
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    this.loadOrg();
     this.initSubscriptions([]);
     dataFetch(
       '/api/user/prefs',
@@ -221,10 +222,8 @@ class MesheryApp extends App {
 
   loadMeshModelComponent = () => {
     const connectionDef = {};
-    Object.keys(CONNECTION_KINDS).map(async (kind) => {
-      const connectionKind =
-        CONNECTION_KINDS[kind] === 'meshery' ? 'meshery-core' : CONNECTION_KINDS[kind];
-      const res = await getMeshModelComponent(connectionKind, 'Connection');
+    CONNECTION_KINDS_DEF.map(async (kind) => {
+      const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].model.metadata.transitions,
@@ -232,9 +231,9 @@ class MesheryApp extends App {
         };
       }
       this.setState({ connectionMetadata: connectionDef });
-      this.props.setConnectionMetadata({
-        connectionMetadataState: connectionDef,
-      });
+    });
+    this.props.setConnectionMetadata({
+      connectionMetadataState: connectionDef,
     });
   };
 
@@ -358,6 +357,26 @@ class MesheryApp extends App {
 
   updateExtensionType = (type) => {
     this.props.store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
+  };
+
+  loadOrg = async () => {
+    const { store } = this.props;
+    dataFetch(
+      '/api/identity/orgs',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          store.dispatch({
+            type: actionTypes.SET_ORGANIZATION,
+            organization: result?.organizations[0],
+          });
+        }
+      },
+      (err) => console.log('There was an error fetching available orgs:', err),
+    );
   };
 
   async loadConfigFromServer() {

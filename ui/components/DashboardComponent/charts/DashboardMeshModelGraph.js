@@ -88,7 +88,7 @@ function MeshModelContructs({ classes }) {
           >
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
@@ -96,7 +96,7 @@ function MeshModelContructs({ classes }) {
             />
           </Tooltip>
         </div>
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
       </div>
@@ -159,7 +159,7 @@ function MeshModelCategories({ classes }) {
           <Tooltip title="Learn more about Categories" placement="right">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
@@ -167,7 +167,7 @@ function MeshModelCategories({ classes }) {
             />
           </Tooltip>
         </div>
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
       </div>

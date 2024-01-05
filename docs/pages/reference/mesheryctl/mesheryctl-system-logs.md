@@ -19,7 +19,6 @@ Print logs
 Print history of Meshery's logs and begin tailing them.
 
 It also shows the logs of a specific component.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system logs [flags]

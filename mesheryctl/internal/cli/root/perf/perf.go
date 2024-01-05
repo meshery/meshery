@@ -34,21 +34,22 @@ var (
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Management",
-	Long:  `Performance Management & Benchmarking`,
+	Long: `Performance Management & Benchmarking.
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Run performance test
+// Run performance test:
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 	
-// List performance profiles
+// List performance profiles:
 mesheryctl perf profile sam-test
 
-// List performance results
+// List performance results:
 mesheryctl perf result sam-test
 
-// Display Perf profile in JSON or YAML
+// Display Perf profile in JSON or YAML:
 mesheryctl perf result -o json
 mesheryctl perf result -o yaml
-	`,
+`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -59,9 +60,9 @@ mesheryctl perf result -o yaml
 
 			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
 			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
-				return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
+				return errors.New(utils.PerfError(fmt.Sprintf("'%s' is an invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
 			}
-			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
+			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is an invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
 		}
 		return nil
 	},

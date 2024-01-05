@@ -17,7 +17,6 @@ Onboard application
 ## Synopsis
 
 Command will trigger deploy of application
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app onboard [flags]

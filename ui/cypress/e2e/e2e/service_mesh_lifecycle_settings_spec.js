@@ -35,7 +35,7 @@ describe('Lifecycle Service Mesh', () => {
       }
 
       // Lifecycle > Service Mesh Page
-      cy.visit('/management');
+      cy.visit('/management/service-mesh');
       selectServiceMeshType(ADAPTER_LOCATION);
       // "Select Service Mesh Type" Dropdown
       cy.get('[data-cy="lifecycle-service-mesh-type"]').should('contain.text', ADAPTER_LOCATION);

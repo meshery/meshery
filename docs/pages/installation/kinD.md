@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/kind.png
+abstarct: Install Meshery on kinD. Deploy Meshery in kinD in-cluster or outside of kinD out-of-cluster.
 ---
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>

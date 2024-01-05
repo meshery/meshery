@@ -11,7 +11,12 @@ import {
   FormControlLabel,
   Checkbox,
   styled,
+  IconButton,
 } from '@material-ui/core';
+import theme from '../themes/app';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 
 const styles = (theme) => ({
   title: {
@@ -68,13 +73,18 @@ const PromptActionButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(0.5),
   padding: theme.spacing(1),
   borderRadius: 5,
-  backgroundColor: theme.palette.secondary.focused,
   color: '#fff',
   '&:hover': {
     boxShadow:
       '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
   },
   minWidth: 100,
+}));
+
+const IconButtonWrapper = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  right: 10,
+  color: theme.palette.secondary.focused,
 }));
 
 export const PROMPT_VARIANTS = {
@@ -94,6 +104,7 @@ class PromptComponent extends React.Component {
       options: [],
       isChecked: false,
       showCheckbox: false,
+      showInfoIcon: null,
     };
     this.promiseInfo = {};
     this.variant = this.props.variant;
@@ -110,6 +121,7 @@ class PromptComponent extends React.Component {
         options: passed.options,
         showCheckbox: !!passed.showCheckbox,
         show: true,
+        showInfoIcon: passed.showInfoIcon || null,
       });
     });
   };
@@ -129,7 +141,7 @@ class PromptComponent extends React.Component {
   };
 
   render() {
-    const { show, options, title, subtitle, isChecked, showCheckbox } = this.state;
+    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
     return (
@@ -183,12 +195,14 @@ class PromptComponent extends React.Component {
               </Button>
             )}
             <PromptActionButton
+              color="primary"
               onClick={() => {
                 this.hide();
                 resolve(options[0]);
               }}
               key={options[0]}
               promptVariant={this.variant}
+              style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
               type="submit"
               variant="contained"
             >
@@ -196,6 +210,19 @@ class PromptComponent extends React.Component {
                 {options[0]}{' '}
               </Typography>
             </PromptActionButton>
+            {showInfoIcon && (
+              <CustomTextTooltip
+                backgroundColor="#3C494F"
+                placement="top"
+                interactive={true}
+                style={{ whiteSpace: 'pre-line' }}
+                title={getHyperLinkDiv(showInfoIcon)}
+              >
+                <IconButtonWrapper color="primary">
+                  <InfoOutlinedIcon />
+                </IconButtonWrapper>
+              </CustomTextTooltip>
+            )}
           </DialogActions>
         </Dialog>
       </div>

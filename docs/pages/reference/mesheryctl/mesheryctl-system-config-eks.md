@@ -17,7 +17,6 @@ Configure Meshery to use EKS cluster
 ## Synopsis
 
 Configure Meshery to connect to EKS cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config eks [flags]

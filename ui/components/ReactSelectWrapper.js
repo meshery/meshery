@@ -153,6 +153,7 @@ class ReactSelectWrapper extends React.Component {
       value,
       options,
       error,
+      isMulti = false,
       noOptionsMessage = 'No Options',
     } = this.props;
 
@@ -178,6 +179,7 @@ class ReactSelectWrapper extends React.Component {
             onInputChange={onInputChange}
             placeholder={placeholder}
             isClearable
+            isMulti={isMulti}
             noOptionsMessage={() => noOptionsMessage}
           />
         </NoSsr>
@@ -195,6 +197,7 @@ ReactSelectWrapper.propTypes = {
   value: PropTypes.object.isRequired,
   options: PropTypes.array.isRequired,
   error: PropTypes.bool.isRequired,
+  isMulti: PropTypes.bool,
   noOptionsMessage: PropTypes.string,
 };
 export default withStyles(styles, { withTheme: true })(ReactSelectWrapper);

@@ -7,9 +7,10 @@ language: en
 type: guides
 category: mesheryctl
 list: exclude
+abstract: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 
-Guides to using Meshery's various features and components.
+From the Command Line: Guides to using Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "name" %}
 

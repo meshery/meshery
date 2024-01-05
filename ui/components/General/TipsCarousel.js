@@ -26,6 +26,8 @@ const TipsCarousel = ({ tips }) => {
     <Box
       style={{
         width: '40%',
+        minWidth: '320px',
+        maxWidth: '320px',
         borderRadius: '0.438rem',
         background: 'linear-gradient(359deg, #00B39F -6.26%, #000000 85.81%)',
         padding: '2rem',

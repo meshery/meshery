@@ -2,11 +2,11 @@
   "page": 0,
   "page_size": 10,
   "total_count": 3,
-  "applications": [
+  "patterns": [
     {
       "id": "2acfb2ca-8d2b-4e84-95ee-0881d1b4e6b8",
       "name": "MyApplication",
-      "application_file": "name: MyApplication # display name in Meshery UI\nservices:\n  myapp:\n    type: Application\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
+      "pattern_file": "name: MyApplication # display name in Meshery UI\nservices:\n  myapp:\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
       "user_id": null,
       "location": {
         "branch": "",
@@ -20,7 +20,7 @@
     {
       "id": "5b046f74-445c-4874-8b55-11cb7ca93a54",
       "name": "ApplicationPatternTwo",
-      "application_file": "name: ApplicationPatternTwo # display name in Meshery UI\nservices:\n  myapp:\n    type: Application\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
+      "pattern_file": "name: ApplicationPatternTwo # display name in Meshery UI\nservices:\n  myapp:\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
       "user_id": null,
       "location": {
         "branch": "",
@@ -34,7 +34,7 @@
     {
       "id": "d1fb41eb-c049-4352-9b95-4e2c40f94fb4",
       "name": "ApplicationPatternOne",
-      "application_file": "name: ApplicationPatternOne # display name in Meshery UI\nservices:\n  myapp:\n    type: Application\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
+      "pattern_file": "name: ApplicationPatternOne # display name in Meshery UI\nservices:\n  myapp:\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
       "user_id": null,
       "location": {
         "branch": "",

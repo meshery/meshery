@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Meshery Models
+title: Models
 permalink: concepts/models
 type: concepts
 abstract: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
@@ -12,11 +12,11 @@ list: include
 
 Meshery is a cloud-native management plane that aims to provide a comprehensive set of tools for managing cloud-native applications and infrastructure. To achieve this, Meshery needs a model that can represent a wide range of constructs, from simple applications to complex microservices architectures. This document describes the Meshery Model, a set of constructs that are used to represent and manage cloud-native systems.
 
-Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as an exportable package to define managed infrastructure and their relationships, and details specifics of how to manage them.
+Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as an exportable package to define managed infrastructure and their relationships, and details specifics of how to manage them. A Meshery Model is based on the [Model Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/meshmodels.yml) with well-defined attributes. 
 
 ## Design Principles
 
-Meshery Models adheres to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
+Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
 
 * **Comprehensive:** The model should be able to represent a wide range of cloud-native constructs, including applications, services, meshes, and infrastructure components.
 * **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
@@ -25,9 +25,11 @@ Meshery Models adheres to several design principles, including establishing a se
 
 ## Models as the Unit of Packaging
 
-MeshModel supports packaging constructs as OCI-compatible images, making them portable and encapsulating intellectual property. Model packages can include multiple MeshModel constructs, facilitating reusability and versioning.
+## Model Packaging
 
-{% include alert.html title="Model Packaging" color="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
+Each model package can be imported and exported from the system as OCI-compatible images, making them portable (a design goal), abstracting their complexity, and encapsulating potential intellectual property that users might have invested into their models. Model packages are versioned and bundle any number of components, relationships, policies, connections and credentials. For example:
+
+{% include alert.html title="Model Packaging" type="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
 
 ![Meshery Models]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
 
@@ -53,7 +55,7 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 A pattern is a reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
-{% include alert.html title="Metadata" color="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
+{% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
 ### Policy
 
@@ -67,7 +69,7 @@ A pattern is a reusable configuration that can be applied to components or desig
 
 Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
-{% include alert.html title="Model Schema" color="info" content="Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs." %}
+{% include alert.html title="Model Schema" type="info" content="Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs." %}
 
 ## Conclusion
 

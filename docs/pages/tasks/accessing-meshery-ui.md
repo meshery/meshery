@@ -5,6 +5,7 @@ permalink: tasks/accessing-meshery-ui
 type: tasks
 language: en
 list: include
+abstract: "How to find where Meshery UI is exposed from your Kubernetes cluster."
 ---
 
 To access Meshery’s UI via port-forwarding, please refer to the port-forwarding guide for detailed instructions.

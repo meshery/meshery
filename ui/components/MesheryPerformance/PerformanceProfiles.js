@@ -18,7 +18,7 @@ import { iconMedium } from '../../css/icons.styles';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import ResponsiveDataTable from '../../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
@@ -254,7 +254,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     ['name', 'xs'],
     ['endpoints', 'l'],
     ['last_run', 'l'],
-    ['next_run', 'xl'],
+    ['next_run', 'na'],
     ['updated_at', 'l'],
     ['Actions', 'xs'],
   ];
@@ -570,6 +570,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             />
             {viewType === 'table' && (
               <CustomColumnVisibilityControl
+                id="ref"
                 classes={classes}
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
