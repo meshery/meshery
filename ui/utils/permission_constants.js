@@ -145,7 +145,7 @@ export const keys = {
     action: '3798736d-1f5d-41b3-876f-f3f01453dd15',
   },
   SHARE_DESIGN: {
-    subject: 'Share Design', // not seeded
+    subject: 'Share Design',
     action: 'd9ae2b08-762f-418f-916f-43de736b53e2',
   },
   CLONE_DESIGN: {
@@ -185,9 +185,8 @@ export const keys = {
     action: '595b921a-ea1e-4611-83f0-503db0eeb94d',
   },
   UNDEPLOY_DESIGN: {
-    // not seeded
     subject: 'Undeploy Design',
-    action: '595b921a-ea1e-4611-83f0-503db0eeb94d',
+    action: '16b11ffa-7b92-4666-a0ff-191df9cd18b2',
   },
   DETAILS_OF_DESIGN: {
     subject: 'Details of design',
@@ -200,6 +199,10 @@ export const keys = {
   DELETE_A_DESIGN: {
     subject: 'Delete a design',
     action: 'f024fcf7-3c3d-4521-b83e-6d659353ca0e',
+  },
+  EXPORT_DESIGN: {
+    subject: 'Export Design',
+    action: '9a783f51-3b4a-47a6-a02e-b0db9e78cd85',
   },
   DOWNLOAD_A_DESIGN: {
     subject: 'Download a design',
@@ -228,6 +231,14 @@ export const keys = {
   EDIT_WASM_FILTER: {
     subject: 'Edit WASM filter',
     action: '88cd144e-806e-472a-a31a-ef6d64643291',
+  },
+  DELETE_WASM_FILTER: {
+    subject: 'Delete WASM Filter',
+    action: '9225d5a7-7255-49be-9233-daeabefae306',
+  },
+  CLONE_WASM_FILTER: {
+    subject: 'Clone WASM Filter',
+    action: 'c84718ca-7479-4ad9-a2b7-a5784baa51fb',
   },
   ADD_CLUSTER: {
     subject: 'Add cluster',
@@ -382,5 +393,17 @@ export const keys = {
   UNDEPLOY_SERVICE_MESH: {
     subject: 'Undeploy service mesh',
     action: '6e7f6f4f-4321-4e42-9eff-6a8323f32e84',
+  },
+  VIEW_SERVICE_MESH: {
+    subject: 'Undeploy service mesh',
+    action: '6e7f6f4f-4321-4e42-9eff-6a8323f32e84',
+  },
+  VIEW_ALL_KUBERNETES_CLUSTERS: {
+    subject: 'View All Kubernetes Clusters',
+    action: 'b99a9a0a-2cb9-4be7-8251-14a249e4038e',
+  },
+  VIEW_PERFORMANCE_PROFILES: {
+    subject: 'View performance profiles',
+    action: '6593ac26-820b-4e87-be32-64ee740ea204',
   },
 };
