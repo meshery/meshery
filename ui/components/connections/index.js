@@ -398,10 +398,11 @@ function Connections(props) {
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
+          const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           return (
             <TootltipWrappedConnectionChip
               tooltip={'Server: ' + server}
-              title={value}
+              title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
               status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
@@ -411,7 +412,7 @@ function Connections(props) {
               }
               handlePing={(e) => {
                 e.stopPropagation();
-                if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
+                if (tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
@@ -741,6 +742,13 @@ function Connections(props) {
     {
       name: 'kindLogo',
       label: 'kindLogo',
+      options: {
+        display: false,
+      },
+    },
+    {
+      name: 'metadata.name',
+      label: 'Name',
       options: {
         display: false,
       },
