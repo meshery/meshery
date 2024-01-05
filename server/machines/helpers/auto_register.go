@@ -92,7 +92,7 @@ func(arh *AutoRegistrationHelper) processRegistration() {
 			if connType != "" {
 				id, _ := uuid.NewV4() // id should be hash of somehting.
 				userID := uuid.Nil // use proper user id
-				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, userID, nil, arh.log, nil, "", connType, nil)
+				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, userID, nil, arh.log, "", connType, nil)
 				if err != nil {
 					// arh.log.Error(ErrAutoRegister(err, connType))
 				}

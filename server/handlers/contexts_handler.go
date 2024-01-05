@@ -122,12 +122,11 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		userID,
 		smInstanceTracker,
 		h.log,
-		provider,
 		machines.InitialState,
 		"kubernetes",
 		kubernetes.AssignInitialCtx,
 	)
-	
+	inst.AssignProvider(provider)
 	go func(inst *machines.StateMachine) {
 		event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
 		if err != nil {

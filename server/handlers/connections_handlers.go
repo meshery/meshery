@@ -50,11 +50,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			userUUID,
 			smInstanceTracker,
 			h.log,
-			nil,
 			machines.DISCOVERED,
 			strings.ToLower(connectionRegisterPayload.Kind),
 			nil,
 		)
+		inst.AssignProvider(provider)
 		if err != nil {
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
 				"error": err,
@@ -398,11 +398,12 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				userID,
 				smInstanceTracker,
 				h.log,
-				provider,
 				machines.InitialState,
 				"kubernetes",
 				kubernetes.AssignInitialCtx,
 			)
+
+			inst.AssignProvider(provider)
 			if err != nil {
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 					"error": err,

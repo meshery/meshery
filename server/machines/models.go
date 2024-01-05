@@ -82,7 +82,12 @@ type StateMachine struct {
 	Provider models.Provider
 }
 
-func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init models.InitFunc) (*events.Event, error) {
+func(sm *StateMachine) AssignProvider (provider models.Provider) *StateMachine {
+	sm.Provider = provider
+	return sm
+}
+
+func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event
 	var err error
