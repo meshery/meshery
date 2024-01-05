@@ -285,12 +285,12 @@ export const keys = {
     subject: 'Connect Adapter',
     action: 'c93bd211-1dac-42cc-9086-859288826d1b',
   },
-  CONNECT_MATRICS: {
-    subject: 'Connect Matrics',
+  CONNECT_METRICS: {
+    subject: 'Connect Metrics',
     action: 'b0aee906-c549-445f-be0c-b98b04d47d09',
   },
-  VIEW_MATRICIES: {
-    subject: 'View Matricies',
+  VIEW_METRICS: {
+    subject: 'View Metrics',
     action: '7fe36f60-fd0a-4fda-84e5-c64a04c3ad06',
   },
   VIEW_REGISTRY: {
@@ -395,8 +395,8 @@ export const keys = {
     action: '6e7f6f4f-4321-4e42-9eff-6a8323f32e84',
   },
   VIEW_SERVICE_MESH: {
-    subject: 'Undeploy service mesh',
-    action: '6e7f6f4f-4321-4e42-9eff-6a8323f32e84',
+    subject: 'View service mesh',
+    action: 'fdc485dc-f68b-405c-9e54-7b9a7254c282',
   },
   VIEW_ALL_KUBERNETES_CLUSTERS: {
     subject: 'View All Kubernetes Clusters',
