@@ -41,6 +41,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
+import { getlightIncicatorForK8s } from './connections/helpers';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -427,6 +428,7 @@ function K8sContextMenu({
                                 : ''
                             } // chnage to use connection def
                             status={operatorState}
+                            indicator={getlightIncicatorForK8s(operatorState, meshSyncState, natsState)}
                           />
                         </div>
                       </Tooltip>

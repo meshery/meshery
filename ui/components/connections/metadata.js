@@ -157,6 +157,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     tooltip={`Server: ${metadata.server}`}
                     title={connection.name}
                     status={connection.status}
+                    indicator={getlightIncicatorForK8s(operatorState, meshSyncState, natsState)}
                     iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={() => handleKubernetesClick(connection.id)}
                   />

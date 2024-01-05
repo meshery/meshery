@@ -7,6 +7,11 @@ import Ajv from 'ajv';
 import _ from 'lodash';
 import InfoIcon from '../../assets/icons/InfoIcon';
 
+export const LIGHTINDICATORS_CONNECTION_STATES_MAPPING = {
+  GREEN: 'success',
+  YELLOW: 'warn',
+  GREY: 'error'
+}
 export const SEVERITY = {
   INFO: 'informational',
   ERROR: 'error',
