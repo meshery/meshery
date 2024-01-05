@@ -7,7 +7,7 @@ import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import classNames from 'classnames';
 import CAN from '@/utils/can';
-import DefaultError from '../../General/error-404/index';
+import { keys } from '@/utils/permission_constants';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
