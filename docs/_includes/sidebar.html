@@ -16,7 +16,9 @@
     (() => {
       window.addEventListener("load", function () {
         let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
-        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        if (scrollElem) {
+         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        }
       });
     })();
   </script>
