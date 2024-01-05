@@ -17,7 +17,6 @@ List applications
 ## Synopsis
 
 Display list of all available applications.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app list [flags]

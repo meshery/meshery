@@ -17,7 +17,6 @@ Delete a filter file
 ## Synopsis
 
 Delete a filter file using the name or ID of a filter
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter delete [filter-name | ID] [flags]
