@@ -17,7 +17,6 @@ reset provider to default
 ## Synopsis
 
 Reset provider for current context to default (Meshery)
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset [flags]

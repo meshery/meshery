@@ -16,7 +16,7 @@ Performance Management
 
 ## Synopsis
 
-Performance Management & Benchmarking
+Performance Management & Benchmarking.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -27,7 +27,7 @@ mesheryctl perf [flags]
 
 ## Examples
 
-Run performance test
+Run performance test:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
@@ -35,7 +35,7 @@ mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1
 </div>
 </pre> 
 
-List performance profiles
+List performance profiles:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile sam-test
@@ -43,7 +43,7 @@ mesheryctl perf profile sam-test
 </div>
 </pre> 
 
-List performance results
+List performance results:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result sam-test
@@ -51,7 +51,7 @@ mesheryctl perf result sam-test
 </div>
 </pre> 
 
-Display Perf profile in JSON or YAML
+Display Perf profile in JSON or YAML:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result -o json

@@ -17,7 +17,6 @@ Delete a token from your meshconfig
 ## Synopsis
 
 Delete the token with provided token name from your meshconfig tokens.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token delete [flags]

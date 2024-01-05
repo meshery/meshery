@@ -17,7 +17,6 @@ View token
 ## Synopsis
 
 View a specific token in meshery config
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token view [flags]
