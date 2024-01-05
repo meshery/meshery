@@ -15,8 +15,8 @@
     "metadata": {}
   },
   "subType": "Config",
-  "rego_query": "heirarchical_config_relationship",
-  "selectors": {
+  "rego_query": "heirarchical_inventory_relationship",
+"selectors": {
     "allow": {
       "from": [
         {
