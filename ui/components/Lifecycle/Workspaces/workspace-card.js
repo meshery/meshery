@@ -22,6 +22,8 @@ import {
   useGetDesignsOfWorkspaceQuery,
   useGetEnvironmentsOfWorkspaceQuery,
 } from '../../../rtk-query/workspace';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -282,7 +284,9 @@ const CardBack = ({
               }}
               onClick={onEdit}
               disabled={
-                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1 ? true : false
+                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1
+                  ? true
+                  : !CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)
               }
             >
               <Edit style={{ color: 'white', margin: '0 2px' }} />
@@ -297,7 +301,9 @@ const CardBack = ({
               }}
               onClick={onDelete}
               disabled={
-                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1 ? true : false
+                selectedWorkspaces?.filter((id) => id == workspaceId).length === 1
+                  ? true
+                  : !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
               }
             >
               <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
