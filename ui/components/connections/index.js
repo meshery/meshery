@@ -419,7 +419,7 @@ function Connections(props) {
                 }
               }}
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
-              style={{ maxWidth: '120px' }}
+              width="12rem"
             />
           );
         },
