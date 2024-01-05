@@ -410,8 +410,12 @@ function Connections(props) {
               }
               handlePing={(e) => {
                 e.stopPropagation();
-                if (tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES) {
-                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                  ping(
+                    getColumnValue(tableMeta.rowData, 'name', columns),
+                    getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                    getColumnValue(tableMeta.rowData, 'id', columns),
+                  );
                 }
               }}
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
