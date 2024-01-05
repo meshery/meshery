@@ -71,7 +71,7 @@
                         class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
                         id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
                         href="{{grandchildUrl}}"
-                        >{{ grandchild.title }}</a
+                        ><strong style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a
                       >
                       </li>
                       {% endfor %} <!-- grandchild -->
