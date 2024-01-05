@@ -76,6 +76,9 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc models.InitFunc,
 ) (*machines.StateMachine, error) {
+	if initialState == "" {
+		initialState = machines.DISCOVERED
+	}
 	inst, ok := smInstanceTracker.Get(ID)
 	if ok {
 		return inst, nil
