@@ -373,7 +373,7 @@ class MesherySettings extends React.Component {
                 </Tooltip>
               </Tabs>
             </Paper>
-            {tabVal === 0 && (
+            {tabVal === 0 && CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject) && (
               <TabContainer>
                 <MeshAdapterConfigComponent />
               </TabContainer>
