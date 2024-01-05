@@ -85,7 +85,7 @@ excluded_in_search: true
 
 	window.index = lunr(function () {
 		this.field("id");
-		this.field("title", {boost: 0});
+		this.field("title", {boost: 10});
 		this.field("categories");
 		this.field("url");
 		this.field("content");
@@ -106,6 +106,10 @@ excluded_in_search: true
 	for (var key in window.data) {
 		window.index.add(window.data[key]);
 	}
-
-	displaySearchResults(window.index.search(query), query); // Hand the results off to be displayed
+	try {
+		displaySearchResults(window.index.search(query), query);
+	  } catch (error) {
+		console.error("Error in search.js:", error);
+		console.trace(); // This logs the call stack
+	  }
 })();
