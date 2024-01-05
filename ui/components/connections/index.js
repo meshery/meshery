@@ -1253,7 +1253,7 @@ function Connections(props) {
               </div>
             </div>
           )}
-          {(tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)) && (
+          {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ResponsiveDataTable
               data={connections}
               columns={columns}
@@ -1311,7 +1311,8 @@ function Connections(props) {
                       name="OperatorSwitch"
                       color="primary"
                       className={classes.OperatorSwitch}
-                      disabled={ // TODO: update keys here for operator action 
+                      disabled={
+                        // TODO: update keys here for operator action
                         !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
                       }
                     />

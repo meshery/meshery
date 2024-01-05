@@ -122,10 +122,9 @@ function FiltersCard_({
                   title="Unpublish"
                   className={classes.testsButton}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
-                  disabled={!CAN(
-                    keys.UNPUBLISH_WASM_FILTER.action,
-                    keys.UNPUBLISH_WASM_FILTER.subject,
-                  )}
+                  disabled={
+                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
+                  }
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Unpublish </span>
@@ -163,10 +162,9 @@ function FiltersCard_({
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 className={classes.testsButton}
-                disabled={!CAN(
-                  keys.DETAILS_OF_WASM_FILTER.action,
-                  keys.DETAILS_OF_WASM_FILTER.subject,
-                )}
+                disabled={
+                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
+                }
               >
                 <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
                 <span className={classes.btnText}> Info </span>

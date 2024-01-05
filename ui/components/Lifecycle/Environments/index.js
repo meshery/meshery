@@ -466,6 +466,7 @@ const Environments = ({ organization, classes }) => {
                   borderRadius: 5,
                   marginRight: '2rem',
                 }}
+                disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
@@ -499,7 +500,11 @@ const Environments = ({ organization, classes }) => {
                 <Delete
                   style={{ color: 'red', margin: '0 2px' }}
                   onClick={handleBulkDeleteEnvironmentConfirm}
-                  disabled={selectedEnvironments.length > 0 ? false : true}
+                  disabled={
+                    selectedEnvironments.length > 0
+                      ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
+                      : true
+                  }
                 />
               </Button>
             </Box>
@@ -562,23 +567,29 @@ const Environments = ({ organization, classes }) => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-
-          {environmentModal.open && (
-            <Modal
-              open={environmentModal.open}
-              schema={environmentModal.schema.rjsfSchema}
-              uiSchema={environmentModal.schema.uiSchema}
-              handleClose={handleEnvironmentModalClose}
-              handleSubmit={
-                actionType === ACTION_TYPES.CREATE ? handleCreateEnvironment : handleEditEnvironment
-              }
-              title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
-              submitBtnText={
-                actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-              }
-              initialData={initialData}
-            />
-          )}
+          {actionType === ACTION_TYPES.CREATE
+            ? CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)
+            : CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject) &&
+              environmentModal.open && (
+                <Modal
+                  open={environmentModal.open}
+                  schema={environmentModal.schema.rjsfSchema}
+                  uiSchema={environmentModal.schema.uiSchema}
+                  handleClose={handleEnvironmentModalClose}
+                  handleSubmit={
+                    actionType === ACTION_TYPES.CREATE
+                      ? handleCreateEnvironment
+                      : handleEditEnvironment
+                  }
+                  title={
+                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                  }
+                  submitBtnText={
+                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                  }
+                  initialData={initialData}
+                />
+              )}
           <GenericModal
             open={assignConnectionModal}
             handleClose={handleonAssignConnectionModalClose}
