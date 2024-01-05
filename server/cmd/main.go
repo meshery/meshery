@@ -302,7 +302,7 @@ func main() {
 	}
 
 	models.InitMeshSyncRegistrationQueue()
-	mhelpers.NewRegistrationHelper(dbHandler, log, &connToInstanceTracker)
+	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker)
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)

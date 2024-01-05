@@ -2,10 +2,11 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/events"
 )
 
@@ -20,6 +21,8 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
@@ -29,9 +32,10 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 
 	k8sContexts := []models.K8sContext{machinectx.K8sContext}
+	fmt.Println("TEST INSIDE CONNECT >>>>>>>>>")
 	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
-	ctrlHelper.UpdateMeshsynDataHandlers()
+	ctrlHelper.UpdateMeshsynDataHandlers(ctx, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), userUUID, provider)
 
 	return machines.NoOp, nil, nil
 }
