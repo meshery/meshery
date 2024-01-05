@@ -349,9 +349,7 @@ function Connections(props) {
     ['environments', 'm'],
     ['kind', 'm'],
     ['type', 's'],
-    ['sub_type', 'm'],
-    ['updated_at', 'l'],
-    ['created_at', 'na'],
+    ['sub_type', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
   ];
@@ -568,6 +566,7 @@ function Connections(props) {
       options: {
         sort: true,
         sortThirdClickReset: true,
+        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
