@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, Button } from '@material-ui/core';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
-import CAN from '@/utils/can'
-import { keys } from '@/utils/permission_constants'
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const promStyles = (theme) => ({
   promRoot: {

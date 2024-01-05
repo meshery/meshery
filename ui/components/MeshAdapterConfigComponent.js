@@ -14,8 +14,8 @@ import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants'
-import CAN from '@/utils/can'
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -495,7 +495,9 @@ const MeshAdapterConfigComponent = (props) => {
                 size="large"
                 onClick={handleAdapterUndeploy}
                 className={classes.button}
-                disabled={!CAN(keys.UNDEPLOY_SERVICE_MESH.action, keys.UNDEPLOY_SERVICE_MESH.subject)}
+                disabled={
+                  !CAN(keys.UNDEPLOY_SERVICE_MESH.action, keys.UNDEPLOY_SERVICE_MESH.subject)
+                }
               >
                 Undeploy
               </Button>

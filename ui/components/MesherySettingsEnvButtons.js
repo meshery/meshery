@@ -21,8 +21,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
 import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
-import { keys } from "@/utils/permission_constants"
-import CAN from "@/utils/can"
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const styles = makeStyles((theme) => ({
   ctxIcon: {

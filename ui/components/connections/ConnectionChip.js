@@ -34,7 +34,7 @@ const useChipStyles = makeStyles(() => ({
 }));
 
 export const _ConnectionChip = (props) => {
-  const { handlePing, onDelete, iconSrc, status, title } = props
+  const { handlePing, onDelete, iconSrc, status, title } = props;
   const classes = useChipStyles();
   return (
     // <Tooltip title={tooltip || title} placement="bottom">
