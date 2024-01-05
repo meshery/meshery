@@ -27,7 +27,7 @@ import {
 } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import { CAN } from '@/utils/can';
+import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
