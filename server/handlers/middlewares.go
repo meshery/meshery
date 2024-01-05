@@ -242,7 +242,6 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			Provider:           provider,
 			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
@@ -256,11 +255,11 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			userUUID,
 			smInstanceTracker,
 			h.log,
+			provider,
 			machines.DefaultState,
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-		inst.AssignProvider(provider)
 		if err != nil {
 			h.log.Error(err)
 		}
@@ -295,7 +294,6 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			Provider:           provider,
 			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
@@ -309,11 +307,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			userUUID,
 			smInstanceTracker,
 			h.log,
+			provider,
 			machines.DefaultState,
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-		inst.AssignProvider(provider)
 		if err != nil {
 			h.log.Error(err)
 		}

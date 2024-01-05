@@ -121,7 +121,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				Provider:           provider,
 				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
@@ -145,11 +144,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				userID,
 				smInstanceTracker,
 				h.log,
+				provider,
 				machines.DefaultState,
 				"kubernetes",
 				kubernetes.AssignInitialCtx,
 			)
-			inst.AssignProvider(provider)
 			if err != nil {
 				h.log.Error(err)
 			}

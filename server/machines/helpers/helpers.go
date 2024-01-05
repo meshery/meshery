@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/machines/grafana"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/machines/prometheus"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/logger"
 )
@@ -70,6 +71,7 @@ func InitializeMachineWithContext(
 	userID uuid.UUID,
 	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
 	log logger.Handler,
+	provider models.Provider,
 	initialState machines.StateType,
 	mtype string,
 	initFunc connections.InitFunc,
@@ -87,6 +89,7 @@ func InitializeMachineWithContext(
 		log.Error(err)
 		return nil, err
 	}
+	inst.Provider = provider
 	_, err = inst.Start(ctx, machineCtx, log, initFunc)
 	smInstanceTracker.Add(ID, inst)
 	if err != nil {

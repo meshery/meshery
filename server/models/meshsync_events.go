@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/gofrs/uuid"
 	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	// "github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshkit/broker"
@@ -22,7 +23,9 @@ type MeshsyncDataHandler struct {
 	broker    broker.Handler
 	dbHandler database.Handler
 	log       logger.Handler
-	// arh       *machines.AutoRegistrationHelper
+	provider  Provider
+	userId    uuid.UUID
+	connectionID uuid.UUID
 }
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler) *MeshsyncDataHandler {
@@ -30,7 +33,6 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		broker:    broker,
 		dbHandler: dbHandler,
 		log:       log,
-		// arh: models.NewAutoRegistrationHelperSingleton(dbHandler),
 	}
 }
 
@@ -146,10 +148,10 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 
 	switch event.EventType {
 	case broker.Add:
-		// go mh.arh.Send(obj)
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
+		go RegistrationQueue.Send(obj)
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
 			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
@@ -184,6 +186,9 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
 	object.ComponentMetadata = mutils.MergeMaps(object.ComponentMetadata, compMetadata)
 	result := mh.dbHandler.Create(object)
+
+	go RegistrationQueue.Send(*object)
+
 	if result.Error != nil {
 		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
 		if result.Error != nil {

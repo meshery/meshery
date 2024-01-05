@@ -108,7 +108,6 @@ type MachineCtx struct {
 	EventBroadcaster   *models.Broadcast
 	clientset          *kubernetes.Client
 	log                logger.Handler
-	Provider           models.Provider
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager

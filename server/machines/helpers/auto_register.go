@@ -6,6 +6,8 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -23,38 +25,21 @@ var (
     }
 )
 
-type MeshSyncDataQueue struct {
-    ch chan model.KubernetesResource
-}
-
-func newMeshSyncDataQueue() MeshSyncDataQueue {
-    return MeshSyncDataQueue{
-        ch: make(chan model.KubernetesResource, 10),
-    }
-}
-
-// func (mdq *MeshSynMeshSyncDataQueue) Send(object model.KubernetesResource) {
-//  mdq.ch <- object
-// }
-// func (mdq *MeshSyncDataQueue)
-
-func (arh *AutoRegistrationHelper) Send(obj model.KubernetesResource) {
-    arh.queue.ch <- obj
-}
-
 type AutoRegistrationHelper struct {
     dbHandler *database.Handler
-    queue     MeshSyncDataQueue
     log       logger.Handler
+	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
+	// meshsyncDataHandler *models.MeshsyncDataHandler
 }
 
-func SetAutoRegistrationHelperSingleton(dbHandler *database.Handler) *AutoRegistrationHelper {
+func NewRegistrationHelper(dbHandler *database.Handler, log logger.Handler, snInstanceTracker *machines.ConnectionToStateMachineInstanceTracker) *AutoRegistrationHelper {
     defer mutex.Unlock()
     mutex.Lock()
     if AutoRegistrationSingleton == nil {
         AutoRegistrationSingleton = &AutoRegistrationHelper{
             dbHandler: dbHandler,
-            queue:     newMeshSyncDataQueue(),
+			log: log,
+			// meshsyncDataHandler: mdh,
         }
         go AutoRegistrationSingleton.processRegistration()
     }
@@ -63,12 +48,11 @@ func SetAutoRegistrationHelperSingleton(dbHandler *database.Handler) *AutoRegist
 
 
 func(arh *AutoRegistrationHelper) processRegistration() {
-    arh = AutoRegistrationSingleton
 	if arh == nil {
 		return
 	}
 
-	for obj := range arh.queue.ch {
+	for obj := range models.RegistrationQueue.RegistrationChan {
 		go func(obj *model.KubernetesResource) {
 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
@@ -92,7 +76,7 @@ func(arh *AutoRegistrationHelper) processRegistration() {
 			if connType != "" {
 				id, _ := uuid.NewV4() // id should be hash of somehting.
 				userID := uuid.Nil // use proper user id
-				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, userID, nil, arh.log, "", connType, nil)
+				machineInst, err := InitializeMachineWithContext(nil, context.TODO(), id, userID, arh.smInstanceTracker, arh.log, "", connType, nil)
 				if err != nil {
 					// arh.log.Error(ErrAutoRegister(err, connType))
 				}
