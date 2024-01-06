@@ -1229,7 +1229,11 @@ const MesheryPerformanceComponent = (props) => {
                     size="large"
                     onClick={handleSubmit}
                     className={classes.spacing}
-                    disabled={blockRunTestState || disableTestState}
+                    disabled={
+                      blockRunTestState ||
+                      disableTestState ||
+                      !CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)
+                    }
                   >
                     {blockRunTestState ? <CircularProgress size={30} /> : 'Run Test'}
                   </Button>

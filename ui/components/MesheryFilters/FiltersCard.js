@@ -135,10 +135,9 @@ function FiltersCard_({
                 variant="contained"
                 color="primary"
                 onClick={handleDownload}
-                disabled={CAN(
-                  keys.DOWNLOAD_A_WASM_FILTER.action,
-                  keys.DOWNLOAD_A_WASM_FILTER.subject,
-                )}
+                disabled={
+                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
+                }
               >
                 <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
                 <span className={classes.btnText}>Download</span>
@@ -150,7 +149,7 @@ function FiltersCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
-                  // disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
+                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}>Clone</span>

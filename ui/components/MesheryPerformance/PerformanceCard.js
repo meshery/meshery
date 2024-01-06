@@ -23,6 +23,8 @@ import moment from 'moment';
 import dataFetch from '../../lib/data-fetch';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import ReusableTooltip from '../reusable-tooltip';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const useStyles = makeStyles((theme) => ({
   cardButtons: {
@@ -282,6 +284,7 @@ function PerformanceCard({
                   });
                 })
               }
+              disabled={!CAN(keys.VIEW_RESULTS.action, keys.VIEW_RESULTS.subject)}
               className={classes.testsButton}
             >
               {renderTable ? 'Hide' : 'View'} Results
@@ -290,6 +293,7 @@ function PerformanceCard({
               color="primary"
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleRunTest)}
+              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
             >
               Run Test
             </Button>
@@ -326,12 +330,22 @@ function PerformanceCard({
           <Grid item xs={4}>
             <div className={classes.deleteEditButton}>
               <ReusableTooltip title="Edit">
-                <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
+                <IconButton
+                  onClick={(ev) => genericClickHandler(ev, handleEdit)}
+                  disabled={
+                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                  }
+                >
                   <EditIcon style={iconMedium} />
                 </IconButton>
               </ReusableTooltip>
               <ReusableTooltip title="Delete">
-                <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
+                <IconButton
+                  onClick={(ev) => genericClickHandler(ev, handleDelete)}
+                  disabled={
+                    !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
+                  }
+                >
                   <DeleteIcon style={iconMedium} />
                 </IconButton>
               </ReusableTooltip>
