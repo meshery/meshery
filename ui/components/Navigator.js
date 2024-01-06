@@ -72,6 +72,8 @@ import {
   WORKSPACE,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
   root: {
@@ -358,6 +360,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Connections',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
+        disabled: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject),
       },
       {
         id: ENVIRONMENT,
@@ -365,6 +368,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Environments',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
+        disabled: !CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject),
       },
       {
         id: WORKSPACE,
@@ -372,6 +376,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Workspaces',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
+        disabled: !CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject),
       },
       {
         id: SERVICE_MESH,
@@ -380,6 +385,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
+        disabled: !CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject),
       },
     ],
   },
@@ -401,6 +407,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link: true,
         isBeta: true,
+        disabled: !CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject),
       },
       {
         id: DESIGN,
@@ -410,6 +417,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
+        disabled: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
       },
     ],
   },
@@ -430,6 +438,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
+        disabled: !CAN(
+          keys.VIEW_PERFORMANCE_PROFILES.action,
+          keys.VIEW_PERFORMANCE_PROFILES.subject,
+        ),
       },
     ],
   },
@@ -443,6 +455,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     link: true,
     href: '/extensions',
     submenu: false,
+    disabled: !CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject),
   },
 ];
 
@@ -861,6 +874,7 @@ class Navigator extends React.Component {
               show: showc,
               link: linkc,
               children: childrenc,
+              disabled: disabledc,
             }) => {
               if (typeof showc !== 'undefined' && !showc) {
                 return '';
@@ -877,6 +891,7 @@ class Navigator extends React.Component {
                       path === hrefc && classes.itemActiveItem,
                       isDrawerCollapsed && classes.noPadding,
                     )}
+                    disabled={disabledc || false}
                   >
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
@@ -1105,7 +1120,18 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {navigatorComponents.map(
-          ({ id: childId, title, icon, href, show, link, children, hovericon, submenu }) => {
+          ({
+            id: childId,
+            title,
+            icon,
+            href,
+            show,
+            link,
+            children,
+            hovericon,
+            submenu,
+            disabled,
+          }) => {
             // if (typeof show !== "undefined" && !show) {
             //   return "";
             // }
@@ -1130,6 +1156,7 @@ class Navigator extends React.Component {
                       ? this.setState({ hoveredId: false })
                       : null
                   }
+                  disabled={disabled || false}
                 >
                   <Link href={link ? href : ''}>
                     <div data-cy={childId} className={classNames(classes.link)}>
