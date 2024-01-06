@@ -271,10 +271,10 @@ export const keys = {
   },
   VIEW_EXTENSIONS: {
     subject: 'View Extensions',
-    action: 'd25e0950-bcd5-4f31-9d19-26c91d17d89b',
+    action: 'c1330df4-1bbe-4d5d-8828-f4bd9ee989e5',
   },
-  USER_PREFERENCES: {
-    subject: 'Meshery UI: Menu, User Prefs',
+  VIEW_MESHERY_USER_PREFERENCES: {
+    subject: 'View Meshery User Preferences',
     action: 'eb1d8db3-e110-41b9-9f5f-cd271f7fc4a9',
   },
   VIEW_SETTINGS: {
