@@ -97,17 +97,17 @@ mesheryctl exp components list --page 2
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"TypeMeta", "Model", "Schema"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Category.Name, component.Name, component.Version})
+				rows = append(rows, []string{component.TypeMeta.Kind, component.TypeMeta.APIVersion, component.Model.Name, component.Schema})
 			}
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
+			// if no component is found
 			utils.Log.Info("No components(s) found")
 		} else {
 			utils.PrintToTable(header, rows)
@@ -300,12 +300,12 @@ mesheryctl exp components search [query-text]
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"TypeMeta", "Model", "Schema"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Category.Name, component.Name, component.Version})
+				rows = append(rows, []string{component.TypeMeta.Kind, component.TypeMeta.APIVersion, component.Model.Name, component.Schema})
 			}
 		}
 
@@ -364,12 +364,12 @@ func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.C
 	componentArray = append(componentArray, components...)
 
 	for _, component := range componentArray {
-		componentName := fmt.Sprintf(("%s, version: %s"), component.Name, component.Version)
+		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.TypeMeta.APIVersion)
 		componentNames = append(componentNames, componentName)
 	}
 
 	prompt := promptui.Select{
-		Label: "Select a component",
+		Label: "Select component",
 		Items: componentNames,
 	}
 
@@ -381,7 +381,7 @@ func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.C
 
 		return componentArray[i]
 	}
-} 
+}
 
 func outputComponentJson(component v1alpha1.ComponentDefinition) error {
 	if err := prettifyComponentJson(component); err != nil {
