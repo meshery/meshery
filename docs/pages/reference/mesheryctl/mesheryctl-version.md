@@ -17,7 +17,6 @@ Version of mesheryctl
 ## Synopsis
 
 Version of Meshery command line client - mesheryctl.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl version [flags]

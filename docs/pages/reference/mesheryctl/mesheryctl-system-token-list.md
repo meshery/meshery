@@ -17,7 +17,6 @@ List tokens
 ## Synopsis
 
 List all the tokens in your meshconfig
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token list [flags]

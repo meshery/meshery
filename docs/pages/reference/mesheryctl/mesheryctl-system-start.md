@@ -17,7 +17,6 @@ Start Meshery
 ## Synopsis
 
 Start Meshery and each of its cloud native components.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start [flags]

@@ -17,7 +17,6 @@ List patterns
 ## Synopsis
 
 Display list of all available pattern files.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern list [flags]

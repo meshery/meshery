@@ -17,7 +17,6 @@ Set token for context
 ## Synopsis
 
 Set token for current context or context specified with --context flag.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token set [flags]

@@ -196,6 +196,7 @@ func main() {
 		&models.SmiResultWithID{},
 		models.K8sContext{},
 		models.Organization{},
+		models.Key{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -216,6 +217,7 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
@@ -250,11 +252,12 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-
+	krh := models.NewKeysRegistrationHelper(dbHandler, log)
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {
 		ch.SeedComponents()
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
