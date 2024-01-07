@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrAutoRegisterCode = "replace_me"
+	ErrAutoRegisterCode = "1556"
 )
 
 func ErrAutoRegister(err error, connType string) error {
