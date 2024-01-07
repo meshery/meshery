@@ -97,7 +97,7 @@ mesheryctl exp components list --page 2
 			return err
 		}
 
-		header := []string{"TypeMeta", "Model", "Schema"}
+		header := []string{"Kind", "APIVersion", "Model", "Schema"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
@@ -258,7 +258,7 @@ mesheryctl exp components search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+			return fmt.Errorf("search term is missing\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -300,7 +300,7 @@ mesheryctl exp components search [query-text]
 			return err
 		}
 
-		header := []string{"TypeMeta", "Model", "Schema"}
+		header := []string{"Kind", "APIVersion", "Model", "Schema"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
@@ -397,7 +397,6 @@ func outputComponentJson(component v1alpha1.ComponentDefinition) error {
 	return nil
 }
 
-
 // prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
 func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
@@ -414,6 +413,8 @@ func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
 
 func init() {
 	// Add the new exp components commands to the ComponentsCmd
+	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands := []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 	ComponentsCmd.AddCommand(availableSubcommands...)
 }
