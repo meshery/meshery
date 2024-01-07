@@ -55,7 +55,7 @@ type StateMachine struct {
 	ID uuid.UUID
 
 	UserID uuid.UUID
-	
+
 	// Given name for the machine, used in logs to track issues
 	Name string
 
@@ -82,7 +82,7 @@ type StateMachine struct {
 	Provider models.Provider
 }
 
-func(sm *StateMachine) AssignProvider (provider models.Provider) *StateMachine {
+func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
 	sm.Provider = provider
 	return sm
 }

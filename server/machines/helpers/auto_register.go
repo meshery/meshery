@@ -124,9 +124,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 								_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
 								continue
 							}
-	            
-              // Delete the meshsync resource which has been upgraded to Connection.
-              _ = arh.dbHandler.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: data.Obj.ID})
+
+							// Delete the meshsync resource which has been upgraded to Connection.
+							_ = arh.dbHandler.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: data.Obj.ID})
 
 							event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
@@ -144,9 +144,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1alpha1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
-		"name":               objName,
-		"user_id":            userID,
-		"identifier":         identifier,
+		"name":       objName,
+		"user_id":    userID,
+		"identifier": identifier,
 	})
 
 	subCategory, _ := connectionDef.Metadata["subCategory"].(string)

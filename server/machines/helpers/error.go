@@ -1,12 +1,10 @@
 package helpers
 
 import (
-
-
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
-
 )
+
 var (
 	ErrAutoRegisterCode = "replace_me"
 )
