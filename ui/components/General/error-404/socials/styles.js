@@ -19,35 +19,35 @@ export const SocialContainer = styled('div')(() => ({
 }));
 
 export const MessageIcon = styled(Message)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.limedSpruce,
-    color: theme.palette.limedSpruce,
+    fill: theme.palette.secondary.iconMain,
+    color: theme.palette.secondary.iconMain,
   },
 }));
 
 export const SlackIcon = styled(Slack)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.slack,
-    color: theme.palette.slack,
+    fill: '#4A154B',
+    color: '#4A154B',
   },
 }));
 
 export const TwitterIcon = styled(Twitter)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.twitter,
-    color: theme.palette.twitter,
+    fill: '#1da1f2',
+    color: '#1da1f2',
   },
 }));
 
@@ -57,8 +57,8 @@ export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.twitter,
-    color: theme.palette.twitter,
+    fill: '#1da1f2',
+    color: '#1da1f2',
   },
 }));
 
@@ -68,40 +68,40 @@ export const GithubHandleIcon = styled(Github)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.github,
-    color: theme.palette.github,
+    fill: '#24292e',
+    color: '#24292e',
   },
 }));
 
 export const GithubIcon = styled(Github)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.github,
-    color: theme.palette.github,
+    fill: '#24292e',
+    color: '#24292e',
   },
 }));
 
 export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.youtube,
-    color: theme.palette.youtube,
+    fill: '#ff0000',
+    color: '#ff0000',
   },
 }));
 
 export const DockerIcon = styled(Docker)(({ theme }) => ({
-  fill: theme.palette.limedSpruce,
-  color: theme.palette.limedSpruce,
+  fill: theme.palette.secondary.iconMain,
+  color: theme.palette.secondary.iconMain,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.docker,
-    color: theme.palette.docker,
+    fill: '#2496ed',
+    color: '#2496ed',
   },
 }));
