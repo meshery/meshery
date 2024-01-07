@@ -380,12 +380,12 @@ class MesheryApp extends App {
         } else {
           organizationToSet = result.organizations[0];
         }
-    
+
         store.dispatch({
           type: actionTypes.SET_ORGANIZATION,
           organization: organizationToSet,
         });
-    
+
         this.loadAbility(organizationToSet.id);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
