@@ -1403,7 +1403,14 @@ const mapStateToProps = (state) => {
   const isDrawerCollapsed = state.get('isDrawerCollapsed');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
   const organization = state.get('organization');
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry, organization };
+  return {
+    meshAdapters,
+    meshAdaptersts,
+    path,
+    isDrawerCollapsed,
+    capabilitiesRegistry,
+    organization,
+  };
 };
 
 export default withStyles(styles)(
