@@ -364,6 +364,7 @@ class MesheryApp extends App {
 
   loadOrg = async () => {
     const { store } = this.props;
+    const currentOrgId = sessionStorage.getItem('currentOrgId');
     dataFetch(
       '/api/identity/orgs',
       {
@@ -371,13 +372,21 @@ class MesheryApp extends App {
         credentials: 'include',
       },
       (result) => {
-        if (result) {
-          store.dispatch({
-            type: actionTypes.SET_ORGANIZATION,
-            organization: result?.organizations[0],
-          });
-          this.loadAbility(result?.organizations[0]?.id);
+        let organizationToSet;
+
+        if (currentOrgId !== null) {
+          const indx = result.organizations.findIndex((org) => org.id === currentOrgId);
+          organizationToSet = indx !== -1 ? result.organizations[indx] : result.organizations[0];
+        } else {
+          organizationToSet = result.organizations[0];
         }
+    
+        store.dispatch({
+          type: actionTypes.SET_ORGANIZATION,
+          organization: organizationToSet,
+        });
+    
+        this.loadAbility(organizationToSet.id);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
@@ -398,7 +407,7 @@ class MesheryApp extends App {
         (result) => {
           if (result) {
             this.setState({ keys: result.keys });
-            sessionStorage.clear();
+            sessionStorage.removeItem('keys');
             sessionStorage.setItem('keys', JSON.stringify(result.keys));
           }
         },
