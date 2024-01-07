@@ -80,14 +80,16 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 				connectionDefs := arh.getConnectionDefinitions(connType)
 				connectionName := FormatToTitleCase(connType)
 				for _, connectionDef := range connectionDefs {
-					connCapabilities, err := utils.Cast[map[string]interface{}](connectionDef.Metadata["capabilities"])
+					connCapabilities, err := utils.Cast[string](connectionDef.Metadata["capabilities"])
 
 					if err != nil {
 						arh.log.Error(err)
 						continue
 					}
-
-					autoRegister, ok := connCapabilities["autoRegister"].(bool)
+					var capabilities map[string]interface{}
+					err = utils.Unmarshal(connCapabilities, &capabilities)
+					autoRegister, ok := capabilities["autoRegister"].(bool)
+					fmt.Println("TEST capabilities: ", autoRegister)
 					if ok && autoRegister {
 						urls, err := utils.Cast[[]interface{}](compCapabilites["urls"])
 						if err != nil {
