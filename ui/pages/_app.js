@@ -393,7 +393,6 @@ class MesheryApp extends App {
   };
 
   loadAbility = async (orgID) => {
-    console.log('org id', orgID);
     const storedKeys = sessionStorage.getItem('keys');
     if (storedKeys !== null && storedKeys !== undefined) {
       this.setState({ keys: JSON.parse(sessionStorage.getItem('keys')) });
@@ -423,8 +422,6 @@ class MesheryApp extends App {
       }),
     });
     ability.update(this.state.abilities);
-    console.log('ability', ability);
-    console.log('ability', this.state.abilities);
   };
 
   async loadConfigFromServer() {
