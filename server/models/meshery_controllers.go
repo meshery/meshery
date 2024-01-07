@@ -73,7 +73,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
-func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers(ctx context.Context, connectionID, userID uuid.UUID, provider Provider) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers(ctx context.Context, connectionID, userID, mesheryInstanceID uuid.UUID, provider Provider) *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
@@ -106,7 +106,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers(ctx context.Conte
 					continue
 				}
 				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
-				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, connectionID)
+				token, _ := ctx.Value(TokenCtxKey).(string)
+				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, connectionID, mesheryInstanceID, token)
 				err = msDataHandler.Run()
 				if err != nil {
 					mch.log.Warn(err)

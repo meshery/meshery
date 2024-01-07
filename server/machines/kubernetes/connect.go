@@ -35,7 +35,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	fmt.Println("TEST INSIDE CONNECT >>>>>>>>>")
 	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
-	ctrlHelper.UpdateMeshsynDataHandlers(ctx, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), userUUID, provider)
+	ctrlHelper.UpdateMeshsynDataHandlers(ctx, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), userUUID, *sysID, provider)
 
 	return machines.NoOp, nil, nil
 }

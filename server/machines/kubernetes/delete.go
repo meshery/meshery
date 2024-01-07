@@ -31,7 +31,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	}
 
 	k8sContexts := []models.K8sContext{machinectx.K8sContext}
-	machinectx.MesheryCtrlsHelper.UndeployDeployedOperators(machinectx.OperatorTracker)
+	machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).UndeployDeployedOperators(machinectx.OperatorTracker)
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
 	defer cancel()

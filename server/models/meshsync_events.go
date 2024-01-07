@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/gofrs/uuid"
 	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/broker"
@@ -27,9 +25,11 @@ type MeshsyncDataHandler struct {
 	Provider     Provider
 	UserID       uuid.UUID
 	ConnectionID uuid.UUID
+	InstanceID   uuid.UUID
+	Token        string
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID uuid.UUID) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
 		broker:       broker,
 		dbHandler:    dbHandler,
@@ -37,6 +37,8 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		Provider:     provider,
 		UserID:       userID,
 		ConnectionID: connID,
+		InstanceID:   instanceID,
+		Token: token,
 	}
 }
 
@@ -156,7 +158,6 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
-		fmt.Println("meshsyncEventsAccumulator <<<<<<<<<<<<<<<<<<<<<<<<<<", obj.ComponentMetadata)
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
@@ -191,7 +192,6 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	defer mh.dbHandler.Unlock()
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
 	object.ComponentMetadata = mutils.MergeMaps(object.ComponentMetadata, compMetadata)
-	fmt.Println("<<<<<<<<<<<<<<<<<<<<<<<<<<", object.ComponentMetadata)
 	result := mh.dbHandler.Create(object)
 	regQueue := GetMeshSyncRegistrationQueue()
 
