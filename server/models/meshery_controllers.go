@@ -247,7 +247,7 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 					
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
 				
-				if oprStatus != controllers.NotDeployed {
+				if oprStatus != controllers.Undeployed {
 					
 					err := ctrlHandler[MesheryOperator].Undeploy()
 					
