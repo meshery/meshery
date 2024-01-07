@@ -534,6 +534,17 @@ class Navigator extends React.Component {
   componentId = 'navigator';
 
   componentDidMount() {
+    this.fetchCapabilities();
+    this.fetchVersionDetails();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.organization !== this.props.organization) {
+      this.fetchCapabilities();
+    }
+  }
+
+  fetchCapabilities() {
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -543,7 +554,7 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+          const navigatorComponents = this.createNavigatorComponents(capabilitiesRegistryObj);
 
           this.setState({
             navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
@@ -555,6 +566,9 @@ class Navigator extends React.Component {
       },
       (err) => console.error(err),
     );
+  }
+
+  fetchVersionDetails() {
     dataFetch(
       '/api/system/version',
       {
@@ -577,6 +591,10 @@ class Navigator extends React.Component {
       },
       (err) => console.error(err),
     );
+  }
+
+  createNavigatorComponents(capabilityRegistryObj) {
+    return getNavigatorComponents(capabilityRegistryObj);
   }
 
   /**
@@ -916,6 +934,7 @@ class Navigator extends React.Component {
                 show: showc,
                 link: linkc,
                 children: childrenc,
+                disabled: disabledc,
               }) => {
                 if (typeof showc !== 'undefined' && !showc) {
                   return '';
@@ -935,6 +954,7 @@ class Navigator extends React.Component {
                         !showc && classes.disabled,
                       )}
                       onClick={() => this.handleAdapterClick(idc, linkc)}
+                      disabled={disabledc || false}
                     >
                       {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
@@ -1382,7 +1402,8 @@ const mapStateToProps = (state) => {
   const path = state.get('page').get('path');
   const isDrawerCollapsed = state.get('isDrawerCollapsed');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
+  const organization = state.get('organization');
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry, organization };
 };
 
 export default withStyles(styles)(
