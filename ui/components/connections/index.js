@@ -208,6 +208,19 @@ function Connections(props) {
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
+
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -266,9 +279,10 @@ function Connections(props) {
       .unwrap()
       .then((resp) => {
         notify({
-          message: `Environment: ${resp.Name} saved`,
+          message: `Environment "${resp.name}" created`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+        environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
         getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
@@ -280,19 +294,6 @@ function Connections(props) {
         });
       });
   };
-
-  const {
-    data: environmentsResponse,
-    isSuccess: isEnvironmentsSuccess,
-    isError: isEnvironmentsError,
-    error: environmentsError,
-  } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
-    {
-      skip: !organization?.id,
-    },
-  );
-  let environments = environmentsResponse?.environments || [];
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -351,8 +352,7 @@ function Connections(props) {
     ['environments', 'm'],
     ['kind', 'm'],
     ['type', 's'],
-    ['sub_type', 'm'],
-    ['updated_at', 'l'],
+    ['sub_type', 'na'],
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
@@ -400,10 +400,11 @@ function Connections(props) {
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
+          const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           return (
             <TootltipWrappedConnectionChip
               tooltip={'Server: ' + server}
-              title={value}
+              title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
               status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
@@ -413,12 +414,16 @@ function Connections(props) {
               }
               handlePing={(e) => {
                 e.stopPropagation();
-                if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
-                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                  ping(
+                    getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                    getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                    getColumnValue(tableMeta.rowData, 'id', columns),
+                  );
                 }
               }}
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
-              style={{ maxWidth: '120px' }}
+              width="12rem"
             />
           );
         },
@@ -442,7 +447,7 @@ function Connections(props) {
         },
         customBodyRender: (value, tableMeta) => {
           const getOptions = () => {
-            return environments.map((env) => ({ label: env.name, value: env.id })) || [];
+            return environments.map((env) => ({ label: env.name, value: env.id }));
           };
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
           return (
@@ -752,6 +757,13 @@ function Connections(props) {
     {
       name: 'kindLogo',
       label: 'kindLogo',
+      options: {
+        display: false,
+      },
+    },
+    {
+      name: 'metadata.name',
+      label: 'Name',
       options: {
         display: false,
       },

@@ -47,9 +47,10 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			machineCtx,
 			req.Context(),
 			connectionRegisterPayload.ID,
+			userUUID,
 			smInstanceTracker,
 			h.log,
-			nil,
+			provider,
 			machines.DISCOVERED,
 			strings.ToLower(connectionRegisterPayload.Kind),
 			nil,
@@ -384,7 +385,6 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				Provider:           provider,
 				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
@@ -394,6 +394,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				machineCtx,
 				req.Context(),
 				id,
+				userID,
 				smInstanceTracker,
 				h.log,
 				provider,
@@ -401,6 +402,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				"kubernetes",
 				kubernetes.AssignInitialCtx,
 			)
+
 			if err != nil {
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 					"error": err,

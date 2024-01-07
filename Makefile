@@ -42,6 +42,7 @@ docker-local-cloud:
 	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-e KEYS_PATH=$(KEYS_PATH) \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -53,6 +54,7 @@ docker-cloud:
 	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-e KEYS_PATH=$(KEYS_PATH) \
 	-v meshery-config:/home/appuser/.meshery/config \
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
@@ -84,6 +86,7 @@ server-local: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
 ## Build Meshery Server on your local machine.
@@ -95,6 +98,7 @@ build-server: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
 
@@ -107,6 +111,7 @@ server: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 ## Build and run Meshery Server on your local machine.
@@ -120,6 +125,7 @@ server-without-operator: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
@@ -132,6 +138,7 @@ server-skip-compgen:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 	
 ## Build and run Meshery Server on your local machine.
@@ -145,6 +152,7 @@ server-without-k8s: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 server-remote-provider: dep-check
@@ -156,6 +164,7 @@ server-remote-provider: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 server-local-provider: dep-check
@@ -167,6 +176,7 @@ server-local-provider: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with no seed content.
@@ -179,6 +189,7 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 server-playground: dep-check
@@ -191,6 +202,7 @@ server-playground: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	PLAYGROUND=true \
+	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
 ## Lint check Meshery Server.

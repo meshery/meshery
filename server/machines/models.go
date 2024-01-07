@@ -54,6 +54,8 @@ type StateMachine struct {
 	// ID to trace the events originated from the machine, also used in logs
 	ID uuid.UUID
 
+	UserID uuid.UUID
+
 	// Given name for the machine, used in logs to track issues
 	Name string
 
@@ -80,7 +82,12 @@ type StateMachine struct {
 	Provider models.Provider
 }
 
-func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init models.InitFunc) (*events.Event, error) {
+func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
+	sm.Provider = provider
+	return sm
+}
+
+func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event
 	var err error
@@ -118,11 +125,13 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 }
 
 // Returns events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
+// wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
+// In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
-
+	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()

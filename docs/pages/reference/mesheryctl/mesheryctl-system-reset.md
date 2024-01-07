@@ -17,7 +17,6 @@ Reset Meshery's configuration
 ## Synopsis
 
 Reset Meshery to it's default configuration.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system reset [flags]

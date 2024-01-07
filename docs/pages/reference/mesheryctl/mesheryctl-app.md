@@ -16,7 +16,7 @@ Cloud Native Apps Management
 
 ## Synopsis
 
-All apps operations: import, list, view, onboard and offboard
+All apps operations: import, list, view, onboard and offboard.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -27,7 +27,7 @@ mesheryctl app [flags]
 
 ## Examples
 
-Base command
+Base command:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app [subcommand]

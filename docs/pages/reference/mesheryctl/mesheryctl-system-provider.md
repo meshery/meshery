@@ -17,7 +17,6 @@ Switch between providers
 ## Synopsis
 
 Enforce a provider. Choose between available Meshery providers
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider [flags]

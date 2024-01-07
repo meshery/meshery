@@ -17,7 +17,6 @@ view model
 ## Synopsis
 
 view a model queried by its name
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model view [flags]

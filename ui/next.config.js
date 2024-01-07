@@ -17,6 +17,7 @@ const nextConfig = removeImports({
       '/management/service-mesh': { page: '/management/service-mesh' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
+      '/management/workspaces': { page: '/management/workspaces' },
       '/performance': { page: '/performance' },
       '/performance/profiles': { page: '/performance/profiles' },
       '/performance/results': { page: '/performance/results' },
