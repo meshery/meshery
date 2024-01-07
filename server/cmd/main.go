@@ -14,6 +14,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
@@ -302,6 +303,9 @@ func main() {
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
 	}
+
+	models.InitMeshSyncRegistrationQueue()
+	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
