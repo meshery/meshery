@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -32,7 +31,6 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 
 	k8sContexts := []models.K8sContext{machinectx.K8sContext}
-	fmt.Println("TEST INSIDE CONNECT >>>>>>>>>")
 	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
 	ctrlHelper.UpdateMeshsynDataHandlers(ctx, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), userUUID, *sysID, provider)

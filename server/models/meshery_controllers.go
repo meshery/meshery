@@ -130,18 +130,18 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
-		fmt.Println("TEST line 132: ")
+		
 		// resetting this value as a specific controller handler instance does not have any significance opposed to
 		// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 		mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
 		for _, ctx := range ctxs {
-			fmt.Println("TEST line 137: ")
+			
 			ctxID := ctx.ID
 			cfg, _ := ctx.GenerateKubeConfig()
 			client, err := mesherykube.New(cfg)
 			// means that the config is invalid
 			if err != nil {
-				fmt.Println("TEST line 143: ")
+				
 				// invalid configs are not added to the map
 				continue
 			}
@@ -223,9 +223,9 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
-				fmt.Println("TEST>>>>>", oprStatus)
+				
 				if oprStatus == controllers.NotDeployed {
-					fmt.Println("TEST INSIDE DeployUndeployedOperators >>>>>>>>>")
+					
 					err := ctrlHandler[MesheryOperator].Deploy(false)
 					if err != nil {
 						mch.log.Error(err)
@@ -240,15 +240,15 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
-		fmt.Println("TeST::::::::::::")
+		
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-					fmt.Println("TeST:::::::::::: line 242")
+					
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
-				fmt.Println("TeST:::::::::::: line 243", oprStatus)
+				
 				if oprStatus != controllers.NotDeployed {
-					fmt.Println("TeST:::::::::::: line 246")
+					
 					err := ctrlHandler[MesheryOperator].Undeploy()
 					
 					if err != nil {
