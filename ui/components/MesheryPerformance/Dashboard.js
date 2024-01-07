@@ -15,6 +15,9 @@ import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuer
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import DefaultError from '@/components/General/error-404/index';
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -163,89 +166,100 @@ function Dashboard({ updateProgress, grafana, router, classes }) {
 
   return (
     <>
-      <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
-        <Grid container item spacing={1} direction="column" lg xs={12}>
-          <Grid item>
-            <Paper className={classes.paper}>
-              <div className={classes.resultContainer}>
-                <div className={classes.paper}>
-                  <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
-                    <Typography
-                      className={classes.resultNum}
-                      variant="h2"
-                      component="div"
-                      color="primary"
-                      style={{ marginRight: '0.75rem' }}
-                    >
-                      {tests.count.toLocaleString('en')}
-                    </Typography>
-                    <Typography variant="body1" className={classes.resultText} component="div">
-                      Total Tests Run
-                    </Typography>
+      {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
+        <>
+          <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
+            <Grid container item spacing={1} direction="column" lg xs={12}>
+              <Grid item>
+                <Paper className={classes.paper}>
+                  <div className={classes.resultContainer}>
+                    <div className={classes.paper}>
+                      <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
+                        <Typography
+                          className={classes.resultNum}
+                          variant="h2"
+                          component="div"
+                          color="primary"
+                          style={{ marginRight: '0.75rem' }}
+                        >
+                          {tests.count.toLocaleString('en')}
+                        </Typography>
+                        <Typography variant="body1" className={classes.resultText} component="div">
+                          Total Tests Run
+                        </Typography>
+                      </div>
+                      <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setRunTest(true)}
+                          disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                        >
+                          Run Test
+                        </Button>
+                      </div>
+                    </div>
+                    <div className={classes.vSep} />
+                    <div className={classes.hSep} />
+                    <div className={classes.paper}>
+                      <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
+                        <Typography
+                          className={classes.profileNum}
+                          variant="h2"
+                          component="div"
+                          color="primary"
+                          style={{ marginRight: '0.75rem' }}
+                        >
+                          {profiles.count}
+                        </Typography>
+                        <Typography variant="body1" className={classes.profileText} component="div">
+                          Profiles
+                        </Typography>
+                      </div>
+                      <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => router.push('/performance/profiles')}
+                        >
+                          Manage Profiles
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                    <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
-                      Run Test
-                    </Button>
-                  </div>
-                </div>
-                <div className={classes.vSep} />
-                <div className={classes.hSep} />
-                <div className={classes.paper}>
-                  <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
-                    <Typography
-                      className={classes.profileNum}
-                      variant="h2"
-                      component="div"
-                      color="primary"
-                      style={{ marginRight: '0.75rem' }}
-                    >
-                      {profiles.count}
-                    </Typography>
-                    <Typography variant="body1" className={classes.profileText} component="div">
-                      Profiles
-                    </Typography>
-                  </div>
-                  <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => router.push('/performance/profiles')}
-                    >
-                      Manage Profiles
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Paper>
+                </Paper>
+              </Grid>
+              <Grid item>
+                <Paper className={classes.paper}>
+                  <PerformanceCalendar style={{ height: '40rem', margin: '2rem 0 0' }} />
+                </Paper>
+              </Grid>
+            </Grid>
+            <Grid item lg xs={12}>
+              <Paper className={classes.paper} style={{ height: '100%' }}>
+                <MesheryMetrics
+                  boardConfigs={grafana.selectedBoardsConfigs}
+                  grafanaURL={grafana.grafanaURL}
+                  grafanaAPIKey={grafana.grafanaAPIKey}
+                  handleGrafanaChartAddition={() => router.push('/settings/#metrics')}
+                />
+              </Paper>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Paper className={classes.paper}>
-              <PerformanceCalendar style={{ height: '40rem', margin: '2rem 0 0' }} />
-            </Paper>
-          </Grid>
-        </Grid>
-        <Grid item lg xs={12}>
-          <Paper className={classes.paper} style={{ height: '100%' }}>
-            <MesheryMetrics
-              boardConfigs={grafana.selectedBoardsConfigs}
-              grafanaURL={grafana.grafanaURL}
-              grafanaAPIKey={grafana.grafanaAPIKey}
-              handleGrafanaChartAddition={() => router.push('/settings/#metrics')}
-            />
-          </Paper>
-        </Grid>
-      </Grid>
 
-      <GenericModal
-        open={!!runTest}
-        Content={
-          <Paper style={{ margin: 'auto', maxWidth: '90%', outline: 'none' }}>
-            <MesheryPerformanceComponent />
-          </Paper>
-        }
-        handleClose={() => setRunTest(false)}
-      />
+          <GenericModal
+            open={!!runTest}
+            Content={
+              <Paper style={{ margin: 'auto', maxWidth: '90%', outline: 'none' }}>
+                <MesheryPerformanceComponent />
+              </Paper>
+            }
+            handleClose={() => setRunTest(false)}
+          />
+        </>
+      ) : (
+        <DefaultError />
+      )}
     </>
   );
 }
