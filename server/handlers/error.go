@@ -123,7 +123,10 @@ const (
 	ErrBulkDeleteEventCode        = "1538"
 	ErrFetchMeshSyncResourcesCode = "1539"
 	ErrDesignSourceContentCode    = "1554"
-	ErrGetConnectionsCode    	  = "1555"
+	ErrGetConnectionsCode         = "1555"
+	ErrWritingIntoFileCode        = "1556"
+	ErrBuildOCIImgCode            = "1557"
+	ErrSaveOCIArtifactCode        = "1558"
 )
 
 var (
@@ -358,7 +361,7 @@ func ErrSaveSession(err error) error {
 }
 
 func ErrCreateDir(err error, obj string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create dir", "check if sufficient storage is available to create dir"})
 }
 
 func ErrInvalidRequestObject(fields ...string) error {
@@ -498,7 +501,7 @@ func ErrResolvingRegoRelationship(err error) error {
 }
 
 func ErrCreateFile(err error, obj string) error {
-	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create file", "check if sufficient storage is available to create file"})
 }
 
 func ErrLoadCertificate(err error) error {
@@ -540,4 +543,16 @@ func ErrFetchMeshSyncResources(err error) error {
 
 func ErrGetConnections(err error) error {
 	return errors.New(ErrGetConnectionsCode, errors.Alert, []string{"Failed to retrieve connections"}, []string{err.Error()}, []string{"Unable to retrieve the connections"}, []string{"Check if the cluster is connected and healthy, you can check it from k8s switcher in header"})
+}
+
+func ErrWritingIntoFile(err error, obj string) error {
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s" + obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+}
+
+func ErrBuildOCIImg(err error) error {
+	return errors.New(ErrBuildOCIImgCode, errors.Alert, []string{"Failed to build OCI image"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted"})
+}
+
+func ErrSaveOCIArtifact(err error) error {
+	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
 }
