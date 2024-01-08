@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
 )
@@ -43,7 +43,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 
 	grafanaCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.GrafanaCred](connPayload.CredentialSecret)
-	if err != nil {
+	if err != nil && !connPayload.SkipCredentialVerification {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}

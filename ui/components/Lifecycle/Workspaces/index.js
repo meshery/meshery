@@ -38,6 +38,9 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { DeleteIcon } from '@layer5/sistent-svg';
 import theme from '../../../themes/app';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
+import DefaultError from '@/components/General/error-404/index';
 
 const ERROR_MESSAGE = {
   FETCH_ORGANIZATIONS: {
@@ -551,187 +554,213 @@ const Workspaces = ({ organization, classes }) => {
 
   return (
     <NoSsr>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-        <div className={classes.createButtonWrapper}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
-            style={{
-              padding: '8px',
-              borderRadius: 5,
-              marginRight: '2rem',
-            }}
-            data-cy="btnResetDatabase"
-          >
-            <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-            <Typography
-              style={{
-                paddingLeft: '4px',
-                marginRight: '4px',
-              }}
-            >
-              Create
-            </Typography>
-          </Button>
-        </div>
-        <SearchBar
-          onSearch={(value) => {
-            setSearch(value);
-          }}
-          placeholder="Search connections..."
-          expanded={isSearchExpanded}
-          setExpanded={setIsSearchExpanded}
-        />
-      </div>
-      {selectedWorkspaces.length > 0 && (
-        <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
-          <Typography>
-            {selectedWorkspaces.length > 1
-              ? `${selectedWorkspaces.length} workspaces selected`
-              : `${selectedWorkspaces.length} workspace selected`}
-          </Typography>
-          <Button className={classes.iconButton}>
-            <DeleteIcon
-              fill={theme.palette.secondary.error}
-              onClick={handleDeleteWorkspacesModalOpen}
-              disabled={selectedWorkspaces.length > 0 ? false : true}
-            />
-          </Button>
-        </Box>
-      )}
-      {workspaces.length > 0 ? (
+      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
         <>
-          <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-            {workspaces.map((workspace) => (
-              <Grid item xs={12} md={6} key={workspace.id}>
-                <WorkspaceCard
-                  workspaceDetails={workspace}
-                  onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
-                  onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                  onSelect={(e) => handleBulkSelect(e, workspace.id)}
-                  selectedWorkspaces={selectedWorkspaces}
-                  onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
-                  onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
-                  classes={classes}
+          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
+            <div className={classes.createButtonWrapper}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
+                style={{
+                  padding: '8px',
+                  borderRadius: 5,
+                  marginRight: '2rem',
+                }}
+                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                data-cy="btnResetDatabase"
+              >
+                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <Typography
+                  style={{
+                    paddingLeft: '4px',
+                    marginRight: '4px',
+                  }}
+                >
+                  Create
+                </Typography>
+              </Button>
+            </div>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              placeholder="Search connections..."
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+            />
+          </div>
+          {selectedWorkspaces.length > 0 && (
+            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+              <Typography>
+                {selectedWorkspaces.length > 1
+                  ? `${selectedWorkspaces.length} workspaces selected`
+                  : `${selectedWorkspaces.length} workspace selected`}
+              </Typography>
+              <Button className={classes.iconButton}>
+                <DeleteIcon
+                  fill={theme.palette.secondary.error}
+                  onClick={handleDeleteWorkspacesModalOpen}
+                  disabled={
+                    selectedWorkspaces.length > 0
+                      ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
+                      : true
+                  }
+                />
+              </Button>
+            </Box>
+          )}
+          {workspaces.length > 0 ? (
+            <>
+              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+                {workspaces.map((workspace) => (
+                  <Grid item xs={12} md={6} key={workspace.id}>
+                    <WorkspaceCard
+                      workspaceDetails={workspace}
+                      onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
+                      onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
+                      onSelect={(e) => handleBulkSelect(e, workspace.id)}
+                      selectedWorkspaces={selectedWorkspaces}
+                      onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
+                      onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
+                      classes={classes}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <Grid
+                container
+                sx={{ padding: '2rem 0' }}
+                style={{ marginTop: '20px' }}
+                flex
+                justifyContent="center"
+                spacing={2}
+              >
+                <Pagination
+                  count={Math.ceil(workspacesData?.total_count / pageSize)}
+                  page={page + 1}
+                  sx={{
+                    backgroundColor: 'white',
+                    borderRadius: '1rem',
+                    padding: '0.5rem',
+                  }}
+                  onChange={debounce((_, page) => setPage(page - 1), 150)}
+                  boundaryCount={3}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                      {...item}
+                    />
+                  )}
                 />
               </Grid>
-            ))}
-          </Grid>
-          <Grid
-            container
-            sx={{ padding: '2rem 0' }}
-            style={{ marginTop: '20px' }}
-            flex
-            justifyContent="center"
-            spacing={2}
-          >
-            <Pagination
-              count={Math.ceil(workspacesData?.total_count / pageSize)}
-              page={page + 1}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: '1rem',
-                padding: '0.5rem',
-              }}
-              onChange={debounce((_, page) => setPage(page - 1), 150)}
-              boundaryCount={3}
-              renderItem={(item) => (
-                <PaginationItem
-                  slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                  {...item}
-                />
-              )}
+            </>
+          ) : (
+            <EmptyState
+              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+              message="No workspace available"
+              pointerLabel="Click “Create” to establish your first workspace."
             />
-          </Grid>
+          )}
+          {(actionType === ACTION_TYPES.CREATE
+            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+            workspaceModal.open && (
+              <Modal
+                open={workspaceModal.open}
+                schema={workspaceModal.schema.rjsfSchema}
+                uiSchema={workspaceModal.schema.uiSchema}
+                handleClose={handleWorkspaceModalClose}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
+                }
+                title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
+                submitBtnText={
+                  actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
+                }
+                initialData={initialData}
+              />
+            )}
+          <GenericModal
+            open={assignEnvironmentModal}
+            handleClose={handleAssignEnvironmentModalClose}
+            title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+            body={
+              <TransferList
+                name="Environments"
+                assignableData={environmentsData}
+                assignedData={handleAssignEnvironmentsData}
+                originalAssignedData={workspaceEnvironmentsData}
+                emptyStateIconLeft={
+                  <EnvironmentIcon
+                    height="5rem"
+                    width="5rem"
+                    fill="#808080"
+                    secondaryFill="#979797"
+                  />
+                }
+                emtyStateMessageLeft="No environments available"
+                emptyStateIconRight={
+                  <EnvironmentIcon
+                    height="5rem"
+                    width="5rem"
+                    fill="#808080"
+                    secondaryFill="#979797"
+                  />
+                }
+                emtyStateMessageRight="No environments assigned"
+                assignablePage={handleAssignablePageEnvironment}
+                assignedPage={handleAssignedPageEnvironment}
+                originalLeftCount={environments?.total_count}
+                originalRightCount={environmentsOfWorkspace?.total_count}
+              />
+            }
+            action={handleAssignEnvironments}
+            buttonTitle="Save"
+            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            helpText="Assign environment to workspace"
+            maxWidth="md"
+          />
+          <GenericModal
+            open={assignDesignModal}
+            handleClose={handleAssignDesignModalClose}
+            title={`Assign Designs to ${designAssignWorkspace.name}`}
+            body={
+              <TransferList
+                name="Designs"
+                assignableData={designsData}
+                assignedData={handleAssignDesignsData}
+                originalAssignedData={workspaceDesignsData}
+                emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
+                emtyStateMessageLeft="No designs available"
+                emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
+                emtyStateMessageRight="No designs assigned"
+                assignablePage={handleAssignablePageDesign}
+                assignedPage={handleAssignedPageDesign}
+                originalLeftCount={designs?.total_count}
+                originalRightCount={designsOfWorkspace?.total_count}
+              />
+            }
+            action={handleAssignDesigns}
+            buttonTitle="Save"
+            leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
+            helpText="Assign designs to workspace"
+            maxWidth="md"
+          />
+          <GenericModal
+            open={deleteWorkspacesModal}
+            handleClose={handleDeleteWorkspacesModalClose}
+            title={'Delete Workspace'}
+            body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
+            action={handleBulkDeleteWorkspace}
+          />
+          <PromptComponent ref={ref} />
         </>
       ) : (
-        <EmptyState
-          icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-          message="No workspace available"
-          pointerLabel="Click “Create” to establish your first workspace."
-        />
+        <DefaultError />
       )}
-      {workspaceModal.open && (
-        <Modal
-          open={workspaceModal.open}
-          schema={workspaceModal.schema.rjsfSchema}
-          uiSchema={workspaceModal.schema.uiSchema}
-          handleClose={handleWorkspaceModalClose}
-          handleSubmit={
-            actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
-          }
-          title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-          submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-          initialData={initialData}
-        />
-      )}
-      <GenericModal
-        open={assignEnvironmentModal}
-        handleClose={handleAssignEnvironmentModalClose}
-        title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-        body={
-          <TransferList
-            name="Environments"
-            assignableData={environmentsData}
-            assignedData={handleAssignEnvironmentsData}
-            originalAssignedData={workspaceEnvironmentsData}
-            emptyStateIconLeft={
-              <EnvironmentIcon height="5rem" width="5rem" fill="#808080" secondaryFill="#979797" />
-            }
-            emtyStateMessageLeft="No environments available"
-            emptyStateIconRight={
-              <EnvironmentIcon height="5rem" width="5rem" fill="#808080" secondaryFill="#979797" />
-            }
-            emtyStateMessageRight="No environments assigned"
-            assignablePage={handleAssignablePageEnvironment}
-            assignedPage={handleAssignedPageEnvironment}
-            originalLeftCount={environments?.total_count}
-            originalRightCount={environmentsOfWorkspace?.total_count}
-          />
-        }
-        action={handleAssignEnvironments}
-        buttonTitle="Save"
-        leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-        helpText="Assign environment to workspace"
-        maxWidth="md"
-      />
-      <GenericModal
-        open={assignDesignModal}
-        handleClose={handleAssignDesignModalClose}
-        title={`Assign Designs to ${designAssignWorkspace.name}`}
-        body={
-          <TransferList
-            name="Designs"
-            assignableData={designsData}
-            assignedData={handleAssignDesignsData}
-            originalAssignedData={workspaceDesignsData}
-            emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
-            emtyStateMessageLeft="No designs available"
-            emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
-            emtyStateMessageRight="No designs assigned"
-            assignablePage={handleAssignablePageDesign}
-            assignedPage={handleAssignedPageDesign}
-            originalLeftCount={designs?.total_count}
-            originalRightCount={designsOfWorkspace?.total_count}
-          />
-        }
-        action={handleAssignDesigns}
-        buttonTitle="Save"
-        leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
-        helpText="Assign designs to workspace"
-        maxWidth="md"
-      />
-      <GenericModal
-        open={deleteWorkspacesModal}
-        handleClose={handleDeleteWorkspacesModalClose}
-        title={'Delete Workspace'}
-        body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-        action={handleBulkDeleteWorkspace}
-      />
-      <PromptComponent ref={ref} />
     </NoSsr>
   );
 };

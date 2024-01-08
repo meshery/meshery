@@ -12,6 +12,7 @@ import (
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -242,7 +243,6 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			Provider:           provider,
 			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
@@ -253,6 +253,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			machineCtx,
 			ctx,
 			connectionUUID,
+			userUUID,
 			smInstanceTracker,
 			h.log,
 			provider,
@@ -283,18 +284,24 @@ func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request,
 	}
 }
 
+type dataHandlerToClusterID struct {
+	mdh       models.MeshsyncDataHandler
+	clusterID string
+}
+
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	userUUID := uuid.FromStringOrNil(user.ID)
-
+	ctxToDataHandlerMap := h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+	dataHandlers := []*dataHandlerToClusterID{}
+	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			Provider:           provider,
 			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
@@ -305,6 +312,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			machineCtx,
 			ctx,
 			connectionUUID,
+			userUUID,
 			smInstanceTracker,
 			h.log,
 			provider,
@@ -324,5 +332,35 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
+		mdh, ok := ctxToDataHandlerMap[k8sContext.ID]
+		if ok {
+			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
+				mdh: mdh,
+				clusterID: k8sContext.KubernetesServerID.String(),
+			})
+			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
+		}
 	}
+	var resources []model.KubernetesResource
+	
+	err := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		Preload("KubernetesResourceMeta").
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIDs).Where(&model.KubernetesResource{Kind: "Service"}).Where("lower(kubernetes_resource_object_meta.name) LIKE ? OR lower(kubernetes_resource_object_meta.name) LIKE ?", "%grafana%", "%prometheus%").Find(&resources).Error
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		return
+	}
+
+	regQueue := models.GetMeshSyncRegistrationQueue()
+
+	for _, resource := range resources {
+		for _, dh := range dataHandlers {
+			if dh.clusterID == resource.ClusterID {
+				go regQueue.Send(models.MeshSyncRegistrationData{MeshsyncDataHandler: dh.mdh, Obj: resource})
+			}
+		}
+	}
+
 }

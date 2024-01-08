@@ -61,6 +61,7 @@ import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
+import { ability } from '../utils/can';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -116,6 +117,8 @@ class MesheryApp extends App {
       isOpen: false,
       relayEnvironment: createRelayEnvironment(),
       connectionMetadata: {},
+      keys: [],
+      abilities: [],
     };
   }
 
@@ -361,6 +364,7 @@ class MesheryApp extends App {
 
   loadOrg = async () => {
     const { store } = this.props;
+    const currentOrgId = sessionStorage.getItem('currentOrgId');
     dataFetch(
       '/api/identity/orgs',
       {
@@ -368,15 +372,56 @@ class MesheryApp extends App {
         credentials: 'include',
       },
       (result) => {
-        if (result) {
-          store.dispatch({
-            type: actionTypes.SET_ORGANIZATION,
-            organization: result?.organizations[0],
-          });
+        let organizationToSet;
+
+        if (currentOrgId !== null) {
+          const indx = result.organizations.findIndex((org) => org.id === currentOrgId);
+          organizationToSet = indx !== -1 ? result.organizations[indx] : result.organizations[0];
+        } else {
+          organizationToSet = result.organizations[0];
         }
+
+        store.dispatch({
+          type: actionTypes.SET_ORGANIZATION,
+          organization: organizationToSet,
+        });
+
+        this.loadAbility(organizationToSet.id);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
+  };
+
+  loadAbility = async (orgID) => {
+    const storedKeys = sessionStorage.getItem('keys');
+    if (storedKeys !== null && storedKeys !== undefined) {
+      this.setState({ keys: JSON.parse(sessionStorage.getItem('keys')) });
+    } else {
+      dataFetch(
+        `/api/identity/orgs/${orgID}/users/keys`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          if (result) {
+            this.setState({ keys: result.keys });
+            sessionStorage.removeItem('keys');
+            sessionStorage.setItem('keys', JSON.stringify(result.keys));
+          }
+        },
+        (err) => console.log('There was an error fetching available orgs:', err),
+      );
+    }
+    this.setState({
+      abilities: [...this.state.keys]?.map((key) => {
+        return {
+          action: key.id,
+          subject: key.function,
+        };
+      }),
+    });
+    ability.update(this.state.abilities);
   };
 
   async loadConfigFromServer() {

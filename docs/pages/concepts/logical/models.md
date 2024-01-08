@@ -25,9 +25,11 @@ Meshery Models adhere to several design principles, including establishing a set
 
 ## Models as the Unit of Packaging
 
-Models support packaging constructs as OCI-compatible images, making them portable and encapsulating intellectual property. Model packages can include multiple MeshModel constructs, facilitating reusability and versioning.
+## Model Packaging
 
-{% include alert.html title="Model Packaging" color="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
+Each model package can be imported and exported from the system as OCI-compatible images, making them portable (a design goal), abstracting their complexity, and encapsulating potential intellectual property that users might have invested into their models. Model packages are versioned and bundle any number of components, relationships, policies, connections and credentials. For example:
+
+{% include alert.html title="Model Packaging" type="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
 
 ![Meshery Models]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
 
@@ -43,7 +45,7 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Component
 
-[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.See [Relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/components) for more information.
+[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [example components in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/components).
 
 ### Designs
 
@@ -51,23 +53,23 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Patterns
 
-A pattern is a reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
-{% include alert.html title="Metadata" color="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
+{% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
 ### Policy
 
-[Policy](policy) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [Policies in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies) for more information.
+[Policy](policy) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [example policies in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/policies) for more information.
 
 ### Relationships
 
-[Relationships](relationships) define the nature of interaction between interconnected components in MeshModel. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [Relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) for more information.
+[Relationships](relationships) define the nature of interaction between interconnected components in MeshModel. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [example relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/relationships).
 
 #### Evaluation of Relationships
 
 Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
-{% include alert.html title="Model Schema" color="info" content="Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs." %}
+{% include alert.html title="Model Schema" type="info" content="Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs." %}
 
 ## Conclusion
 

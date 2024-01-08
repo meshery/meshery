@@ -7,6 +7,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const SecurityTypesConfig = (
   switchView,
@@ -31,6 +32,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -138,6 +140,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -271,6 +274,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -378,6 +382,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -485,6 +490,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {

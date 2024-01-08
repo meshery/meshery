@@ -16,6 +16,7 @@ import { withStyles } from '@material-ui/core';
 import { Select, MenuItem, FormControl, FormLabel } from '@material-ui/core';
 import styles from './style';
 import theme from '../../themes/app';
+import { useGetCurrentAbilities } from '../../rtk-query/ability';
 
 const SpacesPreferences = (props) => {
   const {
@@ -26,9 +27,12 @@ const SpacesPreferences = (props) => {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization, classes } = props;
+  const [skip, setSkip] = React.useState(true);
   console.log('props', props);
 
   const { notify } = useNotification();
+
+  useGetCurrentAbilities(organization, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -43,6 +47,7 @@ const SpacesPreferences = (props) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
+    setSkip(false);
   };
 
   return (

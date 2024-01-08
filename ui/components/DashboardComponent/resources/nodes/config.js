@@ -9,6 +9,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const NodeTableConfig = (
   switchView,
@@ -36,6 +37,7 @@ export const NodeTableConfig = (
         label: 'ID',
         options: {
           display: false,
+          customBodyRender: (value) => <FormatId id={value} />,
         },
       },
       {

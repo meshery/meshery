@@ -3,11 +3,15 @@ layout: default
 title: Overview
 permalink: /getting-started/overview
 language: en
+redirect_to: /project/overview
 ---
-
 Meshery is an extensible engineering platform for the collaborative design and operation of cloud and cloud native infrastructure and applications.
 
 Kubernetes-centric. Kubernetes not required.
+
+## Meshery is for all cloud and cloud native infrastructure
+
+Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
 
 ## Meshery's Functionality
 
@@ -44,6 +48,4 @@ Through [Models]({{site.baseurl}}/concepts/models), Meshery describes infrastruc
 
 Meshery helps users weigh the value of their cloud native deployments against the overhead incurred in running different deployment scenarios and different configruations. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and infrastructure configuration. In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
-## Meshery is for all cloud and cloud native infrastructure
 
-Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you'll find that Meshery supports your infrastructure diversity (or lack thereof). 

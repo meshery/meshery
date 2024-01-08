@@ -23,8 +23,17 @@ func Registered() State {
 func Connected() State {
 	state := &State{}
 	return *state.
-		RegisterEvent(Disconnect, DISCONNECTED)
+		RegisterEvent(Disconnect, DISCONNECTED).
+		RegisterEvent(Delete, DELETED)
 }
+
+func Disconnected() State {
+	state := &State{}
+	return *state.
+		RegisterEvent(Connect, CONNECTED).
+		RegisterEvent(Delete, DELETED)
+}
+
 
 func Initial() State {
 	state := &State{}
@@ -34,7 +43,7 @@ func Initial() State {
 		RegisterEvent(Connect, CONNECTED)
 }
 
-func New(initialState StateType, ID string, log logger.Handler, mtype string) (*StateMachine, error) {
+func New(initialState StateType, ID string, userID uuid.UUID, log logger.Handler, mtype string) (*StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	if err != nil {
 		return nil, ErrInititalizeK8sMachine(err)
@@ -42,6 +51,7 @@ func New(initialState StateType, ID string, log logger.Handler, mtype string) (*
 
 	return &StateMachine{
 		ID:            connectionID,
+		UserID:        userID,
 		Name:          mtype,
 		PreviousState: DefaultState,
 		InitialState:  initialState,
@@ -51,6 +61,7 @@ func New(initialState StateType, ID string, log logger.Handler, mtype string) (*
 			DISCOVERED:   Discovered(),
 			REGISTERED:   Registered(),
 			CONNECTED:    Connected(),
+			DISCONNECTED: Disconnected(),
 			InitialState: Initial(),
 		},
 	}, nil

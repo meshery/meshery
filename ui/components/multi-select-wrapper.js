@@ -13,7 +13,7 @@ const MultiSelectWrapper = (props) => {
   const allOption = { value: '*', label: selectAllLabel.current };
 
   const filterOptions = (options, input) =>
-    options?.filter(({ label }) => label.toLowerCase().includes(input.toLowerCase()));
+    options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
 
   const comparator = (v1, v2) => {
     if (v1.value === allOption.value) {
@@ -22,7 +22,7 @@ const MultiSelectWrapper = (props) => {
       return -1;
     }
 
-    return v1.label.localeCompare(v2.label);
+    return v1.label?.localeCompare(v2.label);
   };
 
   let filteredOptions = filterOptions(props.options, selectInput).sort(comparator);
@@ -101,7 +101,7 @@ const MultiSelectWrapper = (props) => {
   };
 
   const customFilterOption = ({ value, label }, input) =>
-    (value !== '*' && label.toLowerCase().includes(input.toLowerCase())) ||
+    (value !== '*' && label?.toLowerCase().includes(input.toLowerCase())) ||
     (value === '*' && filteredOptions?.length > 0);
 
   const onInputChange = (inputValue, event) => {
@@ -127,7 +127,7 @@ const MultiSelectWrapper = (props) => {
           ...(props.value ?? []),
           ...props.options.filter(
             ({ label }) =>
-              label.toLowerCase().includes(selectInput?.toLowerCase()) &&
+              label?.toLowerCase().includes(selectInput?.toLowerCase()) &&
               (props.value ?? []).filter((opt) => opt.label === label).length === 0,
           ),
         ].sort(comparator),
