@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
 import { ArrowForward, Edit } from '@material-ui/icons';
 import { DeleteIcon } from '@layer5/sistent-svg';
-import OrgIcon from '../../../assets/icons/OrgIcon';
 import {
   BulkSelectCheckbox,
   CardTitle,
@@ -10,8 +9,6 @@ import {
   DateLabel,
   DescriptionLabel,
   EmptyDescription,
-  OrganizationName,
-  StyledIconButton,
   TabCount,
   TabTitle,
 } from './styles';
@@ -131,7 +128,7 @@ const WorkspaceCard = ({
           <CardFront
             classes={classes}
             name={workspaceDetails?.name}
-            workspaceOwner={workspaceDetails?.owner}
+            description={workspaceDetails?.description}
             environmentsCount={environmentsOfWorkspaceCount}
             onAssignEnvironment={onAssignEnvironment}
             designsCount={designsOfWorkspaceCount}
@@ -142,7 +139,6 @@ const WorkspaceCard = ({
           <CardBack
             classes={classes}
             name={workspaceDetails?.name}
-            description={workspaceDetails?.description}
             workspaceId={workspaceDetails?.id}
             onEdit={onEdit}
             onDelete={onDelete}
@@ -162,7 +158,7 @@ export default WorkspaceCard;
 const CardFront = ({
   classes,
   name,
-  workspaceOwner,
+  description,
   environmentsCount,
   onAssignEnvironment,
   designsCount,
@@ -180,20 +176,26 @@ const CardFront = ({
           {name}
         </CardTitle>
       </Grid>
-      <Grid
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginTop: '5px',
-          marginBottom: '5px',
-        }}
-      >
-        <StyledIconButton onClick={(e) => e.stopPropagation()}>
-          <OrgIcon width="24" height="24" />
-        </StyledIconButton>
-        <OrganizationName variant="span" onClick={(e) => e.stopPropagation()}>
-          {workspaceOwner}
-        </OrganizationName>
+      <Grid>
+        {description ? (
+          <DescriptionLabel
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              padding: '10px 0',
+              color: `${theme.palette.secondary.link}`,
+              maxHeight: '105px',
+            }}
+          >
+            {description}
+          </DescriptionLabel>
+        ) : (
+          <EmptyDescription
+            onClick={(e) => e.stopPropagation()}
+            style={{ padding: '10px 0', color: `${theme.palette.secondary.lightText}` }}
+          >
+            No description
+          </EmptyDescription>
+        )}
       </Grid>
       <Grid
         pt={{ xs: 1.5, md: 3 }}
@@ -242,7 +244,7 @@ const CardBack = ({
   onDelete,
   selectedWorkspaces,
   workspaceId,
-  description,
+  // description,
   updatedDate,
   createdDate,
 }) => {
@@ -309,27 +311,6 @@ const CardBack = ({
               <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
             </Button>
           </Grid>
-        </Grid>
-        <Grid>
-          {description ? (
-            <DescriptionLabel
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                padding: '10px 0',
-                color: theme.palette.secondary.white,
-                maxHeight: '105px',
-              }}
-            >
-              {description}
-            </DescriptionLabel>
-          ) : (
-            <EmptyDescription
-              onClick={(e) => e.stopPropagation()}
-              style={{ padding: '10px 0', color: `${theme.palette.secondary.white}90` }}
-            >
-              No description
-            </EmptyDescription>
-          )}
         </Grid>
       </Grid>
       <Grid
