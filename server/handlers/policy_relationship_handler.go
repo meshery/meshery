@@ -93,7 +93,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	// evaluate specified relationship policies
 	verifiedEvaluationQueries := h.verifyEvaluationQueries(evaluationQueries)
 	if len(verifiedEvaluationQueries) == 0 {
-		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"queries": evaluationQueries}).Build()
+		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluationQueries": evaluationQueries}).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return
