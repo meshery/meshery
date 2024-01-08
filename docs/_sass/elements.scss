@@ -108,6 +108,10 @@ li:has(> a[href*="/installation/quick-start"]){
   list-style-type: none;
   margin-left: -2rem;
 } 
+li:has(> a[href*="/extensions"]){
+  list-style-type: none;
+  margin-left: -2rem;
+} 
 
 .terminal {
 }

@@ -7,6 +7,7 @@ language: en
 display-title: "false"
 list: include
 type: extensions
+category: meshmap
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap <sup style="font-size: 1.8rem; vertical-align: top;">BETA</sup>
