@@ -64,7 +64,7 @@ export const FormatId = ({ id }) => {
           variant="body2"
           style={{
             cursor: 'pointer',
-            color: theme.palette.text.secondary,
+            color: theme.palette.secondary.text,
           }}
         >
           {truncatedId}
