@@ -104,6 +104,10 @@ collections:
     output: true
     permalink: /:collection/:path    
     name: integrations
+  tutorials:
+    output: true
+    permalink: /:collection/:path
+    name: tutorials
 
 # Defaults
 defaults:
