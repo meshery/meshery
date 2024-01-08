@@ -15,7 +15,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
@@ -72,6 +71,7 @@ import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { SortableTableCell } from './connections/common/index.js';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -232,20 +232,29 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <DialogTitle disableTypography id="pattern-dialog-title" className={classes.yamlDialogTitle}>
-        <Typography variant="h6" className={classes.yamlDialogTitleText}>
-          {pattern.name}
-        </Typography>
-        <ReusableTooltip
-          placement="top"
-          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          onClick={toggleFullScreen}
-        >
-          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-        </ReusableTooltip>
-        <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
-          <CloseIcon />
-        </ReusableTooltip>
+      <DialogTitle
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}
+        disableTypography
+        id="pattern-dialog-title"
+        className={classes.yamlDialogTitle}
+      >
+        <div>
+          <Typography variant="h6" className={classes.yamlDialogTitleText}>
+            {pattern.name}
+          </Typography>
+        </div>
+        <div>
+          <ReusableTooltip
+            placement="top"
+            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            onClick={toggleFullScreen}
+          >
+            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </ReusableTooltip>
+          <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
+            <CloseIcon />
+          </ReusableTooltip>
+        </div>
       </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
@@ -319,7 +328,7 @@ function MesheryPatterns({
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
@@ -1044,16 +1053,14 @@ function MesheryPatterns({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -1065,16 +1072,14 @@ function MesheryPatterns({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -1089,16 +1094,14 @@ function MesheryPatterns({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -1347,7 +1350,7 @@ function MesheryPatterns({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
+    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,
@@ -1386,6 +1389,7 @@ function MesheryPatterns({
       switch (action) {
         case 'changePage':
           initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
+          setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
           initPatternsSubscription(
@@ -1394,6 +1398,7 @@ function MesheryPatterns({
             search,
             order,
           );
+          setPageSize(tableState.rowsPerPage);
           break;
         case 'search':
           if (searchTimeout.current) {
@@ -1421,6 +1426,7 @@ function MesheryPatterns({
           }
           if (order !== sortOrder) {
             initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
+            setSortOrder(order);
           }
           break;
       }

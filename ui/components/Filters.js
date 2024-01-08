@@ -23,7 +23,6 @@ import Moment from 'react-moment';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
@@ -60,6 +59,7 @@ import { useWindowDimensions } from '../utils/dimension';
 import { Box } from '@mui/material';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { SortableTableCell } from './connections/common/index.js';
 
 const styles = (theme) => ({
   grid: {
@@ -234,7 +234,7 @@ function MesheryFilters({
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
@@ -844,16 +844,14 @@ function MesheryFilters({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -865,16 +863,14 @@ function MesheryFilters({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -889,16 +885,14 @@ function MesheryFilters({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -1048,7 +1042,7 @@ function MesheryFilters({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
+    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,
@@ -1088,6 +1082,7 @@ function MesheryFilters({
             search,
             sortOrder,
           );
+          setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
           initFiltersSubscription(
@@ -1096,6 +1091,7 @@ function MesheryFilters({
             search,
             sortOrder,
           );
+          setPageSize(tableState.rowsPerPage);
           break;
         case 'search':
           if (searchTimeout.current) {
@@ -1123,6 +1119,7 @@ function MesheryFilters({
           }
           if (order !== sortOrder) {
             initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
+            setSortOrder(order);
           }
           break;
       }
