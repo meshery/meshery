@@ -17,7 +17,6 @@ list available providers
 ## Synopsis
 
 List current provider and available providers
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider list [flags]

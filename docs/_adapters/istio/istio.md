@@ -10,7 +10,7 @@ lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 white_image: /assets/img/service-meshes/istio-white.svg
-permalink: service-meshes/adapters/istio
+permalink: extensibility/adapters/istio
 language: en
 ---
 
@@ -33,7 +33,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ## Features
 

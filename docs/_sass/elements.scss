@@ -104,6 +104,11 @@ ol {
   list-style-type: decimal;
 }
 
+li:has(> a[href*="/installation/quick-start"]){
+  list-style-type: none;
+  margin-left: -2rem;
+} 
+
 .terminal {
 }
 

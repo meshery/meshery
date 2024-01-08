@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, Button } from '@material-ui/core';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const promStyles = (theme) => ({
   promRoot: {
@@ -54,6 +56,7 @@ class PrometheusConfigComponent extends Component {
                 size="large"
                 onClick={handlePrometheusConfigure}
                 className={classes.button}
+                disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
               >
                 Submit
               </Button>

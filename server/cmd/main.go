@@ -14,6 +14,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
@@ -195,6 +196,7 @@ func main() {
 		&models.SmiResultWithID{},
 		models.K8sContext{},
 		models.Organization{},
+		models.Key{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -215,6 +217,7 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
@@ -249,11 +252,12 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-
+	krh := models.NewKeysRegistrationHelper(dbHandler, log)
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {
 		ch.SeedComponents()
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
@@ -299,6 +303,9 @@ func main() {
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
 	}
+
+	models.InitMeshSyncRegistrationQueue()
+	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
