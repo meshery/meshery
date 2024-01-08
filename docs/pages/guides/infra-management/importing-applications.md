@@ -1,21 +1,29 @@
 ---
 layout: default
 title: Importing Applications
-abstract: This guide is to help users get a better understanding of sample apps
+abstract: Learn how to import your existing application definitions and your existing infrastructure configruations into Meshery as you to manage, operate, and observe your cloud native infrastructure more effectively.
 permalink: guides/importing-apps
 type: guides
 language: en
 ---
 
-Importing apps into Meshery as Meshery Apps is a powerful feature that enables you to manage, operate, and observe your cloud native infrastructure more effectively. With this feature, you can easily import your app manifest and store it in the database.
+Import your existing application definitions and your existing infrastructure configruations into Meshery
+Meshery supports a number of different application definition formats. You can import apps into Meshery using either the Meshery CLI or the Meshery UI.
 
-You can import apps into Meshery using either the Meshery CLI or the Meshery UI. We will discuss both methods in detail below.
+## Supported Application Definition Formats
 
-## Using Meshery CLI
+Meshery supports the following application definition formats:
+
+- [Kubernetes Manifests](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/)
+- [Helm Charts](https://helm.sh/docs/topics/charts/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Meshery Designs](/concepts/logical/designs)
+
+## Import Apps Using Meshery CLI
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to import a Docker Compose app, you must first install it. You can install Meshery CLI by following the instructions on the [Meshery documentation site](../installation/mesheryctl.md).
+Before you can use the Meshery CLI to import a Docker Compose app, you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
 
 **Step 2: Import the App Manifest**
 
@@ -37,11 +45,11 @@ This command enable users to import their existing applications from sources as
 <div class="codeblock"><div class="clipboardjs">mesheryctl app import -f ./SampleApplication.yml -s "Kubernetes Manifest"</div></div>
 </pre>
 
-## Using Meshery UI:
+## Import Apps Using Meshery UI
 
 **Step 1: Access the Meshery UI**
 
-To import a Docker Compose app into Meshery using the Meshery UI, you must first Install the Meshery. You can install Meshery by following the instructions on the [Meshery documentation site](../installation/quick-start.md)
+To import a Docker Compose app into Meshery using the Meshery UI, you must first [install Meshery](../installation/quick-start.md)
 
 **Step 2: Navigate to the Application section in the Configuration**
 
@@ -58,4 +66,3 @@ When you import an app into Meshery, it will create a Meshery App based on defin
 <a href="{{ site.baseurl }}/assets/img/applications/ImportApp.png"><img alt="Import-Application" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/applications/ImportApp.png" /></a>
 
 Once the Meshery App has been created, you can use Meshery to manage, operate and observe your cloud native infrastructure. You can also use Meshery to deploy your Meshery App to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
-
