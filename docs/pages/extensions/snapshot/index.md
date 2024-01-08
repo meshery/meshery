@@ -7,6 +7,7 @@ abstract: Screenshot service provided via Meshmap to capture a snapshot of your 
 display-title: "false"
 list: include
 type: extensions
+category: meshmap
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap Snapshot
