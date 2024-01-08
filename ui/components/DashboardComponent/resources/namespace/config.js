@@ -21,8 +21,8 @@ export const NamespaceTableConfig = (
   return {
     name: 'Namespace',
     colViews: [
-      ['id', 'xs'],
-      ['metadata.name', 'm'],
+      ['id', 'na'],
+      ['metadata.name', 'xs'],
       ['apiVersion', 'm'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
