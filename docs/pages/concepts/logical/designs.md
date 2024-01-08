@@ -14,7 +14,7 @@ Like a Google Doc, Designs are your primary tool for collaborative authorship of
 
 <!-- ### Using Designs -->
 
-A Design consists of [Components](../components) and/or ]Patterns](../patterns). A Design is the deployable unit in Meshery. Designs are how the users can describe the desired infrastructure state.
+A Design consists of [Components]({{site.baseurl}}/concepts/components) and/or [Patterns](../concepts/patterns). A Design is the deployable unit in Meshery. Designs are how the users can describe the desired infrastructure state.
 There cannot be two components with the same name within a Design. However, there can be two components with the same name in different Designs.
 
 ### Design Relationships and Restrictions
