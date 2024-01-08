@@ -988,7 +988,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		tmpDir, err := oci.CreateTempOCIContentDir()
 		if err != nil {
 			h.log.Error(ErrCreateDir(err, "OCI"))
-			http.Error(rw, ErrCreateDir(err, "OCI"))
+			http.Error(rw, ErrCreateDir(err, "OCI").Error(), http.StatusInternalServerError)
 			return
 		}
 		defer os.RemoveAll(tmpDir)
@@ -1028,7 +1028,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		h.log.Info("OCI Image successfully built. Digest: %v, Size: %v", digest, size)
+		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
 
 		err = oci.SaveOCIArtifact(ociImg, payload.Path, pattern.Name)
 		if err != nil {
