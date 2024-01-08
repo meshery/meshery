@@ -959,10 +959,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 
-	var payload struct {
-		Path string `json:"path"`
-	}
-
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
@@ -979,11 +975,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	if ociFormat {
-		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-			h.log.Error(ErrRequestBody(err))
-			http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-			return
-		}
+		path := r.URL.Query().Get("path")
 
 		tmpDir, err := oci.CreateTempOCIContentDir()
 		if err != nil {
@@ -1030,14 +1022,14 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
 
-		err = oci.SaveOCIArtifact(ociImg, payload.Path, pattern.Name)
+		err = oci.SaveOCIArtifact(ociImg, path, pattern.Name)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		
-		h.log.Info("OCI Artifact saved at: ", payload.Path)
+		h.log.Info("OCI Artifact successfully saved at: ", path)
 		return
 	}
 
