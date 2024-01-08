@@ -1,61 +1,54 @@
-- title: 🚀 Quick Start
-  url: installation/quick-start
-  links:
-    - title: Supported Platforms ↆ
-      url: installation
-      children:
-        - title: Docker ↆ
-          url: installation/docker
-          grandchildren:
-            - title: Docker Extension
-              url: installation/docker/docker-extension
-        - title: GitHub Codespaces
-          url: installation/codespaces
-        - title: Kubernetes ↆ
-          url: installation/kubernetes
-          grandchildren:
-            - title: "AKS"
-              url: installation/kubernetes/aks
-            - title: "EKS"
-              url: installation/kubernetes/eks
-            - title: "GKE"
-              url: installation/kubernetes/gke
-            - title: "Helm"
-              url: installation/kubernetes/helm
-            - title: "KinD"
-              url: installation/kubernetes/kind
-            - title: "Minikube"
-              url: installation/kubernetes/minikube
-        - title: KubeSphere
-          url: installation/kubesphere
-        - title: Linux or macOS ↆ
-          url: installation/linux-mac
-          grandchildren: 
-            - title: "Bash"
-              url: installation/linux-mac/bash
-            - title: "Brew"
-              url: installation/linux-mac/brew
-        - title: Windows ↆ
-          url: installation/windows 
-          grandchildren: 
-            - title: "Scoop"
-              url: installation/windows/scoop 
-    - title: Compatibility Matrix
-      url: installation/compatibility-matrix
 - title: 🗺 Overview
   url: project/overview
   links:
   - title: FAQ
     url: project/faq
+  - title: 🚀 Quick Start
+    url: installation/quick-start
+  - title: Installation ↆ
+    url: installation
+    children:
+      - title: Docker ↆ
+        url: installation/docker
+        grandchildren:
+          - title: Docker Extension
+            url: installation/docker/docker-extension
+      - title: GitHub Codespaces
+        url: installation/codespaces
+      - title: Kubernetes ↆ
+        url: installation/kubernetes
+        grandchildren:
+          - title: "AKS"
+            url: installation/kubernetes/aks
+          - title: "EKS"
+            url: installation/kubernetes/eks
+          - title: "GKE"
+            url: installation/kubernetes/gke
+          - title: "Helm"
+            url: installation/kubernetes/helm
+          - title: "KinD"
+            url: installation/kubernetes/kind
+          - title: "Minikube"
+            url: installation/kubernetes/minikube
+      - title: KubeSphere
+        url: installation/kubesphere
+      - title: Linux or macOS ↆ
+        url: installation/linux-mac
+        grandchildren: 
+          - title: "Bash"
+            url: installation/linux-mac/bash
+          - title: "Brew"
+            url: installation/linux-mac/brew
+      - title: Windows ↆ
+        url: installation/windows 
+        grandchildren: 
+          - title: "Scoop"
+            url: installation/windows/scoop 
 - title: 🧑‍💻 Contributing & Community
   url: project
   links:
     - title: Community
       url: project/community
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
-      url: project/security-vulnerabilities
     - title: Contributing ↆ
       url: project/contributing
       children:
@@ -259,4 +252,9 @@
       url: reference/mesheryctl
     - title: "Meshery Operator CRDs"
       url: reference/meshery-operator-crds
-
+    - title: Releases
+      url: project/releases
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
+    - title: Compatibility Matrix
+      url: installation/compatibility-matrix
