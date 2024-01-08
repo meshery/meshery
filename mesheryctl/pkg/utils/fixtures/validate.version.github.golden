@@ -4401,7 +4401,7 @@
       "sha": "fb28f52c10ea422fbab1bc90f92ff0fb47fd9431",
       "size": 997,
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/fb28f52c10ea422fbab1bc90f92ff0fb47fd9431"
-    }
+    },
     {
       "path": "docs/pages/guides",
       "mode": "040000",
