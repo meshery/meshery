@@ -28,7 +28,6 @@ var listComponentCmd = &cobra.Command{
 	Example: `
 	// View list of components
 mesheryctl exp components list
-
 // View list of components with specified page number (25 components per page)
 mesheryctl exp components list --page 2
 	`,
@@ -97,12 +96,12 @@ mesheryctl exp components list --page 2
 			return err
 		}
 
-		header := []string{"Kind", "APIVersion", "Model", "Schema"}
+		header := []string{"Kind", "APIVersion", "Model"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.TypeMeta.Kind, component.TypeMeta.APIVersion, component.Model.Name, component.Schema})
+				rows = append(rows, []string{component.Kind, component.APIVersion, component.Model.Name})
 			}
 		}
 
@@ -300,12 +299,12 @@ mesheryctl exp components search [query-text]
 			return err
 		}
 
-		header := []string{"Kind", "APIVersion", "Model", "Schema"}
+		header := []string{"Kind", "APIVersion", "Model"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.TypeMeta.Kind, component.TypeMeta.APIVersion, component.Model.Name, component.Schema})
+				rows = append(rows, []string{component.Kind, component.APIVersion, component.Model.Name})
 			}
 		}
 
@@ -328,7 +327,6 @@ var ComponentsCmd = &cobra.Command{
 	Example: `
 // To view list of components
 mesheryctl exp components list
-
 // To view a specific component
 mesheryctl exp components view [component-name]
 	`,
