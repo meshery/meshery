@@ -8,9 +8,9 @@
   p {
     font-size: 1.8rem;
   }
-  table {
-    font-size: 1.1rem !important;
-  }
+  // table {
+  //   font-size: 1.1rem !important;
+  // }
   .main-container #breadcrumbs {
     font-size: 1.6rem;
   }
@@ -28,7 +28,7 @@
     font-size: 2rem;
   }
   table {
-    font-size: 0.7rem !important;
+    font-size: 1.6rem !important;
   }
   .main-container #breadcrumbs {
     font-size: 2rem;
@@ -70,6 +70,4 @@
     font-size: 1.8rem;
   }
 }
-@media (max-width:400px) {
-  table { font-size: 0.4rem !important; }
-}  
+

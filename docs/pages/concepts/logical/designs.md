@@ -19,7 +19,7 @@ There cannot be two components with the same name within a Design. However, ther
 
 ### Design Relationships and Restrictions
 
-Designs belong to only one Workspace at any given time. Designs can be transferred between Workspaces.
+- Designs belong to only one Workspace at any given time. Designs can be transferred between Workspaces.
 - Designs can be shared with other users or teams.
 - Designs can be cloned or merged.
 - Designs can be exported or imported.

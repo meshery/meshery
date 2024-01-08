@@ -223,8 +223,11 @@
 - title: 🛠 Extensibility
   url: extensibility
   links:
-    - title: "Adapters"
+    - title: "Adapters ↆ"
       url: extensibility/adapters
+      children:
+        - title: Adapters Compatibility Matrix
+          url: installation/compatibility-matrix
     - title: "Load Generators"
       url: extensibility/load-generators
     - title: "Providers ↆ"
@@ -239,7 +242,7 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: Error Codes
+    - title: Error Code Reference
       url: reference/error-codes
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
@@ -248,7 +251,7 @@
         url: reference/graphql-apis
       - title: "REST API Reference"
         url: reference/rest-apis
-    - title: "Meshery CLI"
+    - title: "CLI Command Reference"
       url: reference/mesheryctl
     - title: "Meshery Operator CRDs"
       url: reference/meshery-operator-crds
@@ -256,5 +259,3 @@
       url: project/releases
     - title: Vulnerabilities
       url: project/security-vulnerabilities
-    - title: Compatibility Matrix
-      url: installation/compatibility-matrix
