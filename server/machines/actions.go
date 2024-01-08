@@ -65,6 +65,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	}
 
 	connection, err := provider.SaveConnection(&models.ConnectionPayload{
+		ID:           payload.ID,
 		Kind:         payload.Kind,
 		Type:         payload.Type,
 		SubType:      payload.SubType,
