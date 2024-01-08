@@ -175,8 +175,8 @@
       url: guides/events-management
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
-    - title: Pipelining service mesh specifications
-      url: guides/pipelining-service-mesh-specifications
+    - title: GitOps with Meshery
+      url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
@@ -226,7 +226,7 @@
     - title: "Adapters ↆ"
       url: extensibility/adapters
       children:
-        - title: Adapters Compatibility Matrix
+        - title: Compatibility Matrix
           url: installation/compatibility-matrix
     - title: "Load Generators"
       url: extensibility/load-generators
