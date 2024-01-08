@@ -214,7 +214,7 @@
       url: tasks/infrastructure-management
     - title: Filter Management
       url: tasks/filter-management
-    - title: Lifecycle Management
+    - title: Managing Connections
       url: tasks/lifecycle-management
     - title: Pattern Management
       url: tasks/pattern-management
