@@ -78,7 +78,7 @@ collections:
     permalink: /:collection/:path
   adapters:
     output: true
-    permalink: /service-meshes/:collection/:path
+    permalink: /extensibility/:collection/:path
     name: adapters
   compatibility:
     output: true

@@ -129,6 +129,10 @@
         list-style: none;
         padding: 1rem 0 0 0;
         margin: 0;
+        // & .grandchild.grandchild a {
+        //   font-weight: normal;
+        //   color: #dadddf;
+        // }
         &-title a {
           font-weight: bold;
           margin-bottom: .5rem;
@@ -168,10 +172,6 @@
           & a.active {
             text-decoration: none;
             color: var(--sidenav-hover);
-          }
-          & a.active {
-            text-decoration: none;
-            color: #008979;
           }
 
           &:hover {

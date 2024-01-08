@@ -300,6 +300,9 @@ const (
 	// UserCtxKey is the context key for persisting user to context
 	UserCtxKey ContextKey = "user"
 
+	// UserIDCtxKey is the context key for persisting userID to context
+	UserIDCtxKey ContextKey = "user_id"
+
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey ContextKey = "perf_obj"
 

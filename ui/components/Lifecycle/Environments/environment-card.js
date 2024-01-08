@@ -6,6 +6,8 @@ import { Delete, Edit } from '@material-ui/icons';
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import classNames from 'classnames';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -187,7 +189,7 @@ const EnvironmentCard = ({
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     ? true
-                    : false
+                    : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                 }
               >
                 <Edit style={{ color: 'white', margin: '0 2px' }} />
@@ -198,7 +200,7 @@ const EnvironmentCard = ({
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     ? true
-                    : false
+                    : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                 }
               >
                 <Delete style={{ color: 'white', margin: '0 2px' }} />

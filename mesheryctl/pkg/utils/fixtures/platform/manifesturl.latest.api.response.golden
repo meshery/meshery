@@ -5542,14 +5542,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/fb28f52c10ea422fbab1bc90f92ff0fb47fd9431"
 },
 {
-"path": "docs/pages/getting-started/overview.md",
-"mode": "100644",
-"type": "blob",
-"sha": "ce13567feb3947e1a5de6c0fb927f51000806092",
-"size": 5936,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/ce13567feb3947e1a5de6c0fb927f51000806092"
-},
-{
 "path": "docs/pages/guides",
 "mode": "040000",
 "type": "tree",

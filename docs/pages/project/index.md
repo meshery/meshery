@@ -39,3 +39,5 @@ list: exclude
     {% endif %}
   {% endfor %}
 </ul>
+
+{% include suggested-reading.html language="en" %}
