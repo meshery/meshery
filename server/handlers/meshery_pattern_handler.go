@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,6 +27,8 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
+	"github.com/layer5io/meshkit/models/oci"
+	"github.com/fluxcd/pkg/oci/client"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -954,21 +958,62 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
+
+	var payload struct {
+		Path string `json:"path"`
+	}
+
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
-
 	pattern := &models.MesheryPattern{}
-
 	err = json.Unmarshal(resp, &pattern)
 	if err != nil {
 		obj := "download pattern"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		http.Error(rw, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if ociFormat {
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			h.log.Error(ErrRequestBody(err))
+			http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+			return
+		}
+
+		tmpDir, err := oci.CreateOCIArtifactsDirectoryIfNotExists()
+		if err != nil {
+			h.log.Error(ErrCreateOCIArtifactsDirectory(err))
+			http.Error(rw, ErrCreateOCIArtifactsDirectory(err).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		tmpDesignFile := filepath.Join(tmpDir, pattern.Name+".yaml")
+		if err := ioutil.WriteFile(tmpDesignFile, []byte(pattern.PatternFile), 0644); err != nil {
+			h.log.Error(ErrCreateOCIArtifactsDirectory(err))
+			http.Error(rw, ErrCreateOCIArtifactsDirectory(err).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		opts := client.DefaultOptions()
+		ociImg, err := oci.BuildImage(tmpDir, opts)
+		if err != nil {
+			h.log.Error(ErrBuildOCIImage(err))
+			http.Error(rw, ErrBuildOCIImage(err).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = oci.SaveOCIArtifact(ociImg, payload.Path, pattern.Name)
+		if err != nil {
+			h.log.Error(ErrSaveOCIArtifact(err))
+			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
+			return
+		}		
 	}
 
 	rw.Header().Set("Content-Type", "Pattern/x-yaml")
@@ -1599,11 +1644,13 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	var mimeType string
 	sourcetype := mux.Vars(r)["sourcetype"]
 
-	if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
-		mimeType = "application/x-tar"
-	} else { // serve the content in yaml file
-		mimeType = "application/x-yaml"
+	switch models.DesignType(sourcetype) {
+		case models.HelmChart:
+			mimeType = "application/x-tar"
+		default : // docker-compose, k8smanifest
+			mimeType = "application/x-yaml"
 	}
+
 	reader := bytes.NewReader(resp)
 	rw.Header().Set("Content-Type", mimeType)
 	_, err = io.Copy(rw, reader)
