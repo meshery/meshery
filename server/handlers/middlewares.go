@@ -296,7 +296,6 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	ctxToDataHandlerMap := h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
-	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
@@ -333,16 +332,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
-		_, ok := ctxToDataHandlerMap[k8sContext.ID]
+		mdh, ok := ctxToDataHandlerMap[k8sContext.ID]
 		if ok {
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
-				mdh: models.MeshsyncDataHandler{
-					Provider:     provider,
-					UserID:       userUUID,
-					ConnectionID: uuid.FromStringOrNil(k8sContext.ConnectionID),
-					InstanceID:   *h.SystemID,
-					Token:        token,
-				},
+				mdh: mdh,
 				clusterID: k8sContext.KubernetesServerID.String(),
 			})
 			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
