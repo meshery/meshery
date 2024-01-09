@@ -15,8 +15,8 @@
     "metadata": {}
   },
   "subType": "Config",
-  "rego_query": "heirarchical_inventory_relationship",
-"selectors": {
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": {
     "allow": {
       "from": [
         {
@@ -24,7 +24,11 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatorRef": [["name"]],
+            "mutatorRef": [
+              [
+                "name"
+              ]
+            ],
             "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
           }
         }
@@ -35,7 +39,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
           }
         },
@@ -44,7 +57,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "StatefulSets can use ConfigMaps to provide configuration data to their pods in a similar way to Deployments.\n\nConfigMaps can be referenced in the Pod template specification of a StatefulSet to provide configuration data to each pod in a consistent manner."
           }
         },
@@ -53,7 +75,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "DaemonSets, which ensure that a copy of a pod runs on each node, can utilize ConfigMaps to supply configuration data to their pods.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the DaemonSet."
           }
         },
@@ -62,7 +93,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "When deploying applications using ReplicaSets, you may need to configure each replica with specific settings, such as environment variables or configuration files. ConfigMaps can be referenced in the Pod template specification of a ReplicaSet to provide configuration data to each replica pod.DaemonSets, which ensure that a copy of a pod runs on each node, can utilize ConfigMaps to supply configuration data to their pods.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the ReplicaSet."
           }
         },
@@ -71,7 +111,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the Pod."
           }
         },
@@ -80,7 +129,16 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "ConfigMaps can be referenced in the Pod template specification within the Job definition to inject configuration data into the pods.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the pod created by the Job."
           }
         },
@@ -89,7 +147,18 @@
           "model": "kubernetes",
           "patch": {
             "patchStrategy": "replace",
-            "mutatedRef": [["spec", "jobTemplate", "spec", "containers", "_", "envFrom", "configMapRef", "name"]],
+            "mutatedRef": [
+              [
+                "spec",
+                "jobTemplate",
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
             "description": "ConfigMaps can be referenced in the Pod template specification within the CronJob definition to inject configuration data into the pods.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the pod created by the CronJob."
           }
         }

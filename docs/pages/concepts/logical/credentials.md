@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Credentials
 permalink: concepts/credentials
 type: concepts
