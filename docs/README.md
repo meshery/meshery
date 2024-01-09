@@ -73,48 +73,84 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 **Information Architecture:**
 
-**1. Getting Started (Beginner & User Persona):**
+### Overview and Installation (User Persona)
 
+- **Getting Started:** Overview of Meshery, installation options, prerequisites, and setup instructions.
+- **Installation Guides:** Step-by-step instructions for installing Meshery on different platforms (local, cloud, minikube).
+- **Configuration Guides:** Configuring Meshery for different environments (local, cloud, minikube).
 - **Concepts:** Meshery basics (clusters, pods, deployments, services), terminology glossary.
-- **Tutorials:** Quick start guides for setting up different environments (local, cloud, minikube).
 - **Use Cases:** Demonstrations of common scenarios (web app deployment, data processing pipeline).
-- **Best Practices:** Recommendations for securing the cluster, monitoring performance, managing versions.
 
-**2. Concepts & Architecture (All Personas):**
+### Concepts (All Personas)
 
-- **Deep Dives:** Detailed explanations of core Meshery components (pods, deployments, networking, storage).
-- **Relationships:** Diagrams illustrating interaction between components, resource dependencies.
-- **Advanced Concepts:** StatefulSets, DaemonSets, Ingress controllers, Service Meshes.
+A concept page explains some aspect of Meshery. For example, a concept page might describe the Meshery Models object and explain the role it plays as an application once it is deployed, scaled, and updated. Typically, concept pages don't include sequences of steps, but instead provide links to tasks or tutorials.
+
+- **Architectural Concepts:** Meshery architecture, design, and implementation details. Diagrams illustrating interaction between components, resource dependencies.
+- **Logical Concepts:** Meshery components, resources, and relationships. Diagrams illustrating interaction between components, resource dependencies.
+<!-- - **Deep Dives:** Detailed explanations of core Meshery components. -->
+
+### Tasks & Operations (User Guide)
+
+A task page shows how to do a single thing, typically by giving a short sequence of steps. Task pages have minimal explanation, but often provide links to conceptual topics that provide related background and knowledge.
+
+- **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
+- **Configuration Management:** Designing your infrastructure, managing configuration files.
+- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
+  - Discovery (MeshSync)
+    - Greenfield
+    - Brownfield
+  - Managing Connections
+    - Registering, updating, and deleting connections.
+  - Managing Credentials
+    - Registering, updating, and deleting credentials.
+- **Performance Management:** Load testing, performance monitoring, resource usage analysis.
+<!-- - **Workflows:** Step-by-step procedures for common tasks (rolling updates, blue-green deployments). -->
+
+### Administrator's Guide (Expert & Operator Persona) (Advanced Topics)
+
+- **Multi-Meshery Management:** Federation, cluster federation, GitOps for configuration management.
+- **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
+- **GitOps** DevOps & CI/CD integration - Integrating Meshery with continuous integration and deployment pipelines.
+- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
+- **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
+- **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
 - **Troubleshooting Guides:** Identifying and resolving common errors, debugging techniques.
 
-**3. Tasks & Operations (Admin & User Persona):**
+### Integrations and Extensions (All Personas)
 
-- **Command References:** Detailed explanations and examples for kubectl commands, API resources.
-- **Management Guides:** Configuring resources (limits, requests, health checks), scaling applications.
-- **Workflows:** Step-by-step procedures for common tasks (rolling updates, blue-green deployments).
-- **Security Best Practices:** Authentication, authorization, secrets management, vulnerability scanning.
+- **Integrations:** Integrating Meshery with different infrastructure and systems.
+- **Extensibility:** Customizing Meshery with plugins, adapters, and extensions.
+- API Reference: Comprehensive reference for Meshery API objects and fields.
+  - **Extension Points** Meshery extension points for different capabilities.
+    - Providers, plugins, adapters, and modules.
+- **Extensions** Meshery adapters, plugins, and modules for different extionsion points.
+  - **Adapters** Integrating Meshery with different infrastructure and extended capabilities.
+  - **Plugins** Meshery plugins for different capabilities.
+  - **Remote Providers** Meshery remote providers for different capabilities.
+  - **Security and Identity:** Authentication, authorization, secrets management, vulnerability scanning.
 
-**4. Advanced Topics (Expert & Operator Persona):**
+### Tutorials (All Personas)
 
-- **Multi-Cluster Management:** Federation, cluster federation, GitOps for configuration management.
-- **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
-- **DevOps & CI/CD integration:** Integrating Meshery with continuous integration and deployment pipelines.
-- **Custom Resource Definitions:** Extending Meshery with custom APIs and controllers.
+A tutorial page shows how to accomplish a goal that is larger than a single task. Typically a tutorial page has several sections, each of which has a sequence of steps. For example, a tutorial might provide a walkthrough of a code sample that illustrates a certain feature of Kubernetes. Tutorials can include surface-level explanations, but should link to related concept topics for deep explanations.
 
-**5. Reference & Resources (All Personas):**
+- **Tutorials:** Dedicated walk-throughs with labs and step-by-step instructions using Meshery's features.
 
+### Reference & Resources (All Personas)
+
+A component tool reference page shows the description and flag options output for a Meshery component. For example, a component tool reference page might describe the Meshery CLI and explain the role it plays as an application once it is deployed, scaled, and updated. Typically, component tool reference pages don't include sequences of steps, but instead provide links to tasks or tutorials.
+
+- **Command References:** Detailed explanations and examples for mesheryctl commands, API resources.
 - **API Documentation:** Comprehensive reference for Meshery API objects and fields.
-- **Release Notes & Changelogs:** Detailed information about version changes, new features, deprecations.
+- **Custom Resource Definition Reference:** Comprehensive reference for Meshery CRDs.
+- **Release Notes:** Detailed information about version changes, new features, deprecations.
+- **Glossary:** Definitions of common terms, acronyms, and abbreviations.
+- **Vulnerability Reports:** Security advisories, CVEs, and vulnerability reports.
+
+### Contributing and Community (All Personas)
+
 - **External Resources:** Links to blogs, community forums, case studies, books, training materials.
 - **Contributing Guide:** How to contribute documentation, code, and other resources to the project.
-
-**Additional Considerations:**
-
-- **Versioning:** Separate documentation for different Meshery versions, clear versioning markings.
-- **Search & Navigation:** Robust search functionality, intuitive navigation structure, breadcrumbs.
-- **Feedback & Improvement:** Mechanisms for user feedback, reporting errors, suggesting improvements.
-- **Community Integration:** Highlight community forums, events, contributor guidelines, recognition.
-- **Personalization:** Allow users to personalize their documentation experience (filters, preferences).
+- **Community:** Highlight community forums, events, contributor guidelines, recognition.
+- **FAQ:** Answers to frequently asked questions.
 
 This high-level outline provides a comprehensive framework for structuring the Meshery documentation, catering to diverse user needs while ensuring information is readily accessible and actionable. By further refining each section with specific content recommendations and considering the needs of specific personas, the documentation can effectively serve as a valuable resource for everyone interacting with Meshery.
-
