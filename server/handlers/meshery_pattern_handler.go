@@ -19,6 +19,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
@@ -975,8 +976,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	if ociFormat {
-		path := r.URL.Query().Get("path")
-
 		tmpDir, err := oci.CreateTempOCIContentDir()
 		if err != nil {
 			h.log.Error(ErrCreateDir(err, "OCI"))
@@ -1022,14 +1021,33 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
 
-		err = oci.SaveOCIArtifact(ociImg, path, pattern.Name)
+		err = oci.SaveOCIArtifact(ociImg, tmpDir+pattern.Name+".tar", pattern.Name)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
 			return
 		}
+
+		tmpOCITarFile := filepath.Join(tmpDir, pattern.Name, ".tar")
+		file, err = os.OpenFile(tmpOCITarFile, os.O_RDONLY, 0444)
+				if err != nil {
+					h.log.Error(ErrCreateFile(err, tmpDesignFile)) // change to err read
+			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+			return
+				}
+				content, err := io.ReadAll(file)
+				if err != nil {
+					h.log.Error(ErrCreateFile(err, tmpDesignFile)) // change to err read
+			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+			return
+				}
 		
-		h.log.Info("OCI Artifact successfully saved at: ", path)
+		h.log.Info("OCI Artifact successfully saved at: ", tmpDir+pattern.Name+".tar")
+		reader := bytes.NewReader(content)
+		if _, err := io.Copy(rw, reader); err != nil {
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 		return
 	}
 
