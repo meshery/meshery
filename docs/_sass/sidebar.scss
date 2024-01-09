@@ -249,6 +249,7 @@
 
 .toggle {
   padding: 1px;
+  display: inline;
   &:hover {
     cursor: pointer;
     color: var(--brand-color);
