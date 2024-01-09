@@ -127,7 +127,7 @@ const (
 	ErrWritingIntoFileCode        = "1556"
 	ErrBuildOCIImgCode            = "1557"
 	ErrSaveOCIArtifactCode        = "1558"
-	ErrIOReaderCode        = "1559"
+	ErrIOReaderCode               = "1559"
 )
 
 var (

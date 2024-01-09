@@ -992,14 +992,14 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 		defer file.Close()
 
-	  patternReader := strings.NewReader(pattern.PatternFile)
+		patternReader := strings.NewReader(pattern.PatternFile)
 		ymlDesign, err := io.ReadAll(patternReader)
 		if err != nil {
 			h.log.Error(ErrIOReader(err))
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			return
 		}
-	
+
 		if _, err := file.Write(ymlDesign); err != nil {
 			h.log.Error(ErrWritingIntoFile(err, tmpDesignFile))
 			http.Error(rw, ErrWritingIntoFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
@@ -1028,7 +1028,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
-		
+
 		tmpOCITarFilePath := filepath.Join(tmpDir, pattern.Name+".tar")
 		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pattern.Name)
 		if err != nil {
@@ -1038,18 +1038,18 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
-				if err != nil {
-				h.log.Error(ErrOpenFile(tmpOCITarFilePath))
+		if err != nil {
+			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
 			http.Error(rw, ErrOpenFile(tmpOCITarFilePath).Error(), http.StatusInternalServerError)
 			return
-				}
-				content, err := io.ReadAll(file)
-				if err != nil {
-					h.log.Error(ErrIOReader(err))
+		}
+		content, err := io.ReadAll(file)
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			return
-				}
-		
+		}
+
 		h.log.Info("OCI Artifact successfully saved at: ", tmpOCITarFilePath)
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
