@@ -1392,7 +1392,7 @@ const ImportModal = React.memo((props) => {
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"
-      submitBtnText="IMPORT"
+      submitBtnText="Import"
       leftHeaderIcon={
         <Filter
           fill="#fff"
@@ -1421,7 +1421,7 @@ const PublishModal = React.memo((props) => {
         text: 'Upon submitting your catalog item, an approval flow will be initiated.',
         link: 'https://docs.meshery.io/concepts/catalog',
       }}
-      submitBtnText="SUBMIT FOR APPROVAL"
+      submitBtnText="Submit for Approval"
       submitBtnIcon={<PublicIcon />}
     />
   );
@@ -1433,7 +1433,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  return { 
+  return {
     user: state.get('user')?.toObject(),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     catalogVisibility: state.get('catalogVisibility'),
