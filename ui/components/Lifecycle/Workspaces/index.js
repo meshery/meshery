@@ -239,12 +239,12 @@ const Workspaces = ({ organization, classes }) => {
     handleWorkspaceModalClose();
   };
 
-  const handleDeleteWorkspace = (id) => {
+  const handleDeleteWorkspace = (id, name) => {
     deleteWorkspace({
       workspaceId: id,
     })
       .unwrap()
-      .then(() => handleSuccess(`Workspace deleted`))
+      .then(() => handleSuccess(`Workspace "${name}" deleted`))
       .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
   };
 
@@ -373,7 +373,10 @@ const Workspaces = ({ organization, classes }) => {
 
   const handleBulkDeleteWorkspace = () => {
     selectedWorkspaces.map((workspaceId) => {
-      handleDeleteWorkspace(workspaceId);
+      handleDeleteWorkspace(
+        workspaceId,
+        workspaces.find((workspace) => workspace.name === name),
+      );
     });
     setSelectedWorkspaces([]);
     handleDeleteWorkspacesModalClose();
@@ -406,7 +409,7 @@ const Workspaces = ({ organization, classes }) => {
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
-      handleDeleteWorkspace(workspace.id);
+      handleDeleteWorkspace(workspace.id, workspace.name);
     }
   };
 
