@@ -194,9 +194,11 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
-- title: 🛠 Extensibility
+- title: 🛠 Integrations and Extensions
   url: extensibility
   links:
+    - title: "APIs"
+      url: extensibility/api
     - title: "Adapters ↆ"
       url: extensibility/adapters
       children:
@@ -226,23 +228,30 @@
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
           url: extensibility/adapters/traefik-mesh
-    - title: 🦾 Extensions
-      url: extensions
-      children:
-        - title: MeshMap
-          url: extensions/meshmap
+    - title: "Integrations ↆ"
+      url: extensibility/integrations
     - title: "Load Generators"
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
+    - title: "UI Plugins ↆ"
+      url: extensibility/ui      
+    - title: "🦾 Extensions ↆ"
+      url: extensions
+      children:
+        - title: "Plugin: MeshMap"
+          url: extensions/meshmap
+          grandchildren:
+          - title: "Sharing a Design"
+            url: extensions/sharing-a-design
+        - title: "GitOps: Snapshots"
+          url: extensions/snapshot
+        - title: "Provider: Layer5 Cloud"
+          url: extensions/layer5-cloud
       # children:
       # - title: Building a Remote Provider
       #   url: extensibility/providers/building-a-remote-provider
-    - title: "UI Plugins ↆ"
-      url: extensibility/ui
 
-    - title: "REST & GraphQL APIs"
-      url: extensibility/api
 - title: 📖 Reference
   url: reference
   links:
