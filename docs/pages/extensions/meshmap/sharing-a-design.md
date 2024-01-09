@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Sharing a Design
 permalink: extensions/sharing-a-design
 language: en

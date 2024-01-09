@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Publishing a Design
 permalink: extensions/publishing-a-design
 language: en

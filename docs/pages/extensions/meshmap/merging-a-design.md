@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Merging Designs
 permalink: extensions/merging-design
 language: en

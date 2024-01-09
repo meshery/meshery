@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Importing a Design
 permalink: extensions/importing-a-design
 language: en

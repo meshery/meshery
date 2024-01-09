@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Configuring your Cloud Native Infrastructure and Applications with Meshery
 abstract: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management
