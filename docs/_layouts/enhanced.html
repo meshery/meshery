@@ -54,7 +54,11 @@
             </div>
             {% endfor %}
           </div>
-          {% endif %}  {% include suggested-reading.html language="en" %} {% include feedback.html %}
+          {% endif %}  
+          
+          {% include suggested-reading.html language="en" %} 
+          
+          {% include feedback.html %}
         </div>
       </main>
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
