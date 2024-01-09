@@ -165,7 +165,7 @@ function ConnectionManagementPage(props) {
           handleClose={handleCreateConnectionModalClose}
           handleSubmit={handleCreateConnectionSubmit}
           title="Connect Helm Repository"
-          submitBtnText="Connect"
+          submitBtnText="CONNECT"
         />
       )}
     </>

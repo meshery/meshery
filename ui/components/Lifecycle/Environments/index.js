@@ -585,7 +585,7 @@ const Environments = ({ organization, classes }) => {
                     actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
                   }
                   submitBtnText={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                    actionType === ACTION_TYPES.CREATE ? 'CREATE ENVIRONMENT' : 'EDIT ENVIRONMENT'
                   }
                   initialData={initialData}
                 />

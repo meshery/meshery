@@ -467,7 +467,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         schemaChangeHandler={schemaChangeHandler}
         handleSubmit={handleSubmit}
         payload={{ type: credModal.actionType, id: credModal.id }}
-        submitBtnText="Save"
+        submitBtnText="SAVE"
       />
     </div>
   );

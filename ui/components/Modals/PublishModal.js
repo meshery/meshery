@@ -48,7 +48,7 @@ export default function PublishModal(props) {
       title={title}
       handleClose={handleClose}
       handleSubmit={handleSubmit}
-      submitBtnText="Submit for Approval"
+      submitBtnText="SUBMIT FOR APPROVAL"
       submitBtnIcon={<PublicIcon data-cy="import-button" />}
       showInfoIcon={{
         text: 'Upon submitting your catalog item, an approval flow will be initiated.',

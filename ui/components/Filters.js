@@ -1392,7 +1392,7 @@ const ImportModal = React.memo((props) => {
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"
-      submitBtnText="Import"
+      submitBtnText="IMPORT"
       leftHeaderIcon={
         <Filter
           fill="#fff"
@@ -1421,7 +1421,7 @@ const PublishModal = React.memo((props) => {
         text: 'Upon submitting your catalog item, an approval flow will be initiated.',
         link: 'https://docs.meshery.io/concepts/catalog',
       }}
-      submitBtnText="Submit for Approval"
+      submitBtnText="SUBMIT FOR APPROVAL"
       submitBtnIcon={<PublicIcon />}
     />
   );

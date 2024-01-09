@@ -264,7 +264,7 @@ function FiltersGrid({
             text: 'Upon submitting your catalog item, an approval flow will be initiated.',
             link: 'https://docs.meshery.io/concepts/catalog',
           }}
-          submitBtnText="Submit for Approval"
+          submitBtnText="SUBMIT FOR APPROVAL"
           submitBtnIcon={<PublicIcon />}
         />
       )}
