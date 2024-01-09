@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Overview
 permalink: /getting-started/overview
 language: en

@@ -88,8 +88,11 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 					}
 					var capabilities map[string]interface{}
 					err = utils.Unmarshal(connCapabilities, &capabilities)
+					if err != nil {
+						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Kind)))
+						continue
+					}
 					autoRegister, ok := capabilities["autoRegister"].(bool)
-					fmt.Println("TEST capabilities: ", autoRegister)
 					if ok && autoRegister {
 						urls, err := utils.Cast[[]interface{}](compCapabilites["urls"])
 						if err != nil {

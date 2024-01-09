@@ -9,6 +9,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const NetWorkTableConfig = (
   switchView,
@@ -38,6 +39,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -157,7 +159,7 @@ export const NetWorkTableConfig = (
                     {ports?.slice(0, 1).map((p, i) => (
                       <div key={i}>
                         {`${p.port}/${p.targetPort}:${p.protocol}`}
-                        {i < 1 && ','}
+                        {ports.length > 1 && i === 0 && ','}
                       </div>
                     ))}
                     {showViewAll && (
@@ -276,6 +278,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -411,6 +414,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -574,6 +578,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -726,6 +731,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
