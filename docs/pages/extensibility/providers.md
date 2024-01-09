@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: "Extensibility: Providers"
 permalink: extensibility/providers
 type: Extensibility

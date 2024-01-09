@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: MeshMap
 permalink: extensions/meshmap
 abstract: Collaborative cloud native visual designer to design and manage infrastructure and applications.

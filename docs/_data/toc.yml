@@ -118,8 +118,6 @@
             url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
-    - title: Integrations
-      url: concepts/integrations
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -190,6 +188,9 @@
       url: tasks/filter-management
     - title: Managing Connections
       url: tasks/lifecycle-management
+      children:
+      - title: Registering a Connection
+        url: guides/registering-a-connection
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management

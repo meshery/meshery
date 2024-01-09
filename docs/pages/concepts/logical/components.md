@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Components
 permalink: concepts/components
 type: concepts

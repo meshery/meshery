@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Importing existing applications
 permalink: extensions/importing-an-application
 language: en
