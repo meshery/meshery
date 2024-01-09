@@ -1433,7 +1433,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  return {
+  return { 
     user: state.get('user')?.toObject(),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     catalogVisibility: state.get('catalogVisibility'),
