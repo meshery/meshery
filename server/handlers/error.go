@@ -127,6 +127,7 @@ const (
 	ErrWritingIntoFileCode        = "1556"
 	ErrBuildOCIImgCode            = "1557"
 	ErrSaveOCIArtifactCode        = "1558"
+	ErrIOReaderCode        = "1559"
 )
 
 var (
@@ -555,4 +556,8 @@ func ErrBuildOCIImg(err error) error {
 
 func ErrSaveOCIArtifact(err error) error {
 	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
+}
+
+func ErrIOReader(err error) error {
+	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
 }
