@@ -19,7 +19,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
@@ -992,7 +991,16 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 		defer file.Close()
-		if _, err := file.Write(resp); err != nil {
+
+	  patternReader := strings.NewReader(pattern.PatternFile)
+		ymlDesign, err := io.ReadAll(patternReader)
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	
+		if _, err := file.Write(ymlDesign); err != nil {
 			h.log.Error(ErrWritingIntoFile(err, tmpDesignFile))
 			http.Error(rw, ErrWritingIntoFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
 			return
@@ -1020,34 +1028,34 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
-
-		err = oci.SaveOCIArtifact(ociImg, tmpDir+pattern.Name+".tar", pattern.Name)
+		
+		tmpOCITarFilePath := filepath.Join(tmpDir, pattern.Name+".tar")
+		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pattern.Name)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		tmpOCITarFile := filepath.Join(tmpDir, pattern.Name, ".tar")
-		file, err = os.OpenFile(tmpOCITarFile, os.O_RDONLY, 0444)
+		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
 				if err != nil {
-					h.log.Error(ErrCreateFile(err, tmpDesignFile)) // change to err read
-			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+				h.log.Error(ErrOpenFile(tmpOCITarFilePath))
+			http.Error(rw, ErrOpenFile(tmpOCITarFilePath).Error(), http.StatusInternalServerError)
 			return
 				}
 				content, err := io.ReadAll(file)
 				if err != nil {
-					h.log.Error(ErrCreateFile(err, tmpDesignFile)) // change to err read
-			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+					h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			return
 				}
 		
-		h.log.Info("OCI Artifact successfully saved at: ", tmpDir+pattern.Name+".tar")
+		h.log.Info("OCI Artifact successfully saved at: ", tmpOCITarFilePath)
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
+			return
+		}
 		return
 	}
 
