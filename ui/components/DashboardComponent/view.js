@@ -254,7 +254,9 @@ export const Title = ({ onClick, data, value }) => {
       onMouseLeave={() => setHovered(false)}
     >
       <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
-        <GetNodeIcon metadata={JsonParse(data)} />
+        <div>
+          <GetNodeIcon metadata={JsonParse(data)} />
+        </div>
         <Typography style={{ marginLeft: '0.25rem' }} variant="body2">
           {value}
         </Typography>
