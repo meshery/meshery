@@ -362,8 +362,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         permission: {
           action: keys.VIEW_CONNECTIONS.action,
-          subject: keys.VIEW_CONNECTIONS.subject
-        }
+          subject: keys.VIEW_CONNECTIONS.subject,
+        },
       },
       {
         id: ENVIRONMENT,
@@ -373,8 +373,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         permission: {
           action: keys.VIEW_ENVIRONMENTS.action,
-          subject: keys.VIEW_ENVIRONMENTS.subject
-        }
+          subject: keys.VIEW_ENVIRONMENTS.subject,
+        },
       },
       {
         id: WORKSPACE,
@@ -384,8 +384,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         permission: {
           action: keys.VIEW_WORKSPACE.action,
-          subject: keys.VIEW_WORKSPACE.subject
-        }
+          subject: keys.VIEW_WORKSPACE.subject,
+        },
       },
       {
         id: SERVICE_MESH,
@@ -396,8 +396,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: true,
         permission: {
           action: keys.VIEW_SERVICE_MESH.action,
-          subject: keys.VIEW_SERVICE_MESH.subject
-        }
+          subject: keys.VIEW_SERVICE_MESH.subject,
+        },
       },
     ],
   },
@@ -421,8 +421,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         isBeta: true,
         permission: {
           action: keys.VIEW_FILTERS.action,
-          subject: keys.VIEW_FILTERS.subject
-        }
+          subject: keys.VIEW_FILTERS.subject,
+        },
       },
       {
         id: DESIGN,
@@ -434,8 +434,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         isBeta: true,
         permission: {
           action: keys.VIEW_DESIGNS.action,
-          subject: keys.VIEW_DESIGNS.subject
-        }
+          subject: keys.VIEW_DESIGNS.subject,
+        },
       },
     ],
   },
@@ -458,8 +458,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         permission: {
           action: keys.VIEW_PERFORMANCE_PROFILES.action,
-          subject: keys.VIEW_PERFORMANCE_PROFILES.subject
-        }
+          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
+        },
       },
     ],
   },
@@ -475,8 +475,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     submenu: false,
     permission: {
       action: keys.VIEW_EXTENSIONS.action,
-      subject: keys.VIEW_EXTENSIONS.subject
-    }
+      subject: keys.VIEW_EXTENSIONS.subject,
+    },
   },
 ];
 
@@ -907,7 +907,7 @@ class Navigator extends React.Component {
               show: showc,
               link: linkc,
               children: childrenc,
-              permission: permissionc
+              permission: permissionc,
             }) => {
               if (typeof showc !== 'undefined' && !showc) {
                 return '';
@@ -1426,7 +1426,7 @@ const mapStateToProps = (state) => {
     isDrawerCollapsed,
     capabilitiesRegistry,
     organization,
-    keys
+    keys,
   };
 };
 
