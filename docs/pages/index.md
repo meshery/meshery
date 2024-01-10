@@ -30,7 +30,7 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/installation/" class="text-black">installation</a>
+          <a href="{{ site.baseurl }}/installation/" class="text-black">Installation</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -127,7 +127,9 @@ language: en
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
     <ul>
-      {% for item in sorted_pages %}
+      {% assign sorted_items = sorted_pages | category: "name" | alphabetical %}
+      {{ sorted_items | jsonify }}
+      {% for item in sorted_items %}
       {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
