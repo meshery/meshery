@@ -73,7 +73,7 @@ const initialState = fromJS({
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
-  keys: null
+  keys: null,
 });
 
 export const actionTypes = {
@@ -204,12 +204,14 @@ export const reducer = (state = initialState, action) => {
       return state.merge({ connectionMetadataState: action.connectionMetadataState });
 
     case actionTypes.SET_KEYS:
-      return state.merge({keys: action.keys });
+      const updatedKeyState = state.merge({ keys: action.keys });
+      sessionStorage.setItem('keys', JSON.stringify(action.keys));
+      return updatedKeyState;
 
     case actionTypes.SET_ORGANIZATION:
-      const updatedState = state.mergeDeep({ organization: action.organization });
-      sessionStorage.setItem('currentOrgId', action.organization.id);
-      return updatedState;
+      const updatedOrgState = state.mergeDeep({ organization: action.organization });
+      sessionStorage.setItem('currentOrg', JSON.stringify(action.organization));
+      return updatedOrgState;
 
     default:
       return state;
