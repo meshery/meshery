@@ -1,8 +1,9 @@
-// import dataFetch from "lib/data-fetch";
+export default function downloadFile(props) {
+  const { id, type, name, oci } = props;
+  let dataUri = '';
 
-export default function downloadFile({ id, type, name, oci }) {
   if (type === 'pattern') {
-    oci ? `/api/pattern/download/${id}?oci=true` : dataUri = `/api/pattern/download/${id}`;
+    dataUri = oci ? `/api/pattern/download/${id}?oci=true` : `/api/pattern/download/${id}`;
   }
 
   if (type === 'filter') {
