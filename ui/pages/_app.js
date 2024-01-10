@@ -365,14 +365,13 @@ class MesheryApp extends App {
   loadOrg = async () => {
     const currentOrg = sessionStorage.getItem('currentOrg');
     let reFetchKeys = false;
-  
+
     if (currentOrg && currentOrg !== 'undefined') {
-      console.log("not me")
-      let org = JSON.parse(currentOrg)
+      let org = JSON.parse(currentOrg);
       await this.loadAbility(org.id, reFetchKeys);
-      this.setOrganization(org)
+      this.setOrganization(org);
     }
-  
+
     dataFetch(
       '/api/identity/orgs',
       {
@@ -381,33 +380,33 @@ class MesheryApp extends App {
       },
       async (result) => {
         let organizationToSet;
-  
+
         if (currentOrg) {
           const indx = result.organizations.findIndex((org) => org.id === currentOrg.id);
           if (indx === -1) {
-            organizationToSet = result.organizations[0]
-            reFetchKeys = true
+            organizationToSet = result.organizations[0];
+            reFetchKeys = true;
             await this.loadAbility(organizationToSet.id, reFetchKeys);
           }
         } else {
-          organizationToSet = result.organizations[0]
-          reFetchKeys = true
-          await this.loadAbility(organizationToSet.id, reFetchKeys); 
+          organizationToSet = result.organizations[0];
+          reFetchKeys = true;
+          await this.loadAbility(organizationToSet.id, reFetchKeys);
         }
-        this.setOrganization(organizationToSet)
+        this.setOrganization(organizationToSet);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
   };
 
   setOrganization = (org) => {
-    const { store } = this.props
+    const { store } = this.props;
     store.dispatch({
       type: actionTypes.SET_ORGANIZATION,
       organization: org,
     });
-  }
-  
+  };
+
   loadAbility = async (orgID, reFetchKeys) => {
     const storedKeys = sessionStorage.getItem('keys');
     const { store } = this.props;
@@ -427,7 +426,7 @@ class MesheryApp extends App {
                 type: actionTypes.SET_KEYS,
                 keys: result.keys,
               });
-              this.updateAbility()
+              this.updateAbility();
             });
           }
         },
