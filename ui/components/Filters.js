@@ -29,7 +29,6 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
-import CatalogFilter from './CatalogFilter';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -107,7 +106,7 @@ const styles = (theme) => ({
   },
   btnText: {
     display: 'block',
-    '@media (max-width: 1450px)': {
+    '@media (max-width: 700px)': {
       display: 'none',
     },
   },
@@ -234,7 +233,7 @@ function MesheryFilters({
   classes,
   selectedK8sContexts,
   catalogVisibility,
-  toggleCatalogContent,
+  // toggleCatalogContent,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -245,7 +244,7 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [extensionPreferences, setExtensionPreferences] = useState({});
+  const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
@@ -473,26 +472,26 @@ function MesheryFilters({
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
 
-  const handleCatalogPreference = (catalogPref) => {
-    let body = Object.assign({}, extensionPreferences);
-    body['catalogContent'] = catalogPref;
+  // const handleCatalogPreference = (catalogPref) => {
+  //   let body = Object.assign({}, extensionPreferences);
+  //   body['catalogContent'] = catalogPref;
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
-        notify({
-          message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      (err) => console.error(err),
-    );
-  };
+  //   dataFetch(
+  //     '/api/user/prefs',
+  //     {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       body: JSON.stringify({ usersExtensionPreferences: body }),
+  //     },
+  //     () => {
+  //       notify({
+  //         message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     },
+  //     (err) => console.error(err),
+  //   );
+  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -510,11 +509,11 @@ function MesheryFilters({
     );
   };
 
-  const handleCatalogVisibility = () => {
-    handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility;
-    toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  };
+  // const handleCatalogVisibility = () => {
+  //   handleCatalogPreference(!catalogVisibilityRef.current);
+  //   catalogVisibilityRef.current = !catalogVisibility;
+  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
+  // };
 
   useEffect(() => {
     fetchUserPrefs();
@@ -1236,11 +1235,17 @@ function MesheryFilters({
   const filter = {
     visibility: {
       name: 'visibility',
-      options: [
-        { value: 'public', label: 'Public' },
-        { value: 'private', label: 'Private' },
-        { value: 'published', label: 'Published' },
-      ],
+      //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
+      options: catalogVisibility
+        ? [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+            { label: 'Published', value: 'published' },
+          ]
+        : [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+          ],
     },
   };
 
@@ -1292,11 +1297,11 @@ function MesheryFilters({
                     </div>
                   )}
                   <div style={{ jdisplay: 'flex' }}>
-                    <CatalogFilter
+                    {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    />
+                    /> */}
                   </div>
                 </div>
               )}
