@@ -6,8 +6,6 @@ import {
   DialogContent,
   Button,
   Box,
-  // CircularProgress,
-  // Tooltip,
 } from '@material-ui/core';
 import React from 'react';
 import PatternIcon from '@/assets/icons/Pattern';
@@ -15,14 +13,51 @@ import { CloseIcon } from '@layer5/sistent-svg';
 import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
-// import { useNotification } from '@/utils/hooks/useNotification';
-// import HelpOutlineIcon from '@/assets/icons/HelpOutlineIcon';
-// import { iconSmall } from '@/utils/icon';
-// import theme from '@/themes/app';
+import { withStyles } from '@material-ui/core/styles';
 
-export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDesignDownload }) => {
-  // const { notify } = useNotification();
+const styles = (theme) => ({
+  dialogTitle: {
+    backgroundColor: theme.palette.secondary.mainBackground,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: '12px 20px',
+    gap: '146px',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    textOverflow: 'ellipsis',
+    '& h2': {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+  },
+  text: {
+    fontFamily: 'Qanelas Soft, sans-serif',
+    '&.MuiTypography-root': {
+      fontFamily: 'Qanelas Soft, sans-serif',
+    },
+  },
+  textHeader: {
+    fontFamily: 'Qanelas Soft, sans-serif',
+    textAlign: 'center',
+  },
+  closing: {
+    transform: 'rotate(-90deg)',
+    '&:hover': {
+      transform: 'rotate(90deg)',
+      transition: 'all .3s ease-in',
+      cursor: 'pointer',
+    },
+  },
+});
 
+const ExportModal = ({
+  downloadModal,
+  handleDownloadDialogClose,
+  handleDesignDownload,
+  classes,
+}) => {
   const handleClose = () => {
     handleDownloadDialogClose();
   };
@@ -51,13 +86,10 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
       <DialogTitle
         textAlign="center"
         id="download-design-dialog-title"
-        // className={dialogClasses.dialogTitle}
+        className={classes.dialogTitle}
       >
         <PatternIcon width={30} height={30} style={{ filter: 'none', opacity: 1 }} fill="#FFF" />
-        <Typography
-          // className={dialogClasses.textHeader}
-          variant="h6"
-        >
+        <Typography className={classes.textHeader} variant="h6">
           Export Design
         </Typography>
         <IconButton
@@ -68,10 +100,7 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
             color: '#FFFFFF',
           }}
         >
-          <CloseIcon
-            // className={dialogClasses.closing}
-            fill={'#FFF'}
-          />
+          <CloseIcon className={classes.closing} fill={'#FFF'} />
         </IconButton>
       </DialogTitle>
       <DialogContent
@@ -100,7 +129,7 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
               <Typography
                 component={'h4'}
                 style={{ paddingBottom: '1.5rem' }}
-                // className={dialogClasses.text}
+                className={classes.text}
               >
                 Original ({downloadModal?.content?.type?.String})
               </Typography>
@@ -117,14 +146,8 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
               </div>
             </div>
           )}
-          <div
-          // className={classes.exportBtns}
-          >
-            <Typography
-              component="p"
-              style={{ paddingBottom: '1.5rem' }}
-              // className={dialogClasses.text}
-            >
+          <div>
+            <Typography component="p" style={{ paddingBottom: '1.5rem' }} className={classes.text}>
               Current
             </Typography>
             <div style={exportBtnStyles}>
@@ -139,13 +162,8 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
               </Button>
             </div>
           </div>
-          <div
-          // className={classes.exportBtns}
-          >
-            <Typography
-              style={{ paddingBottom: '1.5rem' }}
-              // className={dialogClasses.text}
-            >
+          <div>
+            <Typography style={{ paddingBottom: '1.5rem' }} className={classes.text}>
               OCI
             </Typography>
 
@@ -166,3 +184,5 @@ export const ExportModal = ({ downloadModal, handleDownloadDialogClose, handleDe
     </Dialog>
   );
 };
+
+export default withStyles(styles)(ExportModal);
