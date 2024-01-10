@@ -156,12 +156,12 @@ export function updateURLs(urlsSet, newUrls, eventType) {
  * @param {string} file
  * @returns
  */
-export function getDecodedFile(file) {
+export function getDecodedFile(dataUrl) {
   // Extract base64-encoded content
-  var encodedContent = file.split(';base64,')[1];
+  const [, base64Content] = dataUrl.split(';base64,');
 
   // Decode base64 content
-  return atob(encodedContent);
+  return atob(base64Content);
 }
 
 /**

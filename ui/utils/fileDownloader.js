@@ -1,15 +1,8 @@
-export default function downloadFile({ id, type, name, source_type }) {
-  let dataStr = JSON.stringify(id);
-  let dataUri = '';
+// import dataFetch from "lib/data-fetch";
 
-  if (source_type) {
-    dataUri = `/api/application/download/${id}/${source_type}` + encodeURIComponent(dataStr);
-  } else {
-    dataUri = `/api/application/download/${id}`;
-  }
-
+export default function downloadFile({ id, type, name, oci }) {
   if (type === 'pattern') {
-    dataUri = `/api/pattern/download/${id}`;
+    oci ? `/api/pattern/download/${id}?oci=true` : dataUri = `/api/pattern/download/${id}`;
   }
 
   if (type === 'filter') {
