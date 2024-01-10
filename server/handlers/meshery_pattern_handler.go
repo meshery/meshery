@@ -351,8 +351,8 @@ func (h *Handler) handlePatternPOST(
 			} else {
 				h.log.Info("OCI Artifact decompressed successfully")
 				mesheryPattern = decompressedDesign
-				mesheryPattern.Type = parsedBody.PatternData.Type
 			}
+			mesheryPattern.Type = parsedBody.PatternData.Type
 			// Check if the pattern is valid
 			err = pCore.IsValidPattern(mesheryPattern.PatternFile)
 			if err != nil {
@@ -1116,8 +1116,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
 
-		tmpOCITarFilePath := filepath.Join(tmpDir, pattern.Name+".tar")
-		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pattern.Name)
+		pretifiedName := strings.ToLower(strings.Replace(pattern.Name, " ", "", -1)) // ensures that tag validation passes
+		tmpOCITarFilePath := filepath.Join(tmpDir, pretifiedName+".tar")
+		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pretifiedName)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
