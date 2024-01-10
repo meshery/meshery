@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Concepts
 permalink: concepts/logical
 language: en

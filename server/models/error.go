@@ -104,7 +104,7 @@ const (
 	ErrPersistConnectionCode              = "1548"
 	ErrPrometheusScanCode                 = "1549"
 	ErrGrafanaScanCode                    = "1550"
-	ErrDBCreateCode                       = "replace_me"
+	ErrDBCreateCode                       = "1557"
 )
 
 var (

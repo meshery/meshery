@@ -15,7 +15,7 @@
     "metadata": {}
   },
   "subType": "Firewall",
-  "rego_query": "edge_binding_relationship",
+  "evaluationQuery": "edge_binding_relationship",
   "selectors": {
     "allow": {
       "from": [
