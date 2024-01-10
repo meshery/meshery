@@ -128,6 +128,8 @@ const (
 	ErrBuildOCIImgCode            = "1557"
 	ErrSaveOCIArtifactCode        = "1558"
 	ErrIOReaderCode               = "1559"
+	ErrUnCompressOCIArtifactCode 			= "1560"
+	ErrWaklingLocalDirectoryCode 			= "1561"
 )
 
 var (
@@ -560,4 +562,12 @@ func ErrSaveOCIArtifact(err error) error {
 
 func ErrIOReader(err error) error {
 	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
+}
+
+func ErrUnCompressOCIArtifact(err error) error {
+	return errors.New(ErrUnCompressOCIArtifactCode, errors.Alert, []string{"Failed to uncompress OCI artifact"}, []string{err.Error()}, []string{"unable to uncompress OCI artifact", "OCI artifact may be corrupted"}, []string{"check if the OCI artifact is valid and not corrupted"})
+}
+
+func ErrWaklingLocalDirectory(err error) error {
+	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
 }
