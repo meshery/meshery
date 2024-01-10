@@ -63,6 +63,7 @@ import { SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
+import UniversalFilter from '../utils/custom-filter';
 
 const styles = (theme) => ({
   grid: {
@@ -465,8 +466,8 @@ function MesheryFilters({
   };
 
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
@@ -551,13 +552,19 @@ function MesheryFilters({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-  function fetchFilters(page, pageSize, search, sortOrder) {
+
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
+  function fetchFilters(page, pageSize, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const query =
+      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+      (visibilityFilter
+        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
+        : '');
 
     updateProgress({ showProgress: true });
 
@@ -568,10 +575,17 @@ function MesheryFilters({
         console.log('FilterFile API', `/api/filter${query}`);
         updateProgress({ showProgress: false });
         if (result) {
-          handleSetFilters(result.filters || []);
+          const filteredFilters = result.filters.filter((content) => {
+            if (visibilityFilter === null || content.visibility === visibilityFilter) {
+              return true;
+            }
+            return false;
+          });
+          handleSetFilters(filteredFilters);
           // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
+          setVisibilityFilter(visibilityFilter);
         }
       },
       // handleError
@@ -917,14 +931,15 @@ function MesheryFilters({
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          const visibility = filters[tableMeta.rowIndex]?.visibility;
-          return (
-            <>
-              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-            </>
-          );
-        },
+        //   customBodyRender: function CustomBody(_, tableMeta, value) {
+        //     const visibility = filters[tableMeta.rowIndex]?.visibility;
+        //     return (
+        //       // <>
+        //       //   <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
+        //       // </>
+        //       {value}
+        //     );
+        //   },
       },
     },
     {
@@ -1125,6 +1140,7 @@ function MesheryFilters({
                 pageSize,
                 tableState.searchText !== null ? tableState.searchText : '',
                 sortOrder,
+                visibilityFilter,
               );
               setSearch(tableState.searchText);
             }
@@ -1217,6 +1233,25 @@ function MesheryFilters({
     return initialVisibility;
   });
 
+  const filter = {
+    visibility: {
+      name: 'visibility',
+      options: [
+        { value: 'public', label: 'Public' },
+        { value: 'private', label: 'Private' },
+        { value: 'published', label: 'Published' },
+      ],
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
+
+  const handleApplyFilter = () => {
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+  };
+
   return (
     <>
       <NoSsr>
@@ -1282,6 +1317,13 @@ function MesheryFilters({
                     customToolsProps={{ columnVisibility, setColumnVisibility }}
                   />
                 )}
+                <UniversalFilter
+                  id="ref"
+                  filters={filter}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
 
                 {!selectedFilter.show && (
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
@@ -1323,7 +1365,7 @@ function MesheryFilters({
                 publishModal={publishModal}
                 setPublishModal={setPublishModal}
                 publishSchema={publishSchema}
-                fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+                fetch={() => fetchFilters(page, pageSize, search, sortOrder, visibilityFilter)}
                 handleInfoModal={handleInfoModal}
               />
             )}
