@@ -5,7 +5,16 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { updateProgress } from 'lib/store';
 import { useDispatch } from 'react-redux';
 
-export function usePrometheusHook() {
+export function useTelemetryHook(connectionType) {
+  switch (connectionType) {
+    case CONNECTION_KINDS.PROMETHEUS:
+      return pingPrometheus();
+    case CONNECTION_KINDS.GRAFANA:
+      return pingGrafana();
+  }
+}
+
+function pingPrometheus() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
@@ -30,7 +39,7 @@ export function usePrometheusHook() {
   return ping;
 }
 
-export function useGrafanaHook() {
+function pingGrafana() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
@@ -57,12 +66,7 @@ export function useGrafanaHook() {
 
 export function withTelemetryHook(Component, telemetryConnType) {
   return function CompWrappedWithTelemetryHook(props) {
-    let ping;
-    if (telemetryConnType === CONNECTION_KINDS.PROMETHEUS) {
-      ping = usePrometheusHook();
-    } else {
-      ping = useGrafanaHook();
-    }
+    const ping = useTelemetryHook(telemetryConnType);
     return <Component {...props} ping={ping} />;
   };
 }

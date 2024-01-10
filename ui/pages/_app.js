@@ -149,9 +149,8 @@ class MesheryApp extends App {
             store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
           } else {
             const credentialID = connection?.credential_id;
-            
+
             getCredentialByID(credentialID).then((res) => {
-            
               const grafanaCfg = {
                 grafanaURL: connection?.metadata?.url || '',
                 grafanaAPIKey: res?.secret?.secret || '',

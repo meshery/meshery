@@ -54,7 +54,6 @@ const getGrafanaBoards = (self, cb = () => {}) => {
   if (typeof grafanaURL === 'undefined' || grafanaURL === '') {
     return;
   }
-  console.log("INSIDE getGrafanaBoards: ", connectionID, connectionName);
   self.props.updateProgress({ showProgress: true });
   dataFetch(
     `/api/telemetry/metrics/grafana/boards/${connectionID}?dashboardSearch=${grafanaBoardSearch}`,
@@ -143,11 +142,11 @@ class GrafanaComponent extends Component {
       selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
       ts: props.grafana.ts,
     };
-    console.log("GRAFANA CONSTRUCTOR: ", props.grafana);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs, connectionID, connectionName } = nextProps.grafana;
+    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs, connectionID, connectionName } =
+      nextProps.grafana;
     if (nextProps.grafana.ts > this.state.ts) {
       this.setState(
         {
@@ -156,8 +155,8 @@ class GrafanaComponent extends Component {
           selectedBoardsConfigs,
           grafanaConfigSuccess: grafanaURL !== '',
           ts: nextProps.ts,
-          connectionID, 
-          connectionName
+          connectionID,
+          connectionName,
         },
         () => getGrafanaBoards(this),
       );
@@ -216,7 +215,7 @@ class GrafanaComponent extends Component {
     if (name === 'grafanaURL' && !!data) {
       this.setState({ urlError: false });
     }
-    
+
     const grafanaConnectionObj = data.target?.value;
     if (name === 'grafanaBoardSearch') {
       if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
@@ -227,7 +226,8 @@ class GrafanaComponent extends Component {
       const grafanaCfg = {
         grafanaURL: grafanaConnectionObj?.value || '',
         grafanaAPIKey: res?.secret?.secret || '',
-        grafanaBoardSearch: grafanaConnectionObj?.metadata?.grafanaBoardSearch || this.state?.grafanaBoardSearch,
+        grafanaBoardSearch:
+          grafanaConnectionObj?.metadata?.grafanaBoardSearch || this.state?.grafanaBoardSearch,
         grafanaBoards: grafanaConnectionObj?.metadata['grafana_boards'] || [],
         selectedBoardsConfigs: grafanaConnectionObj?.metadata['selectedBoardsConfigs'],
         connectionID: grafanaConnectionObj?.id,

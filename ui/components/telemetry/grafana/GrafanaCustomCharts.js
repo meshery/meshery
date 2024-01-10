@@ -239,7 +239,7 @@ class GrafanaCustomCharts extends Component {
                         // if(panel.type === 'graph'){
                         <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
                           <GrafanaCustomChart
-                          connectionID={connectionID}
+                            connectionID={connectionID}
                             board={config}
                             sparkline={sparkline}
                             panel={panel}
@@ -286,7 +286,7 @@ GrafanaCustomCharts.propTypes = {
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
-  connectionID: PropTypes.string.isRequired
+  connectionID: PropTypes.string.isRequired,
   // boardPanelData:
 };
 

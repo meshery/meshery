@@ -271,8 +271,8 @@ class GrafanaCustomChart extends Component {
       case 'singlestat':
         this.panelType =
           props.panel.type === 'singlestat' &&
-            props.panel.sparkline &&
-            props.panel.sparkline.show === true
+          props.panel.sparkline &&
+          props.panel.sparkline.show === true
             ? 'sparkline'
             : 'gauge';
         // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
@@ -415,7 +415,7 @@ class GrafanaCustomChart extends Component {
       templateVars,
       testUUID,
       panelData,
-      connectionID
+      connectionID,
     } = this.props;
     const { chartData } = this.state;
     let { xAxis } = this.state;
@@ -446,7 +446,6 @@ class GrafanaCustomChart extends Component {
     }
     const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
     const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
-
 
     let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
 
@@ -652,8 +651,8 @@ class GrafanaCustomChart extends Component {
     const linked = this.state.sparkline
       ? false
       : !inDialog
-        ? { name: board && board.title ? board.title : '' }
-        : false;
+      ? { name: board && board.title ? board.title : '' }
+      : false;
 
     let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
     if (panel.type !== 'graph') {
@@ -667,9 +666,9 @@ class GrafanaCustomChart extends Component {
         bindto: self.chartRef,
         size: this.state.sparkline
           ? {
-            // width: 150,
-            height: 50,
-          }
+              // width: 150,
+              height: 50,
+            }
           : null,
         data: {
           x: 'x',
@@ -708,8 +707,8 @@ class GrafanaCustomChart extends Component {
 
         const dataLength =
           chartConfig.data.columns &&
-            Array.isArray(chartConfig.data.columns) &&
-            chartConfig.data.columns.length > 1
+          Array.isArray(chartConfig.data.columns) &&
+          chartConfig.data.columns.length > 1
             ? chartConfig.data.columns[1].length
             : 0; // 0 is for x axis
         if (dataLength > 0) {

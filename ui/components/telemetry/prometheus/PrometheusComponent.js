@@ -251,9 +251,13 @@ class PrometheusComponent extends Component {
 
   render() {
     const { classes } = this.props;
-    const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs, connectionID } =
-      this.state;
-      console.log("CONNECTION ID : ", connectionID);
+    const {
+      urlError,
+      prometheusURL,
+      prometheusConfigSuccess,
+      selectedPrometheusBoardsConfigs,
+      connectionID,
+    } = this.state;
     if (prometheusConfigSuccess) {
       let displaySelec = '';
       if (selectedPrometheusBoardsConfigs.length > 0) {
