@@ -16,7 +16,6 @@ export function usePrometheusHook() {
         credentials: 'include',
       },
       (result) => {
-        dispatch(updateProgress({ showProgress: false }));
         if (typeof result !== 'undefined') {
           notify({
             message: `Prometheus connection "${name}" pinged at ${server}`,
@@ -26,6 +25,7 @@ export function usePrometheusHook() {
       },
       self.handleError,
     );
+    dispatch(updateProgress({ showProgress: false }));
   };
   return ping;
 }
@@ -41,7 +41,6 @@ export function useGrafanaHook() {
         credentials: 'include',
       },
       (result) => {
-        dispatch(updateProgress({ showProgress: false }));
         if (typeof result !== 'undefined') {
           notify({
             message: `Grafana connection "${name}" pinged at ${server}`,
@@ -51,18 +50,19 @@ export function useGrafanaHook() {
       },
       self.handleError,
     );
+    dispatch(updateProgress({ showProgress: false }));
   };
   return ping;
 }
 
 export function withTelemetryHook(Component, telemetryConnType) {
-  return function CompWrappedWithTelemetryHook (props) {
+  return function CompWrappedWithTelemetryHook(props) {
     let ping;
     if (telemetryConnType === CONNECTION_KINDS.PROMETHEUS) {
       ping = usePrometheusHook();
     } else {
       ping = useGrafanaHook();
     }
-    return (<Component {...props} ping={ping} />);
+    return <Component {...props} ping={ping} />;
   };
 }

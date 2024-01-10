@@ -38,17 +38,15 @@ const PrometheusConfigComponent = ({
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
         JSON.stringify([CONNECTION_STATES.CONNECTED]),
-      )}&kind=${encodeURIComponent(
-        JSON.stringify([CONNECTION_KINDS.PROMETHEUS]),
-      )}`,
+      )}&kind=${encodeURIComponent(JSON.stringify([CONNECTION_KINDS.PROMETHEUS]))}`,
       {
         credentials: 'include',
         method: 'GET',
       },
       (result) => {
         setAvailablePrometheusConnection(result?.connections);
-        console.log('RESULT ', result);
-      });
+      },
+    );
   }, []);
 
   return (
@@ -59,7 +57,11 @@ const PrometheusConfigComponent = ({
             <Grid item xs={12}>
               <ReactSelectWrapper
                 onChange={(select) => handleChange('prometheusURL')(select)}
-                options={availablePrometheusConnection.map(connection => ({ value: connection?.metadata?.url, label: connection?.metadata?.url, ...connection }))}
+                options={availablePrometheusConnection.map((connection) => ({
+                  value: connection?.metadata?.url,
+                  label: connection?.metadata?.url,
+                  ...connection,
+                }))}
                 value={prometheusURL}
                 label="Prometheus Base URL"
                 placeholder="Address of Prometheus Server"

@@ -303,7 +303,6 @@ export const updateGrafanaConfig =
 export const updatePrometheusConfig =
   ({ prometheus }) =>
   (dispatch) => {
-    console.log("INSIDE updatePrometheusConfig", prometheus);
     return dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus });
   };
 

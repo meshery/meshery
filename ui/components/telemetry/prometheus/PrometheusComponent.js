@@ -74,7 +74,8 @@ class PrometheusComponent extends Component {
   constructor(props) {
     super(props);
     // const {selectedPrometheusBoardsConfigs} = props.grafana;
-    const { prometheusURL, selectedPrometheusBoardsConfigs, connectionID, connectionName } = props.prometheus;
+    const { prometheusURL, selectedPrometheusBoardsConfigs, connectionID, connectionName } =
+      props.prometheus;
     let prometheusConfigSuccess = false;
     if (prometheusURL !== '') {
       prometheusConfigSuccess = true;
@@ -96,7 +97,6 @@ class PrometheusComponent extends Component {
 
   componentDidMount() {
     const self = this;
-    console.log('TEST >> >> ', self.props.prometheus);
     if (self.props.isMeshConfigured)
       // todo
       dataFetch(
@@ -138,8 +138,7 @@ class PrometheusComponent extends Component {
 
   static getDerivedStateFromProps(props, state) {
     const { prometheusURL, selectedPrometheusBoardsConfigs } = props.prometheus;
-    console.log("PROMETHEUS URL ", prometheusURL);
-    let configs = !!selectedPrometheusBoardsConfigs ? [] : selectedPrometheusBoardsConfigs
+    let configs = selectedPrometheusBoardsConfigs ? [] : selectedPrometheusBoardsConfigs;
     if (prometheusURL !== state.prometheusURL && prometheusURL !== '') {
       return {
         prometheusURL,
@@ -158,14 +157,13 @@ class PrometheusComponent extends Component {
     if (name === 'prometheusURL' && !!data) {
       this.setState({ urlError: false });
     }
-    console.log("HANDLE CHANGE: ", data, this.props);
     const promCfg = {
       prometheusURL: data?.value || '',
       selectedPrometheusBoardsConfigs: data?.metadata['prometheus_boards'] || [],
       connectionID: data?.id,
       connectionName: data?.name,
     };
-    this.props.updatePrometheusConfig({prometheus: promCfg });
+    this.props.updatePrometheusConfig({ prometheus: promCfg });
     // this.setState({ [name]: value });
   };
 
@@ -198,13 +196,12 @@ class PrometheusComponent extends Component {
     e.preventDefault();
     const self = this;
     self.props.updateProgress({ showProgress: true });
-    console.log("SELF :    : ", self);
     dataFetch(
       `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
       {
         method: 'PUT',
         credentials: 'include',
-        body: JSON.stringify({id: self?.state?.connectionID })
+        body: JSON.stringify({ id: self?.state?.connectionID }),
       },
       (result) => {
         self.props.updateProgress({ showProgress: false });
@@ -226,7 +223,7 @@ class PrometheusComponent extends Component {
   // done
   handlePrometheusClick = () => {
     const self = this;
-    this.props.ping(self.connectionName, self.prometheusURL, self.connectionID);
+    this.props.ping(self.state.connectionName, self.state.prometheusURL, self.state.connectionID);
   };
 
   addSelectedBoardPanelConfig = (boardsSelection) => {
@@ -254,8 +251,9 @@ class PrometheusComponent extends Component {
 
   render() {
     const { classes } = this.props;
-    const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs } =
+    const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs, connectionID } =
       this.state;
+      console.log("CONNECTION ID : ", connectionID);
     if (prometheusConfigSuccess) {
       let displaySelec = '';
       if (selectedPrometheusBoardsConfigs.length > 0) {
@@ -275,6 +273,7 @@ class PrometheusComponent extends Component {
             <GrafanaCustomCharts
               boardPanelConfigs={selectedPrometheusBoardsConfigs}
               prometheusURL={prometheusURL}
+              connectionID={connectionID}
             />
           </React.Fragment>
         );
@@ -289,7 +288,7 @@ class PrometheusComponent extends Component {
               addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
               handlePrometheusClick={this.handlePrometheusClick}
               handleError={this.handleError}
-              connectionID={this.connectionID}
+              connectionID={connectionID}
             />
             {displaySelec}
           </React.Fragment>

@@ -271,8 +271,8 @@ class GrafanaCustomChart extends Component {
       case 'singlestat':
         this.panelType =
           props.panel.type === 'singlestat' &&
-          props.panel.sparkline &&
-          props.panel.sparkline.show === true
+            props.panel.sparkline &&
+            props.panel.sparkline.show === true
             ? 'sparkline'
             : 'gauge';
         // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
@@ -333,9 +333,10 @@ class GrafanaCustomChart extends Component {
   collectChartData = (chartInst) => {
     const { panel } = this.props;
     const self = this;
+
     if (panel.targets) {
       panel.targets.forEach((target, ind) => {
-        self.getData(ind, target, chartInst);
+        self.getData(ind, target, chartInst, target.datasource?.type);
       });
     }
   };
@@ -403,7 +404,7 @@ class GrafanaCustomChart extends Component {
     return step;
   };
 
-  getData = async (ind, target) => {
+  getData = async (ind, target, datasource) => {
     const {
       prometheusURL,
       grafanaURL,
@@ -414,6 +415,7 @@ class GrafanaCustomChart extends Component {
       templateVars,
       testUUID,
       panelData,
+      connectionID
     } = this.props;
     const { chartData } = this.state;
     let { xAxis } = this.state;
@@ -423,11 +425,11 @@ class GrafanaCustomChart extends Component {
     let endpointAPIKey = '';
     if (prometheusURL && prometheusURL !== '') {
       endpointURL = prometheusURL;
-      queryRangeURL = '/api/prometheus/query_range';
+      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
     } else if (grafanaURL && grafanaURL !== '') {
       endpointURL = grafanaURL;
       endpointAPIKey = grafanaAPIKey;
-      queryRangeURL = '/api/grafana/query_range';
+      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
     }
     const self = this;
     let { expr } = target;
@@ -444,12 +446,10 @@ class GrafanaCustomChart extends Component {
     }
     const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
     const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
-    let ds;
-    if (typeof panel.datasource !== 'string') {
-      ds = panel?.datasource?.type.charAt(0).toUpperCase() + panel.datasource.type.substring(1);
-    } else {
-      ds = panel?.datasource?.charAt(0).toUpperCase() + panel.datasource.substring(1);
-    }
+
+
+    let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
+
     let queryParams = `ds=${ds}&query=${encodeURIComponent(
       expr,
     )}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
@@ -652,8 +652,8 @@ class GrafanaCustomChart extends Component {
     const linked = this.state.sparkline
       ? false
       : !inDialog
-      ? { name: board && board.title ? board.title : '' }
-      : false;
+        ? { name: board && board.title ? board.title : '' }
+        : false;
 
     let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
     if (panel.type !== 'graph') {
@@ -667,9 +667,9 @@ class GrafanaCustomChart extends Component {
         bindto: self.chartRef,
         size: this.state.sparkline
           ? {
-              // width: 150,
-              height: 50,
-            }
+            // width: 150,
+            height: 50,
+          }
           : null,
         data: {
           x: 'x',
@@ -708,8 +708,8 @@ class GrafanaCustomChart extends Component {
 
         const dataLength =
           chartConfig.data.columns &&
-          Array.isArray(chartConfig.data.columns) &&
-          chartConfig.data.columns.length > 1
+            Array.isArray(chartConfig.data.columns) &&
+            chartConfig.data.columns.length > 1
             ? chartConfig.data.columns[1].length
             : 0; // 0 is for x axis
         if (dataLength > 0) {
@@ -877,6 +877,7 @@ class GrafanaCustomChart extends Component {
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
+  connectionID: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,

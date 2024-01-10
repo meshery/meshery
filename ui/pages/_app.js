@@ -127,7 +127,7 @@ class MesheryApp extends App {
     const { store } = this.props;
 
     dataFetch(
-      `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
+      `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
         JSON.stringify([CONNECTION_STATES.CONNECTED]),
       )}&kind=${encodeURIComponent(
         JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
@@ -149,12 +149,12 @@ class MesheryApp extends App {
             store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
           } else {
             const credentialID = connection?.credential_id;
-            console.log('CREDENTIAL ID : ', credentialID);
+            
             getCredentialByID(credentialID).then((res) => {
-              console.log('CREDENTIAL FOR ID : ', res, credentialID);
+            
               const grafanaCfg = {
                 grafanaURL: connection?.metadata?.url || '',
-                grafanaAPIKey: connection?.url || '',
+                grafanaAPIKey: res?.secret?.secret || '',
                 grafanaBoardSearch: '',
                 grafanaBoards: connection?.metadata['grafana_boards'] || [],
                 selectedBoardsConfigs: [],
@@ -165,7 +165,6 @@ class MesheryApp extends App {
             });
           }
         });
-        console.log('RESULT _APP.JS', res);
       },
     );
   };
@@ -224,7 +223,7 @@ class MesheryApp extends App {
   };
 
   componentDidMount() {
-    // this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.loadPromGrafanaConnection();
     this.loadOrg();
     this.initSubscriptions([]);
@@ -335,7 +334,6 @@ class MesheryApp extends App {
           type: actionTypes.SET_CONTROLLER_STATE,
           controllerState: data,
         });
-        console.log('CONTROLLER TEST CONTROLLER ', data);
       },
     });
     // const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback }) above uses old listenToMeshSyncEvents subscription, instead new subscribeMeshSyncEvents is used

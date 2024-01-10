@@ -116,7 +116,7 @@ class PrometheusSelectionComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      '/api/telemetry/metrics/board_import',
+      `/api/telemetry/metrics/board_import/${self.props.connectionID}`,
       {
         method: 'POST',
         credentials: 'include',
@@ -127,7 +127,7 @@ class PrometheusSelectionComponent extends Component {
         this.props.updateProgress({ showProgress: false });
         var panels = result.panels.filter(
           (panel) =>
-            panel.targets !== undefined && panel.datasource.type.toLowerCase() === 'prometheus',
+            panel.targets !== undefined && panel.targets.some(target => target.datasource.type.toLowerCase() === 'prometheus'),
         );
         if (typeof result !== 'undefined') {
           this.setState({

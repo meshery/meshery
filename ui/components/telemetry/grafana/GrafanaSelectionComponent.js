@@ -96,7 +96,7 @@ class GrafanaSelectionComponent extends Component {
 
   queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/grafana/query?query=${encodeURIComponent(
+      let queryURL = `/api/telemetry/metrics/grafana/query/${this.props.connectionID}?query=${encodeURIComponent(
         templateVars[ind].query,
       )}&dsid=${templateVars[ind].datasource.id}`;
       for (let i = ind; i > 0; i--) {
