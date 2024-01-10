@@ -435,18 +435,18 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			connection, statusCode, err := provider.UpdateConnectionStatusByID(token, id, status)
 
 			if err != nil {
-				event := events.NewEvent().WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
+				event := events.NewEvent().WithCategory("connection").WithAction("update").WithSeverity(events.Error).ActedUpon(id).FromUser(userID).FromSystem(*h.SystemID).WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
 				_ = provider.PersistEvent(event)
 				h.config.EventBroadcaster.Publish(userID, event)
 				h.log.Error(err)
 				continue
 			}
 			eb := events.NewEvent()
-			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithStatus("update")
+			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithAction("update")
 			if status == connections.DELETED {
 				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
-			event := events.NewEvent().WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
+			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
 			_ = provider.PersistEvent(event)
 			h.config.EventBroadcaster.Publish(userID, event)
 

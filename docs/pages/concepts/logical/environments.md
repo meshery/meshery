@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Environments
 permalink: concepts/environments
 type: concepts

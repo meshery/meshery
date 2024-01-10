@@ -3,7 +3,7 @@ layout: page
 title: Integrations
 abstract: Integrations with other services.
 language: en
-permalink: integrations
+permalink: extensibility/integrations
 type: integrations
 display-title: "true"
 language: en

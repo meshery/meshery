@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Patterns
 permalink: concepts/patterns
 type: concepts
