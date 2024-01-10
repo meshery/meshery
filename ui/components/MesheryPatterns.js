@@ -79,7 +79,7 @@ import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
 import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { ExportModal } from './exportmodal';
+import ExportModal from './ExportModal';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -209,9 +209,6 @@ const styles = (theme) => ({
       width: '100%',
     },
   },
-  // text : {
-  //   padding : "5px"
-  // }
 });
 
 function TooltipIcon({ children, onClick, title, placement }) {
