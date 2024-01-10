@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FormGroup, FormControlLabel, Grid } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
-import { setOrganization } from '../../lib/store';
+import { setOrganization, setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useGetOrgsQuery } from '../../rtk-query/organization';
@@ -32,7 +32,7 @@ const SpacesPreferences = (props) => {
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, skip);
+  useGetCurrentAbilities(organization, props.setKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -101,6 +101,7 @@ const SpacesPreferences = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   setOrganization: bindActionCreators(setOrganization, dispatch),
+  setKeys: bindActionCreators(setKeys, dispatch),
 });
 
 const mapStateToProps = (state) => {

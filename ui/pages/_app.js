@@ -363,39 +363,55 @@ class MesheryApp extends App {
   };
 
   loadOrg = async () => {
-    const { store } = this.props;
-    const currentOrgId = sessionStorage.getItem('currentOrgId');
+    const currentOrg = sessionStorage.getItem('currentOrg');
+    let reFetchKeys = false;
+
+    if (currentOrg && currentOrg !== 'undefined') {
+      let org = JSON.parse(currentOrg);
+      await this.loadAbility(org.id, reFetchKeys);
+      this.setOrganization(org);
+    }
+
     dataFetch(
       '/api/identity/orgs',
       {
         method: 'GET',
         credentials: 'include',
       },
-      (result) => {
+      async (result) => {
         let organizationToSet;
 
-        if (currentOrgId !== null) {
-          const indx = result.organizations.findIndex((org) => org.id === currentOrgId);
-          organizationToSet = indx !== -1 ? result.organizations[indx] : result.organizations[0];
+        if (currentOrg) {
+          const indx = result.organizations.findIndex((org) => org.id === currentOrg.id);
+          if (indx === -1) {
+            organizationToSet = result.organizations[0];
+            reFetchKeys = true;
+            await this.loadAbility(organizationToSet.id, reFetchKeys);
+          }
         } else {
           organizationToSet = result.organizations[0];
+          reFetchKeys = true;
+          await this.loadAbility(organizationToSet.id, reFetchKeys);
         }
-
-        store.dispatch({
-          type: actionTypes.SET_ORGANIZATION,
-          organization: organizationToSet,
-        });
-
-        this.loadAbility(organizationToSet.id);
+        this.setOrganization(organizationToSet);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
   };
 
-  loadAbility = async (orgID) => {
+  setOrganization = (org) => {
+    const { store } = this.props;
+    store.dispatch({
+      type: actionTypes.SET_ORGANIZATION,
+      organization: org,
+    });
+  };
+
+  loadAbility = async (orgID, reFetchKeys) => {
     const storedKeys = sessionStorage.getItem('keys');
-    if (storedKeys !== null && storedKeys !== undefined) {
-      this.setState({ keys: JSON.parse(sessionStorage.getItem('keys')) });
+    const { store } = this.props;
+    if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
+      this.setState({ keys: JSON.parse(storedKeys) }, this.updateAbility);
     } else {
       dataFetch(
         `/api/identity/orgs/${orgID}/users/keys`,
@@ -405,23 +421,22 @@ class MesheryApp extends App {
         },
         (result) => {
           if (result) {
-            this.setState({ keys: result.keys });
-            sessionStorage.removeItem('keys');
-            sessionStorage.setItem('keys', JSON.stringify(result.keys));
+            this.setState({ keys: result.keys }, () => {
+              store.dispatch({
+                type: actionTypes.SET_KEYS,
+                keys: result.keys,
+              });
+              this.updateAbility();
+            });
           }
         },
         (err) => console.log('There was an error fetching available orgs:', err),
       );
     }
-    this.setState({
-      abilities: [...this.state.keys]?.map((key) => {
-        return {
-          action: key.id,
-          subject: key.function,
-        };
-      }),
-    });
-    ability.update(this.state.abilities);
+  };
+
+  updateAbility = () => {
+    ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
   };
 
   async loadConfigFromServer() {
