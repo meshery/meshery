@@ -363,14 +363,16 @@ class MesheryApp extends App {
   };
 
   loadOrg = async () => {
-    const { store } = this.props;
-    const currentOrg = JSON.parse(sessionStorage.getItem('currentOrg'));
+    const currentOrg = sessionStorage.getItem('currentOrg');
     let reFetchKeys = false;
-
-    if (currentOrg) {
-      await this.loadAndSetOrganization(currentOrg, store, reFetchKeys);
+  
+    if (currentOrg && currentOrg !== 'undefined') {
+      console.log("not me")
+      let org = JSON.parse(currentOrg)
+      await this.loadAbility(org.id, reFetchKeys);
+      this.setOrganization(org)
     }
-
+  
     dataFetch(
       '/api/identity/orgs',
       {
@@ -378,72 +380,64 @@ class MesheryApp extends App {
         credentials: 'include',
       },
       async (result) => {
-        const organizationToSet = this.determineOrganizationToSet(currentOrg, result.organizations);
-        reFetchKeys = !currentOrg || !result.organizations.some((org) => org.id === currentOrg.id);
-        this.setOrganizationAndLoadAbility(organizationToSet, store, reFetchKeys);
+        let organizationToSet;
+  
+        if (currentOrg) {
+          const indx = result.organizations.findIndex((org) => org.id === currentOrg.id);
+          if (indx === -1) {
+            organizationToSet = result.organizations[0]
+            reFetchKeys = true
+            await this.loadAbility(organizationToSet.id, reFetchKeys);
+          }
+        } else {
+          organizationToSet = result.organizations[0]
+          reFetchKeys = true
+          await this.loadAbility(organizationToSet.id, reFetchKeys); 
+        }
+        this.setOrganization(organizationToSet)
       },
-      (err) => console.error('Error fetching available orgs:', err),
+      (err) => console.log('There was an error fetching available orgs:', err),
     );
   };
 
-  loadAndSetOrganization = async (org, store, reFetchKeys) => {
-    this.setOrganization(org, store);
-    await this.loadAbility(org.id, reFetchKeys);
-  };
-
-  determineOrganizationToSet = (currentOrg, organizations) => {
-    return currentOrg
-      ? organizations.find((org) => org.id === currentOrg.id) || organizations[0]
-      : organizations[0];
-  };
-
-  setOrganizationAndLoadAbility = async (org, store, reFetchKeys) => {
-    this.setOrganization(org, store);
-    await this.loadAbility(org.id, reFetchKeys);
-  };
-
-  setOrganization = (org, store) => {
+  setOrganization = (org) => {
+    const { store } = this.props
     store.dispatch({
       type: actionTypes.SET_ORGANIZATION,
       organization: org,
     });
-  };
-
+  }
+  
   loadAbility = async (orgID, reFetchKeys) => {
     const storedKeys = sessionStorage.getItem('keys');
     const { store } = this.props;
-
-    if (!reFetchKeys && storedKeys) {
+    if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
       this.setState({ keys: JSON.parse(storedKeys) }, this.updateAbility);
     } else {
-      const result = await this.fetchUserKeys(orgID);
-      if (result) {
-        this.setState({ keys: result.keys }, () => {
-          store.dispatch({
-            type: actionTypes.SET_KEYS,
-            keys: result.keys,
-          });
-          this.updateAbility();
-        });
-      }
-    }
-  };
-
-  fetchUserKeys = async (orgID) => {
-    try {
-      const result = await dataFetch(`/api/identity/orgs/${orgID}/users/keys`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      return result;
-    } catch (err) {
-      console.error('Error fetching user keys:', err);
+      dataFetch(
+        `/api/identity/orgs/${orgID}/users/keys`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          if (result) {
+            this.setState({ keys: result.keys }, () => {
+              store.dispatch({
+                type: actionTypes.SET_KEYS,
+                keys: result.keys,
+              });
+              this.updateAbility()
+            });
+          }
+        },
+        (err) => console.log('There was an error fetching available orgs:', err),
+      );
     }
   };
 
   updateAbility = () => {
     ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
-    console.log('Ability updated.');
   };
 
   async loadConfigFromServer() {
