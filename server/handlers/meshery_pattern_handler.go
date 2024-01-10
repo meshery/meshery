@@ -29,18 +29,45 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/sirupsen/logrus"
+	isql "github.com/layer5io/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
-type MesheryPatternRequestBody struct {
+type MesheryPatternPOSTRequestBody struct {
+	Name          string                 `json:"name,omitempty"`
+	URL           string                 `json:"url,omitempty"`
+	Path          string                 `json:"path,omitempty"`
+	Save          bool                   `json:"save,omitempty"`
+	PatternData   *mesheryPatternPayload `json:"pattern_data,omitempty"`
+	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
+}
+
+type MesheryPatternUPDATERequestBody struct {
 	Name          string                 `json:"name,omitempty"`
 	URL           string                 `json:"url,omitempty"`
 	Path          string                 `json:"path,omitempty"`
 	Save          bool                   `json:"save,omitempty"`
 	PatternData   *models.MesheryPattern `json:"pattern_data,omitempty"`
 	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
+}
+
+
+type mesheryPatternPayload struct {
+	ID *uuid.UUID `json:"id,omitempty"`
+
+	Name        string `json:"name,omitempty"`
+	PatternFile []byte `json:"pattern_file"`
+	// Meshery doesn't have the user id fields
+	// but the remote provider is allowed to provide one
+	UserID *string `json:"user_id"`
+
+	Location      isql.Map       `json:"location"`
+	Visibility    string         `json:"visibility"`
+	CatalogData   isql.Map       `json:"catalog_data,omitempty"`
+	Type          sql.NullString `json:"type"`
+	SourceContent []byte         `json:"source_content"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
@@ -92,7 +119,7 @@ func (h *Handler) handlePatternPOST(
 		EventType:     meshes.EventType_INFO,
 	}
 	sourcetype := mux.Vars(r)["sourcetype"]
-	var parsedBody *MesheryPatternRequestBody
+	var parsedBody *MesheryPatternPOSTRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -127,7 +154,9 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	format := r.URL.Query().Get("output")
-	var mesheryPattern *models.MesheryPattern
+	var mesheryPatternPayload *mesheryPatternPayload // payload assumed the file is sent into bytes. this helps in ensuring the contents are not corrupted while converting to string in UI
+	
+	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
 
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
@@ -235,8 +264,9 @@ func (h *Handler) handlePatternPOST(
 			}
 		}
 
-		mesheryPattern = parsedBody.PatternData
-		bytPattern := []byte(mesheryPattern.PatternFile)
+		mesheryPatternPayload = parsedBody.PatternData
+
+		bytPattern := mesheryPatternPayload.PatternFile
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -310,33 +340,47 @@ func (h *Handler) handlePatternPOST(
 				String: string(models.Design),
 				Valid:  true,
 			}
-			// Check if the pattern is valid
-			err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
-			if err != nil {
-				h.log.Error(ErrInvalidPattern(err))
-				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
-				addMeshkitErr(&res, ErrInvalidPattern(err))
-				go h.EventsBuffer.Publish(&res)
-				return
-			}
-			// Assign a name if no name is provided
-			if parsedBody.PatternData.Name == "" {
-				patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
-				if err != nil {
-					h.log.Error(ErrSavePattern(err))
-					http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
-					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-						"error": ErrSavePattern(err),
-					}).WithDescription("unable to get \"name\" from the pattern.").Build()
+			mesheryPattern.PatternFile = string(bytPattern)
 
-					_ = provider.PersistEvent(event)
-					go h.config.EventBroadcaster.Publish(userID, event)
+			// assume the design is in OCI Artifact format
+			decompressedDesign, err := unCompressOCIArtifactIntoDesign(parsedBody.PatternData.PatternFile)
+			// if errors occurs in decompressing OCI Artifact into design file
+			// then fall back to importing design as yaml file
+			if err != nil {
+				h.log.Warn(ErrUnCompressOCIArtifact(err))
+				h.log.Info("Falling back to importing design as yaml file")		
+			} else {
+				h.log.Info("OCI Artifact decompressed successfully")
+				mesheryPattern = decompressedDesign
+				mesheryPattern.Type = parsedBody.PatternData.Type
+			}
+				// Check if the pattern is valid
+				err = pCore.IsValidPattern(mesheryPattern.PatternFile)
+				if err != nil {
+					h.log.Error(ErrInvalidPattern(err))
+					http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
+					addMeshkitErr(&res, ErrInvalidPattern(err))
+					go h.EventsBuffer.Publish(&res)
 					return
 				}
-				parsedBody.PatternData.Name = patternName
-			}
 
-			mesheryPattern := parsedBody.PatternData
+				// Assign a name if no name is provided
+				if parsedBody.PatternData.Name == "" {
+					patternName, err := models.GetPatternName(mesheryPattern.PatternFile)
+					if err != nil {
+						h.log.Error(ErrSavePattern(err))
+						http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+						event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+							"error": ErrSavePattern(err),
+						}).WithDescription("unable to get \"name\" from the pattern.").Build()
+
+						_ = provider.PersistEvent(event)
+						go h.config.EventBroadcaster.Publish(userID, event)
+						return
+					}
+					mesheryPattern.Name = patternName
+				}
+
 
 			if parsedBody.Save {
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
@@ -663,6 +707,50 @@ func (h *Handler) handlePatternPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
+}
+
+func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
+
+			// Assume design is in OCI Tarball Format
+			tmpDir, err := oci.CreateTempOCIContentDir()
+			if err != nil {
+				return nil, ErrCreateDir(err, "OCI")
+			}
+			// defer os.RemoveAll(tmpDir)
+
+			tmpInputDesignFile := filepath.Join(tmpDir, "design.tar")
+			file, err := os.Create(tmpInputDesignFile)
+			if err != nil {
+				return nil, ErrCreateFile(err, tmpInputDesignFile)
+			}
+			defer file.Close()
+
+			reader := bytes.NewReader(artifact)
+			if _, err := io.Copy(file, reader); err != nil {
+				return nil, ErrWritingIntoFile(err, tmpInputDesignFile)
+			}
+
+			tmpOutputDesignFile := filepath.Join(tmpDir, "output")
+			// Extract the tarball
+			if err := oci.UnCompressOCIArtifact(tmpInputDesignFile, tmpOutputDesignFile); err != nil {
+				return nil, ErrUnCompressOCIArtifact(err)
+			}
+
+			files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
+			if err != nil {
+				return nil, ErrWaklingLocalDirectory(err)
+			}
+
+			// TODO: Add support to merge multiple designs into one
+			// Currently, assumes to save only the first design
+			design := files[0]
+
+			mesheryPattern := &models.MesheryPattern{
+				PatternFile: design.Content,
+				Name: design.Name,
+			}
+			
+			return mesheryPattern, nil
 }
 
 func githubRepoDesignScan(
@@ -1455,7 +1543,7 @@ func (h *Handler) handlePatternUpdate(
 		return
 	}
 
-	var parsedBody *MesheryPatternRequestBody
+	var parsedBody *MesheryPatternUPDATERequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
 		return
