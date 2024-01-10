@@ -166,9 +166,9 @@ class PrometheusSelectionComponent extends Component {
 
   queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/query?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}`;
+      let queryURL = `/api/telemetry/metrics/query/${
+        this.props?.connectionID
+      }?query=${encodeURIComponent(templateVars[ind].query)}`;
       for (let i = ind; i > 0; i--) {
         queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
       }

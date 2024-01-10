@@ -60,8 +60,9 @@ import './styles/charts.css';
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import { ability } from '../utils/can';
+import { getCredentialByID } from '@/api/credentials';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -122,6 +123,53 @@ class MesheryApp extends App {
     };
   }
 
+  loadPromGrafanaConnection = () => {
+    const { store } = this.props;
+
+    dataFetch(
+      `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
+        JSON.stringify([CONNECTION_STATES.CONNECTED]),
+      )}&kind=${encodeURIComponent(
+        JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
+      )}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        res?.connections?.forEach((connection) => {
+          if (connection.kind == CONNECTION_KINDS.PROMETHEUS) {
+            const promCfg = {
+              prometheusURL: connection?.metadata?.url || '',
+              selectedPrometheusBoardsConfigs: connection?.metadata['prometheus_boards'] || [],
+              connectionID: connection?.id,
+              connectionName: connection?.name,
+            };
+
+            store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
+          } else {
+            const credentialID = connection?.credential_id;
+            console.log('CREDENTIAL ID : ', credentialID);
+            getCredentialByID(credentialID).then((res) => {
+              console.log('CREDENTIAL FOR ID : ', res, credentialID);
+              const grafanaCfg = {
+                grafanaURL: connection?.metadata?.url || '',
+                grafanaAPIKey: connection?.url || '',
+                grafanaBoardSearch: '',
+                grafanaBoards: connection?.metadata['grafana_boards'] || [],
+                selectedBoardsConfigs: [],
+                connectionID: connection?.id,
+                connectionName: connection?.name,
+              };
+              store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
+            });
+          }
+        });
+        console.log('RESULT _APP.JS', res);
+      },
+    );
+  };
+
   initMeshSyncEventsSubscription(contexts = []) {
     if (this.meshsyncEventsSubscriptionRef.current) {
       this.meshsyncEventsSubscriptionRef.current.dispose();
@@ -176,7 +224,8 @@ class MesheryApp extends App {
   };
 
   componentDidMount() {
-    this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    // this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+    this.loadPromGrafanaConnection();
     this.loadOrg();
     this.initSubscriptions([]);
     dataFetch(
@@ -444,35 +493,35 @@ class MesheryApp extends App {
               meshAdapters: result.meshAdapters,
             });
           }
-          if (result.grafana) {
-            const grafanaCfg = Object.assign(
-              {
-                grafanaURL: '',
-                grafanaAPIKey: '',
-                grafanaBoardSearch: '',
-                grafanaBoards: [],
-                selectedBoardsConfigs: [],
-              },
-              result.grafana,
-            );
-            store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
-          }
-          if (result.prometheus) {
-            if (typeof result.prometheus.prometheusURL === 'undefined') {
-              result.prometheus.prometheusURL = '';
-            }
-            if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
-              result.prometheus.selectedPrometheusBoardsConfigs = [];
-            }
-            const promCfg = Object.assign(
-              {
-                prometheusURL: '',
-                selectedPrometheusBoardsConfigs: [],
-              },
-              result.prometheus,
-            );
-            store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
-          }
+          // if (result.grafana) {
+          //   const grafanaCfg = Object.assign(
+          //     {
+          //       grafanaURL: '',
+          //       grafanaAPIKey: '',
+          //       grafanaBoardSearch: '',
+          //       grafanaBoards: [],
+          //       selectedBoardsConfigs: [],
+          //     },
+          //     result.grafana,
+          //   );
+          //   store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
+          // }
+          // if (result.prometheus) {
+          //   if (typeof result.prometheus.prometheusURL === 'undefined') {
+          //     result.prometheus.prometheusURL = '';
+          //   }
+          //   if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
+          //     result.prometheus.selectedPrometheusBoardsConfigs = [];
+          //   }
+          //   const promCfg = Object.assign(
+          //     {
+          //       prometheusURL: '',
+          //       selectedPrometheusBoardsConfigs: [],
+          //     },
+          //     result.prometheus,
+          //   );
+          //   store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
+          // }
           if (result.loadTestPrefs) {
             const loadTestPref = Object.assign(
               {

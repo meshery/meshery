@@ -84,16 +84,16 @@ const Overview = ({ classes }) => {
       <div className={classes.rootClass}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12}>
-            <DashboardMeshModelGraph classes={classes} />
+            {/* <DashboardMeshModelGraph classes={classes} /> */}
           </Grid>
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <ConnectionStatsChart classes={classes} />
+                {/* <ConnectionStatsChart classes={classes} /> */}
               </Grid>
               <Grid item xs={12} md={6}>
-                <MesheryConfigurationChart classes={classes} />
+                {/* <MesheryConfigurationChart classes={classes} /> */}
               </Grid>
             </Grid>
           </Grid>
