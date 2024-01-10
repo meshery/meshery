@@ -3779,7 +3779,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
-	fmt.Println("GET CONNECTION BY ID : ", connectionID, resp, err)
+	
 	defer func(){
 		_ = resp.Body.Close()
 	}()
