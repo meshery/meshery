@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: "Extensibility: UI"
 permalink: extensibility/ui
 type: Extensibility

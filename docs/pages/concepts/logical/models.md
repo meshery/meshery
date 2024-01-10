@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Models
 permalink: concepts/models
 type: concepts

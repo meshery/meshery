@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Deploying Sample Applications
 abstract: This guide is to help users get a better understanding of sample apps
 permalink: guides/sample-apps

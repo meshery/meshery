@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Connections
 permalink: concepts/connections
 type: concepts

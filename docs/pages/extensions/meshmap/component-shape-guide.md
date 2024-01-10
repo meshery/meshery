@@ -1,11 +1,13 @@
 ---
-layout: default
+layout: enhanced
 title: Component Shape Guide
 permalink: extensions/component-shape-guide
 language: en
+abstract: Kubernetes architecture deployment and architecture diagramming tool for cloud native applications - MeshMap.
 display-title: "false"
-list: exclude
-type: meshmap
+list: include
+type: extensions
+category: meshmap
 ---
 
 ## Component Shape Guide
@@ -13,7 +15,8 @@ type: meshmap
 Inside MeshMap, the allocation of specific shapes to signify various purposes creates a coherent and intelligible visual representation of intricate designs.
 Currently, the circle is used as the default shape for new components.
 
-Although the usage of the components is divided into categories, some shapes serve as a universal representation of particular components. 
+Although the usage of the components is divided into categories, some shapes serve as a universal representation of particular components.
+
 Below are all the shapes with their current usage in a general context.
 
 <div class="svg-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 40px;">

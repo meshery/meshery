@@ -125,36 +125,8 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface
-# - title: 🦾 Service Meshes
-#   url: service-meshes
-#   links:
-#     - title: App Mesh
-#       url: service-meshes/adapters/app-mesh
-#     # - title: Citrix Service Mesh
-#     #   url: service-meshes/adapters/cpx
-#     - title: Cilium Service Mesh
-#       url: service-meshes/adapters/cilium
-#     - title: Consul
-#       url: service-meshes/adapters/consul
-#     - title: Istio
-#       url: service-meshes/adapters/istio
-#     - title: Kuma
-#       url: service-meshes/adapters/kuma
-#     - title: Linkerd
-#       url: service-meshes/adapters/linkerd
-#     - title: Network Service Mesh
-#       url: service-meshes/adapters/nsm
-#     - title: NGINX Service Mesh
-#       url: service-meshes/adapters/nginx-sm
-#     - title: Open Service Mesh
-#       url: service-meshes/adapters/osm
-#     - title: Tanzu
-#       url: service-meshes/adapters/tanzu-sm
-#     - title: Traefik Mesh
-#       url: service-meshes/adapters/traefik-mesh
 - title: 📚 Guides (all)
   url: guides
   links:
@@ -164,7 +136,7 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
-    - title: Configuring Kubernetes Infrastructure
+    - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
@@ -216,29 +188,71 @@
       url: tasks/filter-management
     - title: Managing Connections
       url: tasks/lifecycle-management
+      children:
+      - title: Registering a Connection
+        url: guides/registering-a-connection
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
-- title: 🛠 Extensibility
+- title: 🛠 Integrations and Extensions
   url: extensibility
   links:
+    - title: "APIs"
+      url: extensibility/api
     - title: "Adapters ↆ"
       url: extensibility/adapters
       children:
         - title: Compatibility Matrix
           url: installation/compatibility-matrix
+        - title: App Mesh
+          url: extensibility/adapters/app-mesh
+        - title: Citrix Service Mesh
+          url: extensibility/adapters/cpx
+        - title: Cilium Service Mesh
+          url: extensibility/adapters/cilium
+        - title: Consul
+          url: extensibility/adapters/consul
+        - title: Istio
+          url: extensibility/adapters/istio
+        - title: Kuma
+          url: extensibility/adapters/kuma
+        - title: Linkerd
+          url: extensibility/adapters/linkerd
+        - title: Network Service Mesh
+          url: extensibility/adapters/nsm
+        - title: NGINX Service Mesh
+          url: extensibility/adapters/nginx-sm
+        - title: Open Service Mesh
+          url: extensibility/adapters/osm
+        - title: Tanzu
+          url: extensibility/adapters/tanzu-sm
+        - title: Traefik Mesh
+          url: extensibility/adapters/traefik-mesh
+    - title: "Integrations ↆ"
+      url: extensibility/integrations
     - title: "Load Generators"
       url: extensibility/load-generators
-    - title: "Providers ↆ"
+    - title: "Providers"
       url: extensibility/providers
+    - title: "UI Plugins ↆ"
+      url: extensibility/ui      
+    - title: "🦾 Extensions ↆ"
+      url: extensions
       children:
-      - title: Building a Remote Provider
-        url: extensibility/providers/building-a-remote-provider
-    - title: "UI Plugins"
-      url: extensibility/ui
-    - title: "REST & GraphQL APIs"
-      url: extensibility/api
+        - title: "Plugin: MeshMap"
+          url: extensions/meshmap
+          grandchildren:
+          - title: "Sharing a Design"
+            url: extensions/sharing-a-design
+        - title: "GitOps: Snapshots"
+          url: extensions/snapshot
+        - title: "Provider: Layer5 Cloud"
+          url: extensions/layer5-cloud
+      # children:
+      # - title: Building a Remote Provider
+      #   url: extensibility/providers/building-a-remote-provider
+
 - title: 📖 Reference
   url: reference
   links:
