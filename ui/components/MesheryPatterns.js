@@ -55,7 +55,7 @@ import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import Modal from './Modal';
-import downloadFile from '../utils/fileDownloader';
+import downloadContent from '../utils/fileDownloader';
 import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import ReusableTooltip from './reusable-tooltip';
@@ -1051,7 +1051,7 @@ function MesheryPatterns({
     try {
       let id = design.id;
       let name = design.name;
-      downloadFile({ id, name, type: 'pattern', oci });
+      downloadContent({ id, name, type: 'pattern', oci });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
