@@ -56,7 +56,6 @@ Meshery runs as a set of one or more containers inside your Docker Desktop virtu
             <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
             <span data-ty="progress"></span>
             <span data-ty="">Successfully installed Meshery</span>
-            <span data-ty="input">mesheryctl system dashboard</span>
   </div>
  </div>
 </pre>
