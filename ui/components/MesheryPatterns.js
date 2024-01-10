@@ -33,7 +33,11 @@ import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { ctxUrl } from '../utils/multi-ctx';
-import { generateValidatePayload, getComponentsinFile, getDecodedFile } from '../utils/utils';
+import {
+  generateValidatePayload,
+  getComponentsinFile,
+  getUnit8ArrayDecodedFile,
+} from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import CatalogFilter from './CatalogFilter';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -75,6 +79,7 @@ import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
 import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { ExportModal } from './exportmodal';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -382,6 +387,28 @@ function MesheryPatterns({
     pattern: {},
     name: '',
   });
+
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+
+  const handleDownloadDialogClose = () => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: false,
+      content: null,
+    }));
+  };
+
+  const handleDesignDownloadModal = (e, pattern) => {
+    e.stopPropagation();
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: true,
+      content: pattern,
+    }));
+  };
 
   console.log('updated ability in pattern', ability);
 
@@ -1018,11 +1045,13 @@ function MesheryPatterns({
     }
   }
 
-  const handleDownload = (e, id, name) => {
+  const handleDownload = (e, design, oci) => {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadFile({ id, name, type: 'pattern' });
+      let id = design.id;
+      let name = design.name;
+      downloadFile({ id, name, type: 'pattern', oci });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
@@ -1247,7 +1276,10 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Download"
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
-                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+                onClick={(e) =>
+                  // handleDownload(e, rowData.id, rowData.name)
+                  handleDesignDownloadModal(e, rowData)
+                }
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
@@ -1470,7 +1502,6 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
-    console.log('data....', data);
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
@@ -1480,7 +1511,7 @@ function MesheryPatterns({
           save: true,
           pattern_data: {
             name,
-            pattern_file: getDecodedFile(file),
+            pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
@@ -1505,6 +1536,7 @@ function MesheryPatterns({
 
   return (
     <NoSsr>
+      {console.log('updated ui')}
       {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
         <>
           {selectedRowData && Object.keys(selectedRowData).length > 0 && (
@@ -1593,16 +1625,23 @@ function MesheryPatterns({
             </div>
           </div>
           {!selectedPattern.show && viewType === 'table' && (
-            <ResponsiveDataTable
-              data={patterns}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <>
+              <ResponsiveDataTable
+                data={patterns}
+                columns={columns}
+                // @ts-ignore
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+              <ExportModal
+                downloadModal={downloadModal}
+                handleDownloadDialogClose={handleDownloadDialogClose}
+                handleDesignDownload={handleDownload}
+              />
+            </>
           )}
           {!selectedPattern.show && viewType === 'grid' && (
             // grid vieww
