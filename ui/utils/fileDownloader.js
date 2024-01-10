@@ -1,3 +1,5 @@
+import { FILTER, PATTERN } from './Enum';
+
 const DOWNLOAD_PATH = {
   [PATTERN]: ({ id, source_type, oci }) =>
     source_type
@@ -5,13 +7,13 @@ const DOWNLOAD_PATH = {
       : oci
       ? `/api/pattern/download/${id}?oci=true`
       : `/api/pattern/download/${id}`,
-  [FILTER]: ({ id }) => `/api/filter/download/${id}`
+  [FILTER]: ({ id }) => `/api/filter/download/${id}`,
 };
 
 export const downloadFileFromUrl = (url, name) => {
-  let linkElement = document.createElement("a");
-  linkElement.setAttribute("href", url);
-  linkElement.setAttribute("download", name);
+  let linkElement = document.createElement('a');
+  linkElement.setAttribute('href', url);
+  linkElement.setAttribute('download', name);
   linkElement.click();
   linkElement.remove();
 };
@@ -23,12 +25,12 @@ export const downloadFileFromUrl = (url, name) => {
  * @param {string} source_type - source type of the file to download
  * @returns {void}
  */
-export default function downloadContent({ id, type, name, source_type, oci=false }) {
+export default function downloadContent({ id, type, name, source_type, oci = false }) {
   const uri = DOWNLOAD_PATH[type]({ id, source_type, oci });
   if (!uri) {
-    throw new Error("Invalid type of content to download", type);
+    throw new Error('Invalid type of content to download', type);
   }
-  console.log("Download Uri", uri);
+  console.log('Download Uri', uri);
   downloadFileFromUrl(uri, name);
 }
 
