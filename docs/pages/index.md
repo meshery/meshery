@@ -30,7 +30,7 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/installation/" class="text-black">Supported Platforms</a>
+          <a href="{{ site.baseurl }}/installation/" class="text-black">installation</a>
         </p>
       </summary>
       <ul class="section-title">
