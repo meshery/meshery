@@ -1,18 +1,14 @@
 ---
-layout: integration
+layout: default
 title: Intel Device Plugins Operator
 permalink: integrations/intel-device-plugins-operator
-type: extensibility
-category: integration
-description: 
+type: installation
+category: integrations
 display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/intel-device-plugins-operator.svg
 ---
-<!-- {{ site.data.integration | strip_html }}
-{% assign row = site.data.integration[0] %}
-{{ row | inspect }} -->
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

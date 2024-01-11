@@ -83,11 +83,10 @@ func generateMDContent(record []string, name string, csvIndices CSVIndices) stri
 	overviewAndFeatures = strings.Replace(overviewAndFeatures, "</p>", "\n", -1)
 
 	content := `---
-layout: integration
+layout: default
 title: ` + name + `
-permalink: extensibility/integrations/` + formattedName + `
-description: 
-type: extensibility
+permalink: integrations/` + formattedName + `
+type: installation
 category: integrations
 display-title: "false"
 language: en
