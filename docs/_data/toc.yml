@@ -153,7 +153,11 @@
       url: guides/performance-management
       children:
         - title: Integrating Prometheus and Grafana
-          url: guides/meshery-metrics
+          url: guides/performance-management/meshery-metrics
+        - title: Interpreting Performance Test Results 
+          url: guides/performance-management/interpreting-performance-test-results
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management
     - title: Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:

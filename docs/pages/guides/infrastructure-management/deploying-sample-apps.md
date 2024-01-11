@@ -2,7 +2,8 @@
 layout: enhanced
 title: Deploying Sample Applications
 abstract: This guide is to help users get a better understanding of sample apps
-permalink: guides/sample-apps
+permalink: guides/infrastructure-management/sample-apps
+category: infrastructure
 type: guides
 language: en
 ---
