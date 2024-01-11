@@ -380,20 +380,22 @@ class MesheryApp extends App {
       },
       async (result) => {
         let organizationToSet;
+        const sessionOrg = JSON.parse(currentOrg);
 
         if (currentOrg) {
-          const indx = result.organizations.findIndex((org) => org.id === currentOrg.id);
+          const indx = result.organizations.findIndex((org) => org.id === sessionOrg.id);
           if (indx === -1) {
             organizationToSet = result.organizations[0];
             reFetchKeys = true;
             await this.loadAbility(organizationToSet.id, reFetchKeys);
+            this.setOrganization(organizationToSet);
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
           await this.loadAbility(organizationToSet.id, reFetchKeys);
+          this.setOrganization(organizationToSet);
         }
-        this.setOrganization(organizationToSet);
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
