@@ -137,13 +137,13 @@ const ResourcesSubMenu = (props) => {
       <div className={classes.wrapperClss}>
         <Paper className={classes.wrapperClss}>
           <div className={classes.subMenuTab}>
-            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880, md: 1200 } }}>
+            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 845, sm: 880, md: 1200 } }}>
               <Tabs
                 value={getResourceCategoryIndex(selectedResource)}
                 className={classes.tabs}
                 onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
                 variant="scrollable"
-                scrollButtons="auto"
+                scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
                 centered
