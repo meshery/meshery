@@ -4,6 +4,7 @@ title: GitOps with Meshery
 abstract: Integrating your CI/CD pipelines with Meshery's GitHub Actions
 permalink: guides/gitops-with-meshery
 type: guides
+category: gitops
 language: en
 list: include
 published: true

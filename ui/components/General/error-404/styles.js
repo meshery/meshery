@@ -36,7 +36,7 @@ export const ErrorContentContainer = styled('div')(() => ({
 }));
 
 export const ErrorLink = styled('a')(({ theme }) => ({
-  color: theme.palette.keppelGreen,
+  color: theme.palette.secondary.focused,
   textDecoration: 'none',
 }));
 

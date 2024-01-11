@@ -1,8 +1,9 @@
 ---
 layout: default
-title: Performance Management
-permalink: tasks/performance-management
+title: Managing Performance
+permalink: tasks/performance/managing-performance
 type: tasks
+category: performance
 language: en
 list: include
 abstract: "Advanced performance characterization with Meshery."
