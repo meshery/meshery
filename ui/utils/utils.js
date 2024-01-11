@@ -349,8 +349,8 @@ export const ResizableCell = ({ value }) => (
   <div style={{ position: 'relative', height: '20px' }}>
     <div style={customBodyRenderStyle}>
       <div style={cellStyle}>
-        <Tooltip title={value} arrow placement="top">
-          <span>{value}</span>
+        <Tooltip title={value} placement="top-start">
+          <span style={{ cursor: 'pointer' }}>{value}</span>
         </Tooltip>
       </div>
     </div>

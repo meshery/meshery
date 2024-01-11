@@ -282,7 +282,7 @@ export const keys = {
     action: 'fdc038e3-1fdf-403a-af8a-53c0de8d7820',
   },
   CONNECT_ADAPTER: {
-    subject: 'Connect Adapter',
+    subject: 'Connect adapter',
     action: 'c93bd211-1dac-42cc-9086-859288826d1b',
   },
   CONNECT_METRICS: {

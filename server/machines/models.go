@@ -21,6 +21,7 @@ const (
 	NotFound   EventType = "not found"
 	Delete     EventType = "delete"
 	NoOp       EventType = "noop"
+	Exit       EventType = "exit"
 
 	DISCOVERED   StateType = "discovered"
 	REGISTERED   StateType = "registered"
@@ -184,6 +185,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				}
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
+				
 				sm.Log.Debug("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
@@ -191,6 +193,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 					if eventType == NoOp {
 						return event, err
 					}
+
 				}
 			}
 		}
@@ -199,7 +202,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		sm.CurrentState = nextState
 	}
 
-	if sm.Provider != nil {
+	if sm.Provider != nil && eventType != Exit {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, statusCode, err := sm.Provider.UpdateConnectionStatusByID(token, sm.ID, connections.ConnectionStatus(sm.CurrentState))
 
