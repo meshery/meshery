@@ -1315,13 +1315,6 @@ function MesheryFilters({
                   setExpanded={setIsSearchExpanded}
                   placeholder="Search"
                 />
-                {viewType === 'table' && (
-                  <CustomColumnVisibilityControl
-                    id="ref"
-                    columns={columns}
-                    customToolsProps={{ columnVisibility, setColumnVisibility }}
-                  />
-                )}
                 <UniversalFilter
                   id="ref"
                   filters={filter}
@@ -1329,6 +1322,13 @@ function MesheryFilters({
                   setSelectedFilters={setSelectedFilters}
                   handleApplyFilter={handleApplyFilter}
                 />
+                {viewType === 'table' && (
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={columns}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                )}
 
                 {!selectedFilter.show && (
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
