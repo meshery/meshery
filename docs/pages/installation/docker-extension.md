@@ -52,10 +52,11 @@ Meshery runs as a set of one or more containers inside your Docker Desktop virtu
  <span style="font-size:0;">docker extension install meshery/docker-extension-meshery</span> 
  </div>
  <div class="window-buttons"></div>
- <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
+ <div id="termynal2" style="width:100%; height:90px; max-width:100%;" data-termynal="">
             <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
             <span data-ty="progress"></span>
             <span data-ty="">Successfully installed Meshery</span>
+            <span data-ty="input">mesheryctl system dashboard</span>
   </div>
  </div>
 </pre>
