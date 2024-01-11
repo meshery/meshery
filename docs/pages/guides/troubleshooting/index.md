@@ -2,7 +2,7 @@
 layout: default
 title: Troubleshooting Guide
 permalink: guides/troubleshooting
-redirect_from: guides/troubleshooting/
+# redirect_from: guides/troubleshooting/
 language: en
 abstract: The documentation in the Troubleshooting section provides comprehensive guidance on troubleshooting in Meshery and its components, ensuring you can address common issues efficiently.
 ---

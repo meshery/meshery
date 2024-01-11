@@ -1,10 +1,10 @@
 ---
 layout: enhanced
-title: Configuring your Cloud Native Infrastructure and Applications with Meshery
+title: Configuring your Cloud Native Infrastructure and Applications
 abstract: Learn how to use Meshery Designs effectively
-permalink: guides/infrastructure-management/configuration-management
+permalink: guides/configuration-management/working-with-designs
 type: guides
-category: infrastructure
+category: configuration
 language: en
 abstract: Learn how to use Meshery Designs effectively
 ---
