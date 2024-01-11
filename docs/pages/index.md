@@ -122,20 +122,46 @@ language: en
 
  <!-- Extensions -->
   <div class="section">
-    <a href="{{ site.baseurl }}/extensions">
-        <div class="btn-primary">Extensions</div>
+    <a href="{{ site.baseurl }}/extensibility">
+        <div class="btn-primary">Integrations & Extensions</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
-    <ul>
-      {% assign sorted_items = sorted_pages | category: "name" | alphabetical %}
-
-      {% for item in sorted_items %}
-      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
+        <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="extensions" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/integrations" class="text-black">Integrations</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="integration" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
   </div>
 
 </div>
@@ -197,8 +223,9 @@ language: en
         <div class="btn-primary">Contributing and Community</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
+    <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
     <ul>
-      <li><a href="{{ site.baseurl }}/project/community" class="text-black">Community</a></li>
+      <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
     </ul>
     <details>
       <summary>
