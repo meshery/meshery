@@ -177,7 +177,7 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Meshery CLI</a>
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using the CLI</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -192,9 +192,45 @@ language: en
           {% endfor %}
       </ul>
     </details>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="infrastructure" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+        <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/performance-management" class="text-black">Performance Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.language=="en" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="performance" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -224,9 +260,7 @@ language: en
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
-    <ul>
-      <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
-    </ul>
+    <a href="{{ site.baseurl }}/project/community" style="font-size:1.8rem">Community</a>
     <details>
       <summary>
         <p style="display:inline">
@@ -261,7 +295,7 @@ language: en
 
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and item.language =="en" -%}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
