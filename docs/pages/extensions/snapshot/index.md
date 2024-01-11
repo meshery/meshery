@@ -28,12 +28,12 @@ MeshMap Snapshot is a screenshot service provided via MeshMap for your designs. 
 
 Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 <ul>
-<li>Step 1: Log in to your Meshery Dashboard.</lI>
-<lI>Step 2: Navigate to Extensions and Enable GitHub Action: MeshMap Snapshot.</lI>
-<lI>Step 3: You will be directed to Meshery Cloud.</lI>
-<lI>Step 4: Click on the "Let's Go" button in the onboarding modal.</lI>
-<lI>Step 5: Now, select the second option, 'GitOps your infrastructure with MeshMap Snapshot'.</lI>
-<lI>Step 6: Once that's complete, follow the guided instructions.</lI>
+<li>Step 1: Log in to your Meshery Dashboard.</li>
+<li>Step 2: Navigate to Extensions and Enable GitHub Action: MeshMap Snapshot.</li>
+<li>Step 3: You will be directed to Meshery Cloud.</li>
+<li>Step 4: Click on the "Let's Go" button in the onboarding modal.</li>
+<li>Step 5: Now, select the second option, 'GitOps your infrastructure with MeshMap Snapshot'.</li>
+<li>Step 6: Once that's complete, follow the guided instructions.</li>
 </ul>
 
 ## Configurating the SnapShot Service

@@ -140,9 +140,11 @@
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/creating-a-meshery-design
+        url: guides/configuration-management/creating-a-meshery-design
+      - title: Working with Designs
+        url: guides/configuration-management/working-with-designs
       - title: Importing Applications
-        url: guides/importing-apps
+        url: guides/configuration-management/importing-apps
     - title: Managing Events with Notification Center
       url: guides/events-management
     - title: Using Multiple Meshery Adapters
@@ -153,8 +155,12 @@
       url: guides/performance-management
       children:
         - title: Integrating Prometheus and Grafana
-          url: guides/meshery-metrics
-    - title: Meshery CLI Guides ↆ
+          url: guides/performance-management/meshery-metrics
+        - title: Interpreting Performance Test Results 
+          url: guides/performance-management/interpreting-performance-test-results
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management
+    - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl

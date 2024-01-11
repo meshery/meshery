@@ -11,15 +11,16 @@ list: exclude
 abstract: Integrations with other platforms and services.
 ---
 
-
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
 {% assign total = sorted_index | size %}
 {% capture totalled %}
+
 ### All Integrations by Name ({{ total }})
+
 {% endcapture %}
 {{totalled}}
 
-<!-- 
+<!--
 UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
 ### All Integrations by Name ({{ site.integrations.size }}) -->
 

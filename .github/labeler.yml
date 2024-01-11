@@ -8,7 +8,7 @@ component/ui:
 component/server:
   - "server/**/*"
 area/models:
-  - "server/meshmodel/**/*  
+  - "server/meshmodel/**/*"
 component/mesheryctl:
   - "mesheryctl/**/*"
 component/extensions:
