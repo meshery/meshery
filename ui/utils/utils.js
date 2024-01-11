@@ -184,6 +184,18 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
 };
 
 /**
+ * Gets the stringified meshery pattern_file and convert it to uint8Array
+ * @param {string} design
+ * @returns {array} - return array of uint8Array
+ *
+ * */
+export const getUnit8ArrayForDesign = (design) => {
+  const uint8Array = Uint8Array.from(design, (char) => char.charCodeAt(0));
+
+  return Array.from(uint8Array);
+};
+
+/**
  * Change the value of a property in RJSF schema
  *
  * @param {string} schema - RJSF schema

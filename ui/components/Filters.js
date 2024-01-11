@@ -121,7 +121,6 @@ function TooltipIcon({ children, onClick, title }) {
 }
 
 function YAMLEditor({ filter, onClose, onSubmit, classes }) {
-  const [yaml, setYaml] = useState('');
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -138,6 +137,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
   }
 
   const config = resourceData?.settings?.config || '';
+  const [yaml, setYaml] = useState(config);
 
   return (
     <Dialog

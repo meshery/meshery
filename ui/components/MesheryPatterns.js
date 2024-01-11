@@ -37,6 +37,7 @@ import {
   generateValidatePayload,
   getComponentsinFile,
   getUnit8ArrayDecodedFile,
+  getUnit8ArrayForDesign,
 } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import CatalogFilter from './CatalogFilter';
@@ -221,7 +222,7 @@ function TooltipIcon({ children, onClick, title, placement }) {
 
 function YAMLEditor({ pattern, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState('');
+  const [yaml, setYaml] = useState(pattern.pattern_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -993,7 +994,7 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: data, catalog_data },
+            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
             save: true,
           }),
         },
@@ -1012,7 +1013,7 @@ function MesheryPatterns({
         body = JSON.stringify({
           pattern_data: {
             name: metadata?.name || name,
-            pattern_file: data,
+            pattern_file: getUnit8ArrayDecodedFile(data),
             catalog_data,
           },
           save: true,
