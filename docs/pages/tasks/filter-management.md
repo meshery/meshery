@@ -1,6 +1,6 @@
 ---
 layout: default
-title: WASM Filter Management
+title: Envoy WASM Filter Management
 permalink: tasks/filter-management
 type: tasks
 language: en

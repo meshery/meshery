@@ -355,7 +355,7 @@ const Workspaces = ({ organization, classes }) => {
     } else {
       setActionType(ACTION_TYPES.CREATE);
       setInitialData({
-        name: '',
+        name: undefined,
         description: '',
         organization: orgId,
       });
