@@ -118,7 +118,7 @@ func (h *Handler) handlePatternPOST(
 		EventType:     meshes.EventType_INFO,
 	}
 	sourcetype := mux.Vars(r)["sourcetype"]
-	var parsedBody *MesheryPatternPOSTRequestBody
+	parsedBody := &MesheryPatternPOSTRequestBody{}
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -153,8 +153,6 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	format := r.URL.Query().Get("output")
-	var mesheryPatternPayload *mesheryPatternPayload // payload assumed the file is sent into bytes. this helps in ensuring the contents are not corrupted while converting to string in UI
-
 	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
 
 	if parsedBody.CytoscapeJSON != "" {
@@ -263,9 +261,7 @@ func (h *Handler) handlePatternPOST(
 			}
 		}
 
-		mesheryPatternPayload = parsedBody.PatternData
-
-		bytPattern := mesheryPatternPayload.PatternFile
+		bytPattern := parsedBody.PatternData.PatternFile
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -335,14 +331,16 @@ func (h *Handler) handlePatternPOST(
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
-			parsedBody.PatternData.Type = sql.NullString{
-				String: string(models.Design),
-				Valid:  true,
-			}
+
 			mesheryPattern.PatternFile = string(bytPattern)
+			mesheryPattern.CatalogData = parsedBody.PatternData.CatalogData
+			
+			if parsedBody.PatternData.ID != nil {
+				mesheryPattern.ID = parsedBody.PatternData.ID
+			}
 
 			// assume the design is in OCI Artifact format
-			decompressedDesign, err := unCompressOCIArtifactIntoDesign(parsedBody.PatternData.PatternFile)
+			uncompressedDesign, err := unCompressOCIArtifactIntoDesign(parsedBody.PatternData.PatternFile)
 			// if errors occurs in decompressing OCI Artifact into design file
 			// then fall back to importing design as yaml file
 			if err != nil {
@@ -350,9 +348,12 @@ func (h *Handler) handlePatternPOST(
 				h.log.Info("Falling back to importing design as yaml file")
 			} else {
 				h.log.Info("OCI Artifact decompressed successfully")
-				mesheryPattern = decompressedDesign
+				mesheryPattern = uncompressedDesign
 			}
-			mesheryPattern.Type = parsedBody.PatternData.Type
+			mesheryPattern.Type = sql.NullString{
+				String: string(models.Design),
+				Valid:  true,
+			}
 			// Check if the pattern is valid
 			err = pCore.IsValidPattern(mesheryPattern.PatternFile)
 			if err != nil {
