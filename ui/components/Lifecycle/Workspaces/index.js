@@ -92,6 +92,7 @@ const Workspaces = ({ organization, classes }) => {
   const [designsPageSize /*setDesignssPageSize*/] = useState(25);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
+  const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const ref = useRef(null);
   const { notify } = useNotification();
@@ -239,12 +240,12 @@ const Workspaces = ({ organization, classes }) => {
     handleWorkspaceModalClose();
   };
 
-  const handleDeleteWorkspace = (id) => {
+  const handleDeleteWorkspace = (id, name) => {
     deleteWorkspace({
       workspaceId: id,
     })
       .unwrap()
-      .then(() => handleSuccess(`Workspace deleted`))
+      .then(() => handleSuccess(`Workspace "${name}" deleted`))
       .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
   };
 
@@ -354,7 +355,7 @@ const Workspaces = ({ organization, classes }) => {
     } else {
       setActionType(ACTION_TYPES.CREATE);
       setInitialData({
-        name: '',
+        name: undefined,
         description: '',
         organization: orgId,
       });
@@ -373,7 +374,10 @@ const Workspaces = ({ organization, classes }) => {
 
   const handleBulkDeleteWorkspace = () => {
     selectedWorkspaces.map((workspaceId) => {
-      handleDeleteWorkspace(workspaceId);
+      handleDeleteWorkspace(
+        workspaceId,
+        workspaces.find((workspace) => workspace.name === name),
+      );
     });
     setSelectedWorkspaces([]);
     handleDeleteWorkspacesModalClose();
@@ -406,7 +410,7 @@ const Workspaces = ({ organization, classes }) => {
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
-      handleDeleteWorkspace(workspace.id);
+      handleDeleteWorkspace(workspace.id, workspace.name);
     }
   };
 
@@ -439,19 +443,18 @@ const Workspaces = ({ organization, classes }) => {
   };
 
   const handleAssignEnvironmentsData = (updatedAssignedData) => {
+    const { addedEnvironmentsIds, removedEnvironmentsIds } =
+      getAddedAndRemovedEnvironments(updatedAssignedData);
+    (addedEnvironmentsIds.length > 0 || removedEnvironmentsIds.length) > 0
+      ? setDisableTranferButton(false)
+      : setDisableTranferButton(true);
+
     setAssignedEnvironments(updatedAssignedData);
   };
 
   const handleAssignEnvironments = () => {
-    const originalEnvironmentsIds = workspaceEnvironmentsData.map((environment) => environment.id);
-    const updatedEnvironmentsIds = assignedEnvironments.map((environment) => environment.id);
-
-    const addedEnvironmentsIds = updatedEnvironmentsIds.filter(
-      (id) => !originalEnvironmentsIds.includes(id),
-    );
-    const removedTeamsIds = originalEnvironmentsIds.filter(
-      (id) => !updatedEnvironmentsIds.includes(id),
-    );
+    const { addedEnvironmentsIds, removedEnvironmentsIds } =
+      getAddedAndRemovedEnvironments(assignedEnvironments);
 
     addedEnvironmentsIds.map((id) =>
       assignEnvironmentToWorkspace({
@@ -460,7 +463,7 @@ const Workspaces = ({ organization, classes }) => {
       }).unwrap(),
     );
 
-    removedTeamsIds.map((id) =>
+    removedEnvironmentsIds.map((id) =>
       unassignEnvironmentFromWorkspace({
         workspaceId: environmentAssignWorkspace.id,
         environmentId: id,
@@ -469,6 +472,22 @@ const Workspaces = ({ organization, classes }) => {
     setEnvironmentsData([]);
     setWorkspaceEnvironmentsData([]);
     handleAssignEnvironmentModalClose();
+  };
+
+  const getAddedAndRemovedEnvironments = (allAssignedEnvironments) => {
+    const originalEnvironmentsIds = workspaceEnvironmentsData.map((environment) => environment.id);
+    const updatedEnvironmentsIds = allAssignedEnvironments.map((environment) => environment.id);
+
+    const addedEnvironmentsIds = updatedEnvironmentsIds.filter(
+      (id) => !originalEnvironmentsIds.includes(id),
+    );
+    const removedEnvironmentsIds = originalEnvironmentsIds.filter(
+      (id) => !updatedEnvironmentsIds.includes(id),
+    );
+    return {
+      addedEnvironmentsIds,
+      removedEnvironmentsIds,
+    };
   };
 
   const handleAssignDesignModalClose = () => {
@@ -488,15 +507,16 @@ const Workspaces = ({ organization, classes }) => {
   };
 
   const handleAssignDesignsData = (updatedAssignedData) => {
+    const { addedDesignsIds, removedDesignsIds } = getAddedAndRemovedDesigns(updatedAssignedData);
+    (addedDesignsIds.length > 0 || removedDesignsIds.length) > 0
+      ? setDisableTranferButton(false)
+      : setDisableTranferButton(true);
+
     setAssignedDesigns(updatedAssignedData);
   };
 
   const handleAssignDesigns = () => {
-    const originalDesignsIds = workspaceDesignsData.map((design) => design.id);
-    const updatedDesignsIds = assignedDesigns.map((design) => design.id);
-
-    const addedDesignsIds = updatedDesignsIds.filter((id) => !originalDesignsIds.includes(id));
-    const removedDesignsIds = originalDesignsIds.filter((id) => !updatedDesignsIds.includes(id));
+    const { addedDesignsIds, removedDesignsIds } = getAddedAndRemovedDesigns(assignedDesigns);
 
     addedDesignsIds.map((id) =>
       assignDesignToWorkspace({
@@ -514,6 +534,19 @@ const Workspaces = ({ organization, classes }) => {
     setDesignsData([]);
     setWorkspaceDesignsData([]);
     handleAssignDesignModalClose();
+  };
+
+  const getAddedAndRemovedDesigns = (allAssignedDesigns) => {
+    const originalDesignsIds = workspaceDesignsData.map((design) => design.id);
+    const updatedDesignsIds = allAssignedDesigns.map((design) => design.id);
+
+    const addedDesignsIds = updatedDesignsIds.filter((id) => !originalDesignsIds.includes(id));
+    const removedDesignsIds = originalDesignsIds.filter((id) => !updatedDesignsIds.includes(id));
+
+    return {
+      addedDesignsIds,
+      removedDesignsIds,
+    };
   };
 
   const handleAssignablePageEnvironment = () => {
@@ -677,9 +710,7 @@ const Workspaces = ({ organization, classes }) => {
                   actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
                 }
                 title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-                submitBtnText={
-                  actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
-                }
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
               />
             )}
@@ -719,6 +750,7 @@ const Workspaces = ({ organization, classes }) => {
             }
             action={handleAssignEnvironments}
             buttonTitle="Save"
+            disabled={disableTranferButton}
             leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
             helpText="Assign environment to workspace"
             maxWidth="md"
@@ -745,6 +777,7 @@ const Workspaces = ({ organization, classes }) => {
             }
             action={handleAssignDesigns}
             buttonTitle="Save"
+            disabled={disableTranferButton}
             leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
             helpText="Assign designs to workspace"
             maxWidth="md"

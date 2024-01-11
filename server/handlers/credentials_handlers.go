@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -42,6 +43,23 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	h.log.Info("credential saved successfully", createdCredential.Name, createdCredential.ID)
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	credentialID := uuid.FromStringOrNil(mux.Vars(req)["credentialID"])
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(w, "unable to get user credentials", statusCode)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(credential); err != nil {
+		h.log.Error(models.ErrMarshal(err, "credential"))
+		http.Error(w, "unable to encode user credentials", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {

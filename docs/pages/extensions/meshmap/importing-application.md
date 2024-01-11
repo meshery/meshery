@@ -1,12 +1,13 @@
 ---
-layout: default
+layout: enhanced
 title: Importing existing applications
 permalink: extensions/importing-an-application
 language: en
-display-title: "false"
-list: exclude
-type: meshmap
 abstract: Import your existing applications into Meshery.
+display-title: "false"
+list: include
+type: extensions
+category: meshmap
 ---
 
 ## Import existing applications into Meshery

@@ -1111,7 +1111,7 @@ function Connections(props) {
         handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
       }
       notify({
-        message: `Operator ${response.operatorStatus.toLowerCase()}`,
+        message: `Operator ${response.operatorStatus?.toLowerCase()}`,
         event_type: EVENT_TYPES.SUCCESS,
       });
 

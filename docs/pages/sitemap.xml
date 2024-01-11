@@ -8,12 +8,12 @@ permalink: /sitemap.xml
     <url>
      <loc>/</loc>
      <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>
-     <changefreq>daily</changefreq>
+     <changefreq>weekly</changefreq>
     </url>
-{% for section in site.data.toc %}<url>
-     <loc>{{ site.baseurl }}{{ section.url }}/</loc>
+{% for page in site.pages %}<url>
+     <loc>{{ site.url }}{{ page.url | xml_escape }}</loc>
      <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>
-     <changefreq>daily</changefreq>
+     <changefreq>weekly</changefreq>
     </url>
 {% endfor %}
 </urlset>

@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { ErrorTypes } from '@/constants/common';
+import { useTheme } from '@material-ui/core/styles';
 // import InstallMeshery, { MesheryAction } from "../../dashboard/install-meshery-card";
 import Socials from './socials';
 import {
@@ -36,6 +37,7 @@ const UnknownServerSideError = (props) => {
 
 const DefaultError = (props) => {
   const { errorTitle, errorContent, errorType } = props;
+  const theme = useTheme();
 
   return (
     <ErrorMain>
@@ -43,15 +45,40 @@ const DefaultError = (props) => {
         <img
           width="400px"
           height="300px"
-          src="/static/img/meshery-logo/meshery-logo-light-text.png"
+          src={
+            theme.palette.type === 'dark'
+              ? '/static/img/meshery-logo/meshery-logo-white-text.png'
+              : '/static/img/meshery-logo/meshery-logo-light-text.png'
+          }
           alt="Meshery logo"
         />
         <ErrorComponent>
           <Typography variant="h4" component="h4" align="center" className="errormsg">
             {errorTitle
               ? errorTitle
-              : 'You are not authorized to view this page. Contact your administrator'}
+              : "Oops! It seems like you don't have the necessary permissions to view this page."}
           </Typography>
+          <Typography
+            variant="body1"
+            component="p"
+            align="left"
+            style={{ paddingLeft: '1.25rem', paddingTop: '1rem' }}
+          >
+            Possible reasons:
+          </Typography>
+          <ol style={{ textAlign: 'left', fontSize: '1rem' }}>
+            <li>
+              <strong>Insufficient Permissions:</strong> Your account may lack the required
+              permissions to access this page. To resolve this, please reach out to your
+              administrator and request the necessary access.
+            </li>
+            <li>
+              <strong>Check Selected Organization:</strong> Ensure you are in the correct
+              organization in which you have access to view this page. You can verify your
+              organization settings <ErrorLink href="/user/preferences">here</ErrorLink>. If needed,
+              switch to an organization where you have the required permissions.
+            </li>
+          </ol>
           {errorType === ErrorTypes.UNKNOWN ? (
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}

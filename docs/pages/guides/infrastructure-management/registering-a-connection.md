@@ -2,8 +2,10 @@
 layout: default
 title: Registering a Connection
 abstract: Discovering Components with MeshSync and Registering as a Connection
-permalink: guides/registering-a-connection
+permalink: guides/infrastructure-management/registering-a-connection
 type: guides
+category: connections
+category: infrastructure
 language: en
 abstract: "MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure."
 list: include
@@ -65,4 +67,7 @@ During credential registration, users can assign credentials to one or more conn
 
 The benefit of normalizing and extracting the status of a component as a direct property of the connection is to allow different systems to connect to the same component with different states. For example, multiple Meshery servers can connect to the same Kubernetes cluster, each having its own individual connection with a unique status.
 
-Now that you are familiar with MeshSync and its powerful features, you are ready to streamline your Kubernetes cluster management. Happy syncing!
+Now that you are familiar with MeshSync and its powerful features, you are ready to streamline your Kubernetes cluster management. 
+
+
+

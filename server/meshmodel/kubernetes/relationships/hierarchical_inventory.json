@@ -15,7 +15,7 @@
         "metadata": {}
     },
     "subType": "Inventory",
-    "rego_query": "heirarchical_inventory_relationship",
+    "evaluationQuery": "heirarchical_inventory_relationship",
     "selectors": {
         "allow": {
             "from": [

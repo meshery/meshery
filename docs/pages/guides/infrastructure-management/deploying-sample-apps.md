@@ -1,8 +1,9 @@
 ---
-layout: default
+layout: enhanced
 title: Deploying Sample Applications
 abstract: This guide is to help users get a better understanding of sample apps
-permalink: guides/sample-apps
+permalink: guides/infrastructure-management/sample-apps
+category: infrastructure
 type: guides
 language: en
 ---
@@ -16,7 +17,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 
 ## Deploy a sample app on Meshery
 
-1. Go to the management page of any [service mesh]({{ site.baseurl }}/service-meshes) and install any of its stable versions.
+1. Go to the management page of any service mesh and install any of its stable versions.
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;display:flex;padding-top:10px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" /></a>
 
 1. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a dropdown menu with the available sample applications.
