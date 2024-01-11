@@ -204,7 +204,7 @@ export const reducer = (state = initialState, action) => {
       return state.merge({ connectionMetadataState: action.connectionMetadataState });
 
     case actionTypes.SET_KEYS:
-      const updatedKeyState = state.merge({ keys: action.keys });
+      const updatedKeyState = state.mergeDeep({ keys: action.keys });
       sessionStorage.setItem('keys', JSON.stringify(action.keys));
       return updatedKeyState;
 
