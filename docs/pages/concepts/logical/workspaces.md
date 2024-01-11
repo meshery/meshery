@@ -1,7 +1,7 @@
 ---
 layout: enhanced
 title: Workspaces
-permalink: concepts/workspaces
+permalink: concepts/logical/workspaces
 type: concepts
 abstract: "Meshery Workspaces act as central collaboration points for teams"
 language: en
@@ -48,7 +48,7 @@ See "[Environments](/concepts/environments)" section for more information.
 - One ore more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
-See "[Meshery Designs](/concepts/designs)" section for more information.
+See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
 ### Teams
 
@@ -64,7 +64,7 @@ See "[Teams](/extensions/team-management)" section for more information.
 - Connections can be assigned to one or more environments.
 - Same connection can be assigned to multiple environments.
 
-See "[Connections](/concepts/connections)" section for more information.
+See "[Connections](/concepts/logical/connections)" section for more information.
 
 ## Best Practices
 
