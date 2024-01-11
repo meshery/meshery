@@ -27,7 +27,6 @@ To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }
             <span data-ty="input">mesheryctl system dashboard</span>
   </div>
   </div>
-
  </pre>
 
 {% include alert.html type="info" title="Meshery CLI Package Managers" content="In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
