@@ -8,7 +8,7 @@ language: en
 list: include
 ---
 
-Meshery Environments allow you to logically group related [Connections]({{site.baseurl}}/concepts/logical/connections) and their associated [Credentials]({{site.baseurl}}/concepts/logical/credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis. 
+Meshery Environments allow you to logically group related [Connections](#connections) and their associated [Credentials](#credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis. 
 
 ### Assigning Resources 
 
@@ -33,12 +33,12 @@ Environments represent a collection of resources in the form of Connections - bo
 
 ## Key Components
 
-### Connections
+### Connections <a id="connections"></a>
 Connections are an integral part of Environment. These are cloud-native resources that can be both managed and unmanaged, and they're registered by the Meshery Server. Examples of connections include Kubernetes clusters, Prometheus instances, Jaeger tracers, and Nginx web servers.
 
 See "[Connections](/concepts/connections)" section for more information.
 
-### Credentials
+### Credentials <a id="credentials"></a>
 Credentials in an Environment are the keys to securely authenticate and access managed connections. For example, valid Prometheus secrets or Kubernetes API tokens are essential credentials for securely interacting with these managed resources.
 
 See "[Credentials](/concepts/credentials)" section for more information.
