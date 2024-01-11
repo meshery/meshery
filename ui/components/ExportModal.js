@@ -60,7 +60,9 @@ const ExportModal = (props) => {
     classes,
     extensibleButtons,
   } = props;
-  console.log(extensibleButtons);
+
+  // In order to gain access to the child component instance,
+  // const childRef = useRef();
 
   const handleClose = () => {
     handleDownloadDialogClose();
