@@ -52,12 +52,16 @@ const styles = (theme) => ({
   },
 });
 
-const ExportModal = ({
-  downloadModal,
-  handleDownloadDialogClose,
-  handleDesignDownload,
-  classes,
-}) => {
+const ExportModal = (props) => {
+  const {
+    downloadModal,
+    handleDownloadDialogClose,
+    handleDesignDownload,
+    classes,
+    extensibleButtons,
+  } = props;
+  console.log(extensibleButtons);
+
   const handleClose = () => {
     handleDownloadDialogClose();
   };
@@ -179,6 +183,11 @@ const ExportModal = ({
               </Button>
             </div>
           </div>
+          <>
+            {extensibleButtons?.map((btn, idx) => (
+              <div key={idx}>{btn(props)}</div>
+            ))}
+          </>
         </Box>
       </DialogContent>
     </Dialog>
