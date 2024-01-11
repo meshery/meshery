@@ -37,6 +37,9 @@ const styles = (theme) => ({
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
+    '& .MuiTab-fullWidth': {
+      flexBasis: 'unset', // Remove flex-basis
+    },
   },
   icon: {
     display: 'inline',

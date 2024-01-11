@@ -54,6 +54,8 @@ import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const styles = (theme) => ({
   smWrapper: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
@@ -1102,31 +1104,52 @@ class MesheryAdapterPlayComponent extends React.Component {
         : [];
     let content;
     let description;
+    let permission;
     switch (cat) {
       case 0:
         content = 'Manage Service Mesh Lifecycle';
         description = 'Deploy a service mesh or SMI adapter on your cluster.';
+        permission = {
+          action: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.action,
+          subject: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.subject,
+        };
         break;
 
       case 1:
         content = 'Manage Sample Application Lifecycle';
         description = 'Deploy sample applications on/off the service mesh.';
+        permission = {
+          action: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.action,
+          subject: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.subject,
+        };
         break;
 
       case 2:
         content = 'Apply Service Mesh Configuration';
         description = 'Configure your service mesh using some pre-defined options.';
         selectedAdapterOps = selectedAdapterOps.filter((ops) => !ops.value.startsWith('Add-on:'));
+        permission = {
+          action: keys.APPLY_SERVICE_MESH_CONFIGURATION.action,
+          subject: keys.APPLY_SERVICE_MESH_CONFIGURATION.subject,
+        };
         break;
 
       case 3:
         content = 'Validate Service Mesh Configuration';
         description = 'Validate your service mesh configuration against best practices.';
+        permission = {
+          action: keys.VALIDATE_SERVICE_MESH_CONFIGURATION.action,
+          subject: keys.VALIDATE_SERVICE_MESH_CONFIGURATION.subject,
+        };
         break;
 
       case 4:
         content = 'Apply Custom Configuration';
         description = 'Customize the configuration of your service mesh.';
+        permission = {
+          action: keys.APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION.action,
+          subject: keys.APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION.subject,
+        };
         break;
     }
     return (
@@ -1137,6 +1160,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             aria-label="install"
             ref={(ch) => (this.addIconEles[cat] = ch)}
             onClick={this.addDelHandleClick(cat, false)}
+            disabled={!CAN(permission.action, permission.subject)}
           >
             {cat !== 4 ? <AddIcon style={iconMedium} /> : <PlayIcon style={iconMedium} />}
           </IconButton>
@@ -1149,6 +1173,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 ref={(ch) => (this.delIconEles[cat] = ch)}
                 className={classes.deleteRight}
                 onClick={this.addDelHandleClick(cat, true)}
+                disabled={!CAN(permission.action, permission.subject)}
               >
                 <DeleteIcon style={iconMedium} />
               </IconButton>

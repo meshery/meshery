@@ -94,6 +94,7 @@ const Environments = ({ organization, classes }) => {
   const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
   const [skip, setSkip] = useState(true);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const pageSize = 10;
   const connectionPageSize = 25;
@@ -282,7 +283,7 @@ const Environments = ({ organization, classes }) => {
     } else {
       setActionType(ACTION_TYPES.CREATE);
       setInitialData({
-        name: '',
+        name: undefined,
         description: '',
         organization: orgId,
       });
@@ -393,15 +394,8 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleAssignConnection = () => {
-    const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
-    const updatedConnectionsIds = assignedConnections.map((conn) => conn.id);
-
-    const addedConnectionsIds = updatedConnectionsIds.filter(
-      (id) => !originalConnectionsIds.includes(id),
-    );
-    const removedConnectionsIds = originalConnectionsIds.filter(
-      (id) => !updatedConnectionsIds.includes(id),
-    );
+    const { addedConnectionsIds, removedConnectionsIds } =
+      getAddedAndRemovedConnection(assignedConnections);
 
     addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
 
@@ -428,7 +422,30 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
+    const { addedConnectionsIds, removedConnectionsIds } =
+      getAddedAndRemovedConnection(updatedAssignedData);
+    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0
+      ? setDisableTranferButton(false)
+      : setDisableTranferButton(true);
+
     setAssignedConnections(updatedAssignedData);
+  };
+
+  const getAddedAndRemovedConnection = (allAssignedConnections) => {
+    const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
+    const updatedConnectionsIds = allAssignedConnections.map((conn) => conn.id);
+
+    const addedConnectionsIds = updatedConnectionsIds.filter(
+      (id) => !originalConnectionsIds.includes(id),
+    );
+    const removedConnectionsIds = originalConnectionsIds.filter(
+      (id) => !updatedConnectionsIds.includes(id),
+    );
+
+    return {
+      addedConnectionsIds,
+      removedConnectionsIds,
+    };
   };
 
   const handleAssignablePage = () => {
@@ -584,9 +601,7 @@ const Environments = ({ organization, classes }) => {
                   title={
                     actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
                   }
-                  submitBtnText={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                  }
+                  submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                   initialData={initialData}
                 />
               )}
@@ -617,6 +632,7 @@ const Environments = ({ organization, classes }) => {
             }
             action={handleAssignConnection}
             buttonTitle="Save"
+            disabled={disableTranferButton}
             leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
             helpText="Assign connections to environment"
             maxWidth="md"

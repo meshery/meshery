@@ -1206,7 +1206,7 @@ function MesheryPatterns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} TODO: uncomment when clone key will get seeded
+                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
