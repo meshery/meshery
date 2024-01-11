@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -30,6 +31,7 @@ func CreateIntegrationDocs(csvIndices CSVIndices) {
 func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
 	for _, record := range records[1:] {
 		svgContent := record[csvIndices.SvgIndex]
+		fmt.Println("Creating SVG:", record[csvIndices.NameIndex])
 		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
 	}
 }
@@ -50,6 +52,7 @@ func createFiles(path, filetype, name, content string) {
 	fullPath := path + "/" + formattedName + filetype
 
 	file, err := os.Create(fullPath)
+	fmt.Println("Creating file:", fullPath)
 	if err != nil {
 		log.Println("Error creating filetype file:", err)
 		return
