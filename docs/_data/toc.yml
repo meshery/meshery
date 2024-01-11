@@ -100,24 +100,24 @@
       url: concepts/logical
       children: 
         - title: "Designs"
-          url: concepts/designs
+          url: concepts/logical/designs
         - title: "Environments"
-          url: concepts/environments          
+          url: concepts/logical/environments          
         - title: "Models ↆ"
-          url: concepts/models
+          url: concepts/logical/models
           grandchildren: 
           - title: "Components"
-            url: concepts/components
+            url: concepts/logical/components
           - title: "Relationships"
-            url: concepts/relationships
+            url: concepts/logical/relationships
           - title: "Policies"
-            url: concepts/policies
+            url: concepts/logical/policies
           - title: "Connections"
-            url: concepts/connections
+            url: concepts/logical/connections
           - title: "Credentials"
-            url: concepts/credentials
+            url: concepts/logical/credentials
         - title: "Workspaces"
-          url: concepts/workspaces
+          url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -253,8 +253,8 @@
             url: extensions/sharing-a-design
         - title: "GitOps: Snapshots"
           url: extensions/snapshot
-        - title: "Provider: Layer5 Cloud"
-          url: extensions/layer5-cloud
+        # - title: "Provider: Layer5 Cloud"
+        #   url: extensions/layer5-cloud
       # children:
       # - title: Building a Remote Provider
       #   url: extensibility/providers/building-a-remote-provider

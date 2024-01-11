@@ -39,7 +39,7 @@ After creating a Workspace, of your next steps is to resource that Workspace. Li
 - One or more environments can be assigned to a workspace.
 - Same environment can be assigned to multiple workspaces.
 
-See "[Environments](/concepts/environments)" section for more information.
+See "[Environments](/concepts/logical/environments)" section for more information.
 
 ### Designs
 
