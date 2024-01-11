@@ -1,7 +1,7 @@
 ---
 layout: enhanced
 title: Models
-permalink: concepts/models
+permalink: concepts/logical/models
 type: concepts
 abstract: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
 language: en
