@@ -1031,6 +1031,8 @@ func (h *Handler) DeleteMesheryPatternHandler(
 // swagger:route GET /api/pattern/download/{id} PatternsAPI idGetMesheryPattern
 // Handle GET request for Meshery Pattern with the given id
 //
+// ?oci={true|false} - If true, returns the pattern in OCI Artifact format
+//
 // Get the pattern with the given id
 // responses:
 //  200:
@@ -1246,7 +1248,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			event = eventBuilder.Build()
 			go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
-			
+
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
