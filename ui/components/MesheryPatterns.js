@@ -1043,13 +1043,13 @@ function MesheryPatterns({
     }
   }
 
-  const handleDownload = (e, design, oci) => {
+  const handleDownload = (e, design, source_type, params) => {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
       let id = design.id;
       let name = design.name;
-      downloadContent({ id, name, type: 'pattern', oci });
+      downloadContent({ id, name, type: 'pattern', source_type, params });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
@@ -1274,10 +1274,7 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Download"
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
-                onClick={(e) =>
-                  // handleDownload(e, rowData.id, rowData.name)
-                  handleDesignDownloadModal(e, rowData)
-                }
+                onClick={(e) => handleDesignDownloadModal(e, rowData)}
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>

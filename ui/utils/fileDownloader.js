@@ -1,11 +1,11 @@
 import { FILTER, PATTERN } from './Enum';
 
 const DOWNLOAD_PATH = {
-  [PATTERN]: ({ id, source_type, oci }) =>
+  [PATTERN]: ({ id, source_type, params }) =>
     source_type
       ? `/api/pattern/download/${id}/${source_type}`
-      : oci
-      ? `/api/pattern/download/${id}?oci=true`
+      : params
+      ? `/api/pattern/download/${id}?${params}`
       : `/api/pattern/download/${id}`,
   [FILTER]: ({ id }) => `/api/filter/download/${id}`,
 };
@@ -25,8 +25,8 @@ export const downloadFileFromUrl = (url, name) => {
  * @param {string} source_type - source type of the file to download
  * @returns {void}
  */
-export default function downloadContent({ id, type, name, source_type, oci = false }) {
-  const uri = DOWNLOAD_PATH[type]({ id, source_type, oci });
+export default function downloadContent({ id, type, name, source_type, params }) {
+  const uri = DOWNLOAD_PATH[type]({ id, source_type, params });
   if (!uri) {
     throw new Error('Invalid type of content to download', type);
   }

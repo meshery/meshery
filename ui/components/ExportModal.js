@@ -160,7 +160,15 @@ const ExportModal = (props) => {
                 Original ({downloadModal?.content?.type?.String})
               </Typography>
               <div style={exportBtnStyles}>
-                <Button onClick={(e) => handleDesignDownload(e, downloadModal.content, false)}>
+                <Button
+                  onClick={(e) =>
+                    handleDesignDownload(
+                      e,
+                      downloadModal.content,
+                      downloadModal?.content.type?.String,
+                    )
+                  }
+                >
                   <div style={exportWrpStyles}>
                     <OriginalApplicationFileIcon width={75} height={75} />
                     <div style={{ display: 'flex', padding: '0.8rem' }}>
@@ -177,7 +185,7 @@ const ExportModal = (props) => {
               Current
             </Typography>
             <div style={exportBtnStyles}>
-              <Button onClick={(e) => handleDesignDownload(e, downloadModal.content, false)}>
+              <Button onClick={(e) => handleDesignDownload(e, downloadModal.content)}>
                 <div style={exportWrpStyles}>
                   <ModifiedApplicationFileIcon width={75} height={82} />
                   <div style={{ display: 'flex', padding: '0.4rem' }}>
@@ -194,7 +202,9 @@ const ExportModal = (props) => {
             </Typography>
 
             <div style={exportBtnStyles}>
-              <Button onClick={(e) => handleDesignDownload(e, downloadModal.content, true)}>
+              <Button
+                onClick={(e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true')}
+              >
                 <div style={exportWrpStyles}>
                   <ModifiedApplicationFileIcon width={75} height={82} />
                   <div style={{ display: 'flex', padding: '0.4rem' }}>
