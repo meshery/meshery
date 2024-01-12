@@ -268,19 +268,16 @@ func (h *Handler) handlePatternPOST(
 			if sourcetype == string(models.DockerCompose) {
 				k8sres, err = kompose.Convert(bytPattern) // convert the docker compose file into kubernetes manifest
 				if err != nil {
-					obj := "convert"
-					conversionErr := ErrApplicationFailure(err, obj)
-					h.log.Error(conversionErr)
-
+					h.log.Error(ErrConvertingDockerComposeToDesign(err))
 					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-						"error": conversionErr,
+						"error": ErrConvertingDockerComposeToDesign(err),
 					}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s", mesheryPattern.Name)).Build()
 
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
 
-					http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+					http.Error(rw, ErrConvertingDockerComposeToDesign(err).Error(), http.StatusInternalServerError)
+					addMeshkitErr(&res, ErrConvertingDockerComposeToDesign(err))
 					go h.EventsBuffer.Publish(&res)
 					return
 				}
@@ -297,35 +294,29 @@ func (h *Handler) handlePatternPOST(
 			}
 			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
-				obj := "convert"
-				conversionErr := ErrApplicationFailure(err, obj)
-				h.log.Error(conversionErr)
-
+				h.log.Error(ErrConvertingK8sManifestToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": conversionErr,
+					"error": ErrConvertingK8sManifestToDesign(err),
 				}).WithDescription(fmt.Sprintf("Failed converting K8s Manifest %s to design file format.", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, err) //this error is already a meshkit error so no further wrapping required
+				http.Error(rw, ErrConvertingK8sManifestToDesign(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrConvertingK8sManifestToDesign(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
-				obj := "convert"
-				conversionErr := ErrApplicationFailure(err, obj)
-				h.log.Error(conversionErr)
-
+				h.log.Error(ErrMarshallingDesignIntoYAML(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": conversionErr,
+					"error": ErrMarshallingDesignIntoYAML(err),
 				}).WithDescription(fmt.Sprintf("Failed converting design %s to YAML format.", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrMarshallingDesignIntoYAML(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrMarshallingDesignIntoYAML(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
@@ -346,8 +337,20 @@ func (h *Handler) handlePatternPOST(
 			if err != nil {
 				h.log.Warn(ErrUnCompressOCIArtifact(err))
 				h.log.Info("Falling back to importing design as yaml file")
+
+				// commenting for now as every save event would other wise send following event
+				event := eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
+					"error": ErrUnCompressOCIArtifact(err),
+				}).WithDescription(fmt.Sprintf("Failed uncompressing OCI Artifact %s into Design YAML. Falling back to importing design as YAML.", mesheryPattern.Name)).Build()
+				_ = provider.PersistEvent(event)
+				// go h.config.EventBroadcaster.Publish(userID, event)
+				// addMeshkitErr(&res, ErrUnCompressOCIArtifact(err))
+				// go h.EventsBuffer.Publish(&res)
 			} else {
 				h.log.Info("OCI Artifact decompressed successfully")
+				event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact decompressed into %s design file", mesheryPattern.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				mesheryPattern = uncompressedDesign
 			}
 			mesheryPattern.Type = sql.NullString{
@@ -358,6 +361,11 @@ func (h *Handler) handlePatternPOST(
 			err = pCore.IsValidPattern(mesheryPattern.PatternFile)
 			if err != nil {
 				h.log.Error(ErrInvalidPattern(err))
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": ErrInvalidPattern(err),
+				}).WithDescription(fmt.Sprintf("Design Validation for %s design file failed.", mesheryPattern.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
 				addMeshkitErr(&res, ErrInvalidPattern(err))
 				go h.EventsBuffer.Publish(&res)
@@ -461,18 +469,15 @@ func (h *Handler) handlePatternPOST(
 				URL: parsedBody.URL,
 			})
 			if err != nil {
-				obj := "import"
-				importErr := ErrApplicationFailure(err, obj)
-				h.log.Error(importErr)
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": importErr,
-				}).WithDescription(fmt.Sprintf("error converting helm chart %s to Kubernetes manifest, URL might be malformed or not reachable.", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrConvertingHelmChartToDesign(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
@@ -480,34 +485,30 @@ func (h *Handler) handlePatternPOST(
 			result := string(resp)
 			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
-				obj := "convert"
-				convertErr := ErrApplicationFailure(err, obj)
-				h.log.Error(convertErr)
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": convertErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, err)
+
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrConvertingHelmChartToDesign(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
-				obj := "convert"
-				convertErr := ErrApplicationFailure(err, obj)
-				h.log.Error(convertErr)
-				http.Error(rw, convertErr.Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
-
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": convertErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrConvertingHelmChartToDesign(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
@@ -684,7 +685,7 @@ func (h *Handler) handlePatternPOST(
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
-			go h.config.ApplicationChannel.Publish(userID, struct{}{})
+			go h.config.PatternChannel.Publish(userID, struct{}{})
 			eb := eventBuilder
 			_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Design %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
 			return
@@ -1687,7 +1688,7 @@ func (h *Handler) handlePatternUpdate(
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
-	go h.config.ApplicationChannel.Publish(userID, struct{}{})
+	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
 	h.formatPatternOutput(rw, resp, format, &res, eventBuilder)

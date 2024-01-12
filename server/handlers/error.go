@@ -130,6 +130,10 @@ const (
 	ErrIOReaderCode               = "1559"
 	ErrUnCompressOCIArtifactCode 			= "1560"
 	ErrWaklingLocalDirectoryCode 			= "1561"
+	ErrConvertingK8sManifestToDesignCode 	= "1562"
+	ErrConvertingDockerComposeToDesignCode = "1563"
+	ErrMarshallingDesignIntoYAMLCode 		= "1564"
+	ErrConvertingHelmChartToDesignCode = "1565"
 )
 
 var (
@@ -293,7 +297,7 @@ func ErrRetrieveMeshData(err error) error {
 }
 
 func ErrApplicationFailure(err error, obj string) error {
-	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{"uploaded application source content might be converted", "incorrect source type selected"}, []string{"Select the correct source type", "Make sure the uploaded application source content is valid"})
 }
 
 func ErrApplicationSourceContent(err error, obj string) error {
@@ -570,4 +574,20 @@ func ErrUnCompressOCIArtifact(err error) error {
 
 func ErrWaklingLocalDirectory(err error) error {
 	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
+}
+
+func ErrConvertingK8sManifestToDesign(err error) error {
+	return errors.New(ErrConvertingK8sManifestToDesignCode, errors.Alert, []string{"Failed to convert k8s manifest to design"}, []string{err.Error()}, []string{"unable to convert k8s manifest to design", "k8s manifest may be corrupted", "incorrect source type selected"}, []string{"check if the k8s manifest is valid and not corrupted", "check if the source type selected is Kubernetes Manifest"})
+}
+
+func ErrConvertingDockerComposeToDesign(err error) error {
+	return errors.New(ErrConvertingDockerComposeToDesignCode, errors.Alert, []string{"Failed to convert docker compose to design"}, []string{err.Error()}, []string{"unable to convert docker compose to design", "docker compose may be corrupted", "incorrect source type selected"}, []string{"check if the docker compose is valid and not corrupted", "check if the source type selected is Docker Compose"})
+}
+
+func ErrMarshallingDesignIntoYAML(err error) error {
+	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrConvertingHelmChartToDesign(err error) error {
+	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
