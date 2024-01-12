@@ -5,6 +5,7 @@ abstract: How to Meshery and all of its components
 permalink: guides/upgrade
 display-title: "false"
 type: guides
+category: administration
 language: en
 abstract: How to upgrade Meshery and all of its components
 ---

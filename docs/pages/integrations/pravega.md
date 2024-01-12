@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Pravega
-permalink: integrations/pravega
-type: installation
+permalink: extensibility/integrations/pravega
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/pravega.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: pravega -->
+ #### About: Pravega - Streaming as a new software defined storage primitive -->
 
 ### Overview & Features:
+
 1. Pravega - Streaming as a new software defined storage primitive
 
 2. Collaborative and visual infrastructure as code for Pravega

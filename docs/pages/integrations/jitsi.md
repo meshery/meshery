@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Jitsi
-permalink: integrations/jitsi
-type: installation
+permalink: extensibility/integrations/jitsi
+type: extensibility
 category: integrations
+integrations-category: Tools
+integrations-subcategory: Video Conferencing
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/jitsi.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: jitsi -->
+ #### About: Jitsi is a set of open-source projects that allows you to easily build and deploy secure video conferencing solutions. -->
 
 ### Overview & Features:
+
 1. Jitsi is a set of open-source projects that allows you to easily build and deploy secure video conferencing solutions.
 
 2. Collaborative and visual infrastructure as code for Jitsi

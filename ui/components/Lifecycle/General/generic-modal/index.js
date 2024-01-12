@@ -12,9 +12,9 @@ import {
   Backdrop,
 } from '@material-ui/core';
 import useStyles from './styles';
-import { CustomTooltip } from './styles';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import theme from '../../../../themes/app';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const GenericModal = ({
   open,
@@ -61,7 +61,7 @@ const GenericModal = ({
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {helpText && (
-            <CustomTooltip title={helpText}>
+            <CustomTextTooltip title={helpText}>
               <IconButton>
                 <HelpOutlineIcon
                   height={'2rem'}
@@ -69,7 +69,7 @@ const GenericModal = ({
                   fill={theme.palette.secondary.primaryModalText}
                 />
               </IconButton>
-            </CustomTooltip>
+            </CustomTextTooltip>
           )}
           <IconButton
             aria-label="close"

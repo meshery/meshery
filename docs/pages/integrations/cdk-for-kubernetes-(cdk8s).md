@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cdk For Kubernetes (Cdk8S)
-permalink: integrations/cdk-for-kubernetes-(cdk8s)
-type: installation
+permalink: extensibility/integrations/cdk-for-kubernetes-(cdk8s)
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cdk-for-kubernetes-(cdk8s).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cdk8s -->
+ #### About: CDK8s lets you define Kubernetes apps and components using familiar programming languages and object-oriented APIs. -->
 
 ### Overview & Features:
+
 1. CDK8s lets you define Kubernetes apps and components using familiar programming languages and object-oriented APIs.
 
 2. Collaborative and visual infrastructure as code for Cdk For Kubernetes (Cdk8S)

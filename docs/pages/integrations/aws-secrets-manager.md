@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Secrets Manager
-permalink: integrations/aws-secrets-manager
-type: installation
+permalink: extensibility/integrations/aws-secrets-manager
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security Identity Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-secrets-manager.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-secretsmanager-controller -->
+ #### About: AWS Secrets Manager helps you manage, retrieve, and rotate database credentials, API keys, and other secrets throughout their lifecycles. -->
 
 ### Overview & Features:
+
 1. AWS Secrets Manager helps you manage, retrieve, and rotate database credentials, API keys, and other secrets throughout their lifecycles.
 
 2. Collaborative and visual infrastructure as code for AWS Secrets Manager

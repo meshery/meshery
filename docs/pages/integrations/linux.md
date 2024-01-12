@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Linux
-permalink: integrations/linux
-type: installation
+permalink: extensibility/integrations/linux
+type: extensibility
 category: integrations
+integrations-category: Platform
+integrations-subcategory: Operating System
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/linux.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: linux -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. The easiest way to get a production-grade Kubernetes cluster up and running
 
 5. Faster and easier configuration

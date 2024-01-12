@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubedl
-permalink: integrations/kubedl
-type: installation
+permalink: extensibility/integrations/kubedl
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubedl.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubedl -->
+ #### About: Run your deep learning workloads on Kubernetes more easily and efficiently. -->
 
 ### Overview & Features:
+
 1. Run your deep learning workloads on Kubernetes more easily and efficiently.
 
 2. Collaborative and visual infrastructure as code for Kubedl

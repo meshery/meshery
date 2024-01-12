@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevirt
-permalink: integrations/kubevirt
-type: installation
+permalink: extensibility/integrations/kubevirt
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubevirt.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubevirt -->
+ #### About: Kubernetes Virtualization API and runtime in order to define and manage virtual machines. -->
 
 ### Overview & Features:
+
 1. Kubernetes Virtualization API and runtime in order to define and manage virtual machines.
 
 2. Collaborative and visual infrastructure as code for Kubevirt

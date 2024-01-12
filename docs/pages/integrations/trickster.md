@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Trickster
-permalink: integrations/trickster
-type: installation
+permalink: extensibility/integrations/trickster
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/trickster.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: trickster -->
+ #### About: Open Source HTTP Reverse Proxy Cache and Time Series Dashboard Accelerator -->
 
 ### Overview & Features:
+
 1. Open Source HTTP Reverse Proxy Cache and Time Series Dashboard Accelerator
 
 2. Collaborative and visual infrastructure as code for Trickster

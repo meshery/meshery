@@ -2,7 +2,7 @@
 layout: default
 title: Cloud Native Design Patterns
 permalink: tasks/pattern-management
-redirect_from: tasks/pattern-management/
+# redirect_from: tasks/pattern-management/
 type: tasks
 language: en
 list: include

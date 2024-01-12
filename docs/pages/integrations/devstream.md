@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Devstream
-permalink: integrations/devstream
-type: installation
+permalink: extensibility/integrations/devstream
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/devstream.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: devstream -->
+ #### About: DevStream: the open-source DevOps toolchain manager (DTM). -->
 
 ### Overview & Features:
+
 1. DevStream: the open-source DevOps toolchain manager (DTM).
 
 2. Collaborative and visual infrastructure as code for Devstream

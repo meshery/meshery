@@ -53,7 +53,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
 	}
-	return machines.NoOp, nil, nil
+	return machines.Exit, nil, nil
 }
 
 func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {

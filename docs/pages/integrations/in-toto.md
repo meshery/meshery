@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: In Toto
-permalink: integrations/in-toto
-type: installation
+permalink: extensibility/integrations/in-toto
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/in-toto.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: in-toto -->
+ #### About: In-toto is a framework to secure the integrity of software supply chains -->
 
 ### Overview & Features:
+
 1. In-toto is a framework to secure the integrity of software supply chains
 
 2. Collaborative and visual infrastructure as code for In Toto

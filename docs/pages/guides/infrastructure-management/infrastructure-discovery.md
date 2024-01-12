@@ -1,10 +1,11 @@
 ---
 layout: default
-title: Registering a Connection
+title: Infrastructure Discovery
 abstract: Discovering Components with MeshSync and Registering as a Connection
-permalink: guides/registering-a-connection
+permalink: guides/infrastructure-management/registering-a-connection
 type: guides
 category: connections
+category: infrastructure
 language: en
 abstract: "MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure."
 list: include

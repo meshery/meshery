@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Devfile
-permalink: integrations/devfile
-type: installation
+permalink: extensibility/integrations/devfile
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/devfile.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: devfile -->
+ #### About: Kube-native API for cloud development workspaces specification -->
 
 ### Overview & Features:
+
 1. Kube-native API for cloud development workspaces specification
 
 2. Collaborative and visual infrastructure as code for Devfile
