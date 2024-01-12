@@ -50,6 +50,30 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
+  exportBtns: {
+    '& p': {
+      margin: '0 0 0.75rem',
+    },
+
+    '& button': {
+      height: '8rem',
+      border: 0,
+      boxShadow: '0rem 0rem 0.375rem rgba(0, 0, 0, 0.25)',
+
+      '& span': {
+        flexWrap: 'wrap',
+
+        '& .MuiButton-startIcon': {
+          flex: '0 0 100%',
+          justifyContent: 'center',
+        },
+
+        '& .MuiButton-endIcon': {
+          margin: 0,
+        },
+      },
+    },
+  },
 });
 
 const ExportModal = (props) => {
@@ -58,13 +82,13 @@ const ExportModal = (props) => {
     handleDownloadDialogClose,
     handleDesignDownload,
     classes,
-    extensibleButtons,
+    ExtensibleButton,
   } = props;
 
-  // In order to gain access to the child component instance,
-  // const childRef = useRef();
+  const [closed, setClosed] = React.useState(false);
 
   const handleClose = () => {
+    setClosed(true);
     handleDownloadDialogClose();
   };
 
@@ -111,27 +135,23 @@ const ExportModal = (props) => {
       </DialogTitle>
       <DialogContent
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '3.5rem',
+          display: 'inline-table',
           maxWidth: '688px',
           padding: '5rem',
+          margin: '0 auto',
         }}
       >
         <Box
           sx={{
             display: 'flex',
             gap: '2.5rem',
-            width: '100%',
+            width: 'auto',
             textAlign: 'center',
             alignItems: 'center',
           }}
         >
           {downloadModal?.content?.type?.String && (
-            <div
-            // className={classes.exportBtns}
-            >
+            <div>
               <Typography
                 component={'h4'}
                 style={{ paddingBottom: '1.5rem' }}
@@ -185,11 +205,7 @@ const ExportModal = (props) => {
               </Button>
             </div>
           </div>
-          <>
-            {extensibleButtons?.map((btn, idx) => (
-              <div key={idx}>{btn(props)}</div>
-            ))}
-          </>
+          {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
         </Box>
       </DialogContent>
     </Dialog>
