@@ -235,13 +235,13 @@
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
           url: extensibility/adapters/traefik-mesh
-    - title: "Integrations ↆ"
+    - title: "Integrations"
       url: extensibility/integrations
     - title: "Load Generators"
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
-    - title: "UI Plugins ↆ"
+    - title: "UI Plugins"
       url: extensibility/ui      
     - title: "🦾 Extensions ↆ"
       url: extensions
