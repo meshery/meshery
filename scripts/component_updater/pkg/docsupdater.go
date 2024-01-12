@@ -1,8 +1,10 @@
 package pkg
 
 import (
+	"encoding/csv"
 	"bytes"
 	"encoding/xml"
+	"log"
 	"fmt"
 	"io"
 	"os"
@@ -243,73 +245,118 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 	return svg, nil
 }
 
-// func (t *templateAttributes) fillAttributes(path string) error {
-//    file, err := os.Open(path)
-//    if err != nil {
-//       return err
-//    }
-//    defer file.Close()
-//    scanner := bufio.NewScanner(file)
-//    scanner.Split(bufio.ScanLines)
-//    aboutProjectRead := false
-//    for scanner.Scan() {
-//       line := scanner.Text()
-//       if strings.HasPrefix(line, "title:") {
-//          t.title = strings.TrimSpace(strings.TrimPrefix(line, "title:"))
-//       } else if strings.HasPrefix(line, "subtitle:") {
-//          t.subtitle = strings.TrimSpace(strings.TrimPrefix(line, "subtitle:"))
-//       } else if strings.HasPrefix(line, "docURL:") {
-//          t.docURL = strings.TrimSpace(strings.TrimPrefix(line, "docURL:"))
-//       } else if strings.HasPrefix(line, "category:") {
-//          t.category = strings.TrimSpace(strings.TrimPrefix(line, "category:"))
-//       } else if strings.HasPrefix(line, "subcategory:") {
-//          t.subcategory = strings.TrimSpace(strings.TrimPrefix(line, "subcategory:"))
-//       } else if strings.HasPrefix(line, "subtitle:") {
-//          t.howItWorks = strings.TrimSpace(strings.TrimPrefix(line, "howItWorks:"))
-//       } else if strings.HasPrefix(line, "howItWorksDetails:") {
-//          t.howItWorksDetails = strings.TrimSpace(strings.TrimPrefix(line, "howItWorksDetails:"))
-//       } else if strings.HasPrefix(line, "workingSlides:") {
-//          t.workingSlides = strings.TrimSpace(strings.TrimPrefix(line, "workingSlides:"))
-//          if !strings.HasSuffix(t.workingSlides, "]") {
-//             for scanner.Scan() {
-//                subline := scanner.Text()
-//                t.workingSlides += "\n" + subline
-//                if strings.HasSuffix(subline, "]") {
-//                   break
-//                }
-//             }
-//          }
-//       } else if strings.HasPrefix(line, "integrationIcon") {
-//          t.integrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "integrationIcon:"))
-//       } else if strings.HasPrefix(line, "darkModeIntegrationIcon") {
-//          t.darkModeIntegrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "darkModeIntegrationIcon:"))
-//       } else if strings.HasPrefix(line, "published") {
-//          t.published = strings.TrimSpace(strings.TrimPrefix(line, "published:"))
-//       } else if strings.HasPrefix(line, "<p>") {
-//          if !aboutProjectRead {
-//             t.aboutProject = line
-//             if !strings.HasSuffix(t.aboutProject, "</p>") {
-//                for scanner.Scan() {
-//                   subline := scanner.Text()
-//                   t.aboutProject += "\n" + subline
-//                   if strings.HasSuffix(subline, "</p>") {
-//                      break
-//                   }
-//                }
-//             }
-//          } else {
-//             t.standardBlurb = line
-//             if !strings.HasSuffix(t.aboutProject, "</p>") {
-//                for scanner.Scan() {
-//                   subline := scanner.Text()
-//                   t.standardBlurb += "\n" + subline
-//                   if strings.HasSuffix(subline, "</p>") {
-//                      break
-//                   }
-//                }
-//             }
-//          }
-//       }
-//    }
-//    return nil
-// }
+
+func CreateIntegrationDocs(csvIndices CSVIndices) {
+	inputFile, err := os.Open("filtered.csv")
+	if err != nil {
+		log.Println("Error opening input file:", err)
+		return
+	}
+	defer inputFile.Close()
+
+	csvReader := csv.NewReader(inputFile)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		log.Println("Error reading input file:", err)
+		return
+	}
+	GenerateIntegrationDocsSVG(records, csvIndices)
+	GenerateIntegrationDocs(records, csvIndices)
+}
+
+func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
+	for _, record := range records[1:] {
+		svgContent := record[csvIndices.SvgIndex]
+		fmt.Println("Creating SVG:", record[csvIndices.NameIndex])
+		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
+	}
+}
+
+func GenerateIntegrationDocs(records [][]string, csvIndices CSVIndices) {
+
+	for _, record := range records[1:] {
+
+		mdContent := generateMDContent(record, record[csvIndices.NameIndex], csvIndices)
+
+		createFiles("../../docs/pages/integrations", ".md", record[csvIndices.NameIndex], mdContent)
+	}
+}
+
+func createFiles(path, filetype, name, content string) {
+	formattedName := formatName(name)
+
+	fullPath := path + "/" + formattedName + filetype
+
+	file, err := os.Create(fullPath)
+	fmt.Println("Creating file:", fullPath)
+	if err != nil {
+		log.Println("Error creating filetype file:", err)
+		return
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, content)
+	if err != nil {
+		log.Println("Error writing to filetype file:", err)
+	}
+}
+
+func formatName(input string) string {
+	formattedName := strings.ReplaceAll(input, " ", "-")
+	formattedName = strings.ToLower(formattedName)
+	return formattedName
+}
+
+func generateMDContent(record []string, name string, csvIndices CSVIndices) string {
+	mdContent := ""
+	for i := csvIndices.IndexStart; i <= csvIndices.IndexEnd; i++ {
+		if record[i] != "" && !strings.Contains(record[i], "https") {
+			mdContent += strconv.Itoa(i-(csvIndices.IndexStart-1)) + `.` + ` ` + record[i] + "\n\n"
+		}
+	}
+
+	formattedName := formatName(name)
+
+	// Remove <p> and </p> tags and replace them with one line gap
+	overviewAndFeatures := strings.Replace(mdContent, "<p>", "", -1)
+	overviewAndFeatures = strings.Replace(overviewAndFeatures, "</p>", "\n", -1)
+
+	content := `---
+layout: enhanced
+title: ` + name + `
+permalink: extensibility/integrations/` + formattedName + `
+type: extensibility
+category: integrations
+integrations-category: ` + record[2] + `
+integrations-subcategory: ` + record[3] + `
+display-title: "false"
+language: en
+list: include
+image: /assets/img/integrations/` + formattedName + `.svg
+---
+
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
+
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### About: ` + record[25] + ` -->
+
+### Overview & Features:
+
+` + overviewAndFeatures
+
+	return content
+}
+
+func DeleteTempCreatedFiles() {
+	files := []string{"filtered.csv", "integration.csv"}
+
+	for _, file := range files {
+		err := os.Remove(file)
+		if err != nil {
+			log.Printf("Error deleting %s: %v\n", file, err)
+		} else {
+			log.Printf("%s deleted successfully.\n", file)
+		}
+	}
+}
