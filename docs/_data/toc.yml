@@ -196,11 +196,11 @@
       url: tasks/lifecycle-management
       children:
       - title: Registering a Connection
-        url: guides/registering-a-connection
+        url: guides/infrastructure-management/registering-a-connection
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management
-      url: tasks/performance-management
+      url: tasks/performance/managing-performance
 - title: 🛠 Integrations and Extensions
   url: extensibility
   links:
