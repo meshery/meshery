@@ -9,7 +9,7 @@ import {
   useTheme,
   Tooltip,
 } from '@material-ui/core';
-// import Checkbox from '@mui/material/Checkbox';
+import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -22,8 +22,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
-  // const [checked, setChecked] = useState(false);
-  // const [hover, setHover] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [hover, setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
@@ -31,8 +31,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
 
   return (
     <StyledTreeItemRoot
-      // onMouseEnter={() => setHover(true)}
-      // onMouseLeave={() => setHover(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       root={root}
       lineColor={theme.palette.secondary.text}
       label={
@@ -61,7 +61,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
 
           {/* Currently the functionality of checkbox is not supported */}
 
-          {/* {check && (
+          {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
               size="small"
@@ -74,7 +74,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
                 },
               }}
             />
-          )} */}
+          )}
           {search && (
             <SearchBar
               onSearch={debounce((value) => setSearchText(value), 200)}

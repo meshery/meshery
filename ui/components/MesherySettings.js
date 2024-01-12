@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { withRouter } from 'next/router';
+import { withRouter, useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
@@ -29,6 +29,15 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import {
+  REGISTRY,
+  METRICS,
+  ADAPTERS,
+  RESET,
+  OVERVIEW,
+  GRAFANA,
+  PROMETHEUS,
+} from '@/constants/navigator';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -130,65 +139,68 @@ function TabContainer(props) {
 
 TabContainer.propTypes = { children: PropTypes.node.isRequired };
 
+const settingsRouter = (router) => {
+  const { query, push: pushRoute, asPath, route } = router;
+
+  const selectedSettingsCategory = query.settingsCategory;
+  const selectedTab = query.tab;
+
+  const handleChangeSettingsCategory = (settingsCategory) => {
+    if (query.settingsCategory === settingsCategory) {
+      return;
+    }
+    pushRoute(
+      `${route}?settingsCategory=${settingsCategory || query.settingsCategory}`,
+      undefined,
+      { shallow: true },
+    );
+  };
+
+  const handleChangeSelectedTab = (tab) => {
+    if (query.tab === tab) {
+      return;
+    }
+    pushRoute(`${route}?settingsCategory=${selectedSettingsCategory}&tab=${tab}`, undefined, {
+      shallow: true,
+    });
+  };
+
+  const handleChangeSelectedTabCustomCategory = (settingsCategory, tab) => {
+    if (query.tab === tab) {
+      return;
+    }
+    pushRoute(`${route}?settingsCategory=${settingsCategory}&tab=${tab}`, undefined, {
+      shallow: true,
+    });
+  };
+
+  return {
+    selectedSettingsCategory,
+    selectedTab,
+    handleChangeSettingsCategory,
+    handleChangeSelectedTab,
+    handleChangeSelectedTabCustomCategory,
+  };
+};
+
 //TODO: Tabs are hardcoded everywhere
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      k8sconfig,
-      meshAdapters,
-      grafana,
-      prometheus,
-      router: { asPath },
-    } = props;
+    const { k8sconfig, meshAdapters, grafana, prometheus, router } = props;
 
+    const { selectedSettingsCategory, selectedTab, handleChangeSettingsCategory } =
+      settingsRouter(router);
+    handleChangeSettingsCategory(ADAPTERS);
     this._isMounted = false;
-
-    //TODO: Extract this logic and clean it
-    let tabVal = 0,
-      subTabVal = 0;
-    const splittedPath = asPath.split('#');
-    if (splittedPath.length >= 2 && splittedPath[1]) {
-      const subTabPath = splittedPath[1].split('/');
-
-      switch (subTabPath[0]) {
-        case 'adapters':
-          tabVal = 0;
-          break;
-        case 'metrics':
-          tabVal = 1;
-          break;
-        case 'registry':
-          tabVal = 2;
-          break;
-        case 'reset':
-          tabVal = 3;
-      }
-      if (subTabPath.length >= 2 && subTabPath[1]) {
-        switch (subTabPath[1]) {
-          case 'inclusterconfig':
-            subTabVal = 0;
-            break;
-          case 'outclusterconfig':
-            subTabVal = 1;
-            break;
-          case 'grafana':
-            subTabVal = 0;
-            break;
-          case 'prometheus':
-            subTabVal = 1;
-            break;
-        }
-      }
-    }
     this.state = {
       completed: {},
       k8sconfig,
       meshAdapters,
       grafana,
       prometheus,
-      tabVal,
-      subTabVal,
+      tabVal: selectedSettingsCategory || ADAPTERS,
+      subTabVal: selectedTab || GRAFANA,
       modelsCount: 0,
       componentsCount: 0,
       relationshipsCount: 0,
@@ -270,36 +282,22 @@ class MesherySettings extends React.Component {
 
   handleChange = (val) => {
     const self = this;
+    const {
+      handleChangeSettingsCategory,
+      handleChangeSelectedTab,
+      handleChangeSelectedTabCustomCategory,
+    } = settingsRouter(this.props.router);
     return (event, newVal) => {
       if (val === 'tabVal') {
-        let newRoute = this.props.router.route;
-
-        switch (newVal) {
-          case 0:
-            newRoute += '#adapters';
-            break;
-          case 1:
-            newRoute += '#metrics';
-            break;
-          case 2:
-            newRoute += '#registry';
-            break;
-          case 3:
-            newRoute += '#reset';
+        if (newVal === METRICS) {
+          handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
+          self.setState({ tabVal: newVal, subTabVal: GRAFANA });
+        } else {
+          handleChangeSettingsCategory(newVal);
+          self.setState({ tabVal: newVal });
         }
-        if (this.props.router.route != newRoute) this.props.router.push(newRoute);
-        self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
-        let newRoute = this.props.router.route;
-        switch (newVal) {
-          case 0:
-            if (self.state.tabVal == 1) newRoute += '#metrics/grafana';
-            break;
-          case 1:
-            if (self.state.tabVal == 1) newRoute += '#metrics/prometheus';
-            break;
-        }
-        if (this.props.router.route != newRoute) this.props.router.push(newRoute);
+        handleChangeSelectedTab(newVal);
         self.setState({ subTabVal: newVal });
       }
     };
@@ -341,6 +339,7 @@ class MesherySettings extends React.Component {
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                     label="Adapters"
                     data-cy="tabServiceMeshes"
+                    value={ADAPTERS}
                     disabled={!CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject)}
                   />
                 </Tooltip>
@@ -349,7 +348,8 @@ class MesherySettings extends React.Component {
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                     label="Metrics"
-                    tab="tabMetrics"
+                    // tab="tabMetrics"
+                    value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
                 </Tooltip>
@@ -358,7 +358,8 @@ class MesherySettings extends React.Component {
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                     label="Registry"
-                    tab="registry"
+                    // tab="registry"
+                    value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
                 </Tooltip>
@@ -367,18 +368,20 @@ class MesherySettings extends React.Component {
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                     label="Reset"
-                    tab="systemReset"
+                    // tab="systemReset"
+                    value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                   />
                 </Tooltip>
               </Tabs>
             </Paper>
-            {tabVal === 0 && CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject) && (
-              <TabContainer>
-                <MeshAdapterConfigComponent />
-              </TabContainer>
-            )}
-            {tabVal === 1 && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
+            {tabVal === ADAPTERS &&
+              CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject) && (
+                <TabContainer>
+                  <MeshAdapterConfigComponent />
+                </TabContainer>
+              )}
+            {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
               <TabContainer>
                 <AppBar position="static" color="default">
                   <Tabs
@@ -391,6 +394,7 @@ class MesherySettings extends React.Component {
                   >
                     <Tab
                       className={classes.tab}
+                      value={GRAFANA}
                       label={
                         <div className={classes.iconText}>
                           Grafana
@@ -400,6 +404,7 @@ class MesherySettings extends React.Component {
                     />
                     <Tab
                       className={classes.tab}
+                      value={PROMETHEUS}
                       label={
                         <div className={classes.iconText}>
                           Prometheus
@@ -412,7 +417,7 @@ class MesherySettings extends React.Component {
                     />
                   </Tabs>
                 </AppBar>
-                {subTabVal === 0 && (
+                {subTabVal === GRAFANA && (
                   <TabContainer>
                     <GrafanaComponent
                       scannedGrafana={this.state.scannedGrafana}
@@ -420,7 +425,7 @@ class MesherySettings extends React.Component {
                     />
                   </TabContainer>
                 )}
-                {subTabVal === 1 && (
+                {subTabVal === PROMETHEUS && (
                   <TabContainer>
                     <PrometheusComponent
                       scannedPrometheus={this.state.scannedPrometheus}
@@ -430,7 +435,7 @@ class MesherySettings extends React.Component {
                 )}
               </TabContainer>
             )}
-            {tabVal === 2 && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
+            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
               <TabContainer>
                 <TabContainer>
                   <TabContainer>
@@ -439,13 +444,14 @@ class MesherySettings extends React.Component {
                       componentsCount={this.state.componentsCount}
                       relationshipsCount={this.state.relationshipsCount}
                       registrantCount={this.state.registrantCount}
+                      settingsRouter={settingsRouter}
                     />
                   </TabContainer>
                 </TabContainer>
                 {/* </div> */}
               </TabContainer>
             )}
-            {tabVal === 3 && (
+            {tabVal === RESET && (
               <TabContainer>
                 <DatabaseSummary promptRef={this.systemResetPromptRef} />
               </TabContainer>

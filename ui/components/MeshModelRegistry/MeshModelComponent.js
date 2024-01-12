@@ -30,6 +30,7 @@ import { toLower } from 'lodash';
 import { DisableButton } from './MeshModel.style';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
+import { useRouter } from 'next/router';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -66,7 +67,11 @@ const MeshModelComponent = ({
   componentsCount,
   relationshipsCount,
   registrantCount,
+  settingsRouter
 }) => {
+  // const { selectedTab, changeTab } = useRegistryRouter()
+  const router = useRouter()
+  const { selectedTab, handleChangeSelectedTab } = settingsRouter(router)
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
@@ -84,7 +89,7 @@ const MeshModelComponent = ({
     order: '',
   });
   const StyleClass = useStyles();
-  const [view, setView] = useState(OVERVIEW);
+  const [view, setView] = useState(selectedTab || OVERVIEW);
   const [convert, setConvert] = useState(false);
   const [show, setShow] = useState({
     model: {},
@@ -97,7 +102,7 @@ const MeshModelComponent = ({
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
-
+  // console.log("selectedTab", selectedTab)
   const getModels = async (page) => {
     try {
       const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
@@ -334,7 +339,10 @@ const MeshModelComponent = ({
               view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(MODELS);
+              setView(()=>{
+                handleChangeSelectedTab(MODELS)
+                return MODELS
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -368,7 +376,10 @@ const MeshModelComponent = ({
               view === COMPONENTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(COMPONENTS);
+              setView(()=>{
+                handleChangeSelectedTab(COMPONENTS)
+                return COMPONENTS
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -402,7 +413,10 @@ const MeshModelComponent = ({
               view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(RELATIONSHIPS);
+              setView(()=>{
+                handleChangeSelectedTab(RELATIONSHIPS)
+                return RELATIONSHIPS
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -436,7 +450,10 @@ const MeshModelComponent = ({
               view === REGISTRANTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(REGISTRANTS);
+              setView(()=>{
+                handleChangeSelectedTab(REGISTRANTS)
+                return REGISTRANTS
+              });
               setPage({
                 Models: 0,
                 Components: 0,
