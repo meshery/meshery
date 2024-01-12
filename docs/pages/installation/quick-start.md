@@ -48,7 +48,7 @@ Your default browser will be opened and directed to Meshery's web-based user int
 
 ### Select a Provider
 
-Select from the list of [Providers]({{ site.baseurl }}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen Provider.
+Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />

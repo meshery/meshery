@@ -1,28 +1,32 @@
 ---
-layout: default
-title: "Extensible Authorization: CASL"
-permalink: extensibility/extensible-authorization
+layout: enhanced
+title: "Extensibility: Authorization"
+permalink: extensibility/authorization
 type: Extensibility
-abstract: ""
+abstract: "Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via authorization, adapters, load generators and providers."
 language: en
 list: include
 ---
 
-Meshery now features an extensible authorization system that provides fine-tuned access control to Meshery's features. This system ensures users have secure and controlled access to Meshery's rich set of features and functionalities in context of your organization. Example of authorization: Ability to deploy design in cluster or Ability to delete any resource in cluster.
+Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it's web-based user interface, [Meshery UI]({{site.baseurl}}/concepts/architecture).
 
-## What is permission
+## Authorization Keys
 
-In Meshery, permissions are represented as keys, each serving as a unique identifier for a specific permission. For example, you can allow any users to view and manage connections but not to delete them. One or more keys can be grouped together and assigned to a keychain. Then this keychain can be assigned to a role and that role can be assigned to a user. This is the general flow of how keys are assigned to a user. You can learn more about keys and roles about here, [Learn more](https://docs.layer5.io/cloud/security/keys/)
+The extensible authorization system consistes of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a [Connection](/concepts/logical/connections), edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.
 
-Meshery utilizes CASL (JS-based permission framework) to enforce these permissions within its user interface.
+{% include alert.html type="info" title="Note" content="The extensible authorization system is available to both Local and Remote Providers. Depending upon your chosen <a href='/extensibility/providers'>Remote Provider</a>, keys, clustering of them, assigning them to user groups, not just individual users or to user roles may be offered." %}
+
+## Authorization Framework
+
+Meshery utilizes CASL (JS-based permission framework) to evaluate any given user's set of session keys against the built-in keyhooks populated through each invidual Meshery UI page. This allows for granular control over the UI, empowering you to tailor your Meshery experience to your organization's needs by limiting access to specific features and functionalities based on the user's assigned keys.
 
 <a href="/assets/img/permission-in-UI.png">
   <img style="width:min(100%,800px)" src="/assets/img/permission-in-UI.png" />
 </a>
 
-## Introduction to CASL.js
+### Introduction to CASL.js
 
-CASL is an isomorphic authorization JavaScript library which restricts what resources a given client is allowed to access. It's designed to be incrementally adoptable and can easily scale between a simple claim based and fully featured subject and attribute based authorization. It makes it easy to manage and share permissions/keys across UI components, API services, and database queries.
+[CASL.js](https://casl.js.org) is an isomorphic authorization JavaScript library which restricts what resources a given client is allowed to access. It's designed to be incrementally adoptable and can easily scale between a simple claim based and fully featured subject and attribute based authorization. It makes it easy to manage and share permissions/keys across UI components, API services, and database queries.
 
 An example of how CASL evaluate permission in UI.
 {% capture code_content %}<React.Fragment>
@@ -37,23 +41,13 @@ An example of how CASL evaluate permission in UI.
 
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Note</h4>
+
 It's important to understand not all pages uses CASL authorization, means even if you are not assigned with any role within organization you might access preferences page and Meshery UI dashboard.
 </div>
 
+## Authorization using Local Provider
 
-## Authorization for Local provider
+Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database](/concepts/architecture/database). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
 
-While Meshery offers flexibility with various providers, the Local provider operates with predefined keys stored in a local database. Remember this limits customization of permissions.
+{% include discuss.html %}
 
-## Summary
-
-Extensible authorization in Meshery offers granular control over its features, empowering you to tailor your Meshery experience to your organization's needs. The system ensures secure access to Meshery's extensive capabilities, providing flexibility in managing permissions, fine-tuning access, and customizing functionalities. With Meshery's extensible authorization, you gain the ability to define and enforce permissions with precision, enhancing the overall security and control of your cloud-native environment.
-
-<div class="alert alert-dark" role="alert">
-<h4 class="alert-heading">Discussion Forum</h4>
-Not finding what you're looking for? Ask on the <a href="http://discuss.meshery.io">Discussion Forum</a>.
-</div>
-
-# Additional Resources
-
-- [CASLjs Documentation](https://casl.js.org/v4/en/guide/intro/)
