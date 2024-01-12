@@ -57,6 +57,7 @@ import {
   CONNECTION_STATES,
   CONTROLLERS,
   CONTROLLER_STATES,
+  CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -70,6 +71,20 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import UniversalFilter from '../../utils/custom-filter';
+import MultiSelectWrapper from '../multi-select-wrapper';
+import {
+  useGetEnvironmentsQuery,
+  useAddConnectionToEnvironmentMutation,
+  useRemoveConnectionFromEnvironmentMutation,
+  useSaveEnvironmentMutation,
+} from '../../rtk-query/environments';
+import ErrorBoundary from '../ErrorBoundary';
+import { store } from '../../store';
+import { Provider } from 'react-redux';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import DefaultError from '../General/error-404/index';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -87,6 +102,14 @@ const ACTION_TYPES = {
   FETCH_CONNECTION_STATUS_TRANSITIONS: {
     name: 'FETCH_CONNECTION_STATUS_TRANSITIONS',
     error_msg: 'Failed to fetch connection transitions',
+  },
+  FETCH_ENVIRONMENT: {
+    name: 'FETCH_ENVIRONMENT',
+    error_msg: 'Failed to fetch environment',
+  },
+  CREATE_ENVIRONMENT: {
+    name: 'CREATE_ENVIRONMENT',
+    error_msg: 'Failed to create environment',
   },
 };
 
@@ -148,15 +171,18 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections({
-  classes,
-  updateProgress,
-  /*onOpenCreateConnectionModal,*/ operatorState,
-  selectedK8sContexts,
-  k8sconfig,
-  connectionMetadataState,
-  meshsyncControllerState,
-}) {
+function Connections(props) {
+  const {
+    classes,
+    updateProgress,
+    /*onOpenCreateConnectionModal,*/ operatorState,
+    selectedK8sContexts,
+    k8sconfig,
+    connectionMetadataState,
+    meshsyncControllerState,
+    organization,
+  } = props;
+  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -171,9 +197,103 @@ function Connections({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
+  const [filter, setFilter] = useState('');
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [kindFilter, setKindFilter] = useState(null);
+
+  const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
+  const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
+  const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+  let environments = environmentsResponse?.environments || [];
+
+  const addConnectionToEnvironment = async (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        notify({
+          message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  const removeConnectionFromEnvironment = (
+    environmentId,
+    environmentName,
+    connectionId,
+    connectionName,
+  ) => {
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .then(() => {
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        notify({
+          message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
+  const saveEnvironment = (connectionId, connectionName, environmentName) => {
+    saveEnvironmentMutator({
+      body: {
+        name: environmentName,
+        organization_id: organization?.id,
+      },
+    })
+      .unwrap()
+      .then((resp) => {
+        notify({
+          message: `Environment "${resp.name}" created`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        environments = [...environments, resp];
+        addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -196,12 +316,43 @@ function Connections({
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
+  const handleEnvironmentSelect = (
+    connectionId,
+    connName,
+    assignedEnvironments,
+    selectedEnvironments,
+    unSelectedEnvironments,
+  ) => {
+    let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+      return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+    });
+
+    newlySelectedEnvironments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+      let isNew = environment.__isNew__ || false;
+
+      if (isNew) {
+        saveEnvironment(connectionId, connName, envName);
+        return;
+      }
+
+      addConnectionToEnvironment(environmentId, envName, connectionId, connName);
+    });
+    unSelectedEnvironments.forEach((environment) => {
+      let envName = environment.label;
+      let environmentId = environment.value || '';
+
+      removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
+    });
+  };
+
   let colViews = [
     ['name', 'xs'],
+    ['environments', 'm'],
     ['kind', 'm'],
     ['type', 's'],
-    ['sub_type', 'm'],
-    ['updated_at', 'l'],
+    ['sub_type', 'na'],
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
@@ -249,10 +400,11 @@ function Connections({
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
+          const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           return (
             <TootltipWrappedConnectionChip
               tooltip={'Server: ' + server}
-              title={value}
+              title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
               status={getColumnValue(tableMeta.rowData, 'status', columns)}
               onDelete={() =>
                 handleDeleteConnection(
@@ -260,14 +412,75 @@ function Connections({
                   getColumnValue(tableMeta.rowData, 'kind', columns),
                 )
               }
-              handlePing={() => {
-                if (tableMeta.rowData[4] === CONNECTION_KINDS.KUBERNETES) {
-                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+              handlePing={(e) => {
+                e.stopPropagation();
+                if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                  ping(
+                    getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                    getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                    getColumnValue(tableMeta.rowData, 'id', columns),
+                  );
                 }
               }}
               iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
-              style={{ maxWidth: '120px' }}
+              width="12rem"
             />
+          );
+        },
+      },
+    },
+    {
+      name: 'environments',
+      label: 'Environments',
+      options: {
+        sort: false,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
+          const getOptions = () => {
+            return environments.map((env) => ({ label: env.name, value: env.id }));
+          };
+          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
+          return (
+            isEnvironmentsSuccess && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          connections[tableMeta.rowIndex].id,
+                          connections[tableMeta.rowIndex].name,
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={getOptions()}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                      disabled={
+                        !CAN(
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                        )
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              </div>
+            )
           );
         },
       },
@@ -436,7 +649,10 @@ function Connections({
           } else {
             nextStatus.push(value);
           }
-          const disabled = value === 'deleted' ? true : false;
+          const disabled =
+            value === 'deleted'
+              ? true
+              : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -481,7 +697,11 @@ function Connections({
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
                           avatar={icons[status] ? icons[status]() : ''}
-                          label={status}
+                          label={
+                            status == value
+                              ? status
+                              : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                          }
                         />
                       </MenuItem>
                     ))}
@@ -541,6 +761,13 @@ function Connections({
         display: false,
       },
     },
+    {
+      name: 'metadata.name',
+      label: 'Name',
+      options: {
+        display: false,
+      },
+    },
   ];
 
   const options = useMemo(
@@ -571,6 +798,7 @@ function Connections({
           // @ts-ignore
           onClick={() => handleDeleteConnections(selected)}
           style={{ background: '#8F1F00', marginRight: '10px' }}
+          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
         >
           <DeleteForeverIcon style={iconMedium} />
           Delete
@@ -628,7 +856,10 @@ function Connections({
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
                           <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <FormatConnectionMetadata connection={connection} />
+                            <FormatConnectionMetadata
+                              connection={connection}
+                              meshsyncControllerState={meshsyncControllerState}
+                            />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -644,23 +875,49 @@ function Connections({
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = showCols[col.name];
+    });
+    return initialVisibility;
+  });
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
+    updateCols(columns);
     if (!loading && connectionMetadataState) {
-      getConnections(page, pageSize, search, sortOrder);
+      getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
     }
-  }, [page, pageSize, search, sortOrder, connectionMetadataState]);
+  }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
 
-  const getConnections = (page, pageSize, search, sortOrder) => {
+  useEffect(() => {
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: environmentsError.toString(),
+      });
+    }
+  }, [environmentsError]);
+
+  const getConnections = (page, pageSize, search, sortOrder, statusFilter, kindFilter) => {
     setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+        (statusFilter ? `&status=${encodeURIComponent(JSON.stringify([statusFilter]))}` : '') +
+        (kindFilter ? `&kind=${encodeURIComponent(JSON.stringify([kindFilter]))}` : ''),
+
       {
         credentials: 'include',
         method: 'GET',
@@ -673,11 +930,25 @@ function Connections({
             (connection.kindLogo =
               connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
-        setConnections(res?.connections || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
+
+        const filteredConnections = res?.connections.filter((connection) => {
+          if (
+            (statusFilter === null || connection.status === statusFilter) &&
+            (kindFilter === null || connection.kind === kindFilter)
+          ) {
+            return true;
+          }
+          return false;
+        });
+
+        setConnections(filteredConnections);
+        setCount(res?.total_count);
         setLoading(false);
+        setPageSize(res?.page_size);
+        setPage(res?.page);
+        setStatusFilter(statusFilter);
+        setKindFilter(kindFilter);
+        setFilter(filter);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
@@ -702,7 +973,7 @@ function Connections({
         body: requestBody,
       },
       () => {
-        getConnections(page, pageSize, search, sortOrder);
+        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
     );
@@ -840,7 +1111,7 @@ function Connections({
         handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
       }
       notify({
-        message: `Operator ${response.operatorStatus.toLowerCase()}`,
+        message: `Operator ${response.operatorStatus?.toLowerCase()}`,
         event_type: EVENT_TYPES.SUCCESS,
       });
 
@@ -872,64 +1143,82 @@ function Connections({
     return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
-  const [tableCols, updateCols] = useState(columns);
+  const filters = {
+    status: {
+      name: 'Status',
+      options: [
+        { label: 'Connected', value: 'connected' },
+        { label: 'Registered', value: 'registered' },
+        { label: 'Discovered', value: 'discovered' },
+        { label: 'Ignored', value: 'ignored' },
+        { label: 'Deleted', value: 'deleted' },
+        { label: 'Maintenance', value: 'maintenance' },
+        { label: 'Disconnected', value: 'disconnected' },
+        { label: 'Not Found', value: 'not found' },
+      ],
+    },
+    kind: {
+      name: 'Kind',
+      options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+    },
+  };
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
+
+  const handleApplyFilter = () => {
+    const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+
+    getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+  };
 
   return (
-    <>
-      <NoSsr>
-        <AppBar position="static" color="default" className={classes.appBar}>
-          <Tabs
-            value={tab}
-            className={classes.tabs}
-            onChange={(e, newTab) => {
-              e.stopPropagation();
-              setTab(newTab);
-            }}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-            sx={{
-              height: '10%',
-            }}
-          >
-            <Tab
-              className={classes.tab}
-              label={
-                <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                  <ConnectionIcon width="20" height="20" />
-                  {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
-                </div>
-              }
-            />
-            <Tab
-              className={classes.tab}
-              label={
-                <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                  <MeshsyncIcon width="20" height="20" />
-                </div>
-              }
-            />
-          </Tabs>
-        </AppBar>
-        {tab === 0 && (
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '-30px' }}
-          >
-            <div className={classes.createButton}>
-              {/* <div>
+    <NoSsr>
+      {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
+        <>
+          <AppBar position="static" color="default" className={classes.appBar}>
+            <Tabs
+              value={tab}
+              className={classes.tabs}
+              onChange={(e, newTab) => {
+                e.stopPropagation();
+                setTab(newTab);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{
+                height: '10%',
+              }}
+            >
+              <Tab
+                className={classes.tab}
+                label={
+                  <div className={classes.iconText}>
+                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                    <ConnectionIcon width="20" height="20" />
+                    {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
+                  </div>
+                }
+              />
+              <Tab
+                className={classes.tab}
+                label={
+                  <div className={classes.iconText}>
+                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                    <MeshsyncIcon width="20" height="20" />
+                  </div>
+                }
+              />
+            </Tabs>
+          </AppBar>
+          {tab === 0 && (
+            <div
+              className={StyleClass.toolWrapper}
+              style={{ marginBottom: '5px', marginTop: '-30px' }}
+            >
+              <div className={classes.createButton}>
+                {/* <div>
               <Button
                 aria-label="Rediscover"
                 variant="contained"
@@ -942,96 +1231,115 @@ function Connections({
                 Connect Helm Repository
               </Button>
             </div> */}
-              <MesherySettingsEnvButtons />
-            </div>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display: 'flex',
-                borderRadius: '0.5rem 0.5rem 0 0',
-              }}
-            >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
+                <MesherySettingsEnvButtons />
+              </div>
+              <div
+                className={classes.searchAndView}
+                style={{
+                  display: 'flex',
+                  borderRadius: '0.5rem 0.5rem 0 0',
                 }}
-                placeholder="Search connections..."
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-              />
+              >
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                  placeholder="Search connections..."
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                />
 
-              <CustomColumnVisibilityControl
-                columns={getVisibilityColums(columns)}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
+                <UniversalFilter
+                  id="ref"
+                  filters={filters}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
+
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={getVisibilityColums(columns)}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              </div>
             </div>
-          </div>
-        )}
-        {tab === 0 && (
-          <ResponsiveDataTable
-            data={connections}
-            columns={columns}
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
-        )}
-        {tab === 1 && (
-          <MeshSyncTable
-            classes={classes}
-            updateProgress={updateProgress}
-            search={search}
-            selectedK8sContexts={selectedK8sContexts}
-            k8sconfig={k8sconfig}
-          />
-        )}
-        <PromptComponent ref={modalRef} />
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleActionMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <Grid style={{ margin: '10px' }}>
-            <div className={classNames(classes.list, classes.listButton)}>
-              <Box className={classes.listItem} sx={{ width: '100%' }}>
-                <Button
-                  type="submit"
-                  onClick={handleFlushMeshSync(rowData.rowIndex)}
-                  data-cy="btnResetDatabase"
-                  className={classes.button}
-                >
-                  <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                  <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-                    Flush MeshSync
-                  </Typography>
-                </Button>
-              </Box>
-            </div>
-            <div className={classes.list}>
-              <Box className={classes.listItem} sx={{ width: '100%' }}>
-                <div className={classes.listContainer}>
-                  <Switch
-                    defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                    onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                    name="OperatorSwitch"
-                    color="primary"
-                    className={classes.OperatorSwitch}
-                  />
-                  <Typography variant="body1">Operator</Typography>
-                </div>
-              </Box>
-            </div>
-          </Grid>
-        </Popover>
-        <PromptComponent ref={meshSyncResetRef} />
-      </NoSsr>
-    </>
+          )}
+          {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
+            <ResponsiveDataTable
+              data={connections}
+              columns={columns}
+              options={options}
+              className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          )}
+          {tab === 1 && (
+            <MeshSyncTable
+              classes={classes}
+              updateProgress={updateProgress}
+              search={search}
+              selectedK8sContexts={selectedK8sContexts}
+              k8sconfig={k8sconfig}
+            />
+          )}
+          <PromptComponent ref={modalRef} />
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleActionMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <Grid style={{ margin: '10px' }}>
+              <div className={classNames(classes.list, classes.listButton)}>
+                <Box className={classes.listItem} sx={{ width: '100%' }}>
+                  <Button
+                    type="submit"
+                    onClick={handleFlushMeshSync(rowData.rowIndex)}
+                    data-cy="btnResetDatabase"
+                    className={classes.button}
+                    disabled={
+                      !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
+                    }
+                  >
+                    <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                    <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                      Flush MeshSync
+                    </Typography>
+                  </Button>
+                </Box>
+              </div>
+              <div className={classes.list}>
+                <Box className={classes.listItem} sx={{ width: '100%' }}>
+                  <div className={classes.listContainer}>
+                    <Switch
+                      defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                      onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                      name="OperatorSwitch"
+                      color="primary"
+                      className={classes.OperatorSwitch}
+                      disabled={
+                        // TODO: update keys here for operator action
+                        !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
+                      }
+                    />
+                    <Typography variant="body1">Operator</Typography>
+                  </div>
+                </Box>
+              </div>
+            </Grid>
+          </Popover>
+          <PromptComponent ref={meshSyncResetRef} />
+        </>
+      ) : (
+        <DefaultError />
+      )}
+    </NoSsr>
   );
 }
 
@@ -1045,6 +1353,7 @@ const mapStateToProps = (state) => {
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
+  const organization = state.get('organization');
 
   return {
     k8sconfig,
@@ -1052,10 +1361,26 @@ const mapStateToProps = (state) => {
     operatorState,
     connectionMetadataState,
     meshsyncControllerState,
+    organization,
   };
+};
+
+const ConnectionManagementPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in Connection Management', e)}
+      >
+        <Provider store={store}>
+          <ConnectionManagementPage {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
+  );
 };
 
 // @ts-ignore
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPage),
+  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPageWithErrorBoundary),
 );

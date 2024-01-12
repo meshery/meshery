@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kuma
-permalink: integrations/kuma
-type: installation
+permalink: extensibility/integrations/kuma
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kuma.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kuma -->
+ #### About: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project. -->
 
 ### Overview & Features:
+
 1. 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 
 2. Collaborative and visual infrastructure as code for Kuma

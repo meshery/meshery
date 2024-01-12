@@ -38,7 +38,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
 	gMux.PathPrefix("/api/provider/extension").
-		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.ProviderComponentsHandler))), models.ProviderAuth))).
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ProviderComponentsHandler)), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler), models.ProviderAuth))).
 		Methods("GET")
@@ -51,7 +51,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// 	Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/")))).
 	// 	Methods("GET")
 
-	gMux.Handle("/api/system/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.SessionSyncHandler))), models.ProviderAuth))).
+	gMux.Handle("/api/system/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.K8sFSMMiddleware(h.SessionSyncHandler))), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler), models.ProviderAuth))).
@@ -61,7 +61,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/identity/users", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsers), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/identity/users/keys", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsersKeys), models.ProviderAuth))).
+	gMux.Handle("/api/identity/orgs/{orgID}/users/keys", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsersKeys), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserPrefsHandler), models.ProviderAuth))).
@@ -125,22 +125,22 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/telemetry/metrics/grafana/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaConfigHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "DELETE")
-	gMux.Handle("/api/telemetry/metrics/grafana/boards/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler), models.ProviderAuth))).
+	gMux.Handle("/api/telemetry/metrics/grafana/boards/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
-	gMux.Handle("/api/telemetry/metrics/grafana/query/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler), models.ProviderAuth))).
+	gMux.Handle("/api/telemetry/metrics/grafana/query/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/grafana/query_range/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryRangeHandler), models.ProviderAuth))).
+	gMux.Handle("/api/grafana/query_range/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryRangeHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/telemetry/metrics/grafana/ping/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler), models.ProviderAuth))).
+	gMux.Handle("/api/telemetry/metrics/grafana/ping/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.Handle("/api/telemetry/metrics/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "DELETE")
-	gMux.Handle("/api/telemetry/metrics/board_import/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler), models.ProviderAuth))).
+	gMux.Handle("/api/telemetry/metrics/board_import/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler), models.ProviderAuth))).
 		Methods("POST")
-	gMux.Handle("/api/telemetry/metrics/query/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryHandler), models.ProviderAuth))).
+	gMux.Handle("/api/telemetry/metrics/query/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/prometheus/query_range/:connectionID", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryRangeHandler), models.ProviderAuth))).
+	gMux.Handle("/api/prometheus/query_range/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryRangeHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/telemetry/metrics/ping/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusPingHandler), models.ProviderAuth))).
 		Methods("GET")
@@ -207,7 +207,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/models/{model}/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}/relationships/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
-	
+
 	gMux.Handle("/api/meshmodels/relationships/evaluate", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EvaluateRelationshipPolicy), models.ProviderAuth))).
 		Methods("POST")
 
@@ -277,13 +277,19 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("DELETE")
 	gMux.Handle("/api/user/schedules", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveScheduleHandler), models.ProviderAuth))).
 		Methods("POST")
-	
+
 	gMux.Handle("/api/system/meshsync/resources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResources), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/system/meshsync/resources/kinds", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResourcesKinds), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/meshsync/resources/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMeshSyncResource), models.ProviderAuth))).
+		Methods("DELETE")
 
 	// Handlers for User Credentials
 
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserCredentials), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/credentials/{credentialID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserCredentialByID), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateUserCredential), models.ProviderAuth))).
 		Methods("PUT")
@@ -312,6 +318,29 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("DELETE")
 	gMux.Handle("/api/environments/{environmentID}/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsOfEnvironmentHandler), models.ProviderAuth))).
 		Methods("GET")
+
+	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspacesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateWorkspaceHandler), models.ProviderAuth))).
+		Methods("PUT")
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+	gMux.Handle("/api/workspaces/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetWorkspaceByIdHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironmentsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/environments/{environmentID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddEnvironmentToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/environments/{environmentID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveEnvironmentFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+	gMux.Handle("/api/workspaces/{id}/designs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetDesignsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddDesignToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveDesignFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")
@@ -370,8 +399,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnections), models.ProviderAuth))).
-		Methods("GET")
-	gMux.Handle("/api/integrations/connections/{connectionKind}/transitions", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetPossibleTransitionsByKind), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/integrations/connections/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsStatus), models.ProviderAuth))).
 		Methods("GET")

@@ -455,7 +455,7 @@ func IsServerRunning(serverAddr string) error {
 	conn, err := net.DialTimeout("tcp", serverAddr, 2*time.Second)
 	if err != nil {
 		// Connection failed, server is not running
-		return errors.WithMessage(err, "Mehsery server is not reachable")
+		return errors.WithMessage(err, "Meshery server is not reachable")
 	}
 	defer conn.Close()
 	return nil

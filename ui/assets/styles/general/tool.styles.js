@@ -159,7 +159,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '1rem',
-      height: '35rem',
+      height: 'fit-content',
+      maxHeight: '30rem',
     },
   },
   emptyDetailsContainer: {
@@ -172,12 +173,14 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
+    // justifyContent: 'center',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '0.5rem',
-      height: '35rem',
+      height: 'fit-content',
+      maxHeight: '30rem',
     },
   },
   activeTab: {

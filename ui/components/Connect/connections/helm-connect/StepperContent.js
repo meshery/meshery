@@ -6,7 +6,7 @@ import Router, { useRouter } from 'next/router';
 import { useTheme } from '@material-ui/core';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { generateSelectedHelmRepo, selectRepoSchema, addStatusToCharts } from './utils';
+import { generateSelectedHelmRepo, addStatusToCharts } from './utils';
 import {
   useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
@@ -19,6 +19,7 @@ import StepperContent from '../../stepper/StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import debounce from 'lodash/debounce';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { selectCompSchema } from '../../../RJSFUtils/common';
 
 export const ConnectApp = ({ handleNext, setSharedData }) => {
   const [isConnected, setIsConnected] = React.useState(false);
@@ -230,7 +231,13 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
     }
   };
 
-  const schema = selectRepoSchema(availableRepos);
+  const schema = selectCompSchema(
+    availableRepos,
+    'Select one or more Helm charts from the available options',
+    'Select one or more of your Helm charts',
+    'selectedHelmRepos',
+    true,
+  );
 
   const handleChange = (data) => {
     const { updatedData, arrayOfSelected } = generateSelectedHelmRepo(data, sharedData);

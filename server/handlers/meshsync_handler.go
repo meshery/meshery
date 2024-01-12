@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
@@ -79,8 +80,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
-			h.log.Error(ErrFetchPattern(err))
-			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrFetchMeshSyncResources(err))
+			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -115,7 +116,10 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	if search != "" {
-		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
+
+		result = result.
+			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+			Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
 	}
 
 	result.Count(&totalCount)
@@ -160,5 +164,98 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+// swagger:route GET /api/system/meshsync/resources/kinds GetMeshSyncResourcesKinds idGetMeshSyncResourcesKinds
+// Handle GET request for meshsync discovered resources kinds
+//
+// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
+//
+// ```?page = {page-number}``` Default page number is 1
+//
+// ```?pagesize = {pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?search = {componentname}``` If search is non empty then a greedy search is performed
+//
+// ```?order = {field}``` orders on the passed field
+//
+// responses:
+// 200: []meshsyncResourcesKindsResponseWrapper
+
+func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	page, offset, limit,
+		search, order, sort, _ := getPaginationParams(r)
+
+	filter := struct {
+		ClusterIds []string `json:"clusterIds"`
+	}{}
+
+	var kinds []string
+	var totalCount int64
+
+	clusterIds := r.URL.Query().Get("clusterIds")
+	if clusterIds != "" {
+		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+		if err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		filter.ClusterIds = []string{}
+	}
+
+	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).Distinct("kind").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+
+	if search != "" {
+		result = result.Where("kubernetes_resources.kind LIKE ?", "%"+search+"%")
+	}
+
+	if limit != 0 {
+		result = result.Limit(limit)
+	}
+
+	if offset != 0 {
+		result = result.Offset(offset)
+	}
+
+	if order != "" {
+		if sort == "desc" {
+			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
+		} else {
+			result = result.Order(order)
+		}
+	}
+
+	err := result.Pluck("kinds", &kinds).Error
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := &models.MeshSyncResourcesKindsAPIResponse{
+		Kinds:      kinds,
+		TotalCount: totalCount,
+		Page:       page,
+		PageSize:   limit,
+	}
+
+	if err := enc.Encode(response); err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	resourceID := mux.Vars(r)["id"]
+	db := provider.GetGenericPersister()
+	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
+	if err != nil {
+		h.log.Error(models.ErrDelete(err, "meshsync data", http.StatusInternalServerError))
 	}
 }

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubedb Ops Manager
-permalink: integrations/kubedb-ops-manager
-type: installation
+permalink: extensibility/integrations/kubedb-ops-manager
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubedb-ops-manager.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubedb-ops-manager -->
+ #### About: KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud -->
 
 ### Overview & Features:
+
 1. KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud
 
 2. Collaborative and visual infrastructure as code for Kubedb Ops Manager

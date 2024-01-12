@@ -17,7 +17,6 @@ Import a WASM filter
 ## Synopsis
 
 Import a WASM filter from a URI (http/s) or local filesystem path
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter import [URI] [flags]

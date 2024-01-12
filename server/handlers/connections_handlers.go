@@ -10,11 +10,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	helpers "github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
@@ -41,31 +41,28 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-		smInstanceTracker.mx.Lock()
-		defer smInstanceTracker.mx.Unlock()
 
-		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionRegisterPayload.ID]
-		if !ok {
-			machineCtx := make(map[string]string, 0)
-			inst, err = InitializeMachineWithContext(
-				machineCtx,
-				req.Context(),
-				connectionRegisterPayload.ID,
-				smInstanceTracker,
-				h.log,
-				nil,
-				machines.DISCOVERED,
-				strings.ToLower(connectionRegisterPayload.Kind),
-				nil,
-			)
-			if err != nil {
-				event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
-					"error": err,
-				}).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+		machineCtx := make(map[string]string, 0)
+		inst, err := helpers.InitializeMachineWithContext(
+			machineCtx,
+			req.Context(),
+			connectionRegisterPayload.ID,
+			userUUID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.DISCOVERED,
+			strings.ToLower(connectionRegisterPayload.Kind),
+			nil,
+		)
+		if err != nil {
+			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
+
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
@@ -87,32 +84,28 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
 
-	smInstancetracker.mx.Lock()
-	defer smInstancetracker.mx.Unlock()
 	id, ok := body["id"]
 	if ok {
-		delete(smInstancetracker.ConnectToInstanceMap, uuid.FromStringOrNil(id))
+		smInstancetracker.Remove(uuid.FromStringOrNil(id))
 	}
 }
 
 func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
 	compFilter := &v1alpha1.ComponentFilter{
-		Name:      "Connection",
-		ModelName: payload.Model,
-		Limit:     1,
+		Name:  fmt.Sprintf("%sConnection", payload.Kind),
+		Limit: 1,
 	}
 	schema := make(map[string]interface{}, 1)
-	component, _, _ := h.registryManager.GetEntities(compFilter)
-	if len(component) == 0 {
+	connectionComponent, _, _ := h.registryManager.GetEntities(compFilter)
+	if len(connectionComponent) == 0 {
 		http.Error(w, "Unable to register resource as connection. No matching connection definition found in the registry", http.StatusInternalServerError)
 		return
 	}
 
-	schema["component"] = component[0]
+	schema["connection"] = connectionComponent[0]
 	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:      "Credential",
-		ModelName: payload.Model,
-		Limit:     1,
+		Name:  fmt.Sprintf("%sCredential", payload.Kind),
+		Limit: 1,
 	})
 
 	if len(credential) > 0 {
@@ -191,6 +184,12 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
+//
+// ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
+//
+// ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
+//
+// ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
 // responses:
 // 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -199,6 +198,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	order := q.Get("order")
 	search := q.Get("search")
 	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
+	filter := q.Get("filter")
 
 	if pageSize > 50 {
 		pageSize = 50
@@ -213,9 +213,39 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		order = "updated_at desc"
 	}
 
-	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
+	err := req.ParseForm()
+	if err != nil {
+		h.log.Error(ErrGetConnections(err))
+		http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order)
+	queryParam := struct {
+		Status []string `json:"status"`
+		Kind   []string `json:"kind"`
+	}{}
+
+	status := q.Get("status")
+	kind := q.Get("kind")
+	if status != "" {
+		err := json.Unmarshal([]byte(status), &queryParam.Status)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if kind != "" {
+		err := json.Unmarshal([]byte(kind), &queryParam.Kind)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind)
 	obj := "connections"
 
 	if err != nil {
@@ -305,23 +335,6 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionKind}/transitions GetAvailableTransitionsByKind idGetConnectionsStatus
-// Handle GET request for getting all possible connection transitions
-//
-// Get all possible state transitions for a particular connection kind.
-// responses:
-// 200: mesheryConnectionsStatusPage
-func (h *Handler) GetPossibleTransitionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionKind := mux.Vars(req)["connectionKind"]
-	transitions := connections.PossibleTransitionnsMap[connectionKind]
-
-	err := json.NewEncoder(w).Encode(transitions)
-	if err != nil {
-		http.Error(w, models.ErrMarshal(err, "connection transitions").Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionStatusPayload := &connectionStatusPayload{}
 	defer func() {
@@ -348,7 +361,6 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	if connKind == "kubernetes" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		smInstanceTracker.mx.Lock()
 		for id, status := range *connectionStatusPayload {
 			eventBuilder.ActedUpon(id)
 			k8scontext, err := provider.GetK8sContext(token, id.String())
@@ -373,36 +385,35 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				Provider:           provider,
 				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
 			}
-			inst, ok := smInstanceTracker.ConnectToInstanceMap[id]
-			if !ok {
-				inst, err = InitializeMachineWithContext(
-					machineCtx,
-					req.Context(),
-					id,
-					smInstanceTracker,
-					h.log,
-					provider,
-					machines.InitialState,
-					"kubernetes",
-					kubernetes.AssignInitialCtx,
-				)
-				if err != nil {
-					event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
-						"error": err,
-					}).Build()
-					_ = provider.PersistEvent(event)
-					go h.config.EventBroadcaster.Publish(userID, event)
-					continue
-				}
+
+			inst, err := helpers.InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				id,
+				userID,
+				smInstanceTracker,
+				h.log,
+				provider,
+				machines.InitialState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
+			)
+
+			if err != nil {
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
 			}
 
 			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-				event, err = inst.SendEvent(req.Context(), helpers.StatusToEvent(status), nil)
+				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
 					_ = provider.PersistEvent(event)
@@ -411,32 +422,31 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				}
 
 				if status == connections.DELETED {
-					delete(smInstanceTracker.ConnectToInstanceMap, inst.ID)
+					smInstanceTracker.Remove(inst.ID)
 				}
 
 				_ = provider.PersistEvent(event)
 				h.config.EventBroadcaster.Publish(userID, event)
 			}(inst, status)
 		}
-		smInstanceTracker.mx.Unlock()
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		for id, status := range *connectionStatusPayload {
 			connection, statusCode, err := provider.UpdateConnectionStatusByID(token, id, status)
 
 			if err != nil {
-				event := events.NewEvent().WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
+				event := events.NewEvent().WithCategory("connection").WithAction("update").WithSeverity(events.Error).ActedUpon(id).FromUser(userID).FromSystem(*h.SystemID).WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
 				_ = provider.PersistEvent(event)
 				h.config.EventBroadcaster.Publish(userID, event)
 				h.log.Error(err)
 				continue
 			}
 			eb := events.NewEvent()
-			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithStatus("update")
+			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithAction("update")
 			if status == connections.DELETED {
 				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
-			event := events.NewEvent().WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
+			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
 			_ = provider.PersistEvent(event)
 			h.config.EventBroadcaster.Publish(userID, event)
 

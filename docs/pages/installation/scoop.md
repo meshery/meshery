@@ -10,6 +10,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/scoop.png
+abstract: Install Meshery CLI on Windows with Scoop
 ---
 # Install Meshery CLI with Scoop
 

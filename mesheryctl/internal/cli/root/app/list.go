@@ -54,8 +54,8 @@ mesheryctl app list
 			return nil
 		}
 
-		var response *models.ApplicationsAPIResponse
-		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/application", nil)
+		var response *models.PatternsAPIResponse
+		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/pattern", nil)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -87,7 +87,7 @@ mesheryctl app list
 
 		if verbose {
 			if provider == "None" {
-				for _, v := range response.Applications {
+				for _, v := range response.Patterns {
 					AppID := v.ID.String()
 					AppName := v.Name
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
@@ -98,7 +98,7 @@ mesheryctl app list
 				return nil
 			}
 
-			for _, v := range response.Applications {
+			for _, v := range response.Patterns {
 				AppID := utils.TruncateID(v.ID.String())
 				var UserID string
 				if v.UserID != nil {
@@ -118,7 +118,7 @@ mesheryctl app list
 
 		// Check if meshery provider is set
 		if provider == "None" {
-			for _, v := range response.Applications {
+			for _, v := range response.Patterns {
 				AppName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				AppID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
@@ -128,7 +128,7 @@ mesheryctl app list
 			utils.PrintToTableWithFooter([]string{"APP ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 			return nil
 		}
-		for _, v := range response.Applications {
+		for _, v := range response.Patterns {
 			AppID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {

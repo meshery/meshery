@@ -6,6 +6,7 @@ language: en
 type: guides
 category: mesheryctl
 list: include
+abstract: Run pre-flight and post-deployment system health checks using Meshery's CLI, mesheryctl.
 ---
 
 Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, `mesheryctl system check` is a useful utility to ensure that your Meshery deployments are healthy.
@@ -95,7 +96,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management](tasks/performance-management) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management](tasks/performance/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 

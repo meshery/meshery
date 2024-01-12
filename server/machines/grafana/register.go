@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
 )
@@ -22,7 +22,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[models.ConnectionPayload](data)
 	if err != nil {
@@ -43,7 +43,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 
 	grafanaCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.GrafanaCred](connPayload.CredentialSecret)
-	if err != nil {
+	if err != nil && !connPayload.SkipCredentialVerification {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
@@ -53,7 +53,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
 	}
-	return machines.NoOp, nil, nil
+	return machines.Exit, nil, nil
 }
 
 func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {

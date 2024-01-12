@@ -6,6 +6,7 @@ language: en
 type: guides
 category: mesheryctl
 list: include
+abstract: Bash, Zsh, Oh My Zsh, and fish autocompletion for `mesheryctl` commands.
 ---
 
 If you would like to have `mesheryctl` commands automatically completed for use as you use `mesheryctl`, then use the following instructions to configure automatic completion within your environment.

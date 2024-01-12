@@ -8,6 +8,7 @@ const KeyValue = ({ property, value }) => (
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
         margin: '0.3rem 0',
       }}
     >
@@ -15,13 +16,13 @@ const KeyValue = ({ property, value }) => (
         style={{
           padding: '0',
           margin: '0 0.5rem 0 0',
-          fontSize: '14px',
+          fontSize: '16px',
           fontWeight: '600',
         }}
       >
         {property}
       </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{value}</p>
+      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{value}</p>
     </div>
   </>
 );
@@ -447,16 +448,15 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
     >
       {((view === MODELS && !show.model.displayName) ||
         (view === COMPONENTS && !comp.displayName) ||
-        (view === RELATIONSHIPS && !rela.kind) ||
-        (view === REGISTRANTS && !regi.hostname)) && (
-        <p style={{ color: '#969696' }}>No {view} selected</p>
+        (view === RELATIONSHIPS && !rela.kind)) && (
+        <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>
       )}
       {view === REGISTRANTS && regi.hostname && (
         <div>
           <Title title={regi.hostname} />
-          <div className={StyleClass.segment}>
-            <RegistrantContent registrant={regi} />
-          </div>
+
+          <RegistrantContent registrant={regi} />
+
           {show.model.displayName && <hr style={{ margin: '1rem 0' }} />}
         </div>
       )}

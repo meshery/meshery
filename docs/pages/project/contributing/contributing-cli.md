@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery CLI
 permalink: project/contributing/contributing-cli
-description: How to contribute to Meshery Command Line Interface.
+abstract: How to contribute to Meshery Command Line Interface.
 language: en
 type: project
 category: contributing

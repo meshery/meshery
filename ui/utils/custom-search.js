@@ -105,12 +105,12 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
       {expanded ? (
         <ClickAwayListener
           onClickAway={(event) => {
-            //when user clicks on actions menu, search bar should not close
-            const isSearchBar = event.target.closest('#your-search-bar-id');
-            const isTable = event.target.closest('#searchClick');
+            const isTable = event.target.closest('#ref');
 
-            if (!isSearchBar && !isTable) {
-              // The click is outside the search bar and table, so you can close the search bar
+            if (searchText !== '') {
+              return;
+            }
+            if (isTable) {
               handleClearIconClick(); // Close the search bar as needed
             }
           }}

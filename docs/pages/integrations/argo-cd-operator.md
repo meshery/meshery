@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Argo CD Operator
-permalink: integrations/argo-cd-operator
-type: installation
+permalink: extensibility/integrations/argo-cd-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/argo-cd-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: argocd-operator -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Argo CD Operator
 
 4. 

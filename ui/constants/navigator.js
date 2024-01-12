@@ -11,6 +11,8 @@ export const SECURITY = 'security';
 export const CONFIG = 'config';
 
 export const CONNECTION = 'connection';
+export const ENVIRONMENT = 'environment';
+export const WORKSPACE = 'Workspace';
 export const SERVICE_MESH = 'service_mesh';
 export const ISTIO = 'istio';
 export const KUMA = 'kuma';

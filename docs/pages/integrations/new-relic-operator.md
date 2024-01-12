@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: New Relic Operator
-permalink: integrations/new-relic-operator
-type: installation
+permalink: extensibility/integrations/new-relic-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Observability and Analysis
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/new-relic-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: newrelic-operator -->
+ #### About: The newrelic-kubernetes-operator is a Kubernetes Operator that facilitates management of New Relic resources from within your Kubernetes configuration. Managing New Relic resources via custom Kubernetes objects can be done the same way you manage built-in Kubernetes objects. -->
 
 ### Overview & Features:
+
 1. The newrelic-kubernetes-operator is a Kubernetes Operator that facilitates management of New Relic resources from within your Kubernetes configuration. Managing New Relic resources via custom Kubernetes objects can be done the same way you manage built-in Kubernetes objects.
 
 2. Collaborative and visual infrastructure as code for New Relic Operator

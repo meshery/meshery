@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kong Mesh
-permalink: integrations/kong-mesh
-type: installation
+permalink: extensibility/integrations/kong-mesh
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kong-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kong-mesh -->
+ #### About: Enterprise service mesh based on Kuma for multi-cloud and multi-cluster on both Kubernetes and VMs. -->
 
 ### Overview & Features:
+
 1. Enterprise service mesh based on Kuma for multi-cloud and multi-cluster on both Kubernetes and VMs.
 
 2. Collaborative and visual infrastructure as code for Kong Mesh

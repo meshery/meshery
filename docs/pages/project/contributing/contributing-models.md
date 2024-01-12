@@ -3,7 +3,7 @@ layout: page
 title: Contributing to Models
 permalink: project/contributing/contributing-models
 redirect_from: project/contributing/contributing-models/
-description: How to contribute to Meshery Models, Components, Relationships, Policies...
+abstract: How to contribute to Meshery Models, Components, Relationships, Policies...
 language: en
 type: project
 category: contributing
@@ -50,6 +50,10 @@ If a specific attribute is not provided with a value in the definition, it means
 [![MeshModel Contruct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
 
 _Figure: MeshModel Contruct Classification_
+
+### Generating Models does not require Meshery Server
+
+Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components.
 
 ### Contribute to MeshModel Relationships
 

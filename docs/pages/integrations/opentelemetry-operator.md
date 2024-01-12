@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OpenTelemetry Operator
-permalink: integrations/opentelemetry-operator
-type: installation
+permalink: extensibility/integrations/opentelemetry-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Tracing
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/opentelemetry-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: opentelemetry-operator -->
+ #### About: OpenTelemetry community content -->
 
 ### Overview & Features:
+
 1. OpenTelemetry community content
 
 2. Collaborative and visual infrastructure as code for OpenTelemetry Operator

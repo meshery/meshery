@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: K8GB
-permalink: integrations/k8gb
-type: installation
+permalink: extensibility/integrations/k8gb
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Coordination & Service Discovery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/k8gb.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: k8gb -->
+ #### About: A cloud native Kubernetes Global Balancer -->
 
 ### Overview & Features:
+
 1. A cloud native Kubernetes Global Balancer
 
 2. Collaborative and visual infrastructure as code for K8GB

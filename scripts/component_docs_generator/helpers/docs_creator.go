@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -30,6 +31,7 @@ func CreateIntegrationDocs(csvIndices CSVIndices) {
 func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
 	for _, record := range records[1:] {
 		svgContent := record[csvIndices.SvgIndex]
+		fmt.Println("Creating SVG:", record[csvIndices.NameIndex])
 		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
 	}
 }
@@ -50,6 +52,7 @@ func createFiles(path, filetype, name, content string) {
 	fullPath := path + "/" + formattedName + filetype
 
 	file, err := os.Create(fullPath)
+	fmt.Println("Creating file:", fullPath)
 	if err != nil {
 		log.Println("Error creating filetype file:", err)
 		return
@@ -83,11 +86,13 @@ func generateMDContent(record []string, name string, csvIndices CSVIndices) stri
 	overviewAndFeatures = strings.Replace(overviewAndFeatures, "</p>", "\n", -1)
 
 	content := `---
-layout: default
+layout: enhanced
 title: ` + name + `
-permalink: integrations/` + formattedName + `
-type: installation
+permalink: extensibility/integrations/` + formattedName + `
+type: extensibility
 category: integrations
+integrations-category: ` + record[2] + `
+integrations-subcategory: ` + record[3] + `
 display-title: "false"
 language: en
 list: include
@@ -98,9 +103,10 @@ image: /assets/img/integrations/` + formattedName + `.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: ` + record[1] + ` -->
+ #### About: ` + record[25] + ` -->
 
 ### Overview & Features:
+
 ` + overviewAndFeatures
 
 	return content

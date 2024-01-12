@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Command Reference
+title: Command Line Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
 redirect_from:
@@ -9,6 +9,7 @@ redirect_from:
   - reference/mesheryctl/
 type: Reference
 language: en
+abstract: "A guide to Meshery's CLI: mesheryctl"
 ---
 
 ## Categories and Command Structure

@@ -32,43 +32,41 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.6.0
+version: 0.7.0
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
-# TODO: Need to confirm the image version
+# This is the version number of the application being deployed. This version number should be incremented each time you make changes to the application.
 # appVersion: v0.6.0
 
 dependencies:
   - name: meshery-istio
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-istio.enabled
   - name: meshery-linkerd
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-linkerd.enabled
   - name: meshery-consul
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-consul.enabled
   - name: meshery-kuma
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-kuma.enabled
   - name: meshery-nsm
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-nsm.enabled
   - name: meshery-traefik-mesh
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-traefik-mesh.enabled
   - name: meshery-nginx-sm
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-nginx-sm.enabled
   - name: meshery-app-mesh
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-app-mesh.enabled
   - name: meshery-cilium
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-cilium.enabled
   - name: meshery-perf
-    version: 0.5.0
+    version: 0.7.0
     condition: meshery-perf.enabled
 
 maintainers:

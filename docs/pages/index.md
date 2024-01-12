@@ -13,9 +13,9 @@ language: en
   <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
-  <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
+  <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
 </div>
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
   <!-- OVERVIEW -->
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
@@ -30,7 +30,7 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/installation/" class="text-black">Supported Platforms</a>
+          <a href="{{ site.baseurl }}/installation/" class="text-black">Installation</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -48,6 +48,7 @@ language: en
   </div>
 
     <!-- CONCEPTS -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/concepts">
         <div class="btn-primary">Concepts</div>
@@ -100,7 +101,7 @@ language: en
   </div>
 </div>
 
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
   <!-- TASKS -->
   <div class="section">
@@ -121,23 +122,51 @@ language: en
 
  <!-- Extensions -->
   <div class="section">
-    <a href="{{ site.baseurl }}/extensions">
-        <div class="btn-primary">Extensions</div>
+    <a href="{{ site.baseurl }}/extensibility">
+        <div class="btn-primary">Integrations & Extensions</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
+        <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="extensions" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/integrations" class="text-black">Integrations</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="integration" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
   </div>
 
-</div> 
+</div>
 
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
 <!-- GUIDES -->
   <div class="section">
@@ -148,7 +177,7 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Meshery CLI</a>
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using the CLI</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -163,9 +192,81 @@ language: en
           {% endfor %}
       </ul>
     </details>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="infrastructure" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+        <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/performance-management" class="text-black">Performance Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+      <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Configuration Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>  
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="troubleshooting" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>    
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.language=="en" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -185,18 +286,17 @@ language: en
       {% endif -%}
       {% endfor %}
     </ul> -->
-  </div> 
-
+  </div>
 
     <!-- CONTRIBUTING -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/project">
         <div class="btn-primary">Contributing and Community</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    <ul>
-      <li><a href="{{ site.baseurl }}/project/community" class="text-black">Community</a></li>
-    </ul>
+    <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
+    <a href="{{ site.baseurl }}/project/community" style="font-size:1.8rem">Community</a>
     <details>
       <summary>
         <p style="display:inline">
@@ -218,9 +318,10 @@ language: en
   </div>
     
 </div>
-<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
+<div class="flex flex-col--2 container">
 
     <!-- PROJECT -->
+
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Project</div>
@@ -230,15 +331,17 @@ language: en
 
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and item.language =="en" -%}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
     </ul>
+
   </div>
 
     <!-- REFERENCE -->
+
   <div class="section">
   <a href="{{ site.baseurl }}/installation/quick-start">
         <div class="btn-primary">Reference</div>
@@ -257,10 +360,6 @@ language: en
 </div>
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
-
-
-
-
 
 <!-- <div style="text-align:center;padding:0;margin:0;">
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />

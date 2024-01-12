@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Grafana Operator
-permalink: integrations/grafana-operator
-type: installation
+permalink: extensibility/integrations/grafana-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,11 @@ image: /assets/img/integrations/grafana-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: grafana-operator -->
+ #### About: Query, visualize, alert on, and understand your data with Grafana and Meshery. Use Grafana to create, explore, and share all of your data through dashboards,
+Use Meshery to customize the flexible display of your dashboards in context of your infrastructure management. -->
 
 ### Overview & Features:
+
 1. Query, visualize, alert on, and understand your data with Grafana and Meshery. Use Grafana to create, explore, and share all of your data through dashboards,
 Use Meshery to customize the flexible display of your dashboards in context of your infrastructure management.
 

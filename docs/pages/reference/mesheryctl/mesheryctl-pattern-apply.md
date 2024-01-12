@@ -17,7 +17,6 @@ Apply pattern file
 ## Synopsis
 
 Apply pattern file will trigger deploy of the pattern file
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern apply [flags]

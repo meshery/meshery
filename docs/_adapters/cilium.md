@@ -10,7 +10,7 @@ lab: cilium-meshery-adapter
 github_link: https://github.com/meshery/meshery-cilium
 image: /assets/img/service-meshes/cilium.svg
 white_image: /assets/img/service-meshes/cilium-white.svg
-permalink: service-meshes/adapters/cilium
+permalink: extensibility/adapters/cilium
 language: en
 ---
 

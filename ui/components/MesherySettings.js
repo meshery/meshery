@@ -27,6 +27,8 @@ import {
 } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -291,19 +293,10 @@ class MesherySettings extends React.Component {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
-            if (self.state.tabVal == 0) newRoute += '#environment/outclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/grafana';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/models';
+            if (self.state.tabVal == 1) newRoute += '#metrics/grafana';
             break;
           case 1:
-            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/components';
-            break;
-          case 2:
-            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
-            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
-            else if (self.state.tabVal == 4) newRoute += '#metrics/relationships';
+            if (self.state.tabVal == 1) newRoute += '#metrics/prometheus';
             break;
         }
         if (this.props.router.route != newRoute) this.props.router.push(newRoute);
@@ -330,130 +323,138 @@ class MesherySettings extends React.Component {
       );
     }
     return (
-      <div className={classes.wrapperClss}>
-        <Paper square className={classes.wrapperClss}>
-          <Tabs
-            value={tabVal}
-            className={classes.tabs}
-            onChange={this.handleChange('tabVal')}
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tooltip title="Connect Meshery Adapters" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                label="Adapters"
-                data-cy="tabServiceMeshes"
-              />
-            </Tooltip>
-            <Tooltip title="Configure Metrics backends" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                label="Metrics"
-                tab="tabMetrics"
-              />
-            </Tooltip>
-            <Tooltip title="Registry" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Registry"
-                tab="registry"
-              />
-            </Tooltip>
-            <Tooltip title="Reset System" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                label="Reset"
-                tab="systemReset"
-              />
-            </Tooltip>
-          </Tabs>
-        </Paper>
-        {tabVal === 0 && (
-          <TabContainer>
-            <MeshAdapterConfigComponent />
-          </TabContainer>
-        )}
-        {tabVal === 1 && (
-          <TabContainer>
-            <AppBar position="static" color="default">
+      <>
+        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) && (
+          <div className={classes.wrapperClss}>
+            <Paper square className={classes.wrapperClss}>
               <Tabs
-                value={subTabVal}
+                value={tabVal}
                 className={classes.tabs}
-                onChange={this.handleChange('subTabVal')}
+                onChange={this.handleChange('tabVal')}
+                variant="fullWidth"
                 indicatorColor="primary"
                 textColor="primary"
-                variant="fullWidth"
               >
-                <Tab
-                  className={classes.tab}
-                  label={
-                    <div className={classes.iconText}>
-                      Grafana
-                      <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                    </div>
-                  }
-                />
-                <Tab
-                  className={classes.tab}
-                  label={
-                    <div className={classes.iconText}>
-                      Prometheus
-                      <img
-                        src="/static/img/prometheus_logo_orange_circle.svg"
-                        className={classes.icon}
-                      />
-                    </div>
-                  }
-                />
+                <Tooltip title="Connect Meshery Adapters" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                    label="Adapters"
+                    data-cy="tabServiceMeshes"
+                    disabled={!CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject)}
+                  />
+                </Tooltip>
+                <Tooltip title="Configure Metrics backends" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                    label="Metrics"
+                    tab="tabMetrics"
+                    disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
+                  />
+                </Tooltip>
+                <Tooltip title="Registry" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                    label="Registry"
+                    tab="registry"
+                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                  />
+                </Tooltip>
+                <Tooltip title="Reset System" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                    label="Reset"
+                    tab="systemReset"
+                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                  />
+                </Tooltip>
               </Tabs>
-            </AppBar>
-            {subTabVal === 0 && (
+            </Paper>
+            {tabVal === 0 && CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject) && (
               <TabContainer>
-                <GrafanaComponent
-                  scannedGrafana={this.state.scannedGrafana}
-                  isMeshConfigured={this.state.isMeshConfigured}
-                />
+                <MeshAdapterConfigComponent />
               </TabContainer>
             )}
-            {subTabVal === 1 && (
+            {tabVal === 1 && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
               <TabContainer>
-                <PrometheusComponent
-                  scannedPrometheus={this.state.scannedPrometheus}
-                  isMeshConfigured={this.state.isMeshConfigured}
-                />
+                <AppBar position="static" color="default">
+                  <Tabs
+                    value={subTabVal}
+                    className={classes.tabs}
+                    onChange={this.handleChange('subTabVal')}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    variant="fullWidth"
+                  >
+                    <Tab
+                      className={classes.tab}
+                      label={
+                        <div className={classes.iconText}>
+                          Grafana
+                          <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                        </div>
+                      }
+                    />
+                    <Tab
+                      className={classes.tab}
+                      label={
+                        <div className={classes.iconText}>
+                          Prometheus
+                          <img
+                            src="/static/img/prometheus_logo_orange_circle.svg"
+                            className={classes.icon}
+                          />
+                        </div>
+                      }
+                    />
+                  </Tabs>
+                </AppBar>
+                {subTabVal === 0 && (
+                  <TabContainer>
+                    <GrafanaComponent
+                      scannedGrafana={this.state.scannedGrafana}
+                      isMeshConfigured={this.state.isMeshConfigured}
+                    />
+                  </TabContainer>
+                )}
+                {subTabVal === 1 && (
+                  <TabContainer>
+                    <PrometheusComponent
+                      scannedPrometheus={this.state.scannedPrometheus}
+                      isMeshConfigured={this.state.isMeshConfigured}
+                    />
+                  </TabContainer>
+                )}
               </TabContainer>
             )}
-          </TabContainer>
-        )}
-        {tabVal === 2 && (
-          <TabContainer>
-            <TabContainer>
+            {tabVal === 2 && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
               <TabContainer>
-                <MeshModelComponent
-                  modelsCount={this.state.modelsCount}
-                  componentsCount={this.state.componentsCount}
-                  relationshipsCount={this.state.relationshipsCount}
-                  registrantCount={this.state.registrantCount}
-                />
+                <TabContainer>
+                  <TabContainer>
+                    <MeshModelComponent
+                      modelsCount={this.state.modelsCount}
+                      componentsCount={this.state.componentsCount}
+                      relationshipsCount={this.state.relationshipsCount}
+                      registrantCount={this.state.registrantCount}
+                    />
+                  </TabContainer>
+                </TabContainer>
+                {/* </div> */}
               </TabContainer>
-            </TabContainer>
-            {/* </div> */}
-          </TabContainer>
+            )}
+            {tabVal === 3 && (
+              <TabContainer>
+                <DatabaseSummary promptRef={this.systemResetPromptRef} />
+              </TabContainer>
+            )}
+            {backToPlay}
+            <PromptComponent ref={this.systemResetPromptRef} />
+          </div>
         )}
-        {tabVal === 3 && (
-          <TabContainer>
-            <DatabaseSummary promptRef={this.systemResetPromptRef} />
-          </TabContainer>
-        )}
-        {backToPlay}
-        <PromptComponent ref={this.systemResetPromptRef} />
-      </div>
+      </>
     );
   }
 }

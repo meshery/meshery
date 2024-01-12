@@ -122,6 +122,8 @@ const (
 	ErrBulkUpdateEventCode        = "1537"
 	ErrBulkDeleteEventCode        = "1538"
 	ErrFetchMeshSyncResourcesCode = "1539"
+	ErrDesignSourceContentCode    = "1554"
+	ErrGetConnectionsCode    	  = "1555"
 )
 
 var (
@@ -290,6 +292,10 @@ func ErrApplicationFailure(err error, obj string) error {
 
 func ErrApplicationSourceContent(err error, obj string) error {
 	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
+}
+
+func ErrDesignSourceContent(err error, obj string) error {
+	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
 }
 
 func ErrDownloadWASMFile(err error, obj string) error {
@@ -530,4 +536,8 @@ func ErrUnsupportedEventStatus(err error, status string) error {
 // ErrFetchMeshSyncResources
 func ErrFetchMeshSyncResources(err error) error {
 	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
+}
+
+func ErrGetConnections(err error) error {
+	return errors.New(ErrGetConnectionsCode, errors.Alert, []string{"Failed to retrieve connections"}, []string{err.Error()}, []string{"Unable to retrieve the connections"}, []string{"Check if the cluster is connected and healthy, you can check it from k8s switcher in header"})
 }
