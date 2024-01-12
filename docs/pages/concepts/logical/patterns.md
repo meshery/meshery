@@ -1,7 +1,7 @@
 ---
 layout: enhanced
 title: Patterns
-permalink: concepts/patterns
+permalink: concepts/logical/patterns
 type: concepts
 abstract: "Meshery Patterns are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured."
 language: en

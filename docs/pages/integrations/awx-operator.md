@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWX Operator
-permalink: integrations/awx-operator
-type: installation
+permalink: extensibility/integrations/awx-operator
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/awx-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: awx-operator -->
+ #### About: An Ansible AWX operator for Kubernetes built with Operator SDK and Ansible. -->
 
 ### Overview & Features:
+
 1. An Ansible AWX operator for Kubernetes built with Operator SDK and Ansible.
 
 2. Collaborative and visual infrastructure as code for AWX Operator

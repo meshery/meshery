@@ -2,7 +2,7 @@
 layout: default
 title: Quick Start Guide
 permalink: installation/quick-start
-redirect_from: installation/quick-start/
+# redirect_from: installation/quick-start/
 language: en
 type: installation
 abstract: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
@@ -46,7 +46,7 @@ Your default browser will be opened and directed to Meshery's web-based user int
 
 ### Select a Provider
 
-Select from the list of [Providers]({{ site.baseurl }}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen Provider.
+Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />

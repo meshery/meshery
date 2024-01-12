@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Gerrit Operator
-permalink: integrations/gerrit-operator
-type: installation
+permalink: extensibility/integrations/gerrit-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/gerrit-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: gerrit-operator -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Gerrit Operator
 
 4. 

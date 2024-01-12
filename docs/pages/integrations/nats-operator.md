@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: NATS Operator
-permalink: integrations/nats-operator
-type: installation
+permalink: extensibility/integrations/nats-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/nats-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: nats-operator -->
+ #### About: High-Performance server for NATS.io, the cloud and edge native messaging system. -->
 
 ### Overview & Features:
+
 1. High-Performance server for NATS.io, the cloud and edge native messaging system.
 
 2. Collaborative and visual infrastructure as code for Mongodb Operator

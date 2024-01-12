@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Strimzi Kafka Operator
-permalink: integrations/strimzi-kafka-operator
-type: installation
+permalink: extensibility/integrations/strimzi-kafka-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/strimzi-kafka-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: strimzi-kafka-operator -->
+ #### About: Apache Kafka® running on Kubernetes -->
 
 ### Overview & Features:
+
 1. Apache Kafka® running on Kubernetes
 
 2. Collaborative and visual infrastructure as code for Strimzi Kafka Operator

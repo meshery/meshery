@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Superedge
-permalink: integrations/superedge
-type: installation
+permalink: extensibility/integrations/superedge
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/superedge.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: superedge -->
+ #### About: An edge-native container management system for edge computing -->
 
 ### Overview & Features:
+
 1. An edge-native container management system for edge computing
 
 2. Collaborative and visual infrastructure as code for Superedge

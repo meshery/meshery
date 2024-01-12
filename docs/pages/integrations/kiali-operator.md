@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kiali Operator
-permalink: integrations/kiali-operator
-type: installation
+permalink: extensibility/integrations/kiali-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kiali-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kiali-operator -->
+ #### About: Kiali project, observability for the Istio service mesh -->
 
 ### Overview & Features:
+
 1. Kiali project, observability for the Istio service mesh
 
 2. Collaborative and visual infrastructure as code for Kiali Operator
