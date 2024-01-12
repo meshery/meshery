@@ -335,14 +335,14 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		mdh, ok := ctxToDataHandlerMap[k8sContext.ID]
 		if ok {
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
-				mdh: mdh,
+				mdh:       mdh,
 				clusterID: k8sContext.KubernetesServerID.String(),
 			})
 			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
 		}
 	}
 	var resources []model.KubernetesResource
-	
+
 	err := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
 		Preload("KubernetesResourceMeta").
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").

@@ -33,7 +33,12 @@ import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { ctxUrl } from '../utils/multi-ctx';
-import { generateValidatePayload, getComponentsinFile, getDecodedFile } from '../utils/utils';
+import {
+  generateValidatePayload,
+  getComponentsinFile,
+  getUnit8ArrayDecodedFile,
+  getUnit8ArrayForDesign,
+} from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -50,7 +55,7 @@ import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import Modal from './Modal';
-import downloadFile from '../utils/fileDownloader';
+import downloadContent from '../utils/fileDownloader';
 import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import ReusableTooltip from './reusable-tooltip';
@@ -74,6 +79,7 @@ import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
 import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
 
 const genericClickHandler = (ev, fn) => {
@@ -204,9 +210,6 @@ const styles = (theme) => ({
       width: '100%',
     },
   },
-  // text : {
-  //   padding : "5px"
-  // }
 });
 
 function TooltipIcon({ children, onClick, title, placement }) {
@@ -219,7 +222,7 @@ function TooltipIcon({ children, onClick, title, placement }) {
 
 function YAMLEditor({ pattern, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState('');
+  const [yaml, setYaml] = useState(pattern.pattern_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -384,6 +387,28 @@ function MesheryPatterns({
     pattern: {},
     name: '',
   });
+
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+
+  const handleDownloadDialogClose = () => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: false,
+      content: null,
+    }));
+  };
+
+  const handleDesignDownloadModal = (e, pattern) => {
+    e.stopPropagation();
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: true,
+      content: pattern,
+    }));
+  };
 
   console.log('updated ability in pattern', ability);
 
@@ -982,7 +1007,7 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: data, catalog_data },
+            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
             save: true,
           }),
         },
@@ -1001,7 +1026,7 @@ function MesheryPatterns({
         body = JSON.stringify({
           pattern_data: {
             name: metadata?.name || name,
-            pattern_file: data,
+            pattern_file: getUnit8ArrayDecodedFile(data),
             catalog_data,
           },
           save: true,
@@ -1031,11 +1056,13 @@ function MesheryPatterns({
     }
   }
 
-  const handleDownload = (e, id, name) => {
+  const handleDownload = (e, design, source_type, params) => {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadFile({ id, name, type: 'pattern' });
+      let id = design.id;
+      let name = design.name;
+      downloadContent({ id, name, type: 'pattern', source_type, params });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
@@ -1260,7 +1287,7 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Download"
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
-                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+                onClick={(e) => handleDesignDownloadModal(e, rowData)}
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
@@ -1484,7 +1511,6 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
-    console.log('data....', data);
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
@@ -1494,7 +1520,7 @@ function MesheryPatterns({
           save: true,
           pattern_data: {
             name,
-            pattern_file: getDecodedFile(file),
+            pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
@@ -1542,6 +1568,7 @@ function MesheryPatterns({
 
   return (
     <NoSsr>
+      {console.log('updated ui')}
       {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
         <>
           {selectedRowData && Object.keys(selectedRowData).length > 0 && (
@@ -1637,16 +1664,23 @@ function MesheryPatterns({
             </div>
           </div>
           {!selectedPattern.show && viewType === 'table' && (
-            <ResponsiveDataTable
-              data={patterns}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <>
+              <ResponsiveDataTable
+                data={patterns}
+                columns={columns}
+                // @ts-ignore
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+              <ExportModal
+                downloadModal={downloadModal}
+                handleDownloadDialogClose={handleDownloadDialogClose}
+                handleDesignDownload={handleDownload}
+              />
+            </>
           )}
           {!selectedPattern.show && viewType === 'grid' && (
             // grid vieww

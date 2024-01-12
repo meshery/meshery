@@ -36,7 +36,7 @@ import PublicIcon from '@material-ui/icons/Public';
 import { ctxUrl } from '../utils/multi-ctx';
 import ConfirmationMsg from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
-import downloadFile from '../utils/fileDownloader';
+import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
 import SaveIcon from '@material-ui/icons/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
@@ -121,7 +121,6 @@ function TooltipIcon({ children, onClick, title }) {
 }
 
 function YAMLEditor({ filter, onClose, onSubmit, classes }) {
-  const [yaml, setYaml] = useState('');
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -138,6 +137,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
   }
 
   const config = resourceData?.settings?.config || '';
+  const [yaml, setYaml] = useState(config);
 
   return (
     <Dialog
@@ -817,7 +817,7 @@ function MesheryFilters({
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadFile({ id, name, type: 'filter' });
+      downloadContent({ id, name, type: 'filter' });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" filter downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {

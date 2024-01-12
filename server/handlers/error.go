@@ -123,7 +123,17 @@ const (
 	ErrBulkDeleteEventCode        = "1538"
 	ErrFetchMeshSyncResourcesCode = "1539"
 	ErrDesignSourceContentCode    = "1554"
-	ErrGetConnectionsCode    	  = "1555"
+	ErrGetConnectionsCode         = "1555"
+	ErrWritingIntoFileCode        = "1556"
+	ErrBuildOCIImgCode            = "1557"
+	ErrSaveOCIArtifactCode        = "1558"
+	ErrIOReaderCode               = "1559"
+	ErrUnCompressOCIArtifactCode 			= "1560"
+	ErrWaklingLocalDirectoryCode 			= "1561"
+	ErrConvertingK8sManifestToDesignCode 	= "1562"
+	ErrConvertingDockerComposeToDesignCode = "1563"
+	ErrMarshallingDesignIntoYAMLCode 		= "1564"
+	ErrConvertingHelmChartToDesignCode = "1565"
 )
 
 var (
@@ -287,7 +297,7 @@ func ErrRetrieveMeshData(err error) error {
 }
 
 func ErrApplicationFailure(err error, obj string) error {
-	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{"uploaded application source content might be converted", "incorrect source type selected"}, []string{"Select the correct source type", "Make sure the uploaded application source content is valid"})
 }
 
 func ErrApplicationSourceContent(err error, obj string) error {
@@ -358,7 +368,7 @@ func ErrSaveSession(err error) error {
 }
 
 func ErrCreateDir(err error, obj string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create dir", "check if sufficient storage is available to create dir"})
 }
 
 func ErrInvalidRequestObject(fields ...string) error {
@@ -498,7 +508,7 @@ func ErrResolvingRegoRelationship(err error) error {
 }
 
 func ErrCreateFile(err error, obj string) error {
-	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create file", "check if sufficient storage is available to create file"})
 }
 
 func ErrLoadCertificate(err error) error {
@@ -540,4 +550,44 @@ func ErrFetchMeshSyncResources(err error) error {
 
 func ErrGetConnections(err error) error {
 	return errors.New(ErrGetConnectionsCode, errors.Alert, []string{"Failed to retrieve connections"}, []string{err.Error()}, []string{"Unable to retrieve the connections"}, []string{"Check if the cluster is connected and healthy, you can check it from k8s switcher in header"})
+}
+
+func ErrWritingIntoFile(err error, obj string) error {
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s" + obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+}
+
+func ErrBuildOCIImg(err error) error {
+	return errors.New(ErrBuildOCIImgCode, errors.Alert, []string{"Failed to build OCI image"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted"})
+}
+
+func ErrSaveOCIArtifact(err error) error {
+	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
+}
+
+func ErrIOReader(err error) error {
+	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
+}
+
+func ErrUnCompressOCIArtifact(err error) error {
+	return errors.New(ErrUnCompressOCIArtifactCode, errors.Alert, []string{"Failed to uncompress OCI artifact"}, []string{err.Error()}, []string{"unable to uncompress OCI artifact", "OCI artifact may be corrupted"}, []string{"check if the OCI artifact is valid and not corrupted"})
+}
+
+func ErrWaklingLocalDirectory(err error) error {
+	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
+}
+
+func ErrConvertingK8sManifestToDesign(err error) error {
+	return errors.New(ErrConvertingK8sManifestToDesignCode, errors.Alert, []string{"Failed to convert k8s manifest to design"}, []string{err.Error()}, []string{"unable to convert k8s manifest to design", "k8s manifest may be corrupted", "incorrect source type selected"}, []string{"check if the k8s manifest is valid and not corrupted", "check if the source type selected is Kubernetes Manifest"})
+}
+
+func ErrConvertingDockerComposeToDesign(err error) error {
+	return errors.New(ErrConvertingDockerComposeToDesignCode, errors.Alert, []string{"Failed to convert docker compose to design"}, []string{err.Error()}, []string{"unable to convert docker compose to design", "docker compose may be corrupted", "incorrect source type selected"}, []string{"check if the docker compose is valid and not corrupted", "check if the source type selected is Docker Compose"})
+}
+
+func ErrMarshallingDesignIntoYAML(err error) error {
+	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrConvertingHelmChartToDesign(err error) error {
+	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
