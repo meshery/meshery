@@ -2,7 +2,7 @@
 layout: default
 title: Meshery Overview
 permalink: project/overview
-redirect_from: project/overview/
+# redirect_from: project/overview/
 language: en
 display-title: true
 type: project
