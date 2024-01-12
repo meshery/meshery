@@ -275,7 +275,7 @@ func (h *Handler) handlePatternPOST(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": conversionErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryPattern.Name)).Build()
+				}).WithDescription(fmt.Sprintf("Failed converting K8s Manifest %s to design file format.", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -292,7 +292,7 @@ func (h *Handler) handlePatternPOST(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": conversionErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryPattern.Name)).Build()
+				}).WithDescription(fmt.Sprintf("Failed converting design %s to YAML format.", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
