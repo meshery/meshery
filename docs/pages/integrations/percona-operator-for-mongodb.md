@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Operator for MongoDB
-permalink: integrations/percona-operator-for-mongodb
-type: installation
+permalink: extensibility/integrations/percona-operator-for-mongodb
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/percona-operator-for-mongodb.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: psmdb-operator -->
+ #### About: Percona Operator for MongoDB allows users to deploy and manage Percona Server for MongoDB Clusters on Kubernetes -->
 
 ### Overview & Features:
+
 1. Percona Operator for MongoDB allows users to deploy and manage Percona Server for MongoDB Clusters on Kubernetes
 
 2. Collaborative and visual infrastructure as code for Percona Operator for MongoDB

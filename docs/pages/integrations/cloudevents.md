@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cloudevents
-permalink: integrations/cloudevents
-type: installation
+permalink: extensibility/integrations/cloudevents
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cloudevents.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cloudevents -->
+ #### About: CloudEvents Specification -->
 
 ### Overview & Features:
+
 1. CloudEvents Specification
 
 2. Collaborative and visual infrastructure as code for Cloudevents

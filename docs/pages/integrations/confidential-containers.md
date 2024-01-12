@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Confidential Containers
-permalink: integrations/confidential-containers
-type: installation
+permalink: extensibility/integrations/confidential-containers
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/confidential-containers.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: confidential containers -->
+ #### About: Confidential Containers is an open source community working to enable cloud native  confidential computing by leveraging Trusted Execution Environments to protect  containers and data. -->
 
 ### Overview & Features:
+
 1. Confidential Containers is an open source community working to enable cloud native  confidential computing by leveraging Trusted Execution Environments to protect  containers and data.
 
 2. Collaborative and visual infrastructure as code for Confidential Containers

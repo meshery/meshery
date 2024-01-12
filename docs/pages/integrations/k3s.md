@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: K3s
-permalink: integrations/k3s
-type: installation
+permalink: extensibility/integrations/k3s
+type: extensibility
 category: integrations
+integrations-category: Platform
+integrations-subcategory: Kubernetes
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/k3s.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: k3s -->
+ #### About: Lightweight Kubernetes -->
 
 ### Overview & Features:
+
 1. Lightweight Kubernetes
 
 2. Collaborative and visual infrastructure as code for K3s
