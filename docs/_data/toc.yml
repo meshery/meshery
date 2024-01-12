@@ -248,9 +248,9 @@
       children:
         - title: "Plugin: MeshMap"
           url: extensions/meshmap
-          grandchildren:
-          - title: "Sharing a Design"
-            url: extensions/sharing-a-design
+          # grandchildren:
+          # - title: "Sharing a Design"
+          #   url: extensions/sharing-a-design
         - title: "GitOps: Snapshots"
           url: extensions/snapshot
         # - title: "Provider: Layer5 Cloud"

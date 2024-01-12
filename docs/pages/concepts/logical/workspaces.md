@@ -50,13 +50,23 @@ See "[Environments](/concepts/logical/environments)" section for more informatio
 
 See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
-### Teams
+### Organizations
+
+- Organizationa are the unit of tenancy in Meshery. Organizations group users together.
+- Organizations own all resources created by users, like Workspaces, Designs, Environments, and so on.
+- Remote Providers can extend Meshery to include additional identity and user management features like heirarchical organizations, or teams (as user groups), and so on.
+- Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.
+
+Learn more about [extensible authorization](/extensibility/authorization).
+ <!-- "[Organizations](/extensions/team-management)" section for more information. -->
+
+<!-- ### Teams
 
 - A Workspace is closely associated with Teams in Meshery. Teams are groups of users with varying permissions, and they are at the center of resource access and management within a Workspace.
 - One ore more teams can be assigned to a workspace.
 - Same team can be assigned to multiple workspaces.
 
-See "[Teams](/extensions/team-management)" section for more information.
+See "[Teams](/extensions/team-management)" section for more information. -->
 
 ### Connections
 
