@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kuberhealthy
-permalink: integrations/kuberhealthy
-type: installation
+permalink: extensibility/integrations/kuberhealthy
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kuberhealthy.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kuberhealthy -->
+ #### About: A Kubernetes operator for running synthetic checks as pods. Works great with Prometheus! -->
 
 ### Overview & Features:
+
 1. A Kubernetes operator for running synthetic checks as pods. Works great with Prometheus!
 
 2. Collaborative and visual infrastructure as code for Kuberhealthy

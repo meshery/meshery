@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Vineyard
-permalink: integrations/vineyard
-type: installation
+permalink: extensibility/integrations/vineyard
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/vineyard.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: vineyard -->
+ #### About: Vineyard (v6d) is an in-memory immutable data manager. -->
 
 ### Overview & Features:
+
 1. Vineyard (v6d) is an in-memory immutable data manager.
 
 2. Collaborative and visual infrastructure as code for Vineyard

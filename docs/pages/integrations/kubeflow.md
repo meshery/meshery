@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubeflow
-permalink: integrations/kubeflow
-type: installation
+permalink: extensibility/integrations/kubeflow
+type: extensibility
 category: integrations
+integrations-category: Machine Learning
+integrations-subcategory: Machine Learning
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubeflow.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubeflow -->
+ #### About: Kubeflow the cloud-native platform for machine learning operations - pipelines, training and deployment. -->
 
 ### Overview & Features:
+
 1. Kubeflow the cloud-native platform for machine learning operations - pipelines, training and deployment.
 
 2. Collaborative and visual infrastructure as code for Kubeflow

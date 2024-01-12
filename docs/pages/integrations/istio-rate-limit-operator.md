@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Istio Rate Limit Operator
-permalink: integrations/istio-rate-limit-operator
-type: installation
+permalink: extensibility/integrations/istio-rate-limit-operator
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/istio-rate-limit-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: istio-ratelimit-operator -->
+ #### About: Connect, secure, control, and observe services. -->
 
 ### Overview & Features:
+
 1. Connect, secure, control, and observe services.
 
 2. The easiest way to get production-grade Istio service mesh up and running

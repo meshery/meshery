@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kanister Operator
-permalink: integrations/kanister-operator
-type: installation
+permalink: extensibility/integrations/kanister-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Provisioning
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kanister-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kanister-operator -->
+ #### About: Kanister is a framework that enables application-level data management on Kubernetes. It allows domain experts to capture application specific data management tasks via blueprints, which can be easily shared and extended. The framework takes care of the tedious details surrounding execution on Kubernetes and presents a homogeneous operational experience across applications at scale. -->
 
 ### Overview & Features:
+
 1. Kanister is a framework that enables application-level data management on Kubernetes. It allows domain experts to capture application specific data management tasks via blueprints, which can be easily shared and extended. The framework takes care of the tedious details surrounding execution on Kubernetes and presents a homogeneous operational experience across applications at scale.
 
 2. Collaborative and visual infrastructure as code for Kanister Operator

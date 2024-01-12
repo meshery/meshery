@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Oras
-permalink: integrations/oras
-type: installation
+permalink: extensibility/integrations/oras
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Storage
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/oras.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: oras -->
+ #### About: Work with OCI registries, but for secure supply chain - managing content like artifacts, images, SBOM -->
 
 ### Overview & Features:
+
 1. Work with OCI registries, but for secure supply chain - managing content like artifacts, images, SBOM
 
 2. Collaborative and visual infrastructure as code for Operator

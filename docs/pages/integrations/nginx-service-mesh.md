@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: NGINX Service Mesh
-permalink: integrations/nginx-service-mesh
-type: installation
+permalink: extensibility/integrations/nginx-service-mesh
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/nginx-service-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: nginx-service-mesh -->
+ #### About: NGINX Service Mesh is a fully integrated lightweight service mesh that leverages a data plane powered by NGINX Plus to manage container traffic in Kubernetes environments. -->
 
 ### Overview & Features:
+
 1. NGINX Service Mesh is a fully integrated lightweight service mesh that leverages a data plane powered by NGINX Plus to manage container traffic in Kubernetes environments.
 
 2. Collaborative and visual infrastructure as code for NGINX Service Mesh

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cert Manager Crds
-permalink: integrations/cert-manager-crds
-type: installation
+permalink: extensibility/integrations/cert-manager-crds
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cert-manager-crds.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cert-manager-crds -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Cert Manager Crds
 
 4. 

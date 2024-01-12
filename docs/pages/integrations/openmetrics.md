@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OpenMetrics
-permalink: integrations/openmetrics
-type: installation
+permalink: extensibility/integrations/openmetrics
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/openmetrics.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: openmetrics -->
+ #### About: Evolving the Prometheus exposition format into a standard. -->
 
 ### Overview & Features:
+
 1. Evolving the Prometheus exposition format into a standard.
 
 2. Collaborative and visual infrastructure as code for OpenMetrics

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Dragonfly
-permalink: integrations/dragonfly
-type: installation
+permalink: extensibility/integrations/dragonfly
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/dragonfly.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: dragonfly -->
+ #### About: Dragonfly is an intelligent P2P based image and file distribution system, it also provides a variety of enterprise-level (efficiency, stability, safety, low-cost) product features. -->
 
 ### Overview & Features:
+
 1. Dragonfly is an intelligent P2P based image and file distribution system, it also provides a variety of enterprise-level (efficiency, stability, safety, low-cost) product features.
 
 2. Collaborative and visual infrastructure as code for Dragonfly

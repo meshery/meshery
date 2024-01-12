@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS EMR Containers
-permalink: integrations/aws-emr-containers
-type: installation
+permalink: extensibility/integrations/aws-emr-containers
+type: extensibility
 category: integrations
+integrations-category: Analytics
+integrations-subcategory: Analytics
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-emr-containers.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-emrcontainers-controller -->
+ #### About: Amazon EMR on EKS provides a deployment option for Amazon EMR that allows you to run open-source big data frameworks on Amazon Elastic Kubernetes Service (Amazon EKS). -->
 
 ### Overview & Features:
+
 1. Amazon EMR on EKS provides a deployment option for Amazon EMR that allows you to run open-source big data frameworks on Amazon Elastic Kubernetes Service (Amazon EKS).
 
 2. Collaborative and visual infrastructure as code for AWS EMR Containers

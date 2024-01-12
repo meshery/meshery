@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kyverno Operator
-permalink: integrations/kyverno-operator
-type: installation
+permalink: extensibility/integrations/kyverno-operator
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kyverno-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kyverno-operator -->
+ #### About: Kubernetes Native Policy Management -->
 
 ### Overview & Features:
+
 1. Kubernetes Native Policy Management
 
 2. Collaborative and visual infrastructure as code for Kyverno Operator
