@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS API Gateway Operator
-permalink: integrations/aws-api-gateway-operator
-type: installation
+permalink: extensibility/integrations/aws-api-gateway-operator
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-api-gateway-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-api-gateway-operator -->
+ #### About: Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. -->
 
 ### Overview & Features:
+
 1. Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale.
 
 2. Collaborative and visual infrastructure as code for AWS API Gateway Operator

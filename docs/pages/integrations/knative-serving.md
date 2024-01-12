@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Knative Serving
-permalink: integrations/knative-serving
-type: installation
+permalink: extensibility/integrations/knative-serving
+type: extensibility
 category: integrations
+integrations-category: Serverless
+integrations-subcategory: Installable Platform
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/knative-serving.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: knative-serving -->
+ #### About: Knative is a developer-focused serverless application layer which is a great complement to the existing Kubernetes application constructs. Knative consists of two components: an HTTP-triggered autoscaling container runtime called “Knative Serving”, and a CloudEvents-over-HTTP asynchronous routing layer called “Knative Eventing”. -->
 
 ### Overview & Features:
+
 1. Knative is a developer-focused serverless application layer which is a great complement to the existing Kubernetes application constructs. Knative consists of two components: an HTTP-triggered autoscaling container runtime called “Knative Serving”, and a CloudEvents-over-HTTP asynchronous routing layer called “Knative Eventing”.
 
 2. Collaborative and visual infrastructure as code for Knative Serving

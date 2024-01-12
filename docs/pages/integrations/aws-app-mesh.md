@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS App Mesh
-permalink: integrations/aws-app-mesh
-type: installation
+permalink: extensibility/integrations/aws-app-mesh
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-app-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: appmesh-controller -->
+ #### About: AWS App Mesh is a service mesh that provides application-level networking to make it easy for your services to communicate with each other across multiple types of compute infrastructure. App Mesh standardizes how your services communicate, giving you end-to-end visibility and ensuring high-availability for your applications. -->
 
 ### Overview & Features:
+
 1. AWS App Mesh is a service mesh that provides application-level networking to make it easy for your services to communicate with each other across multiple types of compute infrastructure. App Mesh standardizes how your services communicate, giving you end-to-end visibility and ensuring high-availability for your applications.
 
 2. Collaborative and visual infrastructure as code for AWS App Mesh

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: GitLab
-permalink: integrations/gitlab
-type: installation
+permalink: extensibility/integrations/gitlab
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/gitlab.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: gitlab -->
+ #### About: Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD). -->
 
 ### Overview & Features:
+
 1. Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD).
 
 2. Collaborative and visual infrastructure as code for GitLab

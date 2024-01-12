@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS MQ
-permalink: integrations/aws-mq
-type: installation
+permalink: extensibility/integrations/aws-mq
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-mq.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-mq-controller -->
+ #### About: AWS MQ offers fully managed service for open-source message brokers -->
 
 ### Overview & Features:
+
 1. AWS MQ offers fully managed service for open-source message brokers
 
 2. Collaborative and visual infrastructure as code for AWS MQ

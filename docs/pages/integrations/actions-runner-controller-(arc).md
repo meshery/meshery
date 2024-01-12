@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Actions Runner Controller (ARC)
-permalink: integrations/actions-runner-controller-(arc)
-type: installation
+permalink: extensibility/integrations/actions-runner-controller-(arc)
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/actions-runner-controller-(arc).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: actions-runner-controller -->
+ #### About: A Kubernetes controller that operates self-hosted runners for GitHub Actions on your Kubernetes cluster. -->
 
 ### Overview & Features:
+
 1. A Kubernetes controller that operates self-hosted runners for GitHub Actions on your Kubernetes cluster.
 
 2. Collaborative and visual infrastructure as code for Actions Runner Controller (ARC)

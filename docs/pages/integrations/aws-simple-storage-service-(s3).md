@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Simple Storage Service (S3)
-permalink: integrations/aws-simple-storage-service-(s3)
-type: installation
+permalink: extensibility/integrations/aws-simple-storage-service-(s3)
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Storage
+integrations-subcategory: Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-simple-storage-service-(s3).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-s3-controller -->
+ #### About: Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance. -->
 
 ### Overview & Features:
+
 1. Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance.
 
 2. Collaborative and visual infrastructure as code for AWS Simple Storage Service (S3)

@@ -29,7 +29,6 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
-import CatalogFilter from './CatalogFilter';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -63,6 +62,7 @@ import { SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
+import UniversalFilter from '../utils/custom-filter';
 
 const styles = (theme) => ({
   grid: {
@@ -106,7 +106,7 @@ const styles = (theme) => ({
   },
   btnText: {
     display: 'block',
-    '@media (max-width: 1450px)': {
+    '@media (max-width: 700px)': {
       display: 'none',
     },
   },
@@ -233,7 +233,7 @@ function MesheryFilters({
   classes,
   selectedK8sContexts,
   catalogVisibility,
-  toggleCatalogContent,
+  // toggleCatalogContent,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -244,7 +244,7 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [extensionPreferences, setExtensionPreferences] = useState({});
+  const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
@@ -465,33 +465,33 @@ function MesheryFilters({
   };
 
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
 
-  const handleCatalogPreference = (catalogPref) => {
-    let body = Object.assign({}, extensionPreferences);
-    body['catalogContent'] = catalogPref;
+  // const handleCatalogPreference = (catalogPref) => {
+  //   let body = Object.assign({}, extensionPreferences);
+  //   body['catalogContent'] = catalogPref;
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
-        notify({
-          message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      (err) => console.error(err),
-    );
-  };
+  //   dataFetch(
+  //     '/api/user/prefs',
+  //     {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       body: JSON.stringify({ usersExtensionPreferences: body }),
+  //     },
+  //     () => {
+  //       notify({
+  //         message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     },
+  //     (err) => console.error(err),
+  //   );
+  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -509,11 +509,11 @@ function MesheryFilters({
     );
   };
 
-  const handleCatalogVisibility = () => {
-    handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility;
-    toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  };
+  // const handleCatalogVisibility = () => {
+  //   handleCatalogPreference(!catalogVisibilityRef.current);
+  //   catalogVisibilityRef.current = !catalogVisibility;
+  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
+  // };
 
   useEffect(() => {
     fetchUserPrefs();
@@ -551,13 +551,19 @@ function MesheryFilters({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-  function fetchFilters(page, pageSize, search, sortOrder) {
+
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
+  function fetchFilters(page, pageSize, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const query =
+      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+      (visibilityFilter
+        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
+        : '');
 
     updateProgress({ showProgress: true });
 
@@ -568,10 +574,17 @@ function MesheryFilters({
         console.log('FilterFile API', `/api/filter${query}`);
         updateProgress({ showProgress: false });
         if (result) {
-          handleSetFilters(result.filters || []);
+          const filteredFilters = result.filters.filter((content) => {
+            if (visibilityFilter === null || content.visibility === visibilityFilter) {
+              return true;
+            }
+            return false;
+          });
+          handleSetFilters(filteredFilters);
           // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
+          setVisibilityFilter(visibilityFilter);
         }
       },
       // handleError
@@ -917,14 +930,15 @@ function MesheryFilters({
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          const visibility = filters[tableMeta.rowIndex]?.visibility;
-          return (
-            <>
-              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-            </>
-          );
-        },
+        //   customBodyRender: function CustomBody(_, tableMeta, value) {
+        //     const visibility = filters[tableMeta.rowIndex]?.visibility;
+        //     return (
+        //       // <>
+        //       //   <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
+        //       // </>
+        //       {value}
+        //     );
+        //   },
       },
     },
     {
@@ -1125,6 +1139,7 @@ function MesheryFilters({
                 pageSize,
                 tableState.searchText !== null ? tableState.searchText : '',
                 sortOrder,
+                visibilityFilter,
               );
               setSearch(tableState.searchText);
             }
@@ -1217,6 +1232,31 @@ function MesheryFilters({
     return initialVisibility;
   });
 
+  const filter = {
+    visibility: {
+      name: 'visibility',
+      //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
+      options: catalogVisibility
+        ? [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+            { label: 'Published', value: 'published' },
+          ]
+        : [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+          ],
+    },
+  };
+
+  const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
+
+  const handleApplyFilter = () => {
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+  };
+
   return (
     <>
       <NoSsr>
@@ -1257,11 +1297,11 @@ function MesheryFilters({
                     </div>
                   )}
                   <div style={{ jdisplay: 'flex' }}>
-                    <CatalogFilter
+                    {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    />
+                    /> */}
                   </div>
                 </div>
               )}
@@ -1274,6 +1314,13 @@ function MesheryFilters({
                   expanded={isSearchExpanded}
                   setExpanded={setIsSearchExpanded}
                   placeholder="Search"
+                />
+                <UniversalFilter
+                  id="ref"
+                  filters={filter}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
                 />
                 {viewType === 'table' && (
                   <CustomColumnVisibilityControl
@@ -1323,7 +1370,7 @@ function MesheryFilters({
                 publishModal={publishModal}
                 setPublishModal={setPublishModal}
                 publishSchema={publishSchema}
-                fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+                fetch={() => fetchFilters(page, pageSize, search, sortOrder, visibilityFilter)}
                 handleInfoModal={handleInfoModal}
               />
             )}

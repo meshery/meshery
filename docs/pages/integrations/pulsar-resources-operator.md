@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Pulsar Resources Operator
-permalink: integrations/pulsar-resources-operator
-type: installation
+permalink: extensibility/integrations/pulsar-resources-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/pulsar-resources-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: pulsar-resources-operator -->
+ #### About: The Pulsar Operator is a controller that manages Pulsar clusters in Kubernetes. It provides a full management life-cycle for Pulsar, including deployment, upgrades, scaling, and configuration changes. With the Pulsar Operator, Pulsar can run seamlessly in the Kubernetes clusters deployed on a public or private cloud. You can then manage Pulsar clusters using the Kubernetes Application Programming Interface (API) and the kubectl tool. -->
 
 ### Overview & Features:
+
 1. The Pulsar Operator is a controller that manages Pulsar clusters in Kubernetes. It provides a full management life-cycle for Pulsar, including deployment, upgrades, scaling, and configuration changes. With the Pulsar Operator, Pulsar can run seamlessly in the Kubernetes clusters deployed on a public or private cloud. You can then manage Pulsar clusters using the Kubernetes Application Programming Interface (API) and the kubectl tool.
 
 2. Collaborative and visual infrastructure as code for Pulsar Resources Operator

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: CRI-O
-permalink: integrations/cri-o
-type: installation
+permalink: extensibility/integrations/cri-o
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cri-o.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cri-o -->
+ #### About: Open Container Initiative-based implementation of Kubernetes Container Runtime Interface -->
 
 ### Overview & Features:
+
 1. Open Container Initiative-based implementation of Kubernetes Container Runtime Interface
 
 2. Collaborative and visual infrastructure as code for CRI-O

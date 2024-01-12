@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Vault Secrets
-permalink: integrations/vault-secrets
-type: installation
+permalink: extensibility/integrations/vault-secrets
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/vault-secrets.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: vault-secrets -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Vault Secrets
 
 4. 

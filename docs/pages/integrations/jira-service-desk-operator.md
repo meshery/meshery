@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Jira Service Desk Operator
-permalink: integrations/jira-service-desk-operator
-type: installation
+permalink: extensibility/integrations/jira-service-desk-operator
+type: extensibility
 category: integrations
+integrations-category: Tools
+integrations-subcategory: Tools
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/jira-service-desk-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: jira-service-desk-operator -->
+ #### About: Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software. -->
 
 ### Overview & Features:
+
 1. Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.
 
 2. Collaborative and visual infrastructure as code for Jira Service Desk Operator

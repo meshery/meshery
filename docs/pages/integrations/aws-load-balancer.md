@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Load Balancer
-permalink: integrations/aws-load-balancer
-type: installation
+permalink: extensibility/integrations/aws-load-balancer
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,12 @@ image: /assets/img/integrations/aws-load-balancer.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-load-balancer-controller -->
+ #### About: Distribute network traffic to improve application scalability
+Get Started with Elastic Load Balancing
+ -->
 
 ### Overview & Features:
+
 1. Distribute network traffic to improve application scalability
 Get Started with Elastic Load Balancing
 

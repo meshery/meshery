@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Crossplane
-permalink: integrations/crossplane
-type: installation
+permalink: extensibility/integrations/crossplane
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/crossplane.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: crossplane -->
+ #### About: Cloud Native Control Planes -->
 
 ### Overview & Features:
+
 1. Cloud Native Control Planes
 
 2. Collaborative and visual infrastructure as code for Crossplane

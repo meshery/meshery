@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Volcano
-permalink: integrations/volcano
-type: installation
+permalink: extensibility/integrations/volcano
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/volcano.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: volcano -->
+ #### About: A Cloud Native Batch System (Project under CNCF) -->
 
 ### Overview & Features:
+
 1. A Cloud Native Batch System (Project under CNCF)
 
 2. Collaborative and visual infrastructure as code for Volcano

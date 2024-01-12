@@ -40,7 +40,6 @@ import {
   getUnit8ArrayForDesign,
 } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
-import CatalogFilter from './CatalogFilter';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -81,6 +80,7 @@ import DefaultError from './General/error-404/index';
 import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
+import UniversalFilter from '../utils/custom-filter';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -330,7 +330,7 @@ function MesheryPatterns({
   classes,
   selectedK8sContexts,
   catalogVisibility,
-  toggleCatalogContent,
+  // toggleCatalogContent,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -341,10 +341,11 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const [extensionPreferences, setExtensionPreferences] = useState({});
+  const [setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -359,6 +360,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -493,9 +495,9 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
-    fetchPatterns(page, pageSize, search, sortOrder);
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -503,26 +505,26 @@ function MesheryPatterns({
     }
   }, [viewType]);
 
-  const handleCatalogPreference = (catalogPref) => {
-    let body = Object.assign({}, extensionPreferences);
-    body['catalogContent'] = catalogPref;
+  // const handleCatalogPreference = (catalogPref) => {
+  //   let body = Object.assign({}, extensionPreferences);
+  //   body['catalogContent'] = catalogPref;
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
-        notify({
-          message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      (err) => console.error(err),
-    );
-  };
+  //   dataFetch(
+  //     '/api/user/prefs',
+  //     {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       body: JSON.stringify({ usersExtensionPreferences: body }),
+  //     },
+  //     () => {
+  //       notify({
+  //         message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     },
+  //     (err) => console.error(err),
+  //   );
+  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -581,11 +583,11 @@ function MesheryPatterns({
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
 
-  const handleCatalogVisibility = () => {
-    handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility;
-    toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  };
+  // const handleCatalogVisibility = () => {
+  //   handleCatalogPreference(!catalogVisibilityRef.current);
+  //   catalogVisibilityRef.current = !catalogVisibility;
+  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
+  // };
 
   useEffect(() => {
     fetchUserPrefs();
@@ -670,12 +672,12 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  useEffect(() => {
-    setPage(0);
-    setPageSize(10);
-    setCount(0);
-    fetchPatterns(0, 10, search, sortOrder);
-  }, [viewType]);
+  // useEffect(() => {
+  //   setPage(0);
+  //   setPageSize(10);
+  //   setCount(0);
+  //   fetchPatterns(0, 10, search, sortOrder,visibilityFilter);
+  // }, [viewType]);
 
   const handleModalClose = () => {
     // @ts-ignore
@@ -921,12 +923,16 @@ function MesheryPatterns({
     );
   }
 
-  function fetchPatterns(page, pageSize, search, sortOrder) {
+  function fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const query =
+      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+      (visibilityFilter
+        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
+        : '');
 
     updateProgress({ showProgress: true });
     dataFetch(
@@ -937,10 +943,17 @@ function MesheryPatterns({
         updateProgress({ showProgress: false });
         stillLoading(false);
         if (result) {
+          const filteredPatterns = result.patterns.filter((content) => {
+            if (visibilityFilter === null || content.visibility === visibilityFilter) {
+              return true;
+            }
+            return false;
+          });
           // setPage(result.page || 0);
           // setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
-          handleSetPatterns(result.patterns || []);
+          handleSetPatterns(filteredPatterns);
+          setVisibilityFilter(visibilityFilter);
           // setPatterns(result.patterns || []);
         }
       },
@@ -1153,14 +1166,14 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          const visibility = patterns[tableMeta.rowIndex]?.visibility;
-          return (
-            <div style={{ cursor: 'default' }}>
-              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-            </div>
-          );
-        },
+        // customBodyRender: function CustomBody(_, tableMeta) {
+        //   const visibility = patterns[tableMeta.rowIndex]?.visibility;
+        //   return (
+        //     <div style={{ cursor: 'default' }}>
+        //       <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
+        //     </div>
+        //   );
+        // },
       },
     },
     {
@@ -1450,6 +1463,7 @@ function MesheryPatterns({
                 pageSize,
                 tableState.searchText !== null ? tableState.searchText : '',
                 sortOrder,
+                visibilityFilter,
               );
               setSearch(tableState.searchText);
             }
@@ -1529,6 +1543,29 @@ function MesheryPatterns({
     );
   }
 
+  const filter = {
+    visibility: {
+      name: 'visibility',
+      //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
+      options: catalogVisibility
+        ? [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+            { label: 'Published', value: 'published' },
+          ]
+        : [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+          ],
+    },
+  };
+
+  const handleApplyFilter = () => {
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  };
+
   return (
     <NoSsr>
       {console.log('updated ui')}
@@ -1587,11 +1624,11 @@ function MesheryPatterns({
                 )}
                 {!selectedPattern.show && (
                   <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                    <CatalogFilter
+                    {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    />
+                    /> */}
                   </div>
                 )}
               </div>
@@ -1605,6 +1642,13 @@ function MesheryPatterns({
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
                 placeholder="Search designs..."
+              />
+              <UniversalFilter
+                id="ref"
+                filters={filter}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                handleApplyFilter={handleApplyFilter}
               />
               {viewType === 'table' && (
                 <CustomColumnVisibilityControl
@@ -1662,6 +1706,7 @@ function MesheryPatterns({
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
               user={user}
+              fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
               handleInfoModal={handleInfoModal}
             />
           )}

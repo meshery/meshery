@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Hexa
-permalink: integrations/hexa
-type: installation
+permalink: extensibility/integrations/hexa
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/hexa.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: hexa -->
+ #### About: Hexa Policy Orchestrator enables you to manage all of your access policies consistently across software providers. -->
 
 ### Overview & Features:
+
 1. Hexa Policy Orchestrator enables you to manage all of your access policies consistently across software providers.
 
 2. Collaborative and visual infrastructure as code for Hexa

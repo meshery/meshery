@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Curiefense
-permalink: integrations/curiefense
-type: installation
+permalink: extensibility/integrations/curiefense
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/curiefense.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: curiefense -->
+ #### About: Curiefense is a unified, open source platform protecting cloud native applications. -->
 
 ### Overview & Features:
+
 1. Curiefense is a unified, open source platform protecting cloud native applications.
 
 2. Collaborative and visual infrastructure as code for Curiefense

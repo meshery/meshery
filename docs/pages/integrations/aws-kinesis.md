@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Kinesis
-permalink: integrations/aws-kinesis
-type: installation
+permalink: extensibility/integrations/aws-kinesis
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management Service
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-kinesis.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-kms-controller -->
+ #### About: AWS Key Management Service (AWS KMS) is a managed service that makes it easy for you to create and control the cryptographic keys that are used to protect your data. -->
 
 ### Overview & Features:
+
 1. AWS Key Management Service (AWS KMS) is a managed service that makes it easy for you to create and control the cryptographic keys that are used to protect your data.
 
 2. Collaborative and visual infrastructure as code for AWS Kinesis

@@ -228,6 +228,24 @@ language: en
           {% endfor %}
       </ul>
     </details>
+      <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Configuration Management</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>  
     <details>
       <summary>
         <p style="display:inline">
@@ -248,7 +266,7 @@ language: en
     </details>    
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.language=="en" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}

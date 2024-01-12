@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Stackgres Operator
-permalink: integrations/stackgres-operator
-type: installation
+permalink: extensibility/integrations/stackgres-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,12 @@ image: /assets/img/integrations/stackgres-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: stackgres-operator -->
+ #### About: StackGres is a fully-featured platform for running PostgreSQL on Kubernetes.
+Deploy in minutes an Enterprise-Grade Postgres-as-a-Service, in your infrastructure.
+100% Open Source. -->
 
 ### Overview & Features:
+
 1. StackGres is a fully-featured platform for running PostgreSQL on Kubernetes.
 Deploy in minutes an Enterprise-Grade Postgres-as-a-Service, in your infrastructure.
 100% Open Source.

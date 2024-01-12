@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubeform Provider AWS
-permalink: integrations/kubeform-provider-aws
-type: installation
+permalink: extensibility/integrations/kubeform-provider-aws
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Cloud Provider
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubeform-provider-aws.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubeform-provider-aws -->
+ #### About: Kubeform is a Kubernetes operator provisioning cloud or on-prem resources using Terraform providers. Kubeform provides auto-generated Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for a cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 5 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean and Linode. -->
 
 ### Overview & Features:
+
 1. Kubeform is a Kubernetes operator provisioning cloud or on-prem resources using Terraform providers. Kubeform provides auto-generated Kubernetes CRDs for Terraform resources so that you can manage any cloud infrastructure in a Kubernetes native way. You just write a CRD for a cloud infrastructure, apply it and Kubeform will create it for you! Kubeform currently supports 5 top cloud platforms. These are AWS, Google Cloud, Azure, DigitalOcean and Linode.
 
 2. Collaborative and visual infrastructure as code for Integration Template

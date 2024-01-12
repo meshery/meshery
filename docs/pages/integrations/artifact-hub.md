@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Artifact Hub
-permalink: integrations/artifact-hub
-type: installation
+permalink: extensibility/integrations/artifact-hub
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/artifact-hub.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: artifact hub -->
+ #### About: Find, install and publish Kubernetes packages -->
 
 ### Overview & Features:
+
 1. Find, install and publish Kubernetes packages
 
 2. Collaborative and visual infrastructure as code for Artifact Hub

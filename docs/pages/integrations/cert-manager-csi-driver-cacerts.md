@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cert Manager Csi Driver Cacerts
-permalink: integrations/cert-manager-csi-driver-cacerts
-type: installation
+permalink: extensibility/integrations/cert-manager-csi-driver-cacerts
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cert-manager-csi-driver-cacerts.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cert-manager-csi-driver-cacerts -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Cert Manager Csi Driver Cacerts
 
 4. 

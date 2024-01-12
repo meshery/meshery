@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: BFE
-permalink: integrations/bfe
-type: installation
+permalink: extensibility/integrations/bfe
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/bfe.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: bfe -->
+ #### About: Open-source layer 7 load balancer derived from proprietary Baidu FrontEnd -->
 
 ### Overview & Features:
+
 1. Open-source layer 7 load balancer derived from proprietary Baidu FrontEnd
 
 2. Collaborative and visual infrastructure as code for BFE
