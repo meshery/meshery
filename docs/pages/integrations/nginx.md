@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: NGINX
-permalink: integrations/nginx
-type: installation
+permalink: extensibility/integrations/nginx
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/nginx.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: nginx -->
+ #### About: NGINX is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. -->
 
 ### Overview & Features:
+
 1. NGINX is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server.
 
 2. Collaborative and visual infrastructure as code for NGINX

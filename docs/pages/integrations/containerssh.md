@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Containerssh
-permalink: integrations/containerssh
-type: installation
+permalink: extensibility/integrations/containerssh
+type: extensibility
 category: integrations
+integrations-category: Tools
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/containerssh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: containerssh -->
+ #### About: ContainerSSH launches a new container for each SSH connection in Kubernetes, Podman or Docker. The user is transparently dropped in the container and the container is removed when the user disconnects. Authentication and container configuration are dynamic using webhooks, no system users required. -->
 
 ### Overview & Features:
+
 1. ContainerSSH launches a new container for each SSH connection in Kubernetes, Podman or Docker. The user is transparently dropped in the container and the container is removed when the user disconnects. Authentication and container configuration are dynamic using webhooks, no system users required.
 
 2. Collaborative and visual infrastructure as code for Containerssh

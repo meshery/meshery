@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Dex
-permalink: integrations/dex
-type: installation
+permalink: extensibility/integrations/dex
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/dex.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: dex -->
+ #### About: OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors -->
 
 ### Overview & Features:
+
 1. OpenID Connect (OIDC) identity and OAuth 2.0 provider with pluggable connectors
 
 2. Collaborative and visual infrastructure as code for Dex

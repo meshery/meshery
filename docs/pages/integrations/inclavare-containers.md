@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Inclavare Containers
-permalink: integrations/inclavare-containers
-type: installation
+permalink: extensibility/integrations/inclavare-containers
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/inclavare-containers.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: inclavare containers -->
+ #### About: A novel container runtime, aka confidential container, for cloud-native confidential computing and enclave runtime ecosystem. -->
 
 ### Overview & Features:
+
 1. A novel container runtime, aka confidential container, for cloud-native confidential computing and enclave runtime ecosystem.
 
 2. Collaborative and visual infrastructure as code for Inclavare Containers

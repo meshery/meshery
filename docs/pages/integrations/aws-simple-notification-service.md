@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Simple Notification Service
-permalink: integrations/aws-simple-notification-service
-type: installation
+permalink: extensibility/integrations/aws-simple-notification-service
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: App Integration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-simple-notification-service.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-sns-controller -->
+ #### About: Amazon Simple Notification Service (Amazon SNS) sends notifications two ways, A2A and A2P. -->
 
 ### Overview & Features:
+
 1. Amazon Simple Notification Service (Amazon SNS) sends notifications two ways, A2A and A2P.
 
 2. Collaborative and visual infrastructure as code for AWS Simple Notification Service

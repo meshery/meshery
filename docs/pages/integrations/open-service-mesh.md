@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Open Service Mesh
-permalink: integrations/open-service-mesh
-type: installation
+permalink: extensibility/integrations/open-service-mesh
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/open-service-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: open service mesh -->
+ #### About: Open Service Mesh (OSM) is a lightweight, extensible, cloud native service mesh that allows users to uniformly manage, secure, and get out-of-the-box observability features for highly dynamic microservice environments. -->
 
 ### Overview & Features:
+
 1. Open Service Mesh (OSM) is a lightweight, extensible, cloud native service mesh that allows users to uniformly manage, secure, and get out-of-the-box observability features for highly dynamic microservice environments.
 
 2. Access all that Open Service Mesh has to offer

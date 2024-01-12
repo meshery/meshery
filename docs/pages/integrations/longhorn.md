@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Longhorn
-permalink: integrations/longhorn
-type: installation
+permalink: extensibility/integrations/longhorn
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Storage
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/longhorn.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: longhorn -->
+ #### About: Cloud-Native distributed storage built on and for Kubernetes -->
 
 ### Overview & Features:
+
 1. Cloud-Native distributed storage built on and for Kubernetes
 
 2. Collaborative and visual infrastructure as code for Longhorn

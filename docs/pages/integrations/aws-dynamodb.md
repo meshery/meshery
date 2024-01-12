@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS DynamoDB
-permalink: integrations/aws-dynamodb
-type: installation
+permalink: extensibility/integrations/aws-dynamodb
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-dynamodb.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-dynamodb-controller -->
+ #### About: Amazon DynamoDB is a serverless, NoSQL, fully managed database with single-digit millisecond performance at any scale -->
 
 ### Overview & Features:
+
 1. Amazon DynamoDB is a serverless, NoSQL, fully managed database with single-digit millisecond performance at any scale
 
 2. Collaborative and visual infrastructure as code for AWS DynamoDB

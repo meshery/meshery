@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Applilcation Autoscaling
-permalink: integrations/aws-applilcation-autoscaling
-type: installation
+permalink: extensibility/integrations/aws-applilcation-autoscaling
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Management Governance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-applilcation-autoscaling.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-applicationautoscaling-controller -->
+ #### About: AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost. Using AWS Auto Scaling, it’s easy to setup application scaling for multiple resources across multiple services in minutes.  -->
 
 ### Overview & Features:
+
 1. AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost. Using AWS Auto Scaling, it’s easy to setup application scaling for multiple resources across multiple services in minutes. 
 
 2. Collaborative and visual infrastructure as code for AWS Applilcation Autoscaling

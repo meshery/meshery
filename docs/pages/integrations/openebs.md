@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OpenEBS
-permalink: integrations/openebs
-type: installation
+permalink: extensibility/integrations/openebs
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Storage
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/openebs.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: openebs -->
+ #### About: Leading Open Source Container Attached Storage, built using Cloud Native Architecture, simplifies running Stateful Applications on Kubernetes. -->
 
 ### Overview & Features:
+
 1. Leading Open Source Container Attached Storage, built using Cloud Native Architecture, simplifies running Stateful Applications on Kubernetes.
 
 2. Collaborative and visual infrastructure as code for OpenEBS

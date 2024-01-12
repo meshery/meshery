@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Chaos Mesh
-permalink: integrations/chaos-mesh
-type: installation
+permalink: extensibility/integrations/chaos-mesh
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Chaos Engineering
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/chaos-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: chaos-mesh -->
+ #### About: A Chaos Engineering Platform for Kubernetes. -->
 
 ### Overview & Features:
+
 1. A Chaos Engineering Platform for Kubernetes.
 
 2. Collaborative and visual infrastructure as code for Chaos Mesh

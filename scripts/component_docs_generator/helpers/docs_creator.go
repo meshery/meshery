@@ -86,11 +86,13 @@ func generateMDContent(record []string, name string, csvIndices CSVIndices) stri
 	overviewAndFeatures = strings.Replace(overviewAndFeatures, "</p>", "\n", -1)
 
 	content := `---
-layout: default
+layout: enhanced
 title: ` + name + `
-permalink: integrations/` + formattedName + `
-type: installation
+permalink: extensibility/integrations/` + formattedName + `
+type: extensibility
 category: integrations
+integrations-category: ` + record[2] + `
+integrations-subcategory: ` + record[3] + `
 display-title: "false"
 language: en
 list: include
@@ -101,9 +103,10 @@ image: /assets/img/integrations/` + formattedName + `.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: ` + record[1] + ` -->
+ #### About: ` + record[25] + ` -->
 
 ### Overview & Features:
+
 ` + overviewAndFeatures
 
 	return content

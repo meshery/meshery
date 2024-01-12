@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Openkruise
-permalink: integrations/openkruise
-type: installation
+permalink: extensibility/integrations/openkruise
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/openkruise.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: openkruise -->
+ #### About: Automate application management on Kubernetes (project under CNCF) -->
 
 ### Overview & Features:
+
 1. Automate application management on Kubernetes (project under CNCF)
 
 2. Collaborative and visual infrastructure as code for OpenEBS

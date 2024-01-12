@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Route 53 Resolver
-permalink: integrations/aws-route-53-resolver
-type: installation
+permalink: extensibility/integrations/aws-route-53-resolver
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-route-53-resolver.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-route53resolver-controller -->
+ #### About: Amazon Route 53 Resolver responds recursively to DNS queries from AWS resources for public records, Amazon VPC-specific DNS names, and Amazon Route 53 private hosted zones, and is available by default in all VPCs. -->
 
 ### Overview & Features:
+
 1. Amazon Route 53 Resolver responds recursively to DNS queries from AWS resources for public records, Amazon VPC-specific DNS names, and Amazon Route 53 private hosted zones, and is available by default in all VPCs.
 
 2. Collaborative and visual infrastructure as code for AWS Route 53 Resolver
