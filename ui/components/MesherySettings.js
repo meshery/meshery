@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { withRouter, useRouter } from 'next/router';
+import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
@@ -29,15 +29,7 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import {
-  REGISTRY,
-  METRICS,
-  ADAPTERS,
-  RESET,
-  OVERVIEW,
-  GRAFANA,
-  PROMETHEUS,
-} from '@/constants/navigator';
+import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -140,7 +132,7 @@ function TabContainer(props) {
 TabContainer.propTypes = { children: PropTypes.node.isRequired };
 
 const settingsRouter = (router) => {
-  const { query, push: pushRoute, asPath, route } = router;
+  const { query, push: pushRoute, route } = router;
 
   const selectedSettingsCategory = query.settingsCategory;
   const selectedTab = query.tab;
@@ -191,7 +183,9 @@ class MesherySettings extends React.Component {
 
     const { selectedSettingsCategory, selectedTab, handleChangeSettingsCategory } =
       settingsRouter(router);
-    handleChangeSettingsCategory(ADAPTERS);
+    if (!selectedSettingsCategory) {
+      handleChangeSettingsCategory(ADAPTERS);
+    }
     this._isMounted = false;
     this.state = {
       completed: {},

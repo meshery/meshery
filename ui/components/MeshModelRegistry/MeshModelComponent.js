@@ -67,11 +67,11 @@ const MeshModelComponent = ({
   componentsCount,
   relationshipsCount,
   registrantCount,
-  settingsRouter
+  settingsRouter,
 }) => {
   // const { selectedTab, changeTab } = useRegistryRouter()
-  const router = useRouter()
-  const { selectedTab, handleChangeSelectedTab } = settingsRouter(router)
+  const router = useRouter();
+  const { selectedTab, handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
@@ -103,6 +103,14 @@ const MeshModelComponent = ({
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
   // console.log("selectedTab", selectedTab)
+
+  useEffect(() => {
+    if (selectedTab) {
+      setAnimate(true);
+      setConvert(true);
+    }
+  }, [selectedTab]);
+
   const getModels = async (page) => {
     try {
       const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
@@ -297,6 +305,8 @@ const MeshModelComponent = ({
     };
   }, [view, page, searchText, rowsPerPage]);
 
+  console.log('show', show);
+
   return (
     <div data-test="workloads">
       <div
@@ -339,9 +349,9 @@ const MeshModelComponent = ({
               view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(()=>{
-                handleChangeSelectedTab(MODELS)
-                return MODELS
+              setView(() => {
+                handleChangeSelectedTab(MODELS);
+                return MODELS;
               });
               setPage({
                 Models: 0,
@@ -376,9 +386,9 @@ const MeshModelComponent = ({
               view === COMPONENTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(()=>{
-                handleChangeSelectedTab(COMPONENTS)
-                return COMPONENTS
+              setView(() => {
+                handleChangeSelectedTab(COMPONENTS);
+                return COMPONENTS;
               });
               setPage({
                 Models: 0,
@@ -413,9 +423,9 @@ const MeshModelComponent = ({
               view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(()=>{
-                handleChangeSelectedTab(RELATIONSHIPS)
-                return RELATIONSHIPS
+              setView(() => {
+                handleChangeSelectedTab(RELATIONSHIPS);
+                return RELATIONSHIPS;
               });
               setPage({
                 Models: 0,
@@ -450,9 +460,9 @@ const MeshModelComponent = ({
               view === REGISTRANTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(()=>{
-                handleChangeSelectedTab(REGISTRANTS)
-                return REGISTRANTS
+              setView(() => {
+                handleChangeSelectedTab(REGISTRANTS);
+                return REGISTRANTS;
               });
               setPage({
                 Models: 0,
