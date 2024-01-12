@@ -99,7 +99,7 @@ collections:
     name: mesheryctlcommands
   integrations:
     output: true
-    permalink: /:collection/:path    
+    permalink: /extensibility/:collection/:path    
     name: integrations
 
 # Defaults
