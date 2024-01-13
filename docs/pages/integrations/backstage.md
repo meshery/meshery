@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Backstage
-permalink: integrations/backstage
-type: installation
+permalink: extensibility/integrations/backstage
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/backstage.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: backstage -->
+ #### About: Backstage is an open platform for building developer portals -->
 
 ### Overview & Features:
+
 1. Backstage is an open platform for building developer portals
 
 2. Collaborative and visual infrastructure as code for Backstage

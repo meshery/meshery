@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Serverless Workflow
-permalink: integrations/serverless-workflow
-type: installation
+permalink: extensibility/integrations/serverless-workflow
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/serverless-workflow.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: serverless workflow -->
+ #### About: Serverless Workflow Specification -->
 
 ### Overview & Features:
+
 1. Serverless Workflow Specification
 
 2. Collaborative and visual infrastructure as code for Serverless Workflow

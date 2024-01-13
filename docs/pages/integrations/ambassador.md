@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Ambassador
-permalink: integrations/ambassador
-type: installation
+permalink: extensibility/integrations/ambassador
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: API Gateway
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/ambassador.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: ambassador -->
+ #### About: The Ambassador Edge Stack and its open source version Emissary-Ingress (FKA Ambassador API Gateway) offer a self-service, comprehensive API Gateway that is Kubernetes-native and built on Envoy. -->
 
 ### Overview & Features:
+
 1. The Ambassador Edge Stack and its open source version Emissary-Ingress (FKA Ambassador API Gateway) offer a self-service, comprehensive API Gateway that is Kubernetes-native and built on Envoy.
 
 2. Collaborative and visual infrastructure as code for Ambassador

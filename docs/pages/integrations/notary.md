@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Notary
-permalink: integrations/notary
-type: installation
+permalink: extensibility/integrations/notary
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/notary.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: notary -->
+ #### About: Notary is a project that allows anyone to have trust over arbitrary collections of data -->
 
 ### Overview & Features:
+
 1. Notary is a project that allows anyone to have trust over arbitrary collections of data
 
 2. Collaborative and visual infrastructure as code for NGINX Service Mesh

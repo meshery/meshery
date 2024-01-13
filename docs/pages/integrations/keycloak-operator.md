@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Keycloak Operator
-permalink: integrations/keycloak-operator
-type: installation
+permalink: extensibility/integrations/keycloak-operator
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/keycloak-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: keycloak-operator -->
+ #### About: Open Source Identity and Access Management For Modern Applications and Services -->
 
 ### Overview & Features:
+
 1. Open Source Identity and Access Management For Modern Applications and Services
 
 2. Collaborative and visual infrastructure as code for Keycloak Operator

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Open Policy Agent (OPA)
-permalink: integrations/open-policy-agent-(opa)
-type: installation
+permalink: extensibility/integrations/open-policy-agent-(opa)
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/open-policy-agent-(opa).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: open policy agent (opa) -->
+ #### About: An open source, general-purpose policy engine. -->
 
 ### Overview & Features:
+
 1. An open source, general-purpose policy engine.
 
 2. Collaborative and visual infrastructure as code for Open Policy Agent (OPA)

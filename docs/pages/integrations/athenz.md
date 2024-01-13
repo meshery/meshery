@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Athenz
-permalink: integrations/athenz
-type: installation
+permalink: extensibility/integrations/athenz
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/athenz.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: athenz -->
+ #### About: Open source platform for X.509 certificate based service authentication and fine grained access control in dynamic infrastructures -->
 
 ### Overview & Features:
+
 1. Open source platform for X.509 certificate based service authentication and fine grained access control in dynamic infrastructures
 
 2. Collaborative and visual infrastructure as code for Athenz

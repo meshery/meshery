@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubesphere
-permalink: integrations/kubesphere
-type: installation
+permalink: extensibility/integrations/kubesphere
+type: extensibility
 category: integrations
+integrations-category: Platform
+integrations-subcategory: Certified Kubernetes - Distribution
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubesphere.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubesphere -->
+ #### About: The easiest way to get a production-grade Kubernetes cluster up and running -->
 
 ### Overview & Features:
+
 1. The easiest way to get a production-grade Kubernetes cluster up and running
 
 2. Collaborative and visual infrastructure as code for Kubesphere

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Fabedge
-permalink: integrations/fabedge
-type: installation
+permalink: extensibility/integrations/fabedge
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Network
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/fabedge.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: fabedge -->
+ #### About: Secure Edge Networking Solution Based On Kubernetes -->
 
 ### Overview & Features:
+
 1. Secure Edge Networking Solution Based On Kubernetes
 
 2. Collaborative and visual infrastructure as code for Fabedge

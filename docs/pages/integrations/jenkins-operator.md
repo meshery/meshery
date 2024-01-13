@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Jenkins Operator
-permalink: integrations/jenkins-operator
-type: installation
+permalink: extensibility/integrations/jenkins-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/jenkins-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: jenkins-operator -->
+ #### About: CNCF Jaeger, a Distributed Tracing Platform -->
 
 ### Overview & Features:
+
 1. CNCF Jaeger, a Distributed Tracing Platform
 
 2. Collaborative and visual infrastructure as code for Jenkins Operator

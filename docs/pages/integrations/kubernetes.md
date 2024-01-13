@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubernetes
-permalink: integrations/kubernetes
-type: installation
+permalink: extensibility/integrations/kubernetes
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Orchestration & Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubernetes.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubernetes -->
+ #### About: Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications -->
 
 ### Overview & Features:
+
 1. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications
 
 2. The easiest way to get a production-grade Kubernetes cluster up and running

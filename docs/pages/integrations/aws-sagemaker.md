@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS SageMaker
-permalink: integrations/aws-sagemaker
-type: installation
+permalink: extensibility/integrations/aws-sagemaker
+type: extensibility
 category: integrations
+integrations-category: Machine Learning
+integrations-subcategory: Machine Learning
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-sagemaker.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-sagemaker-controller -->
+ #### About: Amazon SageMaker is a fully managed service that brings together a broad set of tools to enable high-performance, low-cost machine learning (ML) for any use case. -->
 
 ### Overview & Features:
+
 1. Amazon SageMaker is a fully managed service that brings together a broad set of tools to enable high-performance, low-cost machine learning (ML) for any use case.
 
 2. Collaborative and visual infrastructure as code for AWS SageMaker

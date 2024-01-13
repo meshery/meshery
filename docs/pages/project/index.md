@@ -5,7 +5,7 @@ type: project
 category: contributing
 abstract: Information about contributing to the Meshery project and participating the Meshery community.
 permalink: project
-redirect_from: project/
+# redirect_from: project/
 language: en
 list: exclude
 ---

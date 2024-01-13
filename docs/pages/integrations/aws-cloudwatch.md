@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS CloudWatch
-permalink: integrations/aws-cloudwatch
-type: installation
+permalink: extensibility/integrations/aws-cloudwatch
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Management Governance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-cloudwatch.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-cloudwatch-controller -->
+ #### About: CloudWatch enables you to monitor and observe your AWS and on-premises resources and applications. -->
 
 ### Overview & Features:
+
 1. CloudWatch enables you to monitor and observe your AWS and on-premises resources and applications.
 
 2. Collaborative and visual infrastructure as code for AWS CloudWatch

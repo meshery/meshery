@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: NGINX Ingress Controller
-permalink: integrations/nginx-ingress-controller
-type: installation
+permalink: extensibility/integrations/nginx-ingress-controller
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/nginx-ingress-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: nginx-ingress -->
+ #### About: NGINX Ingress Controller is synonymous with high‑performing, scalable, and secure modern apps in production. -->
 
 ### Overview & Features:
+
 1. NGINX Ingress Controller is synonymous with high‑performing, scalable, and secure modern apps in production.
 
 2. Collaborative and visual infrastructure as code for NGINX Ingress Controller

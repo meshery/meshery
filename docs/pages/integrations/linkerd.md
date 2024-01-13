@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Linkerd
-permalink: integrations/linkerd
-type: installation
+permalink: extensibility/integrations/linkerd
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/linkerd.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: linkerd -->
+ #### About: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x. -->
 
 ### Overview & Features:
+
 1. Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 
 2. Collaborative and visual infrastructure as code for Linkerd

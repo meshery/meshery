@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS ElastiCache
-permalink: integrations/aws-elasticache
-type: installation
+permalink: extensibility/integrations/aws-elasticache
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-elasticache.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-elasticache-controller -->
+ #### About: Amazon ElastiCache allows you to seamlessly set up, run, and scale an in-memory cache in the cloud. ElastiCache is compatible with both Redis and Memcached. -->
 
 ### Overview & Features:
+
 1. Amazon ElastiCache allows you to seamlessly set up, run, and scale an in-memory cache in the cloud. ElastiCache is compatible with both Redis and Memcached.
 
 2. Collaborative and visual infrastructure as code for AWS ElastiCache

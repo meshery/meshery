@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Etcd Cluster Operator
-permalink: integrations/etcd-cluster-operator
-type: installation
+permalink: extensibility/integrations/etcd-cluster-operator
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Coordination & Service Discovery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/etcd-cluster-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: etcd-cluster-operator -->
+ #### About: Distributed reliable key-value store for the most critical data of a distributed system -->
 
 ### Overview & Features:
+
 1. Distributed reliable key-value store for the most critical data of a distributed system
 
 2. Collaborative and visual infrastructure as code for Etcd Cluster Operator

@@ -29,6 +29,7 @@ import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './Modal';
+import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 
 const requires = createRequires(getDependencies);
@@ -110,6 +111,7 @@ function NavigatorExtension({
         getComponentsinFile,
         UploadImport,
         PublishModal,
+        ExportModal,
         GenericRJSFModal: Modal,
         PromptComponent,
         generateValidatePayload,

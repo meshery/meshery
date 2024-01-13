@@ -5,11 +5,11 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
+import { FormatId } from '@/components/DataFormatter';
 
 export const NamespaceTableConfig = (
   switchView,
@@ -33,7 +33,7 @@ export const NamespaceTableConfig = (
         label: 'ID',
         options: {
           display: false,
-          customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={10} />,
+          customBodyRender: (value) => <FormatId id={value} />,
         },
       },
       {

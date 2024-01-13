@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Mimir
-permalink: integrations/mimir
-type: installation
+permalink: extensibility/integrations/mimir
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Observability and Analysis
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/mimir.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: mimir-distributed -->
+ #### About: Grafana Mimir lets you scale to 1 billion metrics and beyond, with high availability, multi-tenancy, durable storage, and blazing fast query performance over long periods of time. -->
 
 ### Overview & Features:
+
 1. Grafana Mimir lets you scale to 1 billion metrics and beyond, with high availability, multi-tenancy, durable storage, and blazing fast query performance over long periods of time.
 
 2. Scale to 1 billion metrics and beyond with Meshery and Grafana Mimir

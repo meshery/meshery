@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS EventBridge
-permalink: integrations/aws-eventbridge
-type: installation
+permalink: extensibility/integrations/aws-eventbridge
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-eventbridge.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-eventbridge-controller -->
+ #### About: Amazon EventBridge enables you to build event-driven applications at scale across AWS, existing systems, or SaaS applications -->
 
 ### Overview & Features:
+
 1. Amazon EventBridge enables you to build event-driven applications at scale across AWS, existing systems, or SaaS applications
 
 2. Collaborative and visual infrastructure as code for AWS EventBridge

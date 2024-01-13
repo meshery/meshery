@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Karpenter
-permalink: integrations/karpenter
-type: installation
+permalink: extensibility/integrations/karpenter
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/karpenter.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: karpenter -->
+ #### About: Karpenter is an open-source node provisioning project built for Kubernetes. Adding Karpenter to a Kubernetes cluster can dramatically improve the efficiency and cost of running workloads on that cluster. -->
 
 ### Overview & Features:
+
 1. Karpenter is an open-source node provisioning project built for Kubernetes. Adding Karpenter to a Kubernetes cluster can dramatically improve the efficiency and cost of running workloads on that cluster.
 
 2. Collaborative and visual infrastructure as code for Karpenter
