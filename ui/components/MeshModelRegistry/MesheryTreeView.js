@@ -1,19 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import {
-  Box,
-  Typography,
-  IconButton,
-  FormControlLabel,
-  Switch,
-  useTheme,
-  Tooltip,
-} from '@material-ui/core';
-import Checkbox from '@mui/material/Checkbox';
+import { IconButton, FormControlLabel, Switch, Tooltip } from '@material-ui/core';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
-import { StyledTreeItemRoot } from './MeshModel.style';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
@@ -33,6 +23,7 @@ const ComponentTree = ({
   comp,
   data,
   handleScroll,
+  setSearchText,
 }) => {
   return (
     <TreeView
@@ -95,6 +86,7 @@ const RelationshipTree = ({
   rela,
   data,
   handleScroll,
+  setSearchText,
 }) => {
   return (
     <TreeView
@@ -588,6 +580,7 @@ const MesheryTreeView = ({
           setComp={setComp}
           setSelected={setSelected}
           handleScroll={handleScroll}
+          setSearchText={setSearchText}
         />
       )}
       {view === RELATIONSHIPS && (
@@ -602,6 +595,7 @@ const MesheryTreeView = ({
           setRela={setRela}
           setSelected={setSelected}
           handleScroll={handleScroll}
+          setSearchText={setSearchText}
         />
       )}
     </div>
