@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Azure Active Directory (AAD)
-permalink: integrations/azure-active-directory-(aad)
-type: installation
+permalink: extensibility/integrations/azure-active-directory-(aad)
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/azure-active-directory-(aad).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aad-pod-identity -->
+ #### About: Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD). -->
 
 ### Overview & Features:
+
 1. Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD).
 
 2. Collaborative and visual infrastructure as code for Azure Active Directory (AAD)

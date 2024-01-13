@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Identity and Access Management
-permalink: integrations/aws-identity-and-access-management
-type: installation
+permalink: extensibility/integrations/aws-identity-and-access-management
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security Identity Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-identity-and-access-management.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-iam-controller -->
+ #### About: AWS Identity and Access Management securely manage identities and access to AWS services and resources -->
 
 ### Overview & Features:
+
 1. AWS Identity and Access Management securely manage identities and access to AWS services and resources
 
 2. Collaborative and visual infrastructure as code for AWS Identity and Access Management

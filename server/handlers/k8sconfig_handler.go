@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/machines"
 
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
@@ -121,7 +121,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				Provider:           provider,
 				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
@@ -142,6 +141,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				machineCtx,
 				req.Context(),
 				connection.ID,
+				userID,
 				smInstanceTracker,
 				h.log,
 				provider,

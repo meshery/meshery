@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Server for MongoDB
-permalink: integrations/percona-server-for-mongodb
-type: installation
+permalink: extensibility/integrations/percona-server-for-mongodb
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/percona-server-for-mongodb.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: psmdb-db -->
+ #### About: Percona Server for MongoDB Cluster on Kubernetes controlled by Percona Operator for MongoDB. -->
 
 ### Overview & Features:
+
 1. Percona Server for MongoDB Cluster on Kubernetes controlled by Percona Operator for MongoDB.
 
 2. Collaborative and visual infrastructure as code for Percona Server for MongoDB

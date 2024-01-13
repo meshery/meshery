@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Fluentbit Operator
-permalink: integrations/fluentbit-operator
-type: installation
+permalink: extensibility/integrations/fluentbit-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/fluentbit-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: fluentbit-operator -->
+ #### About: Fluent Bit is a super fast, lightweight, and highly scalable logging and metrics processor and forwarder. It is the preferred choice for cloud and containerized environments. -->
 
 ### Overview & Features:
+
 1. Fluent Bit is a super fast, lightweight, and highly scalable logging and metrics processor and forwarder. It is the preferred choice for cloud and containerized environments.
 
 2. Collaborative and visual infrastructure as code for Fluentbit Operator

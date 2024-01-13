@@ -14,7 +14,7 @@
     },
     "metadata": {}
   },
-  "rego_query": "heirarcal_parent_relationship",
+  "evaluationQuery": "heirarcal_parent_relationship",
   "subType": "Parent",
   "selectors": {
     "allow": {

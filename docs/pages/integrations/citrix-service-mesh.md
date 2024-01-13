@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Citrix Service Mesh
-permalink: integrations/citrix-service-mesh
-type: installation
+permalink: extensibility/integrations/citrix-service-mesh
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/citrix-service-mesh.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cpx -->
+ #### About: Unlock all of Citrix Service Mesh features with Meshery -->
 
 ### Overview & Features:
+
 1. Unlock all of Citrix Service Mesh features with Meshery
 
 2. The easiest way to get a production-grade Kubernetes cluster up and running

@@ -3779,9 +3779,13 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
+	
+	defer func(){
+		_ = resp.Body.Close()
+	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
 		var conn connections.Connection
@@ -3792,7 +3796,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 	}
 
 	l.Log.Debug(string(bdr))
-	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to update connection with id %s", connectionID), "connection", resp.StatusCode)
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
@@ -3839,13 +3843,13 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID u
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	bf := bytes.NewBuffer([]byte(connectionStatus))
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
-	// logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		l.Log.Error(err)
-		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, resp.StatusCode)
+		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, http.StatusInternalServerError)
 	}
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4164,7 +4168,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Save Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Credential", http.StatusInternalServerError)
 	}
 	defer resp.Body.Close()
 
@@ -4278,7 +4282,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Update Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Update Credential", http.StatusInternalServerError)
 	}
 	defer resp.Body.Close()
 

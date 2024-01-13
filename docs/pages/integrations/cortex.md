@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cortex
-permalink: integrations/cortex
-type: installation
+permalink: extensibility/integrations/cortex
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Metrics
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cortex.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cortex -->
+ #### About: A horizontally scalable, highly available, multi-tenant, long term Prometheus. -->
 
 ### Overview & Features:
+
 1. A horizontally scalable, highly available, multi-tenant, long term Prometheus.
 
 2. Collaborative and visual infrastructure as code for Cortex

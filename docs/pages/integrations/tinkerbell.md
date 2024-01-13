@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Tinkerbell
-permalink: integrations/tinkerbell
-type: installation
+permalink: extensibility/integrations/tinkerbell
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/tinkerbell.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: tinkerbell -->
+ #### About: A workflow engine for provisioning bare metal. -->
 
 ### Overview & Features:
+
 1. A workflow engine for provisioning bare metal.
 
 2. Collaborative and visual infrastructure as code for Tinkerbell

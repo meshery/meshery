@@ -39,10 +39,11 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     bottom: 0,
   },
-  // yamlDialogTitle: {
-  //   display: 'flex',
-  //   alignItems: 'center',
-  // },
+  yamlDialogTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   // yamlDialogTitleText: {
   //   flexGrow: 1,
   // },

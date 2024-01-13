@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Containerd
-permalink: integrations/containerd
-type: installation
+permalink: extensibility/integrations/containerd
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/containerd.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: containerd -->
+ #### About: An open and reliable container runtime -->
 
 ### Overview & Features:
+
 1. An open and reliable container runtime
 
 2. Collaborative and visual infrastructure as code for Containerd

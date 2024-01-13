@@ -213,7 +213,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		}
 
 		promCred := map[string]interface{}{
-			"credential": promKey,
+			"secret": promKey,
 		}
 
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL, promKey); err != nil {
@@ -301,7 +301,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 		http.Error(w, err.Error(), statusCode)
 		return
 	}
-	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
+	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 
 	if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrPrometheusScan(err))

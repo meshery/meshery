@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: enhanced
 title: Models
-permalink: concepts/models
+permalink: concepts/logical/models
 type: concepts
 abstract: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
 language: en
@@ -45,7 +45,7 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Component
 
-[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.See [Relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/components) for more information.
+[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [example components in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/components).
 
 ### Designs
 
@@ -53,17 +53,17 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Patterns
 
-A pattern is a reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 {% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
 ### Policy
 
-[Policy](policy) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [Policies in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies) for more information.
+[Policy](policy) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [example policies in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/policies) for more information.
 
 ### Relationships
 
-[Relationships](relationships) define the nature of interaction between interconnected components in MeshModel. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [Relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) for more information.
+[Relationships](relationships) define the nature of interaction between interconnected components in MeshModel. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [example relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/relationships).
 
 #### Evaluation of Relationships
 

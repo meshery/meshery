@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevela
-permalink: integrations/kubevela
-type: installation
+permalink: extensibility/integrations/kubevela
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubevela.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubevela -->
+ #### About: The Modern Application Platform. -->
 
 ### Overview & Features:
+
 1. The Modern Application Platform.
 
 2. Collaborative and visual infrastructure as code for Kubevela

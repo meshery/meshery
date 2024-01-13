@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Parsec
-permalink: integrations/parsec
-type: installation
+permalink: extensibility/integrations/parsec
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/parsec.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: parsec -->
+ #### About: Platform Abstraction for security service -->
 
 ### Overview & Features:
+
 1. Platform Abstraction for security service
 
 2. Collaborative and visual infrastructure as code for Parsec

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Buildpacks
-permalink: integrations/buildpacks
-type: installation
+permalink: extensibility/integrations/buildpacks
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/buildpacks.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: buildpacks -->
+ #### About: CLI for building apps using Cloud Native Buildpacks -->
 
 ### Overview & Features:
+
 1. CLI for building apps using Cloud Native Buildpacks
 
 2. Collaborative and visual infrastructure as code for Buildpacks

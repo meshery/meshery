@@ -155,7 +155,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <ListItem>
                   <TootltipWrappedConnectionChip
                     tooltip={`Server: ${metadata.server}`}
-                    title={connection.name}
+                    title={metadata.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={() => handleKubernetesClick(connection.id)}
@@ -168,7 +168,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Name" secondary={connection.name} />
+                  <ListItemText primary="Name" secondary={metadata.name} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="K8s Version" secondary={metadata.version} />

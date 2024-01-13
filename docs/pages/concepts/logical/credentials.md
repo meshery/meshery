@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: enhanced
 title: Credentials
-permalink: concepts/credentials
+permalink: concepts/logical/credentials
 type: concepts
 abstract: Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
 language: en

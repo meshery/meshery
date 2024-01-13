@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Tremor
-permalink: integrations/tremor
-type: installation
+permalink: extensibility/integrations/tremor
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/tremor.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: tremor -->
+ #### About: Main Tremor Project Rust Codebase -->
 
 ### Overview & Features:
+
 1. Main Tremor Project Rust Codebase
 
 2. Collaborative and visual infrastructure as code for Tremor

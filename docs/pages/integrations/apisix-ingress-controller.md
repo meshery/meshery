@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: APISIX Ingress Controller
-permalink: integrations/apisix-ingress-controller
-type: installation
+permalink: extensibility/integrations/apisix-ingress-controller
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: API Gateway
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/apisix-ingress-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: apisix-ingress-controller -->
+ #### About: The Cloud-Native API Gateway -->
 
 ### Overview & Features:
+
 1. The Cloud-Native API Gateway
 
 2. Collaborative and visual infrastructure as code for APISIX Ingress Controller

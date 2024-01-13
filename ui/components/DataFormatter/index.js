@@ -50,10 +50,16 @@ export const FormattedDate = ({ date }) => {
 };
 
 export const FormatId = ({ id }) => {
+  const [copied, setCopied] = React.useState(false);
   const theme = useTheme();
   // truncates the id to 15 characters and adds an ellipsis and adds a clicpboard copy button
   const copyToClipboard = () => {
     navigator.clipboard.writeText(id);
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   const truncatedId = _.truncate(id, { length: 15 });
@@ -64,13 +70,13 @@ export const FormatId = ({ id }) => {
           variant="body2"
           style={{
             cursor: 'pointer',
-            color: theme.palette.text.secondary,
+            color: theme.palette.secondary.text,
           }}
         >
           {truncatedId}
         </Typography>
       </Tooltip>
-      <Tooltip title="Copy" placement="top">
+      <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
           <CopyIcon width="1rem" height="1rem" />
         </IconButton>

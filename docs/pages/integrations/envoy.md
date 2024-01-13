@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Envoy
-permalink: integrations/envoy
-type: installation
+permalink: extensibility/integrations/envoy
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/envoy.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: envoy -->
+ #### About: Cloud-native high-performance edge/middle/service proxy -->
 
 ### Overview & Features:
+
 1. Cloud-native high-performance edge/middle/service proxy
 
 2. Collaborative and visual infrastructure as code for Envoy

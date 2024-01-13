@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Elastic Container Registry
-permalink: integrations/aws-elastic-container-registry
-type: installation
+permalink: extensibility/integrations/aws-elastic-container-registry
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Containers
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-elastic-container-registry.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-ecr-controller -->
+ #### About: Amazon Elastic Container Registry (Amazon ECR) is a fully managed container registry offering high-performance hosting, so you can reliably deploy application images and artifacts anywhere. -->
 
 ### Overview & Features:
+
 1. Amazon Elastic Container Registry (Amazon ECR) is a fully managed container registry offering high-performance hosting, so you can reliably deploy application images and artifacts anywhere.
 
 2. Collaborative and visual infrastructure as code for AWS Elastic Container Registry

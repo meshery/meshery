@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubedb Grafana Dashboards
-permalink: integrations/kubedb-grafana-dashboards
-type: installation
+permalink: extensibility/integrations/kubedb-grafana-dashboards
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubedb-grafana-dashboards.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubedb-grafana-dashboards -->
+ #### About: KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud -->
 
 ### Overview & Features:
+
 1. KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud
 
 2. Collaborative and visual infrastructure as code for Kubedb Grafana Dashboards

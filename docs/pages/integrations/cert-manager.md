@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cert Manager
-permalink: integrations/cert-manager
-type: installation
+permalink: extensibility/integrations/cert-manager
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cert-manager.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cert-manager -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Cloud native certificate management with Cert Manager and Meshery
 
 4. 

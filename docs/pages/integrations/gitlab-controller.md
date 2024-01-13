@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Gitlab Controller
-permalink: integrations/gitlab-controller
-type: installation
+permalink: extensibility/integrations/gitlab-controller
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/gitlab-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: gitlab-controller -->
+ #### About: GitOps your infrastructure with Meshery and GitHub -->
 
 ### Overview & Features:
+
 1. GitOps your infrastructure with Meshery and GitHub
 
 2. Collaborative and visual infrastructure as code for Gitlab Controller

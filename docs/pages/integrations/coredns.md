@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Coredns
-permalink: integrations/coredns
-type: installation
+permalink: extensibility/integrations/coredns
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Coordination & Service Discovery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/coredns.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: coredns -->
+ #### About: CoreDNS is a DNS server that chains plugins -->
 
 ### Overview & Features:
+
 1. CoreDNS is a DNS server that chains plugins
 
 2. Collaborative and visual infrastructure as code for Coredns
