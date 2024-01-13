@@ -30,75 +30,500 @@
   })();
   </script>
 
-  <nav class="sidebar-nav" id="td-section-nav">
-    {% for section in site.data.toc %}
-    <ul class="sidebar-nav__section">
-      {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
-      page.url | replace: "/", "" }}{% endcapture %}
+<nav class="sidebar-nav" id="td-section-nav">
+    
+  <ul class="sidebar-nav__section">
+     
 
-      <li class="sidebar-nav__section-title">
-        <!-- Toggle button -->
-        <div class="toggle"  data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false" aria-controls="section{{forloop.index0}}"> ⇅ </div>
-        <a
-          href="{% if section.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ section.url }}{% else %}{{
-		  section.external_url }}{% endif %}"
-          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section {% if pageUrl == sectionUrl %} active {% endif %}"
-          > {{ section.title }}
-        </a>
-  
-      {% if section.links %}
-          <ul class="td-sidebar-nav__section collapse" id="section{{forloop.index0}}">
-            {% for entry in section.links %} {% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{%
-            endcapture %}
-            <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
-              <a
-                href="{% if entry.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ entry.url }}{% else %}
-                {{entry.external_url }}{% endif %}"
-                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
-                >{{ entry.title }}</a
-              >
-            </li>
-            {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
-             <ul style="margin-bottom: 0;">
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"> ⇅ </div>
+      <a
+        href="/project/overview"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 🗺 Overview
+      </a>
 
-                  {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
-                  }}{{ linkUrlSelected }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
-                  capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
-                  "/", "" | strip}}{% endcapture %}
-                  <li id="{{ child.title | slugify }}">
-                  <a
-                    class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
-                    id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify}}"
-                    href="{{childUrl}}"
-                    >{{ child.title }}</a>
-                  </li>
-                  {% if child.grandchildren %}
-                  <ul style="margin-bottom: 0;">
-                      {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
-                      }}{{ linkUrlSelected }}/{{ grandchild.url }}{% else %}{{ grandchild.external_url }}{% endif %} {% endcapture %} {%
-                      capture grandchildUrl %}{{grandchildUrl | strip}}{% endcapture %} {% capture grandchildTitle %}{{ grandchildUrl | replace:
-                      "/", "" | strip}}{% endcapture %}
-                      <li id="{{ grandchild.title | slugify }}">
-                        <a
-                        class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
-                        id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
-                        href="{{grandchildUrl}}"
-                        ><strong style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a
-                      >
-                      </li>
-                      {% endfor %} <!-- grandchild -->
-                  </ul>
-                  
-                  {% endif %} <!-- end grandchild -->
-                {% endfor %} <!-- children -->
-              </ul> 
-              {% endif %}  <!-- end children -->
-              {% endif %}  <!-- end pageurl -->
-            {% endfor %} <!--  section.links -->
-          </ul>
-      {% endif %} <!--  section.links -->
-    </li>
-  </ul> <!-- end of "sidebar-nav__section" -->
-  {% endfor %}
+    
+        <ul class="td-sidebar-nav__section collapse" id="section0">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/project/faq"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >FAQ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/installation/quick-start"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >🚀 Quick Start</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/installation"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Installation ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"> ⇅ </div>
+      <a
+        href="/project"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 🧑‍💻 Contributing & Community
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section1">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/project/community"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Community</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/project/contributing"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Contributing ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"> ⇅ </div>
+      <a
+        href="/concepts"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 🧠 Concepts
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section2">
+           
+          <li class="sidebar-nav__section-link  active ">
+            <a
+              href="/concepts/architecture"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Architectural ↆ</a
+            >
+          </li>
+           
+           <ul style="margin-bottom: 0;">
+
+                   
+                <li id="adapters">
+                <a
+                  class="sidebar-nav__section-link "
+                  id="m-concepts-architectural-ↆ-adapters"
+                  href="/concepts/architecture/adapters"
+                  >Adapters</a>
+                </li>
+                 <!-- end grandchild -->
+                 
+                <li id="database">
+                <a
+                  class="sidebar-nav__section-link "
+                  id="m-concepts-architectural-ↆ-database"
+                  href="/concepts/architecture/database"
+                  >Database</a>
+                </li>
+                 <!-- end grandchild -->
+                 
+                <li id="operator-ↆ">
+                <a
+                  class="sidebar-nav__section-link "
+                  id="m-concepts-architectural-ↆ-operator-ↆ"
+                  href="/concepts/architecture/operator"
+                  >Operator ↆ</a>
+                </li>
+                
+                <ul style="margin-bottom: 0;">
+                       
+                    <li id="broker">
+                      <a
+                      class="sidebar-nav__section-link "
+                      id="m-concepts-architectural-ↆ-broker"
+                      href="/concepts/architecture/broker"
+                      ><strong style="color: var(--color-secondary-medium); font-weight: normal;">Broker</strong></a
+                    >
+                    </li>
+                       
+                    <li id="meshsync">
+                      <a
+                      class="sidebar-nav__section-link "
+                      id="m-concepts-architectural-ↆ-meshsync"
+                      href="/concepts/architecture/meshsync"
+                      ><strong style="color: var(--color-secondary-medium); font-weight: normal;">Meshsync</strong></a
+                    >
+                    </li>
+                     <!-- grandchild -->
+                </ul>
+                
+                 <!-- end grandchild -->
+               <!-- children -->
+            </ul> 
+              <!-- end children -->
+              <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/concepts/logical"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Logical ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"> ⇅ </div>
+      <a
+        href="/guides"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 📚 Guides (all)
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section3">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/configuration-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Configuring Kubernetes Infrastructure ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/events-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Managing Events with Notification Center</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/multiple-adapters"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Using Multiple Meshery Adapters</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/gitops-with-meshery"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >GitOps with Meshery</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/performance-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Using Metrics in Meshery ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/mesheryctl"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Using Meshery CLI Guides ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/troubleshooting"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Troubleshooting Guides ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/guides/upgrade"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Upgrading Meshery ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"> ⇅ </div>
+      <a
+        href="/tasks"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > ⚙️ Tasks (all)
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section4">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/tasks/infrastructure-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Infrastructure Management</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/tasks/filter-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Filter Management</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/tasks/lifecycle-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Managing Connections</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/tasks/pattern-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Pattern Management</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/tasks/performance/managing-performance"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Performance Management</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"> ⇅ </div>
+      <a
+        href="/extensibility"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 🛠 Integrations and Extensions
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section5">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/api"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >APIs</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/adapters"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Adapters ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/integrations"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Integrations</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/load-generators"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Load Generators</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/providers"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Providers</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/ui"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >UI Plugins</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensions"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >🦾 Extensions ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
+  <ul class="sidebar-nav__section">
+     
+
+    <li class="sidebar-nav__section-title">
+      <!-- Toggle button -->
+      <div class="toggle"  data-toggle="collapse" data-target="#section6" aria-expanded="false" aria-controls="section6"> ⇅ </div>
+      <a
+        href="/reference"
+        class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+        > 📖 Reference
+      </a>
+
+    
+        <ul class="td-sidebar-nav__section collapse" id="section6">
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/reference/error-codes"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Error Code Reference</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/extensibility/api"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >REST & GraphQL APIs ↆ</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/reference/mesheryctl"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >CLI Command Reference</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/reference/meshery-operator-crds"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Meshery Operator CRDs</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/project/releases"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Releases</a
+            >
+          </li>
+            <!-- end pageurl -->
+           
+          <li class="sidebar-nav__section-link ">
+            <a
+              href="/project/security-vulnerabilities"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+              >Vulnerabilities</a
+            >
+          </li>
+            <!-- end pageurl -->
+           <!--  section.links -->
+        </ul>
+     <!--  section.links -->
+  </li>
+</ul> <!-- end of "sidebar-nav__section" -->
+
 </nav>
 </div>
