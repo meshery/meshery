@@ -1,0 +1,43 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "An RDS DBCluster allows you to group database instances for high availability and scalability. You can reference an IAM role from a DBCluster to control access to the DBCluster and its associated resources.\n\nWhen you create a DBCluster, you specify an IAM role that the DBCluster's instances will assume. This allows the instances to access other AWS services and resources that the role has permissions for. For example, you may grant the role permissions to write logs to CloudWatch Logs.\n\nThe key things to know about IAM roles in RDS are:\n\nAn IAM role provides permissions for the DBCluster's instances to access other AWS services, without having to use long-term access keys in the instances.\n\nYou specify the role to use when creating the DBCluster. The instances will then assume this role.\n\nThe role should allow the\nrds.amazonaws.com\n service principal to assume the role. This allows the instances to assume the role.\n\nManaging permissions by attaching policies to the IAM role provides a centralized way to control access for all instances in the DBCluster."
+  },
+  "model": {
+    "name": "aws-rds-controller",
+    "version": "1.1.8",
+    "displayName": "AWS Relational Database Service",
+    "category": {
+      "name": "Database",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Permission",
+  "rego_query": "edge_binding_relationship",
+  "selectors": {
+    "allow": {
+      "from": [
+        {
+          "kind": "DBCluster",
+          "model": "aws-rds-controller",
+          "match": {
+            "self": [],
+            "domainIAMRoleName": []
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Role",
+          "model": "aws-iam-controller ",
+          "match": {
+            "self": [],
+            "properties.spec.properties.path": []
+          }
+        }
+      ]
+    }
+  }
+}

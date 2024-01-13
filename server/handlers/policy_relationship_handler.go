@@ -27,7 +27,7 @@ const (
 )
 
 type relationshipPolicyEvalPayload struct {
-	PatternFile string   `json:"pattern_file"`
+	PatternFile       string   `json:"pattern_file"`
 	EvaluationQueries []string `json:"evaluation_queries"`
 }
 
