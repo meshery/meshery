@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 white_image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: extensibility/adapters/traefik-mesh
+redirect_from: service-meshes/adapters/traefik-mesh
 language: en
 ---
 

@@ -34,11 +34,12 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-      {% for item in sorted_pages %}
-      {% if item.type=="installation" and item.category!="integrations" and item.list=="include" and item.language == "en" -%}
+      {% assign sorted_installation = site.pages | where: "type","installation" %}
+      {% for item in sorted_installation  %}
+      {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         {% if item.abstract %}
-          -  {{ item.abstract }}
+          - {{ item.abstract }}
         {% endif %}
         </li>
         {% endif %}
@@ -69,15 +70,16 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
-          {% if item.type=="concepts" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
+        {% assign sorted_concepts = site.pages | where: "type","concepts" %}
+        {% for item in sorted_concepts %}
+        {% if item.type=="concepts" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+         -  {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
       </ul>
     </details>
     <details>
@@ -87,15 +89,16 @@ language: en
         </p>
       </summary>
       <ul>
-          {% for item in sorted_pages %}
-          {% if item.type=="components" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        {% assign sorted_components = site.pages | where: "type","components" %}
+        {% for item in sorted_components %}
+        {% if item.type=="components" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+            - {{ item.abstract }}
             {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
+          </li>
+        {% endif %}
+        {% endfor %}
       </ul>
     </details>
   </div>
@@ -110,7 +113,8 @@ language: en
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <ul>
-      {% for item in sorted_pages %}
+      {% assign sorted_tasks = site.pages | where: "type","tasks" %}
+      {% for item in sorted_tasks %}
       {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
@@ -133,15 +137,16 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
-          {% if item.type=="extensions" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
+        {% assign sorted_extensions = site.pages | where: "type","extensions" %}
+        {% for item in sorted_extensions %}
+        {% if item.type=="extensions" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
       </ul>
     </details>
     <details>
@@ -151,15 +156,17 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
-          {% if item.type=="integration" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
+        {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
+        See all <a href="{{site.baseurl}}/extensibility/integrations">{{ sorted_ints | size }} integations</a>
+        {% for item in sorted_ints %}
+        {% if item.type=="extensibility" and item.category="integration" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
       </ul>
     </details>
   </div>
@@ -181,15 +188,16 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
-          {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
+        {% assign sorted_mesheryctl = site.pages | where: "type","guides" %}
+        {% for item in sorted_mesheryctl %}
+        {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
       </ul>
     </details>
     <details>
@@ -199,7 +207,8 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
+       {% assign sorted_infrastructure = site.pages | where: "type","guides" %}
+          {% for item in sorted_infrastructure %}
           {% if item.type=="guides" and item.category=="infrastructure" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
@@ -217,11 +226,12 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
+        {% assign performance = site.pages | where: "type","guides" %}
+          {% for item in performance %}
           {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+              - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -235,11 +245,12 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
+        {% assign configuration = site.pages | where: "type","guides" %}
+          {% for item in configuration %}
           {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+            -  {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -253,7 +264,8 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
+          {% assign troubleshooting = site.pages | where: "category","troubleshooting" %}
+          {% for item in troubleshooting %}
           {% if item.type=="guides" and item.category=="troubleshooting" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
@@ -304,11 +316,12 @@ language: en
         </p>
       </summary>
       <ul class="section-title">
-          {% for item in sorted_pages %}
+       {% assign contributing = site.pages | where: "category","contributing" %}
+          {% for item in contributing %}
           {% if item.category=="contributing" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+              - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -327,10 +340,9 @@ language: en
         <div class="btn-primary">Project</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
-
+    {% assign project = site.pages | sort: "name" | alphabetical %}
     <ul>
-      {% for item in sorted_pages %}
+      {% for item in project %}
       {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
@@ -365,3 +377,4 @@ language: en
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
 <h1>Documentation</h1>
 </div> -->
+

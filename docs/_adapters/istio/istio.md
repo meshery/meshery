@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 white_image: /assets/img/service-meshes/istio-white.svg
 permalink: extensibility/adapters/istio
+redirect_from: service-meshes/adapters/istio
 language: en
 ---
 

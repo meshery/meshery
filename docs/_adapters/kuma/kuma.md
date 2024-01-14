@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 white_image: /assets/img/service-meshes/kuma-white.svg
 permalink: extensibility/adapters/kuma
+redirect_from: service-meshes/adapters/kuma
 language: en
 ---
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
