@@ -62,6 +62,17 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
+const useMeshModelComponentRouter = () => {
+  const router = useRouter();
+  const { query } = router;
+
+  const searchQuery = query.searchText || null;
+  const selectedTab = query.tab;
+  const selectedPageSize = query.pagesize || 14;
+
+  return { searchQuery, selectedTab, selectedPageSize };
+};
+
 const MeshModelComponent = ({
   modelsCount,
   componentsCount,
@@ -71,25 +82,26 @@ const MeshModelComponent = ({
 }) => {
   // const { selectedTab, changeTab } = useRegistryRouter()
   const router = useRouter();
-  const { selectedTab, handleChangeSelectedTab } = settingsRouter(router);
+  const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
+  const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
     Components: 0,
     Relationships: 0,
     Registrants: 0,
   });
-
-  const [searchText, setSearchText] = useState(null);
-  const [rowsPerPage] = useState(14);
+  const [searchText, setSearchText] = useState(searchQuery);
+  const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [sortOrder, setSortOrder] = useState({
     sort: SORT.ASCENDING,
     order: '',
   });
+  console.log('selectedTab', selectedTab);
   const StyleClass = useStyles();
-  const [view, setView] = useState(selectedTab || OVERVIEW);
+  const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
   const [show, setShow] = useState({
     model: {},
@@ -108,6 +120,9 @@ const MeshModelComponent = ({
     if (selectedTab) {
       setAnimate(true);
       setConvert(true);
+      setView(selectedTab);
+    } else {
+      setView(OVERVIEW);
     }
   }, [selectedTab]);
 
@@ -142,6 +157,7 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...components]);
         setSortOrder(sortOrder);
       }
+      setRowsPerPage(14)
     } catch (error) {
       console.error('Failed to fetch components:', error);
     }
@@ -160,6 +176,7 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...relationships]);
         setSortOrder(sortOrder);
       }
+      setRowsPerPage(14)
     } catch (error) {
       console.error('Failed to fetch relationships:', error);
     }
@@ -247,6 +264,7 @@ const MeshModelComponent = ({
 
         setResourcesDetail(tempRegistrants);
       }
+      setRowsPerPage(14)
     } catch (error) {
       console.error('Failed to fetch registrants:', error);
     }
@@ -520,6 +538,7 @@ const MeshModelComponent = ({
                   setPage={setPage}
                   checked={checked}
                   setChecked={setChecked}
+                  searchText={searchText}
                 />
               )}
             </div>
