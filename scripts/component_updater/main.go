@@ -290,6 +290,9 @@ func docsUpdater(output []map[string]string) {
 		if err != nil {
 			panic(err)
 		}
+
+		
+
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
