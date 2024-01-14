@@ -325,7 +325,7 @@ func (h *Handler) handlePatternPOST(
 
 			mesheryPattern.PatternFile = string(bytPattern)
 			mesheryPattern.CatalogData = parsedBody.PatternData.CatalogData
-			
+
 			if parsedBody.PatternData.ID != nil {
 				mesheryPattern.ID = parsedBody.PatternData.ID
 			}
@@ -1064,13 +1064,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrGetPattern(err),
-				}).WithDescription(fmt.Sprintf("Failed to fetch design file for ID: %s.", patternID)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrGetPattern(err))
-				go h.EventsBuffer.Publish(&res)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrGetPattern(err),
+		}).WithDescription(fmt.Sprintf("Failed to fetch design file for ID: %s.", patternID)).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		addMeshkitErr(&res, ErrGetPattern(err))
+		go h.EventsBuffer.Publish(&res)
 		return
 	}
 	pattern := &models.MesheryPattern{}
@@ -1079,13 +1079,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		obj := "download pattern"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		http.Error(rw, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": models.ErrUnmarshal(err, obj),
-				}).WithDescription(fmt.Sprintf("Failed to unmarshal design file for ID: %s.", patternID)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, models.ErrUnmarshal(err, obj))
-				go h.EventsBuffer.Publish(&res)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": models.ErrUnmarshal(err, obj),
+		}).WithDescription(fmt.Sprintf("Failed to unmarshal design file for ID: %s.", patternID)).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		addMeshkitErr(&res, models.ErrUnmarshal(err, obj))
+		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -1096,12 +1096,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, ErrCreateDir(err, "OCI").Error(), http.StatusInternalServerError)
 
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrCreateDir(err, "OCI"),
-				}).WithDescription("Error creating tmp directory under ~/.meshery/content/").Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrCreateDir(err, "OCI"))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrCreateDir(err, "OCI"),
+			}).WithDescription("Error creating tmp directory under ~/.meshery/content/").Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrCreateDir(err, "OCI"))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		defer os.RemoveAll(tmpDir)
@@ -1112,12 +1112,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrCreateFile(err, tmpDesignFile))
 			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrCreateFile(err, tmpDesignFile),
-				}).WithDescription(fmt.Sprintf("Error creating tmp file %s", tmpDesignFile)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrCreateFile(err, tmpDesignFile))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrCreateFile(err, tmpDesignFile),
+			}).WithDescription(fmt.Sprintf("Error creating tmp file %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrCreateFile(err, tmpDesignFile))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		defer file.Close()
@@ -1128,12 +1128,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrIOReader(err))
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrIOReader(err),
-				}).WithDescription(fmt.Sprintf("Error reading retrieved design file %s", pattern.Name)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrIOReader(err))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrIOReader(err),
+			}).WithDescription(fmt.Sprintf("Error reading retrieved design file %s", pattern.Name)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrIOReader(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -1141,12 +1141,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrWritingIntoFile(err, tmpDesignFile))
 			http.Error(rw, ErrWritingIntoFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrWritingIntoFile(err, tmpDesignFile),
-				}).WithDescription(fmt.Sprintf("Error writing into tmp design file %s at %s", pattern.Name, tmpDesignFile)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrWritingIntoFile(err, tmpDesignFile))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrWritingIntoFile(err, tmpDesignFile),
+			}).WithDescription(fmt.Sprintf("Error writing into tmp design file %s at %s", pattern.Name, tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrWritingIntoFile(err, tmpDesignFile))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -1155,12 +1155,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrBuildOCIImg(err))
 			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrBuildOCIImg(err),
-				}).WithDescription(fmt.Sprintf("Error building OCI Image from contents at %s", tmpDesignFile)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrBuildOCIImg(err))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error building OCI Image from contents at %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrBuildOCIImg(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -1169,12 +1169,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrBuildOCIImg(err))
 			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrBuildOCIImg(err),
-				}).WithDescription(fmt.Sprintf("Error getting image digest for %s", tmpDesignFile)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrBuildOCIImg(err))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error getting image digest for %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrBuildOCIImg(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -1182,22 +1182,22 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		if err != nil {
 			h.log.Error(ErrBuildOCIImg(err))
 			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrBuildOCIImg(err),
-				}).WithDescription(fmt.Sprintf("Error getting calculating image size for %s", tmpDesignFile)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrBuildOCIImg(err))
-				go h.EventsBuffer.Publish(&res)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error getting calculating image size for %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrBuildOCIImg(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
 		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
 
-			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
-			event := eventBuilder.Build()
-			go h.config.EventBroadcaster.Publish(userID, event)
-			_ = provider.PersistEvent(event)
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
+		event := eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(event)
 
 		pretifiedName := strings.ToLower(strings.Replace(pattern.Name, " ", "", -1)) // ensures that tag validation passes
 		tmpOCITarFilePath := filepath.Join(tmpDir, pretifiedName+".tar")
@@ -1205,13 +1205,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrSaveOCIArtifact(err),
-				}).WithDescription(fmt.Sprintf("Failed to save OCI Artifact %s temporarily", tmpOCITarFilePath)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSaveOCIArtifact(err))
-				go h.EventsBuffer.Publish(&res)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrSaveOCIArtifact(err),
+			}).WithDescription(fmt.Sprintf("Failed to save OCI Artifact %s temporarily", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrSaveOCIArtifact(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -1220,12 +1220,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
 			http.Error(rw, ErrOpenFile(tmpOCITarFilePath).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrOpenFile(tmpOCITarFilePath),
-				}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrOpenFile(tmpOCITarFilePath))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrOpenFile(tmpOCITarFilePath),
+			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrOpenFile(tmpOCITarFilePath))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		content, err := io.ReadAll(file)
@@ -1233,32 +1233,32 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			h.log.Error(ErrIOReader(err))
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrIOReader(err),
-				}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrIOReader(err))
-				go h.EventsBuffer.Publish(&res)
+				"error": ErrIOReader(err),
+			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrIOReader(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
 		h.log.Info("OCI Artifact successfully saved at: ", tmpOCITarFilePath)
 
-			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact temporarily saved at: %s", tmpOCITarFilePath))
-			event = eventBuilder.Build()
-			go h.config.EventBroadcaster.Publish(userID, event)
-			_ = provider.PersistEvent(event)
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact temporarily saved at: %s", tmpOCITarFilePath))
+		event = eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(event)
 
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrIOReader(err),
-				}).WithDescription("Failed to save contents of OCI Artifact at requested path").Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrIOReader(err))
-				go h.EventsBuffer.Publish(&res)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrIOReader(err),
+			}).WithDescription("Failed to save contents of OCI Artifact at requested path").Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			addMeshkitErr(&res, ErrIOReader(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		return

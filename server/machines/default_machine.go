@@ -34,7 +34,6 @@ func Disconnected() State {
 		RegisterEvent(Delete, DELETED)
 }
 
-
 func Initial() State {
 	state := &State{}
 	return *state.

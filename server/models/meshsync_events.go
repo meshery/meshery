@@ -38,7 +38,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		UserID:       userID,
 		ConnectionID: connID,
 		InstanceID:   instanceID,
-		Token: token,
+		Token:        token,
 	}
 }
 
