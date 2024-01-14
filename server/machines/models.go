@@ -185,7 +185,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				}
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
-				
+
 				sm.Log.Debug("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
