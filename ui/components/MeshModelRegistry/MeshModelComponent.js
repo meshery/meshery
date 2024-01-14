@@ -144,6 +144,7 @@ const MeshModelComponent = ({
     }
   };
 
+  // TODO: Use RTK
   const getComponents = async (page, sortOrder) => {
     try {
       const { total_count, components } = await getComponentsDetailWithPageSize(
@@ -163,6 +164,7 @@ const MeshModelComponent = ({
     }
   };
 
+  // TODO: Use RTK
   const getRelationships = async (page, sortOrder) => {
     try {
       const { total_count, relationships } = await getRelationshipsDetailWithPageSize(
@@ -181,7 +183,8 @@ const MeshModelComponent = ({
       console.error('Failed to fetch relationships:', error);
     }
   };
-
+  
+  // TODO: Use RTK
   const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText, {
@@ -296,6 +299,7 @@ const MeshModelComponent = ({
         });
   }, [checked]);
 
+  console.log("dataparent rerender")
   useEffect(() => {
     setRequestCancelled(false);
     // setLoading(true);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { IconButton, FormControlLabel, Switch, Tooltip } from '@material-ui/core';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
@@ -21,7 +21,6 @@ const ComponentTree = ({
   handleToggle,
   handleSelect,
   data,
-  handleScroll,
 }) => {
   return (
     <TreeView
@@ -36,23 +35,17 @@ const ComponentTree = ({
       expanded={expanded}
       selected={selected}
     >
-      <div
-        id="scrollElement"
-        style={{ overflowY: 'auto', height: '27rem' }}
-        onScroll={handleScroll(COMPONENTS)}
-      >
-        {data.map((component, index) => (
-          <StyledTreeItem
-            key={index}
-            nodeId={`${component.id}`}
-            check
-            labelText={component.displayName}
-            onClick={() => {
-              setComp(component);
-            }}
-          />
-        ))}
-      </div>
+      {data.map((component, index) => (
+        <StyledTreeItem
+          key={index}
+          nodeId={`${component.id}`}
+          check
+          labelText={component.displayName}
+          onClick={() => {
+            setComp(component);
+          }}
+        />
+      ))}
     </TreeView>
   );
 };
@@ -64,7 +57,6 @@ const RelationshipTree = ({
   handleToggle,
   handleSelect,
   data,
-  handleScroll,
 }) => {
   return (
     <TreeView
@@ -79,31 +71,22 @@ const RelationshipTree = ({
       expanded={expanded}
       selected={selected}
     >
-      <div
-        id="scrollElement"
-        style={{ overflowY: 'auto', maxHeight: '27rem' }}
-        onScroll={handleScroll(RELATIONSHIPS)}
-      >
-        {data.map((relationship, index) => (
-          <StyledTreeItem
-            key={index}
-            nodeId={`${relationship.id}`}
-            check
-            labelText={relationship.subType}
-            onClick={() => {
-              setRela(relationship);
-            }}
-          />
-        ))}
-      </div>
+      {data.map((relationship, index) => (
+        <StyledTreeItem
+          key={index}
+          nodeId={`${relationship.id}`}
+          check
+          labelText={relationship.subType}
+          onClick={() => {
+            setRela(relationship);
+          }}
+        />
+      ))}
     </TreeView>
   );
 };
 
-const MesheryTreeViewItem = ({
-  model,
-  setShow,
-}) => {
+const MesheryTreeViewItem = ({ model, setShow }) => {
   return (
     <StyledTreeItem
       key={model.id}
@@ -353,14 +336,14 @@ const MesheryTreeView = ({
 
   useEffect(() => {
     if (scrollRef.current) {
-      const div = document.getElementById('scrollElement');
+      const div = document.querySelector('.scrollElement');
       div.scrollTop = scrollRef.current;
     }
   }, [data]);
 
-  const handleChecked = () => {
-    setChecked(!checked);
-  };
+  const handleChecked = useCallback(() => {
+    setChecked((prevChecked) => !prevChecked);
+  }, [setChecked]);
 
   const expandAll = () => {
     const arr = [];
@@ -374,14 +357,14 @@ const MesheryTreeView = ({
 
   const handleSelect = (event, nodeIds) => {
     if (nodeIds.length >= 0) {
-      let selectedIdArr = selectedItemUUID.split('.')
+      let selectedIdArr = nodeIds[0].split('.');
       let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
-
+      
       // Filter object contains current filter applied to data
       // Route will contain filters to support deeplink
       const filter = {
         ...(searchText && { searchText }),
-        pagesize: indx + 5,
+        pagesize: indx + 14,
       };
       handleUpdateSelectedRoute(nodeIds, filter);
       setSelected([0, nodeIds]);
@@ -395,7 +378,7 @@ const MesheryTreeView = ({
   };
 
   useEffect(() => {
-    let selectedIdArr = selectedItemUUID.split('.')
+    let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
       setExpanded(
         selectedIdArr.reduce(
@@ -434,155 +417,136 @@ const MesheryTreeView = ({
     setRegi({});
   }, [view]);
 
-  console.log('data-->', data);
-
-  return (
-    <div style={{ width: '100%' }}>
-      {view === MODELS && (
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid #d2d3d4',
-            }}
-          >
-            <div>
-              {width < 1370 && isSearchExpanded ? null : (
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                  <Tooltip title="Expand All" placement="top">
-                    <IconButton onClick={expandAll} size="large" disableRipple>
-                      {/* <PlusSquare /> */}
-                      <KeyboardArrowDownIcon />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Collapse All" placement="top">
-                    <IconButton
-                      onClick={() => setExpanded([])}
-                      style={{ marginRight: '4px' }}
-                      size="large"
-                      disableRipple
-                    >
-                      {/* <MinusSquare /> */}
-                      <KeyboardArrowUpIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        color="primary"
-                        checked={checked}
-                        onClick={handleChecked}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                      />
-                    }
-                    label="Duplicates"
-                  />
-                </div>
-              )}
-            </div>
-            <div style={{ display: 'flex' }}>
-              <SearchBar
-                onSearch={debounce((value) => setSearchText(value), 200)}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder="Search"
-              />
-            </div>
-          </div>
-          <div
-            id="scrollElement"
-            style={{
-              overflowY: 'auto',
-              height: '27rem',
-            }}
-            onScroll={handleScroll(MODELS)}
-          >
-            <MesheryTreeViewModel
-              data={data}
-              setShow={setShow}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-            />
-          </div>
-        </div>
-      )}
-      {view === REGISTRANTS && (
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid #d2d3d4',
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <IconButton onClick={expandAll} size="large">
-                {/* <PlusSquare /> */}
+  const renderHeader = (type) => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid #d2d3d4',
+      }}
+    >
+      <div>
+        {width < 1370 && isSearchExpanded ? null : (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <Tooltip title="Expand All" placement="top">
+              <IconButton onClick={expandAll} size="large" disableRipple>
                 <KeyboardArrowDownIcon />
               </IconButton>
+            </Tooltip>
 
+            <Tooltip title="Collapse All" placement="top">
               <IconButton
                 onClick={() => setExpanded([])}
                 style={{ marginRight: '4px' }}
                 size="large"
+                disableRipple
               >
-                {/* <MinusSquare /> */}
                 <KeyboardArrowUpIcon />
               </IconButton>
-            </div>
+            </Tooltip>
+            {type === MODELS && 
+              <FormControlLabel
+                control={
+                  <Switch
+                    color="primary"
+                    checked={checked}
+                    onClick={handleChecked}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                  />
+                }
+                label="Duplicates"
+              />
+            }
           </div>
-          <div
-            id="scrollElement"
-            style={{ overflowY: 'auto', height: '27rem' }}
-            onScroll={handleScroll(REGISTRANTS)}
-          >
-            <MesheryTreeViewRegistrants
-              data={data}
-              setShow={setShow}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-            />
-          </div>
-        </div>
-      )}
-      {view === COMPONENTS && (
-        <ComponentTree
-          handleToggle={handleToggle}
-          handleSelect={handleSelect}
-          expanded={expanded}
-          selected={selected}
-          data={data}
-          comp={comp}
-          setExpanded={setExpanded}
-          setComp={setComp}
-          setSelected={setSelected}
-          handleScroll={handleScroll}
-          setSearchText={setSearchText}
+        )}
+      </div>
+      <div style={{ display: 'flex' }}>
+        <SearchBar
+          onSearch={debounce((value) => setSearchText(value), 200)}
+          expanded={isSearchExpanded}
+          setExpanded={setIsSearchExpanded}
+          placeholder="Search"
         />
-      )}
-      {view === RELATIONSHIPS && (
-        <RelationshipTree
-          handleToggle={handleToggle}
-          handleSelect={handleSelect}
-          expanded={expanded}
-          selected={selected}
-          data={data}
-          rela={rela}
-          setExpanded={setExpanded}
-          setRela={setRela}
-          setSelected={setSelected}
-          handleScroll={handleScroll}
-          setSearchText={setSearchText}
-        />
-      )}
+      </div>
+    </div>
+  );
+
+  const renderTree = (treeComponent, type) => (
+    <div>
+      {renderHeader(type)}
+      <div
+        className="scrollElement"
+        style={{ overflowY: 'auto', height: '27rem' }}
+        onScroll={handleScroll(type)}
+      >
+        {treeComponent}
+      </div>
+    </div>
+  );
+
+  console.log('data-->', data);
+
+  return (
+    <div style={{ width: '100%' }}>
+      {view === MODELS &&
+        renderTree(
+          <MesheryTreeViewModel
+            data={data}
+            setShow={setShow}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+          />,
+          MODELS,
+        )}
+      {view === REGISTRANTS &&
+        renderTree(
+          <MesheryTreeViewRegistrants
+            data={data}
+            setShow={setShow}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+          />,
+          REGISTRANTS,
+        )}
+      {view === COMPONENTS &&
+        renderTree(
+          <ComponentTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            comp={comp}
+            setExpanded={setExpanded}
+            setComp={setComp}
+            setSelected={setSelected}
+            handleScroll={handleScroll}
+            setSearchText={setSearchText}
+          />,
+          COMPONENTS,
+        )}
+      {view === RELATIONSHIPS &&
+        renderTree(
+          <RelationshipTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            rela={rela}
+            setExpanded={setExpanded}
+            setRela={setRela}
+            setSelected={setSelected}
+            handleScroll={handleScroll}
+            setSearchText={setSearchText}
+          />,
+          RELATIONSHIPS,
+        )}
     </div>
   );
 };
