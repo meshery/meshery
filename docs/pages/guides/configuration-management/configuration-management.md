@@ -74,7 +74,7 @@ Like patterns, Meshery also comes with some sample WebAssembly Filters for you t
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/layer5io/wasm-filters) repo.
 
-Meshery's sample application [ImageHub](guides/deploying-sample-apps) will let you test out configuring these filters out-of-the-box.
+Meshery's sample application [ImageHub](/docs/pages/guides/infrastructure-management/deploying-sample-apps.md) will let you test out configuring these filters out-of-the-box.
 
 You can onboard ImageHub to an installed service mesh as shown below.
 
@@ -104,7 +104,7 @@ Meshery can also manage your Kubernetes applications and deploy them to any of y
 
 ### Managing Applications Through Meshery UI
 
-Meshery has a set of [sample applications](./deploying-sample-apps.md) which you can use to quickly test out your deployment.
+Meshery has a set of [sample applications](/docs/pages/guides/infrastructure-management/deploying-sample-apps.md) which you can use to quickly test out your deployment.
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications-seeded.png" width="50%" />
 
@@ -118,7 +118,7 @@ The application files can be described in following formats:
 - Helm charts
 - Docker Compose Apps
 
-You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery](performance-management.md) for more details.
+You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery](/docs/pages/guides/performance-management/performance-management.md) for more details.
 
 ### Managing Applications Through Meshery CLI
 
