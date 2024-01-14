@@ -10,6 +10,7 @@ github_link: https://github.com/meshery/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 white_image: /assets/img/service-meshes/osm.svg
 permalink: extensibility/adapters/osm
+redirect_from: service-meshes/adapters/osm
 earliest_version: v0.9.2
 language: en
 ---
