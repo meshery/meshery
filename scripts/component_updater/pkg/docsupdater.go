@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"encoding/csv"
+	// "encoding/csv"
 	"bytes"
 	"encoding/xml"
 	"log"
@@ -35,14 +35,6 @@ published: <Publish>
    <Standard Blurb>
 </p>`
 
-// func createEmptyMarkdown(path string) error {
-//    file, err := os.Create(path)
-//    if err != nil {
-//       return err
-//    }
-//    _, err = file.Write([]byte(template))
-//    return err
-// }
 
 type TemplateAttributes struct {
 	Title                   string
@@ -66,44 +58,9 @@ type TemplateAttributes struct {
 }
 
 func (t TemplateAttributes) CreateMarkDown() string {
-	// markdown := "---\n"
-	// markdown += "title: " + t.Title + "\n"
-	// markdown += "subtitle: " + t.Subtitle + "\n"
-	// markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
-	// markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
-	// markdown += "docURL: " + t.DocURL + "\n"
-	// markdown += "category: " + t.Category + "\n"
-	// markdown += "subcategory: " + t.Subcategory + "\n"
-	// markdown += "featureList: " + t.FeatureList + "\n"
-	// markdown += "workingSlides: " + t.WorkingSlides + "\n"
-	// markdown += "howItWorks: " + t.HowItWorks + "\n"
-	// markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
-	// markdown += "published: " + t.Published + "\n"
-	// markdown += "---\n"
-	// markdown += t.AboutProject + "\n"
-	// markdown += t.StandardBlurb
 	markdown := t.FullPage
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
-}
-
-// Creates JSON formatted meshmodel attribute item for Meshery docs
-func (t TemplateAttributes) CreateJSONItem() string {
-	json := "{"
-	json += fmt.Sprintf("\"name\":\"%s\"", t.Title)
-	// If SVGs exist, then add the paths to json
-	if t.ColorSVG != "" {
-		json += fmt.Sprintf(",\"color\":\"../images/integration/%s-color.svg\"", t.ModelName)
-	}
-
-	if t.WhiteSVG != "" {
-		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", t.ModelName)
-	}
-
-	json += fmt.Sprintf(",\"permalink\":\"https://docs.meshery.io/extensibility/integrations/%s\"", FormatName(t.Title))
-
-	json += "}"
-	return json
 }
 
 func FormatName(input string) string {
@@ -246,43 +203,43 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 }
 
 
-func CreateIntegrationDocs(csvIndices CSVIndices) {
-	inputFile, err := os.Open("filtered.csv")
-	if err != nil {
-		log.Println("Error opening input file:", err)
-		return
-	}
-	defer inputFile.Close()
+// func CreateIntegrationDocs(csvIndices CSVIndices) {
+// 	inputFile, err := os.Open("filtered.csv")
+// 	if err != nil {
+// 		log.Println("Error opening input file:", err)
+// 		return
+// 	}
+// 	defer inputFile.Close()
 
-	csvReader := csv.NewReader(inputFile)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		log.Println("Error reading input file:", err)
-		return
-	}
-	GenerateIntegrationDocsSVG(records, csvIndices)
-	GenerateIntegrationDocs(records, csvIndices)
-}
+// 	csvReader := csv.NewReader(inputFile)
+	// records, err := csvReader.ReadAll()
+	// if err != nil {
+	// 	log.Println("Error reading input file:", err)
+	// 	return
+	// }
+	// GenerateIntegrationDocsSVG(records, csvIndices)
+	// GenerateIntegrationDocs(records, csvIndices)
+// }
 
-func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
-	for _, record := range records[1:] {
-		svgContent := record[csvIndices.SvgIndex]
-		fmt.Println("Creating SVG:", record[csvIndices.NameIndex])
-		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
-	}
-}
+// func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
+// 	for _, record := range records[1:] {
+// 		svgContent := record[csvIndices.SvgIndex]
+// 		fmt.Println("Creating SVG:", record[csvIndices.NameIndex])
+// 		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
+// 	}
+// }
 
-func GenerateIntegrationDocs(records [][]string, csvIndices CSVIndices) {
+// func GenerateIntegrationDocs(records [][]string, csvIndices CSVIndices) {
 
-	for _, record := range records[1:] {
+// 	for _, record := range records[1:] {
 
-		mdContent := generateMDContent(record, record[csvIndices.NameIndex], csvIndices)
+// 		mdContent := generateMDContent(record, record[csvIndices.NameIndex], csvIndices)
 
-		createFiles("../../docs/pages/integrations", ".md", record[csvIndices.NameIndex], mdContent)
-	}
-}
+// 		createFiles("../../docs/pages/integrations", ".md", record[csvIndices.NameIndex], mdContent)
+// 	}
+// }
 
-func createFiles(path, filetype, name, content string) {
+func CreateFiles(path, filetype, name, content string) {
 	formattedName := formatName(name)
 
 	fullPath := path + "/" + formattedName + filetype
@@ -307,15 +264,15 @@ func formatName(input string) string {
 	return formattedName
 }
 
-func generateMDContent(record []string, name string, csvIndices CSVIndices) string {
+func GenerateMDContent(t TemplateAttributes) string {
 	mdContent := ""
-	for i := csvIndices.IndexStart; i <= csvIndices.IndexEnd; i++ {
-		if record[i] != "" && !strings.Contains(record[i], "https") {
-			mdContent += strconv.Itoa(i-(csvIndices.IndexStart-1)) + `.` + ` ` + record[i] + "\n\n"
-		}
-	}
+	// for i := csvIndices.IndexStart; i <= csvIndices.IndexEnd; i++ {
+	// 	if record[i] != "" && !strings.Contains(record[i], "https") {
+	// 		mdContent += strconv.Itoa(i-(csvIndices.IndexStart-1)) + `.` + ` ` + record[i] + "\n\n"
+	// 	}
+	// }
 
-	formattedName := formatName(name)
+	formattedName := formatName(t.ModelName)
 
 	// Remove <p> and </p> tags and replace them with one line gap
 	overviewAndFeatures := strings.Replace(mdContent, "<p>", "", -1)
@@ -323,12 +280,12 @@ func generateMDContent(record []string, name string, csvIndices CSVIndices) stri
 
 	content := `---
 layout: enhanced
-title: ` + name + `
+title: ` + formattedName + `
 permalink: extensibility/integrations/` + formattedName + `
 type: extensibility
 category: integrations
-integrations-category: ` + record[2] + `
-integrations-subcategory: ` + record[3] + `
+integrations-category: ` + t.Category + `
+integrations-subcategory: ` + t.Subcategory + `
 display-title: "false"
 language: en
 list: include
@@ -339,7 +296,7 @@ image: /assets/img/integrations/` + formattedName + `.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### About: ` + record[25] + ` -->
+ #### About: ` + ` -->
 
 ### Overview & Features:
 
