@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Keylime
-permalink: integrations/keylime
-type: installation
+permalink: extensibility/integrations/keylime
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/keylime.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: keylime -->
+ #### About: CNCF is an open source software foundation that hosts and nurtures projects like Kubernetes and Prometheus. -->
 
 ### Overview & Features:
+
 1. CNCF is an open source software foundation that hosts and nurtures projects like Kubernetes and Prometheus.
 
 2. Collaborative and visual infrastructure as code for Keylime

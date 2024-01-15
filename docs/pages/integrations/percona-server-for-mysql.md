@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Server for MySQL
-permalink: integrations/percona-server-for-mysql
-type: installation
+permalink: extensibility/integrations/percona-server-for-mysql
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/percona-server-for-mysql.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: ps-db -->
+ #### About: The Prometheus monitoring system and time series database. -->
 
 ### Overview & Features:
+
 1. The Prometheus monitoring system and time series database.
 
 2. Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh’s control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.

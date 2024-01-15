@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS CloudTrail
-permalink: integrations/aws-cloudtrail
-type: installation
+permalink: extensibility/integrations/aws-cloudtrail
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-cloudtrail.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-cloudtrail-controller -->
+ #### About: AWS CloudTrail monitors and records account activity across your AWS infrastructure, giving you control over storage, analysis, and remediation actions. -->
 
 ### Overview & Features:
+
 1. AWS CloudTrail monitors and records account activity across your AWS infrastructure, giving you control over storage, analysis, and remediation actions.
 
 2. Collaborative and visual infrastructure as code for AWS CloudTrail

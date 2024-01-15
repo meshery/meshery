@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Contour
-permalink: integrations/contour
-type: installation
+permalink: extensibility/integrations/contour
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/contour.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: contour-operator -->
+ #### About: Contour is a Kubernetes ingress controller using Envoy proxy. -->
 
 ### Overview & Features:
+
 1. Contour is a Kubernetes ingress controller using Envoy proxy.
 
 2. Collaborative and visual infrastructure as code for Contour

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: KubeSphere
-permalink: installation/kubesphere
+permalink: installation/kubernetes/kubesphere
 type: installation
 category: kubernetes
 redirect_from:

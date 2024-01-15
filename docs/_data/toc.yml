@@ -30,8 +30,8 @@
             url: installation/kubernetes/kind
           - title: "Minikube"
             url: installation/kubernetes/minikube
-      - title: KubeSphere
-        url: installation/kubesphere
+          - title: KubeSphere
+            url: installation/kubernetes/kubesphere
       - title: Linux or macOS ↆ
         url: installation/linux-mac
         grandchildren: 
@@ -100,24 +100,24 @@
       url: concepts/logical
       children: 
         - title: "Designs"
-          url: concepts/designs
+          url: concepts/logical/designs
         - title: "Environments"
-          url: concepts/environments          
+          url: concepts/logical/environments          
         - title: "Models ↆ"
-          url: concepts/models
+          url: concepts/logical/models
           grandchildren: 
           - title: "Components"
-            url: concepts/components
+            url: concepts/logical/components
           - title: "Relationships"
-            url: concepts/relationships
+            url: concepts/logical/relationships
           - title: "Policies"
-            url: concepts/policies
+            url: concepts/logical/policies
           - title: "Connections"
-            url: concepts/connections
+            url: concepts/logical/connections
           - title: "Credentials"
-            url: concepts/credentials
+            url: concepts/logical/credentials
         - title: "Workspaces"
-          url: concepts/workspaces
+          url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -196,11 +196,11 @@
       url: tasks/lifecycle-management
       children:
       - title: Registering a Connection
-        url: guides/registering-a-connection
+        url: guides/infrastructure-management/registering-a-connection
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management
-      url: tasks/performance-management
+      url: tasks/performance/managing-performance
 - title: 🛠 Integrations and Extensions
   url: extensibility
   links:
@@ -235,26 +235,26 @@
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
           url: extensibility/adapters/traefik-mesh
-    - title: "Integrations ↆ"
+    - title: "Integrations"
       url: extensibility/integrations
     - title: "Load Generators"
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
-    - title: "UI Plugins ↆ"
+    - title: "UI Plugins"
       url: extensibility/ui      
     - title: "🦾 Extensions ↆ"
       url: extensions
       children:
         - title: "Plugin: MeshMap"
           url: extensions/meshmap
-          grandchildren:
-          - title: "Sharing a Design"
-            url: extensions/sharing-a-design
+          # grandchildren:
+          # - title: "Sharing a Design"
+          #   url: extensions/sharing-a-design
         - title: "GitOps: Snapshots"
           url: extensions/snapshot
-        - title: "Provider: Layer5 Cloud"
-          url: extensions/layer5-cloud
+        # - title: "Provider: Layer5 Cloud"
+        #   url: extensions/layer5-cloud
       # children:
       # - title: Building a Remote Provider
       #   url: extensibility/providers/building-a-remote-provider

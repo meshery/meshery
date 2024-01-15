@@ -22,6 +22,11 @@ const (
 	MesheryServerBrokerConnection = "meshery-server"
 )
 
+type MesheryControllerStatusAndVersion struct {
+	Status  controllers.MesheryControllerStatus
+	Version string
+}
+
 type MesheryController int
 
 const (
@@ -39,7 +44,7 @@ type MesheryControllersHelper struct {
 	// maps each context with a meshsync data handler
 	ctxMeshsyncDataHandlerMap map[string]MeshsyncDataHandler
 
-	mu                sync.Mutex
+	mu sync.Mutex
 
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
@@ -130,18 +135,18 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
-		
+
 		// resetting this value as a specific controller handler instance does not have any significance opposed to
 		// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 		mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
 		for _, ctx := range ctxs {
-			
+
 			ctxID := ctx.ID
 			cfg, _ := ctx.GenerateKubeConfig()
 			client, err := mesherykube.New(cfg)
 			// means that the config is invalid
 			if err != nil {
-				
+
 				// invalid configs are not added to the map
 				continue
 			}
@@ -223,9 +228,9 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
-				
+
 				if oprStatus == controllers.NotDeployed {
-					
+
 					err := ctrlHandler[MesheryOperator].Deploy(false)
 					if err != nil {
 						mch.log.Error(err)
@@ -240,17 +245,17 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
-		
+
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-					
+
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
-				
+
 				if oprStatus != controllers.Undeployed {
-					
+
 					err := ctrlHandler[MesheryOperator].Undeploy()
-					
+
 					if err != nil {
 						mch.log.Error(err)
 					}

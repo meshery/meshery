@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Jfrog Distribution
-permalink: integrations/jfrog-distribution
-type: installation
+permalink: extensibility/integrations/jfrog-distribution
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/jfrog-distribution.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: distribution -->
+ #### About: The toolkit to pack, ship, store, and deliver container content -->
 
 ### Overview & Features:
+
 1. The toolkit to pack, ship, store, and deliver container content
 
 2. Managed release binary distribution with JFrog distribution

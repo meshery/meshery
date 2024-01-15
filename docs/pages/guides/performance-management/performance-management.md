@@ -3,6 +3,7 @@ layout: default
 title: Performance Management with Meshery
 abstract: This guide is to help users get a better overview of running and managing performance tests in Meshery
 permalink: guides/performance/performance-management
+redirect_from: functionality/performance-management
 type: guides
 category: performance
 command: perf
@@ -27,7 +28,7 @@ To install a service mesh, see [this guide]({{ site.baseurl }}/service-meshes).
 
 Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your service mesh.
 
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 

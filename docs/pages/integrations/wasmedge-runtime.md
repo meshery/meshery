@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Wasmedge Runtime
-permalink: integrations/wasmedge-runtime
-type: installation
+permalink: extensibility/integrations/wasmedge-runtime
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/wasmedge-runtime.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: wasmedgeruntime -->
+ #### About: WasmEdge is a lightweight, high-performance, and extensible WebAssembly runtime for cloud native, edge, and decentralized applications. It powers serverless apps, embedded functions, microservices, smart contracts, and IoT devices. -->
 
 ### Overview & Features:
+
 1. WasmEdge is a lightweight, high-performance, and extensible WebAssembly runtime for cloud native, edge, and decentralized applications. It powers serverless apps, embedded functions, microservices, smart contracts, and IoT devices.
 
 2. Collaborative and visual infrastructure as code for Wasmedge Runtime

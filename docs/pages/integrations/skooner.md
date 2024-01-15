@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Skooner
-permalink: integrations/skooner
-type: installation
+permalink: extensibility/integrations/skooner
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/skooner.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: skooner -->
+ #### About: Simple Kubernetes real-time dashboard and management. -->
 
 ### Overview & Features:
+
 1. Simple Kubernetes real-time dashboard and management.
 
 2. Collaborative and visual infrastructure as code for Skooner

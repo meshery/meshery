@@ -1221,7 +1221,7 @@ paths:
                 - GetAllMeshmodelRelationships
     /api/meshmodels/relationships/evaluate:
         post:
-            description: Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
+            description: Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
             operationId: relationshipPolicyEvalPayloadWrapper
             responses: {}
             tags:
@@ -1383,6 +1383,24 @@ paths:
                 "200":
                     description: ""
             summary: Handle POST request for Pattern Deploy
+            tags:
+                - PatternsAPI
+    /api/pattern/download/{id}:
+        get:
+            description: Fetches the pattern with the given id
+            operationId: idGetMesheryPattern
+            parameters:
+                - description: id for a specific
+                  format: uuid
+                  in: path
+                  name: id
+                  required: true
+                  type: string
+                  x-go-name: ID
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle GET for a Meshery Pattern
             tags:
                 - PatternsAPI
     /api/pattern/download/{id}/{sourcetype}:
@@ -2613,6 +2631,8 @@ responses:
                 type: string
             displayhostname:
                 type: string
+            evaluationQuery:
+                type: string
             hostID: {}
             hostname:
                 type: string
@@ -2620,8 +2640,6 @@ responses:
                 type: string
             metadata: {}
             model: {}
-            rego_query:
-                type: string
             selectors: {}
             subType:
                 type: string

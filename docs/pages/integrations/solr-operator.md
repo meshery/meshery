@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Solr Operator
-permalink: integrations/solr-operator
-type: installation
+permalink: extensibility/integrations/solr-operator
+type: extensibility
 category: integrations
+integrations-category: Analytics
+integrations-subcategory: Query
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/solr-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: solr-operator -->
+ #### About: Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more. Solr powers the search and navigation features of many of the world's largest internet sites. -->
 
 ### Overview & Features:
+
 1. Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more. Solr powers the search and navigation features of many of the world's largest internet sites.
 
 2. Collaborative and visual infrastructure as code for Solr Operator

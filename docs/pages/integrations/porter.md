@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Porter
-permalink: integrations/porter
-type: installation
+permalink: extensibility/integrations/porter
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/porter.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: porter -->
+ #### About: Porter enables you to package your application artifact, client tools, configuration and deployment logic together as an installer that you can distribute, and install with a single command. -->
 
 ### Overview & Features:
+
 1. Porter enables you to package your application artifact, client tools, configuration and deployment logic together as an installer that you can distribute, and install with a single command.
 
 2. Collaborative and visual infrastructure as code for Porter

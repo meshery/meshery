@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Node Termination Handler
-permalink: integrations/aws-node-termination-handler
-type: installation
+permalink: extensibility/integrations/aws-node-termination-handler
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,11 @@ image: /assets/img/integrations/aws-node-termination-handler.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-node-termination-handler-2 -->
+ #### About: Gracefully handle EC2 instance shutdown within Kubernetes
+ -->
 
 ### Overview & Features:
+
 1. Gracefully handle EC2 instance shutdown within Kubernetes
 
 

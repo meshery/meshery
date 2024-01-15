@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Antrea
-permalink: integrations/antrea
-type: installation
+permalink: extensibility/integrations/antrea
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Network
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/antrea.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: antrea -->
+ #### About: Kubernetes networking based on Open vSwitch -->
 
 ### Overview & Features:
+
 1. Kubernetes networking based on Open vSwitch
 
 2. Collaborative and visual infrastructure as code for Antrea

@@ -229,3 +229,34 @@
     }
   }
 }
+.collapse {
+
+  &:not(.show) {
+    display: none;
+  }
+}
+
+.collapsing {
+  height: 0;
+  overflow: hidden;
+  transition: all .4s ease-out;
+
+  &.collapse-horizontal {
+    width: 0;
+    height: auto;
+  }
+}
+
+.toggle {
+  padding: 1px;
+  display: inline;
+  &:hover {
+    cursor: pointer;
+    color: var(--brand-color);
+  }
+  &:active {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+  }
+}

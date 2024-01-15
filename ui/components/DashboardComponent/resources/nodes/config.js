@@ -176,8 +176,8 @@ export const NodeTableConfig = (
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let addresses = attribute?.addresses || [];
-            let externalIP =
-              addresses?.find((address) => address.type === 'ExternalIP')?.address || '';
+            let externalIP = addresses?.find((address) => address.type === 'ExternalIP')
+              ?.address || <span style={{ display: 'flex', justifyContent: 'center' }}>-</span>;
             return <>{externalIP}</>;
           },
         },

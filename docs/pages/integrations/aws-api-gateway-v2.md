@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS API Gateway v2
-permalink: integrations/aws-api-gateway-v2
-type: installation
+permalink: extensibility/integrations/aws-api-gateway-v2
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,11 @@ image: /assets/img/integrations/aws-api-gateway-v2.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-apigatewayv2-controller -->
+ #### About: Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. APIs act as the "front door" for applications to access data, business logic, or functionality from your backend services. Using API Gateway, you can create RESTful APIs and WebSocket APIs that enable real-time two-way communication applications. API Gateway supports containerized and serverless workloads, as well as web applications.
+ -->
 
 ### Overview & Features:
+
 1. Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. APIs act as the "front door" for applications to access data, business logic, or functionality from your backend services. Using API Gateway, you can create RESTful APIs and WebSocket APIs that enable real-time two-way communication applications. API Gateway supports containerized and serverless workloads, as well as web applications.
 
 
