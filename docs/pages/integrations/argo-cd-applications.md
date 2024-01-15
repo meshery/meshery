@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Argo CD Applications
-permalink: integrations/argo-cd-applications
-type: installation
+permalink: extensibility/integrations/argo-cd-applications
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/argo-cd-applications.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: argo-cd -->
+ #### About: Workflow engine for Kubernetes -->
 
 ### Overview & Features:
+
 1. Workflow engine for Kubernetes
 
 2. Collaborative and visual infrastructure as code for Argo CD Applications

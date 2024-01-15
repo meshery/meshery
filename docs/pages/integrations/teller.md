@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Teller
-permalink: integrations/teller
-type: installation
+permalink: extensibility/integrations/teller
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/teller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: teller -->
+ #### About: Cloud native secrets management for developers - never leave your command line for secrets. -->
 
 ### Overview & Features:
+
 1. Cloud native secrets management for developers - never leave your command line for secrets.
 
 2. Collaborative and visual infrastructure as code for Teller

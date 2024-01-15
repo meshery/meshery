@@ -8,6 +8,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
+import { FormatId } from '@/components/DataFormatter';
 
 export const ConfigurationTableConfig = (
   switchView,
@@ -31,7 +32,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -163,7 +166,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -313,7 +318,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -445,7 +452,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -580,7 +589,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -759,7 +770,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -894,7 +907,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -1087,7 +1102,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -1220,7 +1237,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -1355,7 +1374,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',
@@ -1503,7 +1524,9 @@ export const ConfigurationTableConfig = (
         {
           name: 'id',
           label: 'ID',
-          options: {},
+          options: {
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
         },
         {
           name: 'metadata.name',

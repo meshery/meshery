@@ -1,15 +1,20 @@
 package connections
 
 import (
+	"context"
 	"database/sql"
+	"github.com/layer5io/meshkit/models/events"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/layer5io/meshkit/logger"
 )
 
 // swagger:response ConnectionStatus
 type ConnectionStatus string
+
+type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
 const (
 	DISCOVERED   ConnectionStatus = "discovered"

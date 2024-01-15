@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Virtual Kubelet
-permalink: integrations/virtual-kubelet
-type: installation
+permalink: extensibility/integrations/virtual-kubelet
+type: extensibility
 category: integrations
+integrations-category: Serverless
+integrations-subcategory: Installable Platform
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/virtual-kubelet.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: virtual kubelet -->
+ #### About: Virtual Kubelet is an open source Kubernetes kubelet implementation. -->
 
 ### Overview & Features:
+
 1. Virtual Kubelet is an open source Kubernetes kubelet implementation.
 
 2. Collaborative and visual infrastructure as code for Virtual Kubelet

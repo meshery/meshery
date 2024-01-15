@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Epam Delivery Platform (EDP) Admin Console
-permalink: integrations/epam-delivery-platform-(edp)-admin-console
-type: installation
+permalink: extensibility/integrations/epam-delivery-platform-(edp)-admin-console
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/epam-delivery-platform-(edp)-admin-console.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: admin-console-operator -->
+ #### About: A Helm chart for EDP Admin Console Operator -->
 
 ### Overview & Features:
+
 1. A Helm chart for EDP Admin Console Operator
 
 2. Collaborative and visual infrastructure as code for Epam Delivery Platform (EDP) Admin Console

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
@@ -11,6 +11,7 @@ import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const ACTION_TYPES = {
   FETCH_PATTERNS: {
@@ -104,7 +105,10 @@ export default function MesheryConfigurationChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Configuration
           </Typography>
-          <Tooltip title="Learn more about Configuration Management in Meshery" placement="right">
+          <CustomTextTooltip
+            title="Learn more about Configuration Management in Meshery"
+            placement="left"
+          >
             <InfoIcon
               color={theme.palette.secondary.iconMain}
               style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
@@ -113,7 +117,7 @@ export default function MesheryConfigurationChart({ classes }) {
                 window.open(url, '_blank');
               }}
             />
-          </Tooltip>
+          </CustomTextTooltip>
         </div>
         <Box
           sx={{

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Jaeger Operator
-permalink: integrations/jaeger-operator
-type: installation
+permalink: extensibility/integrations/jaeger-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Tracing
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/jaeger-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: jaeger-operator -->
+ #### About: CNCF Jaeger, a Distributed Tracing Platform -->
 
 ### Overview & Features:
+
 1. CNCF Jaeger, a Distributed Tracing Platform
 
 2. Collaborative and visual infrastructure as code for Jaeger Operator

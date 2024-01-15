@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Camel K
-permalink: integrations/camel-k
-type: installation
+permalink: extensibility/integrations/camel-k
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/camel-k.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: camel-k -->
+ #### About: Apache Camel K is a lightweight integration platform, born on Kubernetes, with serverless superpowers. -->
 
 ### Overview & Features:
+
 1. Apache Camel K is a lightweight integration platform, born on Kubernetes, with serverless superpowers.
 
 2. Collaborative and visual infrastructure as code for Camel K

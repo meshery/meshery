@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Emissary Ingress
-permalink: integrations/emissary-ingress
-type: installation
+permalink: extensibility/integrations/emissary-ingress
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/emissary-ingress.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: emissary-ingress -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Emissary Ingress
 
 4. 

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Target Group Binding
-permalink: integrations/aws-target-group-binding
-type: installation
+permalink: extensibility/integrations/aws-target-group-binding
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-target-group-binding.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-target-group-binding -->
+ #### About: Povision a TargetGroupBinding resource that can be combined with an externally provisioned AWS Loadbalancer to provide an ingress route into the defined kubernetes service. -->
 
 ### Overview & Features:
+
 1. Povision a TargetGroupBinding resource that can be combined with an externally provisioned AWS Loadbalancer to provide an ingress route into the defined kubernetes service.
 
 2. Collaborative and visual infrastructure as code for AWS Target Group Binding

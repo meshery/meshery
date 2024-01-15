@@ -3,6 +3,7 @@ title: News
 permalink: /news/
 excluded_in_search: true
 language: en
+display-title: "false"
 ---
 
 # News

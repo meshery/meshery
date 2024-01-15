@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Step Functions
-permalink: integrations/aws-step-functions
-type: installation
+permalink: extensibility/integrations/aws-step-functions
+type: extensibility
 category: integrations
+integrations-category: Serverless
+integrations-subcategory: Serverless
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-step-functions.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-sfn-controller -->
+ #### About: AWS Step Functions is a serverless orchestration service that lets you integrate with AWS Lambda functions and other AWS services to build business-critical applications.  -->
 
 ### Overview & Features:
+
 1. AWS Step Functions is a serverless orchestration service that lets you integrate with AWS Lambda functions and other AWS services to build business-critical applications. 
 
 2. Collaborative and visual infrastructure as code for AWS Step Functions

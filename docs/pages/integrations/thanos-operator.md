@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Thanos Operator
-permalink: integrations/thanos-operator
-type: installation
+permalink: extensibility/integrations/thanos-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/thanos-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: thanos-operator -->
+ #### About: Highly available Prometheus setup with long term storage capabilities. A CNCF Incubating project. -->
 
 ### Overview & Features:
+
 1. Highly available Prometheus setup with long term storage capabilities. A CNCF Incubating project.
 
 2. Collaborative and visual infrastructure as code for Thanos Operator

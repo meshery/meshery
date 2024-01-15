@@ -20,6 +20,8 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -109,6 +111,7 @@ function FiltersCard_({
                   title="Publish"
                   className={classes.testsButton}
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Publish </span>
@@ -119,6 +122,9 @@ function FiltersCard_({
                   title="Unpublish"
                   className={classes.testsButton}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  disabled={
+                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
+                  }
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Unpublish </span>
@@ -129,6 +135,9 @@ function FiltersCard_({
                 variant="contained"
                 color="primary"
                 onClick={handleDownload}
+                disabled={
+                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
+                }
               >
                 <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
                 <span className={classes.btnText}>Download</span>
@@ -140,6 +149,7 @@ function FiltersCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
+                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}>Clone</span>
@@ -151,6 +161,9 @@ function FiltersCard_({
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 className={classes.testsButton}
+                disabled={
+                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
+                }
               >
                 <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
                 <span className={classes.btnText}> Info </span>
@@ -237,14 +250,20 @@ function FiltersCard_({
               <div className={classes.updateDeleteButtons}>
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
-                  <IconButton onClick={(ev) => genericClickHandler(ev, updateHandler)}>
+                  <IconButton
+                    disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+                    onClick={(ev) => genericClickHandler(ev, updateHandler)}
+                  >
                     <Save color="primary" />
                   </IconButton>
                 </Tooltip>
 
                 {/* Delete Button */}
                 <Tooltip title="Delete" arrow interactive placement="bottom">
-                  <IconButton onClick={(ev) => genericClickHandler(ev, deleteHandler)}>
+                  <IconButton
+                    disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
+                    onClick={(ev) => genericClickHandler(ev, deleteHandler)}
+                  >
                     <DeleteIcon color="primary" />
                   </IconButton>
                 </Tooltip>

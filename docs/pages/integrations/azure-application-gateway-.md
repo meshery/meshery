@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Azure Application Gateway 
-permalink: integrations/azure-application-gateway-
-type: installation
+permalink: extensibility/integrations/azure-application-gateway-
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/azure-application-gateway-.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aks-appgw-fe -->
+ #### About: Create generic frontend web application in AKS with SSL termination on an Application Gateway -->
 
 ### Overview & Features:
+
 1. Create generic frontend web application in AKS with SSL termination on an Application Gateway
 
 2. Collaborative and visual infrastructure as code for Azure Application Gateway 

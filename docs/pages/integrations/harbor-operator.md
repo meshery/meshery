@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Harbor Operator
-permalink: integrations/harbor-operator
-type: installation
+permalink: extensibility/integrations/harbor-operator
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/harbor-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: harbor-operator -->
+ #### About: Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker. -->
 
 ### Overview & Features:
+
 1. Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker.
 
 2. Collaborative and visual infrastructure as code for Harbor Operator

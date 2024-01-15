@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Lambda
-permalink: integrations/aws-lambda
-type: installation
+permalink: extensibility/integrations/aws-lambda
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Serverless
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-lambda.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-lambda-controller -->
+ #### About: AWS Lambda enables you to run code without provisioning or managing servers, creating workload-aware cluster scaling logic, maintaining event integrations, or managing runtimes. -->
 
 ### Overview & Features:
+
 1. AWS Lambda enables you to run code without provisioning or managing servers, creating workload-aware cluster scaling logic, maintaining event integrations, or managing runtimes.
 
 2. Collaborative and visual infrastructure as code for AWS Lambda

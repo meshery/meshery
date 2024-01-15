@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: K8s Vault Controller
-permalink: integrations/k8s-vault-controller
-type: installation
+permalink: extensibility/integrations/k8s-vault-controller
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/k8s-vault-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: k8svault-controller -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for K8s Vault Controller
 
 4. 

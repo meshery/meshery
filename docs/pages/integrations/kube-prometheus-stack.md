@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kube Prometheus Stack
-permalink: integrations/kube-prometheus-stack
-type: installation
+permalink: extensibility/integrations/kube-prometheus-stack
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kube-prometheus-stack.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kube-prometheus-stack -->
+ #### About: Prometheus is an open-source systems monitoring and alerting toolkit -->
 
 ### Overview & Features:
+
 1. Prometheus is an open-source systems monitoring and alerting toolkit
 
 2. Collaborative and visual infrastructure as code for Kube Prometheus Stack

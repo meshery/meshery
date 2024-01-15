@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Docker
-permalink: integrations/docker
-type: installation
+permalink: extensibility/integrations/docker
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/docker.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: docker -->
+ #### About: Develop service mesh-ready apps using Docker Desktop and Meshery -->
 
 ### Overview & Features:
+
 1. Develop service mesh-ready apps using Docker Desktop and Meshery
 
 2. Collaborative and visual infrastructure as code for Docker

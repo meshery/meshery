@@ -1,11 +1,12 @@
 ---
-layout: default
+layout: enhanced
 title: Sharing a Design
 permalink: extensions/sharing-a-design
 language: en
 display-title: "false"
-list: exclude
-type: meshmap
+list: include
+type: extensions
+category: meshmap
 ---
 
 # Sharing a Design
