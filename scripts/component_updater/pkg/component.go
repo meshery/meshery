@@ -15,11 +15,12 @@ var (
 type ComponentCSV struct {
 	ModelDisplayName string `json:"modelDisplayName"` // change to component
 	Model string `json:"model"`
-	Component string `json:"component"`
 	// Registrant string `json:"registrant"`
 	Category string `json:"category"`
 	SubCategory string `json:"subCategory"`
 	Link string `json:"ling"` // convert to source
+	HasSchema string `json:"hasSchema"`
+	Component string `json:"component"`
 	Website string `json:"website"`
 	Docs string `json:"docs"`
 	Shape string `json:"shape"`
@@ -64,20 +65,8 @@ func NewComponentCSVHelper(sheetURL string) (*ComponentCSVHelper, error) {
 	return &ComponentCSVHelper{
 		SheetID: componentSheetID,
 		CSVPath: csvPath,
+		Components: make(map[string][]ComponentCSV),
 	}, nil
-}
-
-func getIndexForRegisterColForComp(cols []string) int {
-	if shouldRegisterColIndex != -1 {
-		return shouldRegisterColIndex
-	}
-
-	for index, col := range cols {
-		if col == shouldRegisterComp {
-			return index
-		}
-	}
-	return shouldRegisterColIndex
 }
 
 
@@ -85,18 +74,12 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet(){
 	ch := make(chan ComponentCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
-		index := getIndexForRegisterColForComp(columns)
-		idx := getIndexForRegisterColForComp(columns)
-		flag := false
-		if index != -1 && index < len(currentRow){
+		index := GetIndexForRegisterCol(columns, shouldRegisterComp)
+		if index != -1 && index < len(currentRow) {
 			shouldRegister := currentRow[index]
-			flag = strings.ToLower(shouldRegister) == "true"
+			return strings.ToLower(shouldRegister) != ""
 		}
-		if idx != -1 && idx < len(currentRow){
-			shouldRegister := currentRow[idx]
-			flag = flag && strings.ToLower(shouldRegister) == ""
-		}
-		return flag
+		return false
 	})
 
 	if err != nil {
@@ -116,7 +99,6 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet(){
 		case data := <-ch:
 			if mch.Components[data.Model] == nil {
 				mch.Components[data.Model] = make([]ComponentCSV, 0)
-				return
 			}
 			mch.Components[data.Model] = append(mch.Components[data.Model], data)
 		case err := <-errorChan:
