@@ -181,11 +181,7 @@ class MesherySettings extends React.Component {
     super(props);
     const { k8sconfig, meshAdapters, grafana, prometheus, router } = props;
 
-    const { selectedSettingsCategory, selectedTab, handleChangeSettingsCategory } =
-      settingsRouter(router);
-    if (!selectedSettingsCategory) {
-      handleChangeSettingsCategory(ADAPTERS);
-    }
+    const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
     this._isMounted = false;
     this.state = {
       completed: {},
@@ -206,7 +202,6 @@ class MesherySettings extends React.Component {
       // Array of scanned grafan urls
       scannedGrafana: [],
     };
-
     this.systemResetPromptRef = React.createRef();
   }
 
@@ -239,6 +234,14 @@ class MesherySettings extends React.Component {
       st.scannedPrometheus = props.telemetryUrls.prometheus;
     }
     return st;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { selectedSettingsCategory } = settingsRouter(this.props.router);
+
+    if (selectedSettingsCategory && selectedSettingsCategory !== prevState.tabVal) {
+      this.setState({ tabVal: selectedSettingsCategory });
+    }
   }
 
   async componentDidMount() {
