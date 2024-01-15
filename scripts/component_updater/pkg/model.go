@@ -3,15 +3,14 @@ package pkg
 import (
 	"fmt"
 	"strings"
+	"path/filepath"
 
 	"github.com/layer5io/meshkit/utils/csv"
 )
 
 var (
-	rowIndex = 1
-	shouldRegisterMod        = "Publish?"
-	shouldRegisterColIndex = -1
-	sheetID = "1551563103" // update
+	shouldRegisterMod        = "publishToSites"
+	sheetID = "234040173" // update
 )
 
 type ModelCSV struct {
@@ -20,7 +19,8 @@ type ModelCSV struct {
 	Registrant string `json:"registrant"`
 	Category string `json:"category"`
 	SubCategory string `json:"subCategory"`
-	Source string `json:"source"`
+	Description string `json:"description"`
+	SourceURL string `json:"sourceURL"`
 	Website string `json:"website"`
 	Docs string `json:"docs"`
 	Shape string `json:"shape"`
@@ -36,17 +36,19 @@ type ModelCSV struct {
 	SVGWhite string `json:"svgWhite"`
 	SVGComplete string `json:"svgComplete"`
 	PublishToRegistry string `json:"publishToRegistry"`
-	ModelAnnotation string `json:"modelAnnotation"`
+	IsAnnotation string `json:"isAnnotation"`
 	AboutProject string `json:"aboutProject"`
 	PageSubtTitle string `json:"pageSubtitle"`
+	DocsURL string `json:"docsURL"`
+	StandardBlurb string `json:"standardBlurb"`
 	Feature1 string `json:"feature1"`
 	Feature2 string `json:"feature2"`
 	Feature3 string `json:"feature3"`
 	HowItWorks string `json:"howItWorks"`
 	HowItWorksDetails string `json:"howItWorksDetails"`
-	StandardBlurb string `json:"standardBlurb"`
 	Screenshots string `json:"screenshots"`
 	FullPage string `json:"fullPage"`
+	PublishToSites string `json:"publishToSites"`
 }
 
 type ModelCSVHelper struct {
@@ -97,6 +99,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
+			fmt.Printf("Reading Modal: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:
 			fmt.Println(err)
 
@@ -104,6 +107,28 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 			return
 		}
 	}
+}
+
+func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path string) string {
+	componentMetadata := ""
+	for _, comp := range components {
+		componentTemplate := `
+	-	name: %s
+		colorIcon: %s
+		whiteIcon: %s
+		description: %s`
+			componentMetadata += fmt.Sprintf(componentTemplate, comp.Component, fmt.Sprintf("icon/components/%s-color.svg", comp.Component), fmt.Sprintf("icon/components/%s-white.svg", comp.Component), comp.Description)
+			err := WriteSVG(filepath.Join(path, "icon", "components", comp.Component+"-color.svg"), comp.SVGColor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+			err = WriteSVG(filepath.Join(path, "icon", "components", comp.Component+"-white.svg"), comp.SVGWhite) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+	}
+	
+	return componentMetadata
 }
 
 // template := `---
@@ -128,15 +153,18 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 // <p>
 //    <Standard Blurb>
 // </p>`
-func (m ModelCSV) CreateMarkDown() string {
+func (m ModelCSV) CreateMarkDown(componentsMetadata string) string {
 	var template string = `---
 title: %s
 subtitle: %s
 integrationIcon: icon/color/%s-color.svg
 darkModeIntegrationIcon: icon/white/%s-white.svg
 docURL: %s
+description: %s
 category: %s
 subcategory: %s
+registrant: %s
+components: %v
 featureList: [
   "%s",
   "%s",
@@ -160,9 +188,12 @@ published: %s
 		m.PageSubtTitle,
 		m.Model,
 		m.Model,
-		m.Docs,
+		m.DocsURL,
+		m.Description,
 		m.Category,
 		m.SubCategory,
+		m.Registrant,
+		componentsMetadata,
 		m.Feature1,
 		m.Feature2,
 		m.Feature3,
