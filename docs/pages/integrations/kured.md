@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kured
-permalink: integrations/kured
-type: installation
+permalink: extensibility/integrations/kured
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kured.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kured -->
+ #### About: Kured (KUbernetes REboot Daemon) is a Kubernetes daemonset that performs safe automatic node reboots when the need to do so is indicated by the package management system of the underlying OS -->
 
 ### Overview & Features:
+
 1. Kured (KUbernetes REboot Daemon) is a Kubernetes daemonset that performs safe automatic node reboots when the need to do so is indicated by the package management system of the underlying OS
 
 2. Collaborative and visual infrastructure as code for Kured

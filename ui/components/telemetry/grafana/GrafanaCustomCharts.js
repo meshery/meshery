@@ -123,7 +123,7 @@ class GrafanaCustomCharts extends Component {
       sparkline,
     } = this.state;
     const { classes, boardPanelConfigs, boardPanelData } = this.props;
-    const { grafanaURL, grafanaAPIKey, prometheusURL } = this.props;
+    const { grafanaURL, grafanaAPIKey, prometheusURL, connectionID } = this.props;
     const { enableGrafanaChip } = this.props;
     // we are now proxying. . .
     // if (grafanaURL && grafanaURL.endsWith('/')){
@@ -195,6 +195,7 @@ class GrafanaCustomCharts extends Component {
                   templateVars={chartDialogBoard.templateVars}
                   updateDateRange={this.updateDateRange}
                   inDialog
+                  connectionID={connectionID}
                   // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
                   panelData={
                     chartDialogPanelData && chartDialogPanelData !== null
@@ -238,6 +239,7 @@ class GrafanaCustomCharts extends Component {
                         // if(panel.type === 'graph'){
                         <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
                           <GrafanaCustomChart
+                            connectionID={connectionID}
                             board={config}
                             sparkline={sparkline}
                             panel={panel}
@@ -284,6 +286,7 @@ GrafanaCustomCharts.propTypes = {
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
+  connectionID: PropTypes.string.isRequired,
   // boardPanelData:
 };
 

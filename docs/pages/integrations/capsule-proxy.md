@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Capsule Proxy
-permalink: integrations/capsule-proxy
-type: installation
+permalink: extensibility/integrations/capsule-proxy
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/capsule-proxy.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: capsule-proxy -->
+ #### About: Capsule implements a multi-tenant and policy-based environment in your Kubernetes cluster. It is designed as a micro-services-based ecosystem with the minimalist approach, leveraging only on upstream Kubernetes. -->
 
 ### Overview & Features:
+
 1. Capsule implements a multi-tenant and policy-based environment in your Kubernetes cluster. It is designed as a micro-services-based ecosystem with the minimalist approach, leveraging only on upstream Kubernetes.
 
 2. Collaborative and visual infrastructure as code for Capsule Proxy

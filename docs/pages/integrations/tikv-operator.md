@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Tikv Operator
-permalink: integrations/tikv-operator
-type: installation
+permalink: extensibility/integrations/tikv-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/tikv-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: tikv-operator -->
+ #### About: A distributed transactional key-value database. Based on the design of Google Spanner and HBase, but simpler to manage and without dependencies on any distributed filesystem -->
 
 ### Overview & Features:
+
 1. A distributed transactional key-value database. Based on the design of Google Spanner and HBase, but simpler to manage and without dependencies on any distributed filesystem
 
 2. Collaborative and visual infrastructure as code for Tikv Operator

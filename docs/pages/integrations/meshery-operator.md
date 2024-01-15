@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Operator
-permalink: integrations/meshery-operator
-type: installation
+permalink: extensibility/integrations/meshery-operator
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: App Definition and Development
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/meshery-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: meshery-operator -->
+ #### About: Meshery, the cloud native management plane -->
 
 ### Overview & Features:
+
 1. Meshery, the cloud native management plane
 
 2. Collaborative and visual infrastructure as code for Meshery Operator

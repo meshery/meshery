@@ -76,9 +76,6 @@ sass:
 
 # Collections
 collections:
-  docs:
-    output: true
-    permalink: /:collection/:path
   adapters:
     output: true
     permalink: /extensibility/:collection/:path
@@ -90,9 +87,10 @@ collections:
   guides:
     output: true
     permalink: /:collection/:path
-  es:
-    output: true
-    permalink: /:collection/:path
+  # Spanish version
+  # es:
+  #   output: true
+  #   permalink: /:collection/:path
   releases:
     output: true
     permalink: project/:collection/:path
@@ -100,22 +98,18 @@ collections:
     output: true
     permalink: reference/mesheryctl/:collection/:path
     name: mesheryctlcommands
-  integrations:
-    output: true
-    permalink: /:collection/:path    
-    name: integrations
-  tutorials:
-    output: true
-    permalink: /:collection/:path
-    name: tutorials
+  # integrations:
+  #   output: true
+  #   permalink: /extensibility/:collection/:path    
+  #   name: integrations
 
 # Defaults
 defaults:
-  - scope:
-      path: "_docs"
-      type: "docs"
-    values:
-      layout: page
+  # - scope:
+  #     path: "_docs"
+  #     type: "docs"
+  #   values:
+  #     layout: page
   -
     scope:
       path: ""

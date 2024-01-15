@@ -1,36 +1,18 @@
 ---
-layout: page
+layout: default
 title: Integrations
-abstract: Integrations with other services.
+permalink: /integrations
+display-title: "false"
+display-toc: "false"
 language: en
-permalink: integrations
-type: integrations
-display-title: "true"
-language: en
-list: exclude
-abstract: Integrations with other platforms and services.
 ---
 
-
-{% assign sorted_index = site.pages | sort: "name" | alphabetical %}
-{% assign total = sorted_index | size %}
-{% capture totalled %}
-### All Integrations by Name ({{ total }})
-{% endcapture %}
-{{totalled}}
-
-<!-- 
-UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
-### All Integrations by Name ({{ site.integrations.size }}) -->
-
+{% assign sorted_pages = site.pages | where: "type", "integration" | sort: "name" | alphabetical %}
 <ul>
-    {% for item in sorted_index %}
-    {% if item.type=="installation" and item.category=="integrations" and item.list=="include" and item.language == "en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.abstract %}
-        -  {{ item.abstract }}
-      {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
+{% for item in sorted_pages %}
+    <!-- {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%} -->
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    <!-- {% endif %} -->
+{% endfor %}
 </ul>

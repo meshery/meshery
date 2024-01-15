@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Falco
-permalink: integrations/falco
-type: installation
+permalink: extensibility/integrations/falco
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/falco.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: falco -->
+ #### About: Cloud Native Runtime Security -->
 
 ### Overview & Features:
+
 1. Cloud Native Runtime Security
 
 2. Collaborative and visual infrastructure as code for Falco
