@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Submariner
-permalink: integrations/submariner
-type: installation
+permalink: extensibility/integrations/submariner
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Network
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/submariner.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: submariner -->
+ #### About: Submariner enables direct networking between Pods and Services in different Kubernetes clusters, either on-premises or in the cloud. -->
 
 ### Overview & Features:
+
 1. Submariner enables direct networking between Pods and Services in different Kubernetes clusters, either on-premises or in the cloud.
 
 2. Collaborative and visual infrastructure as code for Submariner

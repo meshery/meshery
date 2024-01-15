@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS MemoryDB for Redis
-permalink: integrations/aws-memorydb-for-redis
-type: installation
+permalink: extensibility/integrations/aws-memorydb-for-redis
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-memorydb-for-redis.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-memorydb-controller -->
+ #### About: Amazon MemoryDB for Redis is a durable database with microsecond reads, low single-digit millisecond writes, scalability, and enterprise security. MemoryDB delivers 99.99% availability and near instantaneous recovery without any data loss. -->
 
 ### Overview & Features:
+
 1. Amazon MemoryDB for Redis is a durable database with microsecond reads, low single-digit millisecond writes, scalability, and enterprise security. MemoryDB delivers 99.99% availability and near instantaneous recovery without any data loss.
 
 2. Collaborative and visual infrastructure as code for AWS MemoryDB for Redis

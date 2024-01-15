@@ -35,7 +35,6 @@ docker-playground-build:
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
 docker-local-cloud:
-
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
@@ -298,10 +297,15 @@ ui-integration-tests: ui-setup
 jekyll=bundle exec jekyll
 
 site: docs
+site-serve: docs-serve
 
 ## Run Meshery Docs. Listen for changes.
 docs:
 	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
+
+## Run Meshery Docs. Do not listen for changes.
+docs-serve:
+	cd docs; bundle install; bundle exec jekyll serve --drafts --config _config_dev.yml
 
 ## Build Meshery Docs on your local machine.
 docs-build:

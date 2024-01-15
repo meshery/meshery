@@ -14,6 +14,8 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { CONNECTION_KINDS } from '@/utils/Enum';
+import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 
 const promStyles = (theme) => ({
   buttons: {
@@ -33,6 +35,7 @@ const promStyles = (theme) => ({
   chartTitle: { marginLeft: theme.spacing(3), marginTop: theme.spacing(2), textAlign: 'center' },
 });
 
+// todo
 export const submitPrometheusConfigure = (self, cb = () => {}) => {
   const { prometheusURL, selectedPrometheusBoardsConfigs } = self.state;
   if (prometheusURL === '') {
@@ -44,7 +47,7 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
     .join('&');
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    '/api/telemetry/metrics/config',
+    `/api/telemetry/metrics/config`,
     {
       method: 'POST',
       credentials: 'include',
@@ -71,7 +74,8 @@ class PrometheusComponent extends Component {
   constructor(props) {
     super(props);
     // const {selectedPrometheusBoardsConfigs} = props.grafana;
-    const { prometheusURL, selectedPrometheusBoardsConfigs } = props.prometheus;
+    const { prometheusURL, selectedPrometheusBoardsConfigs, connectionID, connectionName } =
+      props.prometheus;
     let prometheusConfigSuccess = false;
     if (prometheusURL !== '') {
       prometheusConfigSuccess = true;
@@ -86,15 +90,17 @@ class PrometheusComponent extends Component {
         : [],
       prometheusURL,
       ts: new Date(),
+      connectionID,
+      connectionName,
     };
   }
 
   componentDidMount() {
     const self = this;
-
     if (self.props.isMeshConfigured)
+      // todo
       dataFetch(
-        '/api/telemetry/metrics/config',
+        `/api/telemetry/metrics/config`,
         {
           method: 'GET',
           credentials: 'include',
@@ -131,28 +137,34 @@ class PrometheusComponent extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { prometheusURL, selectedPrometheusBoardsConfigs } = props.grafana;
-    // if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
-    if (props.ts > state.ts) {
+    const { prometheusURL, selectedPrometheusBoardsConfigs } = props.prometheus;
+    let configs = selectedPrometheusBoardsConfigs ? [] : selectedPrometheusBoardsConfigs;
+    if (prometheusURL !== state.prometheusURL && prometheusURL !== '') {
       return {
         prometheusURL,
-        selectedPrometheusBoardsConfigs,
+        configs,
         prometheusConfigSuccess: prometheusURL !== '',
         ts: props.ts,
       };
     }
     return {};
   }
-
   getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig);
   };
 
-  handleChange = (name) => (value) => {
-    if (name === 'prometheusURL' && value !== '') {
+  handleChange = (name) => (data) => {
+    if (name === 'prometheusURL' && !!data) {
       this.setState({ urlError: false });
     }
-    this.setState({ [name]: value });
+    const promCfg = {
+      prometheusURL: data?.value || '',
+      selectedPrometheusBoardsConfigs: data?.metadata['prometheus_boards'] || [],
+      connectionID: data?.id,
+      connectionName: data?.name,
+    };
+    this.props.updatePrometheusConfig({ prometheus: promCfg });
+    // this.setState({ [name]: value });
   };
 
   handlePrometheusConfigure = () => {
@@ -179,14 +191,17 @@ class PrometheusComponent extends Component {
     });
   };
 
-  handlePrometheusChipDelete = () => {
+  // done
+  handlePrometheusChipDelete = (e) => {
+    e.preventDefault();
     const self = this;
     self.props.updateProgress({ showProgress: true });
     dataFetch(
-      '/api/telemetry/metrics/config',
+      `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
       {
-        method: 'DELETE',
+        method: 'PUT',
         credentials: 'include',
+        body: JSON.stringify({ id: self?.state?.connectionID }),
       },
       (result) => {
         self.props.updateProgress({ showProgress: false });
@@ -205,23 +220,10 @@ class PrometheusComponent extends Component {
     );
   };
 
+  // done
   handlePrometheusClick = () => {
-    this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch(
-      '/api/telemetry/metrics/ping',
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const notify = self.props.notify;
-          notify({ message: 'Prometheus pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      self.handleError,
-    );
+    this.props.ping(self.state.connectionName, self.state.prometheusURL, self.state.connectionID);
   };
 
   addSelectedBoardPanelConfig = (boardsSelection) => {
@@ -249,8 +251,13 @@ class PrometheusComponent extends Component {
 
   render() {
     const { classes } = this.props;
-    const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs } =
-      this.state;
+    const {
+      urlError,
+      prometheusURL,
+      prometheusConfigSuccess,
+      selectedPrometheusBoardsConfigs,
+      connectionID,
+    } = this.state;
     if (prometheusConfigSuccess) {
       let displaySelec = '';
       if (selectedPrometheusBoardsConfigs.length > 0) {
@@ -270,6 +277,7 @@ class PrometheusComponent extends Component {
             <GrafanaCustomCharts
               boardPanelConfigs={selectedPrometheusBoardsConfigs}
               prometheusURL={prometheusURL}
+              connectionID={connectionID}
             />
           </React.Fragment>
         );
@@ -284,6 +292,7 @@ class PrometheusComponent extends Component {
               addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
               handlePrometheusClick={this.handlePrometheusClick}
               handleError={this.handleError}
+              connectionID={connectionID}
             />
             {displaySelec}
           </React.Fragment>
@@ -294,7 +303,6 @@ class PrometheusComponent extends Component {
       <NoSsr>
         <PrometheusConfigComponent
           prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
-          options={this.props.scannedPrometheus.map((url) => ({ label: url, value: url }))}
           urlError={urlError}
           handleChange={this.handleChange}
           handlePrometheusConfigure={this.handlePrometheusConfigure}
@@ -325,5 +333,8 @@ const mapStateToProps = (st) => {
 };
 
 export default withStyles(promStyles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(PrometheusComponent)),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS)),
 );

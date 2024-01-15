@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevault Catalog
-permalink: integrations/kubevault-catalog
-type: installation
+permalink: extensibility/integrations/kubevault-catalog
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubevault-catalog.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubevault-catalog -->
+ #### About: Catalog for KubeVault supported versions supported by KubeVault -->
 
 ### Overview & Features:
+
 1. Catalog for KubeVault supported versions supported by KubeVault
 
 2. Collaborative and visual infrastructure as code for Kubevault Catalog

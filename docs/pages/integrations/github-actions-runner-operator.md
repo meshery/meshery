@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Github Actions Runner Operator
-permalink: integrations/github-actions-runner-operator
-type: installation
+permalink: extensibility/integrations/github-actions-runner-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/github-actions-runner-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: github-actions-runner-operator -->
+ #### About: GitOps your infrastructure with Meshery and GitHub -->
 
 ### Overview & Features:
+
 1. GitOps your infrastructure with Meshery and GitHub
 
 2. Collaborative and visual infrastructure as code for Github Actions Runner Operator

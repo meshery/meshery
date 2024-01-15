@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS EC2
-permalink: integrations/aws-ec2
-type: installation
+permalink: extensibility/integrations/aws-ec2
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Compute
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-ec2.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-ec2-controller -->
+ #### About: Amazon Elastic Compute Cloud (Amazon EC2) offers the broadest and deepest compute platform, with over 750 instances and choice of the latest processor, storage, networking, operating system, and purchase model to help you best match the needs of your workload.  -->
 
 ### Overview & Features:
+
 1. Amazon Elastic Compute Cloud (Amazon EC2) offers the broadest and deepest compute platform, with over 750 instances and choice of the latest processor, storage, networking, operating system, and purchase model to help you best match the needs of your workload. 
 
 2. Collaborative and visual infrastructure as code for AWS EC2

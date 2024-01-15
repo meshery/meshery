@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Fluentd Operator
-permalink: integrations/fluentd-operator
-type: installation
+permalink: extensibility/integrations/fluentd-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/fluentd-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: fluentd-operator -->
+ #### About: Fluentd: Unified Logging Layer (project under CNCF) -->
 
 ### Overview & Features:
+
 1. Fluentd: Unified Logging Layer (project under CNCF)
 
 2. Collaborative and visual infrastructure as code for Fluentd Operator

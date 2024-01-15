@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Overview
 permalink: /getting-started/overview
 language: en
@@ -42,7 +42,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 
 ### Meshery is for cloud native patterns
 
-Through [Models]({{site.baseurl}}/concepts/models), Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io/catalog" target="_self_">Meshery Catalog</a>.
+Through [Models]({{site.baseurl}}/concepts/logical/models), Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io/catalog" target="_self_">Meshery Catalog</a>.
 
 ### Meshery is for performance management
 

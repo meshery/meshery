@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevault
-permalink: integrations/kubevault
-type: installation
+permalink: extensibility/integrations/kubevault
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubevault.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubevault -->
+ #### About: HashiCorp Vault operator for Kubernetes -->
 
 ### Overview & Features:
+
 1. HashiCorp Vault operator for Kubernetes
 
 2. Collaborative and visual infrastructure as code for Kubevault

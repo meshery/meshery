@@ -4,6 +4,7 @@ title: GitOps with Meshery
 abstract: Integrating your CI/CD pipelines with Meshery's GitHub Actions
 permalink: guides/gitops-with-meshery
 type: guides
+category: gitops
 language: en
 list: include
 published: true
@@ -110,7 +111,7 @@ The results from the tests are updated on the Performance Management dashboard i
 
 <a href="https://smi-spec.io">Service Mesh Interface</a> provides a standard interface for service meshes on Kubernetes. These (currently) four specfications offer a common denominator set of interfaces to support most common service mesh use cases and the flexibility to evolve to support new service mesh capabilities over time.
 
-The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="{{ site.baseurl }}/tasks/performance-management">SMP compatible performance benchmarks</a>.
+The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="{{ site.baseurl }}/tasks/performance/managing-performance">SMP compatible performance benchmarks</a>.
 
 <h2>Service Mesh Interface Conformance GitHub Action</h2>
 

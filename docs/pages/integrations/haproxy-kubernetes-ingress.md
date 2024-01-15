@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: HAProxy Kubernetes Ingress
-permalink: integrations/haproxy-kubernetes-ingress
-type: installation
+permalink: extensibility/integrations/haproxy-kubernetes-ingress
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/haproxy-kubernetes-ingress.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubernetes-ingress -->
+ #### About: An ingress controller is a Kubernetes resource that routes traffic from outside your cluster to services within the cluster. -->
 
 ### Overview & Features:
+
 1. An ingress controller is a Kubernetes resource that routes traffic from outside your cluster to services within the cluster.
 
 2. Collaborative and visual infrastructure as code for Integration Template

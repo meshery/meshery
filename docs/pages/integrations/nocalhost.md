@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Nocalhost
-permalink: integrations/nocalhost
-type: installation
+permalink: extensibility/integrations/nocalhost
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/nocalhost.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: nocalhost -->
+ #### About: Nocalhost is Cloud Native Dev Environment. -->
 
 ### Overview & Features:
+
 1. Nocalhost is Cloud Native Dev Environment.
 
 2. Collaborative and visual infrastructure as code for NGINX Service Mesh

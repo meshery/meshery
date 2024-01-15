@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OPA Gatekeeper
-permalink: integrations/opa-gatekeeper
-type: installation
+permalink: extensibility/integrations/opa-gatekeeper
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/opa-gatekeeper.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: gatekeeper -->
+ #### About: Compared to using OPA with its sidecar kube-mgmt (aka Gatekeeper v1.0), Gatekeeper introduces the following functionality: -->
 
 ### Overview & Features:
+
 1. Compared to using OPA with its sidecar kube-mgmt (aka Gatekeeper v1.0), Gatekeeper introduces the following functionality:
 
 2. Collaborative and visual infrastructure as code for Frinx Machine

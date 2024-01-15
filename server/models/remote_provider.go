@@ -3779,9 +3779,13 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
 		var conn connections.Connection
@@ -3792,7 +3796,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 	}
 
 	l.Log.Debug(string(bdr))
-	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to update connection with id %s", connectionID), "connection", resp.StatusCode)
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {

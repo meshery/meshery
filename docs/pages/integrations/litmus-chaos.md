@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Litmus Chaos
-permalink: integrations/litmus-chaos
-type: installation
+permalink: extensibility/integrations/litmus-chaos
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Chaos Engineering
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/litmus-chaos.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: litmus-core -->
+ #### About: Litmus helps  SREs and developers practice chaos engineering in a Cloud-native way. -->
 
 ### Overview & Features:
+
 1. Litmus helps  SREs and developers practice chaos engineering in a Cloud-native way.
 
 2. Collaborative and visual infrastructure as code for Litmus Chaos

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: MinIO Operator
-permalink: integrations/minio-operator
-type: installation
+permalink: extensibility/integrations/minio-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/minio-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: minio-operator -->
+ #### About: MinIO is a high performance, Kubernetes native object storage suite. With an extensive list of enterprise features, it is scalable, secure and resilient while remaining remarkably simple to deploy and operate at scale. Software-defined, MinIO can run on any infrastructure and in any cloud - public, private or edge. MinIO is the world's fastest object storage and can run the broadest set of workloads in the industry. It is widely considered to be the leader in compatibility with Amazon's S3 API. -->
 
 ### Overview & Features:
+
 1. MinIO is a high performance, Kubernetes native object storage suite. With an extensive list of enterprise features, it is scalable, secure and resilient while remaining remarkably simple to deploy and operate at scale. Software-defined, MinIO can run on any infrastructure and in any cloud - public, private or edge. MinIO is the world's fastest object storage and can run the broadest set of workloads in the industry. It is widely considered to be the leader in compatibility with Amazon's S3 API.
 
 2. Collaborative and visual infrastructure as code for MinIO Operator

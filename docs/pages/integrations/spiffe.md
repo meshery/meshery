@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: SPIFFE
-permalink: integrations/spiffe
-type: installation
+permalink: extensibility/integrations/spiffe
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/spiffe.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: spiffe -->
+ #### About: The SPIFFE Project -->
 
 ### Overview & Features:
+
 1. The SPIFFE Project
 
 2. Collaborative and visual infrastructure as code for SPIFFE

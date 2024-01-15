@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS CloudFront
-permalink: integrations/aws-cloudfront
-type: installation
+permalink: extensibility/integrations/aws-cloudfront
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-cloudfront.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-cloudfront-controller -->
+ #### About: Amazon CloudFront is a content delivery network (CDN) service built for high performance, security, and developer convenience. -->
 
 ### Overview & Features:
+
 1. Amazon CloudFront is a content delivery network (CDN) service built for high performance, security, and developer convenience.
 
 2. Collaborative and visual infrastructure as code for AWS CloudFront

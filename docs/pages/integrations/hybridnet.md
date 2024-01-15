@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Hybridnet
-permalink: integrations/hybridnet
-type: installation
+permalink: extensibility/integrations/hybridnet
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,12 @@ image: /assets/img/integrations/hybridnet.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: hybridnet -->
+ #### About: hybridnet is an open source container networking solution designed for hybrid clouds.
+
+ -->
 
 ### Overview & Features:
+
 1. hybridnet is an open source container networking solution designed for hybrid clouds.
 
 

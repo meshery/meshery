@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Aperture Controller
-permalink: integrations/aperture-controller
-type: installation
+permalink: extensibility/integrations/aperture-controller
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aperture-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aperture-controller -->
+ #### About: The Aperture Controller functions as the brain of the Aperture system. Leveraging an advanced control loop, the Controller routinely analyzes polled metrics and indicators to determine how traffic should be shaped as defined by set policies. Once determined, these decisions are then exported to all Aperture Agents to effectively handle workloads. -->
 
 ### Overview & Features:
+
 1. The Aperture Controller functions as the brain of the Aperture system. Leveraging an advanced control loop, the Controller routinely analyzes polled metrics and indicators to determine how traffic should be shaped as defined by set policies. Once determined, these decisions are then exported to all Aperture Agents to effectively handle workloads.
 
 2. Collaborative and visual infrastructure as code for Aperture Controller

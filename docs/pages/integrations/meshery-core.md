@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Core
-permalink: integrations/meshery-core
-type: installation
+permalink: extensibility/integrations/meshery-core
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: App Definition and Development
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/meshery-core.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: meshery-core -->
+ #### About: Meshery, the cloud native management plane -->
 
 ### Overview & Features:
+
 1. Meshery, the cloud native management plane
 
 2. Collaborative and visual infrastructure as code for Meshery Core
