@@ -17,7 +17,6 @@ view current context
 ## Synopsis
 
 Display active Meshery context
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view [context-name | --context context-name| --all] --flags [flags]

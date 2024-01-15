@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kong API Gateway
-permalink: integrations/kong-api-gateway
-type: installation
+permalink: extensibility/integrations/kong-api-gateway
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: API Gateway
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kong-api-gateway.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kong -->
+ #### About: Kong API Gateway is a cloud-native, platform-agnostic, scalable API Gateway distinguished for its high performance and extensibility via plugins. -->
 
 ### Overview & Features:
+
 1. Kong API Gateway is a cloud-native, platform-agnostic, scalable API Gateway distinguished for its high performance and extensibility via plugins.
 
 2. Collaborative and visual infrastructure as code for Kong API Gateway

@@ -9,7 +9,8 @@ project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 white_image: /assets/img/service-meshes/app-mesh-white.svg
-permalink: service-meshes/adapters/app-mesh
+permalink: extensibility/adapters/app-mesh
+redirect_from: service-meshes/adapters/app-mesh
 language: en
 ---
 
@@ -26,7 +27,7 @@ language: en
               {% continue %}
             {% endif %}
           {% endif %}
-        {% endfor %} 
+        {% endfor %}
       {% endif %}
 {% endfor %}
 

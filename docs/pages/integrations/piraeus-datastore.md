@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Piraeus Datastore
-permalink: integrations/piraeus-datastore
-type: installation
+permalink: extensibility/integrations/piraeus-datastore
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/piraeus-datastore.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: piraeus datastore -->
+ #### About: Piraeus is a cloud-native storage system that empowers Kubernetes Local Persistent Volumes with dynamic provisioning, resource management, and high-availability. -->
 
 ### Overview & Features:
+
 1. Piraeus is a cloud-native storage system that empowers Kubernetes Local Persistent Volumes with dynamic provisioning, resource management, and high-availability.
 
 2. Collaborative and visual infrastructure as code for Piraeus Datastore

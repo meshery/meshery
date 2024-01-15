@@ -2,7 +2,7 @@ import React from 'react';
 import { NoSsr, withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import Head from 'next/head';
-import EnvironmentComponent from '../../components/Environments';
+import { EnvironmentComponent } from '../../components/Lifecycle';
 
 const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
 

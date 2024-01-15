@@ -48,6 +48,9 @@ import { iconMedium } from '../../css/icons.styles';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import DefaultError from '@/components/General/error-404/index';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -831,445 +834,462 @@ const MesheryPerformanceComponent = (props) => {
   }
   return (
     <NoSsr>
-      <React.Fragment>
-        <div className={classes.wrapperClss} style={props.style || {}} id="searchClick">
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                id="profileName"
-                name="profileName"
-                label="Profile Name"
-                fullWidth
-                value={profileNameState}
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange('profileName')}
-                inputProps={{
-                  maxLength: 300,
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                    </Tooltip>
-                  ),
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                select
-                id="meshName"
-                name="meshName"
-                label="Service Mesh"
-                fullWidth
-                value={
-                  meshNameState === '' && selectedMeshState !== ''
-                    ? selectedMeshState
-                    : meshNameState
-                }
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange('meshName')}
-              >
-                {availableAdaptersState &&
-                  availableAdaptersState.map((mesh) => (
-                    <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
-                      {mesh}
-                    </MenuItem>
-                  ))}
-                {availableAdaptersState && availableAdaptersState.length > 0 && <Divider />}
-                <MenuItem key="mh_-_none" value="None">
-                  None
-                </MenuItem>
-                {availableSMPMeshesState &&
-                  availableSMPMeshesState.map((mesh) => (
-                    <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
-                      {mesh}
-                    </MenuItem>
-                  ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                id="url"
-                name="url"
-                label="URL to test"
-                type="url"
-                fullWidth
-                value={urlState}
-                error={urlErrorState}
-                helperText={urlErrorState ? 'Please enter a valid URL along with protocol' : ''}
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange('url')}
-                InputProps={{
-                  endAdornment: (
-                    <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
-                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                    </Tooltip>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                required
-                id="c"
-                name="c"
-                label="Concurrent requests"
-                type="number"
-                fullWidth
-                value={cState}
-                inputProps={{ min: '0', step: '1' }}
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange('c')}
-                InputLabelProps={{ shrink: true }}
-                InputProps={{
-                  endAdornment: (
-                    <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                    </Tooltip>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                required
-                id="qps"
-                name="qps"
-                label="Queries per second"
-                type="number"
-                fullWidth
-                value={qpsState}
-                inputProps={{ min: '0', step: '1' }}
-                margin="normal"
-                variant="outlined"
-                onChange={handleChange('qps')}
-                InputLabelProps={{ shrink: true }}
-                InputProps={{
-                  endAdornment: (
-                    <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                    </Tooltip>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Tooltip
-                title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}
-              >
-                <Autocomplete
-                  required
-                  id="t"
-                  name="t"
-                  freeSolo
-                  label="Duration*"
-                  fullWidth
-                  variant="outlined"
-                  className={classes.errorValue}
-                  classes={{ root: tErrorState }}
-                  value={tValueState}
-                  inputValue={tState}
-                  onChange={handleDurationChange}
-                  onInputChange={handleInputDurationChange}
-                  options={durationOptions}
-                  style={{ marginTop: '16px', marginBottom: '8px' }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Duration*" variant="outlined" />
-                  )}
-                  InputProps={{
-                    endAdornment: (
-                      <Tooltip title="Default duration is 30 seconds">
-                        <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                      </Tooltip>
-                    ),
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <ExpansionPanel className={classes.expansionPanel}>
-                <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
-                  <Typography align="center" color="textSecondary" variant="h6">
-                    Advanced Options
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <TextField
-                        id="headers"
-                        name="headers"
-                        label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
-                        fullWidth
-                        value={headersState}
-                        multiline
-                        margin="normal"
-                        variant="outlined"
-                        onChange={handleChange('headers')}
-                      ></TextField>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        id="cookies"
-                        name="cookies"
-                        label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
-                        fullWidth
-                        value={cookiesState}
-                        multiline
-                        margin="normal"
-                        variant="outlined"
-                        onChange={handleChange('cookies')}
-                      ></TextField>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        id="contentType"
-                        name="contentType"
-                        label="Content Type e.g. application/json"
-                        fullWidth
-                        value={contentTypeState}
-                        multiline
-                        margin="normal"
-                        variant="outlined"
-                        onChange={handleChange('contentType')}
-                      ></TextField>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <TextField
-                        id="cookies"
-                        name="cookies"
-                        label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
-                        fullWidth
-                        value={reqBodyState}
-                        multiline
-                        margin="normal"
-                        variant="outlined"
-                        onChange={handleChange('reqBody')}
-                      ></TextField>
-                    </Grid>
-                    <Grid container xs={12} md={12}>
-                      <Grid item xs={6}>
-                        <TextField
-                          id="additional_options"
-                          name="additional_options"
-                          label="Additional Options e.g. { `requestPerSecond`: 20 }"
-                          fullWidth
-                          error={jsonErrorState}
-                          helperText={jsonErrorState ? 'Please enter a valid JSON string' : ''}
-                          value={
-                            additionalOptionsState.length > 150
-                              ? `${additionalOptionsState.slice(0, 150)} .....`
-                              : additionalOptionsState
-                          }
-                          multiline
-                          margin="normal"
-                          variant="outlined"
-                          size="small"
-                          onChange={handleChange('additional_options')}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <label
-                          htmlFor="upload-additional-options"
-                          style={{ paddingLeft: '0' }}
-                          className={classes.upload}
-                          fullWidth
-                        >
-                          <Button
-                            variant="outlined"
-                            onChange={handleChange('additional_options')}
-                            aria-label="Upload Button"
-                            component="span"
-                            className={classes.button}
-                            style={{ margin: '0.5rem', marginTop: '1.15rem' }}
-                          >
-                            <input
-                              id="upload-additional-options"
-                              type="file"
-                              accept={'.json'}
-                              name="upload-button"
-                              hidden
-                              data-cy="additional-options-upload-button"
-                            />
-                            Browse
-                          </Button>
-                          <Tooltip title={infoFlags} interactive>
-                            <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                          </Tooltip>
-                        </label>
-                      </Grid>
-                    </Grid>
-                    <Grid container xs={12} md={12}>
-                      <Grid item xs={6}>
-                        <TextField
-                          size="small"
-                          variant="outlined"
-                          margin="mormal"
-                          fullWidth
-                          label={
-                            caCertificateState?.name || 'Upload SSL Certificate e.g. .crt file'
-                          }
-                          style={{ width: '100%', margin: '0.5rem 0' }}
-                          value={metadataState?.ca_certificate.name}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <label
-                          htmlFor="upload-cacertificate"
-                          className={classes.upload}
-                          style={{ paddingLeft: '0' }}
-                        >
-                          <Button
-                            variant="outlined"
-                            aria-label="Upload Button"
-                            onChange={handleChange('caCertificate')}
-                            component="span"
-                            className={classes.button}
-                            style={{ margin: '0.5rem' }}
-                          >
-                            <input
-                              id="upload-cacertificate"
-                              type="file"
-                              accept={'.crt'}
-                              name="upload-button"
-                              hidden
-                              data-cy="cacertificate-upload-button"
-                              onChange={handleCertificateUpload}
-                            />
-                            Browse
-                          </Button>
-                          <Tooltip title={infoCRTCertificates} interactive>
-                            <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                          </Tooltip>
-                        </label>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl component="loadGenerator" className={classes.margin}>
-                <FormLabel
-                  component="loadGenerator"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  Load generator
-                  <Tooltip title={infoloadGenerators} interactive>
-                    <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                  </Tooltip>
-                </FormLabel>
-                <RadioGroup
-                  aria-label="loadGenerator"
-                  name="loadGenerator"
-                  value={loadGeneratorState}
-                  onChange={handleChange('loadGenerator')}
-                  row
-                >
-                  {loadGenerators.map((lg, index) => (
-                    <FormControlLabel
-                      key={index}
-                      value={lg}
-                      disabled={lg === 'wrk2'}
-                      control={<Radio color="primary" className={classes.radio} />}
-                      label={lg}
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          </Grid>
+      {CAN(keys.VIEW_PERFORMANCE_PROFILES.actions, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
+        <>
           <React.Fragment>
-            <div className={classes.buttons}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                className={classes.spacing}
-                disabled={disableTestState}
-                onClick={() => handleAbort()}
-              >
-                Clear
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => submitProfile()}
-                className={classes.spacing}
-                disabled={disableTestState}
-                startIcon={<SaveOutlinedIcon />}
-              >
-                Save Profile
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleSubmit}
-                className={classes.spacing}
-                disabled={blockRunTestState || disableTestState}
-              >
-                {blockRunTestState ? <CircularProgress size={30} /> : 'Run Test'}
-              </Button>
+            <div className={classes.wrapperClss} style={props.style || {}}>
+              <Grid container spacing={1}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    id="profileName"
+                    name="profileName"
+                    label="Profile Name"
+                    fullWidth
+                    value={profileNameState}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('profileName')}
+                    inputProps={{
+                      maxLength: 300,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
+                        </Tooltip>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    select
+                    id="meshName"
+                    name="meshName"
+                    label="Service Mesh"
+                    fullWidth
+                    value={
+                      meshNameState === '' && selectedMeshState !== ''
+                        ? selectedMeshState
+                        : meshNameState
+                    }
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('meshName')}
+                  >
+                    {availableAdaptersState &&
+                      availableAdaptersState.map((mesh) => (
+                        <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
+                          {mesh}
+                        </MenuItem>
+                      ))}
+                    {availableAdaptersState && availableAdaptersState.length > 0 && <Divider />}
+                    <MenuItem key="mh_-_none" value="None">
+                      None
+                    </MenuItem>
+                    {availableSMPMeshesState &&
+                      availableSMPMeshesState.map((mesh) => (
+                        <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
+                          {mesh}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    id="url"
+                    name="url"
+                    label="URL to test"
+                    type="url"
+                    fullWidth
+                    value={urlState}
+                    error={urlErrorState}
+                    helperText={urlErrorState ? 'Please enter a valid URL along with protocol' : ''}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('url')}
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
+                        </Tooltip>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    required
+                    id="c"
+                    name="c"
+                    label="Concurrent requests"
+                    type="number"
+                    fullWidth
+                    value={cState}
+                    inputProps={{ min: '0', step: '1' }}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('c')}
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
+                        </Tooltip>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    required
+                    id="qps"
+                    name="qps"
+                    label="Queries per second"
+                    type="number"
+                    fullWidth
+                    value={qpsState}
+                    inputProps={{ min: '0', step: '1' }}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('qps')}
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
+                        </Tooltip>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Tooltip
+                    title={
+                      "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
+                    }
+                  >
+                    <Autocomplete
+                      required
+                      id="t"
+                      name="t"
+                      freeSolo
+                      label="Duration*"
+                      fullWidth
+                      variant="outlined"
+                      className={classes.errorValue}
+                      classes={{ root: tErrorState }}
+                      value={tValueState}
+                      inputValue={tState}
+                      onChange={handleDurationChange}
+                      onInputChange={handleInputDurationChange}
+                      options={durationOptions}
+                      style={{ marginTop: '16px', marginBottom: '8px' }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Duration*" variant="outlined" />
+                      )}
+                      InputProps={{
+                        endAdornment: (
+                          <Tooltip title="Default duration is 30 seconds">
+                            <HelpOutlineOutlinedIcon className={classes.iconColor} />
+                          </Tooltip>
+                        ),
+                      }}
+                    />
+                  </Tooltip>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <ExpansionPanel className={classes.expansionPanel}>
+                    <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
+                      <Typography align="center" color="textSecondary" variant="h6">
+                        Advanced Options
+                      </Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="headers"
+                            name="headers"
+                            label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
+                            fullWidth
+                            value={headersState}
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={handleChange('headers')}
+                          ></TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="cookies"
+                            name="cookies"
+                            label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
+                            fullWidth
+                            value={cookiesState}
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={handleChange('cookies')}
+                          ></TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="contentType"
+                            name="contentType"
+                            label="Content Type e.g. application/json"
+                            fullWidth
+                            value={contentTypeState}
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={handleChange('contentType')}
+                          ></TextField>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <TextField
+                            id="cookies"
+                            name="cookies"
+                            label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
+                            fullWidth
+                            value={reqBodyState}
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={handleChange('reqBody')}
+                          ></TextField>
+                        </Grid>
+                        <Grid container xs={12} md={12}>
+                          <Grid item xs={6}>
+                            <TextField
+                              id="additional_options"
+                              name="additional_options"
+                              label="Additional Options e.g. { `requestPerSecond`: 20 }"
+                              fullWidth
+                              error={jsonErrorState}
+                              helperText={jsonErrorState ? 'Please enter a valid JSON string' : ''}
+                              value={
+                                additionalOptionsState.length > 150
+                                  ? `${additionalOptionsState.slice(0, 150)} .....`
+                                  : additionalOptionsState
+                              }
+                              multiline
+                              margin="normal"
+                              variant="outlined"
+                              size="small"
+                              onChange={handleChange('additional_options')}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <label
+                              htmlFor="upload-additional-options"
+                              style={{ paddingLeft: '0' }}
+                              className={classes.upload}
+                              fullWidth
+                            >
+                              <Button
+                                variant="outlined"
+                                onChange={handleChange('additional_options')}
+                                aria-label="Upload Button"
+                                component="span"
+                                className={classes.button}
+                                style={{ margin: '0.5rem', marginTop: '1.15rem' }}
+                              >
+                                <input
+                                  id="upload-additional-options"
+                                  type="file"
+                                  accept={'.json'}
+                                  name="upload-button"
+                                  hidden
+                                  data-cy="additional-options-upload-button"
+                                />
+                                Browse
+                              </Button>
+                              <Tooltip title={infoFlags} interactive>
+                                <HelpOutlineOutlinedIcon className={classes.smallIcons} />
+                              </Tooltip>
+                            </label>
+                          </Grid>
+                        </Grid>
+                        <Grid container xs={12} md={12}>
+                          <Grid item xs={6}>
+                            <TextField
+                              size="small"
+                              variant="outlined"
+                              margin="mormal"
+                              fullWidth
+                              label={
+                                caCertificateState?.name || 'Upload SSL Certificate e.g. .crt file'
+                              }
+                              style={{ width: '100%', margin: '0.5rem 0' }}
+                              value={metadataState?.ca_certificate.name}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <label
+                              htmlFor="upload-cacertificate"
+                              className={classes.upload}
+                              style={{ paddingLeft: '0' }}
+                            >
+                              <Button
+                                variant="outlined"
+                                aria-label="Upload Button"
+                                onChange={handleChange('caCertificate')}
+                                component="span"
+                                className={classes.button}
+                                style={{ margin: '0.5rem' }}
+                              >
+                                <input
+                                  id="upload-cacertificate"
+                                  type="file"
+                                  accept={'.crt'}
+                                  name="upload-button"
+                                  hidden
+                                  data-cy="cacertificate-upload-button"
+                                  onChange={handleCertificateUpload}
+                                />
+                                Browse
+                              </Button>
+                              <Tooltip title={infoCRTCertificates} interactive>
+                                <HelpOutlineOutlinedIcon className={classes.smallIcons} />
+                              </Tooltip>
+                            </label>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <FormControl component="loadGenerator" className={classes.margin}>
+                    <FormLabel
+                      component="loadGenerator"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      Load generator
+                      <Tooltip title={infoloadGenerators} interactive>
+                        <HelpOutlineOutlinedIcon className={classes.smallIcons} />
+                      </Tooltip>
+                    </FormLabel>
+                    <RadioGroup
+                      aria-label="loadGenerator"
+                      name="loadGenerator"
+                      value={loadGeneratorState}
+                      onChange={handleChange('loadGenerator')}
+                      row
+                    >
+                      {loadGenerators.map((lg, index) => (
+                        <FormControlLabel
+                          key={index}
+                          value={lg}
+                          disabled={lg === 'wrk2'}
+                          control={<Radio color="primary" className={classes.radio} />}
+                          label={lg}
+                        />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <React.Fragment>
+                <div className={classes.buttons}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    className={classes.spacing}
+                    disabled={disableTestState}
+                    onClick={() => handleAbort()}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => submitProfile()}
+                    className={classes.spacing}
+                    disabled={disableTestState}
+                    startIcon={<SaveOutlinedIcon />}
+                  >
+                    Save Profile
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleSubmit}
+                    className={classes.spacing}
+                    disabled={
+                      blockRunTestState ||
+                      disableTestState ||
+                      !CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)
+                    }
+                  >
+                    {blockRunTestState ? <CircularProgress size={30} /> : 'Run Test'}
+                  </Button>
+                </div>
+              </React.Fragment>
+
+              {timerDialogOpenState ? (
+                <div className={classes.centerTimer}>
+                  <LoadTestTimerDialog
+                    open={timerDialogOpenState}
+                    t={tState}
+                    onClose={handleTimerDialogClose}
+                    countDownComplete={handleTimerDialogClose}
+                  />
+                </div>
+              ) : null}
+
+              {result && result.runner_results && (
+                <div>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    className={classes.chartTitle}
+                    id="timerAnchor"
+                  >
+                    Test Results
+                    <IconButton
+                      key="download"
+                      aria-label="download"
+                      color="inherit"
+                      // onClick={() => self.props.closeSnackbar(key) }
+                      href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
+                    >
+                      <GetAppIcon style={iconMedium} />
+                    </IconButton>
+                  </Typography>
+                  <div className={classes.chartContent} style={chartStyle}>
+                    <MesheryChart
+                      rawdata={[result && result.runner_results ? result : {}]}
+                      data={[result && result.runner_results ? result.runner_results : {}]}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </React.Fragment>
 
-          {timerDialogOpenState ? (
-            <div className={classes.centerTimer}>
-              <LoadTestTimerDialog
-                open={timerDialogOpenState}
-                t={tState}
-                onClose={handleTimerDialogClose}
-                countDownComplete={handleTimerDialogClose}
-              />
-            </div>
-          ) : null}
+          {displayStaticCharts}
 
-          {result && result.runner_results && (
-            <div>
-              <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
-                Test Results
-                <IconButton
-                  key="download"
-                  aria-label="download"
-                  color="inherit"
-                  // onClick={() => self.props.closeSnackbar(key) }
-                  href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                >
-                  <GetAppIcon style={iconMedium} />
-                </IconButton>
-              </Typography>
-              <div className={classes.chartContent} style={chartStyle}>
-                <MesheryChart
-                  rawdata={[result && result.runner_results ? result : {}]}
-                  data={[result && result.runner_results ? result.runner_results : {}]}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </React.Fragment>
+          {displayPromCharts}
 
-      {displayStaticCharts}
-
-      {displayPromCharts}
-
-      {displayGCharts}
+          {displayGCharts}
+        </>
+      ) : (
+        <DefaultError />
+      )}
     </NoSsr>
   );
 };

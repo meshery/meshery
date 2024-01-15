@@ -11,9 +11,8 @@ github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 white_image: /assets/img/service-meshes/consul-white.svg
 language: en
-language: en
-#redirect_from: service-meshes/adapters/consul
-permalink: service-meshes/adapters/consul
+permalink: extensibility/adapters/consul
+redirect_from: service-meshes/adapters/consul
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -35,7 +34,7 @@ permalink: service-meshes/adapters/consul
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ## Lifecycle management
 
@@ -77,7 +76,7 @@ Meshery supports the deployment of a variety of sample applications on {{ page.n
 - [Image Hub]({{site.baseurl}}/guides/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
-[![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
+[![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
 
 ### Performance management of Consul and it workloads
 
@@ -87,7 +86,7 @@ The {{ page.name }} will connect to {{ page.name }}'s Prometheus and Grafana ins
 
 ### Architecture
 
-[![Consul Service Mesh Architecture]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)
+[![Consul Service Mesh Architecture]({{ site.baseurl }}/extensibility/adapters/consul/service-mesh-architecture-consul.png)]({{ site.baseurl }}/extensibility/adapters/consul/service-mesh-architecture-consul.png)
 
 ### Suggested Topics
 

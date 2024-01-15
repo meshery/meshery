@@ -1,5 +1,10 @@
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { MESHMODEL_ENDPOINT, MESHMODEL_RELATIONSHIPS_ENDPOINT, SORT } from '../constants/endpoints';
+import {
+  MESHMODEL_COMPONENT_ENDPOINT,
+  MESHMODEL_ENDPOINT,
+  MESHMODEL_RELATIONSHIPS_ENDPOINT,
+  SORT,
+} from '../constants/endpoints';
 
 const COMPONENTS_ENDPOINT = '/api/meshmodels/components';
 const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
@@ -139,6 +144,9 @@ export async function getMeshModelComponent(model, component, version, apiVersio
   );
 }
 
+export async function getMeshModelComponentByName(component) {
+  return promisifiedDataFetch(`${MESHMODEL_COMPONENT_ENDPOINT}/components/${component}`);
+}
 // export async function queryMeshModel(modelQueryString, paginated = true) {
 //   // Note: returns paginated response
 //   if (paginated) {

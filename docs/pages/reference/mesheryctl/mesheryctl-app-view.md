@@ -17,7 +17,6 @@ Display application(s)
 ## Synopsis
 
 Displays the contents of a specific application based on name or id
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl app view application name [flags]

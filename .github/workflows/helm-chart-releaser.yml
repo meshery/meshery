@@ -30,7 +30,7 @@ jobs:
     if: ${{github.event_name == 'pull_request'}}
     steps:
     - uses: actions/checkout@master
-    - uses: azure/setup-helm@v2.0
+    - uses: azure/setup-helm@v3.5
       with:
         version: 'v3.6.0' # default is latest stable
       id: install

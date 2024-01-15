@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Github
-permalink: integrations/github
-type: installation
+permalink: extensibility/integrations/github
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/github.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: github -->
+ #### About: GitOps your infrastructure with Meshery and GitHub -->
 
 ### Overview & Features:
+
 1. GitOps your infrastructure with Meshery and GitHub
 
 2. Integrate GitOps into your cloud native management process

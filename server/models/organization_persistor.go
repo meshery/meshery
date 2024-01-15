@@ -37,15 +37,14 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	Paginate(uint(page), uint(pageSize))(query).Find(&organizations)
 
 	organizationsPage := &OrganizationsPage{
-		Page:         page,
-		PageSize:     pageSize,
-		TotalCount:   int(count),
+		Page:          page,
+		PageSize:      pageSize,
+		TotalCount:    int(count),
 		Organizations: organizations,
 	}
 
 	return marshalOrganizationsPage(organizationsPage), nil
 }
-
 
 func (op *OrganizationPersister) SaveOrganization(organization *Organization) ([]byte, error) {
 	if organization.ID == nil {
@@ -59,7 +58,6 @@ func (op *OrganizationPersister) SaveOrganization(organization *Organization) ([
 
 	return marshalOrganizations([]Organization{*organization}), op.DB.Save(organization).Error
 }
-
 
 func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
 	var organization Organization

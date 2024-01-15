@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Open Cluster Management
-permalink: integrations/open-cluster-management
-type: installation
+permalink: extensibility/integrations/open-cluster-management
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/open-cluster-management.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: open cluster management -->
+ #### About: Contains useful documentation on the OCM project. Report here if you found any issues in OCM. -->
 
 ### Overview & Features:
+
 1. Contains useful documentation on the OCM project. Report here if you found any issues in OCM.
 
 2. Collaborative and visual infrastructure as code for NGINX Service Mesh

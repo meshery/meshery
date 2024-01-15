@@ -156,12 +156,12 @@ export function updateURLs(urlsSet, newUrls, eventType) {
  * @param {string} file
  * @returns
  */
-export function getDecodedFile(file) {
+export function getDecodedFile(dataUrl) {
   // Extract base64-encoded content
-  var encodedContent = file.split(';base64,')[1];
+  const [, base64Content] = dataUrl.split(';base64,');
 
   // Decode base64 content
-  return atob(encodedContent);
+  return atob(base64Content);
 }
 
 /**
@@ -179,6 +179,18 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
 
   // Convert decoded content to Uint8Array directly
   const uint8Array = Uint8Array.from(decodedContent, (char) => char.charCodeAt(0));
+
+  return Array.from(uint8Array);
+};
+
+/**
+ * Gets the stringified meshery pattern_file and convert it to uint8Array
+ * @param {string} design
+ * @returns {array} - return array of uint8Array
+ *
+ * */
+export const getUnit8ArrayForDesign = (design) => {
+  const uint8Array = Uint8Array.from(design, (char) => char.charCodeAt(0));
 
   return Array.from(uint8Array);
 };
@@ -326,3 +338,33 @@ export const formatToTitleCase = (value) => {
   }
   return '';
 };
+
+const cellStyle = {
+  boxSizing: 'border-box',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
+const customBodyRenderStyle = {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  boxSizing: 'border-box',
+  display: 'block',
+  width: '120%',
+};
+
+export const ResizableCell = ({ value }) => (
+  <div style={{ position: 'relative', height: '20px' }}>
+    <div style={customBodyRenderStyle}>
+      <div style={cellStyle}>
+        <Tooltip title={value} placement="top-start">
+          <span style={{ cursor: 'pointer' }}>{value}</span>
+        </Tooltip>
+      </div>
+    </div>
+  </div>
+);

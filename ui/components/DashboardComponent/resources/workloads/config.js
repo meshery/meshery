@@ -1,17 +1,15 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import {
-  getClusterNameFromClusterId,
-  getConnectionIdFromClusterId,
-} from '../../../../utils/multi-ctx';
+import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip } from '../../../../utils/utils';
+import { ResizableCell } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const WorkloadTableConfig = (
   switchView,
@@ -41,7 +39,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
-            customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={10} />,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -74,15 +72,10 @@ export const WorkloadTableConfig = (
           options: {
             sort: true,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
+            setCellProps: () => ({ style: { paddingRight: '0px', width: '0%' } }),
+            setCellHeaderProps: () => ({ style: { paddingRight: '0px' } }),
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
             },
           },
         },
@@ -91,6 +84,8 @@ export const WorkloadTableConfig = (
           label: 'Phase',
           options: {
             sort: false,
+            setCellProps: () => ({ style: { paddingLeft: '0px' } }),
+            setCellHeaderProps: () => ({ style: { paddingLeft: '0px' } }),
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -169,7 +164,11 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
               let nodeName = attribute?.nodeName;
-              return <>{nodeName}</>;
+              return (
+                <>
+                  <ResizableCell value={nodeName} />
+                </>
+              );
             },
           },
         },
@@ -190,18 +189,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
                   <TootltipWrappedConnectionChip
-                    title={clusterName}
+                    title={context.name}
                     iconSrc={
                       connectionMetadataState
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(clusterName, val, connectionId)}
+                    width="10.5rem"
+                    handlePing={() => ping(context.name, context.server, context.connection_id)}
                   />
                 </>
               );
@@ -242,6 +241,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -361,12 +361,11 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
                   <TootltipWrappedConnectionChip
-                    title={clusterName}
+                    title={context.name}
                     iconSrc={
                       connectionMetadataState
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
@@ -374,7 +373,7 @@ export const WorkloadTableConfig = (
                     }
                     handlePing={(event) => {
                       event.preventDefault();
-                      ping(clusterName, val, connectionId);
+                      ping(context.name, context.server, context.connection_id);
                     }}
                   />
                 </>
@@ -415,6 +414,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -519,23 +519,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -573,6 +568,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -675,23 +671,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -731,6 +722,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -864,23 +856,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -919,6 +906,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1036,23 +1024,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -1089,6 +1072,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1176,23 +1160,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -1231,6 +1210,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1348,23 +1328,18 @@ export const WorkloadTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },

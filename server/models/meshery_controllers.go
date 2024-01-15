@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -20,6 +21,11 @@ const (
 	ChartRepo                     = "https://meshery.github.io/meshery.io/charts"
 	MesheryServerBrokerConnection = "meshery-server"
 )
+
+type MesheryControllerStatusAndVersion struct {
+	Status  controllers.MesheryControllerStatus
+	Version string
+}
 
 type MesheryController int
 
@@ -72,7 +78,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
-func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers(ctx context.Context, connectionID, userID, mesheryInstanceID uuid.UUID, provider Provider) *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
@@ -105,7 +111,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 					continue
 				}
 				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
-				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
+				token, _ := ctx.Value(TokenCtxKey).(string)
+				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, connectionID, mesheryInstanceID, token)
 				err = msDataHandler.Run()
 				if err != nil {
 					mch.log.Warn(err)
@@ -128,15 +135,18 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
+
 		// resetting this value as a specific controller handler instance does not have any significance opposed to
 		// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 		mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
 		for _, ctx := range ctxs {
+
 			ctxID := ctx.ID
 			cfg, _ := ctx.GenerateKubeConfig()
 			client, err := mesherykube.New(cfg)
 			// means that the config is invalid
 			if err != nil {
+
 				// invalid configs are not added to the map
 				continue
 			}
@@ -218,7 +228,9 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
+
 				if oprStatus == controllers.NotDeployed {
+
 					err := ctrlHandler[MesheryOperator].Deploy(false)
 					if err != nil {
 						mch.log.Error(err)
@@ -233,12 +245,17 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
+
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
+
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
+
 				if oprStatus != controllers.Undeployed {
+
 					err := ctrlHandler[MesheryOperator].Undeploy()
+
 					if err != nil {
 						mch.log.Error(err)
 					}

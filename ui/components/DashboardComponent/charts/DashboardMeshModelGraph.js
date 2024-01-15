@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Typography, Tooltip } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut, pie } from 'billboard.js';
 import {
@@ -15,6 +15,7 @@ import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0);
@@ -82,19 +83,19 @@ function MeshModelContructs({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Registry
           </Typography>
-          <Tooltip
+          <CustomTextTooltip
             title="Learn more about Models, Components, and Relationships in Meshery"
-            placement="right"
+            placement="left"
           >
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
               }}
             />
-          </Tooltip>
+          </CustomTextTooltip>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
@@ -156,16 +157,16 @@ function MeshModelCategories({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Categories
           </Typography>
-          <Tooltip title="Learn more about Categories" placement="right">
+          <CustomTextTooltip title="Learn more about Categories" placement="left">
             <InfoIcon
               color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(url, '_blank');
               }}
             />
-          </Tooltip>
+          </CustomTextTooltip>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />

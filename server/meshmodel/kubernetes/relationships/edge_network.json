@@ -4,7 +4,7 @@
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
-	"model": {
+  "model": {
     "name": "kubernetes",
     "version": "v1.25.2",
     "displayName": "Kubernetes",
@@ -15,7 +15,7 @@
     "metadata": {}
   },
   "subType": "Network",
-  "rego_query": "edge_network_relationship",
+  "evaluationQuery": "edge_network_relationship",
   "selectors": {
     "allow": {
       "from": [

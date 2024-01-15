@@ -17,7 +17,6 @@ remove a service mesh in the kubernetes cluster
 ## Synopsis
 
 remove service mesh in the connected kubernetes cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh remove [flags]

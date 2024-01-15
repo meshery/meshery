@@ -1,9 +1,6 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import {
-  getClusterNameFromClusterId,
-  getConnectionIdFromClusterId,
-} from '../../../../utils/multi-ctx';
+import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
@@ -12,6 +9,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const NetWorkTableConfig = (
   switchView,
@@ -29,7 +27,7 @@ export const NetWorkTableConfig = (
         ['apiVersion', 's'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
-        ['status.attribute', 'm'],
+        ['status.attribute', 'na'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -41,6 +39,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -153,14 +152,14 @@ export const NetWorkTableConfig = (
               let attribute = JSON.parse(val);
               let ports = attribute?.ports;
 
-              const showViewAll = ports?.length > 2;
+              const showViewAll = ports?.length > 1;
               return (
                 <>
                   <div style={{ display: 'flex' }}>
-                    {ports?.slice(0, 2).map((p, i) => (
+                    {ports?.slice(0, 1).map((p, i) => (
                       <div key={i}>
                         {`${p.port}/${p.targetPort}:${p.protocol}`}
-                        {i < 1 && ','}
+                        {ports.length > 1 && i === 0 && ','}
                       </div>
                     ))}
                     {showViewAll && (
@@ -229,18 +228,18 @@ export const NetWorkTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+
               return (
                 <>
                   <TootltipWrappedConnectionChip
-                    title={clusterName}
+                    title={context.name}
                     iconSrc={
                       connectionMetadataState
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(clusterName, val, connectionId)}
+                    handlePing={() => ping(context.name, context.server, context.connection_id)}
                   />
                 </>
               );
@@ -279,6 +278,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -365,23 +365,18 @@ export const NetWorkTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },
@@ -419,6 +414,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -532,22 +528,18 @@ export const NetWorkTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
+                  <TootltipWrappedConnectionChip
+                    title={context.name}
+                    iconSrc={
+                      connectionMetadataState
+                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        : ''
+                    }
+                    handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  />
                 </>
               );
             },
@@ -586,6 +578,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -688,18 +681,17 @@ export const NetWorkTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
                   <TootltipWrappedConnectionChip
-                    title={clusterName}
+                    title={context.name}
                     iconSrc={
                       connectionMetadataState
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(clusterName, val, connectionId)}
+                    handlePing={() => ping(context.name, context.server, context.connection_id)}
                   />
                 </>
               );
@@ -739,6 +731,7 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -852,23 +845,18 @@ export const NetWorkTableConfig = (
               );
             },
             customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              console.log('TESTL ', context);
               return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
               );
             },
           },

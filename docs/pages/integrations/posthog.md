@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Posthog
-permalink: integrations/posthog
-type: installation
+permalink: extensibility/integrations/posthog
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/posthog.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: posthog -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for Posthog
 
 4. 

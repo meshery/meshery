@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cubefs
-permalink: integrations/cubefs
-type: installation
+permalink: extensibility/integrations/cubefs
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cubefs.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cubefs -->
+ #### About: CubeFS is a cloud native distributed storage platform.  -->
 
 ### Overview & Features:
+
 1. CubeFS is a cloud native distributed storage platform. 
 
 2. Collaborative and visual infrastructure as code for Cubefs

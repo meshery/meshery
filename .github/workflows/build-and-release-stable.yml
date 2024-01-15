@@ -156,7 +156,6 @@ jobs:
   call-helm-chart-releaser:
     needs:
       - build
-      - ctlrelease
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
@@ -183,7 +182,6 @@ jobs:
   call-cncf-playground-rollout:
     needs:
       - build
-      - ctlrelease
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit

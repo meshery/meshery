@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from '@material-ui/core';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Button,
+  Typography,
+  CircularProgress,
+} from '@material-ui/core';
 import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import CloseIcon from '@material-ui/icons/Close';
@@ -17,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       transform: 'rotate(0deg)',
     },
     to: {
-      transform: 'rotate(360deg)',
+      transform: 'rotate(90deg)',
     },
   },
   infoIcon: {
@@ -40,13 +48,13 @@ const useStyles = makeStyles((theme) => ({
   },
   iconStyle: {
     color: '#fff',
-  },
-  iconContainer: {
-    transition: 'all .3s',
     '&:hover': {
       backgroundColor: 'transparent !important',
       animation: '$rotateCloseIcon 1s',
     },
+  },
+  iconContainer: {
+    // transition: 'all .3s',
   },
   submitButton: {
     backgroundColor: theme.palette.secondary.focused,
@@ -84,7 +92,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     setAnchorEl(null);
   };
   return (
-    <div id="searchClick">
+    <div>
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
           <ArrowDropDown style={{ color: '#000' }} />
@@ -108,18 +116,6 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     </div>
   );
 };
-
-const RJSFWrapperComponentDefault =
-  (uiSchema) =>
-  (
-    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props,
-  ) => {
-    // Clone the child to pass in additional props
-    return React.cloneElement(props.children, {
-      ...(props.children?.props || {}),
-      uiSchema,
-    });
-  };
 
 /**
  * Renders common dialog component.
@@ -166,6 +162,7 @@ function Modal(props) {
   const [snackbar, setSnackbar] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
+  const [loadingSchema, setLoadingSchema] = useState(true);
 
   const renderTooltipContent = () => (
     <div>
@@ -212,6 +209,12 @@ function Modal(props) {
     formStateRef.current = data;
   };
 
+  useEffect(() => {
+    if (schema) {
+      setLoadingSchema(false);
+    }
+  }, [schema]);
+
   return (
     <>
       <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
@@ -229,22 +232,28 @@ function Modal(props) {
               />
             )}
           </Typography>
-          <IconButton className={classes.iconContainer} onClick={handleClose}>
+          <IconButton className={classes.iconContainer} onClick={handleClose} disableRipple>
             <CloseIcon className={classes.iconStyle} />
           </IconButton>
         </div>
 
-        <RJSFWrapper
-          key={type}
-          formData={initialData || formStateRef}
-          jsonSchema={schema || getSchema(type)}
-          uiSchema={uiSchema}
-          onChange={handleFormChange}
-          liveValidate={false}
-          formRef={formRef}
-          hideTitle={true}
-          RJSFWrapperComponent={RJSFWrapperComponent || RJSFWrapperComponentDefault(uiSchema)}
-        />
+        {loadingSchema ? (
+          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            key={type}
+            formData={initialData || formStateRef}
+            jsonSchema={schema || getSchema(type)}
+            uiSchema={uiSchema}
+            onChange={handleFormChange}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+          />
+        )}
 
         <DialogActions className={classes.dialogAction}>
           <Button

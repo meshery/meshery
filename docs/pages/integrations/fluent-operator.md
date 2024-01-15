@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Fluent Operator
-permalink: integrations/fluent-operator
-type: installation
+permalink: extensibility/integrations/fluent-operator
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/fluent-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: fluent-operator -->
+ #### About: Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd. -->
 
 ### Overview & Features:
+
 1. Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.
 
 2. Collaborative and visual infrastructure as code for Fluent Operator

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Karmada
-permalink: integrations/karmada
-type: installation
+permalink: extensibility/integrations/karmada
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/karmada.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: karmada -->
+ #### About: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration -->
 
 ### Overview & Features:
+
 1. Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 
 2. Collaborative and visual infrastructure as code for Karmada

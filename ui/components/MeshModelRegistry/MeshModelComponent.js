@@ -21,6 +21,8 @@ import {
   COMPONENTS,
   RELATIONSHIPS,
   REGISTRANTS,
+  GRAFANA,
+  PROMETHEUS,
 } from '../../constants/navigator';
 import { SORT } from '../../constants/endpoints';
 import useStyles from '../../assets/styles/general/tool.styles';
@@ -30,6 +32,7 @@ import { toLower } from 'lodash';
 import { DisableButton } from './MeshModel.style';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
+import { useRouter } from 'next/router';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -61,24 +64,38 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
+const useMeshModelComponentRouter = () => {
+  const router = useRouter();
+  const { query } = router;
+
+  const searchQuery = query.searchText || null;
+  const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
+  const selectedPageSize = query.pagesize || 14;
+
+  return { searchQuery, selectedTab, selectedPageSize };
+};
+
 const MeshModelComponent = ({
   modelsCount,
   componentsCount,
   relationshipsCount,
   registrantCount,
+  settingsRouter,
 }) => {
+  const router = useRouter();
+  const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
+  const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
     Components: 0,
     Relationships: 0,
     Registrants: 0,
   });
-
-  const [searchText, setSearchText] = useState(null);
-  const [rowsPerPage] = useState(14);
+  const [searchText, setSearchText] = useState(searchQuery);
+  const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [sortOrder, setSortOrder] = useState({
     sort: SORT.ASCENDING,
     order: '',
@@ -98,6 +115,14 @@ const MeshModelComponent = ({
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (selectedTab && selectedTab !== OVERVIEW) {
+      setAnimate(true);
+      setConvert(true);
+      setView(selectedTab);
+    }
+  }, [selectedTab]);
+
   const getModels = async (page) => {
     try {
       const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
@@ -116,6 +141,7 @@ const MeshModelComponent = ({
     }
   };
 
+  // TODO: Use RTK
   const getComponents = async (page, sortOrder) => {
     try {
       const { total_count, components } = await getComponentsDetailWithPageSize(
@@ -129,11 +155,13 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...components]);
         setSortOrder(sortOrder);
       }
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch components:', error);
     }
   };
 
+  // TODO: Use RTK
   const getRelationships = async (page, sortOrder) => {
     try {
       const { total_count, relationships } = await getRelationshipsDetailWithPageSize(
@@ -147,11 +175,13 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...relationships]);
         setSortOrder(sortOrder);
       }
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch relationships:', error);
     }
   };
 
+  // TODO: Use RTK
   const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText, {
@@ -180,7 +210,6 @@ const MeshModelComponent = ({
   };
 
   const getRegistrants = async (page) => {
-    console.log('registrants:', page);
     try {
       const { total_count, registrants } = await getMeshModelRegistrants(
         page?.Registrants + 1,
@@ -234,6 +263,7 @@ const MeshModelComponent = ({
 
         setResourcesDetail(tempRegistrants);
       }
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch registrants:', error);
     }
@@ -251,23 +281,19 @@ const MeshModelComponent = ({
         );
       });
 
-  useEffect(
-    () => {
-      filteredData = checked
-        ? resourcesDetail // Show all data, including duplicates
-        : resourcesDetail.filter((item, index, self) => {
-            // Filter out duplicates based on your criteria (e.g., name and version)
-            return (
-              index ===
-              self.findIndex(
-                (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-              )
-            );
-          });
-    },
-    resourcesDetail,
-    checked,
-  );
+  useEffect(() => {
+    filteredData = checked
+      ? resourcesDetail // Show all data, including duplicates
+      : resourcesDetail.filter((item, index, self) => {
+          // Filter out duplicates based on your criteria (e.g., name and version)
+          return (
+            index ===
+            self.findIndex(
+              (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+            )
+          );
+        });
+  }, [checked]);
 
   useEffect(() => {
     setRequestCancelled(false);
@@ -338,7 +364,10 @@ const MeshModelComponent = ({
               view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(MODELS);
+              setView(() => {
+                handleChangeSelectedTab(MODELS);
+                return MODELS;
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -372,7 +401,10 @@ const MeshModelComponent = ({
               view === COMPONENTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(COMPONENTS);
+              setView(() => {
+                handleChangeSelectedTab(COMPONENTS);
+                return COMPONENTS;
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -406,7 +438,10 @@ const MeshModelComponent = ({
               view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(RELATIONSHIPS);
+              setView(() => {
+                handleChangeSelectedTab(RELATIONSHIPS);
+                return RELATIONSHIPS;
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -440,7 +475,10 @@ const MeshModelComponent = ({
               view === REGISTRANTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
-              setView(REGISTRANTS);
+              setView(() => {
+                handleChangeSelectedTab(REGISTRANTS);
+                return REGISTRANTS;
+              });
               setPage({
                 Models: 0,
                 Components: 0,
@@ -497,6 +535,7 @@ const MeshModelComponent = ({
                   setPage={setPage}
                   checked={checked}
                   setChecked={setChecked}
+                  searchText={searchText}
                 />
               )}
             </div>

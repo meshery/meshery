@@ -108,7 +108,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - rbenv install version
 
-{% capture code_content %}rbenv install 2.7.5{% endcapture %}
+{% capture code_content %}rbenv install 3.2.2{% endcapture %}
 {% include code.html code=code_content %}
 
 - To list all the versions that can be installed

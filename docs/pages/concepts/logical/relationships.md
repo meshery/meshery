@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: enhanced
 title: Relationships
-permalink: concepts/relationships
+permalink: concepts/logical/relationships
 type: concepts
 abstract: "Meshery Relationships identify and facilitate genealogy between Components."
 language: en
@@ -10,7 +10,7 @@ list: include
 
 [Relationships](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as hierarchical,  relationships. Relationships have selectors, metadata, and optional parameters.
 
-{% include/alert.html title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
+{% include/alert.html type="info" title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
 
 ## Semantic and Non-Semantic Relationships
 
@@ -72,7 +72,7 @@ Any namespaced Kubernetes component --> Kubernetes Namespace
 
 You can reference and search the full set of registered relationships in Meshery UI --> Setttings --> Registry
 
-{% include/alert.html title="Future Feature" %}
+{% include/alert.html type="info" title="Future Feature" %}
 
 ```
 mesheryctl model import -f [ oci:// | file:// ]`

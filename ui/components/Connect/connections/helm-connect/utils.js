@@ -106,28 +106,6 @@ export const generateSelectedHelmRepo = (data, sharedData) => {
   return { updatedData: data, arrayOfSelected: [] };
 };
 
-// selectRepoSchema
-export const selectRepoSchema = (availableRepos) => {
-  return {
-    properties: {
-      selectedHelmRepos: {
-        description: 'Select one or more Helm charts from the available options',
-        items: {
-          enum: availableRepos,
-          type: 'string',
-        },
-        minItems: 1,
-        title: 'Select one or more of your Helm charts',
-        type: 'array',
-        uniqueItems: true,
-        'x-rjsf-grid-area': 12,
-      },
-    },
-    required: ['selectedHelmRepos'],
-    type: 'object',
-  };
-};
-
 /**
  * Adds a 'status' field to each chart in the given array based on its digestion status.
  *

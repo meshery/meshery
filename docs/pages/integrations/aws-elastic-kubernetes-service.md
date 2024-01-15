@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Elastic Kubernetes Service
-permalink: integrations/aws-elastic-kubernetes-service
-type: installation
+permalink: extensibility/integrations/aws-elastic-kubernetes-service
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-elastic-kubernetes-service.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: eks -->
+ #### About: Amazon Elastic Kubernetes Service (EKS) is a managed service and certified Kubernetes conformant to run Kubernetes on AWS and on-premises. -->
 
 ### Overview & Features:
+
 1. Amazon Elastic Kubernetes Service (EKS) is a managed service and certified Kubernetes conformant to run Kubernetes on AWS and on-premises.
 
 2. Diagram and configure your Azure Kubernetes Service clusters

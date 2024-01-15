@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OpenGitOps
-permalink: integrations/opengitops
-type: installation
+permalink: extensibility/integrations/opengitops
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/opengitops.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: opengitops -->
+ #### About: Repository for top-level information about the OpenGitOps project -->
 
 ### Overview & Features:
+
 1. Repository for top-level information about the OpenGitOps project
 
 2. Collaborative and visual infrastructure as code for OpenEBS
