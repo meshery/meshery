@@ -22,6 +22,11 @@ const (
 	MesheryServerBrokerConnection = "meshery-server"
 )
 
+type MesheryControllerStatusAndVersion struct {
+	Status  controllers.MesheryControllerStatus
+	Version string
+}
+
 type MesheryController int
 
 const (
