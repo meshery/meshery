@@ -14,14 +14,7 @@ import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
 import { getFilteredDataForDetailsComponent } from './helper';
 
-const ComponentTree = ({
-  setComp,
-  expanded,
-  selected,
-  handleToggle,
-  handleSelect,
-  data,
-}) => {
+const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect, data }) => {
   return (
     <TreeView
       aria-label="controlled"
@@ -50,14 +43,7 @@ const ComponentTree = ({
   );
 };
 
-const RelationshipTree = ({
-  setRela,
-  expanded,
-  selected,
-  handleToggle,
-  handleSelect,
-  data,
-}) => {
+const RelationshipTree = ({ setRela, expanded, selected, handleToggle, handleSelect, data }) => {
   return (
     <TreeView
       aria-label="controlled"
@@ -359,7 +345,7 @@ const MesheryTreeView = ({
     if (nodeIds.length >= 0) {
       let selectedIdArr = nodeIds[0].split('.');
       let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
-      
+
       // Filter object contains current filter applied to data
       // Route will contain filters to support deeplink
       const filter = {
@@ -445,7 +431,7 @@ const MesheryTreeView = ({
                 <KeyboardArrowUpIcon />
               </IconButton>
             </Tooltip>
-            {type === MODELS && 
+            {type === MODELS && (
               <FormControlLabel
                 control={
                   <Switch
@@ -457,7 +443,7 @@ const MesheryTreeView = ({
                 }
                 label="Duplicates"
               />
-            }
+            )}
           </div>
         )}
       </div>

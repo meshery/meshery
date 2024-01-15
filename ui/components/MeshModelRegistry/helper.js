@@ -1,7 +1,4 @@
-import {
-    MODELS,
-    REGISTRANTS,
-  } from '@/constants/navigator';
+import { MODELS, REGISTRANTS } from '@/constants/navigator';
 
 /**
  * Retrieves filtered data for the details component based on the selected item ID.
@@ -11,7 +8,7 @@ import {
  * @returns {Object} - An object containing the selected component, model, and relationship.
  */
 export const getFilteredDataForDetailsComponent = (data, selectedItemUUID, view) => {
-  let selectedIdArr = selectedItemUUID.split('.')
+  let selectedIdArr = selectedItemUUID.split('.');
   const selectedParent = data.find((parentItem) => parentItem.id === selectedIdArr[0]);
   let selectedComponent = [];
   let selectedModel = {};

@@ -158,7 +158,7 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...components]);
         setSortOrder(sortOrder);
       }
-      setRowsPerPage(14)
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch components:', error);
     }
@@ -178,12 +178,12 @@ const MeshModelComponent = ({
         setResourcesDetail((prev) => [...prev, ...relationships]);
         setSortOrder(sortOrder);
       }
-      setRowsPerPage(14)
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch relationships:', error);
     }
   };
-  
+
   // TODO: Use RTK
   const getSearchedModels = async (searchText) => {
     try {
@@ -267,7 +267,7 @@ const MeshModelComponent = ({
 
         setResourcesDetail(tempRegistrants);
       }
-      setRowsPerPage(14)
+      setRowsPerPage(14);
     } catch (error) {
       console.error('Failed to fetch registrants:', error);
     }
@@ -299,7 +299,7 @@ const MeshModelComponent = ({
         });
   }, [checked]);
 
-  console.log("dataparent rerender")
+  console.log('dataparent rerender');
   useEffect(() => {
     setRequestCancelled(false);
     // setLoading(true);
