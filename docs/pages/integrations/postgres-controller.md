@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres Controller
-permalink: integrations/postgres-controller
-type: installation
+permalink: extensibility/integrations/postgres-controller
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/postgres-controller.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: postgres-controller -->
+ #### About: A controller for managing PostgreSQL databases, roles and more -->
 
 ### Overview & Features:
+
 1. A controller for managing PostgreSQL databases, roles and more
 
 2. Collaborative and visual infrastructure as code for Postgres Controller

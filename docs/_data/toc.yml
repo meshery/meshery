@@ -1,89 +1,84 @@
-- title: 🚀 Quick Start
-  url: installation/quick-start
-  links:
-    - title: Supported Platforms ↆ
-      url: installation
-      children:
-        - title: Docker
-          url: installation/docker
-          grandchildren:
-            - title: Docker Extension
-              url: installation/docker/docker-extension
-        - title: GitHub Codespaces
-          url: installation/codespaces
-        - title: Kubernetes
-          url: installation/kubernetes
-          grandchildren:
-            - title: "- AKS"
-              url: installation/kubernetes/aks
-            - title: "- EKS"
-              url: installation/kubernetes/eks
-            - title: "- GKE"
-              url: installation/kubernetes/gke
-            - title: "- Helm"
-              url: installation/kubernetes/helm
-            - title: "- KinD"
-              url: installation/kubernetes/kind
-            - title: "- Minikube"
-              url: installation/kubernetes/minikube
-        - title: KubeSphere
-          url: installation/kubesphere
-        - title: Linux or macOS ↆ
-          url: installation/linux-mac
-          grandchildren: 
-            - title: "- Bash"
-              url: installation/linux-mac/bash
-            - title: "- Brew"
-              url: installation/linux-mac/brew
-        - title: Windows ↆ
-          url: installation/windows 
-          grandchildren: 
-            - title: "- Scoop"
-              url: installation/windows/scoop 
-    - title: Compatibility Matrix
-      url: installation/compatibility-matrix
 - title: 🗺 Overview
   url: project/overview
   links:
   - title: FAQ
     url: project/faq
+  - title: 🚀 Quick Start
+    url: installation/quick-start
+  - title: Installation ↆ
+    url: installation
+    children:
+      - title: Docker ↆ
+        url: installation/docker
+        grandchildren:
+          - title: Docker Extension
+            url: installation/docker/docker-extension
+      - title: GitHub Codespaces
+        url: installation/codespaces
+      - title: Kubernetes ↆ
+        url: installation/kubernetes
+        grandchildren:
+          - title: "AKS"
+            url: installation/kubernetes/aks
+          - title: "EKS"
+            url: installation/kubernetes/eks
+          - title: "GKE"
+            url: installation/kubernetes/gke
+          - title: "Helm"
+            url: installation/kubernetes/helm
+          - title: "KinD"
+            url: installation/kubernetes/kind
+          - title: "Minikube"
+            url: installation/kubernetes/minikube
+          - title: KubeSphere
+            url: installation/kubernetes/kubesphere
+      - title: Linux or macOS ↆ
+        url: installation/linux-mac
+        grandchildren: 
+          - title: "Bash"
+            url: installation/linux-mac/bash
+          - title: "Brew"
+            url: installation/linux-mac/brew
+      - title: Windows ↆ
+        url: installation/windows 
+        grandchildren: 
+          - title: "Scoop"
+            url: installation/windows/scoop 
 - title: 🧑‍💻 Contributing & Community
   url: project
   links:
     - title: Community
       url: project/community
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
-      url: project/security-vulnerabilities
     - title: Contributing ↆ
       url: project/contributing
       children:
         - title: "Build & Release (CI) ↆ"
           url: project/contributing/build-and-release
           grandchildren:
-          - title: "- End-to-End Testing"
+          - title: "End-to-End Testing"
             url: project/contributing/contributing-cypress
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
-          - title: "- Design Principles"
+          - title: "Design Principles"
             url: project/contributing/contributing-cli-guide
         - title: Docs
           url: project/contributing/contributing-docs
         - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
-          - title: "- Server Events"
+          - title: "Server Events"
             url: project/contributing/contributing-server-events
-          - title: "- Server Errors"
+          - title: "Server Errors"
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Models
+          url: project/contributing/contributing-models
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -97,32 +92,32 @@
         - title: "Operator ↆ"
           url: concepts/architecture/operator
           grandchildren:
-          - title: "- Broker"
+          - title: "Broker"
             url: concepts/architecture/broker
-          - title: "- Meshsync"
+          - title: "Meshsync"
             url: concepts/architecture/meshsync     
     - title: Logical ↆ
       url: concepts/logical
       children: 
         - title: "Designs"
-          url: concepts/designs
+          url: concepts/logical/designs
         - title: "Environments"
-          url: concepts/environments          
+          url: concepts/logical/environments          
         - title: "Models ↆ"
-          url: concepts/models
+          url: concepts/logical/models
           grandchildren: 
-          - title: "- Components"
-            url: concepts/components
-          - title: "- Relationships"
-            url: concepts/relationships
-          - title: "- Policies"
-            url: concepts/policies
-          - title: "- Connections"
-            url: concepts/connections
-          - title: "- Credentials"
-            url: concepts/credentials
+          - title: "Components"
+            url: concepts/logical/components
+          - title: "Relationships"
+            url: concepts/logical/relationships
+          - title: "Policies"
+            url: concepts/logical/policies
+          - title: "Connections"
+            url: concepts/logical/connections
+          - title: "Credentials"
+            url: concepts/logical/credentials
         - title: "Workspaces"
-          url: concepts/workspaces
+          url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -130,36 +125,8 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface
-# - title: 🦾 Service Meshes
-#   url: service-meshes
-#   links:
-#     - title: App Mesh
-#       url: service-meshes/adapters/app-mesh
-#     # - title: Citrix Service Mesh
-#     #   url: service-meshes/adapters/cpx
-#     - title: Cilium Service Mesh
-#       url: service-meshes/adapters/cilium
-#     - title: Consul
-#       url: service-meshes/adapters/consul
-#     - title: Istio
-#       url: service-meshes/adapters/istio
-#     - title: Kuma
-#       url: service-meshes/adapters/kuma
-#     - title: Linkerd
-#       url: service-meshes/adapters/linkerd
-#     - title: Network Service Mesh
-#       url: service-meshes/adapters/nsm
-#     - title: NGINX Service Mesh
-#       url: service-meshes/adapters/nginx-sm
-#     - title: Open Service Mesh
-#       url: service-meshes/adapters/osm
-#     - title: Tanzu
-#       url: service-meshes/adapters/tanzu-sm
-#     - title: Traefik Mesh
-#       url: service-meshes/adapters/traefik-mesh
 - title: 📚 Guides (all)
   url: guides
   links:
@@ -169,25 +136,31 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
-    - title: Configuring Kubernetes Infrastructure
+    - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/creating-a-meshery-design
+        url: guides/configuration-management/creating-a-meshery-design
+      - title: Working with Designs
+        url: guides/configuration-management/working-with-designs
       - title: Importing Applications
-        url: guides/importing-apps
+        url: guides/configuration-management/importing-apps
     - title: Managing Events with Notification Center
       url: guides/events-management
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
-    - title: Pipelining service mesh specifications
-      url: guides/pipelining-service-mesh-specifications
+    - title: GitOps with Meshery
+      url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
         - title: Integrating Prometheus and Grafana
-          url: guides/meshery-metrics
-    - title: Meshery CLI Guides ↆ
+          url: guides/performance-management/meshery-metrics
+        - title: Interpreting Performance Test Results 
+          url: guides/performance-management/interpreting-performance-test-results
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management
+    - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
@@ -219,32 +192,77 @@
       url: tasks/infrastructure-management
     - title: Filter Management
       url: tasks/filter-management
-    - title: Lifecycle Management
+    - title: Managing Connections
       url: tasks/lifecycle-management
+      children:
+      - title: Registering a Connection
+        url: guides/infrastructure-management/registering-a-connection
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management
-      url: tasks/performance-management
-- title: 🛠 Extensibility
+      url: tasks/performance/managing-performance
+- title: 🛠 Integrations and Extensions
   url: extensibility
   links:
-    - title: "Adapters"
+    - title: "APIs"
+      url: extensibility/api
+    - title: "Adapters ↆ"
       url: extensibility/adapters
+      children:
+        - title: Compatibility Matrix
+          url: installation/compatibility-matrix
+        - title: App Mesh
+          url: extensibility/adapters/app-mesh
+        - title: Citrix Service Mesh
+          url: extensibility/adapters/cpx
+        - title: Cilium Service Mesh
+          url: extensibility/adapters/cilium
+        - title: Consul
+          url: extensibility/adapters/consul
+        - title: Istio
+          url: extensibility/adapters/istio
+        - title: Kuma
+          url: extensibility/adapters/kuma
+        - title: Linkerd
+          url: extensibility/adapters/linkerd
+        - title: Network Service Mesh
+          url: extensibility/adapters/nsm
+        - title: NGINX Service Mesh
+          url: extensibility/adapters/nginx-sm
+        - title: Open Service Mesh
+          url: extensibility/adapters/osm
+        - title: Tanzu
+          url: extensibility/adapters/tanzu-sm
+        - title: Traefik Mesh
+          url: extensibility/adapters/traefik-mesh
+    - title: "Integrations"
+      url: extensibility/integrations
     - title: "Load Generators"
       url: extensibility/load-generators
-    - title: "Providers ↆ"
+    - title: "Providers"
       url: extensibility/providers
-      children:
-      - title: Building a Remote Provider
-        url: extensibility/providers/building-a-remote-provider
     - title: "UI Plugins"
-      url: extensibility/ui
-    - title: "REST & GraphQL APIs"
-      url: extensibility/api
+      url: extensibility/ui      
+    - title: "🦾 Extensions ↆ"
+      url: extensions
+      children:
+        - title: "Plugin: MeshMap"
+          url: extensions/meshmap
+          # grandchildren:
+          # - title: "Sharing a Design"
+          #   url: extensions/sharing-a-design
+        - title: "GitOps: Snapshots"
+          url: extensions/snapshot
+        # - title: "Provider: Layer5 Cloud"
+        #   url: extensions/layer5-cloud
+      # children:
+      # - title: Building a Remote Provider
+      #   url: extensibility/providers/building-a-remote-provider
+
 - title: 📖 Reference
   url: reference
   links:
-    - title: Error Codes
+    - title: Error Code Reference
       url: reference/error-codes
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
@@ -253,8 +271,11 @@
         url: reference/graphql-apis
       - title: "REST API Reference"
         url: reference/rest-apis
-    - title: "Meshery CLI"
+    - title: "CLI Command Reference"
       url: reference/mesheryctl
     - title: "Meshery Operator CRDs"
       url: reference/meshery-operator-crds
-
+    - title: Releases
+      url: project/releases
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities

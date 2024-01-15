@@ -333,9 +333,10 @@ class GrafanaCustomChart extends Component {
   collectChartData = (chartInst) => {
     const { panel } = this.props;
     const self = this;
+
     if (panel.targets) {
       panel.targets.forEach((target, ind) => {
-        self.getData(ind, target, chartInst);
+        self.getData(ind, target, chartInst, target.datasource?.type);
       });
     }
   };
@@ -403,7 +404,7 @@ class GrafanaCustomChart extends Component {
     return step;
   };
 
-  getData = async (ind, target) => {
+  getData = async (ind, target, datasource) => {
     const {
       prometheusURL,
       grafanaURL,
@@ -414,6 +415,7 @@ class GrafanaCustomChart extends Component {
       templateVars,
       testUUID,
       panelData,
+      connectionID,
     } = this.props;
     const { chartData } = this.state;
     let { xAxis } = this.state;
@@ -423,11 +425,11 @@ class GrafanaCustomChart extends Component {
     let endpointAPIKey = '';
     if (prometheusURL && prometheusURL !== '') {
       endpointURL = prometheusURL;
-      queryRangeURL = '/api/prometheus/query_range';
+      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
     } else if (grafanaURL && grafanaURL !== '') {
       endpointURL = grafanaURL;
       endpointAPIKey = grafanaAPIKey;
-      queryRangeURL = '/api/grafana/query_range';
+      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
     }
     const self = this;
     let { expr } = target;
@@ -444,12 +446,9 @@ class GrafanaCustomChart extends Component {
     }
     const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
     const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
-    let ds;
-    if (typeof panel.datasource !== 'string') {
-      ds = panel?.datasource?.type.charAt(0).toUpperCase() + panel.datasource.type.substring(1);
-    } else {
-      ds = panel?.datasource?.charAt(0).toUpperCase() + panel.datasource.substring(1);
-    }
+
+    let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
+
     let queryParams = `ds=${ds}&query=${encodeURIComponent(
       expr,
     )}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
@@ -877,6 +876,7 @@ class GrafanaCustomChart extends Component {
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
+  connectionID: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,

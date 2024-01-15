@@ -2,11 +2,12 @@
 layout: page
 title: Contributing to Meshery Adapters
 permalink: project/contributing/contributing-adapters
-description: How to contribute to Meshery Adapters
+abstract: How to contribute to Meshery Adapters
 language: en
 type: project
 category: contributing
 list: include
+abstract: How to contribute to Meshery Adapters
 ---
 
 

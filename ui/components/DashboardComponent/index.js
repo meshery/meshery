@@ -1,11 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
-import { updateGrafanaConfig, updatePrometheusConfig, updateTelemetryUrls } from '../../lib/store';
+import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
+import { Tabs, Tab, Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -13,6 +12,8 @@ import ResourcesSubMenu from './resources/resources-sub-menu';
 import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
+import { TabPanel } from './tabpanel';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -32,8 +33,12 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
   },
   tabs: {
+    flexGrow: 1,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+    '& .MuiTab-fullWidth': {
+      flexBasis: 'unset', // Remove flex-basis
     },
   },
   icon: {
@@ -105,95 +110,117 @@ const styles = (theme) => ({
     cursor: 'pointer',
   },
 });
+const useDashboardRouter = () => {
+  const router = useRouter();
+  const { query, push: pushRoute, route } = router;
 
-const DashboardComponent = (props) => {
-  const { classes, k8sconfig, selectedK8sContexts, updateProgress } = props;
+  const resourceCategory = query.resourceCategory || 'Overview';
+  const selectedResource = query.resource;
 
-  const [tabVal, setTabVal] = React.useState(0);
-
-  const handleChange = () => (event, newValue) => {
-    setTabVal(newValue);
+  const changeResourceTab = (resourceCategory) => {
+    if (query.resourceCategory === resourceCategory) {
+      return;
+    }
+    pushRoute(
+      `${route}?resourceCategory=${resourceCategory || query.resourceCategory}`,
+      undefined,
+      { shallow: true },
+    );
   };
 
-  function TabContainer(props) {
-    return (
-      <Typography component="div" style={{ paddingTop: 2 }}>
-        {props.children}
-      </Typography>
-    );
-  }
+  const handleChangeSelectedResource = (resource) => {
+    if (query.resource === resource) {
+      return;
+    }
+    pushRoute(`${route}?resourceCategory=${resourceCategory}&resource=${resource}`, undefined, {
+      shallow: true,
+    });
+  };
+
+  return { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource };
+};
+
+const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
+  const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
+    useDashboardRouter();
+
+  const getResourceCategoryIndex = (resourceCategory) => {
+    return ResourceCategoryTabs.findIndex((resource) => resource === resourceCategory);
+  };
+
+  const getResourceCategory = (index) => {
+    return ResourceCategoryTabs[index];
+  };
+
   return (
     <>
       <div className={classes.wrapperClss}>
         <Paper square className={classes.wrapperClss}>
           <Tabs
-            value={tabVal}
-            className={classes.tabs}
-            onChange={handleChange()}
-            variant="fullWidth"
+            value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
+            className={classes.tabs}
+            onChange={(_e, val) => {
+              changeResourceTab(getResourceCategory(val));
+            }}
+            variant="fullWidth"
             textColor="primary"
             allowScrollButtonsMobile
             scrollButtons="auto"
           >
-            <Tooltip title={`View Overview`} placement="top">
-              <Tab
-                className={classes.tab}
-                scrollButtons
-                icon={<MesheryIcon style={{ width: '28px', height: '28px' }} />}
-                label={'Overview'}
-              />
-            </Tooltip>
-
-            {Object.keys(ResourcesConfig).map((resource, idx) => {
+            {ResourceCategoryTabs.map((resource, idx) => {
               return (
-                <Tooltip title={`View ${resource}`} placement="top">
+                <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
-                    key={idx}
+                    value={idx}
+                    key={resource}
                     className={classes.tab}
-                    icon={<KubernetesIcon style={{ width: '28px', height: '28px' }} />}
+                    icon={
+                      resource === 'Overview' ? (
+                        <MesheryIcon style={{ width: '28px', height: '28px' }} />
+                      ) : (
+                        <KubernetesIcon style={{ width: '28px', height: '28px' }} />
+                      )
+                    }
                     label={resource}
                   />
-                </Tooltip>
+                </CustomTextTooltip>
               );
             })}
           </Tabs>
         </Paper>
-        {tabVal === 0 && (
-          <TabContainer>
-            <Overview />
-          </TabContainer>
-        )}
-        {Object.keys(ResourcesConfig).map((resource, idx) => {
-          return (
-            tabVal === idx + 1 &&
-            (ResourcesConfig[resource].submenu ? (
-              <TabContainer>
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                />
-              </TabContainer>
+
+        <TabPanel value={resourceCategory} index={'Overview'}>
+          <Overview />
+        </TabPanel>
+        {Object.keys(ResourcesConfig).map((resource, idx) => (
+          <TabPanel value={resourceCategory} index={resource} key={resource}>
+            {ResourcesConfig[resource].submenu ? (
+              <ResourcesSubMenu
+                key={idx}
+                resource={ResourcesConfig[resource]}
+                selectedResource={selectedResource}
+                handleChangeSelectedResource={handleChangeSelectedResource}
+                updateProgress={updateProgress}
+                classes={classes}
+                k8sConfig={k8sconfig}
+                selectedK8sContexts={selectedK8sContexts}
+              />
             ) : (
-              <TabContainer>
-                <ResourcesTable
-                  key={idx}
-                  workloadType={resource}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
-                />
-              </TabContainer>
-            ))
-          );
-        })}
+              <ResourcesTable
+                key={idx}
+                workloadType={resource}
+                classes={classes}
+                k8sConfig={k8sconfig}
+                selectedK8sContexts={selectedK8sContexts}
+                resourceConfig={ResourcesConfig[resource].tableConfig}
+                menu={ResourcesConfig[resource].submenu}
+                updateProgress={updateProgress}
+              />
+            )}
+          </TabPanel>
+        ))}
       </div>
     </>
   );
@@ -201,25 +228,14 @@ const DashboardComponent = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters');
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
-    meshAdapters,
-    meshAdaptersts,
     k8sconfig,
-    grafana,
-    prometheus,
     selectedK8sContexts,
   };
 };

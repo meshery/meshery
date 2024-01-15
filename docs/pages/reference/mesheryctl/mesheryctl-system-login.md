@@ -20,7 +20,6 @@ Authenticate to a Meshery Server
 Authenticate to the Local or a Remote Provider of a Meshery Server
 
 The authentication mode is web-based browser flow
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system login [flags]

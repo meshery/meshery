@@ -1,7 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, Button, Divider, MenuItem, TextField, Grid } from '@material-ui/core';
+import {
+  withStyles,
+  Button,
+  Divider,
+  MenuItem,
+  TextField,
+  Grid,
+  Typography,
+} from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -188,7 +196,19 @@ class MesheryPlayComponent extends React.Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.alreadyConfigured}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '1rem',
+                height: '100%',
+                width: '100%',
+              }}
+            >
+              <Typography variant="h6">Adapter Unavailable</Typography>
+              <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
               <Button
                 variant="contained"
                 color="primary"

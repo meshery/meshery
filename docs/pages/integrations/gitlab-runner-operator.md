@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Gitlab Runner Operator
-permalink: integrations/gitlab-runner-operator
-type: installation
+permalink: extensibility/integrations/gitlab-runner-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/gitlab-runner-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: gitlab-runner-operator -->
+ #### About: GitOps your infrastructure with Meshery and GitLab -->
 
 ### Overview & Features:
+
 1. GitOps your infrastructure with Meshery and GitLab
 
 2. Collaborative and visual infrastructure as code for Gitlab Runner Operator

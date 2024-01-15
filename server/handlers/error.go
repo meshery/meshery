@@ -11,117 +11,129 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrInvalidK8SConfigNilCode    = "1014"
-	ErrNilClientCode              = "1015"
-	ErrRecordPreferencesCode      = "1018"
-	ErrGrafanaConfigCode          = "1019"
-	ErrPrometheusConfigCode       = "1020"
-	ErrGrafanaQueryCode           = "1021"
-	ErrPrometheusQueryCode        = "1022"
-	ErrPrometheusBoardsCode       = "1024"
-	ErrStaticBoardsCode           = "1025"
-	ErrRequestBodyCode            = "1026"
-	ErrParseBoolCode              = "1030"
-	ErrStreamEventsCode           = "1031"
-	ErrStreamClientCode           = "1032"
-	ErrPublishSmiResultsCode      = "1033"
-	ErrPluginOpenCode             = "1034"
-	ErrPluginLookupCode           = "1035"
-	ErrPluginRunCode              = "1036"
-	ErrParseFormCode              = "1037"
-	ErrQueryGetCode               = "1038"
-	ErrGetResultCode              = "1039"
-	ErrConvertToSpecCode          = "1040"
-	ErrFetchSMIResultsCode        = "1041"
-	ErrFormFileCode               = "1042"
-	ErrReadConfigCode             = "1043"
-	ErrLoadConfigCode             = "1044"
-	ErrOpenFileCode               = "1045"
-	ErrKubeVersionCode            = "1046"
-	ErrAddAdapterCode             = "1047"
-	ErrRetrieveDataCode           = "1048"
-	ErrValidAdapterCode           = "1049"
-	ErrOperationIDCode            = "1050"
-	ErrMeshClientCode             = "1051"
-	ErrApplyChangeCode            = "1052"
-	ErrRetrieveMeshDataCode       = "1053"
-	ErrApplicationFailureCode     = "1054"
-	ErrDecodingCode               = "1055"
-	ErrRetrieveUserTokenCode      = "1056"
-	ErrFailToSaveCode             = "1057"
-	ErrFailToDeleteCode           = "1058"
-	ErrWriteResponseCode          = "1059"
-	ErrTestConfigsCode            = "1060"
-	ErrInvalidGenValueCode        = "1061"
-	ErrFailToLoadExtensionsCode   = "1062"
-	ErrConversionCode             = "1063"
-	ErrParseDurationCode          = "1064"
-	ErrLoadTestCode               = "1065"
-	ErrFetchKubernetesCode        = "1066"
-	ErrPanicRecoveryCode          = "1067"
-	ErrBlankNameCode              = "1068"
-	ErrInvalidLTURLCode           = "1069"
-	ErrVersionCompareCode         = "1070"
-	ErrSaveSessionCode            = "1071"
-	ErrKubeClientCode             = "1072"
-	ErrWorkloadDefinitionCode     = "1073"
-	ErrTraitDefinitionCode        = "1074"
-	ErrScopeDefinitionCode        = "1075"
-	ErrPatternFileCode            = "1076"
-	ErrExecutionPlanCode          = "1077"
-	ErrInvalidPatternCode         = "1078"
-	ErrCompConfigPairsCode        = "1079"
-	ErrCreateDirCode              = "1080"
-	ErrInvalidRequestObjectCode   = "1081"
-	ErrChangeK8sContextCode       = "1082"
-	ErrSavingUserPreferenceCode   = "1083"
-	ErrGetFilterCode              = "1084"
-	ErrSaveFilterCode             = "1085"
-	ErrDecodeFilterCode           = "1086"
-	ErrEncodeFilterCode           = "1087"
-	ErrImportFilterCode           = "1088"
-	ErrFetchFilterCode            = "1089"
-	ErrDeleteFilterCode           = "1090"
-	ErrSavePatternCode            = "1091"
-	ErrSaveApplicationCode        = "1092"
-	ErrGetPatternCode             = "1093"
-	ErrDeletePatternCode          = "1094"
-	ErrFetchPatternCode           = "1095"
-	ErrImportPatternCode          = "1096"
-	ErrEncodePatternCode          = "1097"
-	ErrDecodePatternCode          = "1098"
-	ErrParsePatternCode           = "1099"
-	ErrConvertPatternCode         = "1100"
-	ErrInvalidKubeConfigCode      = "1102"
-	ErrInvalidKubeHandlerCode     = "1103"
-	ErrInvalidKubeContextCode     = "1104"
-	ErrValidateCode               = "1106"
-	ErrApplicationContentCode     = "1107"
-	ErrRemoteApplicationURL       = "1108"
-	ErrClonePatternCode           = "1109"
-	ErrCloneFilterCode            = "1110"
-	ErrGenerateComponentsCode     = "1111"
-	ErrPublishCatalogPatternCode  = "1112"
-	ErrPublishCatalogFilterCode   = "1113"
-	ErrGetMeshModelsCode          = "1114"
-	ErrGetUserDetailsCode         = "1115"
-	ErrResolvingRelationship      = "1116"
-	ErrGetLatestVersionCode       = "1117"
-	ErrCreateFileCode             = "1118"
-	ErrLoadCertificateCode        = "1119"
-	ErrCleanupCertificateCode     = "1120"
-	ErrDownlaodWASMFileCode       = "1121"
-	ErrFetchProfileCode           = "1122"
-	ErrPerformanceTestCode        = "1123"
-	ErrFetchApplicationCode       = "1124"
-	ErrDeleteApplicationCode      = "1125"
-	ErrGetEventsCode              = "1126"
-	ErrUpdateEventCode            = "1127"
-	ErrDeleteEventCode            = "1128"
-	ErrUnsupportedEventStatusCode = "1129"
-	ErrBulkUpdateEventCode        = "1537"
-	ErrBulkDeleteEventCode        = "1538"
-	ErrFetchMeshSyncResourcesCode = "1539"
+	ErrInvalidK8SConfigNilCode             = "1014"
+	ErrNilClientCode                       = "1015"
+	ErrRecordPreferencesCode               = "1018"
+	ErrGrafanaConfigCode                   = "1019"
+	ErrPrometheusConfigCode                = "1020"
+	ErrGrafanaQueryCode                    = "1021"
+	ErrPrometheusQueryCode                 = "1022"
+	ErrPrometheusBoardsCode                = "1024"
+	ErrStaticBoardsCode                    = "1025"
+	ErrRequestBodyCode                     = "1026"
+	ErrParseBoolCode                       = "1030"
+	ErrStreamEventsCode                    = "1031"
+	ErrStreamClientCode                    = "1032"
+	ErrPublishSmiResultsCode               = "1033"
+	ErrPluginOpenCode                      = "1034"
+	ErrPluginLookupCode                    = "1035"
+	ErrPluginRunCode                       = "1036"
+	ErrParseFormCode                       = "1037"
+	ErrQueryGetCode                        = "1038"
+	ErrGetResultCode                       = "1039"
+	ErrConvertToSpecCode                   = "1040"
+	ErrFetchSMIResultsCode                 = "1041"
+	ErrFormFileCode                        = "1042"
+	ErrReadConfigCode                      = "1043"
+	ErrLoadConfigCode                      = "1044"
+	ErrOpenFileCode                        = "1045"
+	ErrKubeVersionCode                     = "1046"
+	ErrAddAdapterCode                      = "1047"
+	ErrRetrieveDataCode                    = "1048"
+	ErrValidAdapterCode                    = "1049"
+	ErrOperationIDCode                     = "1050"
+	ErrMeshClientCode                      = "1051"
+	ErrApplyChangeCode                     = "1052"
+	ErrRetrieveMeshDataCode                = "1053"
+	ErrApplicationFailureCode              = "1054"
+	ErrDecodingCode                        = "1055"
+	ErrRetrieveUserTokenCode               = "1056"
+	ErrFailToSaveCode                      = "1057"
+	ErrFailToDeleteCode                    = "1058"
+	ErrWriteResponseCode                   = "1059"
+	ErrTestConfigsCode                     = "1060"
+	ErrInvalidGenValueCode                 = "1061"
+	ErrFailToLoadExtensionsCode            = "1062"
+	ErrConversionCode                      = "1063"
+	ErrParseDurationCode                   = "1064"
+	ErrLoadTestCode                        = "1065"
+	ErrFetchKubernetesCode                 = "1066"
+	ErrPanicRecoveryCode                   = "1067"
+	ErrBlankNameCode                       = "1068"
+	ErrInvalidLTURLCode                    = "1069"
+	ErrVersionCompareCode                  = "1070"
+	ErrSaveSessionCode                     = "1071"
+	ErrKubeClientCode                      = "1072"
+	ErrWorkloadDefinitionCode              = "1073"
+	ErrTraitDefinitionCode                 = "1074"
+	ErrScopeDefinitionCode                 = "1075"
+	ErrPatternFileCode                     = "1076"
+	ErrExecutionPlanCode                   = "1077"
+	ErrInvalidPatternCode                  = "1078"
+	ErrCompConfigPairsCode                 = "1079"
+	ErrCreateDirCode                       = "1080"
+	ErrInvalidRequestObjectCode            = "1081"
+	ErrChangeK8sContextCode                = "1082"
+	ErrSavingUserPreferenceCode            = "1083"
+	ErrGetFilterCode                       = "1084"
+	ErrSaveFilterCode                      = "1085"
+	ErrDecodeFilterCode                    = "1086"
+	ErrEncodeFilterCode                    = "1087"
+	ErrImportFilterCode                    = "1088"
+	ErrFetchFilterCode                     = "1089"
+	ErrDeleteFilterCode                    = "1090"
+	ErrSavePatternCode                     = "1091"
+	ErrSaveApplicationCode                 = "1092"
+	ErrGetPatternCode                      = "1093"
+	ErrDeletePatternCode                   = "1094"
+	ErrFetchPatternCode                    = "1095"
+	ErrImportPatternCode                   = "1096"
+	ErrEncodePatternCode                   = "1097"
+	ErrDecodePatternCode                   = "1098"
+	ErrParsePatternCode                    = "1099"
+	ErrConvertPatternCode                  = "1100"
+	ErrInvalidKubeConfigCode               = "1102"
+	ErrInvalidKubeHandlerCode              = "1103"
+	ErrInvalidKubeContextCode              = "1104"
+	ErrValidateCode                        = "1106"
+	ErrApplicationContentCode              = "1107"
+	ErrRemoteApplicationURL                = "1108"
+	ErrClonePatternCode                    = "1109"
+	ErrCloneFilterCode                     = "1110"
+	ErrGenerateComponentsCode              = "1111"
+	ErrPublishCatalogPatternCode           = "1112"
+	ErrPublishCatalogFilterCode            = "1113"
+	ErrGetMeshModelsCode                   = "1114"
+	ErrGetUserDetailsCode                  = "1115"
+	ErrResolvingRelationship               = "1116"
+	ErrGetLatestVersionCode                = "1117"
+	ErrCreateFileCode                      = "1118"
+	ErrLoadCertificateCode                 = "1119"
+	ErrCleanupCertificateCode              = "1120"
+	ErrDownlaodWASMFileCode                = "1121"
+	ErrFetchProfileCode                    = "1122"
+	ErrPerformanceTestCode                 = "1123"
+	ErrFetchApplicationCode                = "1124"
+	ErrDeleteApplicationCode               = "1125"
+	ErrGetEventsCode                       = "1126"
+	ErrUpdateEventCode                     = "1127"
+	ErrDeleteEventCode                     = "1128"
+	ErrUnsupportedEventStatusCode          = "1129"
+	ErrBulkUpdateEventCode                 = "1537"
+	ErrBulkDeleteEventCode                 = "1538"
+	ErrFetchMeshSyncResourcesCode          = "1539"
+	ErrDesignSourceContentCode             = "1554"
+	ErrGetConnectionsCode                  = "1555"
+	ErrWritingIntoFileCode                 = "1566"
+	ErrBuildOCIImgCode                     = "1567"
+	ErrSaveOCIArtifactCode                 = "1558"
+	ErrIOReaderCode                        = "1559"
+	ErrUnCompressOCIArtifactCode           = "1560"
+	ErrWaklingLocalDirectoryCode           = "1561"
+	ErrConvertingK8sManifestToDesignCode   = "1562"
+	ErrConvertingDockerComposeToDesignCode = "1563"
+	ErrMarshallingDesignIntoYAMLCode       = "1564"
+	ErrConvertingHelmChartToDesignCode     = "1565"
 )
 
 var (
@@ -285,11 +297,15 @@ func ErrRetrieveMeshData(err error) error {
 }
 
 func ErrApplicationFailure(err error, obj string) error {
-	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{"uploaded application source content might be converted", "incorrect source type selected"}, []string{"Select the correct source type", "Make sure the uploaded application source content is valid"})
 }
 
 func ErrApplicationSourceContent(err error, obj string) error {
 	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
+}
+
+func ErrDesignSourceContent(err error, obj string) error {
+	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
 }
 
 func ErrDownloadWASMFile(err error, obj string) error {
@@ -352,7 +368,7 @@ func ErrSaveSession(err error) error {
 }
 
 func ErrCreateDir(err error, obj string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create dir", "check if sufficient storage is available to create dir"})
 }
 
 func ErrInvalidRequestObject(fields ...string) error {
@@ -492,7 +508,7 @@ func ErrResolvingRegoRelationship(err error) error {
 }
 
 func ErrCreateFile(err error, obj string) error {
-	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{"Insufficient permission", "Insufficient storage"}, []string{"check if sufficient permissions are available to create file", "check if sufficient storage is available to create file"})
 }
 
 func ErrLoadCertificate(err error) error {
@@ -530,4 +546,48 @@ func ErrUnsupportedEventStatus(err error, status string) error {
 // ErrFetchMeshSyncResources
 func ErrFetchMeshSyncResources(err error) error {
 	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
+}
+
+func ErrGetConnections(err error) error {
+	return errors.New(ErrGetConnectionsCode, errors.Alert, []string{"Failed to retrieve connections"}, []string{err.Error()}, []string{"Unable to retrieve the connections"}, []string{"Check if the cluster is connected and healthy, you can check it from k8s switcher in header"})
+}
+
+func ErrWritingIntoFile(err error, obj string) error {
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s" + obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+}
+
+func ErrBuildOCIImg(err error) error {
+	return errors.New(ErrBuildOCIImgCode, errors.Alert, []string{"Failed to build OCI image"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted"})
+}
+
+func ErrSaveOCIArtifact(err error) error {
+	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
+}
+
+func ErrIOReader(err error) error {
+	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
+}
+
+func ErrUnCompressOCIArtifact(err error) error {
+	return errors.New(ErrUnCompressOCIArtifactCode, errors.Alert, []string{"Failed to uncompress OCI artifact"}, []string{err.Error()}, []string{"unable to uncompress OCI artifact", "OCI artifact may be corrupted"}, []string{"check if the OCI artifact is valid and not corrupted"})
+}
+
+func ErrWaklingLocalDirectory(err error) error {
+	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
+}
+
+func ErrConvertingK8sManifestToDesign(err error) error {
+	return errors.New(ErrConvertingK8sManifestToDesignCode, errors.Alert, []string{"Failed to convert k8s manifest to design"}, []string{err.Error()}, []string{"unable to convert k8s manifest to design", "k8s manifest may be corrupted", "incorrect source type selected"}, []string{"check if the k8s manifest is valid and not corrupted", "check if the source type selected is Kubernetes Manifest"})
+}
+
+func ErrConvertingDockerComposeToDesign(err error) error {
+	return errors.New(ErrConvertingDockerComposeToDesignCode, errors.Alert, []string{"Failed to convert docker compose to design"}, []string{err.Error()}, []string{"unable to convert docker compose to design", "docker compose may be corrupted", "incorrect source type selected"}, []string{"check if the docker compose is valid and not corrupted", "check if the source type selected is Docker Compose"})
+}
+
+func ErrMarshallingDesignIntoYAML(err error) error {
+	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrConvertingHelmChartToDesign(err error) error {
+	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }

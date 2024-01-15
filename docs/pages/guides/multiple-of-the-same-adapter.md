@@ -4,6 +4,7 @@ title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: guides
 language: en
+abstract: Meshery is capable of running zero or more adapters. Meshery offers many features without the need for adapters. Adapters are optional components that enhance and extend Meshery's core functionality.
 ---
 
 ## Advanced Configuration

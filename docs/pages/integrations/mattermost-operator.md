@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Mattermost Operator
-permalink: integrations/mattermost-operator
-type: installation
+permalink: extensibility/integrations/mattermost-operator
+type: extensibility
 category: integrations
+integrations-category: Tools
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/mattermost-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: mattermost-operator -->
+ #### About: Mattermost is a flexible, open source messaging platform that enables secure team collaboration. -->
 
 ### Overview & Features:
+
 1. Mattermost is a flexible, open source messaging platform that enables secure team collaboration.
 
 2. Collaborative and visual infrastructure as code for Mattermost Operator

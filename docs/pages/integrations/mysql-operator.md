@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: MySQL Operator
-permalink: integrations/mysql-operator
-type: installation
+permalink: extensibility/integrations/mysql-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/mysql-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: mysql-operator -->
+ #### About: MySQL Operator for Kubernetes manages MySQL InnoDB Cluster setups inside a Kubernetes Cluster. MySQL Operator for Kubernetes manages the full lifecycle with setup and maintenance including automating upgrades and backups. This documentation is a work in progress; expect future changes to both content and structure -->
 
 ### Overview & Features:
+
 1. MySQL Operator for Kubernetes manages MySQL InnoDB Cluster setups inside a Kubernetes Cluster. MySQL Operator for Kubernetes manages the full lifecycle with setup and maintenance including automating upgrades and backups. This documentation is a work in progress; expect future changes to both content and structure
 
 2. Collaborative and visual infrastructure as code for Mongodb Operator

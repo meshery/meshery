@@ -1,15 +1,8 @@
 package handlers
 
 import (
-	"context"
 	"net/http"
 	"strconv"
-
-	"github.com/gofrs/uuid"
-	helpers "github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/machines"
-	"github.com/layer5io/meshkit/logger"
 )
 
 const (
@@ -42,31 +35,4 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 		sortOnCol = "updated_at"
 	}
 	return
-}
-
-func InitializeMachineWithContext(
-	machineCtx interface{},
-	ctx context.Context,
-	ID uuid.UUID,
-	smInstanceTracker *ConnectionToStateMachineInstanceTracker,
-	log logger.Handler,
-	provider models.Provider,
-	initialState machines.StateType,
-	mtype string,
-	initFunc models.InitFunc,
-) (*machines.StateMachine, error) {
-
-	inst, err := helpers.GetMachine(initialState, mtype, ID.String(), log)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	inst.Provider = provider
-	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.ConnectToInstanceMap[ID] = inst
-	if err != nil {
-		return nil, err
-	}
-
-	return inst, nil
 }

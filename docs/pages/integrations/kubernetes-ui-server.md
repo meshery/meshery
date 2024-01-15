@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubernetes UI Server
-permalink: integrations/kubernetes-ui-server
-type: installation
+permalink: extensibility/integrations/kubernetes-ui-server
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubernetes-ui-server.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kube-ui-server -->
+ #### About: Kubernetes UI Server is an extended api server for Kubernetes. This exposes a number of apis for a Kubernetes cluster, such as: -->
 
 ### Overview & Features:
+
 1. Kubernetes UI Server is an extended api server for Kubernetes. This exposes a number of apis for a Kubernetes cluster, such as:
 
 2. Collaborative and visual infrastructure as code for Kubernetes UI Server

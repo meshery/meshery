@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-[Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
+[Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes. A Catolog is based on the Meshery's [Catalog Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/catalog.yml) with defined attributes.
 
 ### Simplify Your Cloud Native Infrastructure Deployment and Management
 
@@ -45,5 +45,3 @@ It also supports a collaborative environment, where DevOps engineers can share t
     type="info"
     title="Help with Meshery Catalog"
     content="If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](http://discuss.meshery.io/)." %}
-.
-

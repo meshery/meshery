@@ -1,12 +1,14 @@
 ---
-layout: default
-title: Team Management in Meshery Cloud
+layout: enhanced
+title: Team Management in Layer5 Cloud
 permalink: extensions/team-management
 language: en
 abstract: Learn how to efficiently add team members to Meshery Cloud, assign roles and permissions, and facilitate collaboration within the platform.
 display-title: "false"
 list: include
 type: extensions
+category: provider-layer5
+published: false
 ---
 
 ## Seamlessly Add and Manage Team Members in Meshery Cloud

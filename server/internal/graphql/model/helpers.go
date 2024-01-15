@@ -9,13 +9,9 @@ import (
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/controllers"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -54,98 +50,6 @@ var (
 		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
-
-// listernToEvents - scale this function with the number of channels
-func ListernToEvents(log logger.Handler,
-	handler *database.Handler,
-	datach chan *broker.Message,
-	meshsyncCh chan struct{},
-	broadcast broadcast.Broadcaster,
-) {
-	var wg sync.WaitGroup
-	for msg := range datach {
-		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh, broadcast, &wg)
-	}
-
-	wg.Wait()
-}
-
-// persistData - scale this function with the number of events to persist
-func persistData(msg broker.Message,
-	log logger.Handler,
-	handler *database.Handler,
-	meshsyncCh chan struct{},
-	broadcaster broadcast.Broadcaster,
-	wg *sync.WaitGroup,
-) {
-	defer wg.Done()
-	objectJSON, _ := utils.Marshal(msg.Object)
-	switch msg.ObjectType {
-	case broker.MeshSync:
-		object := meshsyncmodel.KubernetesResource{}
-		err := utils.Unmarshal(string(objectJSON), &object)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		// persist the object
-		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
-		if object.KubernetesResourceMeta.Name == "meshery-operator" || object.KubernetesResourceMeta.Name == "meshery-broker" || object.KubernetesResourceMeta.Name == "meshery-meshsync" {
-			broadcaster.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Data:   false,
-				Type:   "health",
-			})
-		}
-
-		err = recordMeshSyncData(msg.EventType, handler, &object)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-		if meshsyncCh != nil {
-			meshsyncCh <- struct{}{}
-		}
-	case broker.SMI:
-		log.Info("Received SMI Result")
-	}
-}
-
-func PersistClusterNames(
-	ctx context.Context,
-	log logger.Handler,
-	handler *database.Handler,
-	meshsyncCh chan struct{},
-) {
-	k8sContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok {
-		return
-	}
-	for _, clusterConfig := range k8sContexts {
-		clusterName := clusterConfig.Cluster["name"].(string)
-		clusterID := clusterConfig.KubernetesServerID.String()
-		object := meshsyncmodel.KubernetesResource{
-			Kind: "Cluster",
-			KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
-				Name:      clusterName,
-				ClusterID: clusterID,
-			},
-			ClusterID: clusterID,
-		}
-
-		// persist the object
-		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
-		err := recordMeshSyncData(broker.Add, handler, &object)
-		if err != nil {
-			log.Error(err)
-		}
-	}
-	if meshsyncCh != nil {
-		meshsyncCh <- struct{}{}
-	}
-}
 
 // installs operator
 // To be depricated

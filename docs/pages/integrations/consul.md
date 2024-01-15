@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Consul
-permalink: integrations/consul
-type: installation
+permalink: extensibility/integrations/consul
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/consul.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: consul -->
+ #### About: Consul is a distributed, highly available, and data center aware solution to connect and configure applications across dynamic, distributed infrastructure. -->
 
 ### Overview & Features:
+
 1. Consul is a distributed, highly available, and data center aware solution to connect and configure applications across dynamic, distributed infrastructure.
 
 2. Collaborative and visual infrastructure as code for Consul

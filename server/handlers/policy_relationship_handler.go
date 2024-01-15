@@ -23,16 +23,16 @@ import (
 
 const (
 	relationshipPolicyPackageName = "data.meshmodel_policy"
-	siffix                        = "_relationship"
+	suffix                        = "_relationship"
 )
 
 type relationshipPolicyEvalPayload struct {
-	PatternFile string   `json:"pattern_file"`
-	RegoQueries []string `json:"rego_queries"`
+	PatternFile       string   `json:"pattern_file"`
+	EvaluationQueries []string `json:"evaluation_queries"`
 }
 
 // swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
-// Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
+// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
 //
 // responses:
 // 200
@@ -73,7 +73,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	regoQueriesToEval := relationshipPolicyEvalPayload.RegoQueries
+	evaluationQueries := relationshipPolicyEvalPayload.EvaluationQueries
 
 	for _, svc := range patternFile.Services {
 		svc.Settings = core.Format.DePrettify(svc.Settings, false)
@@ -89,18 +89,18 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	eventBuilder.ActedUpon(patternUUID)
 
 	var evalResults interface{}
-	
+
 	// evaluate specified relationship policies
-	verifiedRegoQueriesToEval := h.verifyRegoQueries(regoQueriesToEval)
-	if len(verifiedRegoQueriesToEval) == 0 {
-		event := eventBuilder.WithDescription("Invalid or unsupported rego queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"queries": regoQueriesToEval}).Build()
+	verifiedEvaluationQueries := h.verifyEvaluationQueries(evaluationQueries)
+	if len(verifiedEvaluationQueries) == 0 {
+		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluationQueries": evaluationQueries}).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return
 	}
-	
+
 	evalresults := make(map[string]interface{}, 0)
-	for _, query := range verifiedRegoQueriesToEval {
+	for _, query := range verifiedEvaluationQueries {
 		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
 		if err != nil {
 			h.log.Warn(err)
@@ -120,7 +120,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
-func (h *Handler) verifyRegoQueries(reqoQueries []string) (verifiedRegoQueries []string) {
+func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
 	registeredRelationships, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{})
 
 	var relationships []v1alpha1.RelationshipDefinition
@@ -132,17 +132,17 @@ func (h *Handler) verifyRegoQueries(reqoQueries []string) (verifiedRegoQueries [
 		relationships = append(relationships, relationship)
 	}
 
-	if len(reqoQueries) == 0 || (len(reqoQueries) == 1 && reqoQueries[0] == "all") {
+	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
 		for _, relationship := range relationships {
-			if relationship.RegoQuery != "" {
-				verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+			if relationship.EvaluationQuery != "" {
+				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
 			}
 		}
 	} else {
-		for _, regoQuery := range reqoQueries {
-			for _, relationship := range relationships {				
-				if strings.TrimSuffix(regoQuery, siffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
-					verifiedRegoQueries = append(verifiedRegoQueries, relationship.RegoQuery)
+		for _, regoQuery := range evaluationQueries {
+			for _, relationship := range relationships {
+				if strings.TrimSuffix(regoQuery, suffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
+					verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
 					break
 				}
 			}

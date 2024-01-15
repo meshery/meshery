@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: OpenFeature
-permalink: integrations/openfeature
-type: installation
+permalink: extensibility/integrations/openfeature
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/openfeature.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: openfeature -->
+ #### About: Standardizing Feature Flagging for Everyone -->
 
 ### Overview & Features:
+
 1. Standardizing Feature Flagging for Everyone
 
 2. Collaborative and visual infrastructure as code for OpenEBS

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Cilium
-permalink: integrations/cilium
-type: installation
+permalink: extensibility/integrations/cilium
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cilium.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cilium -->
+ #### About: Cilium is an open source software for providing, securing and observing network connectivity between container workloads - cloud native, and fueled by the revolutionary Kernel technology eBPF. -->
 
 ### Overview & Features:
+
 1. Cilium is an open source software for providing, securing and observing network connectivity between container workloads - cloud native, and fueled by the revolutionary Kernel technology eBPF.
 
 2. The easiest way to get production-grade Kubernetes clusters with Cilium up and running

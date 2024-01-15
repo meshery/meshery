@@ -1,11 +1,15 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "meshery.name" . -}}
 {{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
+{{- $apiVersion := "extensions/v1beta1" -}}
+{{- if .Values.ingress.apiVersion -}}
+{{- $apiVersion = .Values.ingress.apiVersion -}}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+{{- $apiVersion = "networking.k8s.io/v1" }}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+{{- $apiVersion = "networking.k8s.io/v1beta1" }}
 {{- end }}
+apiVersion: {{ $apiVersion }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}
@@ -17,6 +21,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+{{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+{{- end }}
 {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
@@ -28,15 +35,25 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ tpl .host $ | quote }}
       http:
         paths:
-        {{- range .paths }}
-          - path: {{ . }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (eq $apiVersion "networking.k8s.io/v1") }}
+            pathType: {{ .pathType }}
+            {{- end }}
             backend:
+            {{- if eq $apiVersion "networking.k8s.io/v1" }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+            {{- else }}
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
-        {{- end }}
-  {{- end }}
+            {{- end }}
+          {{- end }}
+    {{- end }}
 {{- end }}

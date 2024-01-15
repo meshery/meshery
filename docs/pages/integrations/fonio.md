@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Fonio
-permalink: integrations/fonio
-type: installation
+permalink: extensibility/integrations/fonio
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/fonio.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: fonio -->
+ #### About: Data first monitoring agent using (e)BPF, built on RedBPF -->
 
 ### Overview & Features:
+
 1. Data first monitoring agent using (e)BPF, built on RedBPF
 
 2. Collaborative and visual infrastructure as code for Fonio

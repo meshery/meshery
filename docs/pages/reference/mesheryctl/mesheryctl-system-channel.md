@@ -17,7 +17,6 @@ Switch between release channels
 ## Synopsis
 
 Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel [flags]

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
-import { Tooltip, Tabs, Tab, Typography } from '@material-ui/core';
+import { Tooltip, Tabs, Tab } from '@material-ui/core';
 import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
 
 import { withRouter } from 'next/router';
@@ -8,6 +8,7 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
+import { TabPanel } from '../tabpanel';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -107,21 +108,30 @@ const styles = (theme) => ({
 });
 
 const ResourcesSubMenu = (props) => {
-  const { classes, updateProgress, k8sConfig, resource, selectedK8sContexts } = props;
+  const {
+    classes,
+    updateProgress,
+    k8sConfig,
+    resource,
+    selectedK8sContexts,
+    selectedResource,
+    handleChangeSelectedResource,
+  } = props;
 
-  const [tabVal, setTabVal] = React.useState(0);
+  if (!selectedResource) {
+    handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
+  }
 
-  const handleChange = () => (event, newValue) => {
-    setTabVal(newValue);
+  const TABS = Object.keys(resource.tableConfig());
+
+  const getResourceCategoryIndex = (resourceCategory) => {
+    return TABS.findIndex((resource) => resource === resourceCategory);
   };
 
-  function TabContainer(props) {
-    return (
-      <Typography component="div" style={{ paddingTop: 2 }}>
-        {props.children}
-      </Typography>
-    );
-  }
+  const getResourceCategory = (index) => {
+    return TABS[index];
+  };
+
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -129,56 +139,51 @@ const ResourcesSubMenu = (props) => {
           <div className={classes.subMenuTab}>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 490, sm: 880, md: 1200 } }}>
               <Tabs
-                value={tabVal}
+                value={getResourceCategoryIndex(selectedResource)}
                 className={classes.tabs}
-                onChange={handleChange()}
+                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
                 variant="scrollable"
                 scrollButtons="auto"
                 indicatorColor="primary"
                 textColor="primary"
                 centered
               >
-                {Object.keys(resource.tableConfig()).map((key, index) => {
-                  return (
-                    <Tooltip title={`${resource.tableConfig()[key].name}`} placement="top">
-                      <Tab
-                        key={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <KubernetesIcon
-                              className={classes.iconText}
-                              width="22px"
-                              height="22px"
-                            />
-                            {resource.tableConfig()[key].name}
-                          </div>
-                        }
-                      />
-                    </Tooltip>
-                  );
-                })}
+                {TABS.map((key, index) => (
+                  <Tooltip
+                    key={index}
+                    title={`${resource.tableConfig()[key].name}`}
+                    placement="top"
+                  >
+                    <Tab
+                      key={index}
+                      value={index}
+                      label={
+                        <div className={classes.iconText}>
+                          <KubernetesIcon className={classes.iconText} width="22px" height="22px" />
+                          {resource.tableConfig()[key].name}
+                        </div>
+                      }
+                    />
+                  </Tooltip>
+                ))}
               </Tabs>
             </Box>
           </div>
         </Paper>
-        {Object.keys(resource.tableConfig()).map((key, index) => {
-          return (
-            tabVal === index && (
-              <TabContainer>
-                <ResourcesTable
-                  key={index}
-                  workloadType={key}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sConfig}
-                  resourceConfig={resource.tableConfig}
-                  submenu={resource.submenu}
-                  selectedK8sContexts={selectedK8sContexts}
-                />
-              </TabContainer>
-            )
-          );
-        })}
+        {TABS.map((key, index) => (
+          <TabPanel value={selectedResource} index={key} key={index}>
+            <ResourcesTable
+              key={index}
+              workloadType={key}
+              updateProgress={updateProgress}
+              classes={classes}
+              k8sConfig={k8sConfig}
+              resourceConfig={resource.tableConfig}
+              submenu={resource.submenu}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </TabPanel>
+        ))}
       </div>
     </>
   );

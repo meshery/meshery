@@ -2,9 +2,8 @@ package resolver
 
 import (
 	"context"
-	"sync"
 
-	"github.com/go-errors/errors"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/controllers"
@@ -152,71 +151,31 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.OperatorStatus, error) {
-	status := model.StatusUnknown
-
-	var kubeclient *mesherykube.Client
-	var err error
-	if ctxID != "" {
-		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
-			return nil, model.ErrMesheryClientNil
-		}
-		for _, ctx := range k8scontexts {
-			if ctx.ID == ctxID {
-				kubeclient, err = ctx.GenerateKubeHandler()
-				if err != nil {
-					return nil, model.ErrMesheryClient(err)
-				}
-				break
-			}
-		}
-	} else {
-		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
-			return nil, model.ErrMesheryClientNil
-		}
-		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
-		if err != nil {
-			return nil, model.ErrMesheryClient(err)
-		}
+func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.MesheryControllersStatusListItem, error) {
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	unknowStatus := &model.MesheryControllersStatusListItem{
+		ContextID:  ctxID,
+		Status:     model.MesheryControllerStatusUnkown,
+		Controller: model.GetInternalController(models.MesheryOperator),
 	}
-	if kubeclient == nil {
-		return nil, model.ErrMesheryClientNil
-	}
-	name, version, err := model.GetOperator(kubeclient)
-	if err != nil {
-		r.Log.Error(err)
-		return &model.OperatorStatus{
-			Status: status,
-			Error: &model.Error{
-				Code:        "",
-				Description: err.Error(),
-			},
-		}, nil
-	}
-	if name == "" {
-		status = model.StatusDisabled
-	} else {
-		status = model.StatusEnabled
+	if !ok {
+		return unknowStatus, nil
 	}
 
-	controllers, err := model.GetControllersInfo(kubeclient, r.BrokerConn)
-	if err != nil {
-		r.Log.Error(err)
-		return &model.OperatorStatus{
-			Status: status,
-			Error: &model.Error{
-				Code:        "",
-				Description: err.Error(),
-			},
-		}, nil
+	controllerHandlersPerContext := handler.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
+	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
+		return unknowStatus, nil
 	}
 
-	return &model.OperatorStatus{
-		Status:      status,
-		Version:     version,
-		Controllers: controllers,
+	controllerhandler, ok := controllerHandlersPerContext[ctxID]
+	if !ok {
+		return unknowStatus, nil
+	}
+	status := controllerhandler[models.MesheryOperator].GetStatus()
+	return &model.MesheryControllersStatusListItem{
+		ContextID:  ctxID,
+		Status:     model.GetInternalControllerStatus(status),
+		Controller: model.GetInternalController(models.MesheryOperator),
 	}, nil
 }
 
@@ -268,104 +227,104 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	return &status, nil
 }
 
-func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
-	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
+// func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
+// 	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
 
-	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		return nil, ErrNilClient
-	}
-	var k8sContexts []models.K8sContext
-	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
-		k8sContexts = k8sctxs
-	} else if len(k8scontextIDs) != 0 {
-		var k8sContextIDsMap = make(map[string]bool)
-		for _, k8sContext := range k8scontextIDs {
-			k8sContextIDsMap[k8sContext] = true
-		}
-		for _, k8Context := range k8sctxs {
-			if k8sContextIDsMap[k8Context.ID] {
-				k8sContexts = append(k8sContexts, k8Context)
-			}
-		}
-	}
-	var group sync.WaitGroup
-	for _, k8scontext := range k8sContexts {
-		group.Add(1)
-		go func(k8scontext models.K8sContext) {
-			defer group.Done()
-			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
-			r.Broadcast.Register(operatorSyncChannel)
-			r.Log.Info("Operator subscription started for ", k8scontext.Name)
+// 	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+// 	if !ok || len(k8sctxs) == 0 {
+// 		return nil, ErrNilClient
+// 	}
+// 	var k8sContexts []models.K8sContext
+// 	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
+// 		k8sContexts = k8sctxs
+// 	} else if len(k8scontextIDs) != 0 {
+// 		var k8sContextIDsMap = make(map[string]bool)
+// 		for _, k8sContext := range k8scontextIDs {
+// 			k8sContextIDsMap[k8sContext] = true
+// 		}
+// 		for _, k8Context := range k8sctxs {
+// 			if k8sContextIDsMap[k8Context.ID] {
+// 				k8sContexts = append(k8sContexts, k8Context)
+// 			}
+// 		}
+// 	}
+// 	var group sync.WaitGroup
+// 	for _, k8scontext := range k8sContexts {
+// 		group.Add(1)
+// 		go func(k8scontext models.K8sContext) {
+// 			defer group.Done()
+// 			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
+// 			r.Broadcast.Register(operatorSyncChannel)
+// 			r.Log.Info("Operator subscription started for ", k8scontext.Name)
 
-			// Enforce enable operator
-			status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
-			if err != nil {
-				r.Log.Error(ErrOperatorSubscription(err))
-				return
-			}
-			statusWithContext := model.OperatorStatusPerK8sContext{
-				ContextID:      k8scontext.ID,
-				OperatorStatus: status,
-			}
-			operatorChannel <- &statusWithContext
-			err = r.connectToBroker(ctx, provider, k8scontext.ID)
-			if err != nil && err != ErrNoMeshSync {
-				r.Log.Error(err)
-				// The subscription should remain live to send future messages and only die when context is done
-				// return
-			}
-			for {
-				select {
-				case processing := <-operatorSyncChannel:
-					if processing.Source == broadcast.OperatorSyncChannel {
-						r.Log.Info("Operator sync channel called for ", k8scontext.Name)
-						status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
-						if err != nil {
-							r.Log.Error(ErrOperatorSubscription(err))
-							return
-						}
-						switch processing.Data.(type) {
-						case operatorStatusK8sContext:
-							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
-								continue
-							}
-							switch processing.Data.(operatorStatusK8sContext).processing.(type) {
-							case bool:
-								if processing.Data.(operatorStatusK8sContext).processing.(bool) {
-									status.Status = model.StatusProcessing
-								}
-							case *errors.Error:
-								status.Error = &model.Error{
-									Code:        "",
-									Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
-								}
-							case error:
-								status.Error = &model.Error{
-									Code:        "",
-									Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
-								}
-							}
-						}
-						statusWithContext := model.OperatorStatusPerK8sContext{
-							ContextID:      k8scontext.ID,
-							OperatorStatus: status,
-						}
-						operatorChannel <- &statusWithContext
-					}
-				case <-ctx.Done():
-					r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
-					r.Broadcast.Unregister(operatorSyncChannel)
-					close(operatorSyncChannel)
+// 			// Enforce enable operator
+// 			status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
+// 			if err != nil {
+// 				r.Log.Error(ErrOperatorSubscription(err))
+// 				return
+// 			}
+// 			statusWithContext := model.OperatorStatusPerK8sContext{
+// 				ContextID:      k8scontext.ID,
+// 				OperatorStatus: status,
+// 			}
+// 			operatorChannel <- &statusWithContext
+// 			err = r.connectToBroker(ctx, provider, k8scontext.ID)
+// 			if err != nil && err != ErrNoMeshSync {
+// 				r.Log.Error(err)
+// 				// The subscription should remain live to send future messages and only die when context is done
+// 				// return
+// 			}
+// 			for {
+// 				select {
+// 				case processing := <-operatorSyncChannel:
+// 					if processing.Source == broadcast.OperatorSyncChannel {
+// 						r.Log.Info("Operator sync channel called for ", k8scontext.Name)
+// 						status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
+// 						if err != nil {
+// 							r.Log.Error(ErrOperatorSubscription(err))
+// 							return
+// 						}
+// 						switch processing.Data.(type) {
+// 						case operatorStatusK8sContext:
+// 							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
+// 								continue
+// 							}
+// 							switch processing.Data.(operatorStatusK8sContext).processing.(type) {
+// 							case bool:
+// 								if processing.Data.(operatorStatusK8sContext).processing.(bool) {
+// 									status.Status = model.StatusProcessing
+// 								}
+// 							case *errors.Error:
+// 								status.Error = &model.Error{
+// 									Code:        "",
+// 									Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
+// 								}
+// 							case error:
+// 								status.Error = &model.Error{
+// 									Code:        "",
+// 									Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
+// 								}
+// 							}
+// 						}
+// 						statusWithContext := model.OperatorStatusPerK8sContext{
+// 							ContextID:      k8scontext.ID,
+// 							OperatorStatus: status,
+// 						}
+// 						operatorChannel <- &statusWithContext
+// 					}
+// 				case <-ctx.Done():
+// 					r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
+// 					r.Broadcast.Unregister(operatorSyncChannel)
+// 					close(operatorSyncChannel)
 
-					return
-				}
-			}
-		}(k8scontext)
-	}
-	go func() {
-		group.Wait()
-		close(operatorChannel)
-	}()
-	return operatorChannel, nil
-}
+// 					return
+// 				}
+// 			}
+// 		}(k8scontext)
+// 	}
+// 	go func() {
+// 		group.Wait()
+// 		close(operatorChannel)
+// 	}()
+// 	return operatorChannel, nil
+// }

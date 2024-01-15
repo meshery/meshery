@@ -15,7 +15,7 @@
     "metadata": {}
   },
   "subType": "Permission",
-  "rego_query": "edge_binding_relationship",
+  "evaluationQuery": "edge_binding_relationship",
   "selectors": {
     "deny": {
       "from": [
@@ -120,12 +120,33 @@
                 "name"
               ]
             ],
-            "ClusterRoleBinding": [[
-              "settings",
-              "subjects",
-              "_",
-              "name"
-            ]]
+            "ClusterRoleBinding": [
+              [
+                "settings",
+                "subjects",
+                "_",
+                "name"
+              ]
+            ]
+          }
+        },
+        {
+          "kind": "ServiceAccount",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "name"
+              ]
+            ],
+            "RoleBinding": [
+              [
+                "settings",
+                "subjects",
+                "_",
+                "name"
+              ]
+            ]
           }
         }
       ]

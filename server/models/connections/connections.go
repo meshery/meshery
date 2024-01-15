@@ -1,14 +1,20 @@
 package connections
 
 import (
+	"context"
 	"database/sql"
+	"github.com/layer5io/meshkit/models/events"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/layer5io/meshkit/logger"
 )
 
 // swagger:response ConnectionStatus
 type ConnectionStatus string
+
+type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
 const (
 	DISCOVERED   ConnectionStatus = "discovered"
@@ -42,7 +48,7 @@ type PromConn struct {
 type PromCred struct {
 	Name string `json:"name,omitempty"`
 	// If Basic then it should be formatted as username:password
-	APIKeyOrBasicAuth string `json:"credential,omitempty"`
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
 type GrafanaConn struct {
@@ -53,23 +59,24 @@ type GrafanaConn struct {
 type GrafanaCred struct {
 	Name string `json:"name,omitempty"`
 	// If Basic then it should be formatted as username:password
-	APIKeyOrBasicAuth string `json:"credential,omitempty"`
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
 // swagger:response Connection
 type Connection struct {
-	ID           uuid.UUID              `json:"id,omitempty" db:"id"`
-	Name         string                 `json:"name,omitempty" db:"name"`
-	CredentialID uuid.UUID              `json:"credential_id,omitempty" db:"credential_id"`
-	Type         string                 `json:"type,omitempty" db:"type"`
-	SubType      string                 `json:"sub_type,omitempty" db:"sub_type"`
-	Kind         string                 `json:"kind,omitempty" db:"kind"`
-	Metadata     map[string]interface{} `json:"metadata,omitempty" db:"metadata"`
-	Status       ConnectionStatus       `json:"status,omitempty" db:"status"`
-	UserID       *uuid.UUID             `json:"user_id,omitempty" db:"user_id"`
-	CreatedAt    time.Time              `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt    time.Time              `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt    sql.NullTime           `json:"deleted_at,omitempty" db:"deleted_at"`
+	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
+	Name         string                         `json:"name,omitempty" db:"name"`
+	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
+	Type         string                         `json:"type,omitempty" db:"type"`
+	SubType      string                         `json:"sub_type,omitempty" db:"sub_type"`
+	Kind         string                         `json:"kind,omitempty" db:"kind"`
+	Metadata     map[string]interface{}         `json:"metadata,omitempty" db:"metadata"`
+	Status       ConnectionStatus               `json:"status,omitempty" db:"status"`
+	UserID       *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
+	CreatedAt    time.Time                      `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt    time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt    sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
+	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments"`
 }
 
 // swagger:response ConnectionPage

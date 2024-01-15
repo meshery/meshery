@@ -17,7 +17,6 @@ Configure your Meshery deployment(s)
 ## Synopsis
 
 Configure and switch between different named Meshery server and component versions and deployments.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context [command] [flags]

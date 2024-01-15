@@ -1,18 +1,22 @@
 import React from 'react';
 import { getResourceStr, resourceParsers, timeAgo } from '../../../../utils/k8s-utils';
-import {
-  getClusterNameFromClusterId,
-  getConnectionIdFromClusterId,
-} from '../../../../utils/multi-ctx';
+import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { ConnectionChip } from '../../../connections/ConnectionChip';
+import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
-export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const NodeTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   const ping = useKubernetesHook();
   return {
     name: 'Node',
@@ -33,6 +37,7 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
         label: 'ID',
         options: {
           display: false,
+          customBodyRender: (value) => <FormatId id={value} />,
         },
       },
       {
@@ -44,9 +49,6 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(value, tableMeta) {
-            if (!!meshSyncResources && !!meshSyncResources[tableMeta.rowIndex]) {
-              return <div></div>;
-            }
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
@@ -128,14 +130,18 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
             );
           },
           customBodyRender: function CustomBody(val) {
-            let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-            let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+            let context = getK8sContextFromClusterId(val, k8sConfig);
+
             return (
               <>
-                <ConnectionChip
-                  title={clusterName}
-                  iconSrc="/static/img/kubernetes.svg"
-                  handlePing={() => ping(clusterName, val, connectionId)}
+                <TootltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
                 />
               </>
             );
@@ -170,8 +176,8 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let addresses = attribute?.addresses || [];
-            let externalIP =
-              addresses?.find((address) => address.type === 'ExternalIP')?.address || '';
+            let externalIP = addresses?.find((address) => address.type === 'ExternalIP')
+              ?.address || <span style={{ display: 'flex', justifyContent: 'center' }}>-</span>;
             return <>{externalIP}</>;
           },
         },

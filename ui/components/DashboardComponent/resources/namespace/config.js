@@ -1,25 +1,28 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import {
-  getClusterNameFromClusterId,
-  getConnectionIdFromClusterId,
-} from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { ConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip } from '../../../../utils/utils';
+import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
+import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
+import { FormatId } from '@/components/DataFormatter';
 
-export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+export const NamespaceTableConfig = (
+  switchView,
+  meshSyncResources,
+  k8sConfig,
+  connectionMetadataState,
+) => {
   const ping = useKubernetesHook();
   return {
     name: 'Namespace',
     colViews: [
-      ['id', 'xs'],
-      ['metadata.name', 'm'],
+      ['id', 'na'],
+      ['metadata.name', 'xs'],
       ['apiVersion', 'm'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
@@ -30,7 +33,7 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
         label: 'ID',
         options: {
           display: false,
-          customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={10} />,
+          customBodyRender: (value) => <FormatId id={value} />,
         },
       },
       {
@@ -91,16 +94,18 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
             );
           },
           customBodyRender: function CustomBody(val) {
-            let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-            let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
+            let context = getK8sContextFromClusterId(val, k8sConfig);
+            console.log('TESTL ', context);
             return (
-              <>
-                <ConnectionChip
-                  title={clusterName}
-                  iconSrc="/static/img/kubernetes.svg"
-                  handlePing={() => ping(clusterName, val, connectionId)}
-                />
-              </>
+              <TootltipWrappedConnectionChip
+                title={context.name}
+                iconSrc={
+                  connectionMetadataState
+                    ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    : ''
+                }
+                handlePing={() => ping(context.name, context.server, context.connection_id)}
+              />
             );
           },
         },

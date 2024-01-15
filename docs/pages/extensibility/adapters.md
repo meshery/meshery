@@ -3,10 +3,12 @@ layout: default
 title: "Extensibility: Meshery Adapters"
 permalink: extensibility/adapters
 type: Extensibility
-abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
+abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility/providers">providers</a>.'
 language: en
 #redirect_from: extensibility
 ---
+
+
 ## Guiding Principles of Adapter Design
 
 Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters](../concepts/architecture/adapters). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
@@ -18,6 +20,15 @@ Meshery upholds the following guiding principles for adapter design:
 1. **Adapters should avoid wheel reinvention, but seek to leverage the functionality provided by cloud native infrastructure under management.**
   - This both reduces sustaining costs and improves reliability.
 
+## Adapters
+
+| Adapter | Earliest Version |
+| :----------: | :--------------: |
+{% for adapter in site.adapters -%}
+{% if adapter.port -%}
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.earliest_version }} |
+{% endif -%}
+{% endfor %}
 
 ### Adapter Capabilities
 

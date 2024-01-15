@@ -1,14 +1,12 @@
 ---
 layout: default
-title: Filter Management
+title: Envoy WASM Filter Management
 permalink: tasks/filter-management
 type: tasks
 language: en
 list: include
 abstract: "Meshery provides the ability to manage WASM filters for data plane proxies for agility, maintainability, diversity, reliability and isolation, security, and speed."
 ---
-
-## Seamless WASM Envoy Filter Management
 
 Meshery offers powerful features that simplify the management of Envoy WASM filters in Istio.
 
@@ -19,11 +17,6 @@ Meshery offers powerful features that simplify the management of Envoy WASM filt
 - **Download WASM Binaries**: Access and download WebAssembly binaries directly from your Remote Provider like [Layer5 Cloud](https://meshery.layer5.io/).
 - **Efficient Data Plane Design**: Seamlessly design and deploy Istio and Envoy data planes using extensions like [MeshMap](https://layer5.io/cloud-native-management/meshmap).
 - **Contribute to Open Source**: Get involved with the cloud native community by contributing to any of the open source [wasm-filters](https://github.com/layer5io/wasm-filters) developed by the Meshery community.
-
-### Collaboration and Engagement
-
-- :star2: **Support Your Favorites**: Encourage collaboration by starring your [favorite repository](https://github.com/meshery/meshery) on GitHub.
-- :playground_slide: **Hands-On Experience**: Experience these features firsthand in the [Meshery Playground](https://playground.meshery.io/) by accessing version v0.6.109.
 
 <img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/a07ef29a-4cf8-986e-9bd3-78db7dc00ce1.png" width="100px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" />
 

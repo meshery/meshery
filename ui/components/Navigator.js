@@ -68,8 +68,12 @@ import {
   PROFILES,
   TOGGLER,
   CONNECTION,
+  ENVIRONMENT,
+  WORKSPACE,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
   root: {
@@ -356,14 +360,44 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Connections',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
+        permission: {
+          action: keys.VIEW_CONNECTIONS.action,
+          subject: keys.VIEW_CONNECTIONS.subject,
+        },
+      },
+      {
+        id: ENVIRONMENT,
+        href: '/management/environments',
+        title: 'Environments',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
+        link: true,
+        permission: {
+          action: keys.VIEW_ENVIRONMENTS.action,
+          subject: keys.VIEW_ENVIRONMENTS.subject,
+        },
+      },
+      {
+        id: WORKSPACE,
+        href: '/management/workspaces',
+        title: 'Workspaces',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
+        link: true,
+        permission: {
+          action: keys.VIEW_WORKSPACE.action,
+          subject: keys.VIEW_WORKSPACE.subject,
+        },
       },
       {
         id: SERVICE_MESH,
-        href: '/management',
+        href: '/management/service-mesh',
         title: 'Service Mesh',
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
+        permission: {
+          action: keys.VIEW_SERVICE_MESH.action,
+          subject: keys.VIEW_SERVICE_MESH.subject,
+        },
       },
     ],
   },
@@ -385,6 +419,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link: true,
         isBeta: true,
+        permission: {
+          action: keys.VIEW_FILTERS.action,
+          subject: keys.VIEW_FILTERS.subject,
+        },
       },
       {
         id: DESIGN,
@@ -394,6 +432,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
+        permission: {
+          action: keys.VIEW_DESIGNS.action,
+          subject: keys.VIEW_DESIGNS.subject,
+        },
       },
     ],
   },
@@ -414,6 +456,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
+        permission: {
+          action: keys.VIEW_PERFORMANCE_PROFILES.action,
+          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
+        },
       },
     ],
   },
@@ -427,6 +473,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     link: true,
     href: '/extensions',
     submenu: false,
+    permission: {
+      action: keys.VIEW_EXTENSIONS.action,
+      subject: keys.VIEW_EXTENSIONS.subject,
+    },
   },
 ];
 
@@ -505,6 +555,11 @@ class Navigator extends React.Component {
   componentId = 'navigator';
 
   componentDidMount() {
+    this.fetchCapabilities();
+    this.fetchVersionDetails();
+  }
+
+  fetchCapabilities() {
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -514,7 +569,7 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+          const navigatorComponents = this.createNavigatorComponents(capabilitiesRegistryObj);
 
           this.setState({
             navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
@@ -526,6 +581,9 @@ class Navigator extends React.Component {
       },
       (err) => console.error(err),
     );
+  }
+
+  fetchVersionDetails() {
     dataFetch(
       '/api/system/version',
       {
@@ -548,6 +606,10 @@ class Navigator extends React.Component {
       },
       (err) => console.error(err),
     );
+  }
+
+  createNavigatorComponents(capabilityRegistryObj) {
+    return getNavigatorComponents(capabilityRegistryObj);
   }
 
   /**
@@ -845,6 +907,7 @@ class Navigator extends React.Component {
               show: showc,
               link: linkc,
               children: childrenc,
+              permission: permissionc,
             }) => {
               if (typeof showc !== 'undefined' && !showc) {
                 return '';
@@ -861,6 +924,7 @@ class Navigator extends React.Component {
                       path === hrefc && classes.itemActiveItem,
                       isDrawerCollapsed && classes.noPadding,
                     )}
+                    disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                   >
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
@@ -885,6 +949,7 @@ class Navigator extends React.Component {
                 show: showc,
                 link: linkc,
                 children: childrenc,
+                permission: permissionc,
               }) => {
                 if (typeof showc !== 'undefined' && !showc) {
                   return '';
@@ -904,6 +969,7 @@ class Navigator extends React.Component {
                         !showc && classes.disabled,
                       )}
                       onClick={() => this.handleAdapterClick(idc, linkc)}
+                      disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
                       {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
@@ -1089,7 +1155,18 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {navigatorComponents.map(
-          ({ id: childId, title, icon, href, show, link, children, hovericon, submenu }) => {
+          ({
+            id: childId,
+            title,
+            icon,
+            href,
+            show,
+            link,
+            children,
+            hovericon,
+            submenu,
+            permission,
+          }) => {
             // if (typeof show !== "undefined" && !show) {
             //   return "";
             // }
@@ -1114,6 +1191,7 @@ class Navigator extends React.Component {
                       ? this.setState({ hoveredId: false })
                       : null
                   }
+                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
                   <Link href={link ? href : ''}>
                     <div data-cy={childId} className={classNames(classes.link)}>
@@ -1339,7 +1417,17 @@ const mapStateToProps = (state) => {
   const path = state.get('page').get('path');
   const isDrawerCollapsed = state.get('isDrawerCollapsed');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
+  const organization = state.get('organization');
+  const keys = state.get('keys');
+  return {
+    meshAdapters,
+    meshAdaptersts,
+    path,
+    isDrawerCollapsed,
+    capabilitiesRegistry,
+    organization,
+    keys,
+  };
 };
 
 export default withStyles(styles)(

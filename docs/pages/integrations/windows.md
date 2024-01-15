@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Windows
-permalink: integrations/windows
-type: installation
+permalink: extensibility/integrations/windows
+type: extensibility
 category: integrations
+integrations-category: Platform
+integrations-subcategory: Operating System
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/windows.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: windows -->
+ #### About: Run mesheryctl on your Windows host -->
 
 ### Overview & Features:
+
 1. Run mesheryctl on your Windows host
 
 2. Collaborative and visual infrastructure as code for Windows

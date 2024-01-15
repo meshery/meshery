@@ -84,7 +84,7 @@ ol {
   flex-direction: column;
   gap: 2px;
   font-size: 1.4rem;
-  padding-inline-start: 4rem;
+  padding-inline-start: 3rem;
 
   @media (max-width: 37.5em) {
     font-size: 1.8rem;
@@ -103,6 +103,15 @@ ul {
 ol {
   list-style-type: decimal;
 }
+
+li:has(> a[href*="/installation/quick-start"]){
+  list-style-type: none;
+  margin-left: -2rem;
+} 
+li:has(> a[href*="/extensions"]){
+  list-style-type: none;
+  margin-left: -2rem;
+} 
 
 .terminal {
 }

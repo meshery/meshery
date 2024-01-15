@@ -19,8 +19,10 @@ import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
-import { ConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const styles = makeStyles((theme) => ({
   ctxIcon: {
@@ -201,6 +203,7 @@ const MesherySettingsEnvButtons = () => {
           borderRadius: 5,
           marginRight: '2rem',
         }}
+        disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
         data-cy="btnResetDatabase"
       >
         <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
@@ -286,7 +289,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 whiteSpace="no-wrap"
                 textOverflow="ellipsis"
               >
-                <ConnectionChip
+                <TootltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);

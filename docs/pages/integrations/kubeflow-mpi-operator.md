@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubeflow MPI Operator
-permalink: integrations/kubeflow-mpi-operator
-type: installation
+permalink: extensibility/integrations/kubeflow-mpi-operator
+type: extensibility
 category: integrations
+integrations-category: Machine Learning
+integrations-subcategory: Machine Learning
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubeflow-mpi-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: mpi-operator -->
+ #### About: The MPI Operator makes it easy to run allreduce-style distributed training on Kubernetes. -->
 
 ### Overview & Features:
+
 1. The MPI Operator makes it easy to run allreduce-style distributed training on Kubernetes.
 
 2. Collaborative and visual infrastructure as code for Mongodb Operator

@@ -17,7 +17,6 @@ Validate conformance to service mesh standards
 ## Synopsis
 
 Validate service mesh conformance to different standard specifications
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh validate [flags]

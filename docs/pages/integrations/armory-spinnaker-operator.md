@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Armory Spinnaker Operator
-permalink: integrations/armory-spinnaker-operator
-type: installation
+permalink: extensibility/integrations/armory-spinnaker-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/armory-spinnaker-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: armory-spinnaker-operator -->
+ #### About: Spinnaker is an open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence. -->
 
 ### Overview & Features:
+
 1. Spinnaker is an open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
 
 2. Collaborative and visual infrastructure as code for Armory Spinnaker Operator

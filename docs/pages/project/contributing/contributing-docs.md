@@ -2,7 +2,7 @@
 layout: page
 title: Contributing to Meshery Docs
 permalink: project/contributing/contributing-docs
-description: How to contribute to Meshery Docs.
+abstract: How to contribute to Meshery Docs.
 language: en
 type: project
 category: contributing
@@ -108,7 +108,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - rbenv install version
 
-{% capture code_content %}rbenv install 2.7.5{% endcapture %}
+{% capture code_content %}rbenv install 3.2.2{% endcapture %}
 {% include code.html code=code_content %}
 
 - To list all the versions that can be installed
@@ -357,6 +357,9 @@ Just for fun, here are all the types:
 {% include alert.html type="info" content="This is useful information." %}
 {% include alert.html type="primary" content="This is a primary alert" %}
 {% include alert.html type="secondary" content="This is a secondary alert" %}
+
+{% include alert.html type="light" content="This is a light alert" %}
+{% include alert.html type="dark" content="This is a dark alert" %}
 
 #### alert.html
 

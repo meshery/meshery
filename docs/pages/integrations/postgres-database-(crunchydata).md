@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres Database (CrunchyData)
-permalink: integrations/postgres-database-(crunchydata)
-type: installation
+permalink: extensibility/integrations/postgres-database-(crunchydata)
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/postgres-database-(crunchydata).svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: pg-db -->
+ #### About: Manage Postgres clusters via PGO, the open source Postgres Operator from Crunchy Data. -->
 
 ### Overview & Features:
+
 1. Manage Postgres clusters via PGO, the open source Postgres Operator from Crunchy Data.
 
 2. Collaborative and visual infrastructure as code for Postgres Database (CrunchyData)

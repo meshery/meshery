@@ -2,7 +2,7 @@
 layout: page
 title: Setting up Meshery Development Environment on Windows
 permalink: project/contributing/meshery-windows
-description: How to set up Meshery Development Environment on Windows
+abstract: How to set up Meshery Development Environment on Windows
 language: en
 type: project
 category: contributing

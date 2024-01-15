@@ -29,7 +29,6 @@ const configurationSubscription = graphql`
             String
             Valid
           }
-          SourceContent
         }
       }
       filters {

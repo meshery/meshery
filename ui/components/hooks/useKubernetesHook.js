@@ -3,15 +3,14 @@ import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
 import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
-import {
-  getOperatorStatusFromQueryResult,
-  pingMesheryOperator,
-} from '../ConnectionWizard/helpers/mesheryOperator';
+import { pingMesheryOperator } from '../ConnectionWizard/helpers/mesheryOperator';
 import { EVENT_TYPES } from '../../lib/event-types';
 import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
 import { useEffect, useState } from 'react';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
+import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
+import _ from 'lodash';
 
 export default function useKubernetesHook() {
   const { notify } = useNotification();
@@ -124,14 +123,7 @@ export function useMeshsSyncController() {
 export const useGetOperatorInfoQuery = ({ contextID }) => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const [operatorInfo, setOperatorInfo] = useState({
-    isReachable: false,
-    operatorVersion: '',
-    meshSyncStatus: '',
-    meshSyncVersion: '',
-    natsStatus: '',
-    NATSVersion: '',
-  });
+
   const handleError = handleErrorGenerator(dispatch, notify);
   // const handleSuccess = handleSuccessGenerator(dispatch, notify);
   const handleInfo = handleInfoGenerator(notify);
@@ -142,19 +134,19 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     dispatch(updateProgress({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
     const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextID }).subscribe({
-      next: (res) => {
+      next: () => {
         setIsLoading(false);
 
         dispatch(updateProgress({ showProgress: false }));
-        const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
-        setOperatorInfo({
-          isReachable,
-          ...operatorInfo,
-          meshSyncStatus: operatorInfo.MeshSync ? operatorInfo.MeshSync.status : '',
-          meshSyncVersion: operatorInfo.MeshSync ? operatorInfo.MeshSync.version : '',
-          NATSVersion: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.version : '',
-          natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
-        });
+        // const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
+        // setOperatorInfo({
+        //   isReachable,
+        //   ...operatorInfo,
+        //   meshSyncStatus: operatorInfo.MeshSync ? operatorInfo.MeshSync.status : '',
+        //   meshSyncVersion: operatorInfo.MeshSync ? operatorInfo.MeshSync.version : '',
+        //   NATSVersion: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.version : '',
+        //   natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
+        // });
       },
       error: () => {
         setIsLoading(false);
@@ -169,7 +161,6 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
   }, []);
 
   return {
-    operatorInfo,
     isLoading,
   };
 };
@@ -224,5 +215,74 @@ export const useNatsController = () => {
 
   return {
     ping,
+  };
+};
+
+export const useControllerStatus = (controllerState) => {
+  const getContextStatus = (ctxId) => {
+    const defaultState = {
+      operatorState: CONTROLLER_STATES.DISABLED,
+      operatorVersion: 'Not Available',
+      meshSyncState: CONTROLLER_STATES.DISABLED,
+      meshSyncVersion: 'Not Available',
+      natsState: CONTROLLER_STATES.DISABLED,
+      natsVersion: 'Not Available',
+    };
+
+    const controller = controllerState?.filter((op) => op.contextId === ctxId);
+    if (!controller) {
+      return defaultState;
+    }
+
+    function getMeshSyncStats() {
+      if (!controller) return defaultState;
+      const meshsyncController = controller?.find(
+        (ctlr) => ctlr?.controller === CONTROLLERS.MESHSYNC,
+      );
+      // meshsync is at 1st idx
+      if (meshsyncController) {
+        return {
+          meshSyncState: meshsyncController?.status,
+          meshSyncVersion: meshsyncController?.version,
+        };
+      }
+    }
+
+    function getBrokerStats() {
+      if (!controller) return defaultState;
+      const brokerController = controller?.find((ctlr) => ctlr?.controller === CONTROLLERS.BROKER);
+      if (brokerController) {
+        return {
+          natsState: brokerController?.status,
+          natsVersion: brokerController?.version,
+        };
+      }
+    }
+
+    function getOperatorStatus(ctxId) {
+      const operator = controllerState?.find(
+        (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+      );
+      if (!operator) {
+        return defaultState;
+      }
+
+      return {
+        operatorState: operator.status,
+        operatorVersion: operator?.version,
+      };
+    }
+
+    const actualOperatorState = {
+      ...getOperatorStatus(ctxId),
+      ...getMeshSyncStats(),
+      ...getBrokerStats(),
+    };
+
+    return _.merge(defaultState, actualOperatorState);
+  };
+
+  return {
+    getControllerStatesByContexID: getContextStatus,
   };
 };

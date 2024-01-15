@@ -57,7 +57,7 @@
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  width: fit-content;
+  width: max-content;
   max-width: 450px;
   min-width: 300px;
   height: 100%;
@@ -127,16 +127,22 @@
 
       & .sidebar-nav__section {
         list-style: none;
-        padding: 1.5rem 0;
+        padding: 1rem 0 0 0;
         margin: 0;
-        &-title {
-          // margin-bottom: 5px;
-          font-weight: 600;
-          margin-bottom: 1rem;
-
+        // & .grandchild.grandchild a {
+        //   font-weight: normal;
+        //   color: #dadddf;
+        // }
+        &-title a {
+          font-weight: bold;
+          margin-bottom: .5rem;
+          
           &:hover {
-            font-weight: 600;
+            font-weight: normal;
           }
+        }
+        &-link a {
+          font-weight: normal;
         }
         & a {
           color: var(--color-secondary-medium);
@@ -161,12 +167,16 @@
 
           & a:hover {
             text-decoration: none;
-            color: #008979;
+            color: var(--sidenav-hover);
+          }
+          & a.active {
+            text-decoration: none;
+            color: var(--sidenav-hover);
           }
 
           &:hover {
             text-decoration: none;
-            color: #008979;
+            color: var(--sidenav-hover);
             &::after {
               width: 100%;
             }
@@ -217,5 +227,36 @@
         }
       }
     }
+  }
+}
+.collapse {
+
+  &:not(.show) {
+    display: none;
+  }
+}
+
+.collapsing {
+  height: 0;
+  overflow: hidden;
+  transition: all .4s ease-out;
+
+  &.collapse-horizontal {
+    width: 0;
+    height: auto;
+  }
+}
+
+.toggle {
+  padding: 1px;
+  display: inline;
+  &:hover {
+    cursor: pointer;
+    color: var(--brand-color);
+  }
+  &:active {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
   }
 }
