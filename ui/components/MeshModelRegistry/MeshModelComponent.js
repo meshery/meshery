@@ -80,7 +80,6 @@ const MeshModelComponent = ({
   registrantCount,
   settingsRouter,
 }) => {
-  // const { selectedTab, changeTab } = useRegistryRouter()
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
@@ -99,7 +98,6 @@ const MeshModelComponent = ({
     sort: SORT.ASCENDING,
     order: '',
   });
-  console.log('selectedTab', selectedTab);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
@@ -213,7 +211,6 @@ const MeshModelComponent = ({
   };
 
   const getRegistrants = async (page) => {
-    console.log('registrants:', page);
     try {
       const { total_count, registrants } = await getMeshModelRegistrants(
         page?.Registrants + 1,
@@ -299,7 +296,6 @@ const MeshModelComponent = ({
         });
   }, [checked]);
 
-  console.log('dataparent rerender');
   useEffect(() => {
     setRequestCancelled(false);
     // setLoading(true);
@@ -326,8 +322,6 @@ const MeshModelComponent = ({
       setRequestCancelled(true);
     };
   }, [view, page, searchText, rowsPerPage]);
-
-  console.log('show', show);
 
   return (
     <div data-test="workloads">

@@ -32,6 +32,7 @@ const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect
         <StyledTreeItem
           key={index}
           nodeId={`${component.id}`}
+          data-id={`${component.id}`}
           check
           labelText={component.displayName}
           onClick={() => {
@@ -61,6 +62,7 @@ const RelationshipTree = ({ setRela, expanded, selected, handleToggle, handleSel
         <StyledTreeItem
           key={index}
           nodeId={`${relationship.id}`}
+          data-id={`${relationship.id}`}
           check
           labelText={relationship.subType}
           onClick={() => {
@@ -72,11 +74,12 @@ const RelationshipTree = ({ setRela, expanded, selected, handleToggle, handleSel
   );
 };
 
-const MesheryTreeViewItem = ({ model, setShow }) => {
+const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
   return (
     <StyledTreeItem
       key={model.id}
-      nodeId={model.id}
+      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
+      data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
       top
       labelText={model.displayName}
       onClick={() => {
@@ -88,17 +91,18 @@ const MesheryTreeViewItem = ({ model, setShow }) => {
       }}
     >
       <StyledTreeItem
-        nodeId={`${model.id}.1`}
+        nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1`}
+        data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1`}
         labelText={`Components (${model.components ? model.components.length : 0})`}
       >
         {model.components &&
           model.components.map((component, subIndex) => (
             <StyledTreeItem
               key={subIndex}
-              nodeId={`${model.id}.1.${component.id}`}
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1.${component.id}`}
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1.${component.id}`}
               check
               labelText={component.displayName}
-              data-id={`${model.id}.1.${component.id}`}
               onClick={() => {
                 setShow((prevShow) => {
                   const { components } = prevShow;
@@ -122,14 +126,18 @@ const MesheryTreeViewItem = ({ model, setShow }) => {
           ))}
       </StyledTreeItem>
       <StyledTreeItem
-        nodeId={`${model.id}.2`}
+        nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2`}
+        data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2`}
         labelText={`Relationships (${model.relationships ? model.relationships.length : 0})`}
       >
         {model.relationships &&
           model.relationships.map((relationship, subIndex) => (
             <StyledTreeItem
               key={subIndex}
-              nodeId={`${model.id}.2.${relationship.id}`}
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2.${relationship.id}`}
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2.${
+                relationship.id
+              }`}
               check
               labelText={relationship.displayhostname}
               onClick={() => {
@@ -219,6 +227,7 @@ const MesheryTreeViewRegistrants = ({
         <StyledTreeItem
           key={registrant.id}
           nodeId={registrant.id}
+          data-id={registrant.id}
           top
           labelText={registrant.hostname}
           newParentId={registrant.id}
@@ -233,6 +242,7 @@ const MesheryTreeViewRegistrants = ({
           <div>
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
+              data-id={`${registrant.id}.1`}
               labelText={`Models (${registrant?.summary?.models})`}
             >
               {registrant?.models.map((model, index) => (
@@ -244,6 +254,7 @@ const MesheryTreeViewRegistrants = ({
                   expanded={expanded}
                   selected={selected}
                   setShow={setShow}
+                  registrantID={registrant.id}
                 />
               ))}
             </StyledTreeItem>
@@ -333,10 +344,10 @@ const MesheryTreeView = ({
 
   const expandAll = () => {
     const arr = [];
-    data.map((model, index) => {
-      arr.push(index);
-      arr.push(`${model.id}.1`);
-      arr.push(`${model.id}.2`);
+    data.map((parent) => {
+      arr.push(parent.id);
+      arr.push(`${parent.id}.1`);
+      arr.push(`${parent.id}.2`);
     });
     setExpanded(arr);
   };
@@ -376,16 +387,12 @@ const MesheryTreeView = ({
 
       const { selectedComponent, selectedModel, selectedRelationship } =
         getFilteredDataForDetailsComponent(data, selectedItemUUID, view);
+
       setShow({
         model: selectedModel || {},
         components: selectedComponent ? [selectedComponent] : [],
         relationships: selectedRelationship ? [selectedRelationship] : [],
       });
-
-      const selectedNode = document.querySelector(`[data-id="${selectedItemUUID}"]`);
-      if (selectedNode) {
-        selectedNode.scrollIntoView({ behavior: 'smooth' });
-      }
     } else {
       setExpanded([]);
       setSelected([]);
@@ -393,6 +400,18 @@ const MesheryTreeView = ({
         model: {},
         components: [],
         relationships: [],
+      });
+    }
+  }, [view]);
+
+  useEffect(() => {
+    let selectedIdArr = selectedItemUUID.split('.');
+    if (selectedIdArr.length >= 0) {
+      requestAnimationFrame(() => {
+        const selectedNode = document.querySelector(`[data-id="${selectedItemUUID}"]`);
+        if (selectedNode) {
+          selectedNode.scrollIntoView({ behavior: 'smooth' });
+        }
       });
     }
   }, [view, data]);
@@ -441,7 +460,7 @@ const MesheryTreeView = ({
                     inputProps={{ 'aria-label': 'controlled' }}
                   />
                 }
-                label="Duplicates"
+                label="Show Duplicates"
               />
             )}
           </div>
@@ -470,8 +489,6 @@ const MesheryTreeView = ({
       </div>
     </div>
   );
-
-  console.log('data-->', data);
 
   return (
     <div style={{ width: '100%' }}>

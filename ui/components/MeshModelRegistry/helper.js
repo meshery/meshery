@@ -4,7 +4,8 @@ import { MODELS, REGISTRANTS } from '@/constants/navigator';
  * Retrieves filtered data for the details component based on the selected item ID.
  *
  * @param {Array} data - An array of data representing the tree.
- * @param {Array} selectedIdArr - An array containing the IDs of the selected item. As the length increases, it represents sub-child levels. For example, selectedIdArr[0] is the main parent, selectedIdArr[1] is a sub-child of it, and so on.
+ * @param {Array} selectedItemUUID - Node ID of selected element in tree.
+ * @param {string} view - Selected tab in registry.
  * @returns {Object} - An object containing the selected component, model, and relationship.
  */
 export const getFilteredDataForDetailsComponent = (data, selectedItemUUID, view) => {
