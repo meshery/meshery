@@ -95,7 +95,6 @@ collections:
     output: true
     permalink: reference/mesheryctl/:collection/:path
     name: mesheryctlcommands
-
   # integrations:
   #   output: true
   #   permalink: /extensibility/:collection/:path    
