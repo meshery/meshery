@@ -99,6 +99,24 @@ func main() {
 	}
 	System = os.Args[3]
 
+	if System == pkg.Docs.String() {
+		fmt.Println("Updating docs")
+		modeCSVHelper, err := pkg.NewModelCSVHelper(url)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		modeCSVHelper.ParseModelsSheet()
+		componentCSVHelper, err := pkg.NewComponentCSVHelper(url)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		componentCSVHelper.ParseComponentsSheet()
+		docsUpdater(modeCSVHelper.Models, componentCSVHelper.Components)
+		return
+	}
+
 	filep, err := pkg.DownloadCSV(url)
 	if err != nil {
 		log.Fatal(err)
@@ -119,8 +137,8 @@ func main() {
 	os.Remove(file.Name())
 
 	switch System {
-	case pkg.Docs.String():
-		docsUpdater(output)
+	// case pkg.Docs.String():
+	// 	docsUpdater(output)
 	case pkg.Meshery.String():
 		mesheryUpdater(output)
 	case pkg.RemoteProvider.String():
@@ -163,7 +181,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 	return out2
 }
 
-func docsUpdater(output []map[string]string) {
+func docsUpdater(models []pkg.ModelCSV, components map[string][]pkg.ComponentCSV) {
 	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
@@ -171,74 +189,22 @@ func docsUpdater(output []map[string]string) {
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
 	pathToIntegrationsMesheryDocs := os.Args[6]
-	updateOnlyPublished := true
-	if len(os.Args) > 6 {
-		if os.Args[6] == "--published-only" {
-			updateOnlyPublished = true
-		}
-	}
-	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	mesheryDocsJSON := "const data = ["
-	for _, out := range output {
-		var t pkg.TemplateAttributes
-		publishValue, err := strconv.ParseBool(out["Publish?"])
-		if err != nil {
-			publishValue = false
-		}
-		if updateOnlyPublished && !publishValue {
-			continue
-		}
-		for key, val := range out {
-			switch key {
-			case "modelDisplayName":
-				t.Title = val
-			case "model":
-				t.ModelName = val
-			case "Page Subtitle":
-				t.Subtitle = val
-			case "Docs URL":
-				t.DocURL = val
-			case "category":
-				t.Category = val
-			case "subCategory":
-				t.Subcategory = val
-			case "howItWorks":
-				t.HowItWorks = val
-			case "hotItWorksDetails":
-				t.HowItWorksDetails = val
-			case "Publish?":
-				t.Published = val
-			case "About Project":
-				t.AboutProject = val
-			case "Standard Blurb":
-				t.StandardBlurb = val
-			case "Full Page":
-				t.FullPage = val
-			case "svgColor":
-				t.ColorSVG = val
-			case "svgWhite":
-				t.WhiteSVG = val
-			}
-		}
-		t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
-		t.WorkingSlides = `[
-				../_images/meshmap-visualizer.png,
-				../_images/meshmap-designer.png]`
-
-		md := t.CreateMarkDown()
-		jsonItem := t.CreateJSONItem()
+	for _, model := range models {
+		md := model.CreateMarkDown()
+		jsonItem := model.CreateJSONItem()
 		mesheryDocsJSON += jsonItem + ","
-		modelName := strings.TrimSpace(out["model"])
+		modelName := strings.TrimSpace(model.Model)
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))
-		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
+		err := os.MkdirAll(pathToIntegrationsLayer5, 0777)
 		if err != nil {
 			panic(err)
 		}
 		_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
-		svgcolor := out["svgColor"]
-		svgwhite := out["svgWhite"]
+		svgcolor := model.SVGColor
+		svgwhite := model.SVGWhite
 
 		// Write SVGs to Layer5 docs
 		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
@@ -291,8 +257,13 @@ func docsUpdater(output []map[string]string) {
 			panic(err)
 		}
 
-		
+		// for meshery integration docs
+		// mdContent := pkg.GenerateMDContent(t)
+		// fmt.Printf("Generating MD content for %s\n", modelName)
+		// fmt.Println(mdContent)
 
+		// // pathToIntegrationsMesheryDocs, _ = filepath.Abs(filepath.Join("../../", "docs", "pages", "integrations"))
+		// pkg.CreateFiles("../../docs/pages/integrations", ".md", modelName, mdContent)
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
