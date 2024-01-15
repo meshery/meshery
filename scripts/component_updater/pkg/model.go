@@ -97,7 +97,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
-			// fmt.Println("data: ", data)
 		case err := <-errorChan:
 			fmt.Println(err)
 
@@ -107,12 +106,80 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 	}
 }
 
-
+// template := `---
+// title: <model-display-name>
+// subtitle: <Page Subtitle>
+// integrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh.svg
+// darkModeIntegrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh_white.svg
+// docURL: <Docs URL>
+// category: <Category>
+// subcategory: <Sub-Category>
+// featureList: [<Feature 1>,<Feature 2>,<Feature 3>]
+// workingSlides: [
+//     ../_images/meshmap-visualizer.png,
+//     ../_images/meshmap-designer.png]
+// howItWorks: <howItWorks>
+// howItWorksDetails: howItWorksDetails
+// published: <Publish>
+// ---
+// <p>
+//    <About Project>
+// </p>
+// <p>
+//    <Standard Blurb>
+// </p>`
 func (m ModelCSV) CreateMarkDown() string {
-	markdown := m.FullPage
+	var template string = `---
+title: %s
+subtitle: %s
+integrationIcon: icon/color/%s-color.svg
+darkModeIntegrationIcon: icon/white/%s-white.svg
+docURL: %s
+category: %s
+subcategory: %s
+featureList: [
+  "%s",
+  "%s",
+  "%s"
+]
+workingSlides: [
+  %s,
+  %s
+]
+howItWorks: %s
+howItWorksDetails: %s
+published: %s
+---
+<p>
+%s
+</p>
+%s
+`
+	markdown := fmt.Sprintf(template,
+		m.ModelDisplayName,
+		m.PageSubtTitle,
+		m.Model,
+		m.Model,
+		m.Docs,
+		m.Category,
+		m.SubCategory,
+		m.Feature1,
+		m.Feature2,
+		m.Feature3,
+		`../_images/meshmap-visualizer.png`,
+		`../_images/meshmap-designer.png`,
+		m.HowItWorks,
+		m.HowItWorksDetails,
+		m.PublishToRegistry,
+		m.AboutProject,
+		m.StandardBlurb,
+	)
+	// markdown := template
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
 }
+
+
 
 // Creates JSON formatted meshmodel attribute item for Meshery docs
 func (m ModelCSV) CreateJSONItem() string {
