@@ -21,6 +21,8 @@ import {
   COMPONENTS,
   RELATIONSHIPS,
   REGISTRANTS,
+  GRAFANA,
+  PROMETHEUS,
 } from '../../constants/navigator';
 import { SORT } from '../../constants/endpoints';
 import useStyles from '../../assets/styles/general/tool.styles';
@@ -67,7 +69,7 @@ const useMeshModelComponentRouter = () => {
   const { query } = router;
 
   const searchQuery = query.searchText || null;
-  const selectedTab = query.tab;
+  const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
   const selectedPageSize = query.pagesize || 14;
 
   return { searchQuery, selectedTab, selectedPageSize };
@@ -112,15 +114,12 @@ const MeshModelComponent = ({
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
-  // console.log("selectedTab", selectedTab)
 
   useEffect(() => {
-    if (selectedTab) {
+    if (selectedTab && selectedTab !== OVERVIEW) {
       setAnimate(true);
       setConvert(true);
       setView(selectedTab);
-    } else {
-      setView(OVERVIEW);
     }
   }, [selectedTab]);
 

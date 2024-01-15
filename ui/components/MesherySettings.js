@@ -300,7 +300,6 @@ class MesherySettings extends React.Component {
   render() {
     const { classes } = this.props;
     const { tabVal, subTabVal, k8sconfig, meshAdapters } = this.state;
-
     let backToPlay = '';
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
       backToPlay = (
@@ -327,7 +326,7 @@ class MesherySettings extends React.Component {
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Tooltip title="Connect Meshery Adapters" placement="top">
+                <Tooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
@@ -337,7 +336,7 @@ class MesherySettings extends React.Component {
                     disabled={!CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject)}
                   />
                 </Tooltip>
-                <Tooltip title="Configure Metrics backends" placement="top">
+                <Tooltip title="Configure Metrics backends" placement="top" value={METRICS}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
@@ -347,7 +346,7 @@ class MesherySettings extends React.Component {
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
                 </Tooltip>
-                <Tooltip title="Registry" placement="top">
+                <Tooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
@@ -357,7 +356,7 @@ class MesherySettings extends React.Component {
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
                 </Tooltip>
-                <Tooltip title="Reset System" placement="top">
+                <Tooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
