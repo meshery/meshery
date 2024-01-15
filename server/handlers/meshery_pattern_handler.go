@@ -339,10 +339,10 @@ func (h *Handler) handlePatternPOST(
 				h.log.Info("Falling back to importing design as yaml file")
 
 				// commenting for now as every save event would other wise send following event
-				event := eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
-					"error": ErrUnCompressOCIArtifact(err),
-				}).WithDescription(fmt.Sprintf("Failed uncompressing OCI Artifact %s into Design YAML. Falling back to importing design as YAML.", mesheryPattern.Name)).Build()
-				_ = provider.PersistEvent(event)
+				// event := eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
+				// 	"error": ErrUnCompressOCIArtifact(err),
+				// }).WithDescription(fmt.Sprintf("Failed uncompressing OCI Artifact %s into Design YAML. Falling back to importing design as YAML.", mesheryPattern.Name)).Build()
+				// _ = provider.PersistEvent(event)
 				// go h.config.EventBroadcaster.Publish(userID, event)
 				// addMeshkitErr(&res, ErrUnCompressOCIArtifact(err))
 				// go h.EventsBuffer.Publish(&res)
