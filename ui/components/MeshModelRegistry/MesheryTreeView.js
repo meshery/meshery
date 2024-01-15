@@ -13,6 +13,9 @@ import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
 import { getFilteredDataForDetailsComponent } from './helper';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import _ from 'lodash';
 
 const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect, data }) => {
   return (
@@ -177,7 +180,6 @@ const MesheryTreeViewModel = ({
   return (
     <TreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<DotSquare />}
@@ -451,17 +453,32 @@ const MesheryTreeView = ({
               </IconButton>
             </Tooltip>
             {type === MODELS && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={checked}
-                    onClick={handleChecked}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                }
-                label="Show Duplicates"
-              />
+              <>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={checked}
+                      onClick={handleChecked}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="Show Duplicates"
+                  style={{ margin: 0 }}
+                />
+                <CustomTextTooltip
+                  backgroundColor="#3C494F"
+                  placement="right"
+                  interactive={true}
+                  title={`View all duplicate entries of ${_.toLower(
+                    view,
+                  )}. Entries with identical name and version attributes are considered duplicates.`}
+                >
+                  <IconButton color="primary">
+                    <InfoOutlinedIcon height={20} width={20} />
+                  </IconButton>
+                </CustomTextTooltip>
+              </>
             )}
           </div>
         )}
