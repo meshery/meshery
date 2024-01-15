@@ -100,7 +100,7 @@ func (t TemplateAttributes) CreateJSONItem() string {
 		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", t.ModelName)
 	}
 
-	json += fmt.Sprintf(",\"permaLink\":\"https://docs.meshery.io/integrations/%s\"", FormatName(t.Title))
+	json += fmt.Sprintf(",\"permalink\":\"https://docs.meshery.io/extensibility/integrations/%s\"", FormatName(t.Title))
 
 	json += "}"
 	return json

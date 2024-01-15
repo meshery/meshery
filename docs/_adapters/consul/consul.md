@@ -11,9 +11,8 @@ github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 white_image: /assets/img/service-meshes/consul-white.svg
 language: en
-language: en
-#redirect_from: service-meshes/adapters/consul
 permalink: extensibility/adapters/consul
+redirect_from: service-meshes/adapters/consul
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}

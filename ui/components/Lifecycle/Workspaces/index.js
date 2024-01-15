@@ -300,7 +300,7 @@ const Workspaces = ({ organization, classes }) => {
     );
   };
 
-  const fetchSchema = async (actionType) => {
+  const fetchSchema = async () => {
     dataFetch(
       `/api/schema/resource/workspace`,
       {
@@ -313,9 +313,7 @@ const Workspaces = ({ organization, classes }) => {
           const uiSchemaOrg = res.uiSchema?.organization;
           rjsfSchemaOrg.enum = orgValue;
           rjsfSchemaOrg.enumNames = orgLabel;
-          actionType === ACTION_TYPES.CREATE
-            ? (uiSchemaOrg['ui:widget'] = 'select')
-            : (uiSchemaOrg['ui:widget'] = 'hidden');
+          uiSchemaOrg['ui:widget'] = 'hidden';
           setWorkspaceModal({
             open: true,
             schema: res,
@@ -361,7 +359,7 @@ const Workspaces = ({ organization, classes }) => {
       });
       setEditWorkspaceId('');
     }
-    fetchSchema(actionType);
+    fetchSchema();
   };
 
   const handleWorkspaceModalClose = () => {
