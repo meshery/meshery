@@ -6,6 +6,8 @@ const (
 	Meshery SystemType = iota
 	Docs
 	RemoteProvider
+	rowIndex = 1
+	shouldRegisterColIndex = -1
 )
 
 func (dt SystemType) String() string {
