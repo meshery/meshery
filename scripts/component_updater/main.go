@@ -100,7 +100,7 @@ func main() {
 	System = os.Args[3]
 
 	if System == pkg.Docs.String() {
-		fmt.Println("Updating docs")
+		fmt.Println("docs system")
 		modeCSVHelper, err := pkg.NewModelCSVHelper(url)
 		if err != nil {
 			log.Fatal(err)
@@ -181,7 +181,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 	return out2
 }
 
-func docsUpdater(models []pkg.ModelCSV, components map[string][]pkg.ComponentCSV) {
+func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.ComponentCSV) {
 	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
@@ -191,9 +191,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string][]pkg.ComponentCSV
 	pathToIntegrationsMesheryDocs := os.Args[6]
 	mesheryDocsJSON := "const data = ["
 	for _, model := range models {
-		md := model.CreateMarkDown()
-		jsonItem := model.CreateJSONItem()
-		mesheryDocsJSON += jsonItem + ","
 		modelName := strings.TrimSpace(model.Model)
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
@@ -202,6 +199,11 @@ func docsUpdater(models []pkg.ModelCSV, components map[string][]pkg.ComponentCSV
 		if err != nil {
 			panic(err)
 		}
+		comps := components[model.Registrant][model.Model]
+		componentsMetadata := pkg.CreateComponentsMetadataAndCreateSVGs(comps, pathToIntegrationsLayer5)
+		md := model.CreateMarkDown(componentsMetadata)
+		jsonItem := model.CreateJSONItem()
+		mesheryDocsJSON += jsonItem + ","
 		_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
 		svgcolor := model.SVGColor
 		svgwhite := model.SVGWhite
@@ -211,6 +213,24 @@ func docsUpdater(models []pkg.ModelCSV, components map[string][]pkg.ComponentCSV
 		if err != nil {
 			panic(err)
 		}
+
+		// Write SVGs to Layer5 docs
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "components"), 0777)
+		if err != nil {
+			panic(err)
+		}
+
+		for _, comp := range comps {
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "components", comp.Component+"-color.svg"), comp.SVGColor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "components", comp.Component+"-white.svg"), comp.SVGWhite) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+		}
+
 
 		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 		if err != nil {
