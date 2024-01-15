@@ -2,57 +2,40 @@ package pkg
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/layer5io/meshkit/utils/csv"
 )
 
 var (
-	componentSheetID = "985575256"
-	shouldRegisterComp				 = "component" 
+	componentSheetID = "1958507758"
 )
 
 type ComponentCSV struct {
-	ModelDisplayName string `json:"modelDisplayName"` // change to component
+	Registrant string `json:"registrant"`
 	Model string `json:"model"`
-	// Registrant string `json:"registrant"`
-	Category string `json:"category"`
-	SubCategory string `json:"subCategory"`
-	Link string `json:"ling"` // convert to source
-	HasSchema string `json:"hasSchema"`
 	Component string `json:"component"`
-	Website string `json:"website"`
-	Docs string `json:"docs"`
 	Shape string `json:"shape"`
 	PrimaryColor string `json:"primaryColor"`
 	SecondaryColor string `json:"secondaryColor"`
+	SVGColor string `json:"svgColor"`
+	SVGWhite string `json:"svgWhite"`
+	SVGComplete string `json:"svgComplete"`
+	HasSchema string `json:"hasSchema"`
+	Description string `json:"description"`
+	Docs string `json:"docs"`
 	StyleOverrides string `json:"styleOverrides"`
 	Styles string `json:"styles"`
 	ShapePolygonPoints string `json:"shapePolygonPoints"`
 	DefaultData string `json:"defaultData"`
 	Capabilities string `json:"capabilities"`
 	LogoURL string `json:"logoURL"`
-	SVGColor string `json:"svgColor"`
-	SVGWhite string `json:"svgWhite"`
-	SVGComplete string `json:"svgComplete"`
-	PublishToRegistry string `json:"publishToRegistry"`
-	ModelAnnotation string `json:"modelAnnotation"`// update to componentAnnotation
-	AboutProject string `json:"aboutProject"`
-	PageSubtTitle string `json:"pageSubtitle"`
-	Feature1 string `json:"feature1"`
-	Feature2 string `json:"feature2"`
-	Feature3 string `json:"feature3"`
-	HowItWorks string `json:"howItWorks"`
-	HowItWorksDetails string `json:"howItWorksDetails"`
-	StandardBlurb string `json:"standardBlurb"`
-	Screenshots string `json:"screenshots"`
-	FullPage string `json:"fullPage"`
+	Genealogy string `json:"genealogy"`
+	IsAnnotation string `json:"isAnnotation"`
 }
-
 type ComponentCSVHelper struct {
 	SheetID string
 	CSVPath string
-	Components map[string][]ComponentCSV
+	Components map[string]map[string][]ComponentCSV
 }
 
 func NewComponentCSVHelper(sheetURL string) (*ComponentCSVHelper, error) {
@@ -65,7 +48,7 @@ func NewComponentCSVHelper(sheetURL string) (*ComponentCSVHelper, error) {
 	return &ComponentCSVHelper{
 		SheetID: componentSheetID,
 		CSVPath: csvPath,
-		Components: make(map[string][]ComponentCSV),
+		Components: make(map[string]map[string][]ComponentCSV),
 	}, nil
 }
 
@@ -73,13 +56,8 @@ func NewComponentCSVHelper(sheetURL string) (*ComponentCSVHelper, error) {
 func (mch *ComponentCSVHelper) ParseComponentsSheet(){
 	ch := make(chan ComponentCSV, 1)
 	errorChan := make(chan error, 1)
-	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
-		index := GetIndexForRegisterCol(columns, shouldRegisterComp)
-		if index != -1 && index < len(currentRow) {
-			shouldRegister := currentRow[index]
-			return strings.ToLower(shouldRegister) != ""
-		}
-		return false
+	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(_ []string, _ []string) bool {
+		return true
 	})
 
 	if err != nil {
@@ -97,10 +75,14 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet(){
 		select {
 
 		case data := <-ch:
-			if mch.Components[data.Model] == nil {
-				mch.Components[data.Model] = make([]ComponentCSV, 0)
+			if mch.Components[data.Registrant] == nil {
+				mch.Components[data.Registrant] = make(map[string][]ComponentCSV, 0)
 			}
-			mch.Components[data.Model] = append(mch.Components[data.Model], data)
+			if mch.Components[data.Registrant][data.Model] == nil {
+				mch.Components[data.Registrant][data.Model] = make([]ComponentCSV, 0)
+			}
+			mch.Components[data.Registrant][data.Model] = append(mch.Components[data.Registrant][data.Model], data)
+			fmt.Printf("Reading Component: %s for Modal: %s from Registrant: %s\n", data.Component, data.Model, data.Registrant)
 		case err := <-errorChan:
 			fmt.Println(err)
 
