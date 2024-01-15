@@ -9,7 +9,7 @@ import (
 
 var (
 	rowIndex = 1
-	shouldRegister         = "Publish?"
+	shouldRegisterMod        = "Publish?"
 	shouldRegisterColIndex = -1
 	sheetID = "1551563103" // update
 )
@@ -39,14 +39,13 @@ type ModelCSV struct {
 	ModelAnnotation string `json:"modelAnnotation"`
 	AboutProject string `json:"aboutProject"`
 	PageSubtTitle string `json:"pageSubtitle"`
-	FeatureList string `json:"featureList"`
+	Feature1 string `json:"feature1"`
+	Feature2 string `json:"feature2"`
+	Feature3 string `json:"feature3"`
 	HowItWorks string `json:"howItWorks"`
 	HowItWorksDetails string `json:"howItWorksDetails"`
 	StandardBlurb string `json:"standardBlurb"`
-	WorkingSlides string `json:"workingSlides"`
-	Published string `json:"published"`
-	IntegrationIcon string `json:"integrationIcon"`
-	DarkModeIntegrationIcon string `json:"darkModeIntegrationIcon"`
+	Screenshots string `json:"screenshots"`
 	FullPage string `json:"fullPage"`
 }
 
@@ -74,7 +73,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
-		index := GetIndexForRegisterCol(columns)
+		index := GetIndexForRegisterCol(columns, shouldRegisterMod)
 		if index != -1 && index < len(currentRow) {
 			shouldRegister := currentRow[index]
 			return strings.ToLower(shouldRegister) == "true"
@@ -98,6 +97,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
+			// fmt.Println("data: ", data)
 		case err := <-errorChan:
 			fmt.Println(err)
 
@@ -105,4 +105,30 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 			return
 		}
 	}
+}
+
+
+func (m ModelCSV) CreateMarkDown() string {
+	markdown := m.FullPage
+	markdown = strings.ReplaceAll(markdown, "\r", "\n")
+	return markdown
+}
+
+// Creates JSON formatted meshmodel attribute item for Meshery docs
+func (m ModelCSV) CreateJSONItem() string {
+	json := "{"
+	json += fmt.Sprintf("\"name\":\"%s\"", m.Model)
+	// If SVGs exist, then add the paths to json
+	if m.SVGColor != "" {
+		json += fmt.Sprintf(",\"color\":\"../images/integration/%s-color.svg\"", m.Model)
+	}
+
+	if m.SVGWhite != "" {
+		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", m.Model)
+	}
+
+	json += fmt.Sprintf(",\"permalink\":\"https://docs.meshery.io/extensibility/integrations/%s\"", FormatName(m.ModelDisplayName))
+
+	json += "}"
+	return json
 }
