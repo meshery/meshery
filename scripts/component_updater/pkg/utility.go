@@ -21,3 +21,16 @@ func (dt SystemType) String() string {
 	}
 	return ""
 }
+
+func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
+	if shouldRegisterColIndex != -1 {
+		return shouldRegisterColIndex
+	}
+
+	for index, col := range cols {
+		if col == shouldRegister {
+			return index
+		}
+	}
+	return shouldRegisterColIndex
+}
