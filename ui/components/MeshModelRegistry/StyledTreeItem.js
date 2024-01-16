@@ -10,7 +10,7 @@ import { useWindowDimensions } from '@/utils/dimension';
  */
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   // const [checked, setChecked] = useState(false);
-  const { check, labelText, root, search, setSearchText, ...other } = props;
+  const { labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -27,7 +27,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            py: check ? 0.5 : search ? 0.2 : 1.5,
+            py: 1.5,
             px: 0,
           }}
         >
