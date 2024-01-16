@@ -10,7 +10,8 @@ lab: traefik-meshery-adapter
 github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 white_image: /assets/img/service-meshes/traefik-mesh.svg
-permalink: service-meshes/adapters/traefik-mesh
+permalink: extensibility/adapters/traefik-mesh
+redirect_from: service-meshes/adapters/traefik-mesh
 language: en
 ---
 
@@ -33,7 +34,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ## Lifecycle management
 

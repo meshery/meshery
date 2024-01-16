@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Relational Database Service
-permalink: integrations/aws-relational-database-service
-type: installation
+permalink: extensibility/integrations/aws-relational-database-service
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-relational-database-service.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-rds-controller -->
+ #### About: Amazon Relational Database Service (Amazon RDS) is a collection of managed services that makes it simple to set up, operate, and scale databases in the cloud. -->
 
 ### Overview & Features:
+
 1. Amazon Relational Database Service (Amazon RDS) is a collection of managed services that makes it simple to set up, operate, and scale databases in the cloud.
 
 2. Collaborative and visual infrastructure as code for AWS Relational Database Service

@@ -1157,6 +1157,11 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
 		return err
 	}
+
+	if err := l.KeyPersister.DB.Migrator().DropTable(&Key{}); err != nil {
+		return err
+	}
+
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 

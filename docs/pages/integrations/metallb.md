@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Metallb
-permalink: integrations/metallb
-type: installation
+permalink: extensibility/integrations/metallb
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/metallb.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: metallb -->
+ #### About: A network load-balancer implementation for Kubernetes using standard routing protocols -->
 
 ### Overview & Features:
+
 1. A network load-balancer implementation for Kubernetes using standard routing protocols
 
 2. Collaborative and visual infrastructure as code for Metallb

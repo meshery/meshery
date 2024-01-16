@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: enhanced
 title: Components
-permalink: concepts/components
+permalink: concepts/logical/components
 type: concepts
 abstract: "Meshery Components identify and characterize infrastructure under management."
 language: en
@@ -19,4 +19,4 @@ Components have a status that is represented as a `Connection` object. Both the 
 
 Normalizing and extracting the status of a component as a direct property of the component and putting it into a connection allows multiple systems to share the same component with different states. For example, different Meshery Servers can access the same Kubernetes cluster, but each Meshery Server has its own connection to the cluster with its own status.
 
-Learn more about [Connections](/concepts/connections).
+Learn more about [Connections](/concepts/logical/connections).

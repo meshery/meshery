@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres Operator
-permalink: integrations/postgres-operator
-type: installation
+permalink: extensibility/integrations/postgres-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/postgres-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: postgres-operator -->
+ #### About: Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes -->
 
 ### Overview & Features:
+
 1. Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes
 
 2. Collaborative and visual infrastructure as code for Postgres Operator

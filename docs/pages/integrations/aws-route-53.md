@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Route 53
-permalink: integrations/aws-route-53
-type: installation
+permalink: extensibility/integrations/aws-route-53
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-route-53.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-route53-controller -->
+ #### About: Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. Route 53 connects user requests to internet applications running on AWS or on-premises. -->
 
 ### Overview & Features:
+
 1. Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. Route 53 connects user requests to internet applications running on AWS or on-premises.
 
 2. Collaborative and visual infrastructure as code for AWS Route 53

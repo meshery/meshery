@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kube Rs
-permalink: integrations/kube-rs
-type: installation
+permalink: extensibility/integrations/kube-rs
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kube-rs.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kube-rs -->
+ #### About: A Rust client for Kubernetes in the style of a more generic client-go, a runtime abstraction inspired by controller-runtime, and a derive macro for CRDs inspired by kubebuilder. Hosted by CNCF as a Sandbox Project -->
 
 ### Overview & Features:
+
 1. A Rust client for Kubernetes in the style of a more generic client-go, a runtime abstraction inspired by controller-runtime, and a derive macro for CRDs inspired by kubebuilder. Hosted by CNCF as a Sandbox Project
 
 2. Collaborative and visual infrastructure as code for Kube Rs

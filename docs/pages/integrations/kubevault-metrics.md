@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevault Metrics
-permalink: integrations/kubevault-metrics
-type: installation
+permalink: extensibility/integrations/kubevault-metrics
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Uncategorized
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubevault-metrics.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubevault-metrics -->
+ #### About: KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring Hashicorp's Vault on Kubernetes. -->
 
 ### Overview & Features:
+
 1. KubeVault is a Git-Ops ready, production-grade solution for deploying and configuring Hashicorp's Vault on Kubernetes.
 
 2. Collaborative and visual infrastructure as code for Kubevault Metrics

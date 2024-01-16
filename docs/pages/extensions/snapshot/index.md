@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: MeshMap Snapshot
 permalink: extensions/snapshot
 language: en
@@ -7,67 +7,50 @@ abstract: Screenshot service provided via Meshmap to capture a snapshot of your 
 display-title: "false"
 list: include
 type: extensions
+category: meshmap
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" />  MeshMap Snapshot
+# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap Snapshot
 
 Walks in application and takes a shot of your infrastructure using Meshery Extension MeshMap
 
-MeshMap Snapshot is a screenshot service provided via MeshMap for the design or Application user is interested in. It Enables users to visualize the changes being done in the code-base rapidly over each PR and inform the user about any potential changesin their infrastructure. It doesn't need any configuration or setup neither any deployment by the client rather a simple one time setup is able to provide a long time value.
+MeshMap Snapshot is a screenshot service provided via MeshMap for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
 
-### Guiding Principles
+<details>
+<summary>How the SnapShot service works</summary>
 
-**Step 1: The moving banner board to MeshMap**
+<h3>Functional Sequence Diagram</h3>
 
-
-The screenshots would be flowing through each PR giving product the eye-balls it needs
-
-
-**Step 2: Understanding the designs and infrastructure via visual design without downloading or setting up the MeshMap explicitly**
-
-
-You don't have to explicitly install Meshery or MeshMap on your cluster to see their infrastructure or get benefits of the set of capabilities of MeshMap.
-
-
-**Step 3: Introducing MeshMap along with Meshery in the GitOps field.**
-
-This sets the foundation of MeshMap in the github lifecycle, PRs, comments and all for future.
-
-## Functional Sequence Diagram
-For Github Workflows:
 <img src="{{site.baseurl}}/assets/img/meshmap/meshmap-snapshot.png" />
+</details>
 
-## Example Usage:
+<h3>Installing Meshmap Snapshot: Github Pull Request</h3>
 
-### Add Meshmap Snapshot: Github Pull Request
 Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+<ul>
+<li>Step 1: Log in to your Meshery Dashboard.</li>
+<li>Step 2: Navigate to Extensions and Enable GitHub Action: MeshMap Snapshot.</li>
+<li>Step 3: You will be directed to Meshery Cloud.</li>
+<li>Step 4: Click on the "Let's Go" button in the onboarding modal.</li>
+<li>Step 5: Now, select the second option, 'GitOps your infrastructure with MeshMap Snapshot'.</li>
+<li>Step 6: Once that's complete, follow the guided instructions.</li>
+</ul>
 
-**Step 1: Log in to your Meshery Dashboard.**
+## Configurating the SnapShot Service
 
-**Step 2: Navigate to Extensions and Enable GitHub Action: MeshMap Snapshot.**
-
-**Step 3: You will be directed to Meshery Cloud.**
-
-**Step 4: Click on the "Let's Go" button in the onboarding modal.**
-
-**Step 5: Now, select the second option, 'GitOps your infrastructure with MeshMap Snapshot'.**
-
-**Step 6: Once that's complete, follow the guided instructions.**
-
-**Steps 7: Voila, you're all set!**
-
-
+The Snapshot service does not need access to your Meshery deployment. It is a standalone service.
 
 ### When Infrastructure is located in the file-system
+
 ```yaml
-name: 'MeshMap Snapshot With File-located in Fs'
+name: "MeshMap Snapshot With File-located in Fs"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
       - main
       - master
-      - 'releases/*'
+      - "releases/*"
 
 jobs:
   test: # make sure the action works on a clean machine without building
@@ -91,16 +74,19 @@ jobs:
           application_type: "Kubernetes Manifest" # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: "action/__tests__/manifest-test" # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
 ```
+
+
 ### When Infrastructure is identified via URL
+
 ```yaml
-name: 'MeshMap Snapshot With URL-Upload'
+name: "MeshMap Snapshot With URL-Upload"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
       - main
       - master
-      - 'releases/*'
+      - "releases/*"
 
 jobs:
   test: # make sure the action works on a clean machine without building
@@ -125,15 +111,17 @@ jobs:
 ```
 
 #### FileSystem Approach Notes
+
 The filesystem-approach asks for your relative file-path and automatically merges all the yaml files together to bundle up into one. So you might like to give the root directory where all the yamls are located. It doesn't move recursevely in internal folders, so only the first level yaml files are checked.
 
 ## List of Input variables supported:
+
 ```yaml
-designId:  # id of input  #deprecated
+designId: # id of input  #deprecated
   description: "The design uuid, example: 3c116d0a-49ea-4294-addc-d9ab34210662"
   required: false
-  default: '{}'
-applicationId:  #deprecated
+  default: "{}"
+applicationId: #deprecated
   description: "The application uuid, example: 3c116d0a-49ea-4294-addc-d9ab34210662"
   required: false
 githubToken:
@@ -149,7 +137,7 @@ prNumber:
   description: "The Pull request on which comment has to be made"
   required: false
   default: 0
-filePath: 
+filePath:
   description: "The relative filepath of the location where the manifests are stored"
   required: false
 application_type:
@@ -161,14 +149,16 @@ application_url:
 ```
 
 ## Customizing Snapshot Workflow Triggers in MeshMap Snapshot
+
 You can configure your workflows to run when specific activity on GitHub happens, at a scheduled time, or when an event outside of GitHub occurs.
 
 ### About events that trigger workflows
+
 GitHub Actions provides a variety of events that can trigger workflows, allowing you to automate your software development process. Each event corresponds to a specific activity, such as creating a pull request, pushing code to a repository, or releasing a new version.
 
 ### Supported Events
 
-The MeshMap Snapshot Action supports all of the events listed in the GitHub documentation: 
+The MeshMap Snapshot Action supports all of the events listed in the GitHub documentation:
 For detailed information about each event, including its properties and payloads, refer to the [GitHub Actions documentation](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows).
 
 ### Workflow Syntax for Event Filtering
@@ -177,7 +167,7 @@ When defining workflows, you can use the `on` keyword to specify which events tr
 
 ```yaml
 on:
-  push: 
+  push:
     branches:
       - main
   pull_request:
@@ -189,7 +179,7 @@ on:
 Specific events that are relevant to the MeshMap Snapshot Action are:
 
 - **push:** This event is triggered when code is pushed to the repository. It is the most common event used to trigger workflows.
-- **pull_request:** This event is triggered when a pull request is opened or updated. It is often used to trigger workflows that run tests or linters on the pull request's code. 
+- **pull_request:** This event is triggered when a pull request is opened or updated. It is often used to trigger workflows that run tests or linters on the pull request's code.
 
 - **workflow_dispatch:** This event is triggered when a workflow is manually triggered. It can be used to trigger workflows on demand, such as for publishing a new release or addressing critical bugs.
 
@@ -212,6 +202,7 @@ It is always a good practice to test your workflows after upgrading to a new ver
 After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
 
 # General Upgrade Guide
+
 [MeshMap Snapshot Release Page](https://github.com/layer5labs/meshmap-snapshot/releases)
 
 ```
@@ -222,9 +213,7 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 ```
 
 ## Upgrade/Migrate Guide - For Meshery
+
 1. Given changes done in `action.yml` in MeshMap Snapshot, updating the workflows is required.
 2. Given changes done other than in `action.yml` in MeshMap Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
-
-
-
 

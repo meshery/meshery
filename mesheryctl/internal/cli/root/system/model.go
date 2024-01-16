@@ -353,9 +353,30 @@ mesheryctl exp model list
 // To view a specific model
 mesheryctl exp model view [model-name]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			_ = cmd.Help()
+			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))

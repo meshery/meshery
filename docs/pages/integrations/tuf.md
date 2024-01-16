@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Tuf
-permalink: integrations/tuf
-type: installation
+permalink: extensibility/integrations/tuf
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/tuf.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: tuf -->
+ #### About: Python reference implementation of The Update Framework (TUF) -->
 
 ### Overview & Features:
+
 1. Python reference implementation of The Update Framework (TUF)
 
 2. Collaborative and visual infrastructure as code for Tuf

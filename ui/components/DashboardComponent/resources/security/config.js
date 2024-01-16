@@ -7,6 +7,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const SecurityTypesConfig = (
   switchView,
@@ -31,6 +32,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -138,6 +140,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -192,17 +195,21 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
+                  {value ? (
+                    <div
+                      style={{
+                        color: 'inherit',
+                        textDecorationLine: 'underline',
+                        cursor: 'pointer',
+                        marginBottom: '0.5rem',
+                      }}
+                      onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                    >
+                      {value}
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center' }}>-</div>
+                  )}
                 </>
               );
             },
@@ -271,6 +278,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -378,6 +386,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -485,6 +494,7 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {

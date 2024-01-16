@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Postgres Operator
-permalink: integrations/percona-postgres-operator
-type: installation
+permalink: extensibility/integrations/percona-postgres-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/percona-postgres-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: pg-operator -->
+ #### About: Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes. -->
 
 ### Overview & Features:
+
 1. Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.
 
 2. Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.

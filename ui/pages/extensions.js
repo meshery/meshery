@@ -12,6 +12,9 @@ import { Adapters } from '../components/extensions';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import DefaultError from '@/components/General/error-404';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -168,81 +171,85 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
       <Head>
         <title>Extensions | Meshery</title>
       </Head>
-      <Grid container spacing={1}>
-        <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
-        <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
-        <Grid item {...INITIAL_GRID_SIZE}>
-          <div className={classes.card}>
-            <Typography className={classes.frontContent} variant="h5" component="div">
-              {'Meshery Catalog'}
-            </Typography>
-
-            <Typography className={classes.frontSideDescription} variant="body">
-              <img className={classes.img} src="/static/img/meshery_catalog.svg" />
-              <div
-                style={{
-                  display: 'inline',
-                  position: 'relative',
-                }}
-              >
-                Enable access to the cloud native catalog, supporting{' '}
-                <a
-                  href="https://service-mesh-patterns.github.io/service-mesh-patterns"
-                  className={classes.link}
-                >
-                  Service Mesh Patterns
-                </a>
-                , WebAssembly filters, eBPF programs (
-                <span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
-                <span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog item and
-                customize.
-              </div>
-            </Typography>
-
-            <Grid
-              container
-              spacing={2}
-              className={classes.grid}
-              direction="row"
-              justifyContent="space-between"
-              alignItems="baseline"
-              style={{
-                position: 'absolute',
-                paddingRight: '3rem',
-                paddingLeft: '.5rem',
-                bottom: '1.5rem',
-              }}
-            >
-              <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                Explore the{' '}
-                <a
-                  href="https://meshery.io/catalog"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={classes.link}
-                >
-                  Meshery Catalog
-                </a>
+      {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
+        <Grid container spacing={1}>
+          <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+          <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
+          <Grid item {...INITIAL_GRID_SIZE}>
+            <div className={classes.card}>
+              <Typography className={classes.frontContent} variant="h5" component="div">
+                {'Meshery Catalog'}
               </Typography>
 
-              <div style={{ textAlign: 'right' }}>
-                <Switch
-                  checked={catalogContent}
-                  onChange={handleToggle}
-                  name="OperatorSwitch"
-                  color="primary"
-                  classes={{
-                    switchBase: classes.switchBase,
-                    track: classes.track,
-                    checked: classes.checked,
+              <Typography className={classes.frontSideDescription} variant="body">
+                <img className={classes.img} src="/static/img/meshery_catalog.svg" />
+                <div
+                  style={{
+                    display: 'inline',
+                    position: 'relative',
                   }}
-                />
-              </div>
-            </Grid>
-          </div>
+                >
+                  Enable access to the cloud native catalog, supporting{' '}
+                  <a
+                    href="https://service-mesh-patterns.github.io/service-mesh-patterns"
+                    className={classes.link}
+                  >
+                    Service Mesh Patterns
+                  </a>
+                  , WebAssembly filters, eBPF programs (
+                  <span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
+                  <span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog item and
+                  customize.
+                </div>
+              </Typography>
+
+              <Grid
+                container
+                spacing={2}
+                className={classes.grid}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="baseline"
+                style={{
+                  position: 'absolute',
+                  paddingRight: '3rem',
+                  paddingLeft: '.5rem',
+                  bottom: '1.5rem',
+                }}
+              >
+                <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+                  Explore the{' '}
+                  <a
+                    href="https://meshery.io/catalog"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={classes.link}
+                  >
+                    Meshery Catalog
+                  </a>
+                </Typography>
+
+                <div style={{ textAlign: 'right' }}>
+                  <Switch
+                    checked={catalogContent}
+                    onChange={handleToggle}
+                    name="OperatorSwitch"
+                    color="primary"
+                    classes={{
+                      switchBase: classes.switchBase,
+                      track: classes.track,
+                      checked: classes.checked,
+                    }}
+                  />
+                </div>
+              </Grid>
+            </div>
+          </Grid>
+          <Adapters />
         </Grid>
-        <Adapters />
-      </Grid>
+      ) : (
+        <DefaultError />
+      )}
     </React.Fragment>
   );
 };

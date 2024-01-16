@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kusk Gateway
-permalink: integrations/kusk-gateway
-type: installation
+permalink: extensibility/integrations/kusk-gateway
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: API Gateway
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kusk-gateway.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kusk-gateway -->
+ #### About: Kusk Gateway is a self-service API gateway powered by OpenAPI and Envoy. Kusk Gateway is built and maintained by Kubeshop. -->
 
 ### Overview & Features:
+
 1. Kusk Gateway is a self-service API gateway powered by OpenAPI and Envoy. Kusk Gateway is built and maintained by Kubeshop.
 
 2. Collaborative and visual infrastructure as code for Kusk Gateway

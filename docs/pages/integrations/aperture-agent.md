@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Aperture Agent
-permalink: integrations/aperture-agent
-type: installation
+permalink: extensibility/integrations/aperture-agent
+type: extensibility
 category: integrations
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,11 @@ image: /assets/img/integrations/aperture-agent.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aperture-agent -->
+ #### About: The Aperture Agent is the decision executor of the Aperture system. In addition to gathering data, the Aperture Agent functions as a gatekeeper, acting on traffic based on decisions made by the Aperture Controller. Specifically, depending on feedback from the Controller, the Agent will effectively allow or drop incoming requests. Further supporting the Controller, the Agent works to inject information into traffic, including the specific traffic-shaping decisions made and classification labels which can later be used in policing. One Agent is deployed per node.
+ -->
 
 ### Overview & Features:
+
 1. The Aperture Agent is the decision executor of the Aperture system. In addition to gathering data, the Aperture Agent functions as a gatekeeper, acting on traffic based on decisions made by the Aperture Controller. Specifically, depending on feedback from the Controller, the Agent will effectively allow or drop incoming requests. Further supporting the Controller, the Agent works to inject information into traffic, including the specific traffic-shaping decisions made and classification labels which can later be used in policing. One Agent is deployed per node.
 
 

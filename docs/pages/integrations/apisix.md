@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Apisix
-permalink: integrations/apisix
-type: installation
+permalink: extensibility/integrations/apisix
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/apisix.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: apisix -->
+ #### About: Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD). -->
 
 ### Overview & Features:
+
 1. Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD).
 
 2. Collaborative and visual infrastructure as code for Apisix

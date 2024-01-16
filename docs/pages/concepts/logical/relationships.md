@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: enhanced
 title: Relationships
-permalink: concepts/relationships
+permalink: concepts/logical/relationships
 type: concepts
 abstract: "Meshery Relationships identify and facilitate genealogy between Components."
 language: en

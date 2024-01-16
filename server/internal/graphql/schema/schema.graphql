@@ -78,7 +78,7 @@ type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
-    version: String
+    version: String!
   }
 
 type MeshSyncEvent {

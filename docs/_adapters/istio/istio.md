@@ -10,7 +10,8 @@ lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 white_image: /assets/img/service-meshes/istio-white.svg
-permalink: service-meshes/adapters/istio
+permalink: extensibility/adapters/istio
+redirect_from: service-meshes/adapters/istio
 language: en
 ---
 
@@ -27,23 +28,21 @@ language: en
               {% continue %}
             {% endif %}
           {% endif %}
-        {% endfor %} 
+        {% endfor %}
       {% endif %}
 {% endfor %}
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ## Features
 
 1. {{page.mesh_name}} Lifecycle Management
 1. Workload Lifecycle Management
-   1. Using Service Mesh Standards
-      1. Service Mesh Performance (SMP)
-         1. Prometheus and Grafana connections
-      1. Service Mesh Interface (SMI)
-1. Configuration Analysis, Patterns, and Best Practices
+  1. Service Mesh Performance (SMP)
+     1. Prometheus and Grafana connections
+2. Configuration Analysis, Patterns, and Best Practices
    1. Custom Service Mesh Configuration
 
 ### Lifecycle management
@@ -79,15 +78,15 @@ The ({{page.name}}) includes a handful of sample applications. Use Meshery to de
 
 ## Using Service Mesh Standards
 
-As the open source, cloud native management plane, Meshery enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications using Prometheus and Grafana integrations.
+Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications using Prometheus and Grafana integrations.
 
-### Service Mesh Patterns and Open Application Model (OAM)
+### Service Mesh Patterns and Meshery Models
 
-### Complying with Service Mesh Interface (SMI)
+<!-- ### Complying with Service Mesh Interface (SMI)
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/tasks/service-mesh-interface).
+Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/tasks/service-mesh-interface). -->
 
 ### Managing Service Mesh Performance (SMP)
 
