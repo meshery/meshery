@@ -5,36 +5,27 @@ import data.common.extract_components
 import data.common.get_array_pos
 import future.keywords.in
 
-binding_types := ["mount", "permission"]
-
 edge_binding_relationship[results] {
-	binding_type := binding_types[_]
+	selector_set := data.selectors[_]
 
 	from_selectors := {kind: selectors |
-		s := data[binding_type].selectors.allow.from[_]
-		kind := s.kind
-		selectors := s
+		selectors := selector_set.allow.from[_]
+		kind := selectors.kind
 	}
 
 	to_selectors := {kind: selectors |
-		t := data[binding_type].selectors.allow.to[_]
-
-		# kind := t.kind
-		selectors := t
-
-		# match := t.match
-		val := t.match[key]
+		selectors := selector_set.allow.to[_]
+		val := selectors.match[key]
 
 		key != "self"
 
-		# kind := t.kind
-		kind := concat("#", {t.kind, key})
+		kind := concat("#", {selectors.kind, key})
 	}
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
 	from := extract_components(input.services, from_selectors)
 	to := extract_components(input.services, to_selectors)
 	binding_comps := {type |
-		selector := data[binding_type].selectors.allow.from[_].match
+		selector := selector_set.allow.from[_].match
 		selector[key]
 		key != "self"
 		type = key
@@ -55,7 +46,7 @@ edge_binding_relationship[results] {
 		some comp in from
 
 		some edge in comp.traits.meshmap.edges
-		contains(binding_types, lower(edge.data.subType))
+		lower(data.subType) == lower(edge.data.subType)
 
 		e := {
 			"from": {"id": edge.data.source},
@@ -67,11 +58,11 @@ edge_binding_relationship[results] {
 	# print("edges_set: ", edges_set)
 	# print("edges_set - evaluation_results: ", edges_set - union_of_results)
 	# print("union_of_results: ", union_of_results)
-
-	results = {binding_type: {
+	# print(union(union_of_results, {}))
+	results = {
 		"edges_to_add": union_of_results,
 		"edges_to_remove": edges_set - union_of_results,
-	}}
+	}
 }
 
 evaluate[results] {
@@ -98,7 +89,7 @@ evaluate[results] {
 }
 
 is_related(resource1, resource2, from_selectors) {
-print(resource1, resource2, from_selectors)
+# print(resource1, resource2, from_selectors)
 	match_results := [result |
 		some i
 		match_from := from_selectors.match.self[i]
