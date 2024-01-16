@@ -1,5 +1,13 @@
 package pkg
 
+import (
+	"log"
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
 type SystemType int
 
 const (
@@ -36,3 +44,29 @@ func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
 	}
 	return shouldRegisterColIndex
 }
+
+func formatName(input string) string {
+	formattedName := strings.ReplaceAll(input, " ", "-")
+	formattedName = strings.ToLower(formattedName)
+	return formattedName
+}
+
+func CreateFiles(path, filetype, name, content string) {
+	formattedName := formatName(name)
+
+	fullPath := path + "/" + formattedName + filetype
+
+	file, err := os.Create(fullPath)
+	fmt.Println("Creating file:", fullPath)
+	if err != nil {
+		log.Println("Error creating filetype file:", err)
+		return
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, content)
+	if err != nil {
+		log.Println("Error writing to filetype file:", err)
+	}
+}
+
