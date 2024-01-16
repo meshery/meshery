@@ -14,7 +14,7 @@
     },
     "metadata": {}
   },
-  "subType": "Binding",
+  "subType": "Permission",
   "evaluationQuery": "edge_binding_relationship",
   "selectors": [{
     "deny": {
@@ -145,76 +145,6 @@
                 "subjects",
                 "_",
                 "name"
-              ]
-            ]
-          }
-        }
-      ]
-    }
-  },
-  {
-    "deny": {
-      "from": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        }
-      ],
-      "to": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        }
-      ]
-    },
-    "allow": {
-      "from": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes",
-          "match": {
-            "self": [
-              [
-                "settings",
-                "spec",
-                "volumes",
-                "_",
-                "persistentVolumeClaim",
-                "claimName"
-              ]
-            ],
-            "PersistentVolumeClaim": [
-              [
-                "name"
-              ]
-            ]
-          }
-        }
-      ],
-      "to": [
-        {
-          "kind": "PersistentVolume",
-          "model": "kubernetes",
-          "match": {
-            "self": [
-              [
-                "name"
-              ],
-              [
-                "labels"
-              ]
-            ],
-            "PersistentVolumeClaim": [
-              [
-                "settings",
-                "spec",
-                "volumeName"
-              ],
-              [
-                "settings",
-                "spec",
-                "selector",
-                "matchLabels"
               ]
             ]
           }

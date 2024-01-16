@@ -8,7 +8,7 @@ import data.common.get_array_pos
 import data.common.get_path
 
 heirarchical_inventory_relationship [updated_comps] {
-    selector_set := data.selectors[_]
+    selector_set := data["inventory"].selectors[_]
 
     from_selectors := {kind: selectors |
 		selectors := selector_set.allow.from[_]
