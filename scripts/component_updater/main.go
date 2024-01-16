@@ -57,7 +57,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete","capabilities", "genealogy", "styleOverrides", "capabilities"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "capabilities", "genealogy", "styleOverrides", "capabilities"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
@@ -200,8 +200,16 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 			panic(err)
 		}
 		comps := components[model.Registrant][model.Model]
-		componentsMetadata := pkg.CreateComponentsMetadataAndCreateSVGs(comps, pathToIntegrationsLayer5)
-		md := model.CreateMarkDown(componentsMetadata)
+
+		compsSVGsDir := "icon/components"
+		// Write SVGs to Layer5 docs for components
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, compsSVGsDir), 0777)
+		if err != nil {
+			panic(err)
+		}
+		
+		componentsMetadata := pkg.CreateComponentsMetadataAndCreateSVGs(comps, pathToIntegrationsLayer5, compsSVGsDir)
+		md := model.CreateMarkDownForLayer5(componentsMetadata)
 		jsonItem := model.CreateJSONItem()
 		mesheryDocsJSON += jsonItem + ","
 		_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
@@ -213,24 +221,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		if err != nil {
 			panic(err)
 		}
-
-		// Write SVGs to Layer5 docs
-		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "components"), 0777)
-		if err != nil {
-			panic(err)
-		}
-
-		for _, comp := range comps {
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "components", comp.Component+"-color.svg"), comp.SVGColor) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "components", comp.Component+"-white.svg"), comp.SVGWhite) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-		}
-
 
 		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 		if err != nil {
@@ -278,12 +268,18 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		}
 
 		// for meshery integration docs
-		// mdContent := pkg.GenerateMDContent(t)
+		compsSVGsDir = "assets/img/integrations/components"
+		err = os.MkdirAll(filepath.Join("../../docs", compsSVGsDir), 0777)
+		if err != nil {
+			panic(err)
+		}
+		componentsMetadata = pkg.CreateComponentsMetadataAndCreateSVGs(comps, "../../docs", compsSVGsDir)
+		mdContent := model.GenerateMDContent(componentsMetadata)
 		// fmt.Printf("Generating MD content for %s\n", modelName)
 		// fmt.Println(mdContent)
 
-		// // pathToIntegrationsMesheryDocs, _ = filepath.Abs(filepath.Join("../../", "docs", "pages", "integrations"))
-		// pkg.CreateFiles("../../docs/pages/integrations", ".md", modelName, mdContent)
+		// pathToIntegrationsMesheryDocs, _ = filepath.Abs(filepath.Join("../../", "docs", "pages", "integrations"))
+		pkg.CreateFiles("../../docs/pages/integrations", ".md", modelName, mdContent)
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
