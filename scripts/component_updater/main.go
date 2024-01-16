@@ -275,10 +275,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		}
 		componentsMetadata = pkg.CreateComponentsMetadataAndCreateSVGs(comps, "../../docs", compsSVGsDir)
 		mdContent := model.GenerateMDContent(componentsMetadata)
-		// fmt.Printf("Generating MD content for %s\n", modelName)
-		// fmt.Println(mdContent)
-
-		// pathToIntegrationsMesheryDocs, _ = filepath.Abs(filepath.Join("../../", "docs", "pages", "integrations"))
 		pkg.CreateFiles("../../docs/pages/integrations", ".md", modelName, mdContent)
 	}
 
