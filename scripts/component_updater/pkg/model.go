@@ -2,59 +2,59 @@ package pkg
 
 import (
 	"fmt"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	"github.com/layer5io/meshkit/utils/csv"
 )
 
 var (
-	shouldRegisterMod        = "publishToSites"
-	sheetID = "234040173" // update
+	shouldRegisterMod = "publishToSites"
+	sheetID           = "234040173" // update
 )
 
 type ModelCSV struct {
-	ModelDisplayName string `json:"modelDisplayName"`
-	Model string `json:"model"`
-	Registrant string `json:"registrant"`
-	Category string `json:"category"`
-	SubCategory string `json:"subCategory"`
-	Description string `json:"description"`
-	SourceURL string `json:"sourceURL"`
-	Website string `json:"website"`
-	Docs string `json:"docs"`
-	Shape string `json:"shape"`
-	PrimaryColor string `json:"primaryColor"`
-	SecondaryColor string `json:"secondaryColor"`
-	StyleOverrides string `json:"styleOverrides"`
-	Styles string `json:"styles"`
+	ModelDisplayName   string `json:"modelDisplayName"`
+	Model              string `json:"model"`
+	Registrant         string `json:"registrant"`
+	Category           string `json:"category"`
+	SubCategory        string `json:"subCategory"`
+	Description        string `json:"description"`
+	SourceURL          string `json:"sourceURL"`
+	Website            string `json:"website"`
+	Docs               string `json:"docs"`
+	Shape              string `json:"shape"`
+	PrimaryColor       string `json:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor"`
+	StyleOverrides     string `json:"styleOverrides"`
+	Styles             string `json:"styles"`
 	ShapePolygonPoints string `json:"shapePolygonPoints"`
-	DefaultData string `json:"defaultData"`
-	Capabilities string `json:"capabilities"`
-	LogoURL string `json:"logoURL"`
-	SVGColor string `json:"svgColor"`
-	SVGWhite string `json:"svgWhite"`
-	SVGComplete string `json:"svgComplete"`
-	PublishToRegistry string `json:"publishToRegistry"`
-	IsAnnotation string `json:"isAnnotation"`
-	AboutProject string `json:"aboutProject"`
-	PageSubtTitle string `json:"pageSubtitle"`
-	DocsURL string `json:"docsURL"`
-	StandardBlurb string `json:"standardBlurb"`
-	Feature1 string `json:"feature1"`
-	Feature2 string `json:"feature2"`
-	Feature3 string `json:"feature3"`
-	HowItWorks string `json:"howItWorks"`
-	HowItWorksDetails string `json:"howItWorksDetails"`
-	Screenshots string `json:"screenshots"`
-	FullPage string `json:"fullPage"`
-	PublishToSites string `json:"publishToSites"`
+	DefaultData        string `json:"defaultData"`
+	Capabilities       string `json:"capabilities"`
+	LogoURL            string `json:"logoURL"`
+	SVGColor           string `json:"svgColor"`
+	SVGWhite           string `json:"svgWhite"`
+	SVGComplete        string `json:"svgComplete"`
+	PublishToRegistry  string `json:"publishToRegistry"`
+	IsAnnotation       string `json:"isAnnotation"`
+	AboutProject       string `json:"aboutProject"`
+	PageSubtTitle      string `json:"pageSubtitle"`
+	DocsURL            string `json:"docsURL"`
+	StandardBlurb      string `json:"standardBlurb"`
+	Feature1           string `json:"feature1"`
+	Feature2           string `json:"feature2"`
+	Feature3           string `json:"feature3"`
+	HowItWorks         string `json:"howItWorks"`
+	HowItWorksDetails  string `json:"howItWorksDetails"`
+	Screenshots        string `json:"screenshots"`
+	FullPage           string `json:"fullPage"`
+	PublishToSites     string `json:"publishToSites"`
 }
 
 type ModelCSVHelper struct {
 	SheetID string
 	CSVPath string
-	Models []ModelCSV
+	Models  []ModelCSV
 }
 
 func NewModelCSVHelper(sheetURL string) (*ModelCSVHelper, error) {
@@ -67,11 +67,11 @@ func NewModelCSVHelper(sheetURL string) (*ModelCSVHelper, error) {
 	return &ModelCSVHelper{
 		SheetID: sheetID,
 		CSVPath: csvPath,
-		Models: []ModelCSV{},
+		Models:  []ModelCSV{},
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet(){
+func (mch *ModelCSVHelper) ParseModelsSheet() {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
@@ -109,7 +109,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(){
 	}
 }
 
-func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path string) string {
+func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgDir string) string {
 	componentMetadata := ""
 	for _, comp := range components {
 		componentTemplate := `
@@ -117,17 +117,17 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path strin
 		colorIcon: %s
 		whiteIcon: %s
 		description: %s`
-			componentMetadata += fmt.Sprintf(componentTemplate, comp.Component, fmt.Sprintf("icon/components/%s-color.svg", comp.Component), fmt.Sprintf("icon/components/%s-white.svg", comp.Component), comp.Description)
-			err := WriteSVG(filepath.Join(path, "icon", "components", comp.Component+"-color.svg"), comp.SVGColor) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-			err = WriteSVG(filepath.Join(path, "icon", "components", comp.Component+"-white.svg"), comp.SVGWhite) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
+		componentMetadata += fmt.Sprintf(componentTemplate, comp.Component, fmt.Sprintf("%s/%s-color.svg", svgDir, comp.Component), fmt.Sprintf("%s/%s-white.svg", svgDir, comp.Component), comp.Description)
+		err := WriteSVG(filepath.Join(path, svgDir, comp.Component+"-color.svg"), comp.SVGColor) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+		err = WriteSVG(filepath.Join(path, svgDir, comp.Component+"-white.svg"), comp.SVGWhite) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
 	}
-	
+
 	return componentMetadata
 }
 
@@ -141,19 +141,25 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path strin
 // subcategory: <Sub-Category>
 // featureList: [<Feature 1>,<Feature 2>,<Feature 3>]
 // workingSlides: [
-//     ../_images/meshmap-visualizer.png,
-//     ../_images/meshmap-designer.png]
+//
+//	../_images/meshmap-visualizer.png,
+//	../_images/meshmap-designer.png]
+//
 // howItWorks: <howItWorks>
 // howItWorksDetails: howItWorksDetails
 // published: <Publish>
 // ---
 // <p>
-//    <About Project>
+//
+//	<About Project>
+//
 // </p>
 // <p>
-//    <Standard Blurb>
+//
+//	<Standard Blurb>
+//
 // </p>`
-func (m ModelCSV) CreateMarkDown(componentsMetadata string) string {
+func (m ModelCSV) CreateMarkDownForLayer5(componentsMetadata string) string {
 	var template string = `---
 title: %s
 subtitle: %s
@@ -201,16 +207,13 @@ published: %s
 		`../_images/meshmap-designer.png`,
 		m.HowItWorks,
 		m.HowItWorksDetails,
-		m.PublishToRegistry,
+		m.PublishToSites,
 		m.AboutProject,
 		m.StandardBlurb,
 	)
-	// markdown := template
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
 }
-
-
 
 // Creates JSON formatted meshmodel attribute item for Meshery docs
 func (m ModelCSV) CreateJSONItem() string {
@@ -229,4 +232,57 @@ func (m ModelCSV) CreateJSONItem() string {
 
 	json += "}"
 	return json
+}
+
+func (m ModelCSV) GenerateMDContent(componentsMetadata string) string {
+		formattedName := formatName(m.ModelDisplayName)
+
+		var template string = `---
+layout: enhanced
+title: %s
+subtitle: %s
+image: /assets/img/integrations/%s.svg
+permalink: extensibility/integrations/%s
+docURL: %s
+description: %s
+category: %s
+subcategory: %s
+registrant: %s
+components: %v
+featureList: [
+  "%s",
+  "%s",
+  "%s"
+]
+howItWorks: %s
+howItWorksDetails: %s
+language: en
+list: include
+---
+<p>
+%s
+</p>
+%s
+`
+	markdown := fmt.Sprintf(template,
+		m.ModelDisplayName,
+		m.PageSubtTitle,
+		formattedName,
+		formattedName,
+		m.DocsURL,
+		m.Description,
+		m.Category,
+		m.SubCategory,
+		m.Registrant,
+		componentsMetadata,
+		m.Feature1,
+		m.Feature2,
+		m.Feature3,
+		m.HowItWorks,
+		m.HowItWorksDetails,
+		m.AboutProject,
+		m.StandardBlurb,
+	)
+
+	return markdown
 }
