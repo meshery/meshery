@@ -1,43 +1,31 @@
 ---
 layout: enhanced
 title: Cert Manager
+subtitle: Cloud native certificate management with Cert Manager and Meshery
+image: /assets/img/integrations/cert-manager.svg
 permalink: extensibility/integrations/cert-manager
-type: extensibility
-category: integrations
-integrations-category: Security & Compliance
-integrations-subcategory: Security & Compliance
-display-title: "false"
+docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
+description: 
+category: Security & Compliance
+subcategory: Security & Compliance
+registrant: artifacthub
+components: 
+featureList: [
+  "Simplifies the process of obtaining, renewing and using those certificates.",
+  "Supports issuing certificates from a variety of sources.",
+  "Ensures certificates remain valid and up to date."
+]
+howItWorks: Cloud native certificate management
+howItWorksDetails: X.509 certificate management for Kubernetes and OpenShift
 language: en
 list: include
-image: /assets/img/integrations/cert-manager.svg
 ---
+<p>
 
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-
-<!-- This needs replaced with the Category property, not the sub-category.
- #### About:  -->
-
-### Overview & Features:
-
-2. Cloud native certificate management with Cert Manager and Meshery
-
-4. 
+</p>
+<p>
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-
-
-
+</p>
+<p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-
-
-
-5. Simplifies the process of obtaining, renewing and using those certificates.
-
-6. Supports issuing certificates from a variety of sources.
-
-7. Ensures certificates remain valid and up to date.
-
-8. Cloud native certificate management
-
-9. X.509 certificate management for Kubernetes and OpenShift
-
+</p>

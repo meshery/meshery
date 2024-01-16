@@ -1,0 +1,35 @@
+---
+layout: enhanced
+title: Epam Delivery Platform (EDP) Admin Console
+subtitle: Collaborative and visual infrastructure as code for Epam Delivery Platform (EDP) Admin Console
+image: /assets/img/integrations/epam-delivery-platform-(edp)-admin-console.svg
+permalink: extensibility/integrations/epam-delivery-platform-(edp)-admin-console
+docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
+description: 
+category: Provisioning
+subcategory: Automation & Configuration
+registrant: artifacthub
+components: 
+	-	name: AdminConsole
+		colorIcon: assets/img/integrations/components/AdminConsole-color.svg
+		whiteIcon: assets/img/integrations/components/AdminConsole-white.svg
+		description: 
+featureList: [
+  "Deployed and configured CI/CD toolset (Jenkins, Gerrit, Nexus, SonarQube)",
+  "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",
+  "Gerrit, GitLab or GitHub as a version control system for your code"
+]
+howItWorks: Collaborative Infrastructure as Code
+howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+language: en
+list: include
+---
+<p>
+A Helm chart for EDP Admin Console Operator
+</p>
+<p>
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
+</p>
+<p>
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
+</p>
