@@ -57,12 +57,6 @@ type TemplateAttributes struct {
 	WhiteSVG                string
 }
 
-func (t TemplateAttributes) CreateMarkDown() string {
-	markdown := t.FullPage
-	markdown = strings.ReplaceAll(markdown, "\r", "\n")
-	return markdown
-}
-
 func FormatName(input string) string {
 	formattedName := strings.ReplaceAll(input, " ", "-")
 	formattedName = strings.ToLower(formattedName)
@@ -266,12 +260,6 @@ func formatName(input string) string {
 
 func GenerateMDContent(t TemplateAttributes) string {
 	mdContent := ""
-	// for i := csvIndices.IndexStart; i <= csvIndices.IndexEnd; i++ {
-	// 	if record[i] != "" && !strings.Contains(record[i], "https") {
-	// 		mdContent += strconv.Itoa(i-(csvIndices.IndexStart-1)) + `.` + ` ` + record[i] + "\n\n"
-	// 	}
-	// }
-
 	formattedName := formatName(t.ModelName)
 
 	// Remove <p> and </p> tags and replace them with one line gap
