@@ -1,0 +1,43 @@
+---
+layout: enhanced
+title: Kubeflow Katib
+subtitle: Collaborative and visual infrastructure as code for Kubeflow Katib
+image: /assets/img/integrations/kubeflow-katib.svg
+permalink: extensibility/integrations/kubeflow-katib
+docURL: https://docs.meshery.io/extensibility/integrations/katib
+description: 
+category: Machine Learning
+subcategory: Machine Learning
+registrant: artifacthub
+components: 
+	-	name: Experiment
+		colorIcon: assets/img/integrations/components/Experiment-color.svg
+		whiteIcon: assets/img/integrations/components/Experiment-white.svg
+		description: 
+	-	name: Suggestion
+		colorIcon: assets/img/integrations/components/Suggestion-color.svg
+		whiteIcon: assets/img/integrations/components/Suggestion-white.svg
+		description: 
+	-	name: Trial
+		colorIcon: assets/img/integrations/components/Trial-color.svg
+		whiteIcon: assets/img/integrations/components/Trial-white.svg
+		description: 
+featureList: [
+  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
+  "Invite anyone to review and make changes to your private designs.",
+  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+]
+howItWorks: Collaborative Infrastructure as Code
+howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+language: en
+list: include
+---
+<p>
+Katib is a Kubernetes-native project for automated machine learning (AutoML). Katib supports hyperparameter tuning, early stopping and neural architecture search (NAS).
+</p>
+<p>
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
+</p>
+<p>
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
+</p>

@@ -1,47 +1,40 @@
 ---
 layout: enhanced
 title: AWS VPC CNI
+subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
+image: /assets/img/integrations/aws-vpc-cni.svg
 permalink: extensibility/integrations/aws-vpc-cni
-type: extensibility
-category: integrations
-integrations-category: Cloud Native Network
-integrations-subcategory: Cloud Native Network
-display-title: "false"
+docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
+description: 
+category: Cloud Native Network
+subcategory: Cloud Native Network
+registrant: artifacthub
+components: 
+	-	name: ENIConfig
+		colorIcon: assets/img/integrations/components/ENIConfig-color.svg
+		whiteIcon: assets/img/integrations/components/ENIConfig-white.svg
+		description: 
+	-	name: PolicyEndpoint
+		colorIcon: assets/img/integrations/components/PolicyEndpoint-color.svg
+		whiteIcon: assets/img/integrations/components/PolicyEndpoint-white.svg
+		description: 
+featureList: [
+  "Keep revision history and audit trail of all configuration changes",
+  "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
+  "Deploy Meshery on your EKS clusters for App Mesh management"
+]
+howItWorks: Collaborative Infrastructure as Code
+howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
-image: /assets/img/integrations/aws-vpc-cni.svg
 ---
+<p>
+Networking plugin for pod networking in Kubernetes using Elastic Network Interfaces on AWS.
 
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-
-<!-- This needs replaced with the Category property, not the sub-category.
- #### About: Networking plugin for pod networking in Kubernetes using Elastic Network Interfaces on AWS.
- -->
-
-### Overview & Features:
-
-1. Networking plugin for pod networking in Kubernetes using Elastic Network Interfaces on AWS.
-
-
-2. Collaborative and visual infrastructure as code for AWS VPC CNI
-
-4. 
+</p>
+<p>
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-
-
-
+</p>
+<p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-
-
-
-5. Keep revision history and audit trail of all configuration changes
-
-6. Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration
-
-7. Deploy Meshery on your EKS clusters for App Mesh management
-
-8. Collaborative Infrastructure as Code
-
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
-
+</p>
