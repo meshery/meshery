@@ -16,7 +16,7 @@
   },
   "subType": "Firewall",
   "evaluationQuery": "edge_binding_relationship",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -39,5 +39,5 @@
         }
       ]
     }
-  }
+  }]
 }
