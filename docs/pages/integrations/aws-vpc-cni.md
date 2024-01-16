@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS VPC CNI
-permalink: integrations/aws-vpc-cni
-type: installation
+permalink: extensibility/integrations/aws-vpc-cni
+type: extensibility
 category: integrations
+integrations-category: Cloud Native Network
+integrations-subcategory: Cloud Native Network
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,11 @@ image: /assets/img/integrations/aws-vpc-cni.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-vpc-cni -->
+ #### About: Networking plugin for pod networking in Kubernetes using Elastic Network Interfaces on AWS.
+ -->
 
 ### Overview & Features:
+
 1. Networking plugin for pod networking in Kubernetes using Elastic Network Interfaces on AWS.
 
 

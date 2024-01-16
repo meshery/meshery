@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: CD Pipeline Operator
-permalink: integrations/cd-pipeline-operator
-type: installation
+permalink: extensibility/integrations/cd-pipeline-operator
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/cd-pipeline-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: cd-pipeline-operator -->
+ #### About: Boost your delivery with the development culture based on the modern CI/CD stack, golden path and self-service capabilities of the EPAM Delivery Platform (EDP). -->
 
 ### Overview & Features:
+
 1. Boost your delivery with the development culture based on the modern CI/CD stack, golden path and self-service capabilities of the EPAM Delivery Platform (EDP).
 
 2. Collaborative and visual infrastructure as code for CD Pipeline Operator

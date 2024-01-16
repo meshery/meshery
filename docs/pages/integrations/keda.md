@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Keda
-permalink: integrations/keda
-type: installation
+permalink: extensibility/integrations/keda
+type: extensibility
 category: integrations
+integrations-category: Serverless
+integrations-subcategory: Installable Platform
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/keda.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: keda -->
+ #### About:  KEDA is a Kubernetes-based Event Driven Autoscaling component. It provides event driven scale for any container running in Kubernetes  -->
 
 ### Overview & Features:
+
 1.  KEDA is a Kubernetes-based Event Driven Autoscaling component. It provides event driven scale for any container running in Kubernetes 
 
 2. Collaborative and visual infrastructure as code for Keda

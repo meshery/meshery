@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Brigade
-permalink: integrations/brigade
-type: installation
+permalink: extensibility/integrations/brigade
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/brigade.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: brigade -->
+ #### About: Event-driven scripting for Kubernetes -->
 
 ### Overview & Features:
+
 1. Event-driven scripting for Kubernetes
 
 2. Collaborative and visual infrastructure as code for Brigade

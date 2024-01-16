@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: External Secrets Operator
-permalink: integrations/external-secrets-operator
-type: installation
+permalink: extensibility/integrations/external-secrets-operator
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/external-secrets-operator.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: external-secrets-operator -->
+ #### About: External Secrets Operator reads information from a third-party service like AWS Secrets Manager and automatically injects the values as Kubernetes Secrets. -->
 
 ### Overview & Features:
+
 1. External Secrets Operator reads information from a third-party service like AWS Secrets Manager and automatically injects the values as Kubernetes Secrets.
 
 2. Collaborative and visual infrastructure as code for External Secrets Operator

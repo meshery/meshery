@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: SPIRE
-permalink: integrations/spire
-type: installation
+permalink: extensibility/integrations/spire
+type: extensibility
 category: integrations
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/spire.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: spire -->
+ #### About: The SPIFFE Runtime Environment -->
 
 ### Overview & Features:
+
 1. The SPIFFE Runtime Environment
 
 2. Collaborative and visual infrastructure as code for SPIRE

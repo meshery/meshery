@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Terraform
-permalink: integrations/terraform
-type: installation
+permalink: extensibility/integrations/terraform
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/terraform.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: terraform -->
+ #### About: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned. -->
 
 ### Overview & Features:
+
 1. Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 
 2. Collaborative and visual infrastructure as code for Terraform

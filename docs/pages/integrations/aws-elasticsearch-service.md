@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS ElasticSearch Service
-permalink: integrations/aws-elasticsearch-service
-type: installation
+permalink: extensibility/integrations/aws-elasticsearch-service
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-elasticsearch-service.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-elasticsearchservice-controller -->
+ #### About: AWS ElasticSearch Service makes it easy for you to perform interactive log analytics, real-time application monitoring, website search, and more.  -->
 
 ### Overview & Features:
+
 1. AWS ElasticSearch Service makes it easy for you to perform interactive log analytics, real-time application monitoring, website search, and more. 
 
 2. Collaborative and visual infrastructure as code for AWS ElasticSearch Service

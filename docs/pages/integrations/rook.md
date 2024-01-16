@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Rook
-permalink: integrations/rook
-type: installation
+permalink: extensibility/integrations/rook
+type: extensibility
 category: integrations
+integrations-category: Runtime
+integrations-subcategory: Cloud Native Storage
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/rook.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: rook -->
+ #### About: Storage Orchestration for Kubernetes -->
 
 ### Overview & Features:
+
 1. Storage Orchestration for Kubernetes
 
 2. Collaborative and visual infrastructure as code for Rook

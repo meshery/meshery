@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Pixie
-permalink: integrations/pixie
-type: installation
+permalink: extensibility/integrations/pixie
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/pixie.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: pixie -->
+ #### About: Open source Kubernetes observability for developers -->
 
 ### Overview & Features:
+
 1. Open source Kubernetes observability for developers
 
 2. Collaborative and visual infrastructure as code for Pixie

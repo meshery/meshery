@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Telepresence
-permalink: integrations/telepresence
-type: installation
+permalink: extensibility/integrations/telepresence
+type: extensibility
 category: integrations
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/telepresence.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: telepresence -->
+ #### About: Local development against a remote Kubernetes or OpenShift cluster -->
 
 ### Overview & Features:
+
 1. Local development against a remote Kubernetes or OpenShift cluster
 
 2. Collaborative and visual infrastructure as code for Telepresence

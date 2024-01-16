@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
 white_image: /assets/img/service-meshes/nsm.svg
 permalink: extensibility/adapters/nsm
+redirect_from: service-meshes/adapters/nsm
 language: en
 ---
 

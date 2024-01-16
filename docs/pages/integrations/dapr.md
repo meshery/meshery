@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Dapr
-permalink: integrations/dapr
-type: installation
+permalink: extensibility/integrations/dapr
+type: extensibility
 category: integrations
+integrations-category: Serverless
+integrations-subcategory: Framework
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/dapr.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: dapr -->
+ #### About: Dapr is a portable, event-driven, runtime for building distributed applications across cloud and edge. -->
 
 ### Overview & Features:
+
 1. Dapr is a portable, event-driven, runtime for building distributed applications across cloud and edge.
 
 2. Collaborative and visual infrastructure as code for Dapr

@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AMD GPU
-permalink: integrations/amd-gpu
-type: installation
+permalink: extensibility/integrations/amd-gpu
+type: extensibility
 category: integrations
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/amd-gpu.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: amd-gpu -->
+ #### About:  -->
 
 ### Overview & Features:
+
 2. Collaborative and visual infrastructure as code for AMD GPU
 
 4. 

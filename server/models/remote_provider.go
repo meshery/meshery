@@ -3779,8 +3779,8 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
-	
-	defer func(){
+
+	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)

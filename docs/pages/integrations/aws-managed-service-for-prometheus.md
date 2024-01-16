@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Managed Service for Prometheus
-permalink: integrations/aws-managed-service-for-prometheus
-type: installation
+permalink: extensibility/integrations/aws-managed-service-for-prometheus
+type: extensibility
 category: integrations
+integrations-category: Observability and Analysis
+integrations-subcategory: Metrics
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/aws-managed-service-for-prometheus.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: aws-prometheusservice-controller -->
+ #### About: Amazon Managed Service for Prometheus is a Prometheus-compatible service that monitors and provides alerts on containerized applications and infrastructure at scale. The service is integrated with Amazon Elastic Kubernetes Service (EKS), Amazon Elastic Container Service (ECS), and AWS Distro for OpenTelemetry. -->
 
 ### Overview & Features:
+
 1. Amazon Managed Service for Prometheus is a Prometheus-compatible service that monitors and provides alerts on containerized applications and infrastructure at scale. The service is integrated with Amazon Elastic Kubernetes Service (EKS), Amazon Elastic Container Service (ECS), and AWS Distro for OpenTelemetry.
 
 2. Collaborative and visual infrastructure as code for AWS Managed Service for Prometheus

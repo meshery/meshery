@@ -1,9 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Kubeflow Katib
-permalink: integrations/kubeflow-katib
-type: installation
+permalink: extensibility/integrations/kubeflow-katib
+type: extensibility
 category: integrations
+integrations-category: Machine Learning
+integrations-subcategory: Machine Learning
 display-title: "false"
 language: en
 list: include
@@ -14,9 +16,10 @@ image: /assets/img/integrations/kubeflow-katib.svg
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: katib -->
+ #### About: Katib is a Kubernetes-native project for automated machine learning (AutoML). Katib supports hyperparameter tuning, early stopping and neural architecture search (NAS). -->
 
 ### Overview & Features:
+
 1. Katib is a Kubernetes-native project for automated machine learning (AutoML). Katib supports hyperparameter tuning, early stopping and neural architecture search (NAS).
 
 2. Collaborative and visual infrastructure as code for Kubeflow Katib
