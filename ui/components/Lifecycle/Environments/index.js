@@ -234,7 +234,7 @@ const Environments = ({ organization, classes }) => {
     );
   };
 
-  const fetchSchema = async (actionType) => {
+  const fetchSchema = async () => {
     dataFetch(
       `/api/schema/resource/environment`,
       {
@@ -247,9 +247,7 @@ const Environments = ({ organization, classes }) => {
           const uiSchemaOrg = res.uiSchema?.organization;
           rjsfSchemaOrg.enum = orgValue;
           rjsfSchemaOrg.enumNames = orgLabel;
-          actionType === ACTION_TYPES.CREATE
-            ? (uiSchemaOrg['ui:widget'] = 'select')
-            : (uiSchemaOrg['ui:widget'] = 'hidden');
+          uiSchemaOrg['ui:widget'] = 'hidden';
           setEnvironmentModal({
             open: true,
             schema: res,
@@ -289,7 +287,7 @@ const Environments = ({ organization, classes }) => {
       });
       setEditEnvId('');
     }
-    fetchSchema(actionType);
+    fetchSchema();
   };
 
   const handleEnvironmentModalClose = () => {
@@ -584,27 +582,26 @@ const Environments = ({ organization, classes }) => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-          {actionType === ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)
-            : CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject) &&
-              environmentModal.open && (
-                <Modal
-                  open={environmentModal.open}
-                  schema={environmentModal.schema.rjsfSchema}
-                  uiSchema={environmentModal.schema.uiSchema}
-                  handleClose={handleEnvironmentModalClose}
-                  handleSubmit={
-                    actionType === ACTION_TYPES.CREATE
-                      ? handleCreateEnvironment
-                      : handleEditEnvironment
-                  }
-                  title={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                  }
-                  submitBtnText={actionType === ACTION_TYPES.CREATE ? 'SAVE' : 'UPDATE'}
-                  initialData={initialData}
-                />
-              )}
+          {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
+            CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
+            environmentModal.open && (
+              <Modal
+                open={environmentModal.open}
+                schema={environmentModal.schema.rjsfSchema}
+                uiSchema={environmentModal.schema.uiSchema}
+                handleClose={handleEnvironmentModalClose}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE
+                    ? handleCreateEnvironment
+                    : handleEditEnvironment
+                }
+                title={
+                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                }
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+              />
+            )}
           <GenericModal
             open={assignConnectionModal}
             handleClose={handleonAssignConnectionModalClose}
