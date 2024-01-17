@@ -223,10 +223,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
-
-	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil { // remove this line
-		log.Fatal(err)
-	}
 }
 
 func mesheryUpdater(output []map[string]string) {
