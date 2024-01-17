@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ed02c176db233601ebb7c92a33710c62>>
+ * @generated SignedSource<<0b864e564b4ac213932808374e940c88>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -51,6 +51,13 @@ v1 = [
         "kind": "ScalarField",
         "name": "status",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "version",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -74,16 +81,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2f51de3afecd08d2d6316973805b3890",
+    "cacheID": "d13cc9027c16da162d9414ab27148cf5",
     "id": null,
     "metadata": {},
     "name": "MesheryControllersStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription MesheryControllersStatusSubscription(\n  $k8scontextIDs: [String!]\n) {\n  subscribeMesheryControllersStatus(k8scontextIDs: $k8scontextIDs) {\n    contextId\n    controller\n    status\n  }\n}\n"
+    "text": "subscription MesheryControllersStatusSubscription(\n  $k8scontextIDs: [String!]\n) {\n  subscribeMesheryControllersStatus(k8scontextIDs: $k8scontextIDs) {\n    contextId\n    controller\n    status\n    version\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "5a93ffadfcfbf8ea14d9bac0fe6b50f3";
+node.hash = "b5d4c39af94cb255a592948102c3abb5";
 
 module.exports = node;
