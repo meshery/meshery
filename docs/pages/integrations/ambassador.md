@@ -134,6 +134,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The Ambassador Edge Stack and its open source version Emissary-Ingress (FKA Ambassador API Gateway) offer a self-service, comprehensive API Gateway that is Kubernetes-native and built on Envoy.
 </p>

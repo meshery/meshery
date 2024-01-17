@@ -68,6 +68,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Amazon MemoryDB for Redis is a durable database with microsecond reads, low single-digit millisecond writes, scalability, and enterprise security. MemoryDB delivers 99.99% availability and near instantaneous recovery without any data loss.
 </p>

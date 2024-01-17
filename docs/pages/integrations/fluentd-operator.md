@@ -33,6 +33,8 @@ Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd wh
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Fluentd: Unified Logging Layer (project under CNCF)
 </p>

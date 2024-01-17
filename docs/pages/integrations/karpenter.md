@@ -34,6 +34,8 @@ Deploy workloads: When deploying workloads, you can request that scheduling cons
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Karpenter is an open-source node provisioning project built for Kubernetes. Adding Karpenter to a Kubernetes cluster can dramatically improve the efficiency and cost of running workloads on that cluster.
 </p>

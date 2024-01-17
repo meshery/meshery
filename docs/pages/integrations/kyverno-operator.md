@@ -28,6 +28,8 @@ howItWorksDetails: Using MeshMap, apply best practice design templates for admis
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Kubernetes Native Policy Management
 </p>

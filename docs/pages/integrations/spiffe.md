@@ -20,6 +20,8 @@ howItWorksDetails: Expertly use the Workload API specification to issue and retr
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The SPIFFE Project
 </p>

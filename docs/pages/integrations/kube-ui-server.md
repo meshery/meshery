@@ -80,6 +80,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Kubernetes UI Server is an extended api server for Kubernetes. This exposes a number of apis for a Kubernetes cluster, such as:
 </p>

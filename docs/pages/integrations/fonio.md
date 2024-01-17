@@ -20,6 +20,8 @@ howItWorksDetails: Elastic Load Balancing (ELB) automatically distributes incomi
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Data first monitoring agent using (e)BPF, built on RedBPF
 </p>

@@ -26,6 +26,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The Aperture Agent is the decision executor of the Aperture system. In addition to gathering data, the Aperture Agent functions as a gatekeeper, acting on traffic based on decisions made by the Aperture Controller. Specifically, depending on feedback from the Controller, the Agent will effectively allow or drop incoming requests. Further supporting the Controller, the Agent works to inject information into traffic, including the specific traffic-shaping decisions made and classification labels which can later be used in policing. One Agent is deployed per node.
 

@@ -32,6 +32,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Boost your delivery with the development culture based on the modern CI/CD stack, golden path and self-service capabilities of the EPAM Delivery Platform (EDP).
 </p>

@@ -26,6 +26,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Query, visualize, alert on, and understand your data with Grafana and Meshery. Use Grafana to create, explore, and share all of your data through dashboards, Use Meshery to customize the flexible display of your dashboards in context of your infrastructure management.
 </p>

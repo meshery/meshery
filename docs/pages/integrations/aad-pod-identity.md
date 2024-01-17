@@ -20,6 +20,8 @@ howItWorksDetails: Azure AD workload identity authentication method replaces pod
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD).
 </p>

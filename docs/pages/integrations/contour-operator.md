@@ -92,6 +92,8 @@ howItWorksDetails: Builds upon the basic Kubernetes resource and controller conc
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Contour is a Kubernetes ingress controller using Envoy proxy.
 </p>

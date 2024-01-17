@@ -20,6 +20,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Grafana Mimir lets you scale to 1 billion metrics and beyond, with high availability, multi-tenancy, durable storage, and blazing fast query performance over long periods of time.
 </p>
