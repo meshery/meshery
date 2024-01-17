@@ -107,7 +107,7 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join("icons", "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, modelDir, compIconsSubDir) 
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForLayer5io(components, modelDir, compIconsSubDir) 
 	if err != nil {
 		return err
 	}
@@ -170,11 +170,15 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	
 	// dir for markdown
 	mdDir := filepath.Join(path, "pages", "integrations")
+	err := os.MkdirAll(mdDir, 0777)
+	if err != nil {
+		return err
+	}
 
 	// dir for icons
 	_iconsSubDir := filepath.Join("assets", "img", "integrations", modelName)
 	iconsDir := filepath.Join(path, _iconsSubDir)
-	err := os.MkdirAll(iconsDir, 0777)
+	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
 		return err
 	}
@@ -205,14 +209,20 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, path, compIconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components, path, compIconsSubDir)
 	if err != nil {
 		return err
 	}
 
 	// generate markdown file
 	md := model.CreateMarkDownForMesheryDocs(componentMetadata)
-	err = WriteToFile(filepath.Join(mdDir, modelName+".md"), md)
+	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, md)
 	if err != nil {
 		return err
 	}
