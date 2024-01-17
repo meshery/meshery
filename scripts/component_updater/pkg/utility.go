@@ -80,12 +80,6 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 		return err
 	}
 
-
-	err = os.RemoveAll(filepath.Join(modelDir, "icon"))
-	if err != nil {
-		return err
-	}
-
 	// create dir for color model icons
 	iconsDir := filepath.Join(modelDir, "icons", "color")
 	err = os.MkdirAll(iconsDir, 0777)
@@ -130,25 +124,38 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 }
 
 func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (string, error) {
+
+	formattedName := FormatName(model.Model)
+
 	// generate data.js file
 	jsonItem := model.CreateJSONItem()
 	mesheryioDocsJSON += jsonItem + ","
 
 
+	// create color dir for icons
+	iconsDir := filepath.Join(path, "../", "images", formattedName, "icons", "color")
 	// create svg dir
-	err := os.MkdirAll(filepath.Join(path, "../", "images"), 0777)
+	err := os.MkdirAll(iconsDir, 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// write color svg
-		err = WriteSVG(filepath.Join(path, "../", "images", model.Model+"-color.svg"), model.SVGColor)
+		err = WriteSVG(filepath.Join(iconsDir, formattedName+"-color.svg"), model.SVGColor)
+		if err != nil {
+			return "", err
+		}
+
+		// create white dir for icons
+		iconsDir = filepath.Join(path, "../", "images", formattedName, "icons", "white")
+	// create svg dir
+	err = os.MkdirAll(iconsDir, 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// write white svg
-		err = WriteSVG(filepath.Join(path, "../", "images", model.Model+"-white.svg"), model.SVGWhite)
+		err = WriteSVG(filepath.Join(iconsDir,formattedName+"-white.svg"), model.SVGWhite)
 		if err != nil {
 				return "", err
 		}

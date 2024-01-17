@@ -194,6 +194,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
 		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
+		
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			fmt.Println("no components found for ", model.Model)
@@ -210,7 +211,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-
 		err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
 		if err != nil {
 			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
@@ -224,7 +224,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		log.Fatal(err)
 	}
 
-	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
+	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil { // remove this line
 		log.Fatal(err)
 	}
 }
