@@ -9,13 +9,11 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: [
-{
-"name": "kubegres",
-"colorIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg",
-"whiteIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg",
-"description": "",
-}]
+components: 
+	- name: kubegres
+		colorIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg
+		whiteIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

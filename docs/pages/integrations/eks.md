@@ -9,7 +9,7 @@ description:
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Save and share AKS configuration templates",
   "Ensure multi-tenancy enforcement",

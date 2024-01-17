@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

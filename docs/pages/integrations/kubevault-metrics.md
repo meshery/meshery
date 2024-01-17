@@ -9,7 +9,7 @@ description:
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

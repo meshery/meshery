@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Observability and Analysis
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Get 100% Prometheus compatible, including remote write, PromQL, and alerting",
   "High availability through replication",

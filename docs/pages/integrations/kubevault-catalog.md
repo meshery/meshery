@@ -9,13 +9,11 @@ description:
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: [
-{
-"name": "vault-server-version",
-"colorIcon": "assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg",
-"whiteIcon": "assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg",
-"description": "",
-}]
+components: 
+	- name: vault-server-version
+		colorIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg
+		whiteIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
+		description: 
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

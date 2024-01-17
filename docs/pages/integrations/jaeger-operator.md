@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Tracing
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -9,7 +9,7 @@ description:
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Supports multiple image formats including the existing Docker image format.",
   "Container image management (managing image layers, overlay filesystems, etc).",

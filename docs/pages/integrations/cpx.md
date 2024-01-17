@@ -9,7 +9,7 @@ description:
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

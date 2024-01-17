@@ -9,7 +9,7 @@ description:
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Ensure Cilium Service Mesh daemonset operation",
   "Define microservice isolation using eBPF",

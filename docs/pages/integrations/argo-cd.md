@@ -9,31 +9,23 @@ description:
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: [
-{
-"name": "argo-cd-extension",
-"colorIcon": "assets/img/integrations/argo-cd/components/argo-cd-extension/icons/color/argo-cd-extension-color.svg",
-"whiteIcon": "assets/img/integrations/argo-cd/components/argo-cd-extension/icons/white/argo-cd-extension-white.svg",
-"description": "",
-},
-{
-"name": "application",
-"colorIcon": "assets/img/integrations/argo-cd/components/application/icons/color/application-color.svg",
-"whiteIcon": "assets/img/integrations/argo-cd/components/application/icons/white/application-white.svg",
-"description": "",
-},
-{
-"name": "application-set",
-"colorIcon": "assets/img/integrations/argo-cd/components/application-set/icons/color/application-set-color.svg",
-"whiteIcon": "assets/img/integrations/argo-cd/components/application-set/icons/white/application-set-white.svg",
-"description": "",
-},
-{
-"name": "app-project",
-"colorIcon": "assets/img/integrations/argo-cd/components/app-project/icons/color/app-project-color.svg",
-"whiteIcon": "assets/img/integrations/argo-cd/components/app-project/icons/white/app-project-white.svg",
-"description": "",
-}]
+components: 
+	- name: argo-cd-extension
+		colorIcon: assets/img/integrations/argo-cd/components/argo-cd-extension/icons/color/argo-cd-extension-color.svg
+		whiteIcon: assets/img/integrations/argo-cd/components/argo-cd-extension/icons/white/argo-cd-extension-white.svg
+		description: 
+	- name: application
+		colorIcon: assets/img/integrations/argo-cd/components/application/icons/color/application-color.svg
+		whiteIcon: assets/img/integrations/argo-cd/components/application/icons/white/application-white.svg
+		description: 
+	- name: application-set
+		colorIcon: assets/img/integrations/argo-cd/components/application-set/icons/color/application-set-color.svg
+		whiteIcon: assets/img/integrations/argo-cd/components/application-set/icons/white/application-set-white.svg
+		description: 
+	- name: app-project
+		colorIcon: assets/img/integrations/argo-cd/components/app-project/icons/color/app-project-color.svg
+		whiteIcon: assets/img/integrations/argo-cd/components/app-project/icons/white/app-project-white.svg
+		description: 
 featureList: [
   "Gain mastery over Argo as a workflow engine for Kubernetes",
   "Design application definitions using the intuitive, context-aware visual designer, MeshMap.",

@@ -9,13 +9,11 @@ description:
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: [
-{
-"name": "kyverno-monitor",
-"colorIcon": "assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg",
-"whiteIcon": "assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg",
-"description": "",
-}]
+components: 
+	- name: kyverno-monitor
+		colorIcon: assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg
+		whiteIcon: assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg
+		description: 
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
   "Use Meshery with Kyverno to inspect image metadata and 

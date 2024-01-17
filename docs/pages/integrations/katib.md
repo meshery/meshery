@@ -9,25 +9,19 @@ description:
 category: Machine Learning
 subcategory: Machine Learning
 registrant: artifacthub
-components: [
-{
-"name": "experiment",
-"colorIcon": "assets/img/integrations/katib/components/experiment/icons/color/experiment-color.svg",
-"whiteIcon": "assets/img/integrations/katib/components/experiment/icons/white/experiment-white.svg",
-"description": "",
-},
-{
-"name": "suggestion",
-"colorIcon": "assets/img/integrations/katib/components/suggestion/icons/color/suggestion-color.svg",
-"whiteIcon": "assets/img/integrations/katib/components/suggestion/icons/white/suggestion-white.svg",
-"description": "",
-},
-{
-"name": "trial",
-"colorIcon": "assets/img/integrations/katib/components/trial/icons/color/trial-color.svg",
-"whiteIcon": "assets/img/integrations/katib/components/trial/icons/white/trial-white.svg",
-"description": "",
-}]
+components: 
+	- name: experiment
+		colorIcon: assets/img/integrations/katib/components/experiment/icons/color/experiment-color.svg
+		whiteIcon: assets/img/integrations/katib/components/experiment/icons/white/experiment-white.svg
+		description: 
+	- name: suggestion
+		colorIcon: assets/img/integrations/katib/components/suggestion/icons/color/suggestion-color.svg
+		whiteIcon: assets/img/integrations/katib/components/suggestion/icons/white/suggestion-white.svg
+		description: 
+	- name: trial
+		colorIcon: assets/img/integrations/katib/components/trial/icons/color/trial-color.svg
+		whiteIcon: assets/img/integrations/katib/components/trial/icons/white/trial-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

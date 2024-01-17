@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Metrics
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Durably store data for longer than the lifetime of any single machine, and use this data for long term capacity planning.",
   "Makes your PromQL queries blazin' fast through aggressive parallelization and caching.",

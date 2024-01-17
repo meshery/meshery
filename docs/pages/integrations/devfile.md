@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Development environments are quick to create, can be thrown away at will, and can be easily re-created when needed.",
   "Mechanism for teams to share configurations across projects, and provide a single source of truth throughout the application lifecycle.",

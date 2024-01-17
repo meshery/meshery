@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",

@@ -9,31 +9,23 @@ description:
 category: Cloud Native Network
 subcategory: Networking Content Delivery
 registrant: aws
-components: [
-{
-"name": "field-export",
-"colorIcon": "assets/img/integrations/aws-route53resolver-controller/components/field-export/icons/color/field-export-color.svg",
-"whiteIcon": "assets/img/integrations/aws-route53resolver-controller/components/field-export/icons/white/field-export-white.svg",
-"description": "",
-},
-{
-"name": "adopted-resource",
-"colorIcon": "assets/img/integrations/aws-route53resolver-controller/components/adopted-resource/icons/color/adopted-resource-color.svg",
-"whiteIcon": "assets/img/integrations/aws-route53resolver-controller/components/adopted-resource/icons/white/adopted-resource-white.svg",
-"description": "",
-},
-{
-"name": "resolver-endpoint",
-"colorIcon": "assets/img/integrations/aws-route53resolver-controller/components/resolver-endpoint/icons/color/resolver-endpoint-color.svg",
-"whiteIcon": "assets/img/integrations/aws-route53resolver-controller/components/resolver-endpoint/icons/white/resolver-endpoint-white.svg",
-"description": "",
-},
-{
-"name": "resolver-rule",
-"colorIcon": "assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg",
-"whiteIcon": "assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg",
-"description": "",
-}]
+components: 
+	- name: field-export
+		colorIcon: assets/img/integrations/aws-route53resolver-controller/components/field-export/icons/color/field-export-color.svg
+		whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/field-export/icons/white/field-export-white.svg
+		description: 
+	- name: adopted-resource
+		colorIcon: assets/img/integrations/aws-route53resolver-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+		whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+		description: 
+	- name: resolver-endpoint
+		colorIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-endpoint/icons/color/resolver-endpoint-color.svg
+		whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-endpoint/icons/white/resolver-endpoint-white.svg
+		description: 
+	- name: resolver-rule
+		colorIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
+		whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
+		description: 
 featureList: [
   "Local VPC domain names for EC2 instances (for example, ec2-192-0-2-44.compute-1.amazonaws.com).
 ",

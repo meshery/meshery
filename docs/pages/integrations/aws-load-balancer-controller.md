@@ -9,13 +9,11 @@ description:
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: [
-{
-"name": "ingress-class-params",
-"colorIcon": "assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg",
-"whiteIcon": "assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg",
-"description": "",
-}]
+components: 
+	- name: ingress-class-params
+		colorIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
+		whiteIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
+		description: 
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",

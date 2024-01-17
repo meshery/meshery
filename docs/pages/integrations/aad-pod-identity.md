@@ -9,7 +9,7 @@ description:
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Use Azure Active Directory pod-managed identities in Azure Kubernetes Service.",
   "A maximum of 200 pod-managed identities are allowed for a cluster.",

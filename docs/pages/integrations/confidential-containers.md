@@ -9,7 +9,7 @@ description:
 category: Runtime
 subcategory: Security & Compliance
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Allows cloud native application owners to enforce application security requirements.",
   "Transparent deployment of unmodified containers.",

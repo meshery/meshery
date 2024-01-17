@@ -9,19 +9,15 @@ description:
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: [
-{
-"name": "argo-cd-export",
-"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg",
-"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/white/argo-cd-export-white.svg",
-"description": "",
-},
-{
-"name": "argo-cd",
-"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/color/argo-cd-color.svg",
-"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/white/argo-cd-white.svg",
-"description": "",
-}]
+components: 
+	- name: argo-cd-export
+		colorIcon: assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg
+		whiteIcon: assets/img/integrations/argocd-operator/components/argo-cd-export/icons/white/argo-cd-export-white.svg
+		description: 
+	- name: argo-cd
+		colorIcon: assets/img/integrations/argocd-operator/components/argo-cd/icons/color/argo-cd-color.svg
+		whiteIcon: assets/img/integrations/argocd-operator/components/argo-cd/icons/white/argo-cd-white.svg
+		description: 
 featureList: [
   "Declarative continuous delivery with a fully-loaded UI.",
   "Application definitions, configurations, and environments can be declarative and version controlled.",

@@ -9,55 +9,39 @@ description:
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: [
-{
-"name": "grafana-dashboard",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg",
-"description": "",
-},
-{
-"name": "grafana-data-source",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-data-source/icons/color/grafana-data-source-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-data-source/icons/white/grafana-data-source-white.svg",
-"description": "",
-},
-{
-"name": "grafana-folder",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-folder/icons/color/grafana-folder-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-folder/icons/white/grafana-folder-white.svg",
-"description": "",
-},
-{
-"name": "grafana-notification-channel",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/color/grafana-notification-channel-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/white/grafana-notification-channel-white.svg",
-"description": "",
-},
-{
-"name": "grafana",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana/icons/color/grafana-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana/icons/white/grafana-white.svg",
-"description": "",
-},
-{
-"name": "grafana-datasource",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-datasource/icons/color/grafana-datasource-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-datasource/icons/white/grafana-datasource-white.svg",
-"description": "",
-},
-{
-"name": "grafana-connection",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-connection/icons/color/grafana-connection-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-connection/icons/white/grafana-connection-white.svg",
-"description": "",
-},
-{
-"name": "grafana-credential",
-"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-credential/icons/color/grafana-credential-color.svg",
-"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-credential/icons/white/grafana-credential-white.svg",
-"description": "",
-}]
+components: 
+	- name: grafana-dashboard
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+		description: 
+	- name: grafana-data-source
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-data-source/icons/color/grafana-data-source-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-data-source/icons/white/grafana-data-source-white.svg
+		description: 
+	- name: grafana-folder
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-folder/icons/color/grafana-folder-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-folder/icons/white/grafana-folder-white.svg
+		description: 
+	- name: grafana-notification-channel
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/color/grafana-notification-channel-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/white/grafana-notification-channel-white.svg
+		description: 
+	- name: grafana
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana/icons/color/grafana-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana/icons/white/grafana-white.svg
+		description: 
+	- name: grafana-datasource
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-datasource/icons/color/grafana-datasource-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-datasource/icons/white/grafana-datasource-white.svg
+		description: 
+	- name: grafana-connection
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-connection/icons/color/grafana-connection-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-connection/icons/white/grafana-connection-white.svg
+		description: 
+	- name: grafana-credential
+		colorIcon: assets/img/integrations/grafana-operator/components/grafana-credential/icons/color/grafana-credential-color.svg
+		whiteIcon: assets/img/integrations/grafana-operator/components/grafana-credential/icons/white/grafana-credential-white.svg
+		description: 
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",

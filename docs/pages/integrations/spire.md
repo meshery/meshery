@@ -9,25 +9,19 @@ description:
 category: Security & Compliance
 subcategory: Key Management
 registrant: artifacthub
-components: [
-{
-"name": "cluster-federated-trust-domain",
-"colorIcon": "assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg",
-"whiteIcon": "assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg",
-"description": "",
-},
-{
-"name": "cluster-spiffeid",
-"colorIcon": "assets/img/integrations/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg",
-"whiteIcon": "assets/img/integrations/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg",
-"description": "",
-},
-{
-"name": "controller-manager-config",
-"colorIcon": "assets/img/integrations/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg",
-"whiteIcon": "assets/img/integrations/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg",
-"description": "",
-}]
+components: 
+	- name: cluster-federated-trust-domain
+		colorIcon: assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
+		whiteIcon: assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
+		description: 
+	- name: cluster-spiffeid
+		colorIcon: assets/img/integrations/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
+		whiteIcon: assets/img/integrations/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
+		description: 
+	- name: controller-manager-config
+		colorIcon: assets/img/integrations/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
+		whiteIcon: assets/img/integrations/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
+		description: 
 featureList: [
   "SPIRE design and deployment best practices",
   "Configure SPIRE to securely issue and renew SVIDs.",

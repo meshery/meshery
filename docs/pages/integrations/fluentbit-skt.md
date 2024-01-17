@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

@@ -9,7 +9,7 @@ description:
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Defines Kubernetes applications and reusable abstractions using familiar programming languages.",
   "Simplify application workflows.",

@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Native support for PromQL",
   "Create custom charts with your own Prometheus queries",

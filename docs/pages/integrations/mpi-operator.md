@@ -9,13 +9,11 @@ description:
 category: Machine Learning
 subcategory: Machine Learning
 registrant: artifacthub
-components: [
-{
-"name": "mpi-job",
-"colorIcon": "assets/img/integrations/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg",
-"whiteIcon": "assets/img/integrations/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg",
-"description": "",
-}]
+components: 
+	- name: mpi-job
+		colorIcon: assets/img/integrations/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg
+		whiteIcon: assets/img/integrations/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg
+		description: 
 featureList: [
   "Easily run synchronized, allreduce-style distributed training on Kubernetes.",
   "Invite anyone to review and make changes to your private designs.",

@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Transform application source code into OCI images.",
   "Enable for swift rebasing of images and modular control over images.",

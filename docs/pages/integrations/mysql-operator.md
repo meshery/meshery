@@ -9,31 +9,23 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: [
-{
-"name": "inno-db-cluster",
-"colorIcon": "assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/color/inno-db-cluster-color.svg",
-"whiteIcon": "assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/white/inno-db-cluster-white.svg",
-"description": "",
-},
-{
-"name": "my-sql-backup",
-"colorIcon": "assets/img/integrations/mysql-operator/components/my-sql-backup/icons/color/my-sql-backup-color.svg",
-"whiteIcon": "assets/img/integrations/mysql-operator/components/my-sql-backup/icons/white/my-sql-backup-white.svg",
-"description": "",
-},
-{
-"name": "cluster-kopf-peering",
-"colorIcon": "assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/color/cluster-kopf-peering-color.svg",
-"whiteIcon": "assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/white/cluster-kopf-peering-white.svg",
-"description": "",
-},
-{
-"name": "kopf-peering",
-"colorIcon": "assets/img/integrations/mysql-operator/components/kopf-peering/icons/color/kopf-peering-color.svg",
-"whiteIcon": "assets/img/integrations/mysql-operator/components/kopf-peering/icons/white/kopf-peering-white.svg",
-"description": "",
-}]
+components: 
+	- name: inno-db-cluster
+		colorIcon: assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/color/inno-db-cluster-color.svg
+		whiteIcon: assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/white/inno-db-cluster-white.svg
+		description: 
+	- name: my-sql-backup
+		colorIcon: assets/img/integrations/mysql-operator/components/my-sql-backup/icons/color/my-sql-backup-color.svg
+		whiteIcon: assets/img/integrations/mysql-operator/components/my-sql-backup/icons/white/my-sql-backup-white.svg
+		description: 
+	- name: cluster-kopf-peering
+		colorIcon: assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/color/cluster-kopf-peering-color.svg
+		whiteIcon: assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/white/cluster-kopf-peering-white.svg
+		description: 
+	- name: kopf-peering
+		colorIcon: assets/img/integrations/mysql-operator/components/kopf-peering/icons/color/kopf-peering-color.svg
+		whiteIcon: assets/img/integrations/mysql-operator/components/kopf-peering/icons/white/kopf-peering-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

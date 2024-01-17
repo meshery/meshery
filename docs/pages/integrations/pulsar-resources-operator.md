@@ -9,43 +9,31 @@ description:
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: [
-{
-"name": "pulsar-connection",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/white/pulsar-connection-white.svg",
-"description": "",
-},
-{
-"name": "pulsar-namespace",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/color/pulsar-namespace-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/white/pulsar-namespace-white.svg",
-"description": "",
-},
-{
-"name": "pulsar-permission",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/color/pulsar-permission-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/white/pulsar-permission-white.svg",
-"description": "",
-},
-{
-"name": "pulsar-tenant",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/color/pulsar-tenant-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/white/pulsar-tenant-white.svg",
-"description": "",
-},
-{
-"name": "pulsar-topic",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/color/pulsar-topic-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/white/pulsar-topic-white.svg",
-"description": "",
-},
-{
-"name": "pulsar-geo-replication",
-"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg",
-"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg",
-"description": "",
-}]
+components: 
+	- name: pulsar-connection
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/white/pulsar-connection-white.svg
+		description: 
+	- name: pulsar-namespace
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/color/pulsar-namespace-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/white/pulsar-namespace-white.svg
+		description: 
+	- name: pulsar-permission
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/color/pulsar-permission-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/white/pulsar-permission-white.svg
+		description: 
+	- name: pulsar-tenant
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/color/pulsar-tenant-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/white/pulsar-tenant-white.svg
+		description: 
+	- name: pulsar-topic
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/color/pulsar-topic-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/white/pulsar-topic-white.svg
+		description: 
+	- name: pulsar-geo-replication
+		colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg
+		whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

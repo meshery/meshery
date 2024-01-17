@@ -9,13 +9,11 @@ description:
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: [
-{
-"name": "apisix-route",
-"colorIcon": "assets/img/integrations/apisix/components/apisix-route/icons/color/apisix-route-color.svg",
-"whiteIcon": "assets/img/integrations/apisix/components/apisix-route/icons/white/apisix-route-white.svg",
-"description": "",
-}]
+components: 
+	- name: apisix-route
+		colorIcon: assets/img/integrations/apisix/components/apisix-route/icons/color/apisix-route-color.svg
+		whiteIcon: assets/img/integrations/apisix/components/apisix-route/icons/white/apisix-route-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

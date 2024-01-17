@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "DRBD-9 has great data replication efficiency. It provides synchronous,semi-synchronous and asynchronous replication schemes, and also supports RDMA for high-speed across-node connection.",

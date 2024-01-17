@@ -9,13 +9,11 @@ description:
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: [
-{
-"name": "terminator",
-"colorIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg",
-"whiteIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg",
-"description": "",
-}]
+components: 
+	- name: terminator
+		colorIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
+		whiteIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
+		description: 
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
