@@ -33,6 +33,13 @@ import { DisableButton } from './MeshModel.style';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { useRouter } from 'next/router';
+import { Provider } from 'react-redux';
+import { store } from '../../store'
+import {
+  ErrorBoundary,
+} from '../General/ErrorBoundary';
+import { useGetMeshModelsQuery, useGetComponentsQuery, useGetRelationshipsQuery, useGetRegistrantsQuery } from '@/rtk-query/meshModel'
+import NoSsr from '@material-ui/core/NoSsr';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -75,7 +82,7 @@ const useMeshModelComponentRouter = () => {
   return { searchQuery, selectedTab, selectedPageSize };
 };
 
-const MeshModelComponent = ({
+const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
   relationshipsCount,
@@ -114,6 +121,35 @@ const MeshModelComponent = ({
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
   // const [loading, setLoading] = useState(false);
+
+  /**
+   * RTK Queries
+  */
+  const {data: meshmodelsData} = useGetMeshModelsQuery({
+    page: page.Models + 1,
+    pagesize: 14,
+    components: true,
+    relationships: true,
+    paginated: true,
+    search: searchText ? searchText : ''
+  })
+  const {data: componentsData} = useGetComponentsQuery({
+    page: page.Components + 1,
+    pagesize: 14,
+    search: searchText ? searchText : '',
+    trim: false
+  })
+  const {data: relationshipsData} = useGetRelationshipsQuery({
+    page: page.Relationships + 1,
+    pagesize: 14,
+    paginated: true,
+    search: searchText ? searchText : ''
+  })
+  const {data: registrantsData} = useGetRegistrantsQuery({
+    page: page.Registrants + 1,
+    pagesize: 14,
+    search: searchText ? searchText : ''
+  })
 
   useEffect(() => {
     if (selectedTab && selectedTab !== OVERVIEW) {
@@ -269,6 +305,7 @@ const MeshModelComponent = ({
     }
   };
 
+  // TODO: This is wrong logic, backend should enforce this
   let filteredData = checked
     ? resourcesDetail // Show all data, including duplicates
     : resourcesDetail.filter((item, index, self) => {
@@ -544,6 +581,21 @@ const MeshModelComponent = ({
         )}
       </div>
     </div>
+  );
+};
+
+const MeshModelComponent = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
+        <Provider store={store}>
+          <MeshModelComponent_ {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
   );
 };
 
