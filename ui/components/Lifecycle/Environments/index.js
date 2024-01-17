@@ -598,7 +598,11 @@ const Environments = ({ organization, classes }) => {
                 title={
                   actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
                 }
-                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                submitBtnText={
+                  <div className={classes.submitBtn}>
+                    {actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                  </div>
+                }
                 initialData={initialData}
               />
             )}

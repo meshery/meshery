@@ -708,7 +708,11 @@ const Workspaces = ({ organization, classes }) => {
                   actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
                 }
                 title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'SAVE' : 'UPDATE'}
+                submitBtnText={
+                  <div className={classes.submitBtn}>
+                    {actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                  </div>
+                }
                 initialData={initialData}
               />
             )}
