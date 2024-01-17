@@ -2,8 +2,8 @@
 layout: enhanced
 title: OPA Gatekeeper
 subtitle: Collaborative and visual infrastructure as code for Frinx Machine
-image: /assets/img/integrations/opa-gatekeeper/icons/color/opa-gatekeeper-color.svg
-permalink: extensibility/integrations/opa-gatekeeper
+image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
+permalink: extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
 description: 
 category: Security & Compliance
@@ -11,58 +11,58 @@ subcategory: Security & Compliance
 registrant: artifacthub
 components: [
 {
-"name": "assign"
-"colorIcon": "assets/img/integrations/gatekeeper/components/assign/icons/color/assign-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/assign/icons/white/assign-white.svg"
-"description": ""
+"name": "assign",
+"colorIcon": "assets/img/integrations/gatekeeper/components/assign/icons/color/assign-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/assign/icons/white/assign-white.svg",
+"description": "",
 },
 {
-"name": "assign-metadata"
-"colorIcon": "assets/img/integrations/gatekeeper/components/assign-metadata/icons/color/assign-metadata-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/assign-metadata/icons/white/assign-metadata-white.svg"
-"description": ""
+"name": "assign-metadata",
+"colorIcon": "assets/img/integrations/gatekeeper/components/assign-metadata/icons/color/assign-metadata-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/assign-metadata/icons/white/assign-metadata-white.svg",
+"description": "",
 },
 {
-"name": "constraint-template"
-"colorIcon": "assets/img/integrations/gatekeeper/components/constraint-template/icons/color/constraint-template-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/constraint-template/icons/white/constraint-template-white.svg"
-"description": ""
+"name": "constraint-template",
+"colorIcon": "assets/img/integrations/gatekeeper/components/constraint-template/icons/color/constraint-template-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/constraint-template/icons/white/constraint-template-white.svg",
+"description": "",
 },
 {
-"name": "expansion-template"
-"colorIcon": "assets/img/integrations/gatekeeper/components/expansion-template/icons/color/expansion-template-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/expansion-template/icons/white/expansion-template-white.svg"
-"description": ""
+"name": "expansion-template",
+"colorIcon": "assets/img/integrations/gatekeeper/components/expansion-template/icons/color/expansion-template-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/expansion-template/icons/white/expansion-template-white.svg",
+"description": "",
 },
 {
-"name": "modify-set"
-"colorIcon": "assets/img/integrations/gatekeeper/components/modify-set/icons/color/modify-set-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/modify-set/icons/white/modify-set-white.svg"
-"description": ""
+"name": "modify-set",
+"colorIcon": "assets/img/integrations/gatekeeper/components/modify-set/icons/color/modify-set-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/modify-set/icons/white/modify-set-white.svg",
+"description": "",
 },
 {
-"name": "mutator-pod-status"
-"colorIcon": "assets/img/integrations/gatekeeper/components/mutator-pod-status/icons/color/mutator-pod-status-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/mutator-pod-status/icons/white/mutator-pod-status-white.svg"
-"description": ""
+"name": "mutator-pod-status",
+"colorIcon": "assets/img/integrations/gatekeeper/components/mutator-pod-status/icons/color/mutator-pod-status-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/mutator-pod-status/icons/white/mutator-pod-status-white.svg",
+"description": "",
 },
 {
-"name": "provider"
-"colorIcon": "assets/img/integrations/gatekeeper/components/provider/icons/color/provider-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/provider/icons/white/provider-white.svg"
-"description": ""
+"name": "provider",
+"colorIcon": "assets/img/integrations/gatekeeper/components/provider/icons/color/provider-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/provider/icons/white/provider-white.svg",
+"description": "",
 },
 {
-"name": "assign-image"
-"colorIcon": "assets/img/integrations/gatekeeper/components/assign-image/icons/color/assign-image-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/assign-image/icons/white/assign-image-white.svg"
-"description": ""
+"name": "assign-image",
+"colorIcon": "assets/img/integrations/gatekeeper/components/assign-image/icons/color/assign-image-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/assign-image/icons/white/assign-image-white.svg",
+"description": "",
 },
 {
-"name": "expansion-template-pod-status"
-"colorIcon": "assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/color/expansion-template-pod-status-color.svg"
-"whiteIcon": "assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/white/expansion-template-pod-status-white.svg"
-"description": ""
+"name": "expansion-template-pod-status",
+"colorIcon": "assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/color/expansion-template-pod-status-color.svg",
+"whiteIcon": "assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/white/expansion-template-pod-status-white.svg",
+"description": "",
 }]
 featureList: [
   "Native Kubernetes CRDs for instantiating the policy library (aka constraints)",

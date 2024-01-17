@@ -2,8 +2,8 @@
 layout: enhanced
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
-image: /assets/img/integrations/aws-elastic-kubernetes-service/icons/color/aws-elastic-kubernetes-service-color.svg
-permalink: extensibility/integrations/aws-elastic-kubernetes-service
+image: /assets/img/integrations/eks/icons/color/eks-color.svg
+permalink: extensibility/integrations/eks
 docURL: https://docs.meshery.io/installation/kubernetes/eks
 description: 
 category: Orchestration & Management

@@ -2,8 +2,8 @@
 layout: enhanced
 title: New Relic Operator
 subtitle: Collaborative and visual infrastructure as code for New Relic Operator
-image: /assets/img/integrations/new-relic-operator/icons/color/new-relic-operator-color.svg
-permalink: extensibility/integrations/new-relic-operator
+image: /assets/img/integrations/newrelic-operator/icons/color/newrelic-operator-color.svg
+permalink: extensibility/integrations/newrelic-operator
 docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 
 category: Observability and Analysis
@@ -11,34 +11,34 @@ subcategory: Observability and Analysis
 registrant: artifacthub
 components: [
 {
-"name": "alert-channel"
-"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg"
-"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/white/alert-channel-white.svg"
-"description": ""
+"name": "alert-channel",
+"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg",
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/white/alert-channel-white.svg",
+"description": "",
 },
 {
-"name": "alert-policy"
-"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/color/alert-policy-color.svg"
-"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/white/alert-policy-white.svg"
-"description": ""
+"name": "alert-policy",
+"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/color/alert-policy-color.svg",
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/white/alert-policy-white.svg",
+"description": "",
 },
 {
-"name": "dashboard"
-"colorIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/color/dashboard-color.svg"
-"whiteIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/white/dashboard-white.svg"
-"description": ""
+"name": "dashboard",
+"colorIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/color/dashboard-color.svg",
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/white/dashboard-white.svg",
+"description": "",
 },
 {
-"name": "data"
-"colorIcon": "assets/img/integrations/newrelic-operator/components/data/icons/color/data-color.svg"
-"whiteIcon": "assets/img/integrations/newrelic-operator/components/data/icons/white/data-white.svg"
-"description": ""
+"name": "data",
+"colorIcon": "assets/img/integrations/newrelic-operator/components/data/icons/color/data-color.svg",
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/data/icons/white/data-white.svg",
+"description": "",
 },
 {
-"name": "monitor"
-"colorIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/color/monitor-color.svg"
-"whiteIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/white/monitor-white.svg"
-"description": ""
+"name": "monitor",
+"colorIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/color/monitor-color.svg",
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/white/monitor-white.svg",
+"description": "",
 }]
 featureList: [
   "Alert Policies and NRQL Alert Conditions",

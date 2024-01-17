@@ -2,8 +2,8 @@
 layout: enhanced
 title: HAProxy Kubernetes Ingress
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
-image: /assets/img/integrations/haproxy-kubernetes-ingress/icons/color/haproxy-kubernetes-ingress-color.svg
-permalink: extensibility/integrations/haproxy-kubernetes-ingress
+image: /assets/img/integrations/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
+permalink: extensibility/integrations/kubernetes-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress
 description: 
 category: Cloud Native Network
@@ -11,22 +11,22 @@ subcategory: Service Proxy
 registrant: artifacthub
 components: [
 {
-"name": "backend"
-"colorIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/color/backend-color.svg"
-"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/white/backend-white.svg"
-"description": ""
+"name": "backend",
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/color/backend-color.svg",
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/white/backend-white.svg",
+"description": "",
 },
 {
-"name": "defaults"
-"colorIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/color/defaults-color.svg"
-"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/white/defaults-white.svg"
-"description": ""
+"name": "defaults",
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/color/defaults-color.svg",
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/white/defaults-white.svg",
+"description": "",
 },
 {
-"name": "global"
-"colorIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/color/global-color.svg"
-"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/white/global-white.svg"
-"description": ""
+"name": "global",
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/color/global-color.svg",
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/white/global-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

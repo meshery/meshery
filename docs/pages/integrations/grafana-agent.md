@@ -11,10 +11,10 @@ subcategory: Monitoring
 registrant: artifacthub
 components: [
 {
-"name": "pod-logs"
-"colorIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg"
-"whiteIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg"
-"description": ""
+"name": "pod-logs",
+"colorIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg",
+"whiteIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg",
+"description": "",
 }]
 featureList: [
   "Meshery discovers your Grafana servers",

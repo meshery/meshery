@@ -2,8 +2,8 @@
 layout: enhanced
 title: Wasmedge Runtime
 subtitle: Collaborative and visual infrastructure as code for Wasmedge Runtime
-image: /assets/img/integrations/wasmedge-runtime/icons/color/wasmedge-runtime-color.svg
-permalink: extensibility/integrations/wasmedge-runtime
+image: /assets/img/integrations/wasmedgeruntime/icons/color/wasmedgeruntime-color.svg
+permalink: extensibility/integrations/wasmedgeruntime
 docURL: https://docs.meshery.io/extensibility/integrations/wasmedgeruntime
 description: 
 category: Runtime

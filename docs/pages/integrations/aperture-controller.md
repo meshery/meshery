@@ -11,16 +11,16 @@ subcategory: Scheduling & Orchestration
 registrant: artifacthub
 components: [
 {
-"name": "controller"
-"colorIcon": "assets/img/integrations/aperture-controller/components/controller/icons/color/controller-color.svg"
-"whiteIcon": "assets/img/integrations/aperture-controller/components/controller/icons/white/controller-white.svg"
-"description": ""
+"name": "controller",
+"colorIcon": "assets/img/integrations/aperture-controller/components/controller/icons/color/controller-color.svg",
+"whiteIcon": "assets/img/integrations/aperture-controller/components/controller/icons/white/controller-white.svg",
+"description": "",
 },
 {
-"name": "policy"
-"colorIcon": "assets/img/integrations/aperture-controller/components/policy/icons/color/policy-color.svg"
-"whiteIcon": "assets/img/integrations/aperture-controller/components/policy/icons/white/policy-white.svg"
-"description": ""
+"name": "policy",
+"colorIcon": "assets/img/integrations/aperture-controller/components/policy/icons/color/policy-color.svg",
+"whiteIcon": "assets/img/integrations/aperture-controller/components/policy/icons/white/policy-white.svg",
+"description": "",
 }]
 featureList: [
   "Monitor golden signals to rapidly detect service deterioration and load build-up.",

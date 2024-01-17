@@ -11,16 +11,16 @@ subcategory: Tools
 registrant: artifacthub
 components: [
 {
-"name": "customer"
-"colorIcon": "assets/img/integrations/jira-service-desk-operator/components/customer/icons/color/customer-color.svg"
-"whiteIcon": "assets/img/integrations/jira-service-desk-operator/components/customer/icons/white/customer-white.svg"
-"description": ""
+"name": "customer",
+"colorIcon": "assets/img/integrations/jira-service-desk-operator/components/customer/icons/color/customer-color.svg",
+"whiteIcon": "assets/img/integrations/jira-service-desk-operator/components/customer/icons/white/customer-white.svg",
+"description": "",
 },
 {
-"name": "project"
-"colorIcon": "assets/img/integrations/jira-service-desk-operator/components/project/icons/color/project-color.svg"
-"whiteIcon": "assets/img/integrations/jira-service-desk-operator/components/project/icons/white/project-white.svg"
-"description": ""
+"name": "project",
+"colorIcon": "assets/img/integrations/jira-service-desk-operator/components/project/icons/color/project-color.svg",
+"whiteIcon": "assets/img/integrations/jira-service-desk-operator/components/project/icons/white/project-white.svg",
+"description": "",
 }]
 featureList: [
   "Teams can track issues, manage projects, and automate workflows.",

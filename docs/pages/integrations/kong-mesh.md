@@ -11,46 +11,46 @@ subcategory: Service Mesh
 registrant: artifacthub
 components: [
 {
-"name": "access-audit"
-"colorIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/color/access-audit-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/white/access-audit-white.svg"
-"description": ""
+"name": "access-audit",
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/color/access-audit-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/white/access-audit-white.svg",
+"description": "",
 },
 {
-"name": "access-role-binding"
-"colorIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/color/access-role-binding-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/white/access-role-binding-white.svg"
-"description": ""
+"name": "access-role-binding",
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/color/access-role-binding-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/white/access-role-binding-white.svg",
+"description": "",
 },
 {
-"name": "access-role"
-"colorIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/color/access-role-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/white/access-role-white.svg"
-"description": ""
+"name": "access-role",
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/color/access-role-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/white/access-role-white.svg",
+"description": "",
 },
 {
-"name": "mesh-opa"
-"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/color/mesh-opa-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/white/mesh-opa-white.svg"
-"description": ""
+"name": "mesh-opa",
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/color/mesh-opa-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/white/mesh-opa-white.svg",
+"description": "",
 },
 {
-"name": "opa-policy"
-"colorIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/color/opa-policy-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/white/opa-policy-white.svg"
-"description": ""
+"name": "opa-policy",
+"colorIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/color/opa-policy-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/white/opa-policy-white.svg",
+"description": "",
 },
 {
-"name": "mesh-gateway-config"
-"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/color/mesh-gateway-config-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/white/mesh-gateway-config-white.svg"
-"description": ""
+"name": "mesh-gateway-config",
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/color/mesh-gateway-config-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/white/mesh-gateway-config-white.svg",
+"description": "",
 },
 {
-"name": "mesh-global-rate-limit"
-"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/color/mesh-global-rate-limit-color.svg"
-"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/white/mesh-global-rate-limit-white.svg"
-"description": ""
+"name": "mesh-global-rate-limit",
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/color/mesh-global-rate-limit-color.svg",
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/white/mesh-global-rate-limit-white.svg",
+"description": "",
 }]
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",

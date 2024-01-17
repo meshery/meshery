@@ -11,10 +11,10 @@ subcategory: Source Version Control
 registrant: artifacthub
 components: [
 {
-"name": "runner"
-"colorIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/color/runner-color.svg"
-"whiteIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/white/runner-white.svg"
-"description": ""
+"name": "runner",
+"colorIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/color/runner-color.svg",
+"whiteIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/white/runner-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

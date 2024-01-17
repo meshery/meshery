@@ -11,22 +11,22 @@ subcategory: Database
 registrant: artifacthub
 components: [
 {
-"name": "operator-configuration"
-"colorIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg"
-"whiteIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg"
-"description": ""
+"name": "operator-configuration",
+"colorIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg",
+"whiteIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg",
+"description": "",
 },
 {
-"name": "postgresql"
-"colorIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/color/postgresql-color.svg"
-"whiteIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/white/postgresql-white.svg"
-"description": ""
+"name": "postgresql",
+"colorIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/color/postgresql-color.svg",
+"whiteIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/white/postgresql-white.svg",
+"description": "",
 },
 {
-"name": "postgres-team"
-"colorIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg"
-"whiteIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg"
-"description": ""
+"name": "postgres-team",
+"colorIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg",
+"whiteIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

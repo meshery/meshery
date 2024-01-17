@@ -11,10 +11,10 @@ subcategory: Key Management
 registrant: artifacthub
 components: [
 {
-"name": "workload-identity"
-"colorIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg"
-"whiteIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg"
-"description": ""
+"name": "workload-identity",
+"colorIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg",
+"whiteIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -2,8 +2,8 @@
 layout: enhanced
 title: Contour
 subtitle: Collaborative and visual infrastructure as code for Contour
-image: /assets/img/integrations/contour/icons/color/contour-color.svg
-permalink: extensibility/integrations/contour
+image: /assets/img/integrations/contour-operator/icons/color/contour-operator-color.svg
+permalink: extensibility/integrations/contour-operator
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 
 category: Cloud Native Network
@@ -11,76 +11,76 @@ subcategory: Service Proxy
 registrant: artifacthub
 components: [
 {
-"name": "contour"
-"colorIcon": "assets/img/integrations/contour-operator/components/contour/icons/color/contour-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/contour/icons/white/contour-white.svg"
-"description": ""
+"name": "contour",
+"colorIcon": "assets/img/integrations/contour-operator/components/contour/icons/color/contour-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour/icons/white/contour-white.svg",
+"description": "",
 },
 {
-"name": "contour-configuration"
-"colorIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/color/contour-configuration-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/white/contour-configuration-white.svg"
-"description": ""
+"name": "contour-configuration",
+"colorIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/color/contour-configuration-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/white/contour-configuration-white.svg",
+"description": "",
 },
 {
-"name": "contour-deployment"
-"colorIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/color/contour-deployment-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/white/contour-deployment-white.svg"
-"description": ""
+"name": "contour-deployment",
+"colorIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/color/contour-deployment-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/white/contour-deployment-white.svg",
+"description": "",
 },
 {
-"name": "extension-service"
-"colorIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/color/extension-service-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/white/extension-service-white.svg"
-"description": ""
+"name": "extension-service",
+"colorIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/color/extension-service-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/white/extension-service-white.svg",
+"description": "",
 },
 {
-"name": "gateway"
-"colorIcon": "assets/img/integrations/contour-operator/components/gateway/icons/color/gateway-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/gateway/icons/white/gateway-white.svg"
-"description": ""
+"name": "gateway",
+"colorIcon": "assets/img/integrations/contour-operator/components/gateway/icons/color/gateway-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/gateway/icons/white/gateway-white.svg",
+"description": "",
 },
 {
-"name": "gateway-class"
-"colorIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/color/gateway-class-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/white/gateway-class-white.svg"
-"description": ""
+"name": "gateway-class",
+"colorIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/color/gateway-class-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/white/gateway-class-white.svg",
+"description": "",
 },
 {
-"name": "http-proxy"
-"colorIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/color/http-proxy-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/white/http-proxy-white.svg"
-"description": ""
+"name": "http-proxy",
+"colorIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/color/http-proxy-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/white/http-proxy-white.svg",
+"description": "",
 },
 {
-"name": "http-route"
-"colorIcon": "assets/img/integrations/contour-operator/components/http-route/icons/color/http-route-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/http-route/icons/white/http-route-white.svg"
-"description": ""
+"name": "http-route",
+"colorIcon": "assets/img/integrations/contour-operator/components/http-route/icons/color/http-route-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/http-route/icons/white/http-route-white.svg",
+"description": "",
 },
 {
-"name": "tcp-route"
-"colorIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/color/tcp-route-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/white/tcp-route-white.svg"
-"description": ""
+"name": "tcp-route",
+"colorIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/color/tcp-route-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/white/tcp-route-white.svg",
+"description": "",
 },
 {
-"name": "tls-certificate-delegation"
-"colorIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/color/tls-certificate-delegation-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/white/tls-certificate-delegation-white.svg"
-"description": ""
+"name": "tls-certificate-delegation",
+"colorIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/color/tls-certificate-delegation-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/white/tls-certificate-delegation-white.svg",
+"description": "",
 },
 {
-"name": "tls-route"
-"colorIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/color/tls-route-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/white/tls-route-white.svg"
-"description": ""
+"name": "tls-route",
+"colorIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/color/tls-route-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/white/tls-route-white.svg",
+"description": "",
 },
 {
-"name": "udp-route"
-"colorIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/color/udp-route-color.svg"
-"whiteIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/white/udp-route-white.svg"
-"description": ""
+"name": "udp-route",
+"colorIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/color/udp-route-color.svg",
+"whiteIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/white/udp-route-white.svg",
+"description": "",
 }]
 featureList: [
   "Supports dynamic configuration updates out of the box while maintaining a lightweight profile.",

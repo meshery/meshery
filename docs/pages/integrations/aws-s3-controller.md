@@ -2,8 +2,8 @@
 layout: enhanced
 title: AWS Simple Storage Service (S3)
 subtitle: Collaborative and visual infrastructure as code for AWS Simple Storage Service (S3)
-image: /assets/img/integrations/aws-simple-storage-service-(s3)/icons/color/aws-simple-storage-service-(s3)-color.svg
-permalink: extensibility/integrations/aws-simple-storage-service-(s3)
+image: /assets/img/integrations/aws-s3-controller/icons/color/aws-s3-controller-color.svg
+permalink: extensibility/integrations/aws-s3-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-s3-controller
 description: 
 category: Cloud Native Storage
@@ -11,22 +11,22 @@ subcategory: Storage
 registrant: aws
 components: [
 {
-"name": "field-export"
-"colorIcon": "assets/img/integrations/aws-s3-controller/components/field-export/icons/color/field-export-color.svg"
-"whiteIcon": "assets/img/integrations/aws-s3-controller/components/field-export/icons/white/field-export-white.svg"
-"description": ""
+"name": "field-export",
+"colorIcon": "assets/img/integrations/aws-s3-controller/components/field-export/icons/color/field-export-color.svg",
+"whiteIcon": "assets/img/integrations/aws-s3-controller/components/field-export/icons/white/field-export-white.svg",
+"description": "",
 },
 {
-"name": "adopted-resource"
-"colorIcon": "assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
-"whiteIcon": "assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
-"description": ""
+"name": "adopted-resource",
+"colorIcon": "assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/color/adopted-resource-color.svg",
+"whiteIcon": "assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/white/adopted-resource-white.svg",
+"description": "",
 },
 {
-"name": "bucket"
-"colorIcon": "assets/img/integrations/aws-s3-controller/components/bucket/icons/color/bucket-color.svg"
-"whiteIcon": "assets/img/integrations/aws-s3-controller/components/bucket/icons/white/bucket-white.svg"
-"description": ""
+"name": "bucket",
+"colorIcon": "assets/img/integrations/aws-s3-controller/components/bucket/icons/color/bucket-color.svg",
+"whiteIcon": "assets/img/integrations/aws-s3-controller/components/bucket/icons/white/bucket-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

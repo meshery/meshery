@@ -2,8 +2,8 @@
 layout: enhanced
 title: AWS Node Termination Handler
 subtitle: Collaborative and visual infrastructure as code for AWS Node Termination Handler
-image: /assets/img/integrations/aws-node-termination-handler/icons/color/aws-node-termination-handler-color.svg
-permalink: extensibility/integrations/aws-node-termination-handler
+image: /assets/img/integrations/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
+permalink: extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
 description: 
 category: Provisioning
@@ -11,10 +11,10 @@ subcategory: Automation & Configuration
 registrant: artifacthub
 components: [
 {
-"name": "terminator"
-"colorIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg"
-"whiteIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg"
-"description": ""
+"name": "terminator",
+"colorIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg",
+"whiteIcon": "assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg",
+"description": "",
 }]
 featureList: [
   "Keep revision history and audit trail of all configuration changes",

@@ -2,8 +2,8 @@
 layout: enhanced
 title: Percona Server for MongoDB
 subtitle: Collaborative and visual infrastructure as code for Percona Server for MongoDB
-image: /assets/img/integrations/percona-server-for-mongodb/icons/color/percona-server-for-mongodb-color.svg
-permalink: extensibility/integrations/percona-server-for-mongodb
+image: /assets/img/integrations/psmdb-db/icons/color/psmdb-db-color.svg
+permalink: extensibility/integrations/psmdb-db
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
 category: App Definition and Development

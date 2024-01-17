@@ -11,40 +11,40 @@ subcategory: Monitoring
 registrant: artifacthub
 components: [
 {
-"name": "object-store"
-"colorIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/color/object-store-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/white/object-store-white.svg"
-"description": ""
+"name": "object-store",
+"colorIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/color/object-store-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/white/object-store-white.svg",
+"description": "",
 },
 {
-"name": "receiver"
-"colorIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/color/receiver-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/white/receiver-white.svg"
-"description": ""
+"name": "receiver",
+"colorIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/color/receiver-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/white/receiver-white.svg",
+"description": "",
 },
 {
-"name": "store-endpoint"
-"colorIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/color/store-endpoint-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/white/store-endpoint-white.svg"
-"description": ""
+"name": "store-endpoint",
+"colorIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/color/store-endpoint-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/white/store-endpoint-white.svg",
+"description": "",
 },
 {
-"name": "thanos"
-"colorIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/color/thanos-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/white/thanos-white.svg"
-"description": ""
+"name": "thanos",
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/color/thanos-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/white/thanos-white.svg",
+"description": "",
 },
 {
-"name": "thanos-endpoint"
-"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/color/thanos-endpoint-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/white/thanos-endpoint-white.svg"
-"description": ""
+"name": "thanos-endpoint",
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/color/thanos-endpoint-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/white/thanos-endpoint-white.svg",
+"description": "",
 },
 {
-"name": "thanos-peer"
-"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/color/thanos-peer-color.svg"
-"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/white/thanos-peer-white.svg"
-"description": ""
+"name": "thanos-peer",
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/color/thanos-peer-color.svg",
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/white/thanos-peer-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -11,10 +11,10 @@ subcategory: Key Management
 registrant: artifacthub
 components: [
 {
-"name": "vault"
-"colorIcon": "assets/img/integrations/vault-operator/components/vault/icons/color/vault-color.svg"
-"whiteIcon": "assets/img/integrations/vault-operator/components/vault/icons/white/vault-white.svg"
-"description": ""
+"name": "vault",
+"colorIcon": "assets/img/integrations/vault-operator/components/vault/icons/color/vault-color.svg",
+"whiteIcon": "assets/img/integrations/vault-operator/components/vault/icons/white/vault-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
