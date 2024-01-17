@@ -113,6 +113,7 @@ const MeshModelComponent = ({
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
+  const [relationships, setRelationships] = useState([]);
   // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -171,6 +172,7 @@ const MeshModelComponent = ({
         sortOrder.order,
       );
       setCount(total_count);
+      setRelationships(relationships)
       if (!isRequestCancelled && relationships) {
         setResourcesDetail((prev) => [...prev, ...relationships]);
         setSortOrder(sortOrder);
@@ -199,7 +201,13 @@ const MeshModelComponent = ({
   };
   const getSearchedComponents = async (searchText) => {
     try {
-      const { total_count, components } = await searchComponents(searchText);
+      const options = {
+        paginated: false,
+        pageSize: 'all',
+        page: 0,
+        trim: false,
+      };
+      const { total_count, components } = await searchComponents(searchText, options);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components ? components : []);
@@ -539,7 +547,7 @@ const MeshModelComponent = ({
                 />
               )}
             </div>
-            <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} />
+            <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} relationships={relationships}/>
           </div>
         )}
       </div>

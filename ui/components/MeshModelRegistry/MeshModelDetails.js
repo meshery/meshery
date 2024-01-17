@@ -2,6 +2,11 @@ import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
+import { groupPossibleRelationsByKind, RelationInitiationType } from './helper';
+import { Box, Typography, IconButton, Tooltip } from '@material-ui/core';
+import InfoIcon from '@/assets/icons/InfoIcon';
+import ConnectionIcon from '@/assets/icons/ConnectionIcon';
+import { iconMedium, iconSmall } from '../../css/icons.styles';
 
 const KeyValue = ({ property, value }) => (
   <>
@@ -192,13 +197,79 @@ const ComponentsContents = ({ components }) => {
   );
 };
 
-const ComponentContents = ({ component }) => {
+const formatRelationTitle = (relationInitiationType, relatesTo) => {
+  relationInitiationType = relationInitiationType === RelationInitiationType.FROM ? 'From' : 'To';
+  if (relatesTo.kind === '*') {
+    return `${relationInitiationType} to all components in model ${relatesTo?.rel?.model} (${relatesTo?.rel?.subType})`;
+  }
+
+  if (relatesTo.model === '*') {
+    return `${relationInitiationType} to all components  (${relatesTo?.rel?.subType})`;
+  }
+
+  return `${relationInitiationType} ${relatesTo.kind} (${relatesTo?.rel?.subType})`;
+};
+
+const RelationListItem = ({ relatesTo, relationInitiationType }) => {
+  const title = formatRelationTitle(relationInitiationType, relatesTo);
+  const description = relatesTo.rel?.metadata?.description;
+
+  const infoIconColor = '#FFF';
+
+  return (
+    <Box
+      sx={{
+        marginTop: '0.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center',
+        }}
+      >
+        <ConnectionIcon {...iconSmall} fill="#fff" />
+
+        <Typography variant="body2">{title}</Typography>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center',
+        }}
+      >
+        <Tooltip title={description || ''} placement="top" arrow>
+          <IconButton size="small">
+            <InfoIcon {...iconSmall} fill={infoIconColor} />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    </Box>
+  );
+};
+
+const ComponentContents = ({ component, relationships }) => {
   const StyleClass = useStyles();
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
     kind: (value) => <KeyValue property="Kind" value={value} />,
   };
+
+  const relationsGroupedByKind = groupPossibleRelationsByKind(component, relationships);
+  const availableRelationKinds = Object.keys(relationsGroupedByKind).filter(
+    (kind) =>
+      relationsGroupedByKind[kind]?.[RelationInitiationType.FROM]?.length > 0 ||
+      relationsGroupedByKind[kind]?.[RelationInitiationType.TO]?.length > 0,
+  );
+
+  console.log('relationships', relationships);
+  console.log('relationshipByKind', relationsGroupedByKind);
 
   const metaDataLeft = {
     version: component.apiVersion,
@@ -219,11 +290,15 @@ const ComponentContents = ({ component }) => {
     duplicates: component.duplicates.toString(),
   };
 
+  const componentDescription = JSON.parse(component.schema).description;
+
   const orderRight = ['registrant', 'duplicates'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
     <>
+      <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
+      <p style={{ margin: '0', fontSize: '16px' }}>{componentDescription}</p>
       <div className={StyleClass.segment}>
         <div
           className={StyleClass.fullWidth}
@@ -248,6 +323,33 @@ const ComponentContents = ({ component }) => {
           />
         </div>
       </div>
+      <ChildTitle title="Available Relationships" />
+      {availableRelationKinds.map((kind) => (
+        <Box
+          key={kind}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            borderRadius: '0.25rem',
+            marginTop: '0.5rem',
+            // padding: '0.5rem',
+            // backgroundColor: uiTheme.theme.palette.secondary.mainBackground2
+          }}
+        >
+          <p style={{ fontWeight: '600', margin: '0', fontSize: '14px' }}>{kind}</p>
+
+          {Object.values(RelationInitiationType).map((relationInitiationType) =>
+            relationsGroupedByKind[kind][relationInitiationType].map((from) => (
+              <RelationListItem
+                key={from.kind}
+                relatesTo={from}
+                backgroundColor="#fff"
+                relationInitiationType={relationInitiationType}
+              />
+            )),
+          )}
+        </Box>
+      ))}
     </>
   );
 };
@@ -432,7 +534,7 @@ const RegistrantContent = ({ registrant }) => {
   );
 };
 
-const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
+const MeshModelDetails = ({ view, show, rela, regi, comp, relationships }) => {
   const StyleClass = useStyles();
 
   return (
@@ -485,16 +587,24 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
         </>
       )}
       {view === COMPONENTS && comp.displayName && (
-        <div>
-          <ChildTitle title={comp.displayName} />
-          <ComponentContents component={comp} />
-        </div>
+        <>
+          <div>
+            <img src={comp.metadata.svgColor} height="80px" width="80px"/>
+            <ChildTitle title={comp.displayName} />
+            <ComponentContents component={comp} relationships={relationships} />
+          </div>
+          {/* <div>
+            <hr style={{ marginTop: '1rem 0' }} />
+            <ChildTypeTitle title="Relationships" />
+            <RelationshipsContents relationships={relationships} component={comp}/>
+          </div> */}
+        </>
       )}
       {view === RELATIONSHIPS && rela.kind && (
         <div>
           <ChildTitle title={rela.kind} />
-          <p style={{ fontWeight: '600', margin: '0', fontSize: '14px' }}>Description</p>
-          <p style={{ margin: '0', fontSize: '14px' }}>{rela.metadata?.description}</p>
+          <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
+          <p style={{ margin: '0', fontSize: '16px' }}>{rela.metadata?.description}</p>
           <RelationshipContents relationship={rela} />
         </div>
       )}

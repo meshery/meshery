@@ -27,3 +27,79 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID, view)
 
   return { selectedComponent, selectedModel, selectedRelationship };
 };
+
+export const RelationInitiationType = {
+  FROM: "FROM",
+  TO: "TO"
+};
+
+// Utility function to check if a component can initiate a relation
+const canInitiateRelation = (relation, fromComponent) => {
+  const fromSelector = relation.selectors?.allow?.from;
+  return predicate(fromComponent, fromSelector);
+};
+
+// Utility function to check if a component can accept a relation
+const canAcceptRelation = (relation, toComponent) => {
+  const toSelector = relation.selectors?.allow?.to;
+  return predicate(toComponent, toSelector);
+};
+
+// Utility function to get all possible components to connect
+const getAllPossibleComponentsToConnect = (relation, fromComponent) => {
+  if (!canInitiateRelation(relation, fromComponent)) return [];
+  return relation.selectors?.allow?.to || [];
+};
+
+// Utility function to get all possible components to get connected from
+const getAllPossibleComponentsToGetConnectedFrom = (relation, toComponent) => {
+  if (!canAcceptRelation(relation, toComponent)) return [];
+  return relation.selectors?.allow?.from || [];
+};
+
+// Utility function for the common predicate logic
+const predicate = (component, selectors) => {
+  return !!selectors?.find?.(s => {
+    if (s.kind) {
+      if (s.kind === "*") {
+        //kind wild card matching
+        if (s.model === "*" || s.model === component.model.name) {
+          return true;
+        }
+      }
+      if (!(s.kind === component.kind)) return false;
+    }
+    if (s.model) {
+      if (s.model === "*") return true; // wildcard matching
+      if (!(s.model === component.model.name)) return false;
+      if (s.version) {
+        if (!(s.version === component.model.version)) return false;
+      }
+    }
+    return true;
+  });
+};
+
+
+export const groupPossibleRelationsByKind = (fromComponent, relationships) => {
+  const groupedByKind = relationships.reduce((grouped, rel) => {
+    grouped[rel.kind] = grouped[rel.kind] || {
+      [RelationInitiationType.FROM]: [],
+      [RelationInitiationType.TO]: []
+    };
+
+    const componentsToConnect = getAllPossibleComponentsToGetConnectedFrom(rel, fromComponent);
+    grouped[rel.kind][RelationInitiationType.FROM] = grouped[rel.kind][RelationInitiationType.FROM].concat(
+      componentsToConnect.map(from => ({ rel, ...from }))
+    );
+
+    const componentsToGetConnectedFrom = getAllPossibleComponentsToConnect(rel, fromComponent);
+    grouped[rel.kind][RelationInitiationType.TO] = grouped[rel.kind][RelationInitiationType.TO].concat(
+      componentsToGetConnectedFrom.map(to => ({ rel, ...to }))
+    );
+
+    return grouped;
+  }, {});
+
+  return groupedByKind;
+};
