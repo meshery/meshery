@@ -111,12 +111,11 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 	}
 }
 
-func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgDir string) (string, error) {
+func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV, path, svgDir string) (string, error) {
 		err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
 		if err != nil {
 			return "", err
 		}
-		// svgDir := icons/components
 	componentMetadata := `[`
 	for idx, comp := range components {
 		componentTemplate := `
@@ -134,7 +133,7 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 
 
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
-		colorIconDir := filepath.Join(svgDir, compName, "icons", "color") // icons/components/<component>/icons/color
+		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
 		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
@@ -162,6 +161,51 @@ return "", err
 	}
 
 	componentMetadata += `]`
+
+	return componentMetadata, nil
+}
+
+
+func CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components []ComponentCSV, path, svgDir string) (string, error) {
+		err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
+		if err != nil {
+			return "", err
+		}
+	componentMetadata := ""
+	for _, comp := range components {
+componentTemplate := `
+	- name: %s
+		colorIcon: %s
+		whiteIcon: %s
+		description: %s`
+
+		compName := FormatName(manifests.FormatToReadableString(comp.Component))
+		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
+		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
+
+		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
+		
+		// create color svg dir
+		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
+		if err != nil {
+			return "", err
+		}
+
+		// create white svg dir
+		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
+		if err != nil {
+return "", err
+		}
+
+		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
+		if err != nil {
+return "", err
+		}
+		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
+		if err != nil {
+			return "", err
+		}
+	}
 
 	return componentMetadata, nil
 }
@@ -296,6 +340,8 @@ howItWorksDetails: %s
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 %s
 </p>
