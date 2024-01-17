@@ -119,13 +119,12 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 		// svgDir := icons/components
 	componentMetadata := `[`
 	for idx, comp := range components {
-		// add commas
 		componentTemplate := `
 {
-"name": "%s"
-"colorIcon": "%s"
-"whiteIcon": "%s"
-"description": "%s"
+"name": "%s",
+"colorIcon": "%s",
+"whiteIcon": "%s",
+"description": "%s",
 }`
 
 // add comma if not last component
@@ -134,19 +133,12 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 		}
 
 
-
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color") // icons/components/<component>/icons/color
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
 		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
 		
-		// // create component dir
-		// err := os.MkdirAll(filepath.Join(path, svgDir, compName), 0777)
-		// if err != nil {
-		// 	return "", err
-		// }
-
 		// create color svg dir
 		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
 		if err != nil {
