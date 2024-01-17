@@ -191,15 +191,9 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 	pathToIntegrationsMesheryDocs := os.Args[6]
 	mesheryDocsJSON := "const data = ["
 	for _, model := range models {
-		// modelName := strings.TrimSpace(model.Model)
-		// pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
 		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
-		// err := os.MkdirAll(pathToIntegrationsLayer5, 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			fmt.Println("no components found for ", model.Model)
@@ -222,83 +216,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		// compsSVGsDir := "icon/components"
-		// // Write SVGs to Layer5 docs for components
-		// err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, compsSVGsDir), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		
-		// componentsMetadata := pkg.CreateComponentsMetadataAndCreateSVGs(comps, pathToIntegrationsLayer5, compsSVGsDir)
-		// md := model.CreateMarkDownForLayer5(componentsMetadata)
-
-		// jsonItem := model.CreateJSONItem()
-		// mesheryDocsJSON += jsonItem + ","
-		
-		// _ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
-		// svgcolor := model.SVGColor
-		// svgwhite := model.SVGWhite
-
-		// Write SVGs to Layer5 docs
-		// err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// Write SVGs to Meshery website
-		// err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// Write SVGs to Meshery docs (not being used)
-		// err = os.MkdirAll(filepath.Join(pathToIntegrationsMesheryDocs), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-color.svg"), svgcolor) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// for meshery integration docs
-		// compsSVGsDir = "assets/img/integrations/components"
-		// err = os.MkdirAll(filepath.Join("../../docs", compsSVGsDir), 0777)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// componentsMetadata = pkg.CreateComponentsMetadataAndCreateSVGs(comps, "../../docs", compsSVGsDir)
-		// mdContent := model.GenerateMDContent(componentsMetadata)
-		// pkg.CreateFiles("../../docs/pages/integrations", ".md", modelName, mdContent)
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")

@@ -72,8 +72,9 @@ func CreateFiles(path, filetype, name, content string) {
 }
 
 func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) error {
+	modelName := FormatName(model.Model)
 	// create dir for model
-	modelDir := filepath.Join(path, model.Model)
+	modelDir := filepath.Join(path, modelName)
 	err := os.MkdirAll(modelDir, 0777)
 	if err != nil {
 		return err
@@ -86,7 +87,7 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 		return err
 	}
 
-	err = WriteSVG(filepath.Join(iconsDir, model.Model+"-color.svg"), model.SVGColor)
+	err = WriteSVG(filepath.Join(iconsDir, modelName+"-color.svg"), model.SVGColor)
 	if err != nil {
 		return err
 	}
@@ -99,14 +100,14 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 		return err
 	}
 
-	err = WriteSVG(filepath.Join(iconsDir, model.Model+"-white.svg"), model.SVGWhite)
+	err = WriteSVG(filepath.Join(iconsDir, modelName+"-white.svg"), model.SVGWhite)
 	if err != nil {
 		return err
 	}
 
 	// generate components metadata and create svg files
-
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, modelDir, "components") 
+	compIconsSubDir := filepath.Join("icons", "components")
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, modelDir, compIconsSubDir) 
 	if err != nil {
 		return err
 	}
@@ -158,7 +159,8 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	mdDir := filepath.Join(path, "pages", "integrations")
 
 	// dir for icons
-	iconsDir := filepath.Join(mdDir, "assets", "img", "integrations", modelName)
+	_iconsSubDir := filepath.Join("assets", "img", "integrations", modelName)
+	iconsDir := filepath.Join(path, _iconsSubDir)
 	err := os.MkdirAll(iconsDir, 0777)
 	if err != nil {
 		return err
@@ -189,8 +191,8 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	}
 
 	// generate components metadata and create svg files
-	// compSVGDir := filepath.Join(modelName, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, iconsDir, "components")
+	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, iconsDir, compIconsSubDir)
 	if err != nil {
 		return err
 	}
