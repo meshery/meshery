@@ -38,6 +38,8 @@ howItWorksDetails: Simplify access from identified services to secret stores, da
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The SPIFFE Runtime Environment
 </p>

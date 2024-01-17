@@ -20,6 +20,8 @@ howItWorksDetails: From the convenience of your Docker Desktop interface, connec
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Develop service mesh-ready apps using Docker Desktop and Meshery
 </p>

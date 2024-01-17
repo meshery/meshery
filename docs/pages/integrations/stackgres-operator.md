@@ -104,6 +104,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 StackGres is a fully-featured platform for running PostgreSQL on Kubernetes.
 Deploy in minutes an Enterprise-Grade Postgres-as-a-Service, in your infrastructure.

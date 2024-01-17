@@ -92,6 +92,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 NGINX Ingress Controller is synonymous with high‑performing, scalable, and secure modern apps in production.
 </p>

@@ -20,6 +20,8 @@ howItWorksDetails: cdk8s is an open-source software development framework for de
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 CDK8s lets you define Kubernetes apps and components using familiar programming languages and object-oriented APIs.
 </p>

@@ -62,6 +62,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Enterprise service mesh based on Kuma for multi-cloud and multi-cluster on both Kubernetes and VMs.
 </p>

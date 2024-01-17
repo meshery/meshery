@@ -26,6 +26,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Povision a TargetGroupBinding resource that can be combined with an externally provisioned AWS Loadbalancer to provide an ingress route into the defined kubernetes service.
 </p>

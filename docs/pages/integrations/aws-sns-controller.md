@@ -56,6 +56,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Amazon Simple Notification Service (Amazon SNS) sends notifications two ways, A2A and A2P.
 </p>

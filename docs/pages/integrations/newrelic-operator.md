@@ -50,6 +50,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The newrelic-kubernetes-operator is a Kubernetes Operator that facilitates management of New Relic resources from within your Kubernetes configuration. Managing New Relic resources via custom Kubernetes objects can be done the same way you manage built-in Kubernetes objects.
 </p>

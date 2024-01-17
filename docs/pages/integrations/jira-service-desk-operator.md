@@ -32,6 +32,8 @@ howItWorksDetails: Automate the process of setting up the Jira Service Desk (JSD
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.
 </p>

@@ -63,6 +63,8 @@ Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd wh
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Fluent Bit is a super fast, lightweight, and highly scalable logging and metrics processor and forwarder. It is the preferred choice for cloud and containerized environments.
 </p>

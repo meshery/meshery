@@ -32,6 +32,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The Aperture Controller functions as the brain of the Aperture system. Leveraging an advanced control loop, the Controller routinely analyzes polled metrics and indicators to determine how traffic should be shaped as defined by set policies. Once determined, these decisions are then exported to all Aperture Agents to effectively handle workloads.
 </p>

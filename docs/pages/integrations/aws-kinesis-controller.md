@@ -38,6 +38,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 AWS Kinesis enables you to collect, process, and analyze video and data streams in real time
 </p>

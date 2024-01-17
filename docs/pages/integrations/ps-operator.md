@@ -38,6 +38,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Percona Operator for MySQL allows users to deploy and manage Percona Server for MySQL Clusters on Kubernetes
 </p>

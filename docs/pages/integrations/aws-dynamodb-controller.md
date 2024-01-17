@@ -51,6 +51,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Amazon DynamoDB is a serverless, NoSQL, fully managed database with single-digit millisecond performance at any scale
 </p>

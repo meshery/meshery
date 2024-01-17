@@ -20,6 +20,8 @@ howItWorksDetails: It deploys and scales out automatically within Kubernetes nod
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Piraeus is a cloud-native storage system that empowers Kubernetes Local Persistent Volumes with dynamic provisioning, resource management, and high-availability.
 </p>

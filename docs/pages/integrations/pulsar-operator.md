@@ -44,6 +44,8 @@ howItWorksDetails: Collaboratively manage infrastructure with your coworkers syn
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 The Pulsar Operator is a controller that manages Pulsar clusters in Kubernetes. It provides a full management life-cycle for Pulsar, including deployment, upgrades, scaling, and configuration changes. With the Pulsar Operator, Pulsar can run seamlessly in the Kubernetes clusters deployed on a public or private cloud. You can then manage Pulsar clusters using the Kubernetes Application Programming Interface (API) and the kubectl tool.
 </p>

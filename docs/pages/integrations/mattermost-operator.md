@@ -39,6 +39,8 @@ See the Mattermost documentation - https://docs.mattermost.com.
 language: en
 list: include
 ---
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
 <p>
 Mattermost is a flexible, open source messaging platform that enables secure team collaboration.
 </p>
