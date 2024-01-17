@@ -9,13 +9,11 @@ description:
 category: Provisioning
 subcategory: Uncategorized
 registrant: artifacthub
-components: [
-{
-"name": "proxy-setting",
-"colorIcon": "assets/img/integrations/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg",
-"whiteIcon": "assets/img/integrations/capsule-proxy/components/proxy-setting/icons/white/proxy-setting-white.svg",
-"description": "",
-}]
+components: 
+	- name: proxy-setting
+		colorIcon: assets/img/integrations/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg
+		whiteIcon: assets/img/integrations/capsule-proxy/components/proxy-setting/icons/white/proxy-setting-white.svg
+		description: 
 featureList: [
   "Allows to overcome the limitations of Kubernetes API Server on listing owned cluster-scoped resources.",
   "Add-on for Capsule.",

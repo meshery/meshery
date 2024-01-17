@@ -9,31 +9,23 @@ description:
 category: Provisioning
 subcategory: Management Governance
 registrant: aws
-components: [
-{
-"name": "adopted-resource",
-"colorIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/color/adopted-resource-color.svg",
-"whiteIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/white/adopted-resource-white.svg",
-"description": "",
-},
-{
-"name": "scalable-target",
-"colorIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/color/scalable-target-color.svg",
-"whiteIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/white/scalable-target-white.svg",
-"description": "",
-},
-{
-"name": "field-export",
-"colorIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/color/field-export-color.svg",
-"whiteIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/white/field-export-white.svg",
-"description": "",
-},
-{
-"name": "scaling-target",
-"colorIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/color/scaling-target-color.svg",
-"whiteIcon": "assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/white/scaling-target-white.svg",
-"description": "",
-}]
+components: 
+	- name: adopted-resource
+		colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+		whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+		description: 
+	- name: scalable-target
+		colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/color/scalable-target-color.svg
+		whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/white/scalable-target-white.svg
+		description: 
+	- name: field-export
+		colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/color/field-export-color.svg
+		whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/white/field-export-white.svg
+		description: 
+	- name: scaling-target
+		colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/color/scaling-target-color.svg
+		whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/white/scaling-target-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

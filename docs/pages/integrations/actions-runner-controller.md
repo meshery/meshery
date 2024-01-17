@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Deploy self hosted runners on Kubernetes cluster with a simple set of commands.",
   "Auto scale runners based on demand.",

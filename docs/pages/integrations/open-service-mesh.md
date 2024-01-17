@@ -9,7 +9,7 @@ description:
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Configuration an simplier understanding of your Open Service Mesh deployments and microservices",
   "Configure and chain Envoy WASM filters",

@@ -9,19 +9,15 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: [
-{
-"name": "pg-upgrade",
-"colorIcon": "assets/img/integrations/pgo/components/pg-upgrade/icons/color/pg-upgrade-color.svg",
-"whiteIcon": "assets/img/integrations/pgo/components/pg-upgrade/icons/white/pg-upgrade-white.svg",
-"description": "",
-},
-{
-"name": "postgres-cluster",
-"colorIcon": "assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg",
-"whiteIcon": "assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg",
-"description": "",
-}]
+components: 
+	- name: pg-upgrade
+		colorIcon: assets/img/integrations/pgo/components/pg-upgrade/icons/color/pg-upgrade-color.svg
+		whiteIcon: assets/img/integrations/pgo/components/pg-upgrade/icons/white/pg-upgrade-white.svg
+		description: 
+	- name: postgres-cluster
+		colorIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg
+		whiteIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -9,25 +9,19 @@ description:
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: [
-{
-"name": "bucket",
-"colorIcon": "assets/img/integrations/helm-controller/components/bucket/icons/color/bucket-color.svg",
-"whiteIcon": "assets/img/integrations/helm-controller/components/bucket/icons/white/bucket-white.svg",
-"description": "",
-},
-{
-"name": "git-repository",
-"colorIcon": "assets/img/integrations/helm-controller/components/git-repository/icons/color/git-repository-color.svg",
-"whiteIcon": "assets/img/integrations/helm-controller/components/git-repository/icons/white/git-repository-white.svg",
-"description": "",
-},
-{
-"name": "helm-chart",
-"colorIcon": "assets/img/integrations/helm-controller/components/helm-chart/icons/color/helm-chart-color.svg",
-"whiteIcon": "assets/img/integrations/helm-controller/components/helm-chart/icons/white/helm-chart-white.svg",
-"description": "",
-}]
+components: 
+	- name: bucket
+		colorIcon: assets/img/integrations/helm-controller/components/bucket/icons/color/bucket-color.svg
+		whiteIcon: assets/img/integrations/helm-controller/components/bucket/icons/white/bucket-white.svg
+		description: 
+	- name: git-repository
+		colorIcon: assets/img/integrations/helm-controller/components/git-repository/icons/color/git-repository-color.svg
+		whiteIcon: assets/img/integrations/helm-controller/components/git-repository/icons/white/git-repository-white.svg
+		description: 
+	- name: helm-chart
+		colorIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/color/helm-chart-color.svg
+		whiteIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/white/helm-chart-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

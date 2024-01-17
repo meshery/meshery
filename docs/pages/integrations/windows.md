@@ -9,7 +9,7 @@ description:
 category: Platform
 subcategory: Operating System
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Windows-native builds of Meshery CLI",
   "Deploy Meshery on Docker Desktop for Windows",

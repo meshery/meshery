@@ -9,7 +9,7 @@ description:
 category: Security & Compliance
 subcategory: Key Management
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Design and apply policy for node and workload attestation.",
   "Configure your signing framework for securely issuing and renewing SVIDs.",

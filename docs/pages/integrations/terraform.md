@@ -9,13 +9,11 @@ description:
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: [
-{
-"name": "workspace",
-"colorIcon": "assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg",
-"whiteIcon": "assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg",
-"description": "",
-}]
+components: 
+	- name: workspace
+		colorIcon: assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg
+		whiteIcon: assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

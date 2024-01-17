@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Pipeline your cloud native infrastructure as code changes with GitOps",
   "Integrate Meshery into your GitHub workflow",

@@ -9,7 +9,7 @@ description:
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.",
   "Convert your Docker Compose apps to Kubernetes apps.",

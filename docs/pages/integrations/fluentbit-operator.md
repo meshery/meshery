@@ -9,43 +9,31 @@ description:
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: [
-{
-"name": "filter",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/filter/icons/color/filter-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/filter/icons/white/filter-white.svg",
-"description": "",
-},
-{
-"name": "fluent-bit-config",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg",
-"description": "",
-},
-{
-"name": "input",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/input/icons/color/input-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/input/icons/white/input-white.svg",
-"description": "",
-},
-{
-"name": "output",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/output/icons/color/output-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/output/icons/white/output-white.svg",
-"description": "",
-},
-{
-"name": "parser",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/parser/icons/color/parser-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/parser/icons/white/parser-white.svg",
-"description": "",
-},
-{
-"name": "fluent-bit",
-"colorIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg",
-"whiteIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg",
-"description": "",
-}]
+components: 
+	- name: filter
+		colorIcon: assets/img/integrations/fluentbit-operator/components/filter/icons/color/filter-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/filter/icons/white/filter-white.svg
+		description: 
+	- name: fluent-bit-config
+		colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg
+		description: 
+	- name: input
+		colorIcon: assets/img/integrations/fluentbit-operator/components/input/icons/color/input-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/input/icons/white/input-white.svg
+		description: 
+	- name: output
+		colorIcon: assets/img/integrations/fluentbit-operator/components/output/icons/color/output-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/output/icons/white/output-white.svg
+		description: 
+	- name: parser
+		colorIcon: assets/img/integrations/fluentbit-operator/components/parser/icons/color/parser-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/parser/icons/white/parser-white.svg
+		description: 
+	- name: fluent-bit
+		colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
+		whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
+		description: 
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

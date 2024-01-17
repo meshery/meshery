@@ -9,7 +9,7 @@ description:
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Visually configure and operate Linkerd with real-time topology",
   "Use Linkerd best practice designs and templates",

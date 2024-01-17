@@ -9,7 +9,7 @@ description:
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",
   "Supports issuing certificates from a variety of sources.",

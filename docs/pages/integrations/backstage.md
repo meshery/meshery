@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Restore order to your microservices and infrastructure and enables your product teams to ship high-quality code quickly — without compromising autonomy.",
   "Unifies all your infrastructure tooling, services, and documentation to create a streamlined development environment from end to end.",

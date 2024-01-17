@@ -9,13 +9,11 @@ description:
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: [
-{
-"name": "fluentd-config",
-"colorIcon": "assets/img/integrations/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg",
-"whiteIcon": "assets/img/integrations/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg",
-"description": "",
-}]
+components: 
+	- name: fluentd-config
+		colorIcon: assets/img/integrations/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
+		whiteIcon: assets/img/integrations/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
+		description: 
 featureList: [
   "Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

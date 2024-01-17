@@ -9,25 +9,19 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: [
-{
-"name": "percona-server-my-sql-backup",
-"colorIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg",
-"whiteIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql-backup/icons/white/percona-server-my-sql-backup-white.svg",
-"description": "",
-},
-{
-"name": "percona-server-my-sql-restore",
-"colorIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql-restore/icons/color/percona-server-my-sql-restore-color.svg",
-"whiteIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql-restore/icons/white/percona-server-my-sql-restore-white.svg",
-"description": "",
-},
-{
-"name": "percona-server-my-sql",
-"colorIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg",
-"whiteIcon": "assets/img/integrations/ps-db/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg",
-"description": "",
-}]
+components: 
+	- name: percona-server-my-sql-backup
+		colorIcon: assets/img/integrations/ps-db/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg
+		whiteIcon: assets/img/integrations/ps-db/components/percona-server-my-sql-backup/icons/white/percona-server-my-sql-backup-white.svg
+		description: 
+	- name: percona-server-my-sql-restore
+		colorIcon: assets/img/integrations/ps-db/components/percona-server-my-sql-restore/icons/color/percona-server-my-sql-restore-color.svg
+		whiteIcon: assets/img/integrations/ps-db/components/percona-server-my-sql-restore/icons/white/percona-server-my-sql-restore-white.svg
+		description: 
+	- name: percona-server-my-sql
+		colorIcon: assets/img/integrations/ps-db/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg
+		whiteIcon: assets/img/integrations/ps-db/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
+		description: 
 featureList: [
   "Native support for PromQL",
   "Create custom charts with your own Prometheus queries",

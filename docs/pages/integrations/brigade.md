@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Designed to quickly and efficently handle large volumes of events.",
   "Offers full management of user and service account authorization/authentication.",

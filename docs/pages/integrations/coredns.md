@@ -9,7 +9,7 @@ description:
 category: Orchestration & Management
 subcategory: Coordination & Service Discovery
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Serves zone data from a file; both DNSSEC (NSEC only) and DNS are supported (file and auto).",
   "Retrieves zone data from primaries, i.e., act as a secondary server (AXFR only) (secondary).",

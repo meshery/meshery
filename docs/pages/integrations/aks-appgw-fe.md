@@ -9,31 +9,23 @@ description:
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: [
-{
-"name": "azure-assigned-identity",
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg",
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg",
-"description": "",
-},
-{
-"name": "azure-identity",
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg",
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg",
-"description": "",
-},
-{
-"name": "azure-identity-binding",
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg",
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg",
-"description": "",
-},
-{
-"name": "azure-pod-identity-exception",
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg",
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg",
-"description": "",
-}]
+components: 
+	- name: azure-assigned-identity
+		colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg
+		whiteIcon: assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg
+		description: 
+	- name: azure-identity
+		colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg
+		whiteIcon: assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg
+		description: 
+	- name: azure-identity-binding
+		colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg
+		whiteIcon: assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg
+		description: 
+	- name: azure-pod-identity-exception
+		colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
+		whiteIcon: assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
+		description: 
 featureList: [
   "URL routing and cookie-based affinity
 ",

@@ -9,7 +9,7 @@ description:
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Implements a chunk-based content-addressable filesystem on top of a called RAFS (Registry Acceleration File System) format.",
   "Improves the current OCI image specification.",

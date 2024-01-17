@@ -9,7 +9,7 @@ description:
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Discover, install and publish packages and configurations.",
   "Explore content like Helm charts schemas and templates in an interactive way.",

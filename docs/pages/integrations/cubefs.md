@@ -9,7 +9,7 @@ description:
 category: Runtime
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Multiple Access Protocol Support.",
   "Elasticity, scalability and strong consistency of metadata.",

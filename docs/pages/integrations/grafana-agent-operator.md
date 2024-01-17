@@ -9,7 +9,7 @@ description:
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Meshery discovers your Grafana servers",
   "Easily import existing Grafana dashboards and panels into Meshery",

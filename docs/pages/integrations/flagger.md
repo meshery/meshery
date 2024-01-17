@@ -9,25 +9,19 @@ description:
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: [
-{
-"name": "canary",
-"colorIcon": "assets/img/integrations/flagger/components/canary/icons/color/canary-color.svg",
-"whiteIcon": "assets/img/integrations/flagger/components/canary/icons/white/canary-white.svg",
-"description": "",
-},
-{
-"name": "metric-template",
-"colorIcon": "assets/img/integrations/flagger/components/metric-template/icons/color/metric-template-color.svg",
-"whiteIcon": "assets/img/integrations/flagger/components/metric-template/icons/white/metric-template-white.svg",
-"description": "",
-},
-{
-"name": "alert-provider",
-"colorIcon": "assets/img/integrations/flagger/components/alert-provider/icons/color/alert-provider-color.svg",
-"whiteIcon": "assets/img/integrations/flagger/components/alert-provider/icons/white/alert-provider-white.svg",
-"description": "",
-}]
+components: 
+	- name: canary
+		colorIcon: assets/img/integrations/flagger/components/canary/icons/color/canary-color.svg
+		whiteIcon: assets/img/integrations/flagger/components/canary/icons/white/canary-white.svg
+		description: 
+	- name: metric-template
+		colorIcon: assets/img/integrations/flagger/components/metric-template/icons/color/metric-template-color.svg
+		whiteIcon: assets/img/integrations/flagger/components/metric-template/icons/white/metric-template-white.svg
+		description: 
+	- name: alert-provider
+		colorIcon: assets/img/integrations/flagger/components/alert-provider/icons/color/alert-provider-color.svg
+		whiteIcon: assets/img/integrations/flagger/components/alert-provider/icons/white/alert-provider-white.svg
+		description: 
 featureList: [
   "Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)",
   "Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.",

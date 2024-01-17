@@ -9,7 +9,7 @@ description:
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Identities for all workloads in your hybrid environment.",
   "Authorization and identity provider solution for your Kubernetes clusters.",

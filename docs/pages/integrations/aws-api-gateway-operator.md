@@ -9,13 +9,11 @@ description:
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: [
-{
-"name": "awsapi-gateway",
-"colorIcon": "assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg",
-"whiteIcon": "assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg",
-"description": "",
-}]
+components: 
+	- name: awsapi-gateway
+		colorIcon: assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
+		whiteIcon: assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
+		description: 
 featureList: [
   "Create, publish, maintain, monitor, and secure REST, HTTP, and WebSocket APIs at any scale.",
   "Create APIs that access AWS or other web services, as well as data stored in the AWS Cloud.",

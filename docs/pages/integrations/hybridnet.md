@@ -9,55 +9,39 @@ description:
 category: Cloud Native Network
 subcategory: Uncategorized
 registrant: artifacthub
-components: [
-{
-"name": "remote-cluster",
-"colorIcon": "assets/img/integrations/hybridnet/components/remote-cluster/icons/color/remote-cluster-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/remote-cluster/icons/white/remote-cluster-white.svg",
-"description": "",
-},
-{
-"name": "remote-endpoint-slice",
-"colorIcon": "assets/img/integrations/hybridnet/components/remote-endpoint-slice/icons/color/remote-endpoint-slice-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/remote-endpoint-slice/icons/white/remote-endpoint-slice-white.svg",
-"description": "",
-},
-{
-"name": "remote-subnet",
-"colorIcon": "assets/img/integrations/hybridnet/components/remote-subnet/icons/color/remote-subnet-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/remote-subnet/icons/white/remote-subnet-white.svg",
-"description": "",
-},
-{
-"name": "remote-vtep",
-"colorIcon": "assets/img/integrations/hybridnet/components/remote-vtep/icons/color/remote-vtep-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/remote-vtep/icons/white/remote-vtep-white.svg",
-"description": "",
-},
-{
-"name": "ip-instance",
-"colorIcon": "assets/img/integrations/hybridnet/components/ip-instance/icons/color/ip-instance-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/ip-instance/icons/white/ip-instance-white.svg",
-"description": "",
-},
-{
-"name": "network",
-"colorIcon": "assets/img/integrations/hybridnet/components/network/icons/color/network-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/network/icons/white/network-white.svg",
-"description": "",
-},
-{
-"name": "node-info",
-"colorIcon": "assets/img/integrations/hybridnet/components/node-info/icons/color/node-info-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/node-info/icons/white/node-info-white.svg",
-"description": "",
-},
-{
-"name": "subnet",
-"colorIcon": "assets/img/integrations/hybridnet/components/subnet/icons/color/subnet-color.svg",
-"whiteIcon": "assets/img/integrations/hybridnet/components/subnet/icons/white/subnet-white.svg",
-"description": "",
-}]
+components: 
+	- name: remote-cluster
+		colorIcon: assets/img/integrations/hybridnet/components/remote-cluster/icons/color/remote-cluster-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/remote-cluster/icons/white/remote-cluster-white.svg
+		description: 
+	- name: remote-endpoint-slice
+		colorIcon: assets/img/integrations/hybridnet/components/remote-endpoint-slice/icons/color/remote-endpoint-slice-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/remote-endpoint-slice/icons/white/remote-endpoint-slice-white.svg
+		description: 
+	- name: remote-subnet
+		colorIcon: assets/img/integrations/hybridnet/components/remote-subnet/icons/color/remote-subnet-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/remote-subnet/icons/white/remote-subnet-white.svg
+		description: 
+	- name: remote-vtep
+		colorIcon: assets/img/integrations/hybridnet/components/remote-vtep/icons/color/remote-vtep-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/remote-vtep/icons/white/remote-vtep-white.svg
+		description: 
+	- name: ip-instance
+		colorIcon: assets/img/integrations/hybridnet/components/ip-instance/icons/color/ip-instance-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/ip-instance/icons/white/ip-instance-white.svg
+		description: 
+	- name: network
+		colorIcon: assets/img/integrations/hybridnet/components/network/icons/color/network-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/network/icons/white/network-white.svg
+		description: 
+	- name: node-info
+		colorIcon: assets/img/integrations/hybridnet/components/node-info/icons/color/node-info-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/node-info/icons/white/node-info-white.svg
+		description: 
+	- name: subnet
+		colorIcon: assets/img/integrations/hybridnet/components/subnet/icons/color/subnet-color.svg
+		whiteIcon: assets/img/integrations/hybridnet/components/subnet/icons/white/subnet-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

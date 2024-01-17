@@ -9,7 +9,7 @@ description:
 category: Platform
 subcategory: Operating System
 registrant: artifacthub
-components: []
+components: 
 featureList: [
   "Faster and easier configuration",
   "Application isolation",

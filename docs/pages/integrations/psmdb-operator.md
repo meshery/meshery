@@ -9,25 +9,19 @@ description:
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: [
-{
-"name": "percona-server-mongo-db-backup",
-"colorIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg",
-"whiteIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg",
-"description": "",
-},
-{
-"name": "percona-server-mongo-db-restore",
-"colorIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg",
-"whiteIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg",
-"description": "",
-},
-{
-"name": "percona-server-mongo-db",
-"colorIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg",
-"whiteIcon": "assets/img/integrations/psmdb-operator/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg",
-"description": "",
-}]
+components: 
+	- name: percona-server-mongo-db-backup
+		colorIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg
+		whiteIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg
+		description: 
+	- name: percona-server-mongo-db-restore
+		colorIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg
+		whiteIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg
+		description: 
+	- name: percona-server-mongo-db
+		colorIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
+		whiteIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

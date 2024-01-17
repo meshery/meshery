@@ -9,13 +9,11 @@ description:
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: [
-{
-"name": "rabbitmq-cluster",
-"colorIcon": "assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg",
-"whiteIcon": "assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg",
-"description": "",
-}]
+components: 
+	- name: rabbitmq-cluster
+		colorIcon: assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
+		whiteIcon: assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
+		description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
