@@ -192,7 +192,7 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, iconsDir, compIconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, path, compIconsSubDir)
 	if err != nil {
 		return err
 	}

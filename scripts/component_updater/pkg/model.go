@@ -116,6 +116,7 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 		if err != nil {
 			return "", err
 		}
+		// svgDir := icons/components
 	componentMetadata := ""
 	for _, comp := range components {
 		componentTemplate := `
@@ -125,37 +126,34 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 		description: %s`
 
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
-		compColorIconsSubDir := filepath.Join(compName, "icons", "color")
-		compWhiteIconsSubDir := filepath.Join(compName, "icons", "white")
-		
-		colorIconDir := filepath.Join(svgDir, compColorIconsSubDir)
-		whiteIconDir := filepath.Join(svgDir, compWhiteIconsSubDir)
+		colorIconDir := filepath.Join(svgDir, compName, "icons", "color") // icons/components/<component>/icons/color
+		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
 		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
 		
-		// create component dir
-		err := os.MkdirAll(filepath.Join(path, svgDir, compName), 0777)
-		if err != nil {
-			return "", err
-		}
+		// // create component dir
+		// err := os.MkdirAll(filepath.Join(path, svgDir, compName), 0777)
+		// if err != nil {
+		// 	return "", err
+		// }
 
 		// create color svg dir
-		err = os.MkdirAll(filepath.Join(path, compWhiteIconsSubDir), 0777)
+		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// create white svg dir
-		err = os.MkdirAll(filepath.Join(path, compWhiteIconsSubDir), 0777)
+		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
 		if err != nil {
 return "", err
 		}
 
-		err = WriteSVG(filepath.Join(path, compColorIconsSubDir, compName+"-color.svg"), comp.SVGColor)
+		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
 		if err != nil {
 return "", err
 		}
-		err = WriteSVG(filepath.Join(path, compWhiteIconsSubDir, compName+"-white.svg"), comp.SVGWhite)
+		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
 		if err != nil {
 			return "", err
 		}
