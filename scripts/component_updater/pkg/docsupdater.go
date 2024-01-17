@@ -56,11 +56,6 @@ type TemplateAttributes struct {
 	WhiteSVG                string
 }
 
-func FormatName(input string) string {
-	formattedName := strings.ReplaceAll(input, " ", "-")
-	formattedName = strings.ToLower(formattedName)
-	return formattedName
-}
 
 const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"
 
