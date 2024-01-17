@@ -266,9 +266,9 @@ const styles = (theme) => ({
     padding: 0,
   },
   /** Add this style for uppercase text in the submit button */
-  // submitBtn: {
-  //   textTransform: 'uppercase',
-  // },
+  submitBtn: {
+    textTransform: 'uppercase',
+  },
 });
 
 export default styles;
