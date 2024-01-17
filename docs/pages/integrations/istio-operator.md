@@ -2,34 +2,44 @@
 layout: enhanced
 title: Istio Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /assets/img/integrations/istio-operator.svg
+image: /assets/img/integrations/istio-operator/icons/color/istio-operator-color.svg
 permalink: extensibility/integrations/istio-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
-	-	name: IstioControlPlane
-		colorIcon: assets/img/integrations/components/IstioControlPlane-color.svg
-		whiteIcon: assets/img/integrations/components/IstioControlPlane-white.svg
-		description: 
-	-	name: PeerIstioControlPlane
-		colorIcon: assets/img/integrations/components/PeerIstioControlPlane-color.svg
-		whiteIcon: assets/img/integrations/components/PeerIstioControlPlane-white.svg
-		description: 
-	-	name: IstioMesh
-		colorIcon: assets/img/integrations/components/IstioMesh-color.svg
-		whiteIcon: assets/img/integrations/components/IstioMesh-white.svg
-		description: 
-	-	name: IstioMeshGateway
-		colorIcon: assets/img/integrations/components/IstioMeshGateway-color.svg
-		whiteIcon: assets/img/integrations/components/IstioMeshGateway-white.svg
-		description: 
-	-	name: IstioOperator
-		colorIcon: assets/img/integrations/components/IstioOperator-color.svg
-		whiteIcon: assets/img/integrations/components/IstioOperator-white.svg
-		description: 
+components: [
+{
+"name": "istio-control-plane"
+"colorIcon": "assets/img/integrations/istio-operator/components/istio-control-plane/icons/color/istio-control-plane-color.svg"
+"whiteIcon": "assets/img/integrations/istio-operator/components/istio-control-plane/icons/white/istio-control-plane-white.svg"
+"description": ""
+},
+{
+"name": "peer-istio-control-plane"
+"colorIcon": "assets/img/integrations/istio-operator/components/peer-istio-control-plane/icons/color/peer-istio-control-plane-color.svg"
+"whiteIcon": "assets/img/integrations/istio-operator/components/peer-istio-control-plane/icons/white/peer-istio-control-plane-white.svg"
+"description": ""
+},
+{
+"name": "istio-mesh"
+"colorIcon": "assets/img/integrations/istio-operator/components/istio-mesh/icons/color/istio-mesh-color.svg"
+"whiteIcon": "assets/img/integrations/istio-operator/components/istio-mesh/icons/white/istio-mesh-white.svg"
+"description": ""
+},
+{
+"name": "istio-mesh-gateway"
+"colorIcon": "assets/img/integrations/istio-operator/components/istio-mesh-gateway/icons/color/istio-mesh-gateway-color.svg"
+"whiteIcon": "assets/img/integrations/istio-operator/components/istio-mesh-gateway/icons/white/istio-mesh-gateway-white.svg"
+"description": ""
+},
+{
+"name": "istio-operator"
+"colorIcon": "assets/img/integrations/istio-operator/components/istio-operator/icons/color/istio-operator-color.svg"
+"whiteIcon": "assets/img/integrations/istio-operator/components/istio-operator/icons/white/istio-operator-white.svg"
+"description": ""
+}]
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

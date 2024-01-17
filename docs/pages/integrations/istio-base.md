@@ -2,74 +2,104 @@
 layout: enhanced
 title: Istio
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /assets/img/integrations/istio.svg
+image: /assets/img/integrations/istio/icons/color/istio-color.svg
 permalink: extensibility/integrations/istio
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
-	-	name: WasmPlugin
-		colorIcon: assets/img/integrations/components/WasmPlugin-color.svg
-		whiteIcon: assets/img/integrations/components/WasmPlugin-white.svg
-		description: 
-	-	name: DestinationRule
-		colorIcon: assets/img/integrations/components/DestinationRule-color.svg
-		whiteIcon: assets/img/integrations/components/DestinationRule-white.svg
-		description: 
-	-	name: EnvoyFilter
-		colorIcon: assets/img/integrations/components/EnvoyFilter-color.svg
-		whiteIcon: assets/img/integrations/components/EnvoyFilter-white.svg
-		description: 
-	-	name: Gateway
-		colorIcon: assets/img/integrations/components/Gateway-color.svg
-		whiteIcon: assets/img/integrations/components/Gateway-white.svg
-		description: 
-	-	name: ProxyConfig
-		colorIcon: assets/img/integrations/components/ProxyConfig-color.svg
-		whiteIcon: assets/img/integrations/components/ProxyConfig-white.svg
-		description: 
-	-	name: ServiceEntry
-		colorIcon: assets/img/integrations/components/ServiceEntry-color.svg
-		whiteIcon: assets/img/integrations/components/ServiceEntry-white.svg
-		description: 
-	-	name: Sidecar
-		colorIcon: assets/img/integrations/components/Sidecar-color.svg
-		whiteIcon: assets/img/integrations/components/Sidecar-white.svg
-		description: 
-	-	name: VirtualService
-		colorIcon: assets/img/integrations/components/VirtualService-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualService-white.svg
-		description: 
-	-	name: WorkloadEntry
-		colorIcon: assets/img/integrations/components/WorkloadEntry-color.svg
-		whiteIcon: assets/img/integrations/components/WorkloadEntry-white.svg
-		description: 
-	-	name: WorkloadGroup
-		colorIcon: assets/img/integrations/components/WorkloadGroup-color.svg
-		whiteIcon: assets/img/integrations/components/WorkloadGroup-white.svg
-		description: 
-	-	name: AuthorizationPolicy
-		colorIcon: assets/img/integrations/components/AuthorizationPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/AuthorizationPolicy-white.svg
-		description: 
-	-	name: PeerAuthentication
-		colorIcon: assets/img/integrations/components/PeerAuthentication-color.svg
-		whiteIcon: assets/img/integrations/components/PeerAuthentication-white.svg
-		description: 
-	-	name: RequestAuthentication
-		colorIcon: assets/img/integrations/components/RequestAuthentication-color.svg
-		whiteIcon: assets/img/integrations/components/RequestAuthentication-white.svg
-		description: 
-	-	name: Telemetry
-		colorIcon: assets/img/integrations/components/Telemetry-color.svg
-		whiteIcon: assets/img/integrations/components/Telemetry-white.svg
-		description: 
-	-	name: IstioOperator
-		colorIcon: assets/img/integrations/components/IstioOperator-color.svg
-		whiteIcon: assets/img/integrations/components/IstioOperator-white.svg
-		description: 
+components: [
+{
+"name": "wasm-plugin"
+"colorIcon": "assets/img/integrations/istio-base/components/wasm-plugin/icons/color/wasm-plugin-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/wasm-plugin/icons/white/wasm-plugin-white.svg"
+"description": ""
+},
+{
+"name": "destination-rule"
+"colorIcon": "assets/img/integrations/istio-base/components/destination-rule/icons/color/destination-rule-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/destination-rule/icons/white/destination-rule-white.svg"
+"description": ""
+},
+{
+"name": "envoy-filter"
+"colorIcon": "assets/img/integrations/istio-base/components/envoy-filter/icons/color/envoy-filter-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/envoy-filter/icons/white/envoy-filter-white.svg"
+"description": ""
+},
+{
+"name": "gateway"
+"colorIcon": "assets/img/integrations/istio-base/components/gateway/icons/color/gateway-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/gateway/icons/white/gateway-white.svg"
+"description": ""
+},
+{
+"name": "proxy-config"
+"colorIcon": "assets/img/integrations/istio-base/components/proxy-config/icons/color/proxy-config-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/proxy-config/icons/white/proxy-config-white.svg"
+"description": ""
+},
+{
+"name": "service-entry"
+"colorIcon": "assets/img/integrations/istio-base/components/service-entry/icons/color/service-entry-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/service-entry/icons/white/service-entry-white.svg"
+"description": ""
+},
+{
+"name": "sidecar"
+"colorIcon": "assets/img/integrations/istio-base/components/sidecar/icons/color/sidecar-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/sidecar/icons/white/sidecar-white.svg"
+"description": ""
+},
+{
+"name": "virtual-service"
+"colorIcon": "assets/img/integrations/istio-base/components/virtual-service/icons/color/virtual-service-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/virtual-service/icons/white/virtual-service-white.svg"
+"description": ""
+},
+{
+"name": "workload-entry"
+"colorIcon": "assets/img/integrations/istio-base/components/workload-entry/icons/color/workload-entry-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/workload-entry/icons/white/workload-entry-white.svg"
+"description": ""
+},
+{
+"name": "workload-group"
+"colorIcon": "assets/img/integrations/istio-base/components/workload-group/icons/color/workload-group-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/workload-group/icons/white/workload-group-white.svg"
+"description": ""
+},
+{
+"name": "authorization-policy"
+"colorIcon": "assets/img/integrations/istio-base/components/authorization-policy/icons/color/authorization-policy-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/authorization-policy/icons/white/authorization-policy-white.svg"
+"description": ""
+},
+{
+"name": "peer-authentication"
+"colorIcon": "assets/img/integrations/istio-base/components/peer-authentication/icons/color/peer-authentication-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/peer-authentication/icons/white/peer-authentication-white.svg"
+"description": ""
+},
+{
+"name": "request-authentication"
+"colorIcon": "assets/img/integrations/istio-base/components/request-authentication/icons/color/request-authentication-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/request-authentication/icons/white/request-authentication-white.svg"
+"description": ""
+},
+{
+"name": "telemetry"
+"colorIcon": "assets/img/integrations/istio-base/components/telemetry/icons/color/telemetry-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/telemetry/icons/white/telemetry-white.svg"
+"description": ""
+},
+{
+"name": "istio-operator"
+"colorIcon": "assets/img/integrations/istio-base/components/istio-operator/icons/color/istio-operator-color.svg"
+"whiteIcon": "assets/img/integrations/istio-base/components/istio-operator/icons/white/istio-operator-white.svg"
+"description": ""
+}]
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

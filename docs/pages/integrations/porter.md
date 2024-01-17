@@ -2,26 +2,32 @@
 layout: enhanced
 title: Porter
 subtitle: Collaborative and visual infrastructure as code for Porter
-image: /assets/img/integrations/porter.svg
+image: /assets/img/integrations/porter/icons/color/porter-color.svg
 permalink: extensibility/integrations/porter
 docURL: https://docs.meshery.io/extensibility/integrations/porter
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
-	-	name: BgpConf
-		colorIcon: assets/img/integrations/components/BgpConf-color.svg
-		whiteIcon: assets/img/integrations/components/BgpConf-white.svg
-		description: 
-	-	name: BgpPeer
-		colorIcon: assets/img/integrations/components/BgpPeer-color.svg
-		whiteIcon: assets/img/integrations/components/BgpPeer-white.svg
-		description: 
-	-	name: Eip
-		colorIcon: assets/img/integrations/components/Eip-color.svg
-		whiteIcon: assets/img/integrations/components/Eip-white.svg
-		description: 
+components: [
+{
+"name": "bgp-conf"
+"colorIcon": "assets/img/integrations/porter/components/bgp-conf/icons/color/bgp-conf-color.svg"
+"whiteIcon": "assets/img/integrations/porter/components/bgp-conf/icons/white/bgp-conf-white.svg"
+"description": ""
+},
+{
+"name": "bgp-peer"
+"colorIcon": "assets/img/integrations/porter/components/bgp-peer/icons/color/bgp-peer-color.svg"
+"whiteIcon": "assets/img/integrations/porter/components/bgp-peer/icons/white/bgp-peer-white.svg"
+"description": ""
+},
+{
+"name": "eip"
+"colorIcon": "assets/img/integrations/porter/components/eip/icons/color/eip-color.svg"
+"whiteIcon": "assets/img/integrations/porter/components/eip/icons/white/eip-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

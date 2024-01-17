@@ -2,14 +2,14 @@
 layout: enhanced
 title: Volcano
 subtitle: Collaborative and visual infrastructure as code for Volcano
-image: /assets/img/integrations/volcano.svg
+image: /assets/img/integrations/volcano/icons/color/volcano-color.svg
 permalink: extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

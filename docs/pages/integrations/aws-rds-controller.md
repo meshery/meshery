@@ -2,50 +2,68 @@
 layout: enhanced
 title: AWS Relational Database Service
 subtitle: Collaborative and visual infrastructure as code for AWS Relational Database Service
-image: /assets/img/integrations/aws-relational-database-service.svg
+image: /assets/img/integrations/aws-relational-database-service/icons/color/aws-relational-database-service-color.svg
 permalink: extensibility/integrations/aws-relational-database-service
 docURL: https://docs.meshery.io/extensibility/integrations/aws-rds-controller
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: aws
-components: 
-	-	name: DBCluster
-		colorIcon: assets/img/integrations/components/DBCluster-color.svg
-		whiteIcon: assets/img/integrations/components/DBCluster-white.svg
-		description: 
-	-	name: DBClusterParameterGroup
-		colorIcon: assets/img/integrations/components/DBClusterParameterGroup-color.svg
-		whiteIcon: assets/img/integrations/components/DBClusterParameterGroup-white.svg
-		description: 
-	-	name: DBInstance
-		colorIcon: assets/img/integrations/components/DBInstance-color.svg
-		whiteIcon: assets/img/integrations/components/DBInstance-white.svg
-		description: 
-	-	name: DBParameterGroup
-		colorIcon: assets/img/integrations/components/DBParameterGroup-color.svg
-		whiteIcon: assets/img/integrations/components/DBParameterGroup-white.svg
-		description: 
-	-	name: DBProxy
-		colorIcon: assets/img/integrations/components/DBProxy-color.svg
-		whiteIcon: assets/img/integrations/components/DBProxy-white.svg
-		description: 
-	-	name: DBSubnetGroup
-		colorIcon: assets/img/integrations/components/DBSubnetGroup-color.svg
-		whiteIcon: assets/img/integrations/components/DBSubnetGroup-white.svg
-		description: 
-	-	name: GlobalCluster
-		colorIcon: assets/img/integrations/components/GlobalCluster-color.svg
-		whiteIcon: assets/img/integrations/components/GlobalCluster-white.svg
-		description: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
+components: [
+{
+"name": "db-cluster"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-cluster/icons/color/db-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-cluster/icons/white/db-cluster-white.svg"
+"description": ""
+},
+{
+"name": "db-cluster-parameter-group"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-cluster-parameter-group/icons/color/db-cluster-parameter-group-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-cluster-parameter-group/icons/white/db-cluster-parameter-group-white.svg"
+"description": ""
+},
+{
+"name": "db-instance"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-instance/icons/color/db-instance-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-instance/icons/white/db-instance-white.svg"
+"description": ""
+},
+{
+"name": "db-parameter-group"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-parameter-group/icons/color/db-parameter-group-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-parameter-group/icons/white/db-parameter-group-white.svg"
+"description": ""
+},
+{
+"name": "db-proxy"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-proxy/icons/color/db-proxy-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-proxy/icons/white/db-proxy-white.svg"
+"description": ""
+},
+{
+"name": "db-subnet-group"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/db-subnet-group/icons/color/db-subnet-group-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/db-subnet-group/icons/white/db-subnet-group-white.svg"
+"description": ""
+},
+{
+"name": "global-cluster"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/global-cluster/icons/color/global-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/global-cluster/icons/white/global-cluster-white.svg"
+"description": ""
+},
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+}]
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",

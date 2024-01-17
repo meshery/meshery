@@ -2,194 +2,284 @@
 layout: enhanced
 title: Kubedb CRDs
 subtitle: Collaborative and visual infrastructure as code for Kubedb CRDs
-image: /assets/img/integrations/kubedb-crds.svg
+image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg
 permalink: extensibility/integrations/kubedb-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: ElasticsearchAutoscaler
-		colorIcon: assets/img/integrations/components/ElasticsearchAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchAutoscaler-white.svg
-		description: 
-	-	name: EtcdAutoscaler
-		colorIcon: assets/img/integrations/components/EtcdAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/EtcdAutoscaler-white.svg
-		description: 
-	-	name: MariaDBAutoscaler
-		colorIcon: assets/img/integrations/components/MariaDBAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/MariaDBAutoscaler-white.svg
-		description: 
-	-	name: MemcachedAutoscaler
-		colorIcon: assets/img/integrations/components/MemcachedAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/MemcachedAutoscaler-white.svg
-		description: 
-	-	name: MongoDBAutoscaler
-		colorIcon: assets/img/integrations/components/MongoDBAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/MongoDBAutoscaler-white.svg
-		description: 
-	-	name: MySQLAutoscaler
-		colorIcon: assets/img/integrations/components/MySQLAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLAutoscaler-white.svg
-		description: 
-	-	name: PerconaXtraDBAutoscaler
-		colorIcon: assets/img/integrations/components/PerconaXtraDBAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaXtraDBAutoscaler-white.svg
-		description: 
-	-	name: PgBouncerAutoscaler
-		colorIcon: assets/img/integrations/components/PgBouncerAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/PgBouncerAutoscaler-white.svg
-		description: 
-	-	name: PostgresAutoscaler
-		colorIcon: assets/img/integrations/components/PostgresAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresAutoscaler-white.svg
-		description: 
-	-	name: ProxySQLAutoscaler
-		colorIcon: assets/img/integrations/components/ProxySQLAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/ProxySQLAutoscaler-white.svg
-		description: 
-	-	name: RedisAutoscaler
-		colorIcon: assets/img/integrations/components/RedisAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/RedisAutoscaler-white.svg
-		description: 
-	-	name: RedisSentinelAutoscaler
-		colorIcon: assets/img/integrations/components/RedisSentinelAutoscaler-color.svg
-		whiteIcon: assets/img/integrations/components/RedisSentinelAutoscaler-white.svg
-		description: 
-	-	name: ElasticsearchVersion
-		colorIcon: assets/img/integrations/components/ElasticsearchVersion-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchVersion-white.svg
-		description: 
-	-	name: EtcdVersion
-		colorIcon: assets/img/integrations/components/EtcdVersion-color.svg
-		whiteIcon: assets/img/integrations/components/EtcdVersion-white.svg
-		description: 
-	-	name: KafkaVersion
-		colorIcon: assets/img/integrations/components/KafkaVersion-color.svg
-		whiteIcon: assets/img/integrations/components/KafkaVersion-white.svg
-		description: 
-	-	name: MariaDBVersion
-		colorIcon: assets/img/integrations/components/MariaDBVersion-color.svg
-		whiteIcon: assets/img/integrations/components/MariaDBVersion-white.svg
-		description: 
-	-	name: MemcachedVersion
-		colorIcon: assets/img/integrations/components/MemcachedVersion-color.svg
-		whiteIcon: assets/img/integrations/components/MemcachedVersion-white.svg
-		description: 
-	-	name: MongoDBVersion
-		colorIcon: assets/img/integrations/components/MongoDBVersion-color.svg
-		whiteIcon: assets/img/integrations/components/MongoDBVersion-white.svg
-		description: 
-	-	name: MySQLVersion
-		colorIcon: assets/img/integrations/components/MySQLVersion-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLVersion-white.svg
-		description: 
-	-	name: PerconaXtraDBVersion
-		colorIcon: assets/img/integrations/components/PerconaXtraDBVersion-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaXtraDBVersion-white.svg
-		description: 
-	-	name: PgBouncerVersion
-		colorIcon: assets/img/integrations/components/PgBouncerVersion-color.svg
-		whiteIcon: assets/img/integrations/components/PgBouncerVersion-white.svg
-		description: 
-	-	name: PostgresVersion
-		colorIcon: assets/img/integrations/components/PostgresVersion-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresVersion-white.svg
-		description: 
-	-	name: ProxySQLVersion
-		colorIcon: assets/img/integrations/components/ProxySQLVersion-color.svg
-		whiteIcon: assets/img/integrations/components/ProxySQLVersion-white.svg
-		description: 
-	-	name: RedisVersion
-		colorIcon: assets/img/integrations/components/RedisVersion-color.svg
-		whiteIcon: assets/img/integrations/components/RedisVersion-white.svg
-		description: 
-	-	name: ElasticsearchDashboard
-		colorIcon: assets/img/integrations/components/ElasticsearchDashboard-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchDashboard-white.svg
-		description: 
-	-	name: ElasticsearchOpsRequest
-		colorIcon: assets/img/integrations/components/ElasticsearchOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchOpsRequest-white.svg
-		description: 
-	-	name: EtcdOpsRequest
-		colorIcon: assets/img/integrations/components/EtcdOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/EtcdOpsRequest-white.svg
-		description: 
-	-	name: MariaDBOpsRequest
-		colorIcon: assets/img/integrations/components/MariaDBOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/MariaDBOpsRequest-white.svg
-		description: 
-	-	name: MemcachedOpsRequest
-		colorIcon: assets/img/integrations/components/MemcachedOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/MemcachedOpsRequest-white.svg
-		description: 
-	-	name: MongoDBOpsRequest
-		colorIcon: assets/img/integrations/components/MongoDBOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/MongoDBOpsRequest-white.svg
-		description: 
-	-	name: MySQLOpsRequest
-		colorIcon: assets/img/integrations/components/MySQLOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLOpsRequest-white.svg
-		description: 
-	-	name: PerconaXtraDBOpsRequest
-		colorIcon: assets/img/integrations/components/PerconaXtraDBOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaXtraDBOpsRequest-white.svg
-		description: 
-	-	name: PgBouncerOpsRequest
-		colorIcon: assets/img/integrations/components/PgBouncerOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/PgBouncerOpsRequest-white.svg
-		description: 
-	-	name: PostgresOpsRequest
-		colorIcon: assets/img/integrations/components/PostgresOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresOpsRequest-white.svg
-		description: 
-	-	name: ProxySQLOpsRequest
-		colorIcon: assets/img/integrations/components/ProxySQLOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/ProxySQLOpsRequest-white.svg
-		description: 
-	-	name: RedisOpsRequest
-		colorIcon: assets/img/integrations/components/RedisOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/RedisOpsRequest-white.svg
-		description: 
-	-	name: RedisSentinelOpsRequest
-		colorIcon: assets/img/integrations/components/RedisSentinelOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/RedisSentinelOpsRequest-white.svg
-		description: 
-	-	name: Publisher
-		colorIcon: assets/img/integrations/components/Publisher-color.svg
-		whiteIcon: assets/img/integrations/components/Publisher-white.svg
-		description: 
-	-	name: Subscriber
-		colorIcon: assets/img/integrations/components/Subscriber-color.svg
-		whiteIcon: assets/img/integrations/components/Subscriber-white.svg
-		description: 
-	-	name: MariaDBDatabase
-		colorIcon: assets/img/integrations/components/MariaDBDatabase-color.svg
-		whiteIcon: assets/img/integrations/components/MariaDBDatabase-white.svg
-		description: 
-	-	name: MongoDBDatabase
-		colorIcon: assets/img/integrations/components/MongoDBDatabase-color.svg
-		whiteIcon: assets/img/integrations/components/MongoDBDatabase-white.svg
-		description: 
-	-	name: PostgresDatabase
-		colorIcon: assets/img/integrations/components/PostgresDatabase-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresDatabase-white.svg
-		description: 
-	-	name: RedisDatabase
-		colorIcon: assets/img/integrations/components/RedisDatabase-color.svg
-		whiteIcon: assets/img/integrations/components/RedisDatabase-white.svg
-		description: 
-	-	name: MySQLDatabase
-		colorIcon: assets/img/integrations/components/MySQLDatabase-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLDatabase-white.svg
-		description: 
-	-	name: KafkaOpsRequest
-		colorIcon: assets/img/integrations/components/KafkaOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/KafkaOpsRequest-white.svg
-		description: 
+components: [
+{
+"name": "elasticsearch-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/color/elasticsearch-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/white/elasticsearch-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "etcd-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/etcd-autoscaler/icons/color/etcd-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/etcd-autoscaler/icons/white/etcd-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "maria-db-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/maria-db-autoscaler/icons/color/maria-db-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/maria-db-autoscaler/icons/white/maria-db-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "memcached-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/memcached-autoscaler/icons/color/memcached-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/memcached-autoscaler/icons/white/memcached-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "mongo-db-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-autoscaler/icons/color/mongo-db-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-autoscaler/icons/white/mongo-db-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/my-sql-autoscaler/icons/color/my-sql-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/my-sql-autoscaler/icons/white/my-sql-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "percona-xtra-db-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-autoscaler/icons/color/percona-xtra-db-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-autoscaler/icons/white/percona-xtra-db-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "pg-bouncer-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-autoscaler/icons/color/pg-bouncer-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-autoscaler/icons/white/pg-bouncer-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "postgres-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/postgres-autoscaler/icons/color/postgres-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/postgres-autoscaler/icons/white/postgres-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "proxy-sql-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-autoscaler/icons/color/proxy-sql-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-autoscaler/icons/white/proxy-sql-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "redis-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-autoscaler/icons/color/redis-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-autoscaler/icons/white/redis-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "redis-sentinel-autoscaler"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-sentinel-autoscaler/icons/color/redis-sentinel-autoscaler-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-sentinel-autoscaler/icons/white/redis-sentinel-autoscaler-white.svg"
+"description": ""
+},
+{
+"name": "elasticsearch-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-version/icons/color/elasticsearch-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-version/icons/white/elasticsearch-version-white.svg"
+"description": ""
+},
+{
+"name": "etcd-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/etcd-version/icons/color/etcd-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/etcd-version/icons/white/etcd-version-white.svg"
+"description": ""
+},
+{
+"name": "kafka-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/kafka-version/icons/color/kafka-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/kafka-version/icons/white/kafka-version-white.svg"
+"description": ""
+},
+{
+"name": "maria-db-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/maria-db-version/icons/color/maria-db-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/maria-db-version/icons/white/maria-db-version-white.svg"
+"description": ""
+},
+{
+"name": "memcached-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/memcached-version/icons/color/memcached-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/memcached-version/icons/white/memcached-version-white.svg"
+"description": ""
+},
+{
+"name": "mongo-db-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-version/icons/color/mongo-db-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-version/icons/white/mongo-db-version-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/my-sql-version/icons/color/my-sql-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/my-sql-version/icons/white/my-sql-version-white.svg"
+"description": ""
+},
+{
+"name": "percona-xtra-db-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-version/icons/color/percona-xtra-db-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-version/icons/white/percona-xtra-db-version-white.svg"
+"description": ""
+},
+{
+"name": "pg-bouncer-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-version/icons/color/pg-bouncer-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-version/icons/white/pg-bouncer-version-white.svg"
+"description": ""
+},
+{
+"name": "postgres-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/postgres-version/icons/color/postgres-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/postgres-version/icons/white/postgres-version-white.svg"
+"description": ""
+},
+{
+"name": "proxy-sql-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-version/icons/color/proxy-sql-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-version/icons/white/proxy-sql-version-white.svg"
+"description": ""
+},
+{
+"name": "redis-version"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-version/icons/color/redis-version-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-version/icons/white/redis-version-white.svg"
+"description": ""
+},
+{
+"name": "elasticsearch-dashboard"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-dashboard/icons/color/elasticsearch-dashboard-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-dashboard/icons/white/elasticsearch-dashboard-white.svg"
+"description": ""
+},
+{
+"name": "elasticsearch-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-ops-request/icons/color/elasticsearch-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/elasticsearch-ops-request/icons/white/elasticsearch-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "etcd-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/etcd-ops-request/icons/color/etcd-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/etcd-ops-request/icons/white/etcd-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "maria-db-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/maria-db-ops-request/icons/color/maria-db-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/maria-db-ops-request/icons/white/maria-db-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "memcached-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/memcached-ops-request/icons/color/memcached-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/memcached-ops-request/icons/white/memcached-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "mongo-db-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-ops-request/icons/color/mongo-db-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-ops-request/icons/white/mongo-db-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/my-sql-ops-request/icons/color/my-sql-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/my-sql-ops-request/icons/white/my-sql-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "percona-xtra-db-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-ops-request/icons/color/percona-xtra-db-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/percona-xtra-db-ops-request/icons/white/percona-xtra-db-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "pg-bouncer-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-ops-request/icons/color/pg-bouncer-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/pg-bouncer-ops-request/icons/white/pg-bouncer-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "postgres-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/postgres-ops-request/icons/color/postgres-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/postgres-ops-request/icons/white/postgres-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "proxy-sql-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-ops-request/icons/color/proxy-sql-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/proxy-sql-ops-request/icons/white/proxy-sql-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "redis-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-ops-request/icons/color/redis-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-ops-request/icons/white/redis-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "redis-sentinel-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-sentinel-ops-request/icons/color/redis-sentinel-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-sentinel-ops-request/icons/white/redis-sentinel-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "publisher"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/publisher/icons/color/publisher-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/publisher/icons/white/publisher-white.svg"
+"description": ""
+},
+{
+"name": "subscriber"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/subscriber/icons/color/subscriber-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/subscriber/icons/white/subscriber-white.svg"
+"description": ""
+},
+{
+"name": "maria-db-database"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/maria-db-database/icons/color/maria-db-database-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/maria-db-database/icons/white/maria-db-database-white.svg"
+"description": ""
+},
+{
+"name": "mongo-db-database"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-database/icons/color/mongo-db-database-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/mongo-db-database/icons/white/mongo-db-database-white.svg"
+"description": ""
+},
+{
+"name": "postgres-database"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/postgres-database/icons/color/postgres-database-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/postgres-database/icons/white/postgres-database-white.svg"
+"description": ""
+},
+{
+"name": "redis-database"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/redis-database/icons/color/redis-database-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/redis-database/icons/white/redis-database-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-database"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/my-sql-database/icons/color/my-sql-database-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/my-sql-database/icons/white/my-sql-database-white.svg"
+"description": ""
+},
+{
+"name": "kafka-ops-request"
+"colorIcon": "assets/img/integrations/kubedb-crds/components/kafka-ops-request/icons/color/kafka-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubedb-crds/components/kafka-ops-request/icons/white/kafka-ops-request-white.svg"
+"description": ""
+}]
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

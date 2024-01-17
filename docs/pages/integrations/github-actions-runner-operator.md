@@ -2,18 +2,20 @@
 layout: enhanced
 title: Github Actions Runner Operator
 subtitle: Collaborative and visual infrastructure as code for Github Actions Runner Operator
-image: /assets/img/integrations/github-actions-runner-operator.svg
+image: /assets/img/integrations/github-actions-runner-operator/icons/color/github-actions-runner-operator-color.svg
 permalink: extensibility/integrations/github-actions-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner-operator
 description: 
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: 
-	-	name: GithubActionRunner
-		colorIcon: assets/img/integrations/components/GithubActionRunner-color.svg
-		whiteIcon: assets/img/integrations/components/GithubActionRunner-white.svg
-		description: 
+components: [
+{
+"name": "github-action-runner"
+"colorIcon": "assets/img/integrations/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg"
+"whiteIcon": "assets/img/integrations/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

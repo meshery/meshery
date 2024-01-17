@@ -2,14 +2,14 @@
 layout: enhanced
 title: Notary
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
-image: /assets/img/integrations/notary.svg
+image: /assets/img/integrations/notary/icons/color/notary-color.svg
 permalink: extensibility/integrations/notary
 docURL: https://docs.meshery.io/extensibility/integrations/notary
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

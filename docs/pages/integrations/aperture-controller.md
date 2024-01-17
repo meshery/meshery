@@ -2,22 +2,26 @@
 layout: enhanced
 title: Aperture Controller
 subtitle: Collaborative and visual infrastructure as code for Aperture Controller
-image: /assets/img/integrations/aperture-controller.svg
+image: /assets/img/integrations/aperture-controller/icons/color/aperture-controller-color.svg
 permalink: extensibility/integrations/aperture-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-controller
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
-	-	name: Controller
-		colorIcon: assets/img/integrations/components/Controller-color.svg
-		whiteIcon: assets/img/integrations/components/Controller-white.svg
-		description: 
-	-	name: Policy
-		colorIcon: assets/img/integrations/components/Policy-color.svg
-		whiteIcon: assets/img/integrations/components/Policy-white.svg
-		description: 
+components: [
+{
+"name": "controller"
+"colorIcon": "assets/img/integrations/aperture-controller/components/controller/icons/color/controller-color.svg"
+"whiteIcon": "assets/img/integrations/aperture-controller/components/controller/icons/white/controller-white.svg"
+"description": ""
+},
+{
+"name": "policy"
+"colorIcon": "assets/img/integrations/aperture-controller/components/policy/icons/color/policy-color.svg"
+"whiteIcon": "assets/img/integrations/aperture-controller/components/policy/icons/white/policy-white.svg"
+"description": ""
+}]
 featureList: [
   "Monitor golden signals to rapidly detect service deterioration and load build-up.",
   "Adjusts the concurrency limit of the service.",

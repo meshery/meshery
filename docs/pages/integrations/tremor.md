@@ -2,14 +2,14 @@
 layout: enhanced
 title: Tremor
 subtitle: Collaborative and visual infrastructure as code for Tremor
-image: /assets/img/integrations/tremor.svg
+image: /assets/img/integrations/tremor/icons/color/tremor-color.svg
 permalink: extensibility/integrations/tremor
 docURL: https://docs.meshery.io/extensibility/integrations/tremor
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

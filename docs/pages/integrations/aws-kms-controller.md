@@ -2,34 +2,44 @@
 layout: enhanced
 title: AWS Kinesis
 subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
-image: /assets/img/integrations/aws-kinesis.svg
+image: /assets/img/integrations/aws-kinesis/icons/color/aws-kinesis-color.svg
 permalink: extensibility/integrations/aws-kinesis
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
 description: 
 category: Security & Compliance
 subcategory: Key Management Service
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: Alias
-		colorIcon: assets/img/integrations/components/Alias-color.svg
-		whiteIcon: assets/img/integrations/components/Alias-white.svg
-		description: 
-	-	name: Grant
-		colorIcon: assets/img/integrations/components/Grant-color.svg
-		whiteIcon: assets/img/integrations/components/Grant-white.svg
-		description: 
-	-	name: Key
-		colorIcon: assets/img/integrations/components/Key-color.svg
-		whiteIcon: assets/img/integrations/components/Key-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-kms-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kms-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-kms-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kms-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "alias"
+"colorIcon": "assets/img/integrations/aws-kms-controller/components/alias/icons/color/alias-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kms-controller/components/alias/icons/white/alias-white.svg"
+"description": ""
+},
+{
+"name": "grant"
+"colorIcon": "assets/img/integrations/aws-kms-controller/components/grant/icons/color/grant-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kms-controller/components/grant/icons/white/grant-white.svg"
+"description": ""
+},
+{
+"name": "key"
+"colorIcon": "assets/img/integrations/aws-kms-controller/components/key/icons/color/key-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kms-controller/components/key/icons/white/key-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

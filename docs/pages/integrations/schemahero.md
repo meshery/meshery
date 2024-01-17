@@ -2,14 +2,14 @@
 layout: enhanced
 title: Schemahero
 subtitle: Collaborative and visual infrastructure as code for Schemahero
-image: /assets/img/integrations/schemahero.svg
+image: /assets/img/integrations/schemahero/icons/color/schemahero-color.svg
 permalink: extensibility/integrations/schemahero
 docURL: https://docs.meshery.io/extensibility/integrations/schemahero
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

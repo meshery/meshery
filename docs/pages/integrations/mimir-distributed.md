@@ -2,14 +2,14 @@
 layout: enhanced
 title: Mimir
 subtitle: Scale to 1 billion metrics and beyond with Meshery and Grafana Mimir
-image: /assets/img/integrations/mimir.svg
+image: /assets/img/integrations/mimir/icons/color/mimir-color.svg
 permalink: extensibility/integrations/mimir
 docURL: https://docs.meshery.io/tasks/performance/managing-performance
 description: 
 category: Observability and Analysis
 subcategory: Observability and Analysis
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Get 100% Prometheus compatible, including remote write, PromQL, and alerting",
   "High availability through replication",

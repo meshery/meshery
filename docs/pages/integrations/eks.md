@@ -2,14 +2,14 @@
 layout: enhanced
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
-image: /assets/img/integrations/aws-elastic-kubernetes-service.svg
+image: /assets/img/integrations/aws-elastic-kubernetes-service/icons/color/aws-elastic-kubernetes-service-color.svg
 permalink: extensibility/integrations/aws-elastic-kubernetes-service
 docURL: https://docs.meshery.io/installation/kubernetes/eks
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Save and share AKS configuration templates",
   "Ensure multi-tenancy enforcement",

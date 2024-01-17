@@ -2,18 +2,20 @@
 layout: enhanced
 title: Grafana Agent
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /assets/img/integrations/grafana-agent.svg
+image: /assets/img/integrations/grafana-agent/icons/color/grafana-agent-color.svg
 permalink: extensibility/integrations/grafana-agent
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
-	-	name: PodLogs
-		colorIcon: assets/img/integrations/components/PodLogs-color.svg
-		whiteIcon: assets/img/integrations/components/PodLogs-white.svg
-		description: 
+components: [
+{
+"name": "pod-logs"
+"colorIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg"
+"description": ""
+}]
 featureList: [
   "Meshery discovers your Grafana servers",
   "Easily import existing Grafana dashboards and panels into Meshery",

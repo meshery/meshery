@@ -2,14 +2,14 @@
 layout: enhanced
 title: Skooner
 subtitle: Collaborative and visual infrastructure as code for Skooner
-image: /assets/img/integrations/skooner.svg
+image: /assets/img/integrations/skooner/icons/color/skooner-color.svg
 permalink: extensibility/integrations/skooner
 docURL: https://docs.meshery.io/extensibility/integrations/skooner
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

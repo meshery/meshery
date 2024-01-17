@@ -2,14 +2,14 @@
 layout: enhanced
 title: Tinkerbell
 subtitle: Collaborative and visual infrastructure as code for Tinkerbell
-image: /assets/img/integrations/tinkerbell.svg
+image: /assets/img/integrations/tinkerbell/icons/color/tinkerbell-color.svg
 permalink: extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

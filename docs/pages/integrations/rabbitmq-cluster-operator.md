@@ -2,66 +2,92 @@
 layout: enhanced
 title: RabbitMQ Cluster Operator
 subtitle: Collaborative and visual infrastructure as code for RabbitMQ Cluster Operator
-image: /assets/img/integrations/rabbitmq-cluster-operator.svg
+image: /assets/img/integrations/rabbitmq-cluster-operator/icons/color/rabbitmq-cluster-operator-color.svg
 permalink: extensibility/integrations/rabbitmq-cluster-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-cluster-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
-	-	name: Binding
-		colorIcon: assets/img/integrations/components/Binding-color.svg
-		whiteIcon: assets/img/integrations/components/Binding-white.svg
-		description: 
-	-	name: Exchange
-		colorIcon: assets/img/integrations/components/Exchange-color.svg
-		whiteIcon: assets/img/integrations/components/Exchange-white.svg
-		description: 
-	-	name: Federation
-		colorIcon: assets/img/integrations/components/Federation-color.svg
-		whiteIcon: assets/img/integrations/components/Federation-white.svg
-		description: 
-	-	name: Permission
-		colorIcon: assets/img/integrations/components/Permission-color.svg
-		whiteIcon: assets/img/integrations/components/Permission-white.svg
-		description: 
-	-	name: Policy
-		colorIcon: assets/img/integrations/components/Policy-color.svg
-		whiteIcon: assets/img/integrations/components/Policy-white.svg
-		description: 
-	-	name: Queue
-		colorIcon: assets/img/integrations/components/Queue-color.svg
-		whiteIcon: assets/img/integrations/components/Queue-white.svg
-		description: 
-	-	name: SchemaReplication
-		colorIcon: assets/img/integrations/components/SchemaReplication-color.svg
-		whiteIcon: assets/img/integrations/components/SchemaReplication-white.svg
-		description: 
-	-	name: Shovel
-		colorIcon: assets/img/integrations/components/Shovel-color.svg
-		whiteIcon: assets/img/integrations/components/Shovel-white.svg
-		description: 
-	-	name: SuperStream
-		colorIcon: assets/img/integrations/components/SuperStream-color.svg
-		whiteIcon: assets/img/integrations/components/SuperStream-white.svg
-		description: 
-	-	name: TopicPermission
-		colorIcon: assets/img/integrations/components/TopicPermission-color.svg
-		whiteIcon: assets/img/integrations/components/TopicPermission-white.svg
-		description: 
-	-	name: User
-		colorIcon: assets/img/integrations/components/User-color.svg
-		whiteIcon: assets/img/integrations/components/User-white.svg
-		description: 
-	-	name: Vhost
-		colorIcon: assets/img/integrations/components/Vhost-color.svg
-		whiteIcon: assets/img/integrations/components/Vhost-white.svg
-		description: 
-	-	name: RabbitmqCluster
-		colorIcon: assets/img/integrations/components/RabbitmqCluster-color.svg
-		whiteIcon: assets/img/integrations/components/RabbitmqCluster-white.svg
-		description: 
+components: [
+{
+"name": "binding"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/binding/icons/color/binding-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/binding/icons/white/binding-white.svg"
+"description": ""
+},
+{
+"name": "exchange"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/exchange/icons/color/exchange-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/exchange/icons/white/exchange-white.svg"
+"description": ""
+},
+{
+"name": "federation"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/federation/icons/color/federation-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/federation/icons/white/federation-white.svg"
+"description": ""
+},
+{
+"name": "permission"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/permission/icons/color/permission-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/permission/icons/white/permission-white.svg"
+"description": ""
+},
+{
+"name": "policy"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/policy/icons/color/policy-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/policy/icons/white/policy-white.svg"
+"description": ""
+},
+{
+"name": "queue"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/queue/icons/color/queue-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/queue/icons/white/queue-white.svg"
+"description": ""
+},
+{
+"name": "schema-replication"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/schema-replication/icons/color/schema-replication-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/schema-replication/icons/white/schema-replication-white.svg"
+"description": ""
+},
+{
+"name": "shovel"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/shovel/icons/color/shovel-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/shovel/icons/white/shovel-white.svg"
+"description": ""
+},
+{
+"name": "super-stream"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/super-stream/icons/color/super-stream-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/super-stream/icons/white/super-stream-white.svg"
+"description": ""
+},
+{
+"name": "topic-permission"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/topic-permission/icons/color/topic-permission-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/topic-permission/icons/white/topic-permission-white.svg"
+"description": ""
+},
+{
+"name": "user"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/user/icons/color/user-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/user/icons/white/user-white.svg"
+"description": ""
+},
+{
+"name": "vhost"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/vhost/icons/color/vhost-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/vhost/icons/white/vhost-white.svg"
+"description": ""
+},
+{
+"name": "rabbitmq-cluster"
+"colorIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

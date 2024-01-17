@@ -2,62 +2,86 @@
 layout: enhanced
 title: Contour
 subtitle: Collaborative and visual infrastructure as code for Contour
-image: /assets/img/integrations/contour.svg
+image: /assets/img/integrations/contour/icons/color/contour-color.svg
 permalink: extensibility/integrations/contour
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
-	-	name: Contour
-		colorIcon: assets/img/integrations/components/Contour-color.svg
-		whiteIcon: assets/img/integrations/components/Contour-white.svg
-		description: 
-	-	name: ContourConfiguration
-		colorIcon: assets/img/integrations/components/ContourConfiguration-color.svg
-		whiteIcon: assets/img/integrations/components/ContourConfiguration-white.svg
-		description: 
-	-	name: ContourDeployment
-		colorIcon: assets/img/integrations/components/ContourDeployment-color.svg
-		whiteIcon: assets/img/integrations/components/ContourDeployment-white.svg
-		description: 
-	-	name: ExtensionService
-		colorIcon: assets/img/integrations/components/ExtensionService-color.svg
-		whiteIcon: assets/img/integrations/components/ExtensionService-white.svg
-		description: 
-	-	name: Gateway
-		colorIcon: assets/img/integrations/components/Gateway-color.svg
-		whiteIcon: assets/img/integrations/components/Gateway-white.svg
-		description: 
-	-	name: GatewayClass
-		colorIcon: assets/img/integrations/components/GatewayClass-color.svg
-		whiteIcon: assets/img/integrations/components/GatewayClass-white.svg
-		description: 
-	-	name: HTTPProxy
-		colorIcon: assets/img/integrations/components/HTTPProxy-color.svg
-		whiteIcon: assets/img/integrations/components/HTTPProxy-white.svg
-		description: 
-	-	name: HTTPRoute
-		colorIcon: assets/img/integrations/components/HTTPRoute-color.svg
-		whiteIcon: assets/img/integrations/components/HTTPRoute-white.svg
-		description: 
-	-	name: TCPRoute
-		colorIcon: assets/img/integrations/components/TCPRoute-color.svg
-		whiteIcon: assets/img/integrations/components/TCPRoute-white.svg
-		description: 
-	-	name: TLSCertificateDelegation
-		colorIcon: assets/img/integrations/components/TLSCertificateDelegation-color.svg
-		whiteIcon: assets/img/integrations/components/TLSCertificateDelegation-white.svg
-		description: 
-	-	name: TLSRoute
-		colorIcon: assets/img/integrations/components/TLSRoute-color.svg
-		whiteIcon: assets/img/integrations/components/TLSRoute-white.svg
-		description: 
-	-	name: UDPRoute
-		colorIcon: assets/img/integrations/components/UDPRoute-color.svg
-		whiteIcon: assets/img/integrations/components/UDPRoute-white.svg
-		description: 
+components: [
+{
+"name": "contour"
+"colorIcon": "assets/img/integrations/contour-operator/components/contour/icons/color/contour-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour/icons/white/contour-white.svg"
+"description": ""
+},
+{
+"name": "contour-configuration"
+"colorIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/color/contour-configuration-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour-configuration/icons/white/contour-configuration-white.svg"
+"description": ""
+},
+{
+"name": "contour-deployment"
+"colorIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/color/contour-deployment-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/contour-deployment/icons/white/contour-deployment-white.svg"
+"description": ""
+},
+{
+"name": "extension-service"
+"colorIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/color/extension-service-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/extension-service/icons/white/extension-service-white.svg"
+"description": ""
+},
+{
+"name": "gateway"
+"colorIcon": "assets/img/integrations/contour-operator/components/gateway/icons/color/gateway-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/gateway/icons/white/gateway-white.svg"
+"description": ""
+},
+{
+"name": "gateway-class"
+"colorIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/color/gateway-class-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/gateway-class/icons/white/gateway-class-white.svg"
+"description": ""
+},
+{
+"name": "http-proxy"
+"colorIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/color/http-proxy-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/http-proxy/icons/white/http-proxy-white.svg"
+"description": ""
+},
+{
+"name": "http-route"
+"colorIcon": "assets/img/integrations/contour-operator/components/http-route/icons/color/http-route-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/http-route/icons/white/http-route-white.svg"
+"description": ""
+},
+{
+"name": "tcp-route"
+"colorIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/color/tcp-route-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/tcp-route/icons/white/tcp-route-white.svg"
+"description": ""
+},
+{
+"name": "tls-certificate-delegation"
+"colorIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/color/tls-certificate-delegation-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/tls-certificate-delegation/icons/white/tls-certificate-delegation-white.svg"
+"description": ""
+},
+{
+"name": "tls-route"
+"colorIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/color/tls-route-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/tls-route/icons/white/tls-route-white.svg"
+"description": ""
+},
+{
+"name": "udp-route"
+"colorIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/color/udp-route-color.svg"
+"whiteIcon": "assets/img/integrations/contour-operator/components/udp-route/icons/white/udp-route-white.svg"
+"description": ""
+}]
 featureList: [
   "Supports dynamic configuration updates out of the box while maintaining a lightweight profile.",
   "Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).",

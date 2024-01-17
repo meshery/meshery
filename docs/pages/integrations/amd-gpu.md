@@ -2,22 +2,26 @@
 layout: enhanced
 title: AMD GPU
 subtitle: Collaborative and visual infrastructure as code for AMD GPU
-image: /assets/img/integrations/amd-gpu.svg
+image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg
 permalink: extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
-	-	name: NodeFeature
-		colorIcon: assets/img/integrations/components/NodeFeature-color.svg
-		whiteIcon: assets/img/integrations/components/NodeFeature-white.svg
-		description: 
-	-	name: NodeFeatureRule
-		colorIcon: assets/img/integrations/components/NodeFeatureRule-color.svg
-		whiteIcon: assets/img/integrations/components/NodeFeatureRule-white.svg
-		description: 
+components: [
+{
+"name": "node-feature"
+"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg"
+"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg"
+"description": ""
+},
+{
+"name": "node-feature-rule"
+"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg"
+"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

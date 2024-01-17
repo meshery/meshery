@@ -2,14 +2,14 @@
 layout: enhanced
 title: Wasmcloud
 subtitle: Collaborative and visual infrastructure as code for Wasmcloud
-image: /assets/img/integrations/wasmcloud.svg
+image: /assets/img/integrations/wasmcloud/icons/color/wasmcloud-color.svg
 permalink: extensibility/integrations/wasmcloud
 docURL: https://docs.meshery.io/extensibility/integrations/wasmcloud
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

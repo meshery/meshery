@@ -2,38 +2,50 @@
 layout: enhanced
 title: Fluentbit Operator
 subtitle: Collaborative and visual infrastructure as code for Fluentbit Operator
-image: /assets/img/integrations/fluentbit-operator.svg
+image: /assets/img/integrations/fluentbit-operator/icons/color/fluentbit-operator-color.svg
 permalink: extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: 
-	-	name: Filter
-		colorIcon: assets/img/integrations/components/Filter-color.svg
-		whiteIcon: assets/img/integrations/components/Filter-white.svg
-		description: 
-	-	name: FluentBitConfig
-		colorIcon: assets/img/integrations/components/FluentBitConfig-color.svg
-		whiteIcon: assets/img/integrations/components/FluentBitConfig-white.svg
-		description: 
-	-	name: Input
-		colorIcon: assets/img/integrations/components/Input-color.svg
-		whiteIcon: assets/img/integrations/components/Input-white.svg
-		description: 
-	-	name: Output
-		colorIcon: assets/img/integrations/components/Output-color.svg
-		whiteIcon: assets/img/integrations/components/Output-white.svg
-		description: 
-	-	name: Parser
-		colorIcon: assets/img/integrations/components/Parser-color.svg
-		whiteIcon: assets/img/integrations/components/Parser-white.svg
-		description: 
-	-	name: FluentBit
-		colorIcon: assets/img/integrations/components/FluentBit-color.svg
-		whiteIcon: assets/img/integrations/components/FluentBit-white.svg
-		description: 
+components: [
+{
+"name": "filter"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/filter/icons/color/filter-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/filter/icons/white/filter-white.svg"
+"description": ""
+},
+{
+"name": "fluent-bit-config"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg"
+"description": ""
+},
+{
+"name": "input"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/input/icons/color/input-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/input/icons/white/input-white.svg"
+"description": ""
+},
+{
+"name": "output"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/output/icons/color/output-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/output/icons/white/output-white.svg"
+"description": ""
+},
+{
+"name": "parser"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/parser/icons/color/parser-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/parser/icons/white/parser-white.svg"
+"description": ""
+},
+{
+"name": "fluent-bit"
+"colorIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg"
+"whiteIcon": "assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg"
+"description": ""
+}]
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

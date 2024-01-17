@@ -2,14 +2,14 @@
 layout: enhanced
 title: NGINX
 subtitle: Collaborative and visual infrastructure as code for NGINX
-image: /assets/img/integrations/nginx.svg
+image: /assets/img/integrations/nginx/icons/color/nginx-color.svg
 permalink: extensibility/integrations/nginx
 docURL: https://docs.meshery.io/extensibility/integrations/nginx
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

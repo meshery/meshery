@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kured
 subtitle: Collaborative and visual infrastructure as code for Kured
-image: /assets/img/integrations/kured.svg
+image: /assets/img/integrations/kured/icons/color/kured-color.svg
 permalink: extensibility/integrations/kured
 docURL: https://docs.meshery.io/extensibility/integrations/kured
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

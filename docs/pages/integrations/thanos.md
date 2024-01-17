@@ -2,14 +2,14 @@
 layout: enhanced
 title: Thanos
 subtitle: Collaborative and visual infrastructure as code for Thanos
-image: /assets/img/integrations/thanos.svg
+image: /assets/img/integrations/thanos/icons/color/thanos-color.svg
 permalink: extensibility/integrations/thanos
 docURL: https://docs.meshery.io/extensibility/integrations/thanos
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

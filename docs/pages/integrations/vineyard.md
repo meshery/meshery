@@ -2,14 +2,14 @@
 layout: enhanced
 title: Vineyard
 subtitle: Collaborative and visual infrastructure as code for Vineyard
-image: /assets/img/integrations/vineyard.svg
+image: /assets/img/integrations/vineyard/icons/color/vineyard-color.svg
 permalink: extensibility/integrations/vineyard
 docURL: https://docs.meshery.io/extensibility/integrations/vineyard
 description: 
 category: Runtime
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

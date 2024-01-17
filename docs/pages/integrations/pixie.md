@@ -2,14 +2,14 @@
 layout: enhanced
 title: Pixie
 subtitle: Collaborative and visual infrastructure as code for Pixie
-image: /assets/img/integrations/pixie.svg
+image: /assets/img/integrations/pixie/icons/color/pixie-color.svg
 permalink: extensibility/integrations/pixie
 docURL: https://docs.meshery.io/extensibility/integrations/pixie
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

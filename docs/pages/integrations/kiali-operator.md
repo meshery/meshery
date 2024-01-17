@@ -2,18 +2,20 @@
 layout: enhanced
 title: Kiali Operator
 subtitle: Collaborative and visual infrastructure as code for Kiali Operator
-image: /assets/img/integrations/kiali-operator.svg
+image: /assets/img/integrations/kiali-operator/icons/color/kiali-operator-color.svg
 permalink: extensibility/integrations/kiali-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kiali-operator
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
-	-	name: Kiali
-		colorIcon: assets/img/integrations/components/Kiali-color.svg
-		whiteIcon: assets/img/integrations/components/Kiali-white.svg
-		description: 
+components: [
+{
+"name": "kiali"
+"colorIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg"
+"whiteIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

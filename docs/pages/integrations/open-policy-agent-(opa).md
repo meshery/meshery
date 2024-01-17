@@ -2,14 +2,14 @@
 layout: enhanced
 title: Open Policy Agent (OPA)
 subtitle: Collaborative and visual infrastructure as code for Open Policy Agent (OPA)
-image: /assets/img/integrations/open-policy-agent-(opa).svg
+image: /assets/img/integrations/open-policy-agent-(opa)/icons/color/open-policy-agent-(opa)-color.svg
 permalink: extensibility/integrations/open-policy-agent-(opa)
 docURL: https://docs.meshery.io/extensibility/integrations/open policy agent (opa)
 description: 
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

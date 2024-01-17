@@ -2,14 +2,14 @@
 layout: enhanced
 title: Emissary Ingress
 subtitle: Collaborative and visual infrastructure as code for Emissary Ingress
-image: /assets/img/integrations/emissary-ingress.svg
+image: /assets/img/integrations/emissary-ingress/icons/color/emissary-ingress-color.svg
 permalink: extensibility/integrations/emissary-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/emissary-ingress
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

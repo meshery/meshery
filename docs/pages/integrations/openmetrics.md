@@ -2,14 +2,14 @@
 layout: enhanced
 title: OpenMetrics
 subtitle: Collaborative and visual infrastructure as code for OpenMetrics
-image: /assets/img/integrations/openmetrics.svg
+image: /assets/img/integrations/openmetrics/icons/color/openmetrics-color.svg
 permalink: extensibility/integrations/openmetrics
 docURL: https://docs.meshery.io/extensibility/integrations/openmetrics
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

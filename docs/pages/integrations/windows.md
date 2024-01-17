@@ -2,14 +2,14 @@
 layout: enhanced
 title: Windows
 subtitle: Collaborative and visual infrastructure as code for Windows
-image: /assets/img/integrations/windows.svg
+image: /assets/img/integrations/windows/icons/color/windows-color.svg
 permalink: extensibility/integrations/windows
 docURL: https://docs.meshery.io/installation//windows
 description: 
 category: Platform
 subcategory: Operating System
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Windows-native builds of Meshery CLI",
   "Deploy Meshery on Docker Desktop for Windows",

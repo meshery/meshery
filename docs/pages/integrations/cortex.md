@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cortex
 subtitle: Collaborative and visual infrastructure as code for Cortex
-image: /assets/img/integrations/cortex.svg
+image: /assets/img/integrations/cortex/icons/color/cortex-color.svg
 permalink: extensibility/integrations/cortex
 docURL: https://docs.meshery.io/extensibility/integrations/cortex
 description: 
 category: Observability and Analysis
 subcategory: Metrics
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Durably store data for longer than the lifetime of any single machine, and use this data for long term capacity planning.",
   "Makes your PromQL queries blazin' fast through aggressive parallelization and caching.",

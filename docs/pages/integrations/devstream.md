@@ -2,14 +2,14 @@
 layout: enhanced
 title: Devstream
 subtitle: Collaborative and visual infrastructure as code for Devstream
-image: /assets/img/integrations/devstream.svg
+image: /assets/img/integrations/devstream/icons/color/devstream-color.svg
 permalink: extensibility/integrations/devstream
 docURL: https://docs.meshery.io/extensibility/integrations/devstream
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Centrally manage your toolchain with versioned code, and keep track of every change.",
   "No reinvention of the wheels. Simply create a plugin, and connect any tools you like with DevStream.",

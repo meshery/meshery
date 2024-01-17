@@ -2,110 +2,158 @@
 layout: enhanced
 title: OpenEBS
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
-image: /assets/img/integrations/openebs.svg
+image: /assets/img/integrations/openebs/icons/color/openebs-color.svg
 permalink: extensibility/integrations/openebs
 docURL: https://docs.meshery.io/extensibility/integrations/openebs
 description: 
 category: Cloud Native Storage
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: 
-	-	name: BlockDevice
-		colorIcon: assets/img/integrations/components/BlockDevice-color.svg
-		whiteIcon: assets/img/integrations/components/BlockDevice-white.svg
-		description: 
-	-	name: BlockDeviceClaim
-		colorIcon: assets/img/integrations/components/BlockDeviceClaim-color.svg
-		whiteIcon: assets/img/integrations/components/BlockDeviceClaim-white.svg
-		description: 
-	-	name: LVMNode
-		colorIcon: assets/img/integrations/components/LVMNode-color.svg
-		whiteIcon: assets/img/integrations/components/LVMNode-white.svg
-		description: 
-	-	name: LVMSnapshot
-		colorIcon: assets/img/integrations/components/LVMSnapshot-color.svg
-		whiteIcon: assets/img/integrations/components/LVMSnapshot-white.svg
-		description: 
-	-	name: LVMVolume
-		colorIcon: assets/img/integrations/components/LVMVolume-color.svg
-		whiteIcon: assets/img/integrations/components/LVMVolume-white.svg
-		description: 
-	-	name: ZFSBackup
-		colorIcon: assets/img/integrations/components/ZFSBackup-color.svg
-		whiteIcon: assets/img/integrations/components/ZFSBackup-white.svg
-		description: 
-	-	name: ZFSNode
-		colorIcon: assets/img/integrations/components/ZFSNode-color.svg
-		whiteIcon: assets/img/integrations/components/ZFSNode-white.svg
-		description: 
-	-	name: ZFSRestore
-		colorIcon: assets/img/integrations/components/ZFSRestore-color.svg
-		whiteIcon: assets/img/integrations/components/ZFSRestore-white.svg
-		description: 
-	-	name: ZFSSnapshot
-		colorIcon: assets/img/integrations/components/ZFSSnapshot-color.svg
-		whiteIcon: assets/img/integrations/components/ZFSSnapshot-white.svg
-		description: 
-	-	name: ZFSVolume
-		colorIcon: assets/img/integrations/components/ZFSVolume-color.svg
-		whiteIcon: assets/img/integrations/components/ZFSVolume-white.svg
-		description: 
-	-	name: CStorBackup
-		colorIcon: assets/img/integrations/components/CStorBackup-color.svg
-		whiteIcon: assets/img/integrations/components/CStorBackup-white.svg
-		description: 
-	-	name: CStorCompletedBackup
-		colorIcon: assets/img/integrations/components/CStorCompletedBackup-color.svg
-		whiteIcon: assets/img/integrations/components/CStorCompletedBackup-white.svg
-		description: 
-	-	name: CStorPoolCluster
-		colorIcon: assets/img/integrations/components/CStorPoolCluster-color.svg
-		whiteIcon: assets/img/integrations/components/CStorPoolCluster-white.svg
-		description: 
-	-	name: CStorPoolInstance
-		colorIcon: assets/img/integrations/components/CStorPoolInstance-color.svg
-		whiteIcon: assets/img/integrations/components/CStorPoolInstance-white.svg
-		description: 
-	-	name: CStorRestore
-		colorIcon: assets/img/integrations/components/CStorRestore-color.svg
-		whiteIcon: assets/img/integrations/components/CStorRestore-white.svg
-		description: 
-	-	name: CStorVolume
-		colorIcon: assets/img/integrations/components/CStorVolume-color.svg
-		whiteIcon: assets/img/integrations/components/CStorVolume-white.svg
-		description: 
-	-	name: CStorVolumeAttachment
-		colorIcon: assets/img/integrations/components/CStorVolumeAttachment-color.svg
-		whiteIcon: assets/img/integrations/components/CStorVolumeAttachment-white.svg
-		description: 
-	-	name: CStorVolumeConfig
-		colorIcon: assets/img/integrations/components/CStorVolumeConfig-color.svg
-		whiteIcon: assets/img/integrations/components/CStorVolumeConfig-white.svg
-		description: 
-	-	name: CStorVolumePolicy
-		colorIcon: assets/img/integrations/components/CStorVolumePolicy-color.svg
-		whiteIcon: assets/img/integrations/components/CStorVolumePolicy-white.svg
-		description: 
-	-	name: CStorVolumeReplica
-		colorIcon: assets/img/integrations/components/CStorVolumeReplica-color.svg
-		whiteIcon: assets/img/integrations/components/CStorVolumeReplica-white.svg
-		description: 
-	-	name: MigrationTask
-		colorIcon: assets/img/integrations/components/MigrationTask-color.svg
-		whiteIcon: assets/img/integrations/components/MigrationTask-white.svg
-		description: 
-	-	name: UpgradeTask
-		colorIcon: assets/img/integrations/components/UpgradeTask-color.svg
-		whiteIcon: assets/img/integrations/components/UpgradeTask-white.svg
-		description: 
-	-	name: JivaVolumePolicy
-		colorIcon: assets/img/integrations/components/JivaVolumePolicy-color.svg
-		whiteIcon: assets/img/integrations/components/JivaVolumePolicy-white.svg
-		description: 
-	-	name: JivaVolume
-		colorIcon: assets/img/integrations/components/JivaVolume-color.svg
-		whiteIcon: assets/img/integrations/components/JivaVolume-white.svg
-		description: 
+components: [
+{
+"name": "block-device"
+"colorIcon": "assets/img/integrations/openebs/components/block-device/icons/color/block-device-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/block-device/icons/white/block-device-white.svg"
+"description": ""
+},
+{
+"name": "block-device-claim"
+"colorIcon": "assets/img/integrations/openebs/components/block-device-claim/icons/color/block-device-claim-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/block-device-claim/icons/white/block-device-claim-white.svg"
+"description": ""
+},
+{
+"name": "lvm-node"
+"colorIcon": "assets/img/integrations/openebs/components/lvm-node/icons/color/lvm-node-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/lvm-node/icons/white/lvm-node-white.svg"
+"description": ""
+},
+{
+"name": "lvm-snapshot"
+"colorIcon": "assets/img/integrations/openebs/components/lvm-snapshot/icons/color/lvm-snapshot-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/lvm-snapshot/icons/white/lvm-snapshot-white.svg"
+"description": ""
+},
+{
+"name": "lvm-volume"
+"colorIcon": "assets/img/integrations/openebs/components/lvm-volume/icons/color/lvm-volume-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/lvm-volume/icons/white/lvm-volume-white.svg"
+"description": ""
+},
+{
+"name": "zfs-backup"
+"colorIcon": "assets/img/integrations/openebs/components/zfs-backup/icons/color/zfs-backup-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/zfs-backup/icons/white/zfs-backup-white.svg"
+"description": ""
+},
+{
+"name": "zfs-node"
+"colorIcon": "assets/img/integrations/openebs/components/zfs-node/icons/color/zfs-node-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/zfs-node/icons/white/zfs-node-white.svg"
+"description": ""
+},
+{
+"name": "zfs-restore"
+"colorIcon": "assets/img/integrations/openebs/components/zfs-restore/icons/color/zfs-restore-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/zfs-restore/icons/white/zfs-restore-white.svg"
+"description": ""
+},
+{
+"name": "zfs-snapshot"
+"colorIcon": "assets/img/integrations/openebs/components/zfs-snapshot/icons/color/zfs-snapshot-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/zfs-snapshot/icons/white/zfs-snapshot-white.svg"
+"description": ""
+},
+{
+"name": "zfs-volume"
+"colorIcon": "assets/img/integrations/openebs/components/zfs-volume/icons/color/zfs-volume-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/zfs-volume/icons/white/zfs-volume-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-backup"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-backup/icons/color/c-stor-backup-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-backup/icons/white/c-stor-backup-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-completed-backup"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-completed-backup/icons/color/c-stor-completed-backup-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-completed-backup/icons/white/c-stor-completed-backup-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-pool-cluster"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-pool-cluster/icons/color/c-stor-pool-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-pool-cluster/icons/white/c-stor-pool-cluster-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-pool-instance"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-pool-instance/icons/color/c-stor-pool-instance-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-pool-instance/icons/white/c-stor-pool-instance-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-restore"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-restore/icons/color/c-stor-restore-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-restore/icons/white/c-stor-restore-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-volume"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-volume/icons/color/c-stor-volume-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-volume/icons/white/c-stor-volume-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-volume-attachment"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-volume-attachment/icons/color/c-stor-volume-attachment-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-volume-attachment/icons/white/c-stor-volume-attachment-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-volume-config"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-volume-config/icons/color/c-stor-volume-config-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-volume-config/icons/white/c-stor-volume-config-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-volume-policy"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-volume-policy/icons/color/c-stor-volume-policy-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-volume-policy/icons/white/c-stor-volume-policy-white.svg"
+"description": ""
+},
+{
+"name": "c-stor-volume-replica"
+"colorIcon": "assets/img/integrations/openebs/components/c-stor-volume-replica/icons/color/c-stor-volume-replica-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/c-stor-volume-replica/icons/white/c-stor-volume-replica-white.svg"
+"description": ""
+},
+{
+"name": "migration-task"
+"colorIcon": "assets/img/integrations/openebs/components/migration-task/icons/color/migration-task-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/migration-task/icons/white/migration-task-white.svg"
+"description": ""
+},
+{
+"name": "upgrade-task"
+"colorIcon": "assets/img/integrations/openebs/components/upgrade-task/icons/color/upgrade-task-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/upgrade-task/icons/white/upgrade-task-white.svg"
+"description": ""
+},
+{
+"name": "jiva-volume-policy"
+"colorIcon": "assets/img/integrations/openebs/components/jiva-volume-policy/icons/color/jiva-volume-policy-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/jiva-volume-policy/icons/white/jiva-volume-policy-white.svg"
+"description": ""
+},
+{
+"name": "jiva-volume"
+"colorIcon": "assets/img/integrations/openebs/components/jiva-volume/icons/color/jiva-volume-color.svg"
+"whiteIcon": "assets/img/integrations/openebs/components/jiva-volume/icons/white/jiva-volume-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

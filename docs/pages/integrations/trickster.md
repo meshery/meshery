@@ -2,38 +2,50 @@
 layout: enhanced
 title: Trickster
 subtitle: Collaborative and visual infrastructure as code for Trickster
-image: /assets/img/integrations/trickster.svg
+image: /assets/img/integrations/trickster/icons/color/trickster-color.svg
 permalink: extensibility/integrations/trickster
 docURL: https://docs.meshery.io/extensibility/integrations/trickster
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
-	-	name: TricksterBackend
-		colorIcon: assets/img/integrations/components/TricksterBackend-color.svg
-		whiteIcon: assets/img/integrations/components/TricksterBackend-white.svg
-		description: 
-	-	name: TricksterCache
-		colorIcon: assets/img/integrations/components/TricksterCache-color.svg
-		whiteIcon: assets/img/integrations/components/TricksterCache-white.svg
-		description: 
-	-	name: TricksterRequestRewriter
-		colorIcon: assets/img/integrations/components/TricksterRequestRewriter-color.svg
-		whiteIcon: assets/img/integrations/components/TricksterRequestRewriter-white.svg
-		description: 
-	-	name: TricksterRule
-		colorIcon: assets/img/integrations/components/TricksterRule-color.svg
-		whiteIcon: assets/img/integrations/components/TricksterRule-white.svg
-		description: 
-	-	name: Trickster
-		colorIcon: assets/img/integrations/components/Trickster-color.svg
-		whiteIcon: assets/img/integrations/components/Trickster-white.svg
-		description: 
-	-	name: TricksterTracingConfig
-		colorIcon: assets/img/integrations/components/TricksterTracingConfig-color.svg
-		whiteIcon: assets/img/integrations/components/TricksterTracingConfig-white.svg
-		description: 
+components: [
+{
+"name": "trickster-backend"
+"colorIcon": "assets/img/integrations/trickster/components/trickster-backend/icons/color/trickster-backend-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster-backend/icons/white/trickster-backend-white.svg"
+"description": ""
+},
+{
+"name": "trickster-cache"
+"colorIcon": "assets/img/integrations/trickster/components/trickster-cache/icons/color/trickster-cache-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster-cache/icons/white/trickster-cache-white.svg"
+"description": ""
+},
+{
+"name": "trickster-request-rewriter"
+"colorIcon": "assets/img/integrations/trickster/components/trickster-request-rewriter/icons/color/trickster-request-rewriter-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster-request-rewriter/icons/white/trickster-request-rewriter-white.svg"
+"description": ""
+},
+{
+"name": "trickster-rule"
+"colorIcon": "assets/img/integrations/trickster/components/trickster-rule/icons/color/trickster-rule-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster-rule/icons/white/trickster-rule-white.svg"
+"description": ""
+},
+{
+"name": "trickster"
+"colorIcon": "assets/img/integrations/trickster/components/trickster/icons/color/trickster-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster/icons/white/trickster-white.svg"
+"description": ""
+},
+{
+"name": "trickster-tracing-config"
+"colorIcon": "assets/img/integrations/trickster/components/trickster-tracing-config/icons/color/trickster-tracing-config-color.svg"
+"whiteIcon": "assets/img/integrations/trickster/components/trickster-tracing-config/icons/white/trickster-tracing-config-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

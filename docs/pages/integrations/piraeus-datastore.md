@@ -2,14 +2,14 @@
 layout: enhanced
 title: Piraeus Datastore
 subtitle: Collaborative and visual infrastructure as code for Piraeus Datastore
-image: /assets/img/integrations/piraeus-datastore.svg
+image: /assets/img/integrations/piraeus-datastore/icons/color/piraeus-datastore-color.svg
 permalink: extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "DRBD-9 has great data replication efficiency. It provides synchronous,semi-synchronous and asynchronous replication schemes, and also supports RDMA for high-speed across-node connection.",

@@ -2,38 +2,50 @@
 layout: enhanced
 title: Harbor Operator
 subtitle: Collaborative and visual infrastructure as code for Harbor Operator
-image: /assets/img/integrations/harbor-operator.svg
+image: /assets/img/integrations/harbor-operator/icons/color/harbor-operator-color.svg
 permalink: extensibility/integrations/harbor-operator
 docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
 description: 
 category: Provisioning
 subcategory: Container Registry
 registrant: artifacthub
-components: 
-	-	name: InstanceChartRepository
-		colorIcon: assets/img/integrations/components/InstanceChartRepository-color.svg
-		whiteIcon: assets/img/integrations/components/InstanceChartRepository-white.svg
-		description: 
-	-	name: Instance
-		colorIcon: assets/img/integrations/components/Instance-color.svg
-		whiteIcon: assets/img/integrations/components/Instance-white.svg
-		description: 
-	-	name: Project
-		colorIcon: assets/img/integrations/components/Project-color.svg
-		whiteIcon: assets/img/integrations/components/Project-white.svg
-		description: 
-	-	name: Registry
-		colorIcon: assets/img/integrations/components/Registry-color.svg
-		whiteIcon: assets/img/integrations/components/Registry-white.svg
-		description: 
-	-	name: Replication
-		colorIcon: assets/img/integrations/components/Replication-color.svg
-		whiteIcon: assets/img/integrations/components/Replication-white.svg
-		description: 
-	-	name: User
-		colorIcon: assets/img/integrations/components/User-color.svg
-		whiteIcon: assets/img/integrations/components/User-white.svg
-		description: 
+components: [
+{
+"name": "instance-chart-repository"
+"colorIcon": "assets/img/integrations/harbor-operator/components/instance-chart-repository/icons/color/instance-chart-repository-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/instance-chart-repository/icons/white/instance-chart-repository-white.svg"
+"description": ""
+},
+{
+"name": "instance"
+"colorIcon": "assets/img/integrations/harbor-operator/components/instance/icons/color/instance-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/instance/icons/white/instance-white.svg"
+"description": ""
+},
+{
+"name": "project"
+"colorIcon": "assets/img/integrations/harbor-operator/components/project/icons/color/project-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/project/icons/white/project-white.svg"
+"description": ""
+},
+{
+"name": "registry"
+"colorIcon": "assets/img/integrations/harbor-operator/components/registry/icons/color/registry-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/registry/icons/white/registry-white.svg"
+"description": ""
+},
+{
+"name": "replication"
+"colorIcon": "assets/img/integrations/harbor-operator/components/replication/icons/color/replication-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/replication/icons/white/replication-white.svg"
+"description": ""
+},
+{
+"name": "user"
+"colorIcon": "assets/img/integrations/harbor-operator/components/user/icons/color/user-color.svg"
+"whiteIcon": "assets/img/integrations/harbor-operator/components/user/icons/white/user-white.svg"
+"description": ""
+}]
 featureList: [
   "Content signing and validation",
   "Security and vulnerability analysis",

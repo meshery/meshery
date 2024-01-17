@@ -2,14 +2,14 @@
 layout: enhanced
 title: Wasmedge Runtime
 subtitle: Collaborative and visual infrastructure as code for Wasmedge Runtime
-image: /assets/img/integrations/wasmedge-runtime.svg
+image: /assets/img/integrations/wasmedge-runtime/icons/color/wasmedge-runtime-color.svg
 permalink: extensibility/integrations/wasmedge-runtime
 docURL: https://docs.meshery.io/extensibility/integrations/wasmedgeruntime
 description: 
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

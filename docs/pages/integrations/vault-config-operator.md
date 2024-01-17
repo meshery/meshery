@@ -2,126 +2,182 @@
 layout: enhanced
 title: Vault Config Operator
 subtitle: Collaborative and visual infrastructure as code for Vault Config Operator
-image: /assets/img/integrations/vault-config-operator.svg
+image: /assets/img/integrations/vault-config-operator/icons/color/vault-config-operator-color.svg
 permalink: extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: AuthEngineMount
-		colorIcon: assets/img/integrations/components/AuthEngineMount-color.svg
-		whiteIcon: assets/img/integrations/components/AuthEngineMount-white.svg
-		description: 
-	-	name: DatabaseSecretEngineConfig
-		colorIcon: assets/img/integrations/components/DatabaseSecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/DatabaseSecretEngineConfig-white.svg
-		description: 
-	-	name: DatabaseSecretEngineRole
-		colorIcon: assets/img/integrations/components/DatabaseSecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/DatabaseSecretEngineRole-white.svg
-		description: 
-	-	name: DatabaseSecretEngineStaticRole
-		colorIcon: assets/img/integrations/components/DatabaseSecretEngineStaticRole-color.svg
-		whiteIcon: assets/img/integrations/components/DatabaseSecretEngineStaticRole-white.svg
-		description: 
-	-	name: GitHubSecretEngineConfig
-		colorIcon: assets/img/integrations/components/GitHubSecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/GitHubSecretEngineConfig-white.svg
-		description: 
-	-	name: GitHubSecretEngineRole
-		colorIcon: assets/img/integrations/components/GitHubSecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/GitHubSecretEngineRole-white.svg
-		description: 
-	-	name: JWTOIDCAuthEngineConfig
-		colorIcon: assets/img/integrations/components/JWTOIDCAuthEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/JWTOIDCAuthEngineConfig-white.svg
-		description: 
-	-	name: JWTOIDCAuthEngineRole
-		colorIcon: assets/img/integrations/components/JWTOIDCAuthEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/JWTOIDCAuthEngineRole-white.svg
-		description: 
-	-	name: KubernetesAuthEngineConfig
-		colorIcon: assets/img/integrations/components/KubernetesAuthEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/KubernetesAuthEngineConfig-white.svg
-		description: 
-	-	name: KubernetesAuthEngineRole
-		colorIcon: assets/img/integrations/components/KubernetesAuthEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/KubernetesAuthEngineRole-white.svg
-		description: 
-	-	name: KubernetesSecretEngineConfig
-		colorIcon: assets/img/integrations/components/KubernetesSecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/KubernetesSecretEngineConfig-white.svg
-		description: 
-	-	name: KubernetesSecretEngineRole
-		colorIcon: assets/img/integrations/components/KubernetesSecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/KubernetesSecretEngineRole-white.svg
-		description: 
-	-	name: LDAPAuthEngineConfig
-		colorIcon: assets/img/integrations/components/LDAPAuthEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/LDAPAuthEngineConfig-white.svg
-		description: 
-	-	name: LDAPAuthEngineGroup
-		colorIcon: assets/img/integrations/components/LDAPAuthEngineGroup-color.svg
-		whiteIcon: assets/img/integrations/components/LDAPAuthEngineGroup-white.svg
-		description: 
-	-	name: PasswordPolicy
-		colorIcon: assets/img/integrations/components/PasswordPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/PasswordPolicy-white.svg
-		description: 
-	-	name: PKISecretEngineConfig
-		colorIcon: assets/img/integrations/components/PKISecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/PKISecretEngineConfig-white.svg
-		description: 
-	-	name: PKISecretEngineRole
-		colorIcon: assets/img/integrations/components/PKISecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/PKISecretEngineRole-white.svg
-		description: 
-	-	name: QuaySecretEngineConfig
-		colorIcon: assets/img/integrations/components/QuaySecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/QuaySecretEngineConfig-white.svg
-		description: 
-	-	name: QuaySecretEngineRole
-		colorIcon: assets/img/integrations/components/QuaySecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/QuaySecretEngineRole-white.svg
-		description: 
-	-	name: QuaySecretEngineStaticRole
-		colorIcon: assets/img/integrations/components/QuaySecretEngineStaticRole-color.svg
-		whiteIcon: assets/img/integrations/components/QuaySecretEngineStaticRole-white.svg
-		description: 
-	-	name: RabbitMQSecretEngineConfig
-		colorIcon: assets/img/integrations/components/RabbitMQSecretEngineConfig-color.svg
-		whiteIcon: assets/img/integrations/components/RabbitMQSecretEngineConfig-white.svg
-		description: 
-	-	name: RabbitMQSecretEngineRole
-		colorIcon: assets/img/integrations/components/RabbitMQSecretEngineRole-color.svg
-		whiteIcon: assets/img/integrations/components/RabbitMQSecretEngineRole-white.svg
-		description: 
-	-	name: RandomSecret
-		colorIcon: assets/img/integrations/components/RandomSecret-color.svg
-		whiteIcon: assets/img/integrations/components/RandomSecret-white.svg
-		description: 
-	-	name: SecretEngineMount
-		colorIcon: assets/img/integrations/components/SecretEngineMount-color.svg
-		whiteIcon: assets/img/integrations/components/SecretEngineMount-white.svg
-		description: 
-	-	name: VaultSecret
-		colorIcon: assets/img/integrations/components/VaultSecret-color.svg
-		whiteIcon: assets/img/integrations/components/VaultSecret-white.svg
-		description: 
-	-	name: Policy
-		colorIcon: assets/img/integrations/components/Policy-color.svg
-		whiteIcon: assets/img/integrations/components/Policy-white.svg
-		description: 
-	-	name: GroupAlias
-		colorIcon: assets/img/integrations/components/GroupAlias-color.svg
-		whiteIcon: assets/img/integrations/components/GroupAlias-white.svg
-		description: 
-	-	name: Group
-		colorIcon: assets/img/integrations/components/Group-color.svg
-		whiteIcon: assets/img/integrations/components/Group-white.svg
-		description: 
+components: [
+{
+"name": "auth-engine-mount"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/auth-engine-mount/icons/color/auth-engine-mount-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/auth-engine-mount/icons/white/auth-engine-mount-white.svg"
+"description": ""
+},
+{
+"name": "database-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-config/icons/color/database-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-config/icons/white/database-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "database-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-role/icons/color/database-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-role/icons/white/database-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "database-secret-engine-static-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-static-role/icons/color/database-secret-engine-static-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/database-secret-engine-static-role/icons/white/database-secret-engine-static-role-white.svg"
+"description": ""
+},
+{
+"name": "git-hub-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/git-hub-secret-engine-config/icons/color/git-hub-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/git-hub-secret-engine-config/icons/white/git-hub-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "git-hub-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/git-hub-secret-engine-role/icons/color/git-hub-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/git-hub-secret-engine-role/icons/white/git-hub-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "jwtoidc-auth-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/jwtoidc-auth-engine-config/icons/color/jwtoidc-auth-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/jwtoidc-auth-engine-config/icons/white/jwtoidc-auth-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "jwtoidc-auth-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/jwtoidc-auth-engine-role/icons/color/jwtoidc-auth-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/jwtoidc-auth-engine-role/icons/white/jwtoidc-auth-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "kubernetes-auth-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-auth-engine-config/icons/color/kubernetes-auth-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-auth-engine-config/icons/white/kubernetes-auth-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "kubernetes-auth-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-auth-engine-role/icons/color/kubernetes-auth-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-auth-engine-role/icons/white/kubernetes-auth-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "kubernetes-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-secret-engine-config/icons/color/kubernetes-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-secret-engine-config/icons/white/kubernetes-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "kubernetes-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-secret-engine-role/icons/color/kubernetes-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/kubernetes-secret-engine-role/icons/white/kubernetes-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "ldap-auth-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/ldap-auth-engine-config/icons/color/ldap-auth-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/ldap-auth-engine-config/icons/white/ldap-auth-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "ldap-auth-engine-group"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/ldap-auth-engine-group/icons/color/ldap-auth-engine-group-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/ldap-auth-engine-group/icons/white/ldap-auth-engine-group-white.svg"
+"description": ""
+},
+{
+"name": "password-policy"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/password-policy/icons/color/password-policy-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/password-policy/icons/white/password-policy-white.svg"
+"description": ""
+},
+{
+"name": "pki-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/pki-secret-engine-config/icons/color/pki-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/pki-secret-engine-config/icons/white/pki-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "pki-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/pki-secret-engine-role/icons/color/pki-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/pki-secret-engine-role/icons/white/pki-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "quay-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-config/icons/color/quay-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-config/icons/white/quay-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "quay-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-role/icons/color/quay-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-role/icons/white/quay-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "quay-secret-engine-static-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-static-role/icons/color/quay-secret-engine-static-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/quay-secret-engine-static-role/icons/white/quay-secret-engine-static-role-white.svg"
+"description": ""
+},
+{
+"name": "rabbit-mq-secret-engine-config"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/rabbit-mq-secret-engine-config/icons/color/rabbit-mq-secret-engine-config-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/rabbit-mq-secret-engine-config/icons/white/rabbit-mq-secret-engine-config-white.svg"
+"description": ""
+},
+{
+"name": "rabbit-mq-secret-engine-role"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/rabbit-mq-secret-engine-role/icons/color/rabbit-mq-secret-engine-role-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/rabbit-mq-secret-engine-role/icons/white/rabbit-mq-secret-engine-role-white.svg"
+"description": ""
+},
+{
+"name": "random-secret"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/random-secret/icons/color/random-secret-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/random-secret/icons/white/random-secret-white.svg"
+"description": ""
+},
+{
+"name": "secret-engine-mount"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/secret-engine-mount/icons/color/secret-engine-mount-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/secret-engine-mount/icons/white/secret-engine-mount-white.svg"
+"description": ""
+},
+{
+"name": "vault-secret"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/vault-secret/icons/color/vault-secret-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/vault-secret/icons/white/vault-secret-white.svg"
+"description": ""
+},
+{
+"name": "policy"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/policy/icons/color/policy-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/policy/icons/white/policy-white.svg"
+"description": ""
+},
+{
+"name": "group-alias"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/group-alias/icons/color/group-alias-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/group-alias/icons/white/group-alias-white.svg"
+"description": ""
+},
+{
+"name": "group"
+"colorIcon": "assets/img/integrations/vault-config-operator/components/group/icons/color/group-color.svg"
+"whiteIcon": "assets/img/integrations/vault-config-operator/components/group/icons/white/group-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

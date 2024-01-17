@@ -2,38 +2,50 @@
 layout: enhanced
 title: Apache Shardingsphere Operator Charts
 subtitle: Collaborative and visual infrastructure as code for Apache Shardingsphere Operator Charts
-image: /assets/img/integrations/apache-shardingsphere-operator-charts.svg
+image: /assets/img/integrations/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
 permalink: extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: ComputeNode
-		colorIcon: assets/img/integrations/components/ComputeNode-color.svg
-		whiteIcon: assets/img/integrations/components/ComputeNode-white.svg
-		description: 
-	-	name: ShardingSphereProxy
-		colorIcon: assets/img/integrations/components/ShardingSphereProxy-color.svg
-		whiteIcon: assets/img/integrations/components/ShardingSphereProxy-white.svg
-		description: 
-	-	name: ShardingSphereProxyServerConfig
-		colorIcon: assets/img/integrations/components/ShardingSphereProxyServerConfig-color.svg
-		whiteIcon: assets/img/integrations/components/ShardingSphereProxyServerConfig-white.svg
-		description: 
-	-	name: Chaos
-		colorIcon: assets/img/integrations/components/Chaos-color.svg
-		whiteIcon: assets/img/integrations/components/Chaos-white.svg
-		description: 
-	-	name: StorageNode
-		colorIcon: assets/img/integrations/components/StorageNode-color.svg
-		whiteIcon: assets/img/integrations/components/StorageNode-white.svg
-		description: 
-	-	name: StorageProvider
-		colorIcon: assets/img/integrations/components/StorageProvider-color.svg
-		whiteIcon: assets/img/integrations/components/StorageProvider-white.svg
-		description: 
+components: [
+{
+"name": "compute-node"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/compute-node/icons/color/compute-node-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/compute-node/icons/white/compute-node-white.svg"
+"description": ""
+},
+{
+"name": "sharding-sphere-proxy"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/color/sharding-sphere-proxy-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/white/sharding-sphere-proxy-white.svg"
+"description": ""
+},
+{
+"name": "sharding-sphere-proxy-server-config"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/color/sharding-sphere-proxy-server-config-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/white/sharding-sphere-proxy-server-config-white.svg"
+"description": ""
+},
+{
+"name": "chaos"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/chaos/icons/color/chaos-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/chaos/icons/white/chaos-white.svg"
+"description": ""
+},
+{
+"name": "storage-node"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-node/icons/color/storage-node-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-node/icons/white/storage-node-white.svg"
+"description": ""
+},
+{
+"name": "storage-provider"
+"colorIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/color/storage-provider-color.svg"
+"whiteIcon": "assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/white/storage-provider-white.svg"
+"description": ""
+}]
 featureList: [
   "ShardingSphere provides a distributed database solution based on the underlying database, which can scale computing and storage horizontally.",
   "With a hybrid engine based on XA and BASE transactions, ShardingSphere provides distributed transaction capabilities on top of standalone databases, enabling data security across underlying data sources.",

@@ -2,46 +2,62 @@
 layout: enhanced
 title: Camel K
 subtitle: Collaborative and visual infrastructure as code for Camel K
-image: /assets/img/integrations/camel-k.svg
+image: /assets/img/integrations/camel-k/icons/color/camel-k-color.svg
 permalink: extensibility/integrations/camel-k
 docURL: https://docs.meshery.io/extensibility/integrations/camel-k
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
-	-	name: Build
-		colorIcon: assets/img/integrations/components/Build-color.svg
-		whiteIcon: assets/img/integrations/components/Build-white.svg
-		description: 
-	-	name: CamelCatalog
-		colorIcon: assets/img/integrations/components/CamelCatalog-color.svg
-		whiteIcon: assets/img/integrations/components/CamelCatalog-white.svg
-		description: 
-	-	name: IntegrationKit
-		colorIcon: assets/img/integrations/components/IntegrationKit-color.svg
-		whiteIcon: assets/img/integrations/components/IntegrationKit-white.svg
-		description: 
-	-	name: IntegrationPlatform
-		colorIcon: assets/img/integrations/components/IntegrationPlatform-color.svg
-		whiteIcon: assets/img/integrations/components/IntegrationPlatform-white.svg
-		description: 
-	-	name: Integration
-		colorIcon: assets/img/integrations/components/Integration-color.svg
-		whiteIcon: assets/img/integrations/components/Integration-white.svg
-		description: 
-	-	name: KameletBinding
-		colorIcon: assets/img/integrations/components/KameletBinding-color.svg
-		whiteIcon: assets/img/integrations/components/KameletBinding-white.svg
-		description: 
-	-	name: Kamelet
-		colorIcon: assets/img/integrations/components/Kamelet-color.svg
-		whiteIcon: assets/img/integrations/components/Kamelet-white.svg
-		description: 
-	-	name: Pipe
-		colorIcon: assets/img/integrations/components/Pipe-color.svg
-		whiteIcon: assets/img/integrations/components/Pipe-white.svg
-		description: 
+components: [
+{
+"name": "build"
+"colorIcon": "assets/img/integrations/camel-k/components/build/icons/color/build-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/build/icons/white/build-white.svg"
+"description": ""
+},
+{
+"name": "camel-catalog"
+"colorIcon": "assets/img/integrations/camel-k/components/camel-catalog/icons/color/camel-catalog-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/camel-catalog/icons/white/camel-catalog-white.svg"
+"description": ""
+},
+{
+"name": "integration-kit"
+"colorIcon": "assets/img/integrations/camel-k/components/integration-kit/icons/color/integration-kit-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/integration-kit/icons/white/integration-kit-white.svg"
+"description": ""
+},
+{
+"name": "integration-platform"
+"colorIcon": "assets/img/integrations/camel-k/components/integration-platform/icons/color/integration-platform-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/integration-platform/icons/white/integration-platform-white.svg"
+"description": ""
+},
+{
+"name": "integration"
+"colorIcon": "assets/img/integrations/camel-k/components/integration/icons/color/integration-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/integration/icons/white/integration-white.svg"
+"description": ""
+},
+{
+"name": "kamelet-binding"
+"colorIcon": "assets/img/integrations/camel-k/components/kamelet-binding/icons/color/kamelet-binding-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/kamelet-binding/icons/white/kamelet-binding-white.svg"
+"description": ""
+},
+{
+"name": "kamelet"
+"colorIcon": "assets/img/integrations/camel-k/components/kamelet/icons/color/kamelet-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/kamelet/icons/white/kamelet-white.svg"
+"description": ""
+},
+{
+"name": "pipe"
+"colorIcon": "assets/img/integrations/camel-k/components/pipe/icons/color/pipe-color.svg"
+"whiteIcon": "assets/img/integrations/camel-k/components/pipe/icons/white/pipe-white.svg"
+"description": ""
+}]
 featureList: [
   "Define routing and mediation rules in a variety of domain-specific languages.",
   "Enables easier integration with all kinds of transport or messaging models.",

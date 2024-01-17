@@ -2,14 +2,14 @@
 layout: enhanced
 title: Containerd
 subtitle: Collaborative and visual infrastructure as code for Containerd
-image: /assets/img/integrations/containerd.svg
+image: /assets/img/integrations/containerd/icons/color/containerd-color.svg
 permalink: extensibility/integrations/containerd
 docURL: https://docs.meshery.io/extensibility/integrations/containerd
 description: 
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Implements a chunk-based content-addressable filesystem on top of a called RAFS (Registry Acceleration File System) format.",
   "Improves the current OCI image specification.",

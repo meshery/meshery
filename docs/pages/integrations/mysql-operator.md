@@ -2,30 +2,38 @@
 layout: enhanced
 title: MySQL Operator
 subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
-image: /assets/img/integrations/mysql-operator.svg
+image: /assets/img/integrations/mysql-operator/icons/color/mysql-operator-color.svg
 permalink: extensibility/integrations/mysql-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: InnoDBCluster
-		colorIcon: assets/img/integrations/components/InnoDBCluster-color.svg
-		whiteIcon: assets/img/integrations/components/InnoDBCluster-white.svg
-		description: 
-	-	name: MySQLBackup
-		colorIcon: assets/img/integrations/components/MySQLBackup-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLBackup-white.svg
-		description: 
-	-	name: ClusterKopfPeering
-		colorIcon: assets/img/integrations/components/ClusterKopfPeering-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterKopfPeering-white.svg
-		description: 
-	-	name: KopfPeering
-		colorIcon: assets/img/integrations/components/KopfPeering-color.svg
-		whiteIcon: assets/img/integrations/components/KopfPeering-white.svg
-		description: 
+components: [
+{
+"name": "inno-db-cluster"
+"colorIcon": "assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/color/inno-db-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/white/inno-db-cluster-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-backup"
+"colorIcon": "assets/img/integrations/mysql-operator/components/my-sql-backup/icons/color/my-sql-backup-color.svg"
+"whiteIcon": "assets/img/integrations/mysql-operator/components/my-sql-backup/icons/white/my-sql-backup-white.svg"
+"description": ""
+},
+{
+"name": "cluster-kopf-peering"
+"colorIcon": "assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/color/cluster-kopf-peering-color.svg"
+"whiteIcon": "assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/white/cluster-kopf-peering-white.svg"
+"description": ""
+},
+{
+"name": "kopf-peering"
+"colorIcon": "assets/img/integrations/mysql-operator/components/kopf-peering/icons/color/kopf-peering-color.svg"
+"whiteIcon": "assets/img/integrations/mysql-operator/components/kopf-peering/icons/white/kopf-peering-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

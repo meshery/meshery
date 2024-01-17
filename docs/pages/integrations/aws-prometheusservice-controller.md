@@ -2,38 +2,50 @@
 layout: enhanced
 title: AWS Managed Service for Prometheus
 subtitle: Collaborative and visual infrastructure as code for AWS Managed Service for Prometheus
-image: /assets/img/integrations/aws-managed-service-for-prometheus.svg
+image: /assets/img/integrations/aws-managed-service-for-prometheus/icons/color/aws-managed-service-for-prometheus-color.svg
 permalink: extensibility/integrations/aws-managed-service-for-prometheus
 docURL: https://docs.meshery.io/extensibility/integrations/aws-prometheusservice-controller
 description: 
 category: Observability and Analysis
 subcategory: Metrics
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: AlertManagerDefinition
-		colorIcon: assets/img/integrations/components/AlertManagerDefinition-color.svg
-		whiteIcon: assets/img/integrations/components/AlertManagerDefinition-white.svg
-		description: 
-	-	name: Workspace
-		colorIcon: assets/img/integrations/components/Workspace-color.svg
-		whiteIcon: assets/img/integrations/components/Workspace-white.svg
-		description: 
-	-	name: LoggingConfiguration
-		colorIcon: assets/img/integrations/components/LoggingConfiguration-color.svg
-		whiteIcon: assets/img/integrations/components/LoggingConfiguration-white.svg
-		description: 
-	-	name: RuleGroupsNamespace
-		colorIcon: assets/img/integrations/components/RuleGroupsNamespace-color.svg
-		whiteIcon: assets/img/integrations/components/RuleGroupsNamespace-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "alert-manager-definition"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/alert-manager-definition/icons/color/alert-manager-definition-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/alert-manager-definition/icons/white/alert-manager-definition-white.svg"
+"description": ""
+},
+{
+"name": "workspace"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/workspace/icons/color/workspace-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/workspace/icons/white/workspace-white.svg"
+"description": ""
+},
+{
+"name": "logging-configuration"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/logging-configuration/icons/color/logging-configuration-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/logging-configuration/icons/white/logging-configuration-white.svg"
+"description": ""
+},
+{
+"name": "rule-groups-namespace"
+"colorIcon": "assets/img/integrations/aws-prometheusservice-controller/components/rule-groups-namespace/icons/color/rule-groups-namespace-color.svg"
+"whiteIcon": "assets/img/integrations/aws-prometheusservice-controller/components/rule-groups-namespace/icons/white/rule-groups-namespace-white.svg"
+"description": ""
+}]
 featureList: [
   "No collection agents required",
   "Amazon Managed Service for Prometheus includes a remote write-compatible API that can ingest metrics from OpenTelemetry, Prometheus libraries, and existing Prometheus servers.",

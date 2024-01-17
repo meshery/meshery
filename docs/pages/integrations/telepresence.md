@@ -2,14 +2,14 @@
 layout: enhanced
 title: Telepresence
 subtitle: Collaborative and visual infrastructure as code for Telepresence
-image: /assets/img/integrations/telepresence.svg
+image: /assets/img/integrations/telepresence/icons/color/telepresence-color.svg
 permalink: extensibility/integrations/telepresence
 docURL: https://docs.meshery.io/extensibility/integrations/telepresence
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

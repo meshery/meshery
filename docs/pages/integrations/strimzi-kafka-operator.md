@@ -2,14 +2,14 @@
 layout: enhanced
 title: Strimzi Kafka Operator
 subtitle: Collaborative and visual infrastructure as code for Strimzi Kafka Operator
-image: /assets/img/integrations/strimzi-kafka-operator.svg
+image: /assets/img/integrations/strimzi-kafka-operator/icons/color/strimzi-kafka-operator-color.svg
 permalink: extensibility/integrations/strimzi-kafka-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-kafka-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

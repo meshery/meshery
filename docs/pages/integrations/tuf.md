@@ -2,14 +2,14 @@
 layout: enhanced
 title: Tuf
 subtitle: Collaborative and visual infrastructure as code for Tuf
-image: /assets/img/integrations/tuf.svg
+image: /assets/img/integrations/tuf/icons/color/tuf-color.svg
 permalink: extensibility/integrations/tuf
 docURL: https://docs.meshery.io/extensibility/integrations/tuf
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

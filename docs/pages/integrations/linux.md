@@ -2,14 +2,14 @@
 layout: enhanced
 title: Linux
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
-image: /assets/img/integrations/linux.svg
+image: /assets/img/integrations/linux/icons/color/linux-color.svg
 permalink: extensibility/integrations/linux
 docURL: https://docs.meshery.io/installation/linux-mac
 description: 
 category: Platform
 subcategory: Operating System
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Faster and easier configuration",
   "Application isolation",

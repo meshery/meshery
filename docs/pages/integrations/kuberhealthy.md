@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kuberhealthy
 subtitle: Collaborative and visual infrastructure as code for Kuberhealthy
-image: /assets/img/integrations/kuberhealthy.svg
+image: /assets/img/integrations/kuberhealthy/icons/color/kuberhealthy-color.svg
 permalink: extensibility/integrations/kuberhealthy
 docURL: https://docs.meshery.io/extensibility/integrations/kuberhealthy
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

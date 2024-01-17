@@ -2,14 +2,14 @@
 layout: enhanced
 title: Athenz
 subtitle: Collaborative and visual infrastructure as code for Athenz
-image: /assets/img/integrations/athenz.svg
+image: /assets/img/integrations/athenz/icons/color/athenz-color.svg
 permalink: extensibility/integrations/athenz
 docURL: https://docs.meshery.io/extensibility/integrations/athenz
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Identities for all workloads in your hybrid environment.",
   "Authorization and identity provider solution for your Kubernetes clusters.",

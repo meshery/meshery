@@ -2,14 +2,14 @@
 layout: enhanced
 title: Confidential Containers
 subtitle: Collaborative and visual infrastructure as code for Confidential Containers
-image: /assets/img/integrations/confidential-containers.svg
+image: /assets/img/integrations/confidential-containers/icons/color/confidential-containers-color.svg
 permalink: extensibility/integrations/confidential-containers
 docURL: https://docs.meshery.io/extensibility/integrations/confidential containers
 description: 
 category: Runtime
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Allows cloud native application owners to enforce application security requirements.",
   "Transparent deployment of unmodified containers.",

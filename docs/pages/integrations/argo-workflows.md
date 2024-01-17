@@ -2,58 +2,80 @@
 layout: enhanced
 title: Argo Workflows
 subtitle: Collaborative and visual infrastructure as code for Argo Workflows
-image: /assets/img/integrations/argo-workflows.svg
+image: /assets/img/integrations/argo-workflows/icons/color/argo-workflows-color.svg
 permalink: extensibility/integrations/argo-workflows
 docURL: https://docs.meshery.io/extensibility/integrations/argo-workflows
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
-	-	name: ClusterWorkflowTemplate
-		colorIcon: assets/img/integrations/components/ClusterWorkflowTemplate-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterWorkflowTemplate-white.svg
-		description: 
-	-	name: CronWorkflow
-		colorIcon: assets/img/integrations/components/CronWorkflow-color.svg
-		whiteIcon: assets/img/integrations/components/CronWorkflow-white.svg
-		description: 
-	-	name: EventBus
-		colorIcon: assets/img/integrations/components/EventBus-color.svg
-		whiteIcon: assets/img/integrations/components/EventBus-white.svg
-		description: 
-	-	name: EventSource
-		colorIcon: assets/img/integrations/components/EventSource-color.svg
-		whiteIcon: assets/img/integrations/components/EventSource-white.svg
-		description: 
-	-	name: Sensor
-		colorIcon: assets/img/integrations/components/Sensor-color.svg
-		whiteIcon: assets/img/integrations/components/Sensor-white.svg
-		description: 
-	-	name: WorkflowArtifactGCTask
-		colorIcon: assets/img/integrations/components/WorkflowArtifactGCTask-color.svg
-		whiteIcon: assets/img/integrations/components/WorkflowArtifactGCTask-white.svg
-		description: 
-	-	name: WorkflowEventBinding
-		colorIcon: assets/img/integrations/components/WorkflowEventBinding-color.svg
-		whiteIcon: assets/img/integrations/components/WorkflowEventBinding-white.svg
-		description: 
-	-	name: Workflow
-		colorIcon: assets/img/integrations/components/Workflow-color.svg
-		whiteIcon: assets/img/integrations/components/Workflow-white.svg
-		description: 
-	-	name: WorkflowTaskResult
-		colorIcon: assets/img/integrations/components/WorkflowTaskResult-color.svg
-		whiteIcon: assets/img/integrations/components/WorkflowTaskResult-white.svg
-		description: 
-	-	name: WorkflowTaskSet
-		colorIcon: assets/img/integrations/components/WorkflowTaskSet-color.svg
-		whiteIcon: assets/img/integrations/components/WorkflowTaskSet-white.svg
-		description: 
-	-	name: WorkflowTemplate
-		colorIcon: assets/img/integrations/components/WorkflowTemplate-color.svg
-		whiteIcon: assets/img/integrations/components/WorkflowTemplate-white.svg
-		description: 
+components: [
+{
+"name": "cluster-workflow-template"
+"colorIcon": "assets/img/integrations/argo-workflows/components/cluster-workflow-template/icons/color/cluster-workflow-template-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/cluster-workflow-template/icons/white/cluster-workflow-template-white.svg"
+"description": ""
+},
+{
+"name": "cron-workflow"
+"colorIcon": "assets/img/integrations/argo-workflows/components/cron-workflow/icons/color/cron-workflow-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/cron-workflow/icons/white/cron-workflow-white.svg"
+"description": ""
+},
+{
+"name": "event-bus"
+"colorIcon": "assets/img/integrations/argo-workflows/components/event-bus/icons/color/event-bus-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/event-bus/icons/white/event-bus-white.svg"
+"description": ""
+},
+{
+"name": "event-source"
+"colorIcon": "assets/img/integrations/argo-workflows/components/event-source/icons/color/event-source-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/event-source/icons/white/event-source-white.svg"
+"description": ""
+},
+{
+"name": "sensor"
+"colorIcon": "assets/img/integrations/argo-workflows/components/sensor/icons/color/sensor-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/sensor/icons/white/sensor-white.svg"
+"description": ""
+},
+{
+"name": "workflow-artifact-gc-task"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow-artifact-gc-task/icons/color/workflow-artifact-gc-task-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow-artifact-gc-task/icons/white/workflow-artifact-gc-task-white.svg"
+"description": ""
+},
+{
+"name": "workflow-event-binding"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow-event-binding/icons/color/workflow-event-binding-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow-event-binding/icons/white/workflow-event-binding-white.svg"
+"description": ""
+},
+{
+"name": "workflow"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow/icons/color/workflow-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow/icons/white/workflow-white.svg"
+"description": ""
+},
+{
+"name": "workflow-task-result"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow-task-result/icons/color/workflow-task-result-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow-task-result/icons/white/workflow-task-result-white.svg"
+"description": ""
+},
+{
+"name": "workflow-task-set"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow-task-set/icons/color/workflow-task-set-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow-task-set/icons/white/workflow-task-set-white.svg"
+"description": ""
+},
+{
+"name": "workflow-template"
+"colorIcon": "assets/img/integrations/argo-workflows/components/workflow-template/icons/color/workflow-template-color.svg"
+"whiteIcon": "assets/img/integrations/argo-workflows/components/workflow-template/icons/white/workflow-template-white.svg"
+"description": ""
+}]
 featureList: [
   "UI to visualize and manage Workflows.",
   "Workflow templating to store commonly used Workflows in the cluster.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: K8GB
 subtitle: Collaborative and visual infrastructure as code for K8GB
-image: /assets/img/integrations/k8gb.svg
+image: /assets/img/integrations/k8gb/icons/color/k8gb-color.svg
 permalink: extensibility/integrations/k8gb
 docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 
 category: Orchestration & Management
 subcategory: Coordination & Service Discovery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

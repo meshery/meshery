@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubesphere
 subtitle: Collaborative and visual infrastructure as code for Kubesphere
-image: /assets/img/integrations/kubesphere.svg
+image: /assets/img/integrations/kubesphere/icons/color/kubesphere-color.svg
 permalink: extensibility/integrations/kubesphere
 docURL: https://docs.meshery.io/installation/kubernetes/kubesphere
 description: 
 category: Platform
 subcategory: Certified Kubernetes - Distribution
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Teller
 subtitle: Collaborative and visual infrastructure as code for Teller
-image: /assets/img/integrations/teller.svg
+image: /assets/img/integrations/teller/icons/color/teller-color.svg
 permalink: extensibility/integrations/teller
 docURL: https://docs.meshery.io/extensibility/integrations/teller
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

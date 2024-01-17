@@ -2,46 +2,62 @@
 layout: enhanced
 title: Grafana Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /assets/img/integrations/grafana-operator.svg
+image: /assets/img/integrations/grafana-operator/icons/color/grafana-operator-color.svg
 permalink: extensibility/integrations/grafana-operator
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-operator
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
-	-	name: GrafanaDashboard
-		colorIcon: assets/img/integrations/components/GrafanaDashboard-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaDashboard-white.svg
-		description: 
-	-	name: GrafanaDataSource
-		colorIcon: assets/img/integrations/components/GrafanaDataSource-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaDataSource-white.svg
-		description: 
-	-	name: GrafanaFolder
-		colorIcon: assets/img/integrations/components/GrafanaFolder-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaFolder-white.svg
-		description: 
-	-	name: GrafanaNotificationChannel
-		colorIcon: assets/img/integrations/components/GrafanaNotificationChannel-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaNotificationChannel-white.svg
-		description: 
-	-	name: Grafana
-		colorIcon: assets/img/integrations/components/Grafana-color.svg
-		whiteIcon: assets/img/integrations/components/Grafana-white.svg
-		description: 
-	-	name: GrafanaDatasource
-		colorIcon: assets/img/integrations/components/GrafanaDatasource-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaDatasource-white.svg
-		description: 
-	-	name: GrafanaConnection
-		colorIcon: assets/img/integrations/components/GrafanaConnection-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaConnection-white.svg
-		description: 
-	-	name: GrafanaCredential
-		colorIcon: assets/img/integrations/components/GrafanaCredential-color.svg
-		whiteIcon: assets/img/integrations/components/GrafanaCredential-white.svg
-		description: 
+components: [
+{
+"name": "grafana-dashboard"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg"
+"description": ""
+},
+{
+"name": "grafana-data-source"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-data-source/icons/color/grafana-data-source-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-data-source/icons/white/grafana-data-source-white.svg"
+"description": ""
+},
+{
+"name": "grafana-folder"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-folder/icons/color/grafana-folder-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-folder/icons/white/grafana-folder-white.svg"
+"description": ""
+},
+{
+"name": "grafana-notification-channel"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/color/grafana-notification-channel-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-notification-channel/icons/white/grafana-notification-channel-white.svg"
+"description": ""
+},
+{
+"name": "grafana"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana/icons/color/grafana-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana/icons/white/grafana-white.svg"
+"description": ""
+},
+{
+"name": "grafana-datasource"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-datasource/icons/color/grafana-datasource-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-datasource/icons/white/grafana-datasource-white.svg"
+"description": ""
+},
+{
+"name": "grafana-connection"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-connection/icons/color/grafana-connection-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-connection/icons/white/grafana-connection-white.svg"
+"description": ""
+},
+{
+"name": "grafana-credential"
+"colorIcon": "assets/img/integrations/grafana-operator/components/grafana-credential/icons/color/grafana-credential-color.svg"
+"whiteIcon": "assets/img/integrations/grafana-operator/components/grafana-credential/icons/white/grafana-credential-white.svg"
+"description": ""
+}]
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",

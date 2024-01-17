@@ -2,14 +2,14 @@
 layout: enhanced
 title: Containerssh
 subtitle: Collaborative and visual infrastructure as code for Containerssh
-image: /assets/img/integrations/containerssh.svg
+image: /assets/img/integrations/containerssh/icons/color/containerssh-color.svg
 permalink: extensibility/integrations/containerssh
 docURL: https://docs.meshery.io/extensibility/integrations/containerssh
 description: 
 category: Tools
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

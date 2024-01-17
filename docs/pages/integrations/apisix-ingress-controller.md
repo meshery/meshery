@@ -2,42 +2,56 @@
 layout: enhanced
 title: APISIX Ingress Controller
 subtitle: Collaborative and visual infrastructure as code for APISIX Ingress Controller
-image: /assets/img/integrations/apisix-ingress-controller.svg
+image: /assets/img/integrations/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
 permalink: extensibility/integrations/apisix-ingress-controller
 docURL: https://docs.meshery.io/extensibility/integrations/apisix-ingress-controller
 description: 
 category: Cloud Native Network
 subcategory: API Gateway
 registrant: artifacthub
-components: 
-	-	name: ApisixClusterConfig
-		colorIcon: assets/img/integrations/components/ApisixClusterConfig-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixClusterConfig-white.svg
-		description: 
-	-	name: ApisixConsumer
-		colorIcon: assets/img/integrations/components/ApisixConsumer-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixConsumer-white.svg
-		description: 
-	-	name: ApisixRoute
-		colorIcon: assets/img/integrations/components/ApisixRoute-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixRoute-white.svg
-		description: 
-	-	name: ApisixTls
-		colorIcon: assets/img/integrations/components/ApisixTls-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixTls-white.svg
-		description: 
-	-	name: ApisixUpstream
-		colorIcon: assets/img/integrations/components/ApisixUpstream-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixUpstream-white.svg
-		description: 
-	-	name: ApisixPluginConfig
-		colorIcon: assets/img/integrations/components/ApisixPluginConfig-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixPluginConfig-white.svg
-		description: 
-	-	name: ApisixGlobalRule
-		colorIcon: assets/img/integrations/components/ApisixGlobalRule-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixGlobalRule-white.svg
-		description: 
+components: [
+{
+"name": "apisix-cluster-config"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-cluster-config/icons/color/apisix-cluster-config-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-cluster-config/icons/white/apisix-cluster-config-white.svg"
+"description": ""
+},
+{
+"name": "apisix-consumer"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-consumer/icons/color/apisix-consumer-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-consumer/icons/white/apisix-consumer-white.svg"
+"description": ""
+},
+{
+"name": "apisix-route"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-route/icons/color/apisix-route-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-route/icons/white/apisix-route-white.svg"
+"description": ""
+},
+{
+"name": "apisix-tls"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-tls/icons/color/apisix-tls-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-tls/icons/white/apisix-tls-white.svg"
+"description": ""
+},
+{
+"name": "apisix-upstream"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-upstream/icons/color/apisix-upstream-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-upstream/icons/white/apisix-upstream-white.svg"
+"description": ""
+},
+{
+"name": "apisix-plugin-config"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-plugin-config/icons/color/apisix-plugin-config-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-plugin-config/icons/white/apisix-plugin-config-white.svg"
+"description": ""
+},
+{
+"name": "apisix-global-rule"
+"colorIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/color/apisix-global-rule-color.svg"
+"whiteIcon": "assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/white/apisix-global-rule-white.svg"
+"description": ""
+}]
 featureList: [
   "The Apache APISIX Dashboard is designed to make it as easy as possible for users to operate through a frontend interface.",
   "The Apache APISIX dashboard is flexible to User demands.",

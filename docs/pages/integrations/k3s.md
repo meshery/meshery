@@ -2,14 +2,14 @@
 layout: enhanced
 title: K3s
 subtitle: Collaborative and visual infrastructure as code for K3s
-image: /assets/img/integrations/k3s.svg
+image: /assets/img/integrations/k3s/icons/color/k3s-color.svg
 permalink: extensibility/integrations/k3s
 docURL: https://docs.meshery.io/extensibility/integrations/k3s
 description: 
 category: Platform
 subcategory: Kubernetes
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

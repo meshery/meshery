@@ -2,14 +2,14 @@
 layout: enhanced
 title: Open Service Mesh
 subtitle: Access all that Open Service Mesh has to offer
-image: /assets/img/integrations/open-service-mesh.svg
+image: /assets/img/integrations/open-service-mesh/icons/color/open-service-mesh-color.svg
 permalink: extensibility/integrations/open-service-mesh
 docURL: https://docs.meshery.io/extensibility/adapters/osm
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Configuration an simplier understanding of your Open Service Mesh deployments and microservices",
   "Configure and chain Envoy WASM filters",

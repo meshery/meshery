@@ -2,26 +2,32 @@
 layout: enhanced
 title: AWS Secrets Manager
 subtitle: Collaborative and visual infrastructure as code for AWS Secrets Manager
-image: /assets/img/integrations/aws-secrets-manager.svg
+image: /assets/img/integrations/aws-secrets-manager/icons/color/aws-secrets-manager-color.svg
 permalink: extensibility/integrations/aws-secrets-manager
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
 description: 
 category: Security & Compliance
 subcategory: Security Identity Compliance
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: Secret
-		colorIcon: assets/img/integrations/components/Secret-color.svg
-		whiteIcon: assets/img/integrations/components/Secret-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-secretsmanager-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-secretsmanager-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-secretsmanager-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-secretsmanager-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "secret"
+"colorIcon": "assets/img/integrations/aws-secretsmanager-controller/components/secret/icons/color/secret-color.svg"
+"whiteIcon": "assets/img/integrations/aws-secretsmanager-controller/components/secret/icons/white/secret-white.svg"
+"description": ""
+}]
 featureList: [
   "Centrally store and manage credentials, API keys, and other secrets.",
   "Use AWS Identity and Access Management (IAM) permissions policies to manage access to your secrets.",

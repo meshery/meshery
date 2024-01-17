@@ -2,14 +2,14 @@
 layout: enhanced
 title: Submariner
 subtitle: Collaborative and visual infrastructure as code for Submariner
-image: /assets/img/integrations/submariner.svg
+image: /assets/img/integrations/submariner/icons/color/submariner-color.svg
 permalink: extensibility/integrations/submariner
 docURL: https://docs.meshery.io/extensibility/integrations/submariner
 description: 
 category: Runtime
 subcategory: Cloud Native Network
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

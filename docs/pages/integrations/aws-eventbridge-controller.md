@@ -2,38 +2,50 @@
 layout: enhanced
 title: AWS EventBridge
 subtitle: Collaborative and visual infrastructure as code for AWS EventBridge
-image: /assets/img/integrations/aws-eventbridge.svg
+image: /assets/img/integrations/aws-eventbridge/icons/color/aws-eventbridge-color.svg
 permalink: extensibility/integrations/aws-eventbridge
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-controller
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: aws
-components: 
-	-	name: Archive
-		colorIcon: assets/img/integrations/components/Archive-color.svg
-		whiteIcon: assets/img/integrations/components/Archive-white.svg
-		description: 
-	-	name: Endpoint
-		colorIcon: assets/img/integrations/components/Endpoint-color.svg
-		whiteIcon: assets/img/integrations/components/Endpoint-white.svg
-		description: 
-	-	name: EventBus
-		colorIcon: assets/img/integrations/components/EventBus-color.svg
-		whiteIcon: assets/img/integrations/components/EventBus-white.svg
-		description: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: Rule
-		colorIcon: assets/img/integrations/components/Rule-color.svg
-		whiteIcon: assets/img/integrations/components/Rule-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
+components: [
+{
+"name": "archive"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/archive/icons/white/archive-white.svg"
+"description": ""
+},
+{
+"name": "endpoint"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/endpoint/icons/color/endpoint-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/endpoint/icons/white/endpoint-white.svg"
+"description": ""
+},
+{
+"name": "event-bus"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/event-bus/icons/color/event-bus-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/event-bus/icons/white/event-bus-white.svg"
+"description": ""
+},
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "rule"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/rule/icons/color/rule-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/rule/icons/white/rule-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+}]
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",
   "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Hexa
 subtitle: Collaborative and visual infrastructure as code for Hexa
-image: /assets/img/integrations/hexa.svg
+image: /assets/img/integrations/hexa/icons/color/hexa-color.svg
 permalink: extensibility/integrations/hexa
 docURL: https://docs.meshery.io/extensibility/integrations/hexa
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

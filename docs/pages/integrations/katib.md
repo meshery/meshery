@@ -2,26 +2,32 @@
 layout: enhanced
 title: Kubeflow Katib
 subtitle: Collaborative and visual infrastructure as code for Kubeflow Katib
-image: /assets/img/integrations/kubeflow-katib.svg
+image: /assets/img/integrations/kubeflow-katib/icons/color/kubeflow-katib-color.svg
 permalink: extensibility/integrations/kubeflow-katib
 docURL: https://docs.meshery.io/extensibility/integrations/katib
 description: 
 category: Machine Learning
 subcategory: Machine Learning
 registrant: artifacthub
-components: 
-	-	name: Experiment
-		colorIcon: assets/img/integrations/components/Experiment-color.svg
-		whiteIcon: assets/img/integrations/components/Experiment-white.svg
-		description: 
-	-	name: Suggestion
-		colorIcon: assets/img/integrations/components/Suggestion-color.svg
-		whiteIcon: assets/img/integrations/components/Suggestion-white.svg
-		description: 
-	-	name: Trial
-		colorIcon: assets/img/integrations/components/Trial-color.svg
-		whiteIcon: assets/img/integrations/components/Trial-white.svg
-		description: 
+components: [
+{
+"name": "experiment"
+"colorIcon": "assets/img/integrations/katib/components/experiment/icons/color/experiment-color.svg"
+"whiteIcon": "assets/img/integrations/katib/components/experiment/icons/white/experiment-white.svg"
+"description": ""
+},
+{
+"name": "suggestion"
+"colorIcon": "assets/img/integrations/katib/components/suggestion/icons/color/suggestion-color.svg"
+"whiteIcon": "assets/img/integrations/katib/components/suggestion/icons/white/suggestion-white.svg"
+"description": ""
+},
+{
+"name": "trial"
+"colorIcon": "assets/img/integrations/katib/components/trial/icons/color/trial-color.svg"
+"whiteIcon": "assets/img/integrations/katib/components/trial/icons/white/trial-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

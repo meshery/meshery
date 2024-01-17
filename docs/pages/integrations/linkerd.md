@@ -2,14 +2,14 @@
 layout: enhanced
 title: Linkerd
 subtitle: Collaborative and visual infrastructure as code for Linkerd
-image: /assets/img/integrations/linkerd.svg
+image: /assets/img/integrations/linkerd/icons/color/linkerd-color.svg
 permalink: extensibility/integrations/linkerd
 docURL: https://docs.meshery.io/extensibility/adapters/linkerd
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Visually configure and operate Linkerd with real-time topology",
   "Use Linkerd best practice designs and templates",

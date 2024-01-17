@@ -2,14 +2,14 @@
 layout: enhanced
 title: Strimzi Registry Operator
 subtitle: Collaborative and visual infrastructure as code for Strimzi Registry Operator
-image: /assets/img/integrations/strimzi-registry-operator.svg
+image: /assets/img/integrations/strimzi-registry-operator/icons/color/strimzi-registry-operator-color.svg
 permalink: extensibility/integrations/strimzi-registry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-registry-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

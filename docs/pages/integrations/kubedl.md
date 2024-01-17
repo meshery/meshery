@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubedl
 subtitle: Collaborative and visual infrastructure as code for Kubedl
-image: /assets/img/integrations/kubedl.svg
+image: /assets/img/integrations/kubedl/icons/color/kubedl-color.svg
 permalink: extensibility/integrations/kubedl
 docURL: https://docs.meshery.io/extensibility/integrations/kubedl
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Backstage
 subtitle: Collaborative and visual infrastructure as code for Backstage
-image: /assets/img/integrations/backstage.svg
+image: /assets/img/integrations/backstage/icons/color/backstage-color.svg
 permalink: extensibility/integrations/backstage
 docURL: https://docs.meshery.io/extensibility/integrations/backstage
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Restore order to your microservices and infrastructure and enables your product teams to ship high-quality code quickly — without compromising autonomy.",
   "Unifies all your infrastructure tooling, services, and documentation to create a streamlined development environment from end to end.",

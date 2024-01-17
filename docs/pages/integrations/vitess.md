@@ -2,14 +2,14 @@
 layout: enhanced
 title: Vitess
 subtitle: Collaborative and visual infrastructure as code for Vitess
-image: /assets/img/integrations/vitess.svg
+image: /assets/img/integrations/vitess/icons/color/vitess-color.svg
 permalink: extensibility/integrations/vitess
 docURL: https://docs.meshery.io/extensibility/integrations/vitess
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

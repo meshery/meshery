@@ -2,26 +2,32 @@
 layout: enhanced
 title: GitLab
 subtitle: Collaborative and visual infrastructure as code for GitLab
-image: /assets/img/integrations/gitlab.svg
+image: /assets/img/integrations/gitlab/icons/color/gitlab-color.svg
 permalink: extensibility/integrations/gitlab
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab
 description: 
 category: App Definition and Development
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
-	-	name: Backend
-		colorIcon: assets/img/integrations/components/Backend-color.svg
-		whiteIcon: assets/img/integrations/components/Backend-white.svg
-		description: 
-	-	name: Defaults
-		colorIcon: assets/img/integrations/components/Defaults-color.svg
-		whiteIcon: assets/img/integrations/components/Defaults-white.svg
-		description: 
-	-	name: Global
-		colorIcon: assets/img/integrations/components/Global-color.svg
-		whiteIcon: assets/img/integrations/components/Global-white.svg
-		description: 
+components: [
+{
+"name": "backend"
+"colorIcon": "assets/img/integrations/gitlab/components/backend/icons/color/backend-color.svg"
+"whiteIcon": "assets/img/integrations/gitlab/components/backend/icons/white/backend-white.svg"
+"description": ""
+},
+{
+"name": "defaults"
+"colorIcon": "assets/img/integrations/gitlab/components/defaults/icons/color/defaults-color.svg"
+"whiteIcon": "assets/img/integrations/gitlab/components/defaults/icons/white/defaults-white.svg"
+"description": ""
+},
+{
+"name": "global"
+"colorIcon": "assets/img/integrations/gitlab/components/global/icons/color/global-color.svg"
+"whiteIcon": "assets/img/integrations/gitlab/components/global/icons/white/global-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

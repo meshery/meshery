@@ -2,18 +2,20 @@
 layout: enhanced
 title: Kubevault Operator
 subtitle: Collaborative and visual infrastructure as code for Kubevault Operator
-image: /assets/img/integrations/kubevault-operator.svg
+image: /assets/img/integrations/kubevault-operator/icons/color/kubevault-operator-color.svg
 permalink: extensibility/integrations/kubevault-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-operator
 description: 
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
-	-	name: VaultServer
-		colorIcon: assets/img/integrations/components/VaultServer-color.svg
-		whiteIcon: assets/img/integrations/components/VaultServer-white.svg
-		description: 
+components: [
+{
+"name": "vault-server"
+"colorIcon": "assets/img/integrations/kubevault-operator/components/vault-server/icons/color/vault-server-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-operator/components/vault-server/icons/white/vault-server-white.svg"
+"description": ""
+}]
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

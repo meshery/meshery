@@ -2,26 +2,32 @@
 layout: enhanced
 title: Flagger
 subtitle: Collaborative and visual infrastructure as code for Flagger
-image: /assets/img/integrations/flagger.svg
+image: /assets/img/integrations/flagger/icons/color/flagger-color.svg
 permalink: extensibility/integrations/flagger
 docURL: https://docs.meshery.io/extensibility/integrations/flagger
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
-	-	name: Canary
-		colorIcon: assets/img/integrations/components/Canary-color.svg
-		whiteIcon: assets/img/integrations/components/Canary-white.svg
-		description: 
-	-	name: MetricTemplate
-		colorIcon: assets/img/integrations/components/MetricTemplate-color.svg
-		whiteIcon: assets/img/integrations/components/MetricTemplate-white.svg
-		description: 
-	-	name: AlertProvider
-		colorIcon: assets/img/integrations/components/AlertProvider-color.svg
-		whiteIcon: assets/img/integrations/components/AlertProvider-white.svg
-		description: 
+components: [
+{
+"name": "canary"
+"colorIcon": "assets/img/integrations/flagger/components/canary/icons/color/canary-color.svg"
+"whiteIcon": "assets/img/integrations/flagger/components/canary/icons/white/canary-white.svg"
+"description": ""
+},
+{
+"name": "metric-template"
+"colorIcon": "assets/img/integrations/flagger/components/metric-template/icons/color/metric-template-color.svg"
+"whiteIcon": "assets/img/integrations/flagger/components/metric-template/icons/white/metric-template-white.svg"
+"description": ""
+},
+{
+"name": "alert-provider"
+"colorIcon": "assets/img/integrations/flagger/components/alert-provider/icons/color/alert-provider-color.svg"
+"whiteIcon": "assets/img/integrations/flagger/components/alert-provider/icons/white/alert-provider-white.svg"
+"description": ""
+}]
 featureList: [
   "Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)",
   "Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.",

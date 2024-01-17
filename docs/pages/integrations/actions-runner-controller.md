@@ -2,14 +2,14 @@
 layout: enhanced
 title: Actions Runner Controller (ARC)
 subtitle: Collaborative and visual infrastructure as code for Actions Runner Controller (ARC)
-image: /assets/img/integrations/actions-runner-controller-(arc).svg
+image: /assets/img/integrations/actions-runner-controller-(arc)/icons/color/actions-runner-controller-(arc)-color.svg
 permalink: extensibility/integrations/actions-runner-controller-(arc)
 docURL: https://docs.meshery.io/extensibility/integrations/actions-runner-controller
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Deploy self hosted runners on Kubernetes cluster with a simple set of commands.",
   "Auto scale runners based on demand.",

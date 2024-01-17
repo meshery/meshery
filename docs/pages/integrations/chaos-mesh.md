@@ -2,22 +2,26 @@
 layout: enhanced
 title: Chaos Mesh
 subtitle: Collaborative and visual infrastructure as code for Chaos Mesh
-image: /assets/img/integrations/chaos-mesh.svg
+image: /assets/img/integrations/chaos-mesh/icons/color/chaos-mesh-color.svg
 permalink: extensibility/integrations/chaos-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/chaos-mesh
 description: 
 category: Observability and Analysis
 subcategory: Chaos Engineering
 registrant: artifacthub
-components: 
-	-	name: BlockChaos
-		colorIcon: assets/img/integrations/components/BlockChaos-color.svg
-		whiteIcon: assets/img/integrations/components/BlockChaos-white.svg
-		description: 
-	-	name: RemoteCluster
-		colorIcon: assets/img/integrations/components/RemoteCluster-color.svg
-		whiteIcon: assets/img/integrations/components/RemoteCluster-white.svg
-		description: 
+components: [
+{
+"name": "block-chaos"
+"colorIcon": "assets/img/integrations/chaos-mesh/components/block-chaos/icons/color/block-chaos-color.svg"
+"whiteIcon": "assets/img/integrations/chaos-mesh/components/block-chaos/icons/white/block-chaos-white.svg"
+"description": ""
+},
+{
+"name": "remote-cluster"
+"colorIcon": "assets/img/integrations/chaos-mesh/components/remote-cluster/icons/color/remote-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/chaos-mesh/components/remote-cluster/icons/white/remote-cluster-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

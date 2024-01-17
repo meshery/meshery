@@ -2,14 +2,14 @@
 layout: enhanced
 title: Docker
 subtitle: Collaborative and visual infrastructure as code for Docker
-image: /assets/img/integrations/docker.svg
+image: /assets/img/integrations/docker/icons/color/docker-color.svg
 permalink: extensibility/integrations/docker
 docURL: https://docs.meshery.io/installation/docker 
 description: 
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.",
   "Convert your Docker Compose apps to Kubernetes apps.",

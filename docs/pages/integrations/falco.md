@@ -2,14 +2,14 @@
 layout: enhanced
 title: Falco
 subtitle: Collaborative and visual infrastructure as code for Falco
-image: /assets/img/integrations/falco.svg
+image: /assets/img/integrations/falco/icons/color/falco-color.svg
 permalink: extensibility/integrations/falco
 docURL: https://docs.meshery.io/extensibility/integrations/falco
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

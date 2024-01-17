@@ -2,14 +2,14 @@
 layout: enhanced
 title: BFE
 subtitle: Collaborative and visual infrastructure as code for BFE
-image: /assets/img/integrations/bfe.svg
+image: /assets/img/integrations/bfe/icons/color/bfe-color.svg
 permalink: extensibility/integrations/bfe
 docURL: https://docs.meshery.io/extensibility/integrations/bfe
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "BFE has a builtin plugin framework that makes it possible to develop new features rapidly by writing plugins.",
   "BFE is designed to provide every tenant a dedicated share of the instance. Each tenant&ldquos configuration is isolated and remains invisible to other tenants",

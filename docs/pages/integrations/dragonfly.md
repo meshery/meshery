@@ -2,14 +2,14 @@
 layout: enhanced
 title: Dragonfly
 subtitle: Collaborative and visual infrastructure as code for Dragonfly
-image: /assets/img/integrations/dragonfly.svg
+image: /assets/img/integrations/dragonfly/icons/color/dragonfly-color.svg
 permalink: extensibility/integrations/dragonfly
 docURL: https://docs.meshery.io/extensibility/integrations/dragonfly
 description: 
 category: Provisioning
 subcategory: Container Registry
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

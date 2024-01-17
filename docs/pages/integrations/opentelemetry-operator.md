@@ -2,18 +2,20 @@
 layout: enhanced
 title: OpenTelemetry Operator
 subtitle: Collaborative and visual infrastructure as code for OpenTelemetry Operator
-image: /assets/img/integrations/opentelemetry-operator.svg
+image: /assets/img/integrations/opentelemetry-operator/icons/color/opentelemetry-operator-color.svg
 permalink: extensibility/integrations/opentelemetry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/opentelemetry-operator
 description: 
 category: Observability and Analysis
 subcategory: Tracing
 registrant: artifacthub
-components: 
-	-	name: OpAMPBridge
-		colorIcon: assets/img/integrations/components/OpAMPBridge-color.svg
-		whiteIcon: assets/img/integrations/components/OpAMPBridge-white.svg
-		description: 
+components: [
+{
+"name": "op-amp-bridge"
+"colorIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg"
+"whiteIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

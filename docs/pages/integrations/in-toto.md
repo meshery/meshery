@@ -2,14 +2,14 @@
 layout: enhanced
 title: In Toto
 subtitle: Collaborative and visual infrastructure as code for In Toto
-image: /assets/img/integrations/in-toto.svg
+image: /assets/img/integrations/in-toto/icons/color/in-toto-color.svg
 permalink: extensibility/integrations/in-toto
 docURL: https://docs.meshery.io/extensibility/integrations/in-toto
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,26 +2,32 @@
 layout: enhanced
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as code for AWX Operator
-image: /assets/img/integrations/awx-operator.svg
+image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg
 permalink: extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 
 category: Orchestration & Management
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
-	-	name: AWXBackup
-		colorIcon: assets/img/integrations/components/AWXBackup-color.svg
-		whiteIcon: assets/img/integrations/components/AWXBackup-white.svg
-		description: 
-	-	name: AWXRestore
-		colorIcon: assets/img/integrations/components/AWXRestore-color.svg
-		whiteIcon: assets/img/integrations/components/AWXRestore-white.svg
-		description: 
-	-	name: AWX
-		colorIcon: assets/img/integrations/components/AWX-color.svg
-		whiteIcon: assets/img/integrations/components/AWX-white.svg
-		description: 
+components: [
+{
+"name": "awx-backup"
+"colorIcon": "assets/img/integrations/awx-operator/components/awx-backup/icons/color/awx-backup-color.svg"
+"whiteIcon": "assets/img/integrations/awx-operator/components/awx-backup/icons/white/awx-backup-white.svg"
+"description": ""
+},
+{
+"name": "awx-restore"
+"colorIcon": "assets/img/integrations/awx-operator/components/awx-restore/icons/color/awx-restore-color.svg"
+"whiteIcon": "assets/img/integrations/awx-operator/components/awx-restore/icons/white/awx-restore-white.svg"
+"description": ""
+},
+{
+"name": "awx"
+"colorIcon": "assets/img/integrations/awx-operator/components/awx/icons/color/awx-color.svg"
+"whiteIcon": "assets/img/integrations/awx-operator/components/awx/icons/white/awx-white.svg"
+"description": ""
+}]
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",

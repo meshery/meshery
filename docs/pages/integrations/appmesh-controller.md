@@ -2,42 +2,56 @@
 layout: enhanced
 title: AWS App Mesh
 subtitle: Collaborative and visual infrastructure as code for AWS App Mesh
-image: /assets/img/integrations/aws-app-mesh.svg
+image: /assets/img/integrations/aws-app-mesh/icons/color/aws-app-mesh-color.svg
 permalink: extensibility/integrations/aws-app-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/appmesh-controller
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
-	-	name: BackendGroup
-		colorIcon: assets/img/integrations/components/BackendGroup-color.svg
-		whiteIcon: assets/img/integrations/components/BackendGroup-white.svg
-		description: 
-	-	name: GatewayRoute
-		colorIcon: assets/img/integrations/components/GatewayRoute-color.svg
-		whiteIcon: assets/img/integrations/components/GatewayRoute-white.svg
-		description: 
-	-	name: Mesh
-		colorIcon: assets/img/integrations/components/Mesh-color.svg
-		whiteIcon: assets/img/integrations/components/Mesh-white.svg
-		description: 
-	-	name: VirtualGateway
-		colorIcon: assets/img/integrations/components/VirtualGateway-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualGateway-white.svg
-		description: 
-	-	name: VirtualNode
-		colorIcon: assets/img/integrations/components/VirtualNode-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualNode-white.svg
-		description: 
-	-	name: VirtualRouter
-		colorIcon: assets/img/integrations/components/VirtualRouter-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualRouter-white.svg
-		description: 
-	-	name: VirtualService
-		colorIcon: assets/img/integrations/components/VirtualService-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualService-white.svg
-		description: 
+components: [
+{
+"name": "backend-group"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/backend-group/icons/color/backend-group-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/backend-group/icons/white/backend-group-white.svg"
+"description": ""
+},
+{
+"name": "gateway-route"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/gateway-route/icons/color/gateway-route-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/gateway-route/icons/white/gateway-route-white.svg"
+"description": ""
+},
+{
+"name": "mesh"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/mesh/icons/color/mesh-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/mesh/icons/white/mesh-white.svg"
+"description": ""
+},
+{
+"name": "virtual-gateway"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/virtual-gateway/icons/color/virtual-gateway-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/virtual-gateway/icons/white/virtual-gateway-white.svg"
+"description": ""
+},
+{
+"name": "virtual-node"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/virtual-node/icons/color/virtual-node-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/virtual-node/icons/white/virtual-node-white.svg"
+"description": ""
+},
+{
+"name": "virtual-router"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/virtual-router/icons/color/virtual-router-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/virtual-router/icons/white/virtual-router-white.svg"
+"description": ""
+},
+{
+"name": "virtual-service"
+"colorIcon": "assets/img/integrations/appmesh-controller/components/virtual-service/icons/color/virtual-service-color.svg"
+"whiteIcon": "assets/img/integrations/appmesh-controller/components/virtual-service/icons/white/virtual-service-white.svg"
+"description": ""
+}]
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",

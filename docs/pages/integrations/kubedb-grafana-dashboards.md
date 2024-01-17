@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubedb Grafana Dashboards
 subtitle: Collaborative and visual infrastructure as code for Kubedb Grafana Dashboards
-image: /assets/img/integrations/kubedb-grafana-dashboards.svg
+image: /assets/img/integrations/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
 permalink: extensibility/integrations/kubedb-grafana-dashboards
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-grafana-dashboards
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

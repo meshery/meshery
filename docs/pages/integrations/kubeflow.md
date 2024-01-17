@@ -2,46 +2,62 @@
 layout: enhanced
 title: Kubeflow
 subtitle: Collaborative and visual infrastructure as code for Kubeflow
-image: /assets/img/integrations/kubeflow.svg
+image: /assets/img/integrations/kubeflow/icons/color/kubeflow-color.svg
 permalink: extensibility/integrations/kubeflow
 docURL: https://docs.meshery.io/extensibility/integrations/kubeflow
 description: 
 category: Machine Learning
 subcategory: Machine Learning
 registrant: artifacthub
-components: 
-	-	name: ScheduledWorkflow
-		colorIcon: assets/img/integrations/components/ScheduledWorkflow-color.svg
-		whiteIcon: assets/img/integrations/components/ScheduledWorkflow-white.svg
-		description: 
-	-	name: Viewer
-		colorIcon: assets/img/integrations/components/Viewer-color.svg
-		whiteIcon: assets/img/integrations/components/Viewer-white.svg
-		description: 
-	-	name: Notebook
-		colorIcon: assets/img/integrations/components/Notebook-color.svg
-		whiteIcon: assets/img/integrations/components/Notebook-white.svg
-		description: 
-	-	name: PodDefault
-		colorIcon: assets/img/integrations/components/PodDefault-color.svg
-		whiteIcon: assets/img/integrations/components/PodDefault-white.svg
-		description: 
-	-	name: Profile
-		colorIcon: assets/img/integrations/components/Profile-color.svg
-		whiteIcon: assets/img/integrations/components/Profile-white.svg
-		description: 
-	-	name: Tensorboard
-		colorIcon: assets/img/integrations/components/Tensorboard-color.svg
-		whiteIcon: assets/img/integrations/components/Tensorboard-white.svg
-		description: 
-	-	name: MPIJob
-		colorIcon: assets/img/integrations/components/MPIJob-color.svg
-		whiteIcon: assets/img/integrations/components/MPIJob-white.svg
-		description: 
-	-	name: AuthCode
-		colorIcon: assets/img/integrations/components/AuthCode-color.svg
-		whiteIcon: assets/img/integrations/components/AuthCode-white.svg
-		description: 
+components: [
+{
+"name": "scheduled-workflow"
+"colorIcon": "assets/img/integrations/kubeflow/components/scheduled-workflow/icons/color/scheduled-workflow-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/scheduled-workflow/icons/white/scheduled-workflow-white.svg"
+"description": ""
+},
+{
+"name": "viewer"
+"colorIcon": "assets/img/integrations/kubeflow/components/viewer/icons/color/viewer-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/viewer/icons/white/viewer-white.svg"
+"description": ""
+},
+{
+"name": "notebook"
+"colorIcon": "assets/img/integrations/kubeflow/components/notebook/icons/color/notebook-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/notebook/icons/white/notebook-white.svg"
+"description": ""
+},
+{
+"name": "pod-default"
+"colorIcon": "assets/img/integrations/kubeflow/components/pod-default/icons/color/pod-default-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/pod-default/icons/white/pod-default-white.svg"
+"description": ""
+},
+{
+"name": "profile"
+"colorIcon": "assets/img/integrations/kubeflow/components/profile/icons/color/profile-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/profile/icons/white/profile-white.svg"
+"description": ""
+},
+{
+"name": "tensorboard"
+"colorIcon": "assets/img/integrations/kubeflow/components/tensorboard/icons/color/tensorboard-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/tensorboard/icons/white/tensorboard-white.svg"
+"description": ""
+},
+{
+"name": "mpi-job"
+"colorIcon": "assets/img/integrations/kubeflow/components/mpi-job/icons/color/mpi-job-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/mpi-job/icons/white/mpi-job-white.svg"
+"description": ""
+},
+{
+"name": "auth-code"
+"colorIcon": "assets/img/integrations/kubeflow/components/auth-code/icons/color/auth-code-color.svg"
+"whiteIcon": "assets/img/integrations/kubeflow/components/auth-code/icons/white/auth-code-white.svg"
+"description": ""
+}]
 featureList: [
   "Make deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. ",
   "Design and manage you the machine learning toolkit for Kubernetes",

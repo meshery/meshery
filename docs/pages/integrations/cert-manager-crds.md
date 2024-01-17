@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cert Manager Crds
 subtitle: Collaborative and visual infrastructure as code for Cert Manager Crds
-image: /assets/img/integrations/cert-manager-crds.svg
+image: /assets/img/integrations/cert-manager-crds/icons/color/cert-manager-crds-color.svg
 permalink: extensibility/integrations/cert-manager-crds
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-crds
 description: 
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",
   "Supports issuing certificates from a variety of sources.",

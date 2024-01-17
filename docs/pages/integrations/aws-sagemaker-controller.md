@@ -2,110 +2,158 @@
 layout: enhanced
 title: AWS SageMaker
 subtitle: Collaborative and visual infrastructure as code for AWS SageMaker
-image: /assets/img/integrations/aws-sagemaker.svg
+image: /assets/img/integrations/aws-sagemaker/icons/color/aws-sagemaker-color.svg
 permalink: extensibility/integrations/aws-sagemaker
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-controller
 description: 
 category: Machine Learning
 subcategory: Machine Learning
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: App
-		colorIcon: assets/img/integrations/components/App-color.svg
-		whiteIcon: assets/img/integrations/components/App-white.svg
-		description: 
-	-	name: ModelExplainabilityJobDefinition
-		colorIcon: assets/img/integrations/components/ModelExplainabilityJobDefinition-color.svg
-		whiteIcon: assets/img/integrations/components/ModelExplainabilityJobDefinition-white.svg
-		description: 
-	-	name: DataQualityJobDefinition
-		colorIcon: assets/img/integrations/components/DataQualityJobDefinition-color.svg
-		whiteIcon: assets/img/integrations/components/DataQualityJobDefinition-white.svg
-		description: 
-	-	name: Domain
-		colorIcon: assets/img/integrations/components/Domain-color.svg
-		whiteIcon: assets/img/integrations/components/Domain-white.svg
-		description: 
-	-	name: Endpoint
-		colorIcon: assets/img/integrations/components/Endpoint-color.svg
-		whiteIcon: assets/img/integrations/components/Endpoint-white.svg
-		description: 
-	-	name: Model
-		colorIcon: assets/img/integrations/components/Model-color.svg
-		whiteIcon: assets/img/integrations/components/Model-white.svg
-		description: 
-	-	name: EndpointConfig
-		colorIcon: assets/img/integrations/components/EndpointConfig-color.svg
-		whiteIcon: assets/img/integrations/components/EndpointConfig-white.svg
-		description: 
-	-	name: FeatureGroup
-		colorIcon: assets/img/integrations/components/FeatureGroup-color.svg
-		whiteIcon: assets/img/integrations/components/FeatureGroup-white.svg
-		description: 
-	-	name: HyperParameterTuningJob
-		colorIcon: assets/img/integrations/components/HyperParameterTuningJob-color.svg
-		whiteIcon: assets/img/integrations/components/HyperParameterTuningJob-white.svg
-		description: 
-	-	name: ModelBiasJobDefinition
-		colorIcon: assets/img/integrations/components/ModelBiasJobDefinition-color.svg
-		whiteIcon: assets/img/integrations/components/ModelBiasJobDefinition-white.svg
-		description: 
-	-	name: ModelPackage
-		colorIcon: assets/img/integrations/components/ModelPackage-color.svg
-		whiteIcon: assets/img/integrations/components/ModelPackage-white.svg
-		description: 
-	-	name: ModelPackageGroup
-		colorIcon: assets/img/integrations/components/ModelPackageGroup-color.svg
-		whiteIcon: assets/img/integrations/components/ModelPackageGroup-white.svg
-		description: 
-	-	name: ModelQualityJobDefinition
-		colorIcon: assets/img/integrations/components/ModelQualityJobDefinition-color.svg
-		whiteIcon: assets/img/integrations/components/ModelQualityJobDefinition-white.svg
-		description: 
-	-	name: MonitoringSchedule
-		colorIcon: assets/img/integrations/components/MonitoringSchedule-color.svg
-		whiteIcon: assets/img/integrations/components/MonitoringSchedule-white.svg
-		description: 
-	-	name: NotebookInstance
-		colorIcon: assets/img/integrations/components/NotebookInstance-color.svg
-		whiteIcon: assets/img/integrations/components/NotebookInstance-white.svg
-		description: 
-	-	name: NotebookInstanceLifecycleConfig
-		colorIcon: assets/img/integrations/components/NotebookInstanceLifecycleConfig-color.svg
-		whiteIcon: assets/img/integrations/components/NotebookInstanceLifecycleConfig-white.svg
-		description: 
-	-	name: Pipeline
-		colorIcon: assets/img/integrations/components/Pipeline-color.svg
-		whiteIcon: assets/img/integrations/components/Pipeline-white.svg
-		description: 
-	-	name: PipelineExecution
-		colorIcon: assets/img/integrations/components/PipelineExecution-color.svg
-		whiteIcon: assets/img/integrations/components/PipelineExecution-white.svg
-		description: 
-	-	name: ProcessingJob
-		colorIcon: assets/img/integrations/components/ProcessingJob-color.svg
-		whiteIcon: assets/img/integrations/components/ProcessingJob-white.svg
-		description: 
-	-	name: TrainingJob
-		colorIcon: assets/img/integrations/components/TrainingJob-color.svg
-		whiteIcon: assets/img/integrations/components/TrainingJob-white.svg
-		description: 
-	-	name: TransformJob
-		colorIcon: assets/img/integrations/components/TransformJob-color.svg
-		whiteIcon: assets/img/integrations/components/TransformJob-white.svg
-		description: 
-	-	name: UserProfile
-		colorIcon: assets/img/integrations/components/UserProfile-color.svg
-		whiteIcon: assets/img/integrations/components/UserProfile-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "app"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/app/icons/color/app-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/app/icons/white/app-white.svg"
+"description": ""
+},
+{
+"name": "model-explainability-job-definition"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-explainability-job-definition/icons/color/model-explainability-job-definition-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-explainability-job-definition/icons/white/model-explainability-job-definition-white.svg"
+"description": ""
+},
+{
+"name": "data-quality-job-definition"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/data-quality-job-definition/icons/color/data-quality-job-definition-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/data-quality-job-definition/icons/white/data-quality-job-definition-white.svg"
+"description": ""
+},
+{
+"name": "domain"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/domain/icons/color/domain-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/domain/icons/white/domain-white.svg"
+"description": ""
+},
+{
+"name": "endpoint"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/endpoint/icons/color/endpoint-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/endpoint/icons/white/endpoint-white.svg"
+"description": ""
+},
+{
+"name": "model"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model/icons/color/model-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model/icons/white/model-white.svg"
+"description": ""
+},
+{
+"name": "endpoint-config"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/endpoint-config/icons/color/endpoint-config-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/endpoint-config/icons/white/endpoint-config-white.svg"
+"description": ""
+},
+{
+"name": "feature-group"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/feature-group/icons/color/feature-group-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/feature-group/icons/white/feature-group-white.svg"
+"description": ""
+},
+{
+"name": "hyper-parameter-tuning-job"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/hyper-parameter-tuning-job/icons/color/hyper-parameter-tuning-job-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/hyper-parameter-tuning-job/icons/white/hyper-parameter-tuning-job-white.svg"
+"description": ""
+},
+{
+"name": "model-bias-job-definition"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-bias-job-definition/icons/color/model-bias-job-definition-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-bias-job-definition/icons/white/model-bias-job-definition-white.svg"
+"description": ""
+},
+{
+"name": "model-package"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-package/icons/color/model-package-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-package/icons/white/model-package-white.svg"
+"description": ""
+},
+{
+"name": "model-package-group"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-package-group/icons/color/model-package-group-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-package-group/icons/white/model-package-group-white.svg"
+"description": ""
+},
+{
+"name": "model-quality-job-definition"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-quality-job-definition/icons/color/model-quality-job-definition-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/model-quality-job-definition/icons/white/model-quality-job-definition-white.svg"
+"description": ""
+},
+{
+"name": "monitoring-schedule"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/monitoring-schedule/icons/color/monitoring-schedule-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/monitoring-schedule/icons/white/monitoring-schedule-white.svg"
+"description": ""
+},
+{
+"name": "notebook-instance"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/notebook-instance/icons/color/notebook-instance-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/notebook-instance/icons/white/notebook-instance-white.svg"
+"description": ""
+},
+{
+"name": "notebook-instance-lifecycle-config"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/notebook-instance-lifecycle-config/icons/color/notebook-instance-lifecycle-config-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/notebook-instance-lifecycle-config/icons/white/notebook-instance-lifecycle-config-white.svg"
+"description": ""
+},
+{
+"name": "pipeline"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/pipeline/icons/color/pipeline-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/pipeline/icons/white/pipeline-white.svg"
+"description": ""
+},
+{
+"name": "pipeline-execution"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/pipeline-execution/icons/color/pipeline-execution-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/pipeline-execution/icons/white/pipeline-execution-white.svg"
+"description": ""
+},
+{
+"name": "processing-job"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/processing-job/icons/color/processing-job-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/processing-job/icons/white/processing-job-white.svg"
+"description": ""
+},
+{
+"name": "training-job"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/training-job/icons/color/training-job-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/training-job/icons/white/training-job-white.svg"
+"description": ""
+},
+{
+"name": "transform-job"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/transform-job/icons/color/transform-job-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/transform-job/icons/white/transform-job-white.svg"
+"description": ""
+},
+{
+"name": "user-profile"
+"colorIcon": "assets/img/integrations/aws-sagemaker-controller/components/user-profile/icons/color/user-profile-color.svg"
+"whiteIcon": "assets/img/integrations/aws-sagemaker-controller/components/user-profile/icons/white/user-profile-white.svg"
+"description": ""
+}]
 featureList: [
   "Choice of ML tools",
   "Repeatable and responsible ML workflows",

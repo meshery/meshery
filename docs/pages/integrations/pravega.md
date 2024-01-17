@@ -2,14 +2,14 @@
 layout: enhanced
 title: Pravega
 subtitle: Collaborative and visual infrastructure as code for Pravega
-image: /assets/img/integrations/pravega.svg
+image: /assets/img/integrations/pravega/icons/color/pravega-color.svg
 permalink: extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

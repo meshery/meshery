@@ -2,26 +2,32 @@
 layout: enhanced
 title: AWS MQ
 subtitle: Collaborative and visual infrastructure as code for AWS MQ
-image: /assets/img/integrations/aws-mq.svg
+image: /assets/img/integrations/aws-mq/icons/color/aws-mq-color.svg
 permalink: extensibility/integrations/aws-mq
 docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: Broker
-		colorIcon: assets/img/integrations/components/Broker-color.svg
-		whiteIcon: assets/img/integrations/components/Broker-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-mq-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-mq-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-mq-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-mq-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "broker"
+"colorIcon": "assets/img/integrations/aws-mq-controller/components/broker/icons/color/broker-color.svg"
+"whiteIcon": "assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

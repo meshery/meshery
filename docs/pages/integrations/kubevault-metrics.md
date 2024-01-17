@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubevault Metrics
 subtitle: Collaborative and visual infrastructure as code for Kubevault Metrics
-image: /assets/img/integrations/kubevault-metrics.svg
+image: /assets/img/integrations/kubevault-metrics/icons/color/kubevault-metrics-color.svg
 permalink: extensibility/integrations/kubevault-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-metrics
 description: 
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

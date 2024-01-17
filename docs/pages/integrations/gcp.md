@@ -2,14 +2,14 @@
 layout: enhanced
 title: Google Cloud Platform
 subtitle: Google Cloud Platform, offered by Google, is a suite of cloud computing services that provides a series of modular cloud services including computing, data storage, data analytics and machine learning, alongside a set of management tools.
-image: /assets/img/integrations/google-cloud-platform.svg
+image: /assets/img/integrations/google-cloud-platform/icons/color/google-cloud-platform-color.svg
 permalink: extensibility/integrations/google-cloud-platform
 docURL: https://docs.meshery.io/extensibility/integrations/gcp
 description: 
 category: Provisioning
 subcategory: Cloud Provider
 registrant: meshery
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

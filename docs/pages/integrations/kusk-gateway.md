@@ -2,26 +2,32 @@
 layout: enhanced
 title: Kusk Gateway
 subtitle: Collaborative and visual infrastructure as code for Kusk Gateway
-image: /assets/img/integrations/kusk-gateway.svg
+image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg
 permalink: extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
 description: 
 category: Orchestration & Management
 subcategory: API Gateway
 registrant: artifacthub
-components: 
-	-	name: EnvoyFleet
-		colorIcon: assets/img/integrations/components/EnvoyFleet-color.svg
-		whiteIcon: assets/img/integrations/components/EnvoyFleet-white.svg
-		description: 
-	-	name: StaticRoute
-		colorIcon: assets/img/integrations/components/StaticRoute-color.svg
-		whiteIcon: assets/img/integrations/components/StaticRoute-white.svg
-		description: 
-	-	name: API
-		colorIcon: assets/img/integrations/components/API-color.svg
-		whiteIcon: assets/img/integrations/components/API-white.svg
-		description: 
+components: [
+{
+"name": "envoy-fleet"
+"colorIcon": "assets/img/integrations/kusk-gateway/components/envoy-fleet/icons/color/envoy-fleet-color.svg"
+"whiteIcon": "assets/img/integrations/kusk-gateway/components/envoy-fleet/icons/white/envoy-fleet-white.svg"
+"description": ""
+},
+{
+"name": "static-route"
+"colorIcon": "assets/img/integrations/kusk-gateway/components/static-route/icons/color/static-route-color.svg"
+"whiteIcon": "assets/img/integrations/kusk-gateway/components/static-route/icons/white/static-route-white.svg"
+"description": ""
+},
+{
+"name": "api"
+"colorIcon": "assets/img/integrations/kusk-gateway/components/api/icons/color/api-color.svg"
+"whiteIcon": "assets/img/integrations/kusk-gateway/components/api/icons/white/api-white.svg"
+"description": ""
+}]
 featureList: [
   "Rapidly prototype your APIs by mocking your API responses",
   " Protect your endpoints with automatic request and response validations",
