@@ -80,6 +80,12 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 		return err
 	}
 
+
+	err = os.RemoveAll(filepath.Join(modelDir, "icon"))
+	if err != nil {
+		return err
+	}
+
 	// create dir for color model icons
 	iconsDir := filepath.Join(modelDir, "icons", "color")
 	err = os.MkdirAll(iconsDir, 0777)

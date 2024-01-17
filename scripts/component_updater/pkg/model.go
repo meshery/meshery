@@ -117,13 +117,22 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 			return "", err
 		}
 		// svgDir := icons/components
-	componentMetadata := ""
-	for _, comp := range components {
+	componentMetadata := `[`
+	for idx, comp := range components {
 		componentTemplate := `
-	-	name: %s
-		colorIcon: %s
-		whiteIcon: %s
-		description: %s`
+{
+"name": "%s"
+"colorIcon": "%s"
+"whiteIcon": "%s"
+"description": "%s"
+}`
+
+// add comma if not last component
+		if idx != len(components) - 1 {
+			componentTemplate += ","
+		}
+
+
 
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color") // icons/components/<component>/icons/color
@@ -158,6 +167,8 @@ return "", err
 			return "", err
 		}
 	}
+
+	componentMetadata += `]`
 
 	return componentMetadata, nil
 }
@@ -194,8 +205,8 @@ func (m ModelCSV) CreateMarkDownForLayer5(componentsMetadata string) string {
 	var template string = `---
 title: %s
 subtitle: %s
-integrationIcon: icon/color/%s-color.svg
-darkModeIntegrationIcon: icon/white/%s-white.svg
+integrationIcon: icons/color/%s-color.svg
+darkModeIntegrationIcon: icons/white/%s-white.svg
 docURL: %s
 description: %s
 category: %s
@@ -272,7 +283,7 @@ func (m ModelCSV) CreateMarkDownForMesheryDocs(componentsMetadata string) string
 layout: enhanced
 title: %s
 subtitle: %s
-image: /assets/img/integrations/%s.svg
+image: /assets/img/integrations/%s/icons/color/%s-color.svg
 permalink: extensibility/integrations/%s
 docURL: %s
 description: %s
@@ -298,6 +309,7 @@ list: include
 	markdown := fmt.Sprintf(template,
 		m.ModelDisplayName,
 		m.PageSubtTitle,
+		formattedName,
 		formattedName,
 		formattedName,
 		m.DocsURL,
