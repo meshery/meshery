@@ -86,6 +86,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -125,7 +126,12 @@ function ConnectionManagementPage(props) {
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
   });
-  const [createConnection, setCreateConnection] = useState({});
+
+  const { data: schemaResponse } = useGetSchemaQuery({
+    schemaName: 'helmRepo',
+  });
+
+  const createConnection = schemaResponse ?? {};
 
   const handleCreateConnectionModalOpen = () => {
     setCreateConnectionModal({ open: true });
@@ -136,19 +142,6 @@ function ConnectionManagementPage(props) {
   };
 
   const handleCreateConnectionSubmit = () => {};
-
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/helmRepo',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setCreateConnection(result);
-      },
-    );
-  }, []);
 
   return (
     <>
