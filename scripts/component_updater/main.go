@@ -114,6 +114,17 @@ func main() {
 		}
 		componentCSVHelper.ParseComponentsSheet()
 		docsUpdater(modeCSVHelper.Models, componentCSVHelper.Components)
+
+		err = modeCSVHelper.Cleanup()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = componentCSVHelper.Cleanup()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		return
 	}
 
@@ -147,6 +158,7 @@ func main() {
 		log.Fatal("invalid system name")
 		return
 	}
+
 
 }
 
