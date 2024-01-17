@@ -370,3 +370,13 @@ list: include
 
 	return markdown
 }
+
+func (m ModelCSVHelper) Cleanup() error {
+	// remove csv file
+	err := os.Remove(m.CSVPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

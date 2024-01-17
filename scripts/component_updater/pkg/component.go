@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -90,4 +91,13 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet(){
 			return
 		}
 	}
+}
+
+func (m ComponentCSVHelper) Cleanup() error {
+	// remove csv file
+	err := os.Remove(m.CSVPath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
