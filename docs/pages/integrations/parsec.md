@@ -2,14 +2,14 @@
 layout: enhanced
 title: Parsec
 subtitle: Collaborative and visual infrastructure as code for Parsec
-image: /assets/img/integrations/parsec.svg
+image: /assets/img/integrations/parsec/icons/color/parsec-color.svg
 permalink: extensibility/integrations/parsec
 docURL: https://docs.meshery.io/extensibility/integrations/parsec
 description: 
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

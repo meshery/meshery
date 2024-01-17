@@ -2,14 +2,14 @@
 layout: enhanced
 title: Virtual Kubelet
 subtitle: Collaborative and visual infrastructure as code for Virtual Kubelet
-image: /assets/img/integrations/virtual-kubelet.svg
+image: /assets/img/integrations/virtual-kubelet/icons/color/virtual-kubelet-color.svg
 permalink: extensibility/integrations/virtual-kubelet
 docURL: https://docs.meshery.io/extensibility/integrations/virtual kubelet
 description: 
 category: Serverless
 subcategory: Installable Platform
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

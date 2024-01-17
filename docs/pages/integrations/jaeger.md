@@ -2,14 +2,14 @@
 layout: enhanced
 title: Jaeger
 subtitle: Collaborative and visual infrastructure as code for Jaeger
-image: /assets/img/integrations/jaeger.svg
+image: /assets/img/integrations/jaeger/icons/color/jaeger-color.svg
 permalink: extensibility/integrations/jaeger
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger
 description: 
 category: Observability and Analysis
 subcategory: Tracing
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

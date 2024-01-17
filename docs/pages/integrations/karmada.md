@@ -2,14 +2,14 @@
 layout: enhanced
 title: Karmada
 subtitle: Collaborative and visual infrastructure as code for Karmada
-image: /assets/img/integrations/karmada.svg
+image: /assets/img/integrations/karmada/icons/color/karmada-color.svg
 permalink: extensibility/integrations/karmada
 docURL: https://docs.meshery.io/extensibility/integrations/karmada
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Grafana Agent Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /assets/img/integrations/grafana-agent-operator.svg
+image: /assets/img/integrations/grafana-agent-operator/icons/color/grafana-agent-operator-color.svg
 permalink: extensibility/integrations/grafana-agent-operator
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent-operator
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Meshery discovers your Grafana servers",
   "Easily import existing Grafana dashboards and panels into Meshery",

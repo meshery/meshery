@@ -2,14 +2,14 @@
 layout: enhanced
 title: Github
 subtitle: Integrate GitOps into your cloud native management process
-image: /assets/img/integrations/github.svg
+image: /assets/img/integrations/github/icons/color/github-color.svg
 permalink: extensibility/integrations/github
 docURL: https://layer5.io/resources/cloud-native/what-is-gitops
 description: 
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Pipeline your cloud native infrastructure as code changes with GitOps",
   "Integrate Meshery into your GitHub workflow",

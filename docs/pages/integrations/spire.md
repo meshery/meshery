@@ -2,26 +2,32 @@
 layout: enhanced
 title: SPIRE
 subtitle: Collaborative and visual infrastructure as code for SPIRE
-image: /assets/img/integrations/spire.svg
+image: /assets/img/integrations/spire/icons/color/spire-color.svg
 permalink: extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 
 category: Security & Compliance
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: ClusterFederatedTrustDomain
-		colorIcon: assets/img/integrations/components/ClusterFederatedTrustDomain-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterFederatedTrustDomain-white.svg
-		description: 
-	-	name: ClusterSPIFFEID
-		colorIcon: assets/img/integrations/components/ClusterSPIFFEID-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterSPIFFEID-white.svg
-		description: 
-	-	name: ControllerManagerConfig
-		colorIcon: assets/img/integrations/components/ControllerManagerConfig-color.svg
-		whiteIcon: assets/img/integrations/components/ControllerManagerConfig-white.svg
-		description: 
+components: [
+{
+"name": "cluster-federated-trust-domain"
+"colorIcon": "assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg"
+"whiteIcon": "assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg"
+"description": ""
+},
+{
+"name": "cluster-spiffeid"
+"colorIcon": "assets/img/integrations/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg"
+"whiteIcon": "assets/img/integrations/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg"
+"description": ""
+},
+{
+"name": "controller-manager-config"
+"colorIcon": "assets/img/integrations/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg"
+"whiteIcon": "assets/img/integrations/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg"
+"description": ""
+}]
 featureList: [
   "SPIRE design and deployment best practices",
   "Configure SPIRE to securely issue and renew SVIDs.",

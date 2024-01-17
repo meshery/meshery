@@ -2,14 +2,14 @@
 layout: enhanced
 title: Curiefense
 subtitle: Collaborative and visual infrastructure as code for Curiefense
-image: /assets/img/integrations/curiefense.svg
+image: /assets/img/integrations/curiefense/icons/color/curiefense-color.svg
 permalink: extensibility/integrations/curiefense
 docURL: https://docs.meshery.io/extensibility/integrations/curiefense
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Protects all forms of web traffic, services, and APIs.",
   "Includes bot management, WAF, application-layer DDoS protection, session profiling, advanced rate limiting, and much more.",

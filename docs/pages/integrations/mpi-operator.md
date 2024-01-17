@@ -2,18 +2,20 @@
 layout: enhanced
 title: Kubeflow MPI Operator
 subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
-image: /assets/img/integrations/kubeflow-mpi-operator.svg
+image: /assets/img/integrations/kubeflow-mpi-operator/icons/color/kubeflow-mpi-operator-color.svg
 permalink: extensibility/integrations/kubeflow-mpi-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
 description: 
 category: Machine Learning
 subcategory: Machine Learning
 registrant: artifacthub
-components: 
-	-	name: MPIJob
-		colorIcon: assets/img/integrations/components/MPIJob-color.svg
-		whiteIcon: assets/img/integrations/components/MPIJob-white.svg
-		description: 
+components: [
+{
+"name": "mpi-job"
+"colorIcon": "assets/img/integrations/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg"
+"whiteIcon": "assets/img/integrations/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg"
+"description": ""
+}]
 featureList: [
   "Easily run synchronized, allreduce-style distributed training on Kubernetes.",
   "Invite anyone to review and make changes to your private designs.",

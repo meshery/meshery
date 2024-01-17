@@ -2,14 +2,14 @@
 layout: enhanced
 title: Oras
 subtitle: Collaborative and visual infrastructure as code for Operator
-image: /assets/img/integrations/oras.svg
+image: /assets/img/integrations/oras/icons/color/oras-color.svg
 permalink: extensibility/integrations/oras
 docURL: https://docs.meshery.io/extensibility/integrations/oras
 description: 
 category: Cloud Native Storage
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

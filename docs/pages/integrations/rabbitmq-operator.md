@@ -2,18 +2,20 @@
 layout: enhanced
 title: RabbitMQ Operator
 subtitle: Collaborative and visual infrastructure as code for RabbitMQ Operator
-image: /assets/img/integrations/rabbitmq-operator.svg
+image: /assets/img/integrations/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
 permalink: extensibility/integrations/rabbitmq-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
-	-	name: RabbitmqCluster
-		colorIcon: assets/img/integrations/components/RabbitmqCluster-color.svg
-		whiteIcon: assets/img/integrations/components/RabbitmqCluster-white.svg
-		description: 
+components: [
+{
+"name": "rabbitmq-cluster"
+"colorIcon": "assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

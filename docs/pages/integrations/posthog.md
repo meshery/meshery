@@ -2,14 +2,14 @@
 layout: enhanced
 title: Posthog
 subtitle: Collaborative and visual infrastructure as code for Posthog
-image: /assets/img/integrations/posthog.svg
+image: /assets/img/integrations/posthog/icons/color/posthog-color.svg
 permalink: extensibility/integrations/posthog
 docURL: https://docs.meshery.io/extensibility/integrations/posthog
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

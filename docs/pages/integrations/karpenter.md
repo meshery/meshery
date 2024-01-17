@@ -2,22 +2,26 @@
 layout: enhanced
 title: Karpenter
 subtitle: Collaborative and visual infrastructure as code for Karpenter
-image: /assets/img/integrations/karpenter.svg
+image: /assets/img/integrations/karpenter/icons/color/karpenter-color.svg
 permalink: extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
-	-	name: AWSNodeTemplate
-		colorIcon: assets/img/integrations/components/AWSNodeTemplate-color.svg
-		whiteIcon: assets/img/integrations/components/AWSNodeTemplate-white.svg
-		description: 
-	-	name: Provisioner
-		colorIcon: assets/img/integrations/components/Provisioner-color.svg
-		whiteIcon: assets/img/integrations/components/Provisioner-white.svg
-		description: 
+components: [
+{
+"name": "aws-node-template"
+"colorIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg"
+"whiteIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/white/aws-node-template-white.svg"
+"description": ""
+},
+{
+"name": "provisioner"
+"colorIcon": "assets/img/integrations/karpenter/components/provisioner/icons/color/provisioner-color.svg"
+"whiteIcon": "assets/img/integrations/karpenter/components/provisioner/icons/white/provisioner-white.svg"
+"description": ""
+}]
 featureList: [
   "Watching for pods that the Kubernetes scheduler has marked as unschedulable",
   "Evaluating scheduling constraints (resource requests, nodeselectors, affinities, tolerations, and topology spread constraints) requested by the pods",

@@ -2,26 +2,32 @@
 layout: enhanced
 title: Postgres Operator
 subtitle: Collaborative and visual infrastructure as code for Postgres Operator
-image: /assets/img/integrations/postgres-operator.svg
+image: /assets/img/integrations/postgres-operator/icons/color/postgres-operator-color.svg
 permalink: extensibility/integrations/postgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-operator
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: OperatorConfiguration
-		colorIcon: assets/img/integrations/components/OperatorConfiguration-color.svg
-		whiteIcon: assets/img/integrations/components/OperatorConfiguration-white.svg
-		description: 
-	-	name: postgresql
-		colorIcon: assets/img/integrations/components/postgresql-color.svg
-		whiteIcon: assets/img/integrations/components/postgresql-white.svg
-		description: 
-	-	name: PostgresTeam
-		colorIcon: assets/img/integrations/components/PostgresTeam-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresTeam-white.svg
-		description: 
+components: [
+{
+"name": "operator-configuration"
+"colorIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg"
+"whiteIcon": "assets/img/integrations/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg"
+"description": ""
+},
+{
+"name": "postgresql"
+"colorIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/color/postgresql-color.svg"
+"whiteIcon": "assets/img/integrations/postgres-operator/components/postgresql/icons/white/postgresql-white.svg"
+"description": ""
+},
+{
+"name": "postgres-team"
+"colorIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg"
+"whiteIcon": "assets/img/integrations/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

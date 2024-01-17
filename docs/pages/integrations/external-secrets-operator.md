@@ -2,26 +2,32 @@
 layout: enhanced
 title: External Secrets Operator
 subtitle: Collaborative and visual infrastructure as code for External Secrets Operator
-image: /assets/img/integrations/external-secrets-operator.svg
+image: /assets/img/integrations/external-secrets-operator/icons/color/external-secrets-operator-color.svg
 permalink: extensibility/integrations/external-secrets-operator
 docURL: https://docs.meshery.io/extensibility/integrations/external-secrets-operator
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: ExternalBackend
-		colorIcon: assets/img/integrations/components/ExternalBackend-color.svg
-		whiteIcon: assets/img/integrations/components/ExternalBackend-white.svg
-		description: 
-	-	name: ExternalConfigMap
-		colorIcon: assets/img/integrations/components/ExternalConfigMap-color.svg
-		whiteIcon: assets/img/integrations/components/ExternalConfigMap-white.svg
-		description: 
-	-	name: ExternalSecret
-		colorIcon: assets/img/integrations/components/ExternalSecret-color.svg
-		whiteIcon: assets/img/integrations/components/ExternalSecret-white.svg
-		description: 
+components: [
+{
+"name": "external-backend"
+"colorIcon": "assets/img/integrations/external-secrets-operator/components/external-backend/icons/color/external-backend-color.svg"
+"whiteIcon": "assets/img/integrations/external-secrets-operator/components/external-backend/icons/white/external-backend-white.svg"
+"description": ""
+},
+{
+"name": "external-config-map"
+"colorIcon": "assets/img/integrations/external-secrets-operator/components/external-config-map/icons/color/external-config-map-color.svg"
+"whiteIcon": "assets/img/integrations/external-secrets-operator/components/external-config-map/icons/white/external-config-map-white.svg"
+"description": ""
+},
+{
+"name": "external-secret"
+"colorIcon": "assets/img/integrations/external-secrets-operator/components/external-secret/icons/color/external-secret-color.svg"
+"whiteIcon": "assets/img/integrations/external-secrets-operator/components/external-secret/icons/white/external-secret-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

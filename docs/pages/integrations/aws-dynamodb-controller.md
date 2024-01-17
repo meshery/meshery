@@ -2,34 +2,44 @@
 layout: enhanced
 title: AWS DynamoDB
 subtitle: Collaborative and visual infrastructure as code for AWS DynamoDB
-image: /assets/img/integrations/aws-dynamodb.svg
+image: /assets/img/integrations/aws-dynamodb/icons/color/aws-dynamodb-color.svg
 permalink: extensibility/integrations/aws-dynamodb
 docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: Backup
-		colorIcon: assets/img/integrations/components/Backup-color.svg
-		whiteIcon: assets/img/integrations/components/Backup-white.svg
-		description: 
-	-	name: Table
-		colorIcon: assets/img/integrations/components/Table-color.svg
-		whiteIcon: assets/img/integrations/components/Table-white.svg
-		description: 
-	-	name: GlobalTable
-		colorIcon: assets/img/integrations/components/GlobalTable-color.svg
-		whiteIcon: assets/img/integrations/components/GlobalTable-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-dynamodb-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-dynamodb-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-dynamodb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-dynamodb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "backup"
+"colorIcon": "assets/img/integrations/aws-dynamodb-controller/components/backup/icons/color/backup-color.svg"
+"whiteIcon": "assets/img/integrations/aws-dynamodb-controller/components/backup/icons/white/backup-white.svg"
+"description": ""
+},
+{
+"name": "table"
+"colorIcon": "assets/img/integrations/aws-dynamodb-controller/components/table/icons/color/table-color.svg"
+"whiteIcon": "assets/img/integrations/aws-dynamodb-controller/components/table/icons/white/table-white.svg"
+"description": ""
+},
+{
+"name": "global-table"
+"colorIcon": "assets/img/integrations/aws-dynamodb-controller/components/global-table/icons/color/global-table-color.svg"
+"whiteIcon": "assets/img/integrations/aws-dynamodb-controller/components/global-table/icons/white/global-table-white.svg"
+"description": ""
+}]
 featureList: [
   "Handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
 ",

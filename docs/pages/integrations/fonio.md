@@ -2,14 +2,14 @@
 layout: enhanced
 title: Fonio
 subtitle: Collaborative and visual infrastructure as code for Fonio
-image: /assets/img/integrations/fonio.svg
+image: /assets/img/integrations/fonio/icons/color/fonio-color.svg
 permalink: extensibility/integrations/fonio
 docURL: https://docs.meshery.io/extensibility/integrations/fonio
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",

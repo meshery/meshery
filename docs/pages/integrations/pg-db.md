@@ -2,34 +2,44 @@
 layout: enhanced
 title: Postgres Database (CrunchyData)
 subtitle: Collaborative and visual infrastructure as code for Postgres Database (CrunchyData)
-image: /assets/img/integrations/postgres-database-(crunchydata).svg
+image: /assets/img/integrations/postgres-database-(crunchydata)/icons/color/postgres-database-(crunchydata)-color.svg
 permalink: extensibility/integrations/postgres-database-(crunchydata)
 docURL: https://docs.meshery.io/extensibility/integrations/pg-db
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: Pgcluster
-		colorIcon: assets/img/integrations/components/Pgcluster-color.svg
-		whiteIcon: assets/img/integrations/components/Pgcluster-white.svg
-		description: 
-	-	name: PerconaPGCluster
-		colorIcon: assets/img/integrations/components/PerconaPGCluster-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaPGCluster-white.svg
-		description: 
-	-	name: Pgtask
-		colorIcon: assets/img/integrations/components/Pgtask-color.svg
-		whiteIcon: assets/img/integrations/components/Pgtask-white.svg
-		description: 
-	-	name: Pgreplica
-		colorIcon: assets/img/integrations/components/Pgreplica-color.svg
-		whiteIcon: assets/img/integrations/components/Pgreplica-white.svg
-		description: 
-	-	name: Pgpolicy
-		colorIcon: assets/img/integrations/components/Pgpolicy-color.svg
-		whiteIcon: assets/img/integrations/components/Pgpolicy-white.svg
-		description: 
+components: [
+{
+"name": "pgcluster"
+"colorIcon": "assets/img/integrations/pg-db/components/pgcluster/icons/color/pgcluster-color.svg"
+"whiteIcon": "assets/img/integrations/pg-db/components/pgcluster/icons/white/pgcluster-white.svg"
+"description": ""
+},
+{
+"name": "percona-pg-cluster"
+"colorIcon": "assets/img/integrations/pg-db/components/percona-pg-cluster/icons/color/percona-pg-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/pg-db/components/percona-pg-cluster/icons/white/percona-pg-cluster-white.svg"
+"description": ""
+},
+{
+"name": "pgtask"
+"colorIcon": "assets/img/integrations/pg-db/components/pgtask/icons/color/pgtask-color.svg"
+"whiteIcon": "assets/img/integrations/pg-db/components/pgtask/icons/white/pgtask-white.svg"
+"description": ""
+},
+{
+"name": "pgreplica"
+"colorIcon": "assets/img/integrations/pg-db/components/pgreplica/icons/color/pgreplica-color.svg"
+"whiteIcon": "assets/img/integrations/pg-db/components/pgreplica/icons/white/pgreplica-white.svg"
+"description": ""
+},
+{
+"name": "pgpolicy"
+"colorIcon": "assets/img/integrations/pg-db/components/pgpolicy/icons/color/pgpolicy-color.svg"
+"whiteIcon": "assets/img/integrations/pg-db/components/pgpolicy/icons/white/pgpolicy-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

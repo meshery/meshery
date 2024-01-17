@@ -2,14 +2,14 @@
 layout: enhanced
 title: Nocalhost
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
-image: /assets/img/integrations/nocalhost.svg
+image: /assets/img/integrations/nocalhost/icons/color/nocalhost-color.svg
 permalink: extensibility/integrations/nocalhost
 docURL: https://docs.meshery.io/extensibility/integrations/nocalhost
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

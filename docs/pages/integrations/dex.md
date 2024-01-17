@@ -2,14 +2,14 @@
 layout: enhanced
 title: Dex
 subtitle: Collaborative and visual infrastructure as code for Dex
-image: /assets/img/integrations/dex.svg
+image: /assets/img/integrations/dex/icons/color/dex-color.svg
 permalink: extensibility/integrations/dex
 docURL: https://docs.meshery.io/extensibility/integrations/dex
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

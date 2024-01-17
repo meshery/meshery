@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubevirt
 subtitle: Collaborative and visual infrastructure as code for Kubevirt
-image: /assets/img/integrations/kubevirt.svg
+image: /assets/img/integrations/kubevirt/icons/color/kubevirt-color.svg
 permalink: extensibility/integrations/kubevirt
 docURL: https://docs.meshery.io/extensibility/integrations/kubevirt
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

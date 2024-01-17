@@ -2,18 +2,20 @@
 layout: enhanced
 title: Kyverno Monitor
 subtitle: Collaborative and visual infrastructure as code for Kyverno Monitor
-image: /assets/img/integrations/kyverno-monitor.svg
+image: /assets/img/integrations/kyverno-monitor/icons/color/kyverno-monitor-color.svg
 permalink: extensibility/integrations/kyverno-monitor
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno-monitor
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
-	-	name: KyvernoMonitor
-		colorIcon: assets/img/integrations/components/KyvernoMonitor-color.svg
-		whiteIcon: assets/img/integrations/components/KyvernoMonitor-white.svg
-		description: 
+components: [
+{
+"name": "kyverno-monitor"
+"colorIcon": "assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg"
+"whiteIcon": "assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg"
+"description": ""
+}]
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
   "Use Meshery with Kyverno to inspect image metadata and 

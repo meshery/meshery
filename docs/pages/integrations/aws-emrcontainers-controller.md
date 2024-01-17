@@ -2,30 +2,38 @@
 layout: enhanced
 title: AWS EMR Containers
 subtitle: Collaborative and visual infrastructure as code for AWS EMR Containers
-image: /assets/img/integrations/aws-emr-containers.svg
+image: /assets/img/integrations/aws-emr-containers/icons/color/aws-emr-containers-color.svg
 permalink: extensibility/integrations/aws-emr-containers
 docURL: https://docs.meshery.io/extensibility/integrations/aws-emrcontainers-controller
 description: 
 category: Analytics
 subcategory: Analytics
 registrant: aws
-components: 
-	-	name: VirtualCluster
-		colorIcon: assets/img/integrations/components/VirtualCluster-color.svg
-		whiteIcon: assets/img/integrations/components/VirtualCluster-white.svg
-		description: 
-	-	name: JobRun
-		colorIcon: assets/img/integrations/components/JobRun-color.svg
-		whiteIcon: assets/img/integrations/components/JobRun-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
+components: [
+{
+"name": "virtual-cluster"
+"colorIcon": "assets/img/integrations/aws-emrcontainers-controller/components/virtual-cluster/icons/color/virtual-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/aws-emrcontainers-controller/components/virtual-cluster/icons/white/virtual-cluster-white.svg"
+"description": ""
+},
+{
+"name": "job-run"
+"colorIcon": "assets/img/integrations/aws-emrcontainers-controller/components/job-run/icons/color/job-run-color.svg"
+"whiteIcon": "assets/img/integrations/aws-emrcontainers-controller/components/job-run/icons/white/job-run-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-emrcontainers-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-emrcontainers-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

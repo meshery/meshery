@@ -2,14 +2,14 @@
 layout: enhanced
 title: Keda
 subtitle: Collaborative and visual infrastructure as code for Keda
-image: /assets/img/integrations/keda.svg
+image: /assets/img/integrations/keda/icons/color/keda-color.svg
 permalink: extensibility/integrations/keda
 docURL: https://docs.meshery.io/extensibility/integrations/keda
 description: 
 category: Serverless
 subcategory: Installable Platform
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

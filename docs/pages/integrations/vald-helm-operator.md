@@ -2,22 +2,26 @@
 layout: enhanced
 title: Vald Helm Operator
 subtitle: Collaborative and visual infrastructure as code for Vald Helm Operator
-image: /assets/img/integrations/vald-helm-operator.svg
+image: /assets/img/integrations/vald-helm-operator/icons/color/vald-helm-operator-color.svg
 permalink: extensibility/integrations/vald-helm-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: ValdHelmOperatorRelease
-		colorIcon: assets/img/integrations/components/ValdHelmOperatorRelease-color.svg
-		whiteIcon: assets/img/integrations/components/ValdHelmOperatorRelease-white.svg
-		description: 
-	-	name: ValdRelease
-		colorIcon: assets/img/integrations/components/ValdRelease-color.svg
-		whiteIcon: assets/img/integrations/components/ValdRelease-white.svg
-		description: 
+components: [
+{
+"name": "vald-helm-operator-release"
+"colorIcon": "assets/img/integrations/vald-helm-operator/components/vald-helm-operator-release/icons/color/vald-helm-operator-release-color.svg"
+"whiteIcon": "assets/img/integrations/vald-helm-operator/components/vald-helm-operator-release/icons/white/vald-helm-operator-release-white.svg"
+"description": ""
+},
+{
+"name": "vald-release"
+"colorIcon": "assets/img/integrations/vald-helm-operator/components/vald-release/icons/color/vald-release-color.svg"
+"whiteIcon": "assets/img/integrations/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

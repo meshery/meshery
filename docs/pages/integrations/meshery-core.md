@@ -2,14 +2,14 @@
 layout: enhanced
 title: Meshery Core
 subtitle: Collaborative and visual infrastructure as code for Meshery Core
-image: /assets/img/integrations/meshery-core.svg
+image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
 permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 
 category: Orchestration & Management
 subcategory: App Definition and Development
 registrant: meshery
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

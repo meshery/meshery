@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kube Prometheus
 subtitle: Collaborative and visual infrastructure as code for Kube Prometheus
-image: /assets/img/integrations/kube-prometheus.svg
+image: /assets/img/integrations/kube-prometheus/icons/color/kube-prometheus-color.svg
 permalink: extensibility/integrations/kube-prometheus
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

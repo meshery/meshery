@@ -2,14 +2,14 @@
 layout: enhanced
 title: Inclavare Containers
 subtitle: Collaborative and visual infrastructure as code for Inclavare Containers
-image: /assets/img/integrations/inclavare-containers.svg
+image: /assets/img/integrations/inclavare-containers/icons/color/inclavare-containers-color.svg
 permalink: extensibility/integrations/inclavare-containers
 docURL: https://docs.meshery.io/extensibility/integrations/inclavare containers
 description: 
 category: Runtime
 subcategory: Container Runtime
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

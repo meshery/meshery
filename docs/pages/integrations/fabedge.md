@@ -2,14 +2,14 @@
 layout: enhanced
 title: Fabedge
 subtitle: Collaborative and visual infrastructure as code for Fabedge
-image: /assets/img/integrations/fabedge.svg
+image: /assets/img/integrations/fabedge/icons/color/fabedge-color.svg
 permalink: extensibility/integrations/fabedge
 docURL: https://docs.meshery.io/extensibility/integrations/fabedge
 description: 
 category: Runtime
 subcategory: Cloud Native Network
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Vault Secrets
 subtitle: Collaborative and visual infrastructure as code for Vault Secrets
-image: /assets/img/integrations/vault-secrets.svg
+image: /assets/img/integrations/vault-secrets/icons/color/vault-secrets-color.svg
 permalink: extensibility/integrations/vault-secrets
 docURL: https://docs.meshery.io/extensibility/integrations/vault-secrets
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

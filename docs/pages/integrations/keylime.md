@@ -2,14 +2,14 @@
 layout: enhanced
 title: Keylime
 subtitle: Collaborative and visual infrastructure as code for Keylime
-image: /assets/img/integrations/keylime.svg
+image: /assets/img/integrations/keylime/icons/color/keylime-color.svg
 permalink: extensibility/integrations/keylime
 docURL: https://docs.meshery.io/extensibility/integrations/keylime
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

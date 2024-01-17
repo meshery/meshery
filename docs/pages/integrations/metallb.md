@@ -2,14 +2,14 @@
 layout: enhanced
 title: Metallb
 subtitle: Collaborative and visual infrastructure as code for Metallb
-image: /assets/img/integrations/metallb.svg
+image: /assets/img/integrations/metallb/icons/color/metallb-color.svg
 permalink: extensibility/integrations/metallb
 docURL: https://docs.meshery.io/extensibility/integrations/metallb
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

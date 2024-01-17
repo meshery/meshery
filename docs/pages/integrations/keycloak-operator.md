@@ -2,78 +2,110 @@
 layout: enhanced
 title: Keycloak Operator
 subtitle: Collaborative and visual infrastructure as code for Keycloak Operator
-image: /assets/img/integrations/keycloak-operator.svg
+image: /assets/img/integrations/keycloak-operator/icons/color/keycloak-operator-color.svg
 permalink: extensibility/integrations/keycloak-operator
 docURL: https://docs.meshery.io/extensibility/integrations/keycloak-operator
 description: 
 category: Security & Compliance
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: KeycloakRealmImport
-		colorIcon: assets/img/integrations/components/KeycloakRealmImport-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmImport-white.svg
-		description: 
-	-	name: Keycloak
-		colorIcon: assets/img/integrations/components/Keycloak-color.svg
-		whiteIcon: assets/img/integrations/components/Keycloak-white.svg
-		description: 
-	-	name: KeycloakAuthFlow
-		colorIcon: assets/img/integrations/components/KeycloakAuthFlow-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakAuthFlow-white.svg
-		description: 
-	-	name: KeycloakClient
-		colorIcon: assets/img/integrations/components/KeycloakClient-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakClient-white.svg
-		description: 
-	-	name: KeycloakClientScope
-		colorIcon: assets/img/integrations/components/KeycloakClientScope-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakClientScope-white.svg
-		description: 
-	-	name: KeycloakRealmComponent
-		colorIcon: assets/img/integrations/components/KeycloakRealmComponent-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmComponent-white.svg
-		description: 
-	-	name: KeycloakRealmGroup
-		colorIcon: assets/img/integrations/components/KeycloakRealmGroup-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmGroup-white.svg
-		description: 
-	-	name: KeycloakRealmIdentityProvider
-		colorIcon: assets/img/integrations/components/KeycloakRealmIdentityProvider-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmIdentityProvider-white.svg
-		description: 
-	-	name: KeycloakRealmRoleBatch
-		colorIcon: assets/img/integrations/components/KeycloakRealmRoleBatch-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmRoleBatch-white.svg
-		description: 
-	-	name: KeycloakRealmRole
-		colorIcon: assets/img/integrations/components/KeycloakRealmRole-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmRole-white.svg
-		description: 
-	-	name: KeycloakRealm
-		colorIcon: assets/img/integrations/components/KeycloakRealm-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealm-white.svg
-		description: 
-	-	name: KeycloakRealmUser
-		colorIcon: assets/img/integrations/components/KeycloakRealmUser-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakRealmUser-white.svg
-		description: 
-	-	name: KeycloakBackup
-		colorIcon: assets/img/integrations/components/KeycloakBackup-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakBackup-white.svg
-		description: 
-	-	name: KeycloakUser
-		colorIcon: assets/img/integrations/components/KeycloakUser-color.svg
-		whiteIcon: assets/img/integrations/components/KeycloakUser-white.svg
-		description: 
-	-	name: ClusterKeycloak
-		colorIcon: assets/img/integrations/components/ClusterKeycloak-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterKeycloak-white.svg
-		description: 
-	-	name: ClusterKeycloakRealm
-		colorIcon: assets/img/integrations/components/ClusterKeycloakRealm-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterKeycloakRealm-white.svg
-		description: 
+components: [
+{
+"name": "keycloak-realm-import"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-import/icons/color/keycloak-realm-import-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-import/icons/white/keycloak-realm-import-white.svg"
+"description": ""
+},
+{
+"name": "keycloak"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak/icons/color/keycloak-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak/icons/white/keycloak-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-auth-flow"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-auth-flow/icons/color/keycloak-auth-flow-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-auth-flow/icons/white/keycloak-auth-flow-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-client"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-client/icons/color/keycloak-client-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-client/icons/white/keycloak-client-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-client-scope"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-client-scope/icons/color/keycloak-client-scope-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-client-scope/icons/white/keycloak-client-scope-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-component"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-component/icons/color/keycloak-realm-component-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-component/icons/white/keycloak-realm-component-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-group"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-group/icons/color/keycloak-realm-group-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-group/icons/white/keycloak-realm-group-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-identity-provider"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-identity-provider/icons/color/keycloak-realm-identity-provider-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-identity-provider/icons/white/keycloak-realm-identity-provider-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-role-batch"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-role-batch/icons/color/keycloak-realm-role-batch-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-role-batch/icons/white/keycloak-realm-role-batch-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-role"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-role/icons/color/keycloak-realm-role-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-role/icons/white/keycloak-realm-role-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm/icons/color/keycloak-realm-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm/icons/white/keycloak-realm-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-realm-user"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-user/icons/color/keycloak-realm-user-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-realm-user/icons/white/keycloak-realm-user-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-backup"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-backup/icons/color/keycloak-backup-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-backup/icons/white/keycloak-backup-white.svg"
+"description": ""
+},
+{
+"name": "keycloak-user"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/keycloak-user/icons/color/keycloak-user-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/keycloak-user/icons/white/keycloak-user-white.svg"
+"description": ""
+},
+{
+"name": "cluster-keycloak"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/cluster-keycloak/icons/color/cluster-keycloak-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/cluster-keycloak/icons/white/cluster-keycloak-white.svg"
+"description": ""
+},
+{
+"name": "cluster-keycloak-realm"
+"colorIcon": "assets/img/integrations/keycloak-operator/components/cluster-keycloak-realm/icons/color/cluster-keycloak-realm-color.svg"
+"whiteIcon": "assets/img/integrations/keycloak-operator/components/cluster-keycloak-realm/icons/white/cluster-keycloak-realm-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

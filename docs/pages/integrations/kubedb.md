@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubedb
 subtitle: Collaborative and visual infrastructure as code for Kubedb
-image: /assets/img/integrations/kubedb.svg
+image: /assets/img/integrations/kubedb/icons/color/kubedb-color.svg
 permalink: extensibility/integrations/kubedb
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

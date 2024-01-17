@@ -2,26 +2,32 @@
 layout: enhanced
 title: AWS Kinesis
 subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
-image: /assets/img/integrations/aws-kinesis.svg
+image: /assets/img/integrations/aws-kinesis/icons/color/aws-kinesis-color.svg
 permalink: extensibility/integrations/aws-kinesis
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kinesis-controller
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: aws
-components: 
-	-	name: FieldExport
-		colorIcon: assets/img/integrations/components/FieldExport-color.svg
-		whiteIcon: assets/img/integrations/components/FieldExport-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
-	-	name: Stream
-		colorIcon: assets/img/integrations/components/Stream-color.svg
-		whiteIcon: assets/img/integrations/components/Stream-white.svg
-		description: 
+components: [
+{
+"name": "field-export"
+"colorIcon": "assets/img/integrations/aws-kinesis-controller/components/field-export/icons/color/field-export-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kinesis-controller/components/field-export/icons/white/field-export-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-kinesis-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kinesis-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+},
+{
+"name": "stream"
+"colorIcon": "assets/img/integrations/aws-kinesis-controller/components/stream/icons/color/stream-color.svg"
+"whiteIcon": "assets/img/integrations/aws-kinesis-controller/components/stream/icons/white/stream-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

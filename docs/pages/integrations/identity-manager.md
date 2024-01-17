@@ -2,18 +2,20 @@
 layout: enhanced
 title: Identity Manager
 subtitle: Collaborative and visual infrastructure as code for Identity Manager
-image: /assets/img/integrations/identity-manager.svg
+image: /assets/img/integrations/identity-manager/icons/color/identity-manager-color.svg
 permalink: extensibility/integrations/identity-manager
 docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
 category: Provisioning
 subcategory: Key Management
 registrant: artifacthub
-components: 
-	-	name: WorkloadIdentity
-		colorIcon: assets/img/integrations/components/WorkloadIdentity-color.svg
-		whiteIcon: assets/img/integrations/components/WorkloadIdentity-white.svg
-		description: 
+components: [
+{
+"name": "workload-identity"
+"colorIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg"
+"whiteIcon": "assets/img/integrations/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

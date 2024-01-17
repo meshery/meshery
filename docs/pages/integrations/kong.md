@@ -2,46 +2,62 @@
 layout: enhanced
 title: Kong API Gateway
 subtitle: Collaborative and visual infrastructure as code for Kong API Gateway
-image: /assets/img/integrations/kong-api-gateway.svg
+image: /assets/img/integrations/kong-api-gateway/icons/color/kong-api-gateway-color.svg
 permalink: extensibility/integrations/kong-api-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kong
 description: 
 category: Cloud Native Network
 subcategory: API Gateway
 registrant: artifacthub
-components: 
-	-	name: IngressClassParameters
-		colorIcon: assets/img/integrations/components/IngressClassParameters-color.svg
-		whiteIcon: assets/img/integrations/components/IngressClassParameters-white.svg
-		description: 
-	-	name: KongClusterPlugin
-		colorIcon: assets/img/integrations/components/KongClusterPlugin-color.svg
-		whiteIcon: assets/img/integrations/components/KongClusterPlugin-white.svg
-		description: 
-	-	name: KongConsumer
-		colorIcon: assets/img/integrations/components/KongConsumer-color.svg
-		whiteIcon: assets/img/integrations/components/KongConsumer-white.svg
-		description: 
-	-	name: KongIngress
-		colorIcon: assets/img/integrations/components/KongIngress-color.svg
-		whiteIcon: assets/img/integrations/components/KongIngress-white.svg
-		description: 
-	-	name: KongPlugin
-		colorIcon: assets/img/integrations/components/KongPlugin-color.svg
-		whiteIcon: assets/img/integrations/components/KongPlugin-white.svg
-		description: 
-	-	name: TCPIngress
-		colorIcon: assets/img/integrations/components/TCPIngress-color.svg
-		whiteIcon: assets/img/integrations/components/TCPIngress-white.svg
-		description: 
-	-	name: UDPIngress
-		colorIcon: assets/img/integrations/components/UDPIngress-color.svg
-		whiteIcon: assets/img/integrations/components/UDPIngress-white.svg
-		description: 
-	-	name: KongUpstreamPolicy
-		colorIcon: assets/img/integrations/components/KongUpstreamPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/KongUpstreamPolicy-white.svg
-		description: 
+components: [
+{
+"name": "ingress-class-parameters"
+"colorIcon": "assets/img/integrations/kong/components/ingress-class-parameters/icons/color/ingress-class-parameters-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/ingress-class-parameters/icons/white/ingress-class-parameters-white.svg"
+"description": ""
+},
+{
+"name": "kong-cluster-plugin"
+"colorIcon": "assets/img/integrations/kong/components/kong-cluster-plugin/icons/color/kong-cluster-plugin-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/kong-cluster-plugin/icons/white/kong-cluster-plugin-white.svg"
+"description": ""
+},
+{
+"name": "kong-consumer"
+"colorIcon": "assets/img/integrations/kong/components/kong-consumer/icons/color/kong-consumer-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/kong-consumer/icons/white/kong-consumer-white.svg"
+"description": ""
+},
+{
+"name": "kong-ingress"
+"colorIcon": "assets/img/integrations/kong/components/kong-ingress/icons/color/kong-ingress-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/kong-ingress/icons/white/kong-ingress-white.svg"
+"description": ""
+},
+{
+"name": "kong-plugin"
+"colorIcon": "assets/img/integrations/kong/components/kong-plugin/icons/color/kong-plugin-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/kong-plugin/icons/white/kong-plugin-white.svg"
+"description": ""
+},
+{
+"name": "tcp-ingress"
+"colorIcon": "assets/img/integrations/kong/components/tcp-ingress/icons/color/tcp-ingress-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/tcp-ingress/icons/white/tcp-ingress-white.svg"
+"description": ""
+},
+{
+"name": "udp-ingress"
+"colorIcon": "assets/img/integrations/kong/components/udp-ingress/icons/color/udp-ingress-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/udp-ingress/icons/white/udp-ingress-white.svg"
+"description": ""
+},
+{
+"name": "kong-upstream-policy"
+"colorIcon": "assets/img/integrations/kong/components/kong-upstream-policy/icons/color/kong-upstream-policy-color.svg"
+"whiteIcon": "assets/img/integrations/kong/components/kong-upstream-policy/icons/white/kong-upstream-policy-white.svg"
+"description": ""
+}]
 featureList: [
   "Advanced routing, load balancing, health checking - all configurable via a RESTful admin API or declarative configuration.",
   "Authentication and authorization for APIs using methods like JWT, basic auth, OAuth, ACLs and more.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Citrix Service Mesh
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
-image: /assets/img/integrations/citrix-service-mesh.svg
+image: /assets/img/integrations/citrix-service-mesh/icons/color/citrix-service-mesh-color.svg
 permalink: extensibility/integrations/citrix-service-mesh
 docURL: https://docs.meshery.io/extensibility/adapters/cpx
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

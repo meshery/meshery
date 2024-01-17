@@ -2,14 +2,14 @@
 layout: enhanced
 title: Jaeger Operator
 subtitle: Collaborative and visual infrastructure as code for Jaeger Operator
-image: /assets/img/integrations/jaeger-operator.svg
+image: /assets/img/integrations/jaeger-operator/icons/color/jaeger-operator-color.svg
 permalink: extensibility/integrations/jaeger-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger-operator
 description: 
 category: Observability and Analysis
 subcategory: Tracing
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

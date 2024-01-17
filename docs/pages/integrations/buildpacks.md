@@ -2,14 +2,14 @@
 layout: enhanced
 title: Buildpacks
 subtitle: Collaborative and visual infrastructure as code for Buildpacks
-image: /assets/img/integrations/buildpacks.svg
+image: /assets/img/integrations/buildpacks/icons/color/buildpacks-color.svg
 permalink: extensibility/integrations/buildpacks
 docURL: https://docs.meshery.io/extensibility/integrations/buildpacks
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Transform application source code into OCI images.",
   "Enable for swift rebasing of images and modular control over images.",

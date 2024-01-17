@@ -2,74 +2,104 @@
 layout: enhanced
 title: Kubevault Crds
 subtitle: Collaborative and visual infrastructure as code for Kubevault Crds
-image: /assets/img/integrations/kubevault-crds.svg
+image: /assets/img/integrations/kubevault-crds/icons/color/kubevault-crds-color.svg
 permalink: extensibility/integrations/kubevault-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-crds
 description: 
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
-	-	name: AWSRole
-		colorIcon: assets/img/integrations/components/AWSRole-color.svg
-		whiteIcon: assets/img/integrations/components/AWSRole-white.svg
-		description: 
-	-	name: AzureRole
-		colorIcon: assets/img/integrations/components/AzureRole-color.svg
-		whiteIcon: assets/img/integrations/components/AzureRole-white.svg
-		description: 
-	-	name: ElasticsearchRole
-		colorIcon: assets/img/integrations/components/ElasticsearchRole-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchRole-white.svg
-		description: 
-	-	name: GCPRole
-		colorIcon: assets/img/integrations/components/GCPRole-color.svg
-		whiteIcon: assets/img/integrations/components/GCPRole-white.svg
-		description: 
-	-	name: MariaDBRole
-		colorIcon: assets/img/integrations/components/MariaDBRole-color.svg
-		whiteIcon: assets/img/integrations/components/MariaDBRole-white.svg
-		description: 
-	-	name: MongoDBRole
-		colorIcon: assets/img/integrations/components/MongoDBRole-color.svg
-		whiteIcon: assets/img/integrations/components/MongoDBRole-white.svg
-		description: 
-	-	name: MySQLRole
-		colorIcon: assets/img/integrations/components/MySQLRole-color.svg
-		whiteIcon: assets/img/integrations/components/MySQLRole-white.svg
-		description: 
-	-	name: PostgresRole
-		colorIcon: assets/img/integrations/components/PostgresRole-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresRole-white.svg
-		description: 
-	-	name: RedisRole
-		colorIcon: assets/img/integrations/components/RedisRole-color.svg
-		whiteIcon: assets/img/integrations/components/RedisRole-white.svg
-		description: 
-	-	name: SecretAccessRequest
-		colorIcon: assets/img/integrations/components/SecretAccessRequest-color.svg
-		whiteIcon: assets/img/integrations/components/SecretAccessRequest-white.svg
-		description: 
-	-	name: SecretEngine
-		colorIcon: assets/img/integrations/components/SecretEngine-color.svg
-		whiteIcon: assets/img/integrations/components/SecretEngine-white.svg
-		description: 
-	-	name: SecretRoleBinding
-		colorIcon: assets/img/integrations/components/SecretRoleBinding-color.svg
-		whiteIcon: assets/img/integrations/components/SecretRoleBinding-white.svg
-		description: 
-	-	name: VaultOpsRequest
-		colorIcon: assets/img/integrations/components/VaultOpsRequest-color.svg
-		whiteIcon: assets/img/integrations/components/VaultOpsRequest-white.svg
-		description: 
-	-	name: VaultPolicy
-		colorIcon: assets/img/integrations/components/VaultPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/VaultPolicy-white.svg
-		description: 
-	-	name: VaultPolicyBinding
-		colorIcon: assets/img/integrations/components/VaultPolicyBinding-color.svg
-		whiteIcon: assets/img/integrations/components/VaultPolicyBinding-white.svg
-		description: 
+components: [
+{
+"name": "aws-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/aws-role/icons/color/aws-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/aws-role/icons/white/aws-role-white.svg"
+"description": ""
+},
+{
+"name": "azure-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/azure-role/icons/color/azure-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/azure-role/icons/white/azure-role-white.svg"
+"description": ""
+},
+{
+"name": "elasticsearch-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/elasticsearch-role/icons/color/elasticsearch-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/elasticsearch-role/icons/white/elasticsearch-role-white.svg"
+"description": ""
+},
+{
+"name": "gcp-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/gcp-role/icons/color/gcp-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/gcp-role/icons/white/gcp-role-white.svg"
+"description": ""
+},
+{
+"name": "maria-db-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/maria-db-role/icons/color/maria-db-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/maria-db-role/icons/white/maria-db-role-white.svg"
+"description": ""
+},
+{
+"name": "mongo-db-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/mongo-db-role/icons/color/mongo-db-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/mongo-db-role/icons/white/mongo-db-role-white.svg"
+"description": ""
+},
+{
+"name": "my-sql-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/my-sql-role/icons/color/my-sql-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/my-sql-role/icons/white/my-sql-role-white.svg"
+"description": ""
+},
+{
+"name": "postgres-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/postgres-role/icons/color/postgres-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/postgres-role/icons/white/postgres-role-white.svg"
+"description": ""
+},
+{
+"name": "redis-role"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/redis-role/icons/color/redis-role-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/redis-role/icons/white/redis-role-white.svg"
+"description": ""
+},
+{
+"name": "secret-access-request"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/secret-access-request/icons/color/secret-access-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/secret-access-request/icons/white/secret-access-request-white.svg"
+"description": ""
+},
+{
+"name": "secret-engine"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/secret-engine/icons/color/secret-engine-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/secret-engine/icons/white/secret-engine-white.svg"
+"description": ""
+},
+{
+"name": "secret-role-binding"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/secret-role-binding/icons/color/secret-role-binding-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/secret-role-binding/icons/white/secret-role-binding-white.svg"
+"description": ""
+},
+{
+"name": "vault-ops-request"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/vault-ops-request/icons/color/vault-ops-request-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/vault-ops-request/icons/white/vault-ops-request-white.svg"
+"description": ""
+},
+{
+"name": "vault-policy"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/vault-policy/icons/color/vault-policy-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/vault-policy/icons/white/vault-policy-white.svg"
+"description": ""
+},
+{
+"name": "vault-policy-binding"
+"colorIcon": "assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/color/vault-policy-binding-color.svg"
+"whiteIcon": "assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/white/vault-policy-binding-white.svg"
+"description": ""
+}]
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

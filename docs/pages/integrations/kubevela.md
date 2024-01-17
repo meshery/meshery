@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kubevela
 subtitle: Collaborative and visual infrastructure as code for Kubevela
-image: /assets/img/integrations/kubevela.svg
+image: /assets/img/integrations/kubevela/icons/color/kubevela-color.svg
 permalink: extensibility/integrations/kubevela
 docURL: https://docs.meshery.io/extensibility/integrations/kubevela
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

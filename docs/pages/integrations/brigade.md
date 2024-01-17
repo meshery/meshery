@@ -2,14 +2,14 @@
 layout: enhanced
 title: Brigade
 subtitle: Collaborative and visual infrastructure as code for Brigade
-image: /assets/img/integrations/brigade.svg
+image: /assets/img/integrations/brigade/icons/color/brigade-color.svg
 permalink: extensibility/integrations/brigade
 docURL: https://docs.meshery.io/extensibility/integrations/brigade
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Designed to quickly and efficently handle large volumes of events.",
   "Offers full management of user and service account authorization/authentication.",

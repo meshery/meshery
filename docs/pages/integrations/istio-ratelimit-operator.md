@@ -2,34 +2,44 @@
 layout: enhanced
 title: Istio Rate Limit Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /assets/img/integrations/istio-rate-limit-operator.svg
+image: /assets/img/integrations/istio-rate-limit-operator/icons/color/istio-rate-limit-operator-color.svg
 permalink: extensibility/integrations/istio-rate-limit-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
-	-	name: GlobalRateLimitConfig
-		colorIcon: assets/img/integrations/components/GlobalRateLimitConfig-color.svg
-		whiteIcon: assets/img/integrations/components/GlobalRateLimitConfig-white.svg
-		description: 
-	-	name: GlobalRateLimit
-		colorIcon: assets/img/integrations/components/GlobalRateLimit-color.svg
-		whiteIcon: assets/img/integrations/components/GlobalRateLimit-white.svg
-		description: 
-	-	name: RateLimitService
-		colorIcon: assets/img/integrations/components/RateLimitService-color.svg
-		whiteIcon: assets/img/integrations/components/RateLimitService-white.svg
-		description: 
-	-	name: LocalRateLimitConfig
-		colorIcon: assets/img/integrations/components/LocalRateLimitConfig-color.svg
-		whiteIcon: assets/img/integrations/components/LocalRateLimitConfig-white.svg
-		description: 
-	-	name: LocalRateLimit
-		colorIcon: assets/img/integrations/components/LocalRateLimit-color.svg
-		whiteIcon: assets/img/integrations/components/LocalRateLimit-white.svg
-		description: 
+components: [
+{
+"name": "global-rate-limit-config"
+"colorIcon": "assets/img/integrations/istio-ratelimit-operator/components/global-rate-limit-config/icons/color/global-rate-limit-config-color.svg"
+"whiteIcon": "assets/img/integrations/istio-ratelimit-operator/components/global-rate-limit-config/icons/white/global-rate-limit-config-white.svg"
+"description": ""
+},
+{
+"name": "global-rate-limit"
+"colorIcon": "assets/img/integrations/istio-ratelimit-operator/components/global-rate-limit/icons/color/global-rate-limit-color.svg"
+"whiteIcon": "assets/img/integrations/istio-ratelimit-operator/components/global-rate-limit/icons/white/global-rate-limit-white.svg"
+"description": ""
+},
+{
+"name": "rate-limit-service"
+"colorIcon": "assets/img/integrations/istio-ratelimit-operator/components/rate-limit-service/icons/color/rate-limit-service-color.svg"
+"whiteIcon": "assets/img/integrations/istio-ratelimit-operator/components/rate-limit-service/icons/white/rate-limit-service-white.svg"
+"description": ""
+},
+{
+"name": "local-rate-limit-config"
+"colorIcon": "assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit-config/icons/color/local-rate-limit-config-color.svg"
+"whiteIcon": "assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit-config/icons/white/local-rate-limit-config-white.svg"
+"description": ""
+},
+{
+"name": "local-rate-limit"
+"colorIcon": "assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit/icons/color/local-rate-limit-color.svg"
+"whiteIcon": "assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit/icons/white/local-rate-limit-white.svg"
+"description": ""
+}]
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

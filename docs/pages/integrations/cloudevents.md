@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cloudevents
 subtitle: Collaborative and visual infrastructure as code for Cloudevents
-image: /assets/img/integrations/cloudevents.svg
+image: /assets/img/integrations/cloudevents/icons/color/cloudevents-color.svg
 permalink: extensibility/integrations/cloudevents
 docURL: https://docs.meshery.io/extensibility/integrations/cloudevents
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Provides SDKs for Go, JavaScript, Java, C#, Ruby, PHP, PowerShell, Rust, and Python that can be used to build event routers, tracing systems, and other tools.",
   "Simplifies event declaration and delivery across services, platforms, and beyond.",

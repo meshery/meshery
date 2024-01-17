@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cubefs
 subtitle: Collaborative and visual infrastructure as code for Cubefs
-image: /assets/img/integrations/cubefs.svg
+image: /assets/img/integrations/cubefs/icons/color/cubefs-color.svg
 permalink: extensibility/integrations/cubefs
 docURL: https://docs.meshery.io/extensibility/integrations/cubefs
 description: 
 category: Runtime
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Multiple Access Protocol Support.",
   "Elasticity, scalability and strong consistency of metadata.",

@@ -2,22 +2,26 @@
 layout: enhanced
 title: AWS ElasticSearch Service
 subtitle: Collaborative and visual infrastructure as code for AWS ElasticSearch Service
-image: /assets/img/integrations/aws-elasticsearch-service.svg
+image: /assets/img/integrations/aws-elasticsearch-service/icons/color/aws-elasticsearch-service-color.svg
 permalink: extensibility/integrations/aws-elasticsearch-service
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
 description: 
 category: Observability and Analysis
 subcategory: Logging
 registrant: aws
-components: 
-	-	name: ElasticsearchDomain
-		colorIcon: assets/img/integrations/components/ElasticsearchDomain-color.svg
-		whiteIcon: assets/img/integrations/components/ElasticsearchDomain-white.svg
-		description: 
-	-	name: AdoptedResource
-		colorIcon: assets/img/integrations/components/AdoptedResource-color.svg
-		whiteIcon: assets/img/integrations/components/AdoptedResource-white.svg
-		description: 
+components: [
+{
+"name": "elasticsearch-domain"
+"colorIcon": "assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg"
+"whiteIcon": "assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg"
+"description": ""
+},
+{
+"name": "adopted-resource"
+"colorIcon": "assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
+"whiteIcon": "assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

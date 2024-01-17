@@ -2,22 +2,26 @@
 layout: enhanced
 title: K8s Vault Controller
 subtitle: Collaborative and visual infrastructure as code for K8s Vault Controller
-image: /assets/img/integrations/k8s-vault-controller.svg
+image: /assets/img/integrations/k8s-vault-controller/icons/color/k8s-vault-controller-color.svg
 permalink: extensibility/integrations/k8s-vault-controller
 docURL: https://docs.meshery.io/extensibility/integrations/k8svault-controller
 description: 
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
-	-	name: VaultBinding
-		colorIcon: assets/img/integrations/components/VaultBinding-color.svg
-		whiteIcon: assets/img/integrations/components/VaultBinding-white.svg
-		description: 
-	-	name: VaultMirror
-		colorIcon: assets/img/integrations/components/VaultMirror-color.svg
-		whiteIcon: assets/img/integrations/components/VaultMirror-white.svg
-		description: 
+components: [
+{
+"name": "vault-binding"
+"colorIcon": "assets/img/integrations/k8svault-controller/components/vault-binding/icons/color/vault-binding-color.svg"
+"whiteIcon": "assets/img/integrations/k8svault-controller/components/vault-binding/icons/white/vault-binding-white.svg"
+"description": ""
+},
+{
+"name": "vault-mirror"
+"colorIcon": "assets/img/integrations/k8svault-controller/components/vault-mirror/icons/color/vault-mirror-color.svg"
+"whiteIcon": "assets/img/integrations/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

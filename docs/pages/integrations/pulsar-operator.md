@@ -2,30 +2,38 @@
 layout: enhanced
 title: Pulsar Operator
 subtitle: Collaborative and visual infrastructure as code for Pulsar Operator
-image: /assets/img/integrations/pulsar-operator.svg
+image: /assets/img/integrations/pulsar-operator/icons/color/pulsar-operator-color.svg
 permalink: extensibility/integrations/pulsar-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
-	-	name: BookKeeperCluster
-		colorIcon: assets/img/integrations/components/BookKeeperCluster-color.svg
-		whiteIcon: assets/img/integrations/components/BookKeeperCluster-white.svg
-		description: 
-	-	name: PulsarBroker
-		colorIcon: assets/img/integrations/components/PulsarBroker-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarBroker-white.svg
-		description: 
-	-	name: PulsarProxy
-		colorIcon: assets/img/integrations/components/PulsarProxy-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarProxy-white.svg
-		description: 
-	-	name: ZooKeeperCluster
-		colorIcon: assets/img/integrations/components/ZooKeeperCluster-color.svg
-		whiteIcon: assets/img/integrations/components/ZooKeeperCluster-white.svg
-		description: 
+components: [
+{
+"name": "book-keeper-cluster"
+"colorIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/color/book-keeper-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/white/book-keeper-cluster-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-broker"
+"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/color/pulsar-broker-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/white/pulsar-broker-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-proxy"
+"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/color/pulsar-proxy-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/white/pulsar-proxy-white.svg"
+"description": ""
+},
+{
+"name": "zoo-keeper-cluster"
+"colorIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/color/zoo-keeper-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/white/zoo-keeper-cluster-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

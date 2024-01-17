@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cert Manager
 subtitle: Cloud native certificate management with Cert Manager and Meshery
-image: /assets/img/integrations/cert-manager.svg
+image: /assets/img/integrations/cert-manager/icons/color/cert-manager-color.svg
 permalink: extensibility/integrations/cert-manager
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
 description: 
 category: Security & Compliance
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",
   "Supports issuing certificates from a variety of sources.",

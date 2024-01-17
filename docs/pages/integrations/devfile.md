@@ -2,14 +2,14 @@
 layout: enhanced
 title: Devfile
 subtitle: Collaborative and visual infrastructure as code for Devfile
-image: /assets/img/integrations/devfile.svg
+image: /assets/img/integrations/devfile/icons/color/devfile-color.svg
 permalink: extensibility/integrations/devfile
 docURL: https://docs.meshery.io/extensibility/integrations/devfile
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Development environments are quick to create, can be thrown away at will, and can be easily re-created when needed.",
   "Mechanism for teams to share configurations across projects, and provide a single source of truth throughout the application lifecycle.",

@@ -2,22 +2,26 @@
 layout: enhanced
 title: PGO (CrunchyData)
 subtitle: Collaborative and visual infrastructure as code for PGO (CrunchyData)
-image: /assets/img/integrations/pgo-(crunchydata).svg
+image: /assets/img/integrations/pgo-(crunchydata)/icons/color/pgo-(crunchydata)-color.svg
 permalink: extensibility/integrations/pgo-(crunchydata)
 docURL: https://docs.meshery.io/extensibility/integrations/pgo
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: PGUpgrade
-		colorIcon: assets/img/integrations/components/PGUpgrade-color.svg
-		whiteIcon: assets/img/integrations/components/PGUpgrade-white.svg
-		description: 
-	-	name: PostgresCluster
-		colorIcon: assets/img/integrations/components/PostgresCluster-color.svg
-		whiteIcon: assets/img/integrations/components/PostgresCluster-white.svg
-		description: 
+components: [
+{
+"name": "pg-upgrade"
+"colorIcon": "assets/img/integrations/pgo/components/pg-upgrade/icons/color/pg-upgrade-color.svg"
+"whiteIcon": "assets/img/integrations/pgo/components/pg-upgrade/icons/white/pg-upgrade-white.svg"
+"description": ""
+},
+{
+"name": "postgres-cluster"
+"colorIcon": "assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

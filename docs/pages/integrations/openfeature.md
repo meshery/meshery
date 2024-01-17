@@ -2,14 +2,14 @@
 layout: enhanced
 title: OpenFeature
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
-image: /assets/img/integrations/openfeature.svg
+image: /assets/img/integrations/openfeature/icons/color/openfeature-color.svg
 permalink: extensibility/integrations/openfeature
 docURL: https://docs.meshery.io/extensibility/integrations/openfeature
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

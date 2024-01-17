@@ -2,14 +2,14 @@
 layout: enhanced
 title: Artifact Hub
 subtitle: Collaborative and visual infrastructure as code for Artifact Hub
-image: /assets/img/integrations/artifact-hub.svg
+image: /assets/img/integrations/artifact-hub/icons/color/artifact-hub-color.svg
 permalink: extensibility/integrations/artifact-hub
 docURL: https://docs.meshery.io/extensibility/integrations/artifact-hub
 description: 
 category: App Definition and Development
 subcategory: Application Definition & Image Build
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Discover, install and publish packages and configurations.",
   "Explore content like Helm charts schemas and templates in an interactive way.",

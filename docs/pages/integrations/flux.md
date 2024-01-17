@@ -2,14 +2,14 @@
 layout: enhanced
 title: Flux
 subtitle: Collaborative and visual infrastructure as code for Flux
-image: /assets/img/integrations/flux.svg
+image: /assets/img/integrations/flux/icons/color/flux-color.svg
 permalink: extensibility/integrations/flux
 docURL: https://docs.meshery.io/extensibility/integrations/flux
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

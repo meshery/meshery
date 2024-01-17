@@ -2,14 +2,14 @@
 layout: enhanced
 title: Kube Rs
 subtitle: Collaborative and visual infrastructure as code for Kube Rs
-image: /assets/img/integrations/kube-rs.svg
+image: /assets/img/integrations/kube-rs/icons/color/kube-rs-color.svg
 permalink: extensibility/integrations/kube-rs
 docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
 category: Runtime
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

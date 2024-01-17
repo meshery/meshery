@@ -2,26 +2,32 @@
 layout: enhanced
 title: Kubernetes Secret Generator
 subtitle: Collaborative and visual infrastructure as code for Kubernetes Secret Generator
-image: /assets/img/integrations/kubernetes-secret-generator.svg
+image: /assets/img/integrations/kubernetes-secret-generator/icons/color/kubernetes-secret-generator-color.svg
 permalink: extensibility/integrations/kubernetes-secret-generator
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-secret-generator
 description: 
 category: Security & Compliance
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
-	-	name: BasicAuth
-		colorIcon: assets/img/integrations/components/BasicAuth-color.svg
-		whiteIcon: assets/img/integrations/components/BasicAuth-white.svg
-		description: 
-	-	name: SSHKeyPair
-		colorIcon: assets/img/integrations/components/SSHKeyPair-color.svg
-		whiteIcon: assets/img/integrations/components/SSHKeyPair-white.svg
-		description: 
-	-	name: StringSecret
-		colorIcon: assets/img/integrations/components/StringSecret-color.svg
-		whiteIcon: assets/img/integrations/components/StringSecret-white.svg
-		description: 
+components: [
+{
+"name": "basic-auth"
+"colorIcon": "assets/img/integrations/kubernetes-secret-generator/components/basic-auth/icons/color/basic-auth-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-secret-generator/components/basic-auth/icons/white/basic-auth-white.svg"
+"description": ""
+},
+{
+"name": "ssh-key-pair"
+"colorIcon": "assets/img/integrations/kubernetes-secret-generator/components/ssh-key-pair/icons/color/ssh-key-pair-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-secret-generator/components/ssh-key-pair/icons/white/ssh-key-pair-white.svg"
+"description": ""
+},
+{
+"name": "string-secret"
+"colorIcon": "assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/color/string-secret-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/white/string-secret-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

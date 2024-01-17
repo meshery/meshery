@@ -2,38 +2,50 @@
 layout: enhanced
 title: Thanos Operator
 subtitle: Collaborative and visual infrastructure as code for Thanos Operator
-image: /assets/img/integrations/thanos-operator.svg
+image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-color.svg
 permalink: extensibility/integrations/thanos-operator
 docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator
 description: 
 category: Observability and Analysis
 subcategory: Monitoring
 registrant: artifacthub
-components: 
-	-	name: ObjectStore
-		colorIcon: assets/img/integrations/components/ObjectStore-color.svg
-		whiteIcon: assets/img/integrations/components/ObjectStore-white.svg
-		description: 
-	-	name: Receiver
-		colorIcon: assets/img/integrations/components/Receiver-color.svg
-		whiteIcon: assets/img/integrations/components/Receiver-white.svg
-		description: 
-	-	name: StoreEndpoint
-		colorIcon: assets/img/integrations/components/StoreEndpoint-color.svg
-		whiteIcon: assets/img/integrations/components/StoreEndpoint-white.svg
-		description: 
-	-	name: Thanos
-		colorIcon: assets/img/integrations/components/Thanos-color.svg
-		whiteIcon: assets/img/integrations/components/Thanos-white.svg
-		description: 
-	-	name: ThanosEndpoint
-		colorIcon: assets/img/integrations/components/ThanosEndpoint-color.svg
-		whiteIcon: assets/img/integrations/components/ThanosEndpoint-white.svg
-		description: 
-	-	name: ThanosPeer
-		colorIcon: assets/img/integrations/components/ThanosPeer-color.svg
-		whiteIcon: assets/img/integrations/components/ThanosPeer-white.svg
-		description: 
+components: [
+{
+"name": "object-store"
+"colorIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/color/object-store-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/object-store/icons/white/object-store-white.svg"
+"description": ""
+},
+{
+"name": "receiver"
+"colorIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/color/receiver-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/receiver/icons/white/receiver-white.svg"
+"description": ""
+},
+{
+"name": "store-endpoint"
+"colorIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/color/store-endpoint-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/store-endpoint/icons/white/store-endpoint-white.svg"
+"description": ""
+},
+{
+"name": "thanos"
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/color/thanos-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos/icons/white/thanos-white.svg"
+"description": ""
+},
+{
+"name": "thanos-endpoint"
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/color/thanos-endpoint-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-endpoint/icons/white/thanos-endpoint-white.svg"
+"description": ""
+},
+{
+"name": "thanos-peer"
+"colorIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/color/thanos-peer-color.svg"
+"whiteIcon": "assets/img/integrations/thanos-operator/components/thanos-peer/icons/white/thanos-peer-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,26 +2,32 @@
 layout: enhanced
 title: Mattermost Operator
 subtitle: Collaborative and visual infrastructure as code for Mattermost Operator
-image: /assets/img/integrations/mattermost-operator.svg
+image: /assets/img/integrations/mattermost-operator/icons/color/mattermost-operator-color.svg
 permalink: extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 
 category: Tools
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
-	-	name: ClusterInstallation
-		colorIcon: assets/img/integrations/components/ClusterInstallation-color.svg
-		whiteIcon: assets/img/integrations/components/ClusterInstallation-white.svg
-		description: 
-	-	name: MattermostRestoreDB
-		colorIcon: assets/img/integrations/components/MattermostRestoreDB-color.svg
-		whiteIcon: assets/img/integrations/components/MattermostRestoreDB-white.svg
-		description: 
-	-	name: Mattermost
-		colorIcon: assets/img/integrations/components/Mattermost-color.svg
-		whiteIcon: assets/img/integrations/components/Mattermost-white.svg
-		description: 
+components: [
+{
+"name": "cluster-installation"
+"colorIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg"
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/white/cluster-installation-white.svg"
+"description": ""
+},
+{
+"name": "mattermost-restore-db"
+"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/color/mattermost-restore-db-color.svg"
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/white/mattermost-restore-db-white.svg"
+"description": ""
+},
+{
+"name": "mattermost"
+"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg"
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

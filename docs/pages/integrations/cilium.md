@@ -2,14 +2,14 @@
 layout: enhanced
 title: Cilium
 subtitle: The easiest way to get production-grade Kubernetes clusters with Cilium up and running
-image: /assets/img/integrations/cilium.svg
+image: /assets/img/integrations/cilium/icons/color/cilium-color.svg
 permalink: extensibility/integrations/cilium
 docURL: https://docs.meshery.io/extensibility/adapters/cilium
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Ensure Cilium Service Mesh daemonset operation",
   "Define microservice isolation using eBPF",

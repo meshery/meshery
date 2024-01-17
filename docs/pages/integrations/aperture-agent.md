@@ -2,18 +2,20 @@
 layout: enhanced
 title: Aperture Agent
 subtitle: Collaborative and visual infrastructure as code for Aperture Agent
-image: /assets/img/integrations/aperture-agent.svg
+image: /assets/img/integrations/aperture-agent/icons/color/aperture-agent-color.svg
 permalink: extensibility/integrations/aperture-agent
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
-	-	name: Agent
-		colorIcon: assets/img/integrations/components/Agent-color.svg
-		whiteIcon: assets/img/integrations/components/Agent-white.svg
-		description: 
+components: [
+{
+"name": "agent"
+"colorIcon": "assets/img/integrations/aperture-agent/components/agent/icons/color/agent-color.svg"
+"whiteIcon": "assets/img/integrations/aperture-agent/components/agent/icons/white/agent-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

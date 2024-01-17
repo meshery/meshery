@@ -2,18 +2,20 @@
 layout: enhanced
 title: Apisix
 subtitle: Collaborative and visual infrastructure as code for Apisix
-image: /assets/img/integrations/apisix.svg
+image: /assets/img/integrations/apisix/icons/color/apisix-color.svg
 permalink: extensibility/integrations/apisix
 docURL: https://docs.meshery.io/extensibility/integrations/apisix
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
-	-	name: ApisixRoute
-		colorIcon: assets/img/integrations/components/ApisixRoute-color.svg
-		whiteIcon: assets/img/integrations/components/ApisixRoute-white.svg
-		description: 
+components: [
+{
+"name": "apisix-route"
+"colorIcon": "assets/img/integrations/apisix/components/apisix-route/icons/color/apisix-route-color.svg"
+"whiteIcon": "assets/img/integrations/apisix/components/apisix-route/icons/white/apisix-route-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

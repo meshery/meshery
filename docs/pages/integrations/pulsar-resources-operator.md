@@ -2,38 +2,50 @@
 layout: enhanced
 title: Pulsar Resources Operator
 subtitle: Collaborative and visual infrastructure as code for Pulsar Resources Operator
-image: /assets/img/integrations/pulsar-resources-operator.svg
+image: /assets/img/integrations/pulsar-resources-operator/icons/color/pulsar-resources-operator-color.svg
 permalink: extensibility/integrations/pulsar-resources-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-resources-operator
 description: 
 category: App Definition and Development
 subcategory: Streaming & Messaging
 registrant: artifacthub
-components: 
-	-	name: PulsarConnection
-		colorIcon: assets/img/integrations/components/PulsarConnection-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarConnection-white.svg
-		description: 
-	-	name: PulsarNamespace
-		colorIcon: assets/img/integrations/components/PulsarNamespace-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarNamespace-white.svg
-		description: 
-	-	name: PulsarPermission
-		colorIcon: assets/img/integrations/components/PulsarPermission-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarPermission-white.svg
-		description: 
-	-	name: PulsarTenant
-		colorIcon: assets/img/integrations/components/PulsarTenant-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarTenant-white.svg
-		description: 
-	-	name: PulsarTopic
-		colorIcon: assets/img/integrations/components/PulsarTopic-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarTopic-white.svg
-		description: 
-	-	name: PulsarGeoReplication
-		colorIcon: assets/img/integrations/components/PulsarGeoReplication-color.svg
-		whiteIcon: assets/img/integrations/components/PulsarGeoReplication-white.svg
-		description: 
+components: [
+{
+"name": "pulsar-connection"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/white/pulsar-connection-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-namespace"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/color/pulsar-namespace-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/white/pulsar-namespace-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-permission"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/color/pulsar-permission-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/white/pulsar-permission-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-tenant"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/color/pulsar-tenant-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/white/pulsar-tenant-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-topic"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/color/pulsar-topic-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/white/pulsar-topic-white.svg"
+"description": ""
+},
+{
+"name": "pulsar-geo-replication"
+"colorIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg"
+"whiteIcon": "assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,58 +2,80 @@
 layout: enhanced
 title: Jenkins Operator
 subtitle: Collaborative and visual infrastructure as code for Jenkins Operator
-image: /assets/img/integrations/jenkins-operator.svg
+image: /assets/img/integrations/jenkins-operator/icons/color/jenkins-operator-color.svg
 permalink: extensibility/integrations/jenkins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jenkins-operator
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
-	-	name: Jenkins
-		colorIcon: assets/img/integrations/components/Jenkins-color.svg
-		whiteIcon: assets/img/integrations/components/Jenkins-white.svg
-		description: 
-	-	name: CDStageJenkinsDeployment
-		colorIcon: assets/img/integrations/components/CDStageJenkinsDeployment-color.svg
-		whiteIcon: assets/img/integrations/components/CDStageJenkinsDeployment-white.svg
-		description: 
-	-	name: JenkinsAgent
-		colorIcon: assets/img/integrations/components/JenkinsAgent-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsAgent-white.svg
-		description: 
-	-	name: JenkinsAuthorizationRoleMapping
-		colorIcon: assets/img/integrations/components/JenkinsAuthorizationRoleMapping-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsAuthorizationRoleMapping-white.svg
-		description: 
-	-	name: JenkinsAuthorizationRole
-		colorIcon: assets/img/integrations/components/JenkinsAuthorizationRole-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsAuthorizationRole-white.svg
-		description: 
-	-	name: JenkinsFolder
-		colorIcon: assets/img/integrations/components/JenkinsFolder-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsFolder-white.svg
-		description: 
-	-	name: JenkinsJobBuildRun
-		colorIcon: assets/img/integrations/components/JenkinsJobBuildRun-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsJobBuildRun-white.svg
-		description: 
-	-	name: JenkinsJob
-		colorIcon: assets/img/integrations/components/JenkinsJob-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsJob-white.svg
-		description: 
-	-	name: JenkinsScript
-		colorIcon: assets/img/integrations/components/JenkinsScript-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsScript-white.svg
-		description: 
-	-	name: JenkinsServiceAccount
-		colorIcon: assets/img/integrations/components/JenkinsServiceAccount-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsServiceAccount-white.svg
-		description: 
-	-	name: JenkinsSharedLibrary
-		colorIcon: assets/img/integrations/components/JenkinsSharedLibrary-color.svg
-		whiteIcon: assets/img/integrations/components/JenkinsSharedLibrary-white.svg
-		description: 
+components: [
+{
+"name": "jenkins"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins/icons/color/jenkins-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins/icons/white/jenkins-white.svg"
+"description": ""
+},
+{
+"name": "cd-stage-jenkins-deployment"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/cd-stage-jenkins-deployment/icons/color/cd-stage-jenkins-deployment-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/cd-stage-jenkins-deployment/icons/white/cd-stage-jenkins-deployment-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-agent"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-agent/icons/color/jenkins-agent-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-agent/icons/white/jenkins-agent-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-authorization-role-mapping"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-authorization-role-mapping/icons/color/jenkins-authorization-role-mapping-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-authorization-role-mapping/icons/white/jenkins-authorization-role-mapping-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-authorization-role"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-authorization-role/icons/color/jenkins-authorization-role-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-authorization-role/icons/white/jenkins-authorization-role-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-folder"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-folder/icons/color/jenkins-folder-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-folder/icons/white/jenkins-folder-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-job-build-run"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-job-build-run/icons/color/jenkins-job-build-run-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-job-build-run/icons/white/jenkins-job-build-run-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-job"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-job/icons/color/jenkins-job-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-job/icons/white/jenkins-job-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-script"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-script/icons/color/jenkins-script-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-script/icons/white/jenkins-script-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-service-account"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-service-account/icons/color/jenkins-service-account-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-service-account/icons/white/jenkins-service-account-white.svg"
+"description": ""
+},
+{
+"name": "jenkins-shared-library"
+"colorIcon": "assets/img/integrations/jenkins-operator/components/jenkins-shared-library/icons/color/jenkins-shared-library-color.svg"
+"whiteIcon": "assets/img/integrations/jenkins-operator/components/jenkins-shared-library/icons/white/jenkins-shared-library-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

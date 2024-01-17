@@ -2,14 +2,14 @@
 layout: enhanced
 title: Rook
 subtitle: Collaborative and visual infrastructure as code for Rook
-image: /assets/img/integrations/rook.svg
+image: /assets/img/integrations/rook/icons/color/rook-color.svg
 permalink: extensibility/integrations/rook
 docURL: https://docs.meshery.io/extensibility/integrations/rook
 description: 
 category: Runtime
 subcategory: Cloud Native Storage
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

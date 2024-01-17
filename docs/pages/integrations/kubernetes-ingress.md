@@ -2,26 +2,32 @@
 layout: enhanced
 title: HAProxy Kubernetes Ingress
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
-image: /assets/img/integrations/haproxy-kubernetes-ingress.svg
+image: /assets/img/integrations/haproxy-kubernetes-ingress/icons/color/haproxy-kubernetes-ingress-color.svg
 permalink: extensibility/integrations/haproxy-kubernetes-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress
 description: 
 category: Cloud Native Network
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
-	-	name: Backend
-		colorIcon: assets/img/integrations/components/Backend-color.svg
-		whiteIcon: assets/img/integrations/components/Backend-white.svg
-		description: 
-	-	name: Defaults
-		colorIcon: assets/img/integrations/components/Defaults-color.svg
-		whiteIcon: assets/img/integrations/components/Defaults-white.svg
-		description: 
-	-	name: Global
-		colorIcon: assets/img/integrations/components/Global-color.svg
-		whiteIcon: assets/img/integrations/components/Global-white.svg
-		description: 
+components: [
+{
+"name": "backend"
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/color/backend-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/backend/icons/white/backend-white.svg"
+"description": ""
+},
+{
+"name": "defaults"
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/color/defaults-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/defaults/icons/white/defaults-white.svg"
+"description": ""
+},
+{
+"name": "global"
+"colorIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/color/global-color.svg"
+"whiteIcon": "assets/img/integrations/kubernetes-ingress/components/global/icons/white/global-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Percona Server for MongoDB
 subtitle: Collaborative and visual infrastructure as code for Percona Server for MongoDB
-image: /assets/img/integrations/percona-server-for-mongodb.svg
+image: /assets/img/integrations/percona-server-for-mongodb/icons/color/percona-server-for-mongodb-color.svg
 permalink: extensibility/integrations/percona-server-for-mongodb
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

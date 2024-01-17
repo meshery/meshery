@@ -2,42 +2,56 @@
 layout: enhanced
 title: Kong Mesh
 subtitle: Collaborative and visual infrastructure as code for Kong Mesh
-image: /assets/img/integrations/kong-mesh.svg
+image: /assets/img/integrations/kong-mesh/icons/color/kong-mesh-color.svg
 permalink: extensibility/integrations/kong-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/kong-mesh
 description: 
 category: Cloud Native Network
 subcategory: Service Mesh
 registrant: artifacthub
-components: 
-	-	name: AccessAudit
-		colorIcon: assets/img/integrations/components/AccessAudit-color.svg
-		whiteIcon: assets/img/integrations/components/AccessAudit-white.svg
-		description: 
-	-	name: AccessRoleBinding
-		colorIcon: assets/img/integrations/components/AccessRoleBinding-color.svg
-		whiteIcon: assets/img/integrations/components/AccessRoleBinding-white.svg
-		description: 
-	-	name: AccessRole
-		colorIcon: assets/img/integrations/components/AccessRole-color.svg
-		whiteIcon: assets/img/integrations/components/AccessRole-white.svg
-		description: 
-	-	name: MeshOPA
-		colorIcon: assets/img/integrations/components/MeshOPA-color.svg
-		whiteIcon: assets/img/integrations/components/MeshOPA-white.svg
-		description: 
-	-	name: OPAPolicy
-		colorIcon: assets/img/integrations/components/OPAPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/OPAPolicy-white.svg
-		description: 
-	-	name: MeshGatewayConfig
-		colorIcon: assets/img/integrations/components/MeshGatewayConfig-color.svg
-		whiteIcon: assets/img/integrations/components/MeshGatewayConfig-white.svg
-		description: 
-	-	name: MeshGlobalRateLimit
-		colorIcon: assets/img/integrations/components/MeshGlobalRateLimit-color.svg
-		whiteIcon: assets/img/integrations/components/MeshGlobalRateLimit-white.svg
-		description: 
+components: [
+{
+"name": "access-audit"
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/color/access-audit-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-audit/icons/white/access-audit-white.svg"
+"description": ""
+},
+{
+"name": "access-role-binding"
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/color/access-role-binding-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role-binding/icons/white/access-role-binding-white.svg"
+"description": ""
+},
+{
+"name": "access-role"
+"colorIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/color/access-role-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/access-role/icons/white/access-role-white.svg"
+"description": ""
+},
+{
+"name": "mesh-opa"
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/color/mesh-opa-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-opa/icons/white/mesh-opa-white.svg"
+"description": ""
+},
+{
+"name": "opa-policy"
+"colorIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/color/opa-policy-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/opa-policy/icons/white/opa-policy-white.svg"
+"description": ""
+},
+{
+"name": "mesh-gateway-config"
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/color/mesh-gateway-config-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-gateway-config/icons/white/mesh-gateway-config-white.svg"
+"description": ""
+},
+{
+"name": "mesh-global-rate-limit"
+"colorIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/color/mesh-global-rate-limit-color.svg"
+"whiteIcon": "assets/img/integrations/kong-mesh/components/mesh-global-rate-limit/icons/white/mesh-global-rate-limit-white.svg"
+"description": ""
+}]
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",

@@ -2,18 +2,20 @@
 layout: enhanced
 title: Epam Delivery Platform (EDP) Admin Console
 subtitle: Collaborative and visual infrastructure as code for Epam Delivery Platform (EDP) Admin Console
-image: /assets/img/integrations/epam-delivery-platform-(edp)-admin-console.svg
+image: /assets/img/integrations/epam-delivery-platform-(edp)-admin-console/icons/color/epam-delivery-platform-(edp)-admin-console-color.svg
 permalink: extensibility/integrations/epam-delivery-platform-(edp)-admin-console
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
-	-	name: AdminConsole
-		colorIcon: assets/img/integrations/components/AdminConsole-color.svg
-		whiteIcon: assets/img/integrations/components/AdminConsole-white.svg
-		description: 
+components: [
+{
+"name": "admin-console"
+"colorIcon": "assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg"
+"whiteIcon": "assets/img/integrations/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg"
+"description": ""
+}]
 featureList: [
   "Deployed and configured CI/CD toolset (Jenkins, Gerrit, Nexus, SonarQube)",
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: Open Cluster Management
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
-image: /assets/img/integrations/open-cluster-management.svg
+image: /assets/img/integrations/open-cluster-management/icons/color/open-cluster-management-color.svg
 permalink: extensibility/integrations/open-cluster-management
 docURL: https://docs.meshery.io/extensibility/integrations/open cluster management
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

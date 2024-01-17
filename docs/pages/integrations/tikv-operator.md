@@ -2,14 +2,14 @@
 layout: enhanced
 title: Tikv Operator
 subtitle: Collaborative and visual infrastructure as code for Tikv Operator
-image: /assets/img/integrations/tikv-operator.svg
+image: /assets/img/integrations/tikv-operator/icons/color/tikv-operator-color.svg
 permalink: extensibility/integrations/tikv-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tikv-operator
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,42 +2,56 @@
 layout: enhanced
 title: Gerrit Operator
 subtitle: Collaborative and visual infrastructure as code for Gerrit Operator
-image: /assets/img/integrations/gerrit-operator.svg
+image: /assets/img/integrations/gerrit-operator/icons/color/gerrit-operator-color.svg
 permalink: extensibility/integrations/gerrit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gerrit-operator
 description: 
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: 
-	-	name: GerritGroupMember
-		colorIcon: assets/img/integrations/components/GerritGroupMember-color.svg
-		whiteIcon: assets/img/integrations/components/GerritGroupMember-white.svg
-		description: 
-	-	name: GerritGroup
-		colorIcon: assets/img/integrations/components/GerritGroup-color.svg
-		whiteIcon: assets/img/integrations/components/GerritGroup-white.svg
-		description: 
-	-	name: GerritMergeRequest
-		colorIcon: assets/img/integrations/components/GerritMergeRequest-color.svg
-		whiteIcon: assets/img/integrations/components/GerritMergeRequest-white.svg
-		description: 
-	-	name: GerritProjectAccess
-		colorIcon: assets/img/integrations/components/GerritProjectAccess-color.svg
-		whiteIcon: assets/img/integrations/components/GerritProjectAccess-white.svg
-		description: 
-	-	name: GerritProject
-		colorIcon: assets/img/integrations/components/GerritProject-color.svg
-		whiteIcon: assets/img/integrations/components/GerritProject-white.svg
-		description: 
-	-	name: GerritReplicationConfig
-		colorIcon: assets/img/integrations/components/GerritReplicationConfig-color.svg
-		whiteIcon: assets/img/integrations/components/GerritReplicationConfig-white.svg
-		description: 
-	-	name: Gerrit
-		colorIcon: assets/img/integrations/components/Gerrit-color.svg
-		whiteIcon: assets/img/integrations/components/Gerrit-white.svg
-		description: 
+components: [
+{
+"name": "gerrit-group-member"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-group-member/icons/color/gerrit-group-member-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-group-member/icons/white/gerrit-group-member-white.svg"
+"description": ""
+},
+{
+"name": "gerrit-group"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-group/icons/color/gerrit-group-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-group/icons/white/gerrit-group-white.svg"
+"description": ""
+},
+{
+"name": "gerrit-merge-request"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-merge-request/icons/color/gerrit-merge-request-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-merge-request/icons/white/gerrit-merge-request-white.svg"
+"description": ""
+},
+{
+"name": "gerrit-project-access"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-project-access/icons/color/gerrit-project-access-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-project-access/icons/white/gerrit-project-access-white.svg"
+"description": ""
+},
+{
+"name": "gerrit-project"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-project/icons/color/gerrit-project-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-project/icons/white/gerrit-project-white.svg"
+"description": ""
+},
+{
+"name": "gerrit-replication-config"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit-replication-config/icons/color/gerrit-replication-config-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit-replication-config/icons/white/gerrit-replication-config-white.svg"
+"description": ""
+},
+{
+"name": "gerrit"
+"colorIcon": "assets/img/integrations/gerrit-operator/components/gerrit/icons/color/gerrit-color.svg"
+"whiteIcon": "assets/img/integrations/gerrit-operator/components/gerrit/icons/white/gerrit-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,26 +2,32 @@
 layout: enhanced
 title: Percona Postgres Operator
 subtitle: Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.
-image: /assets/img/integrations/percona-postgres-operator.svg
+image: /assets/img/integrations/percona-postgres-operator/icons/color/percona-postgres-operator-color.svg
 permalink: extensibility/integrations/percona-postgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 
 category: App Definition and Development
 subcategory: Database
 registrant: artifacthub
-components: 
-	-	name: PerconaPGBackup
-		colorIcon: assets/img/integrations/components/PerconaPGBackup-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaPGBackup-white.svg
-		description: 
-	-	name: PerconaPGCluster
-		colorIcon: assets/img/integrations/components/PerconaPGCluster-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaPGCluster-white.svg
-		description: 
-	-	name: PerconaPGRestore
-		colorIcon: assets/img/integrations/components/PerconaPGRestore-color.svg
-		whiteIcon: assets/img/integrations/components/PerconaPGRestore-white.svg
-		description: 
+components: [
+{
+"name": "percona-pg-backup"
+"colorIcon": "assets/img/integrations/pg-operator/components/percona-pg-backup/icons/color/percona-pg-backup-color.svg"
+"whiteIcon": "assets/img/integrations/pg-operator/components/percona-pg-backup/icons/white/percona-pg-backup-white.svg"
+"description": ""
+},
+{
+"name": "percona-pg-cluster"
+"colorIcon": "assets/img/integrations/pg-operator/components/percona-pg-cluster/icons/color/percona-pg-cluster-color.svg"
+"whiteIcon": "assets/img/integrations/pg-operator/components/percona-pg-cluster/icons/white/percona-pg-cluster-white.svg"
+"description": ""
+},
+{
+"name": "percona-pg-restore"
+"colorIcon": "assets/img/integrations/pg-operator/components/percona-pg-restore/icons/color/percona-pg-restore-color.svg"
+"whiteIcon": "assets/img/integrations/pg-operator/components/percona-pg-restore/icons/white/percona-pg-restore-white.svg"
+"description": ""
+}]
 featureList: [
   "Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.",
   "Percona Operators include backup/restore, high availability, replication, sharding, logging features and more.",

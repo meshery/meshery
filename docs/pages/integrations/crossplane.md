@@ -2,14 +2,14 @@
 layout: enhanced
 title: Crossplane
 subtitle: Collaborative and visual infrastructure as code for Crossplane
-image: /assets/img/integrations/crossplane.svg
+image: /assets/img/integrations/crossplane/icons/color/crossplane-color.svg
 permalink: extensibility/integrations/crossplane
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane
 description: 
 category: Orchestration & Management
 subcategory: Scheduling & Orchestration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.",
   "Highly configurable frontend that lets you define the declarative API it offers.",

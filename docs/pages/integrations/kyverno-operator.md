@@ -2,18 +2,20 @@
 layout: enhanced
 title: Kyverno Operator
 subtitle: Collaborative and visual infrastructure as code for Kyverno Operator
-image: /assets/img/integrations/kyverno-operator.svg
+image: /assets/img/integrations/kyverno-operator/icons/color/kyverno-operator-color.svg
 permalink: extensibility/integrations/kyverno-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno-operator
 description: 
 category: Provisioning
 subcategory: Security & Compliance
 registrant: artifacthub
-components: 
-	-	name: KyvernoOperator
-		colorIcon: assets/img/integrations/components/KyvernoOperator-color.svg
-		whiteIcon: assets/img/integrations/components/KyvernoOperator-white.svg
-		description: 
+components: [
+{
+"name": "kyverno-operator"
+"colorIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg"
+"whiteIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg"
+"description": ""
+}]
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
   "Use Meshery with Kyverno to inspect image metadata and 

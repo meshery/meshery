@@ -2,22 +2,26 @@
 layout: enhanced
 title: CD Pipeline Operator
 subtitle: Collaborative and visual infrastructure as code for CD Pipeline Operator
-image: /assets/img/integrations/cd-pipeline-operator.svg
+image: /assets/img/integrations/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
 permalink: extensibility/integrations/cd-pipeline-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
-	-	name: CDPipeline
-		colorIcon: assets/img/integrations/components/CDPipeline-color.svg
-		whiteIcon: assets/img/integrations/components/CDPipeline-white.svg
-		description: 
-	-	name: Stage
-		colorIcon: assets/img/integrations/components/Stage-color.svg
-		whiteIcon: assets/img/integrations/components/Stage-white.svg
-		description: 
+components: [
+{
+"name": "cd-pipeline"
+"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg"
+"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg"
+"description": ""
+},
+{
+"name": "stage"
+"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/color/stage-color.svg"
+"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/white/stage-white.svg"
+"description": ""
+}]
 featureList: [
   "Provides a pre-defined set of CI/CD patterns and tools.",
   "Allows shortening the time that is passed before an active development.",

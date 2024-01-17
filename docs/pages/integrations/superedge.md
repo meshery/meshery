@@ -2,14 +2,14 @@
 layout: enhanced
 title: Superedge
 subtitle: Collaborative and visual infrastructure as code for Superedge
-image: /assets/img/integrations/superedge.svg
+image: /assets/img/integrations/superedge/icons/color/superedge-color.svg
 permalink: extensibility/integrations/superedge
 docURL: https://docs.meshery.io/extensibility/integrations/superedge
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

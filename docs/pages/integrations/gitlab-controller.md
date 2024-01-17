@@ -2,14 +2,14 @@
 layout: enhanced
 title: Gitlab Controller
 subtitle: Collaborative and visual infrastructure as code for Gitlab Controller
-image: /assets/img/integrations/gitlab-controller.svg
+image: /assets/img/integrations/gitlab-controller/icons/color/gitlab-controller-color.svg
 permalink: extensibility/integrations/gitlab-controller
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-controller
 description: 
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

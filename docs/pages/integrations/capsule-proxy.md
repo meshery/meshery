@@ -2,18 +2,20 @@
 layout: enhanced
 title: Capsule Proxy
 subtitle: Collaborative and visual infrastructure as code for Capsule Proxy
-image: /assets/img/integrations/capsule-proxy.svg
+image: /assets/img/integrations/capsule-proxy/icons/color/capsule-proxy-color.svg
 permalink: extensibility/integrations/capsule-proxy
 docURL: https://docs.meshery.io/extensibility/integrations/capsule-proxy
 description: 
 category: Provisioning
 subcategory: Uncategorized
 registrant: artifacthub
-components: 
-	-	name: ProxySetting
-		colorIcon: assets/img/integrations/components/ProxySetting-color.svg
-		whiteIcon: assets/img/integrations/components/ProxySetting-white.svg
-		description: 
+components: [
+{
+"name": "proxy-setting"
+"colorIcon": "assets/img/integrations/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg"
+"whiteIcon": "assets/img/integrations/capsule-proxy/components/proxy-setting/icons/white/proxy-setting-white.svg"
+"description": ""
+}]
 featureList: [
   "Allows to overcome the limitations of Kubernetes API Server on listing owned cluster-scoped resources.",
   "Add-on for Capsule.",

@@ -2,14 +2,14 @@
 layout: enhanced
 title: OpenGitOps
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
-image: /assets/img/integrations/opengitops.svg
+image: /assets/img/integrations/opengitops/icons/color/opengitops-color.svg
 permalink: extensibility/integrations/opengitops
 docURL: https://docs.meshery.io/extensibility/integrations/opengitops
 description: 
 category: App Definition and Development
 subcategory: Continuous Integration & Delivery
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -2,18 +2,20 @@
 layout: enhanced
 title: Terraform
 subtitle: Collaborative and visual infrastructure as code for Terraform
-image: /assets/img/integrations/terraform.svg
+image: /assets/img/integrations/terraform/icons/color/terraform-color.svg
 permalink: extensibility/integrations/terraform
 docURL: https://docs.meshery.io/extensibility/integrations/terraform
 description: 
 category: Provisioning
 subcategory: Automation & Configuration
 registrant: artifacthub
-components: 
-	-	name: Workspace
-		colorIcon: assets/img/integrations/components/Workspace-color.svg
-		whiteIcon: assets/img/integrations/components/Workspace-white.svg
-		description: 
+components: [
+{
+"name": "workspace"
+"colorIcon": "assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg"
+"whiteIcon": "assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

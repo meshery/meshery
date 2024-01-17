@@ -2,18 +2,20 @@
 layout: enhanced
 title: Gitlab Runner Operator
 subtitle: Collaborative and visual infrastructure as code for Gitlab Runner Operator
-image: /assets/img/integrations/gitlab-runner-operator.svg
+image: /assets/img/integrations/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
 permalink: extensibility/integrations/gitlab-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-runner-operator
 description: 
 category: App Definition and Development
 subcategory: Source Version Control
 registrant: artifacthub
-components: 
-	-	name: Runner
-		colorIcon: assets/img/integrations/components/Runner-color.svg
-		whiteIcon: assets/img/integrations/components/Runner-white.svg
-		description: 
+components: [
+{
+"name": "runner"
+"colorIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/color/runner-color.svg"
+"whiteIcon": "assets/img/integrations/gitlab-runner-operator/components/runner/icons/white/runner-white.svg"
+"description": ""
+}]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

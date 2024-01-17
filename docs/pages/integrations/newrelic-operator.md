@@ -2,34 +2,44 @@
 layout: enhanced
 title: New Relic Operator
 subtitle: Collaborative and visual infrastructure as code for New Relic Operator
-image: /assets/img/integrations/new-relic-operator.svg
+image: /assets/img/integrations/new-relic-operator/icons/color/new-relic-operator-color.svg
 permalink: extensibility/integrations/new-relic-operator
 docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 
 category: Observability and Analysis
 subcategory: Observability and Analysis
 registrant: artifacthub
-components: 
-	-	name: AlertChannel
-		colorIcon: assets/img/integrations/components/AlertChannel-color.svg
-		whiteIcon: assets/img/integrations/components/AlertChannel-white.svg
-		description: 
-	-	name: AlertPolicy
-		colorIcon: assets/img/integrations/components/AlertPolicy-color.svg
-		whiteIcon: assets/img/integrations/components/AlertPolicy-white.svg
-		description: 
-	-	name: Dashboard
-		colorIcon: assets/img/integrations/components/Dashboard-color.svg
-		whiteIcon: assets/img/integrations/components/Dashboard-white.svg
-		description: 
-	-	name: Data
-		colorIcon: assets/img/integrations/components/Data-color.svg
-		whiteIcon: assets/img/integrations/components/Data-white.svg
-		description: 
-	-	name: Monitor
-		colorIcon: assets/img/integrations/components/Monitor-color.svg
-		whiteIcon: assets/img/integrations/components/Monitor-white.svg
-		description: 
+components: [
+{
+"name": "alert-channel"
+"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg"
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-channel/icons/white/alert-channel-white.svg"
+"description": ""
+},
+{
+"name": "alert-policy"
+"colorIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/color/alert-policy-color.svg"
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/alert-policy/icons/white/alert-policy-white.svg"
+"description": ""
+},
+{
+"name": "dashboard"
+"colorIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/color/dashboard-color.svg"
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/dashboard/icons/white/dashboard-white.svg"
+"description": ""
+},
+{
+"name": "data"
+"colorIcon": "assets/img/integrations/newrelic-operator/components/data/icons/color/data-color.svg"
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/data/icons/white/data-white.svg"
+"description": ""
+},
+{
+"name": "monitor"
+"colorIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/color/monitor-color.svg"
+"whiteIcon": "assets/img/integrations/newrelic-operator/components/monitor/icons/white/monitor-white.svg"
+"description": ""
+}]
 featureList: [
   "Alert Policies and NRQL Alert Conditions",
   "Alert Conditions for APM, Browser and mobile",

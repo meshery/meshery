@@ -2,14 +2,14 @@
 layout: enhanced
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as code for Fluentd Operator
-image: /assets/img/integrations/fluentd-operator.svg
+image: /assets/img/integrations/fluentd-operator/icons/color/fluentd-operator-color.svg
 permalink: extensibility/integrations/fluentd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentd
 description: 
 category: Observability and Analysis
 subcategory: Logging
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

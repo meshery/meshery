@@ -2,14 +2,14 @@
 layout: enhanced
 title: Envoy
 subtitle: Collaborative and visual infrastructure as code for Envoy
-image: /assets/img/integrations/envoy.svg
+image: /assets/img/integrations/envoy/icons/color/envoy-color.svg
 permalink: extensibility/integrations/envoy
 docURL: https://docs.meshery.io/extensibility/integrations/envoy
 description: 
 category: Orchestration & Management
 subcategory: Service Proxy
 registrant: artifacthub
-components: 
+components: []
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
