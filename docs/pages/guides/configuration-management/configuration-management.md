@@ -9,7 +9,6 @@ language: en
 abstract: Learn how to use Meshery Designs effectively
 redirect_from:
   - /tasks/patterns.md
-  - /reference/mesheryctl
   - /guides/deploying-sample-apps
   - /deploying-sample-apps.md
   - /performance-management.md
