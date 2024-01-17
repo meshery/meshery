@@ -2,8 +2,8 @@
 layout: enhanced
 title: AWS CloudWatch Logs
 subtitle: Collaborative and visual infrastructure as code for AWS CloudWatch Logs
-image: /assets/img/integrations/aws-cloudwatch-logs/icons/color/aws-cloudwatch-logs-color.svg
-permalink: extensibility/integrations/aws-cloudwatch-logs
+image: /assets/img/integrations/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
+permalink: extensibility/integrations/aws-cloudwatchlogs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatchlogs-controller
 description: 
 category: Observability and Analysis
@@ -11,22 +11,22 @@ subcategory: Management Governance
 registrant: aws
 components: [
 {
-"name": "field-export"
-"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/field-export/icons/color/field-export-color.svg"
-"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/field-export/icons/white/field-export-white.svg"
-"description": ""
+"name": "field-export",
+"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/field-export/icons/color/field-export-color.svg",
+"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/field-export/icons/white/field-export-white.svg",
+"description": "",
 },
 {
-"name": "adopted-resource"
-"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg"
-"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg"
-"description": ""
+"name": "adopted-resource",
+"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg",
+"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg",
+"description": "",
 },
 {
-"name": "log-group"
-"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg"
-"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg"
-"description": ""
+"name": "log-group",
+"colorIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg",
+"whiteIcon": "assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg",
+"description": "",
 }]
 featureList: [
   "Two classes of log groups for flexibility – CloudWatch Logs offers two classes of log groups so that you can have a cost-effective option for logs that you access infrequently. ",

@@ -11,28 +11,28 @@ subcategory: Streaming & Messaging
 registrant: artifacthub
 components: [
 {
-"name": "book-keeper-cluster"
-"colorIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/color/book-keeper-cluster-color.svg"
-"whiteIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/white/book-keeper-cluster-white.svg"
-"description": ""
+"name": "book-keeper-cluster",
+"colorIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/color/book-keeper-cluster-color.svg",
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/white/book-keeper-cluster-white.svg",
+"description": "",
 },
 {
-"name": "pulsar-broker"
-"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/color/pulsar-broker-color.svg"
-"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/white/pulsar-broker-white.svg"
-"description": ""
+"name": "pulsar-broker",
+"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/color/pulsar-broker-color.svg",
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-broker/icons/white/pulsar-broker-white.svg",
+"description": "",
 },
 {
-"name": "pulsar-proxy"
-"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/color/pulsar-proxy-color.svg"
-"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/white/pulsar-proxy-white.svg"
-"description": ""
+"name": "pulsar-proxy",
+"colorIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/color/pulsar-proxy-color.svg",
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/pulsar-proxy/icons/white/pulsar-proxy-white.svg",
+"description": "",
 },
 {
-"name": "zoo-keeper-cluster"
-"colorIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/color/zoo-keeper-cluster-color.svg"
-"whiteIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/white/zoo-keeper-cluster-white.svg"
-"description": ""
+"name": "zoo-keeper-cluster",
+"colorIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/color/zoo-keeper-cluster-color.svg",
+"whiteIcon": "assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/white/zoo-keeper-cluster-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

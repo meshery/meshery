@@ -2,8 +2,8 @@
 layout: enhanced
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as code for Fluentd Operator
-image: /assets/img/integrations/fluentd-operator/icons/color/fluentd-operator-color.svg
-permalink: extensibility/integrations/fluentd-operator
+image: /assets/img/integrations/fluentd/icons/color/fluentd-color.svg
+permalink: extensibility/integrations/fluentd
 docURL: https://docs.meshery.io/extensibility/integrations/fluentd
 description: 
 category: Observability and Analysis

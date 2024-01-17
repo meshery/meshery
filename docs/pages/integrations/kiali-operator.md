@@ -11,10 +11,10 @@ subcategory: Monitoring
 registrant: artifacthub
 components: [
 {
-"name": "kiali"
-"colorIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg"
-"whiteIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg"
-"description": ""
+"name": "kiali",
+"colorIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg",
+"whiteIcon": "assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -11,10 +11,10 @@ subcategory: Security & Compliance
 registrant: artifacthub
 components: [
 {
-"name": "ca-provider-class"
-"colorIcon": "assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg"
-"whiteIcon": "assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg"
-"description": ""
+"name": "ca-provider-class",
+"colorIcon": "assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg",
+"whiteIcon": "assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg",
+"description": "",
 }]
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",

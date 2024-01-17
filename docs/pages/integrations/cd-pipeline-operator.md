@@ -11,16 +11,16 @@ subcategory: Continuous Integration & Delivery
 registrant: artifacthub
 components: [
 {
-"name": "cd-pipeline"
-"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg"
-"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg"
-"description": ""
+"name": "cd-pipeline",
+"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg",
+"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg",
+"description": "",
 },
 {
-"name": "stage"
-"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/color/stage-color.svg"
-"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/white/stage-white.svg"
-"description": ""
+"name": "stage",
+"colorIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/color/stage-color.svg",
+"whiteIcon": "assets/img/integrations/cd-pipeline-operator/components/stage/icons/white/stage-white.svg",
+"description": "",
 }]
 featureList: [
   "Provides a pre-defined set of CI/CD patterns and tools.",

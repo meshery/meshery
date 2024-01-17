@@ -2,8 +2,8 @@
 layout: enhanced
 title: Azure Application Gateway 
 subtitle: Collaborative and visual infrastructure as code for Azure Application Gateway 
-image: /assets/img/integrations/azure-application-gateway-/icons/color/azure-application-gateway--color.svg
-permalink: extensibility/integrations/azure-application-gateway-
+image: /assets/img/integrations/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg
+permalink: extensibility/integrations/aks-appgw-fe
 docURL: https://docs.meshery.io/extensibility/integrations/aks-appgw-fe
 description: 
 category: Cloud Native Network
@@ -11,28 +11,28 @@ subcategory: Service Proxy
 registrant: artifacthub
 components: [
 {
-"name": "azure-assigned-identity"
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg"
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg"
-"description": ""
+"name": "azure-assigned-identity",
+"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg",
+"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg",
+"description": "",
 },
 {
-"name": "azure-identity"
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg"
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg"
-"description": ""
+"name": "azure-identity",
+"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg",
+"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg",
+"description": "",
 },
 {
-"name": "azure-identity-binding"
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg"
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg"
-"description": ""
+"name": "azure-identity-binding",
+"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg",
+"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg",
+"description": "",
 },
 {
-"name": "azure-pod-identity-exception"
-"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg"
-"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg"
-"description": ""
+"name": "azure-pod-identity-exception",
+"colorIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg",
+"whiteIcon": "assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg",
+"description": "",
 }]
 featureList: [
   "URL routing and cookie-based affinity

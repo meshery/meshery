@@ -2,8 +2,8 @@
 layout: enhanced
 title: Azure Active Directory (AAD)
 subtitle: Collaborative and visual infrastructure as code for Azure Active Directory (AAD)
-image: /assets/img/integrations/azure-active-directory-(aad)/icons/color/azure-active-directory-(aad)-color.svg
-permalink: extensibility/integrations/azure-active-directory-(aad)
+image: /assets/img/integrations/aad-pod-identity/icons/color/aad-pod-identity-color.svg
+permalink: extensibility/integrations/aad-pod-identity
 docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
 description: 
 category: Provisioning

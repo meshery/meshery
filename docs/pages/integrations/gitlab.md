@@ -11,22 +11,22 @@ subcategory: Security & Compliance
 registrant: artifacthub
 components: [
 {
-"name": "backend"
-"colorIcon": "assets/img/integrations/gitlab/components/backend/icons/color/backend-color.svg"
-"whiteIcon": "assets/img/integrations/gitlab/components/backend/icons/white/backend-white.svg"
-"description": ""
+"name": "backend",
+"colorIcon": "assets/img/integrations/gitlab/components/backend/icons/color/backend-color.svg",
+"whiteIcon": "assets/img/integrations/gitlab/components/backend/icons/white/backend-white.svg",
+"description": "",
 },
 {
-"name": "defaults"
-"colorIcon": "assets/img/integrations/gitlab/components/defaults/icons/color/defaults-color.svg"
-"whiteIcon": "assets/img/integrations/gitlab/components/defaults/icons/white/defaults-white.svg"
-"description": ""
+"name": "defaults",
+"colorIcon": "assets/img/integrations/gitlab/components/defaults/icons/color/defaults-color.svg",
+"whiteIcon": "assets/img/integrations/gitlab/components/defaults/icons/white/defaults-white.svg",
+"description": "",
 },
 {
-"name": "global"
-"colorIcon": "assets/img/integrations/gitlab/components/global/icons/color/global-color.svg"
-"whiteIcon": "assets/img/integrations/gitlab/components/global/icons/white/global-white.svg"
-"description": ""
+"name": "global",
+"colorIcon": "assets/img/integrations/gitlab/components/global/icons/color/global-color.svg",
+"whiteIcon": "assets/img/integrations/gitlab/components/global/icons/white/global-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

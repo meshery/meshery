@@ -11,16 +11,16 @@ subcategory: Automation & Configuration
 registrant: artifacthub
 components: [
 {
-"name": "aws-node-template"
-"colorIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg"
-"whiteIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/white/aws-node-template-white.svg"
-"description": ""
+"name": "aws-node-template",
+"colorIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg",
+"whiteIcon": "assets/img/integrations/karpenter/components/aws-node-template/icons/white/aws-node-template-white.svg",
+"description": "",
 },
 {
-"name": "provisioner"
-"colorIcon": "assets/img/integrations/karpenter/components/provisioner/icons/color/provisioner-color.svg"
-"whiteIcon": "assets/img/integrations/karpenter/components/provisioner/icons/white/provisioner-white.svg"
-"description": ""
+"name": "provisioner",
+"colorIcon": "assets/img/integrations/karpenter/components/provisioner/icons/color/provisioner-color.svg",
+"whiteIcon": "assets/img/integrations/karpenter/components/provisioner/icons/white/provisioner-white.svg",
+"description": "",
 }]
 featureList: [
   "Watching for pods that the Kubernetes scheduler has marked as unschedulable",

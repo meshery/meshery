@@ -11,16 +11,16 @@ subcategory: Automation & Configuration
 registrant: artifacthub
 components: [
 {
-"name": "node-feature"
-"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg"
-"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg"
-"description": ""
+"name": "node-feature",
+"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg",
+"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg",
+"description": "",
 },
 {
-"name": "node-feature-rule"
-"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg"
-"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg"
-"description": ""
+"name": "node-feature-rule",
+"colorIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg",
+"whiteIcon": "assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

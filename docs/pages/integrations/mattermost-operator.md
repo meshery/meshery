@@ -11,22 +11,22 @@ subcategory: Uncategorized
 registrant: artifacthub
 components: [
 {
-"name": "cluster-installation"
-"colorIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg"
-"whiteIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/white/cluster-installation-white.svg"
-"description": ""
+"name": "cluster-installation",
+"colorIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg",
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/cluster-installation/icons/white/cluster-installation-white.svg",
+"description": "",
 },
 {
-"name": "mattermost-restore-db"
-"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/color/mattermost-restore-db-color.svg"
-"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/white/mattermost-restore-db-white.svg"
-"description": ""
+"name": "mattermost-restore-db",
+"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/color/mattermost-restore-db-color.svg",
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost-restore-db/icons/white/mattermost-restore-db-white.svg",
+"description": "",
 },
 {
-"name": "mattermost"
-"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg"
-"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg"
-"description": ""
+"name": "mattermost",
+"colorIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg",
+"whiteIcon": "assets/img/integrations/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

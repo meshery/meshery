@@ -11,10 +11,10 @@ subcategory: Tracing
 registrant: artifacthub
 components: [
 {
-"name": "op-amp-bridge"
-"colorIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg"
-"whiteIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg"
-"description": ""
+"name": "op-amp-bridge",
+"colorIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg",
+"whiteIcon": "assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

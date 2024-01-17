@@ -11,10 +11,10 @@ subcategory: Database
 registrant: artifacthub
 components: [
 {
-"name": "kubegres"
-"colorIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg"
-"whiteIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg"
-"description": ""
+"name": "kubegres",
+"colorIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg",
+"whiteIcon": "assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

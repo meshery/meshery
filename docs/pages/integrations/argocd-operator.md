@@ -2,8 +2,8 @@
 layout: enhanced
 title: Argo CD Operator
 subtitle: Collaborative and visual infrastructure as code for Argo CD Operator
-image: /assets/img/integrations/argo-cd-operator/icons/color/argo-cd-operator-color.svg
-permalink: extensibility/integrations/argo-cd-operator
+image: /assets/img/integrations/argocd-operator/icons/color/argocd-operator-color.svg
+permalink: extensibility/integrations/argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/argocd-operator
 description: 
 category: App Definition and Development
@@ -11,16 +11,16 @@ subcategory: Continuous Integration & Delivery
 registrant: artifacthub
 components: [
 {
-"name": "argo-cd-export"
-"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg"
-"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/white/argo-cd-export-white.svg"
-"description": ""
+"name": "argo-cd-export",
+"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg",
+"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd-export/icons/white/argo-cd-export-white.svg",
+"description": "",
 },
 {
-"name": "argo-cd"
-"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/color/argo-cd-color.svg"
-"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/white/argo-cd-white.svg"
-"description": ""
+"name": "argo-cd",
+"colorIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/color/argo-cd-color.svg",
+"whiteIcon": "assets/img/integrations/argocd-operator/components/argo-cd/icons/white/argo-cd-white.svg",
+"description": "",
 }]
 featureList: [
   "Declarative continuous delivery with a fully-loaded UI.",

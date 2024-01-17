@@ -11,16 +11,16 @@ subcategory: Cloud Native Network
 registrant: artifacthub
 components: [
 {
-"name": "eni-config"
-"colorIcon": "assets/img/integrations/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg"
-"whiteIcon": "assets/img/integrations/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg"
-"description": ""
+"name": "eni-config",
+"colorIcon": "assets/img/integrations/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg",
+"whiteIcon": "assets/img/integrations/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg",
+"description": "",
 },
 {
-"name": "policy-endpoint"
-"colorIcon": "assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg"
-"whiteIcon": "assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg"
-"description": ""
+"name": "policy-endpoint",
+"colorIcon": "assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg",
+"whiteIcon": "assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg",
+"description": "",
 }]
 featureList: [
   "Keep revision history and audit trail of all configuration changes",

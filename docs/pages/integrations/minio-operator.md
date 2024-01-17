@@ -11,10 +11,10 @@ subcategory: Database
 registrant: artifacthub
 components: [
 {
-"name": "tenant"
-"colorIcon": "assets/img/integrations/minio-operator/components/tenant/icons/color/tenant-color.svg"
-"whiteIcon": "assets/img/integrations/minio-operator/components/tenant/icons/white/tenant-white.svg"
-"description": ""
+"name": "tenant",
+"colorIcon": "assets/img/integrations/minio-operator/components/tenant/icons/color/tenant-color.svg",
+"whiteIcon": "assets/img/integrations/minio-operator/components/tenant/icons/white/tenant-white.svg",
+"description": "",
 }]
 featureList: [
   "AWS S3 Compatibility",

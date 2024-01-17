@@ -2,8 +2,8 @@
 layout: enhanced
 title: Percona Operator for MySQL
 subtitle: Collaborative and visual infrastructure as code for Percona Operator for MySQL
-image: /assets/img/integrations/percona-operator-for-mysql/icons/color/percona-operator-for-mysql-color.svg
-permalink: extensibility/integrations/percona-operator-for-mysql
+image: /assets/img/integrations/ps-operator/icons/color/ps-operator-color.svg
+permalink: extensibility/integrations/ps-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ps-operator
 description: 
 category: App Definition and Development
@@ -11,22 +11,22 @@ subcategory: Database
 registrant: artifacthub
 components: [
 {
-"name": "percona-server-my-sql-backup"
-"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg"
-"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-backup/icons/white/percona-server-my-sql-backup-white.svg"
-"description": ""
+"name": "percona-server-my-sql-backup",
+"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg",
+"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-backup/icons/white/percona-server-my-sql-backup-white.svg",
+"description": "",
 },
 {
-"name": "percona-server-my-sql-restore"
-"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-restore/icons/color/percona-server-my-sql-restore-color.svg"
-"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-restore/icons/white/percona-server-my-sql-restore-white.svg"
-"description": ""
+"name": "percona-server-my-sql-restore",
+"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-restore/icons/color/percona-server-my-sql-restore-color.svg",
+"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql-restore/icons/white/percona-server-my-sql-restore-white.svg",
+"description": "",
 },
 {
-"name": "percona-server-my-sql"
-"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg"
-"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg"
-"description": ""
+"name": "percona-server-my-sql",
+"colorIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg",
+"whiteIcon": "assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg",
+"description": "",
 }]
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

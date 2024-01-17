@@ -2,8 +2,8 @@
 layout: enhanced
 title: Jfrog Distribution
 subtitle: Managed release binary distribution with JFrog distribution
-image: /assets/img/integrations/jfrog-distribution/icons/color/jfrog-distribution-color.svg
-permalink: extensibility/integrations/jfrog-distribution
+image: /assets/img/integrations/distribution/icons/color/distribution-color.svg
+permalink: extensibility/integrations/distribution
 docURL: https://docs.meshery.io/extensibility/integrations/distribution
 description: 
 category: Provisioning

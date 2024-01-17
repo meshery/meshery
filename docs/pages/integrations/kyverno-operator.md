@@ -11,10 +11,10 @@ subcategory: Security & Compliance
 registrant: artifacthub
 components: [
 {
-"name": "kyverno-operator"
-"colorIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg"
-"whiteIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg"
-"description": ""
+"name": "kyverno-operator",
+"colorIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg",
+"whiteIcon": "assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg",
+"description": "",
 }]
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
