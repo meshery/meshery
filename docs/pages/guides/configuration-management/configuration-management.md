@@ -9,9 +9,6 @@ language: en
 abstract: Learn how to use Meshery Designs effectively
 redirect_from:
   - /tasks/patterns.md
-  - /guides/deploying-sample-apps
-  - /deploying-sample-apps.md
-  - /performance-management.md
 ---
 
 As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
