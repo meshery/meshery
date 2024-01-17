@@ -1,0 +1,87 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A relationship that assigns configuration data for resources deployed in a cluster by environment variable and volume mount.",
+    "styles": {}
+  },
+  "model": {
+    "name": "kubernetes",
+    "version": "v1.25.2",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Config",
+  "rego_query": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["name"]],
+              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "template", "spec", "volumes", "_", "configMap", "name"]],
+              "description": "Deployments can mount ConfigMaps as volumes to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be available as files in the specified path within the containers."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "template", "spec", "volumes", "_", "configMap", "name"]],
+              "description": "StatefulSets can use ConfigMaps to provide configuration data to their pods in a similar way to Deployments.\n\nConfigMaps can be referenced in the Pod template specification of a StatefulSet to provide configuration data to each pod in a consistent manner."
+            }
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "volumes", "_", "configMap", "name"]],
+              "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables and mounted as files to the container within the Pod."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "template", "spec", "volumes", "_", "configMap", "name"]],
+              "description": "ConfigMaps can be referenced in the Pod template specification within the Job definition to inject configuration data into the pods.\n\nThe keys from the ConfigMap will be exposed as environment variables and mounted as files to the container within the pod created by the Job."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "jobTemplate", "spec", "template", "spec", "volumes", "_", "configMap", "name"]],
+              "description": "ConfigMaps can be referenced in the Pod template specification within the CronJob definition to inject configuration data into the pods.\n\nThe keys from the ConfigMap will be exposed as environment variables and mounted as files to the container within the pod created by the CronJob."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
