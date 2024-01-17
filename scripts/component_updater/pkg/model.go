@@ -119,6 +119,7 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 		// svgDir := icons/components
 	componentMetadata := `[`
 	for idx, comp := range components {
+		// add commas
 		componentTemplate := `
 {
 "name": "%s"
@@ -202,6 +203,7 @@ return "", err
 //
 // </p>`
 func (m ModelCSV) CreateMarkDownForLayer5(componentsMetadata string) string {
+	formattedName := FormatName(m.Model)
 	var template string = `---
 title: %s
 subtitle: %s
@@ -234,8 +236,8 @@ published: %s
 	markdown := fmt.Sprintf(template,
 		m.ModelDisplayName,
 		m.PageSubtTitle,
-		m.Model,
-		m.Model,
+		formattedName,
+		formattedName,
 		m.DocsURL,
 		m.Description,
 		m.Category,
@@ -259,25 +261,26 @@ published: %s
 
 // Creates JSON formatted meshmodel attribute item for Meshery docs
 func (m ModelCSV) CreateJSONItem() string {
+	formattedModelName := FormatName(m.Model)
 	json := "{"
 	json += fmt.Sprintf("\"name\":\"%s\"", m.Model)
 	// If SVGs exist, then add the paths to json
 	if m.SVGColor != "" {
-		json += fmt.Sprintf(",\"color\":\"../images/integration/%s-color.svg\"", m.Model)
+		json += fmt.Sprintf(",\"color\":\"../images/integration/%s/icons/color/%s-color.svg\"", formattedModelName, formattedModelName)
 	}
 
 	if m.SVGWhite != "" {
-		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", m.Model)
+		json += fmt.Sprintf(",\"white\":\"../images/integration/%s/icons/white/%s-white.svg\"", formattedModelName, formattedModelName)
 	}
 
-	json += fmt.Sprintf(",\"permalink\":\"https://docs.meshery.io/extensibility/integrations/%s\"", FormatName(m.ModelDisplayName))
+	json += fmt.Sprintf(",\"permalink\":\"%s\"", m.DocsURL)
 
 	json += "}"
 	return json
 }
 
 func (m ModelCSV) CreateMarkDownForMesheryDocs(componentsMetadata string) string {
-		formattedName := FormatName(m.ModelDisplayName)
+		formattedName := FormatName(m.Model)
 
 		var template string = `---
 layout: enhanced
