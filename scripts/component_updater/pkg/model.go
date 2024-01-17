@@ -148,11 +148,11 @@ func CreateComponentsMetadataAndCreateSVGs(components []ComponentCSV, path, svgD
 return "", err
 		}
 
-		err = WriteSVG(filepath.Join(path, colorIconDir, comp.Component+"-color.svg"), comp.SVGColor)
+		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
 		if err != nil {
 return "", err
 		}
-		err = WriteSVG(filepath.Join(path, whiteIconDir, comp.Component+"-white.svg"), comp.SVGWhite)
+		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
 		if err != nil {
 			return "", err
 		}

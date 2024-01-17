@@ -114,7 +114,10 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 
 	// generate markdown file
 	md := model.CreateMarkDownForLayer5(componentMetadata)
-		_ = WriteToFile(filepath.Join(modelDir, "index.mdx"), md)
+	err = WriteToFile(filepath.Join(modelDir, "index.mdx"), md)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -186,6 +189,7 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	}
 
 	// generate components metadata and create svg files
+	// compSVGDir := filepath.Join(modelName, "components")
 	componentMetadata, err := CreateComponentsMetadataAndCreateSVGs(components, iconsDir, "components")
 	if err != nil {
 		return err
@@ -193,7 +197,10 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 
 	// generate markdown file
 	md := model.CreateMarkDownForMesheryDocs(componentMetadata)
-	_ = WriteToFile(filepath.Join(mdDir, modelName+".mdx"), md)
+	err = WriteToFile(filepath.Join(mdDir, modelName+".md"), md)
+	if err != nil {
+		return err
+	}
 
 
 	return nil
