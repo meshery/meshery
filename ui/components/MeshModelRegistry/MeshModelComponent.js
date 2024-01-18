@@ -133,12 +133,14 @@ const MeshModelComponent_ = ({
   const getMeshModels = () => {
     getMeshModelsData(
       {
-        page: searchText ? 1 : page.Models + 1,
-        pagesize: searchText ? 'all' : rowsPerPage,
-        components: true,
-        relationships: true,
-        paginated: true,
-        search: searchText ? searchText : '',
+        params: {
+          page: searchText ? 1 : page.Models + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          components: true,
+          relationships: true,
+          paginated: true,
+          search: searchText ? searchText : '',
+        },
       },
       true,
     )
@@ -164,10 +166,12 @@ const MeshModelComponent_ = ({
   const getComponents = () => {
     getComponentsData(
       {
-        page: searchText ? 1 : page.Components + 1,
-        pagesize: searchText ? 'all' : rowsPerPage,
-        search: searchText ? searchText : '',
-        trim: false,
+        params: {
+          page: searchText ? 1 : page.Components + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          search: searchText ? searchText : '',
+          trim: false,
+        },
       },
       true,
     )
@@ -196,10 +200,12 @@ const MeshModelComponent_ = ({
   const getRelationships = async () => {
     getRelationshipsData(
       {
-        page: searchText ? 1 : page.Relationships + 1,
-        pagesize: searchText ? 'all' : rowsPerPage,
-        paginated: true,
-        search: searchText ? searchText : '',
+        params: {
+          page: searchText ? 1 : page.Relationships + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          paginated: true,
+          search: searchText ? searchText : '',
+        },
       },
       true,
     )
@@ -229,9 +235,11 @@ const MeshModelComponent_ = ({
     try {
       const { data: registrantsData } = await getRegistrantsData(
         {
-          page: searchText ? 1 : page.Registrants + 1,
-          pagesize: searchText ? 'all' : rowsPerPage,
-          search: searchText ? searchText : '',
+          params: {
+            page: searchText ? 1 : page.Registrants + 1,
+            pagesize: searchText ? 'all' : rowsPerPage,
+            search: searchText ? searchText : '',
+          },
         },
         true,
       );
@@ -244,11 +252,13 @@ const MeshModelComponent_ = ({
           let hostname = toLower(registrant?.hostname);
           const { data: modelRes } = await getMeshModelsData(
             {
-              page: page?.Models + 1,
-              pagesize: rowsPerPage,
-              registrant: hostname,
-              components: true,
-              relationships: true,
+              params: {
+                page: page?.Models + 1,
+                pagesize: rowsPerPage,
+                registrant: hostname,
+                components: true,
+                relationships: true,
+              },
             },
             true,
           );

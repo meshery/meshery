@@ -1,7 +1,16 @@
 import { api } from './index';
+import _ from "lodash";
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
+};
+
+const defaultOptions = {
+  trim: false,
+  annotations: false,
+  search: "",
+  page: 1,
+  pagesize: "all"
 };
 
 const meshModelApi = api
@@ -13,73 +22,42 @@ const meshModelApi = api
       getMeshModels: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-            trim: queryArgs.trim || true,
-            ...queryArgs,
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponents: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/components`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-            trim: queryArgs.trim || true,
-            ...queryArgs,
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationships: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/relationships`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-            ...queryArgs,
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRegistrants: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/registrants`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-            ...queryArgs,
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentsFromModal: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models/${queryArgs.model}/components`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-            trim: queryArgs.search || true,
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationshipsFromModal: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models/${queryArgs.model}/relationships`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 'all',
-            search: queryArgs.search || '',
-          },
+          params: _.merge({}, defaultOptions, queryArgs.params)
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
