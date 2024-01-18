@@ -14,6 +14,10 @@ import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
+import Link from 'next/link';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { DialogActions } from '@layer5/sistent-components';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -74,6 +78,10 @@ const styles = (theme) => ({
       },
     },
   },
+  toolTip: {
+    textDecoration: 'underline',
+    color: theme.palette.secondary.link2,
+  },
 });
 
 const ExportModal = (props) => {
@@ -84,6 +92,23 @@ const ExportModal = (props) => {
     classes,
     ExtensibleButton,
   } = props;
+  const renderTooltipContent = () => (
+    <div>
+      <span>
+        MeshMap Designer offers multiple export options, allowing you to choose the format that
+        suits your needs.
+      </span>
+      <Link
+        href={'https://docs.layer5.io/meshmap/designer/export-designs/'}
+        passHref
+        onClick={(e) => e.stopPropagation()}
+      >
+        <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
+          Learn more
+        </a>
+      </Link>
+    </div>
+  );
 
   const [closed, setClosed] = React.useState(false);
 
@@ -218,6 +243,18 @@ const ExportModal = (props) => {
           {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
         </Box>
       </DialogContent>
+      <DialogActions>
+        <CustomTextTooltip
+          backgroundColor="#3C494F"
+          placement="top"
+          interactive={true}
+          title={renderTooltipContent()}
+        >
+          <IconButton color="primary">
+            <InfoOutlinedIcon />
+          </IconButton>
+        </CustomTextTooltip>
+      </DialogActions>
     </Dialog>
   );
 };
