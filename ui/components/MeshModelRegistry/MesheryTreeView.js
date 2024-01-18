@@ -409,14 +409,16 @@ const MesheryTreeView = ({
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
-      requestAnimationFrame(() => {
-        const selectedNode = document.querySelector(`[data-id="${selectedItemUUID}"]`);
-        if (selectedNode) {
-          selectedNode.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const selectedNode = document.querySelector(`[data-id="${selectedItemUUID}"]`);
+          if (selectedNode) {
+            selectedNode.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }, 200);
     }
-  }, [view, data]);
+  }, [view]);
 
   useEffect(() => {
     setComp({});
