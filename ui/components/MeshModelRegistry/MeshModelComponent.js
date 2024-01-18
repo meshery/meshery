@@ -5,17 +5,6 @@ import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import {
-  getComponentsDetailWithPageSize,
-  getMeshModels,
-  getRelationshipsDetailWithPageSize,
-  getComponentFromModelApi,
-  getRelationshipFromModelApi,
-  searchModels,
-  searchComponents,
-  getMeshModelRegistrants,
-  getMeshModelsByRegistrants,
-} from '../../api/meshmodel';
-import {
   OVERVIEW,
   MODELS,
   COMPONENTS,
@@ -34,11 +23,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
-import { store } from '../../store'
+import { store } from '../../store';
+import { ErrorBoundary } from '../General/ErrorBoundary';
 import {
-  ErrorBoundary,
-} from '../General/ErrorBoundary';
-import { useGetMeshModelsQuery, useGetComponentsQuery, useGetRelationshipsQuery, useGetRegistrantsQuery } from '@/rtk-query/meshModel'
+  useLazyGetMeshModelsQuery,
+  useLazyGetComponentsQuery,
+  useLazyGetRelationshipsQuery,
+  useLazyGetRegistrantsQuery,
+} from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
 
 const meshmodelStyles = (theme) => ({
@@ -92,7 +84,7 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [isRequestCancelled, setRequestCancelled] = useState(false);
+  // const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -103,7 +95,7 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [sortOrder, setSortOrder] = useState({
+  const [sortOrder] = useState({
     sort: SORT.ASCENDING,
     order: '',
   });
@@ -123,33 +115,12 @@ const MeshModelComponent_ = ({
   // const [loading, setLoading] = useState(false);
 
   /**
-   * RTK Queries
-  */
-  const {data: meshmodelsData} = useGetMeshModelsQuery({
-    page: page.Models + 1,
-    pagesize: 14,
-    components: true,
-    relationships: true,
-    paginated: true,
-    search: searchText ? searchText : ''
-  })
-  const {data: componentsData} = useGetComponentsQuery({
-    page: page.Components + 1,
-    pagesize: 14,
-    search: searchText ? searchText : '',
-    trim: false
-  })
-  const {data: relationshipsData} = useGetRelationshipsQuery({
-    page: page.Relationships + 1,
-    pagesize: 14,
-    paginated: true,
-    search: searchText ? searchText : ''
-  })
-  const {data: registrantsData} = useGetRegistrantsQuery({
-    page: page.Registrants + 1,
-    pagesize: 14,
-    search: searchText ? searchText : ''
-  })
+   * RTK Lazy Queries
+   */
+  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
+  const [getComponentsData] = useLazyGetComponentsQuery();
+  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
+  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
 
   useEffect(() => {
     if (selectedTab && selectedTab !== OVERVIEW) {
@@ -159,129 +130,142 @@ const MeshModelComponent_ = ({
     }
   }, [selectedTab]);
 
-  const getModels = async (page) => {
-    try {
-      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
+  const getMeshModels = () => {
+    getMeshModelsData(
+      {
+        page: searchText ? 1 : page.Models + 1,
+        pagesize: searchText ? 'all' : rowsPerPage,
         components: true,
         relationships: true,
         paginated: true,
+        search: searchText ? searchText : '',
+      },
+      true,
+    )
+      .unwrap()
+      .then((res) => {
+        console.log('get response', res);
+        setResourcesDetail((prev) => {
+          if (searchText) {
+            return [...res.models];
+          } else {
+            return [...prev, ...res.models];
+          }
+        });
+        if (rowsPerPage !== 14) {
+          setRowsPerPage(14);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch models:', error.data);
       });
-
-      if (!isRequestCancelled && models) {
-        setResourcesDetail((prev) =>
-          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
-        );
-      }
-    } catch (error) {
-      console.error('Failed to fetch models:', error);
-    }
   };
 
-  // TODO: Use RTK
-  const getComponents = async (page, sortOrder) => {
-    try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(
-        page?.Components + 1,
-        rowsPerPage,
-        sortOrder.sort,
-        sortOrder.order,
-      ); // page+1 due to server side indexing starting from 1
-      setCount(total_count);
-      if (!isRequestCancelled && components) {
-        setResourcesDetail((prev) => [...prev, ...components]);
-        setSortOrder(sortOrder);
-      }
-      setRowsPerPage(14);
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
-  };
-
-  // TODO: Use RTK
-  const getRelationships = async (page, sortOrder) => {
-    try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(
-        page?.Relationships + 1,
-        rowsPerPage,
-        sortOrder.sort,
-        sortOrder.order,
-      );
-      setCount(total_count);
-      if (!isRequestCancelled && relationships) {
-        setResourcesDetail((prev) => [...prev, ...relationships]);
-        setSortOrder(sortOrder);
-      }
-      setRowsPerPage(14);
-    } catch (error) {
-      console.error('Failed to fetch relationships:', error);
-    }
-  };
-
-  // TODO: Use RTK
-  const getSearchedModels = async (searchText) => {
-    try {
-      const { total_count, models } = await searchModels(searchText, {
-        components: true,
-        relationships: true,
+  const getComponents = () => {
+    getComponentsData(
+      {
+        page: searchText ? 1 : page.Components + 1,
+        pagesize: searchText ? 'all' : rowsPerPage,
+        search: searchText ? searchText : '',
+        trim: false,
+      },
+      true,
+    )
+      .unwrap()
+      .then((res) => {
+        setCount(res.total_count);
+        if (res?.components) {
+          setResourcesDetail((prev) => {
+            if (searchText) {
+              return [...res.components];
+            } else {
+              return [...prev, ...res.components];
+            }
+          });
+          // setSortOrder(sortOrder);
+        }
+        if (rowsPerPage !== 14) {
+          setRowsPerPage(14);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch components:', error.data);
       });
-      setCount(total_count);
-
-      if (!isRequestCancelled) {
-        setResourcesDetail(models ? models : []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
-  };
-  const getSearchedComponents = async (searchText) => {
-    try {
-      const { total_count, components } = await searchComponents(searchText);
-      setCount(total_count);
-      if (!isRequestCancelled) {
-        setResourcesDetail(components ? components : []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
   };
 
-  const getRegistrants = async (page) => {
+  const getRelationships = async () => {
+    getRelationshipsData(
+      {
+        page: searchText ? 1 : page.Relationships + 1,
+        pagesize: searchText ? 'all' : rowsPerPage,
+        paginated: true,
+        search: searchText ? searchText : '',
+      },
+      true,
+    )
+      .unwrap()
+      .then((res) => {
+        setCount(res?.total_count);
+        if (res?.relationships) {
+          setResourcesDetail((prev) => {
+            if (searchText) {
+              return [...res.relationships];
+            } else {
+              return [...prev, ...res.relationships];
+            }
+          });
+        }
+        if (rowsPerPage !== 14) {
+          setRowsPerPage(14);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch relationships:', error.data);
+      });
+  };
+
+  //TODO: Optimise it to support dynamic loading
+  const getRegistrants = async () => {
     try {
-      const { total_count, registrants } = await getMeshModelRegistrants(
-        page?.Registrants + 1,
-        rowsPerPage,
+      const { data: registrantsData } = await getRegistrantsData(
+        {
+          page: searchText ? 1 : page.Registrants + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          search: searchText ? searchText : '',
+        },
+        true,
       );
 
-      if (!isRequestCancelled && registrants) {
+      let registrants = registrantsData.registrants;
+      if (registrants) {
         let tempRegistrants = [];
 
-        for (const registrant of registrants) {
+        for (let registrant of registrants) {
           let hostname = toLower(registrant?.hostname);
-          const { models } = await getMeshModelsByRegistrants(
-            page?.Models + 1,
-            rowsPerPage,
-            hostname,
-          ); // page+1 due to server side indexing starting from 1
+          const { data: modelRes } = await getMeshModelsData(
+            {
+              page: page?.Models + 1,
+              pagesize: rowsPerPage,
+              registrant: hostname,
+              components: true,
+              relationships: true,
+            },
+            true,
+          );
 
-          if (models) {
-            const updatedModels = [];
+          if (modelRes.models) {
+            const updatedRegistrant = {
+              ...registrant,
+              models: modelRes.models,
+            };
 
-            for (const model of models) {
-              const { components } = await getComponentFromModelApi(model.name);
-              const { relationships } = await getRelationshipFromModelApi(model.name);
-              model.components = components;
-              model.relationships = relationships;
-              updatedModels.push(model);
-            }
-
-            registrant.models = updatedModels;
-            tempRegistrants.push(registrant);
+            tempRegistrants.push(updatedRegistrant);
           } else {
             tempRegistrants.push(registrant);
           }
         }
 
-        setCount(total_count);
+        setCount(registrants.total_count);
 
         let tempResourcesDetail = [];
         tempRegistrants.forEach((registrant) => {
@@ -306,20 +290,10 @@ const MeshModelComponent_ = ({
   };
 
   // TODO: This is wrong logic, backend should enforce this
-  let filteredData = checked
-    ? resourcesDetail // Show all data, including duplicates
-    : resourcesDetail.filter((item, index, self) => {
-        // Filter out duplicates based on your criteria (e.g., name and version)
-        return (
-          index ===
-          self.findIndex(
-            (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-          )
-        );
-      });
-
-  useEffect(() => {
-    filteredData = checked
+  let filteredData =
+    !view === MODELS
+      ? resourcesDetail
+      : checked
       ? resourcesDetail // Show all data, including duplicates
       : resourcesDetail.filter((item, index, self) => {
           // Filter out duplicates based on your criteria (e.g., name and version)
@@ -330,33 +304,34 @@ const MeshModelComponent_ = ({
             )
           );
         });
+
+  useEffect(() => {
+    filteredData =
+      !view === MODELS
+        ? resourcesDetail
+        : checked
+        ? resourcesDetail // Show all data, including duplicates
+        : resourcesDetail.filter((item, index, self) => {
+            // Filter out duplicates based on your criteria (e.g., name and version)
+            return (
+              index ===
+              self.findIndex(
+                (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+              )
+            );
+          });
   }, [checked]);
 
   useEffect(() => {
-    setRequestCancelled(false);
-    // setLoading(true);
-
-    if (view === MODELS && searchText === null) {
-      getModels(page);
-    } else if (view === COMPONENTS && searchText === null) {
-      getComponents(page, sortOrder);
+    if (view === MODELS) {
+      getMeshModels();
+    } else if (view === COMPONENTS) {
+      getComponents();
     } else if (view === RELATIONSHIPS) {
       getRelationships(page, sortOrder);
-    } else if (view === MODELS && searchText) {
-      getSearchedModels(searchText);
-    } else if (view === COMPONENTS && searchText) {
-      getSearchedComponents(searchText);
-    } else if (view === REGISTRANTS && searchText === null) {
-      getRegistrants(page);
-    } else if (view === MODELS && searchText === '') {
-      getModels(page);
-    } else if (view === COMPONENTS && searchText === '') {
-      getComponents(page, sortOrder);
+    } else if (view === REGISTRANTS) {
+      getRegistrants();
     }
-
-    return () => {
-      setRequestCancelled(true);
-    };
   }, [view, page, searchText, rowsPerPage]);
 
   return (

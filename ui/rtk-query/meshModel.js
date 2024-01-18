@@ -60,12 +60,37 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getComponentsFromModal: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/models/${queryArgs.model}/components`,
+          params: {
+            page: queryArgs.page || 0,
+            pagesize: queryArgs.pagesize || 'all',
+            search: queryArgs.search || '',
+            trim: queryArgs.search || true,
+          },
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getRelationshipsFromModal: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/models/${queryArgs.model}/relationships`,
+          params: {
+            page: queryArgs.page || 0,
+            pagesize: queryArgs.pagesize || 'all',
+            search: queryArgs.search || '',
+          },
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
 export const {
-  useGetMeshModelsQuery,
-  useGetComponentsQuery,
-  useGetRelationshipsQuery,
-  useGetRegistrantsQuery,
+  useLazyGetMeshModelsQuery,
+  useLazyGetComponentsQuery,
+  useLazyGetRelationshipsQuery,
+  useLazyGetRegistrantsQuery,
+  useLazyGetComponentsFromModalQuery,
+  useLazyGetRelationshipsFromModalQuery,
 } = meshModelApi;
