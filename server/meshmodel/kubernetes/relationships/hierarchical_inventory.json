@@ -2,7 +2,7 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which a Core WASM Filter configuration is applied to an Istio Envoy Filter."
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
   },
   "model": {
     "name": "kubernetes",
