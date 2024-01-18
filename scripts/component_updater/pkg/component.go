@@ -3,12 +3,9 @@ package pkg
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/layer5io/meshkit/utils/csv"
-)
-
-var (
-	componentSheetID = "1958507758"
 )
 
 type ComponentCSV struct {
@@ -34,20 +31,26 @@ type ComponentCSV struct {
 	IsAnnotation string `json:"isAnnotation"`
 }
 type ComponentCSVHelper struct {
-	SheetID string
+	SpreadsheetID int64
+	SpreadsheetURL string
+	Title 	string
 	CSVPath string
 	Components map[string]map[string][]ComponentCSV
 }
 
-func NewComponentCSVHelper(sheetURL string) (*ComponentCSVHelper, error) {
-	sheetURL = sheetURL + "&gid=" + componentSheetID
-	csvPath, err := DownloadCSV(sheetURL)
+func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		fmt.Println("Downloading CSV from:", sheetURL)	
+		csvPath, err := DownloadCSV(sheetURL)
 	if err != nil {
 		return nil, err
 	}
 
+
 	return &ComponentCSVHelper{
-		SheetID: componentSheetID,
+		SpreadsheetID: spreadsheetID,
+		SpreadsheetURL: sheetURL,
+		Title: spreadsheetName,
 		CSVPath: csvPath,
 		Components: make(map[string]map[string][]ComponentCSV),
 	}, nil

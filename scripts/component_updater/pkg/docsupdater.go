@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	// "encoding/csv"
 	"bytes"
 	"encoding/xml"
 	"fmt"
@@ -10,51 +9,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-const template string = `---
-title: <model-display-name>
-subtitle: <Page Subtitle>
-integrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh.svg
-darkModeIntegrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh_white.svg
-docURL: <Docs URL>
-category: <Category>
-subcategory: <Sub-Category>
-featureList: [<Feature 1>,<Feature 2>,<Feature 3>]
-workingSlides: [
-    ../_images/meshmap-visualizer.png,
-    ../_images/meshmap-designer.png]
-howItWorks: <howItWorks>
-howItWorksDetails: howItWorksDetails
-published: <Publish>
----
-<p>
-   <About Project>
-</p>
-<p>
-   <Standard Blurb>
-</p>`
-
-
-type TemplateAttributes struct {
-	Title                   string
-	ModelName               string
-	Subtitle                string
-	DocURL                  string
-	Category                string
-	Subcategory             string
-	FeatureList             string
-	HowItWorks              string
-	HowItWorksDetails       string
-	AboutProject            string
-	StandardBlurb           string
-	WorkingSlides           string
-	Published               string
-	IntegrationIcon         string
-	DarkModeIntegrationIcon string
-	FullPage                string
-	ColorSVG                string
-	WhiteSVG                string
-}
 
 
 const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"

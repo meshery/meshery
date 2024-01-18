@@ -62,6 +62,7 @@ var (
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
 	ExcludeDirs                 = []string{"relationships", "policies"}
+	GoogleSpreadSheetURL        = "https://docs.google.com/spreadsheets/d/"
 )
 
 var System string
@@ -99,23 +100,45 @@ func main() {
 	}
 	System = os.Args[3]
 
-	if System == pkg.Docs.String() {
-		fmt.Println("docs system")
-		modeCSVHelper, err := pkg.NewModelCSVHelper(url)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		modeCSVHelper.ParseModelsSheet()
-		componentCSVHelper, err := pkg.NewComponentCSVHelper(url)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		componentCSVHelper.ParseComponentsSheet()
-		docsUpdater(modeCSVHelper.Models, componentCSVHelper.Components)
+	srv, err := pkg.NewSheetSRV()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	resp, err := srv.Spreadsheets.Get(url).Fields().Do()
+		if err != nil || resp.HTTPStatusCode != 200 {
+		fmt.Println(err)
+		return
+	}
 
-		err = modeCSVHelper.Cleanup()
+	modelCSVHelper := &pkg.ModelCSVHelper{}
+	componentCSVHelper := &pkg.ComponentCSVHelper{}
+	GoogleSpreadSheetURL += url
+
+	for _, v := range resp.Sheets {
+		switch v.Properties.Title {
+		case "Models":
+			modelCSVHelper, err = pkg.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+		modelCSVHelper.ParseModelsSheet()
+		case "Components":
+			componentCSVHelper, err = pkg.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+		componentCSVHelper.ParseComponentsSheet()
+		}
+	}
+
+	if System == pkg.Docs.String() {
+
+		docsUpdater(modelCSVHelper.Models, componentCSVHelper.Components)
+
+		err = modelCSVHelper.Cleanup()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -148,8 +171,6 @@ func main() {
 	os.Remove(file.Name())
 
 	switch System {
-	// case pkg.Docs.String():
-	// 	docsUpdater(output)
 	case pkg.Meshery.String():
 		mesheryUpdater(output)
 	case pkg.RemoteProvider.String():
@@ -201,6 +222,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
 	pathToIntegrationsMesheryDocs := os.Args[6]
+	mesheryioDocsJSON := "const data = ["
 	mesheryDocsJSON := "const data = ["
 	for _, model := range models {
 		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
@@ -218,21 +240,30 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 			fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		mesheryDocsJSON, err = pkg.GenerateMesheryioDocs(model, pathForMesheryioIntegrations, mesheryDocsJSON)
+		mesheryioDocsJSON, err = pkg.GenerateMesheryioDocs(model, pathForMesheryioIntegrations, mesheryioDocsJSON)
 		if err != nil {
-			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+			fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
+		mesheryDocsJSON, err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations, mesheryDocsJSON)
 		if err != nil {
 			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 		}
 
 	}
 
+	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
+	mesheryioDocsJSON += "]; export default data"
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
 	mesheryDocsJSON += "]; export default data"
-	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
+	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryioDocsJSON); err != nil {
+		log.Fatal(err)
+	}
+	err := os.MkdirAll(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/"), 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -471,3 +502,5 @@ func remoteProviderUpdater(output []map[string]string) {
 		}
 	}
 }
+
+
