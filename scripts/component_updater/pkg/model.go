@@ -266,8 +266,8 @@ workingSlides: [
   %s,
   %s
 ]
-howItWorks: %s
-howItWorksDetails: %s
+howItWorks: "%s"
+howItWorksDetails: "%s"
 published: %s
 ---
 <p>
