@@ -1,12 +1,18 @@
 package pkg
 
 import (
+	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/option"
+	"google.golang.org/api/sheets/v4"
 )
 
 type SystemType int
@@ -127,35 +133,36 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 
 	formattedName := FormatName(model.Model)
 
+	iconDir := filepath.Join( "../images", "integrations", formattedName)
+
 	// generate data.js file
-	jsonItem := model.CreateJSONItem()
+	jsonItem := model.CreateJSONItem(iconDir)
 	mesheryioDocsJSON += jsonItem + ","
 
-
 	// create color dir for icons
-	iconsDir := filepath.Join(path, "../", "images", formattedName, "icons", "color")
+	colorIconsDir := filepath.Join(path, iconDir, "icons", "color")
 	// create svg dir
-	err := os.MkdirAll(iconsDir, 0777)
+	err := os.MkdirAll(colorIconsDir, 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// write color svg
-		err = WriteSVG(filepath.Join(iconsDir, formattedName+"-color.svg"), model.SVGColor)
+		err = WriteSVG(filepath.Join(colorIconsDir, formattedName+"-color.svg"), model.SVGColor)
 		if err != nil {
 			return "", err
 		}
 
 		// create white dir for icons
-		iconsDir = filepath.Join(path, "../", "images", formattedName, "icons", "white")
+		whiteIconsDir := filepath.Join(path, iconDir, "icons", "white")
 	// create svg dir
-	err = os.MkdirAll(iconsDir, 0777)
+	err = os.MkdirAll(whiteIconsDir, 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// write white svg
-		err = WriteSVG(filepath.Join(iconsDir,formattedName+"-white.svg"), model.SVGWhite)
+		err = WriteSVG(filepath.Join(whiteIconsDir,formattedName+"-white.svg"), model.SVGWhite)
 		if err != nil {
 				return "", err
 		}
@@ -164,7 +171,7 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 	return mesheryioDocsJSON, nil
 }
 
-func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string) error {
+func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path, mesheryDocsJSON string) (string, error) {
 
 	modelName := FormatName(model.Model)
 	
@@ -172,7 +179,7 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	mdDir := filepath.Join(path, "pages", "integrations")
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// dir for icons
@@ -180,53 +187,76 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 	iconsDir := filepath.Join(path, _iconsSubDir)
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// for color icons
 	colorIconsDir := filepath.Join(iconsDir, "icons", "color")
 	err = os.MkdirAll(colorIconsDir, 0777)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = WriteSVG(filepath.Join(colorIconsDir, modelName+"-color.svg"), model.SVGColor)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// for white icons
 	whiteIconsDir := filepath.Join(iconsDir, "icons", "white")
 	err = os.MkdirAll(whiteIconsDir, 0777)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = WriteSVG(filepath.Join(whiteIconsDir, modelName+"-white.svg"), model.SVGWhite)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
 	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components, path, compIconsSubDir)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// generate markdown file
 	md := model.CreateMarkDownForMesheryDocs(componentMetadata)
 	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer file.Close()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {
-		return err
+		return "", err
 	}
 
+	// generate data.js file
+	jsonItem := model.CreateJSONItem(_iconsSubDir)
+	mesheryDocsJSON += jsonItem + ","
 
-	return nil
+
+	return mesheryDocsJSON, nil
+}
+
+
+func NewSheetSRV() (*sheets.Service, error) {
+	ctx := context.Background()
+	byt, _ := base64.StdEncoding.DecodeString(os.Getenv("CRED"))
+	// authenticate and get configuration
+	config, err := google.JWTConfigFromJSON(byt, "https://www.googleapis.com/auth/spreadsheets")
+	if err != nil {
+		return nil, err
+	}
+	// create client with config and context
+	client := config.Client(ctx)
+	// create new service using client
+	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		return nil, err
+	}
+	return srv, nil
 }
