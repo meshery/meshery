@@ -1,6 +1,6 @@
 import { withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
@@ -13,7 +13,7 @@ import {
   GRAFANA,
   PROMETHEUS,
 } from '../../constants/navigator';
-import { SORT } from '../../constants/endpoints';
+// import { SORT } from '../../constants/endpoints';
 import useStyles from '../../assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
@@ -44,12 +44,12 @@ const meshmodelStyles = (theme) => ({
     paddingLeft: 0,
     paddingRight: 0,
     '&.Mui-selected': {
-      color: theme.palette.view === 'dark' ? '#00B39F' : theme.palette.primary,
+      color: theme.palette.secondary.focused,
     },
   },
   tabs: {
     '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.view === 'dark' ? '#00B39F' : theme.palette.primary,
+      backgroundColor: theme.palette.secondary.focused,
     },
   },
   dashboardSection: {
@@ -59,7 +59,7 @@ const meshmodelStyles = (theme) => ({
     overflowY: 'scroll',
   },
   duplicatesModelStyle: {
-    backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    backgroundColor: theme.palette.secondary.focused,
   },
 });
 
@@ -95,10 +95,10 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [sortOrder] = useState({
-    sort: SORT.ASCENDING,
-    order: '',
-  });
+  // const [sortOrder] = useState({
+  //   sort: SORT.ASCENDING,
+  //   order: '',
+  // });
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
@@ -122,180 +122,152 @@ const MeshModelComponent_ = ({
   const [getRelationshipsData] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData] = useLazyGetRegistrantsQuery();
 
-  useEffect(() => {
-    if (selectedTab && selectedTab !== OVERVIEW) {
-      setAnimate(true);
-      setConvert(true);
-      setView(selectedTab);
-    }
-  }, [selectedTab]);
-
-  const getMeshModels = () => {
-    getMeshModelsData(
-      {
-        params: {
-          page: searchText ? 1 : page.Models + 1,
-          pagesize: searchText ? 'all' : rowsPerPage,
-          components: true,
-          relationships: true,
-          paginated: true,
-          search: searchText ? searchText : '',
-        },
-      },
-      true,
-    )
-      .unwrap()
-      .then((res) => {
-        console.log('get response', res);
-        setResourcesDetail((prev) => {
-          if (searchText) {
-            return [...res.models];
-          } else {
-            return [...prev, ...res.models];
-          }
-        });
-        if (rowsPerPage !== 14) {
-          setRowsPerPage(14);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to fetch models:', error.data);
-      });
-  };
-
-  const getComponents = () => {
-    getComponentsData(
-      {
-        params: {
-          page: searchText ? 1 : page.Components + 1,
-          pagesize: searchText ? 'all' : rowsPerPage,
-          search: searchText ? searchText : '',
-          trim: false,
-        },
-      },
-      true,
-    )
-      .unwrap()
-      .then((res) => {
-        setCount(res.total_count);
-        if (res?.components) {
-          setResourcesDetail((prev) => {
-            if (searchText) {
-              return [...res.components];
-            } else {
-              return [...prev, ...res.components];
-            }
-          });
-          // setSortOrder(sortOrder);
-        }
-        if (rowsPerPage !== 14) {
-          setRowsPerPage(14);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to fetch components:', error.data);
-      });
-  };
-
-  const getRelationships = async () => {
-    getRelationshipsData(
-      {
-        params: {
-          page: searchText ? 1 : page.Relationships + 1,
-          pagesize: searchText ? 'all' : rowsPerPage,
-          paginated: true,
-          search: searchText ? searchText : '',
-        },
-      },
-      true,
-    )
-      .unwrap()
-      .then((res) => {
-        setCount(res?.total_count);
-        if (res?.relationships) {
-          setResourcesDetail((prev) => {
-            if (searchText) {
-              return [...res.relationships];
-            } else {
-              return [...prev, ...res.relationships];
-            }
-          });
-        }
-        if (rowsPerPage !== 14) {
-          setRowsPerPage(14);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to fetch relationships:', error.data);
-      });
-  };
-
-  //TODO: Optimise it to support dynamic loading
-  const getRegistrants = async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const { data: registrantsData } = await getRegistrantsData(
-        {
-          params: {
-            page: searchText ? 1 : page.Registrants + 1,
-            pagesize: searchText ? 'all' : rowsPerPage,
-            search: searchText ? searchText : '',
-          },
-        },
-        true,
-      );
-
-      let registrants = registrantsData.registrants;
-      if (registrants) {
-        let tempRegistrants = [];
-
-        for (let registrant of registrants) {
-          let hostname = toLower(registrant?.hostname);
-          const { data: modelRes } = await getMeshModelsData(
+      let response;
+      switch (view) {
+        case MODELS:
+          response = await getMeshModelsData(
             {
               params: {
-                page: page?.Models + 1,
-                pagesize: rowsPerPage,
-                registrant: hostname,
+                page: searchText ? 1 : page.Models + 1,
+                pagesize: searchText ? 'all' : rowsPerPage,
                 components: true,
                 relationships: true,
+                paginated: true,
+                search: searchText || '',
               },
             },
             true,
           );
-
-          if (modelRes.models) {
-            const updatedRegistrant = {
-              ...registrant,
-              models: modelRes.models,
-            };
-
-            tempRegistrants.push(updatedRegistrant);
-          } else {
-            tempRegistrants.push(registrant);
-          }
-        }
-
-        setCount(registrants.total_count);
-
-        let tempResourcesDetail = [];
-        tempRegistrants.forEach((registrant) => {
-          let oldRegistrant = resourcesDetail.find(
-            (resource) => resource?.hostname === registrant?.hostname,
+          break;
+        case COMPONENTS:
+          response = await getComponentsData(
+            {
+              params: {
+                page: searchText ? 1 : page.Components + 1,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+                trim: false,
+              },
+            },
+            true,
           );
-
-          if (oldRegistrant !== undefined) {
-            let newModels = [...oldRegistrant.models, ...registrant.models];
-            registrant.models = newModels;
-          }
-
-          tempResourcesDetail.push(registrant);
-        });
-
-        setResourcesDetail(tempRegistrants);
+          setCount(response.total_count);
+          break;
+        case RELATIONSHIPS:
+          response = await getRelationshipsData(
+            {
+              params: {
+                page: searchText ? 1 : page.Relationships + 1,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                paginated: true,
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          setCount(response?.total_count);
+          break;
+        case REGISTRANTS:
+          response = await getRegistrants();
+          break;
+        default:
+          break;
       }
-      setRowsPerPage(14);
+
+      if (response.data) {
+        const newData = searchText
+          ? [...response.data[view.toLowerCase()]]
+          : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        setResourcesDetail(newData);
+
+        if (rowsPerPage !== 14) {
+          setRowsPerPage(14);
+        }
+      }
     } catch (error) {
-      console.error('Failed to fetch registrants:', error);
+      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+    }
+  }, [
+    getMeshModelsData,
+    getComponentsData,
+    getRelationshipsData,
+    getRegistrantsData,
+    view,
+    searchText,
+    page,
+    rowsPerPage,
+    resourcesDetail,
+  ]);
+
+  const getRegistrants = async () => {
+    let registrantResponse;
+    let response;
+    registrantResponse = await getRegistrantsData(
+      {
+        params: {
+          page: searchText ? 1 : page.Registrants + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          search: searchText || '',
+        },
+      },
+      true,
+    );
+    if (registrantResponse.data && registrantResponse.data.registrants) {
+      const registrants = registrantResponse.data.registrants;
+      const tempResourcesDetail = [];
+
+      for (let registrant of registrants) {
+        let hostname = toLower(registrant?.hostname);
+        const { data: modelRes } = await getMeshModelsData(
+          {
+            params: {
+              page: page?.Models + 1,
+              pagesize: rowsPerPage,
+              registrant: hostname,
+              components: true,
+              relationships: true,
+            },
+          },
+          true,
+        );
+
+        const updatedRegistrant = {
+          ...registrant,
+          models: modelRes.models || [],
+        };
+        tempResourcesDetail.push(updatedRegistrant);
+      }
+      response = {
+        data: {
+          registrants: tempResourcesDetail,
+        },
+      };
+    }
+    setCount(response.total_count);
+    setRowsPerPage(14);
+    return response;
+  };
+
+  const handleTabClick = (selectedView) => {
+    setView(() => {
+      handleChangeSelectedTab(selectedView);
+      return selectedView;
+    });
+    setPage({
+      Models: 0,
+      Components: 0,
+      Relationships: 0,
+      Registrants: 0,
+    });
+    if (view !== selectedView) {
+      setSearchText(null);
+      setResourcesDetail([]);
+    }
+    if (!animate) {
+      setAnimate(true);
+      setConvert(true);
     }
   };
 
@@ -333,45 +305,20 @@ const MeshModelComponent_ = ({
   }, [checked]);
 
   useEffect(() => {
-    if (view === MODELS) {
-      getMeshModels();
-    } else if (view === COMPONENTS) {
-      getComponents();
-    } else if (view === RELATIONSHIPS) {
-      getRelationships(page, sortOrder);
-    } else if (view === REGISTRANTS) {
-      getRegistrants();
+    if (selectedTab && selectedTab !== OVERVIEW) {
+      setAnimate(true);
+      setConvert(true);
+      setView(selectedTab);
     }
+  }, [selectedTab]);
+
+  useEffect(() => {
+    fetchData();
   }, [view, page, searchText, rowsPerPage]);
 
   return (
     <div data-test="workloads">
-      <div
-        className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
-      >
-        <DisableButton
-          disabled
-          variant="contained"
-          style={{
-            visibility: `${animate ? 'visible' : 'hidden'}`,
-          }}
-          size="large"
-          startIcon={<UploadIcon />}
-        >
-          Import
-        </DisableButton>
-        <DisableButton
-          disabled
-          variant="contained"
-          size="large"
-          style={{
-            visibility: `${animate ? 'visible' : 'hidden'}`,
-          }}
-          startIcon={<DoNotDisturbOnIcon />}
-        >
-          Ignore
-        </DisableButton>
-      </div>
+      <TabBar />
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -380,154 +327,34 @@ const MeshModelComponent_ = ({
             animate ? StyleClass.innerContainerAnimate : ''
           }`}
         >
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === MODELS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(MODELS);
-                return MODELS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== MODELS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${modelsCount})` : `${modelsCount}`}
-            </span>
-            Models
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === COMPONENTS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(COMPONENTS);
-                return COMPONENTS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== COMPONENTS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${componentsCount})` : `${componentsCount}`}
-            </span>
-            Components
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(RELATIONSHIPS);
-                return RELATIONSHIPS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== RELATIONSHIPS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${relationshipsCount})` : `${relationshipsCount}`}
-            </span>
-            Relationships
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === REGISTRANTS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(REGISTRANTS);
-                return REGISTRANTS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== REGISTRANTS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${registrantCount})` : `${registrantCount}`}
-            </span>
-            Registrants
-          </Paper>
+          <TabCard
+            label="Models"
+            count={modelsCount}
+            active={view === MODELS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(MODELS)}
+          />
+          <TabCard
+            label="Components"
+            count={componentsCount}
+            active={view === COMPONENTS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(COMPONENTS)}
+          />
+          <TabCard
+            label="Relationships"
+            count={relationshipsCount}
+            active={view === RELATIONSHIPS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(RELATIONSHIPS)}
+          />
+          <TabCard
+            label="Registrants"
+            count={registrantCount}
+            active={view === REGISTRANTS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(REGISTRANTS)}
+          />
         </div>
         {convert && (
           <div
@@ -566,6 +393,62 @@ const MeshModelComponent_ = ({
         )}
       </div>
     </div>
+  );
+};
+
+const TabBar = ({ animate }) => {
+  const StyleClass = useStyles();
+  return (
+    <div
+      className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
+    >
+      <DisableButton
+        disabled
+        variant="contained"
+        style={{
+          visibility: `${animate ? 'visible' : 'hidden'}`,
+        }}
+        size="large"
+        startIcon={<UploadIcon />}
+      >
+        Import
+      </DisableButton>
+      <DisableButton
+        disabled
+        variant="contained"
+        size="large"
+        style={{
+          visibility: `${animate ? 'visible' : 'hidden'}`,
+        }}
+        startIcon={<DoNotDisturbOnIcon />}
+      >
+        Ignore
+      </DisableButton>
+    </div>
+  );
+};
+
+const TabCard = ({ label, count, active, onClick, animate }) => {
+  const StyleClass = useStyles();
+  return (
+    <Paper
+      elevation={3}
+      className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+        active ? StyleClass.activeTab : ''
+      }`}
+      onClick={onClick}
+    >
+      <span
+        style={{
+          fontWeight: `${animate ? 'normal' : 'bold'}`,
+          fontSize: `${animate ? '1rem' : '3rem'}`,
+          marginLeft: `${animate && '4px'}`,
+        }}
+      >
+        {animate ? `(${count})` : `${count}`}
+      </span>
+      {label}
+    </Paper>
   );
 };
 
