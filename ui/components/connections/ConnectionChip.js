@@ -81,7 +81,6 @@ const styles = makeStyles((theme) => ({
     maxWidth: 'max-content !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
-    textTransform: 'capitalize',
     borderRadius: '3px !important',
     padding: '6px 8px',
     '& .MuiChip-label': {
