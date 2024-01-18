@@ -26,6 +26,18 @@
           parentCollapse.classList.add("show");
         }
       });
+      // Add 'active' class to the current page's link
+        console.log("Current URL:", currentUrl);
+        let navLinks = document.querySelectorAll(".sidebar-nav__section-link");
+        navLinks.forEach(function (navLink) {
+          console.log("NavLink Href:", navLink.getAttribute("href"));
+          if (navLink.getAttribute("href") === currentUrl) {
+            // Add 'active' class to the closest <li> tag
+            navLink.closest("li").classList.add("active");
+            console.log("Active class added!");
+          }
+        });
+
     });
   })();
   </script>
@@ -79,7 +91,7 @@
                      
                   <li id="docker-ↆ">
                   <a
-                    class="sidebar-nav__section-link  active "
+                    class="sidebar-nav__section-link "
                     id="m-overview-installation-ↆ-docker-ↆ"
                     href="/installation/docker"
                     >Docker </a>
