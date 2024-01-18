@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/layer5io/meshkit/utils/csv"
@@ -12,7 +13,6 @@ import (
 
 var (
 	shouldRegisterMod = "publishToSites"
-	sheetID           = "234040173" // update
 )
 
 type ModelCSV struct {
@@ -54,22 +54,28 @@ type ModelCSV struct {
 }
 
 type ModelCSVHelper struct {
-	SheetID string
+	SpreadsheetID int64
+	SpreadsheetURL string
+	Title 	string
 	CSVPath string
 	Models  []ModelCSV
 }
 
-func NewModelCSVHelper(sheetURL string) (*ModelCSVHelper, error) {
-	sheetURL = sheetURL + "&gid=" + sheetID
-	csvPath, err := DownloadCSV(sheetURL)
+func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
+	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+	fmt.Println("Downloading CSV from:", sheetURL)
+			csvPath, err := DownloadCSV(sheetURL)
 	if err != nil {
 		return nil, err
 	}
 
+
 	return &ModelCSVHelper{
-		SheetID: sheetID,
-		CSVPath: csvPath,
+		SpreadsheetID: spreadsheetID,
+		SpreadsheetURL: sheetURL,
 		Models:  []ModelCSV{},
+		CSVPath: csvPath,
+		Title: spreadsheetName,
 	}, nil
 }
 
@@ -296,17 +302,17 @@ published: %s
 }
 
 // Creates JSON formatted meshmodel attribute item for Meshery docs
-func (m ModelCSV) CreateJSONItem() string {
+func (m ModelCSV) CreateJSONItem(iconDir string) string {
 	formattedModelName := FormatName(m.Model)
 	json := "{"
 	json += fmt.Sprintf("\"name\":\"%s\"", m.Model)
 	// If SVGs exist, then add the paths to json
 	if m.SVGColor != "" {
-		json += fmt.Sprintf(",\"color\":\"../images/integration/%s/icons/color/%s-color.svg\"", formattedModelName, formattedModelName)
+		json += fmt.Sprintf(",\"color\":\"%s/icons/color/%s-color.svg\"", iconDir, formattedModelName)
 	}
 
 	if m.SVGWhite != "" {
-		json += fmt.Sprintf(",\"white\":\"../images/integration/%s/icons/white/%s-white.svg\"", formattedModelName, formattedModelName)
+		json += fmt.Sprintf(",\"white\":\"%s/icons/white/%s-white.svg\"", iconDir, formattedModelName)
 	}
 
 	json += fmt.Sprintf(",\"permalink\":\"%s\"", m.DocsURL)
