@@ -601,6 +601,7 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern = &pfs[0]
 			}
 		} else {
+
 			if parsedBody.PatternData == nil {
 				parsedBody.PatternData = &mesheryPatternPayload{}
 			}
