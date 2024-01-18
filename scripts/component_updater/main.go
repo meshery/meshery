@@ -42,7 +42,6 @@ The flags are:
 package main
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -107,7 +106,7 @@ func main() {
 	}
 	resp, err := srv.Spreadsheets.Get(url).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
@@ -133,12 +132,39 @@ func main() {
 		componentCSVHelper.ParseComponentsSheet()
 		}
 	}
+	// filep, err := pkg.DownloadCSV(url)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// file, err := os.Open(filep)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// csvReader := csv.NewReader(file)
+	// output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// file.Close()
+	// os.Remove(file.Name())
 
-	if System == pkg.Docs.String() {
-
+	switch System {
+	case pkg.Docs.String():
 		docsUpdater(modelCSVHelper.Models, componentCSVHelper.Components)
+	// commenting these for now
+		// case pkg.Meshery.String():
+	// 	mesheryUpdater(output)
+	// case pkg.RemoteProvider.String():
+	// 	remoteProviderUpdater(output)
+	default:
+		log.Fatal("invalid system name")
+		return
+	}
 
-		err = modelCSVHelper.Cleanup()
+	err = modelCSVHelper.Cleanup()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -148,37 +174,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-		return
-	}
-
-	filep, err := pkg.DownloadCSV(url)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	file, err := os.Open(filep)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	csvReader := csv.NewReader(file)
-	output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	file.Close()
-	os.Remove(file.Name())
-
-	switch System {
-	case pkg.Meshery.String():
-		mesheryUpdater(output)
-	case pkg.RemoteProvider.String():
-		remoteProviderUpdater(output)
-	default:
-		log.Fatal("invalid system name")
-		return
-	}
 
 
 }
