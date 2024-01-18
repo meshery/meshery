@@ -152,20 +152,24 @@ const sortProperties = (properties) => {
 };
 
 /**
- * Provides us the hyper link text.
+ * Provides us the hyperlink text.
  * @param {*} description
+ * @param {*} linkText
  * @returns
  */
-const getHyperLinkWithDescription = (description) => {
+const getHyperLinkWithDescription = (description, linkText = '') => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   return description?.replace(
     urlRegex,
-    (url) => `<a href="${url}" style="color: #00B39F;" target="_blank" rel="noreferrer">${url}</a>`,
+    (url) =>
+      `<a href="${url}" style="color: #00B39F;" target="_blank" rel="noreferrer">${
+        linkText || url
+      }</a>`,
   );
 };
 
-export const getHyperLinkDiv = (text) => (
-  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text) }} />
+export const getHyperLinkDiv = (text, linkText) => (
+  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text, linkText) }} />
 );
 /**
  * Returns the schema for the credentials.

@@ -14,10 +14,10 @@ import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
-import Link from 'next/link';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DialogActions } from '@layer5/sistent-components';
+import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -78,9 +78,22 @@ const styles = (theme) => ({
       },
     },
   },
+  infoIconButton: {
+    color: theme.palette.secondary.focused,
+  },
+  infoIcon: {
+    color: theme.palette.secondary.focused,
+    fill: 'currentColor',
+  },
   toolTip: {
     textDecoration: 'underline',
     color: theme.palette.secondary.link2,
+  },
+  dialogAction: {
+    padding: '0.5rem 1rem',
+    '&.MuiDialogActions-root': {
+      padding: '0.5rem 1rem',
+    },
   },
 });
 
@@ -92,23 +105,12 @@ const ExportModal = (props) => {
     classes,
     ExtensibleButton,
   } = props;
-  const renderTooltipContent = () => (
-    <div>
-      <span>
-        MeshMap Designer offers multiple export options, allowing you to choose the format that
-        suits your needs.
-      </span>
-      <Link
-        href={'https://docs.layer5.io/meshmap/designer/export-designs/'}
-        passHref
-        onClick={(e) => e.stopPropagation()}
-      >
-        <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-          Learn more
-        </a>
-      </Link>
-    </div>
-  );
+  const renderTooltipContent = () => {
+    return getHyperLinkDiv(
+      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. https://docs.layer5.io/meshmap/designer/export-designs/',
+      'Learn more',
+    );
+  };
 
   const [closed, setClosed] = React.useState(false);
 
@@ -243,15 +245,15 @@ const ExportModal = (props) => {
           {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
         </Box>
       </DialogContent>
-      <DialogActions>
+      <DialogActions className={classes.dialogAction}>
         <CustomTextTooltip
           backgroundColor="#3C494F"
           placement="top"
           interactive={true}
           title={renderTooltipContent()}
         >
-          <IconButton color="primary">
-            <InfoOutlinedIcon />
+          <IconButton className={classes.infoIconButton}>
+            <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />
           </IconButton>
         </CustomTextTooltip>
       </DialogActions>
