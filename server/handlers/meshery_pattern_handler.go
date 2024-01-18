@@ -601,10 +601,6 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern = &pfs[0]
 			}
 		} else {
-			parsedBody.PatternData.Type = sql.NullString{
-				String: string(models.Design),
-				Valid:  true,
-			}
 			resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 			if err != nil {
