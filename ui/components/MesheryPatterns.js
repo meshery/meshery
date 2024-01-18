@@ -1794,7 +1794,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <>
@@ -1805,7 +1805,7 @@ const PublishModal = React.memo((props) => {
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
-        handleSubmit={handlePublish}
+        handleSubmit={handleSubmit}
         showInfoIcon={{
           text: 'Upon submitting your catalog item, an approval flow will be initiated.',
           link: 'https://docs.meshery.io/concepts/catalog',
