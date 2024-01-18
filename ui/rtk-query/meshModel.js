@@ -1,5 +1,5 @@
 import { api } from './index';
-import _ from "lodash";
+import _ from 'lodash';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -8,9 +8,9 @@ const TAGS = {
 const defaultOptions = {
   trim: false,
   annotations: false,
-  search: "",
+  search: '',
   page: 1,
-  pagesize: "all"
+  pagesize: 'all',
 };
 
 const meshModelApi = api
@@ -22,42 +22,42 @@ const meshModelApi = api
       getMeshModels: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponents: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/components`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationships: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/relationships`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRegistrants: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/registrants`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentsFromModal: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models/${queryArgs.model}/components`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationshipsFromModal: builder.query({
         query: (queryArgs) => ({
           url: `meshmodels/models/${queryArgs.model}/relationships`,
-          params: _.merge({}, defaultOptions, queryArgs.params)
+          params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
