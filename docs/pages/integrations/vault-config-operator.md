@@ -6,8 +6,8 @@ image: /assets/img/integrations/vault-config-operator/icons/color/vault-config-o
 permalink: extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 
-category: Provisioning
-subcategory: Key Management
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 registrant: artifacthub
 components: 
 	- name: auth-engine-mount
@@ -131,6 +131,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-ec2-controller/icons/color/aws-ec2-controlle
 permalink: extensibility/integrations/aws-ec2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
 description: 
-category: Provisioning
-subcategory: Compute
+integrations-category: Provisioning
+integrations-subcategory: Compute
 registrant: aws
 components: 
 	- name: field-export
@@ -84,6 +84,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

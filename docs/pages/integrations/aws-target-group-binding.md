@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-target-group-binding/icons/color/aws-target-
 permalink: extensibility/integrations/aws-target-group-binding
 docURL: https://docs.meshery.io/extensibility/integrations/aws-target-group-binding
 description: 
-category: Cloud Native Network
-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 registrant: artifacthub
 components: 
 	- name: target-group-binding
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

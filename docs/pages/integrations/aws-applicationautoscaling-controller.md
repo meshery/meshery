@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-applicationautoscaling-controller/icons/colo
 permalink: extensibility/integrations/aws-applicationautoscaling-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-applicationautoscaling-controller
 description: 
-category: Provisioning
-subcategory: Management Governance
+integrations-category: Provisioning
+integrations-subcategory: Management Governance
 registrant: aws
 components: 
 	- name: adopted-resource
@@ -35,6 +35,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

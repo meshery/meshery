@@ -6,8 +6,8 @@ image: /assets/img/integrations/pg-operator/icons/color/pg-operator-color.svg
 permalink: extensibility/integrations/pg-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 
-category: App Definition and Development
-subcategory: Database
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 registrant: artifacthub
 components: 
 	- name: percona-pg-backup
@@ -31,6 +31,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

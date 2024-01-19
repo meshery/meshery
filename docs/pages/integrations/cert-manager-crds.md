@@ -6,8 +6,8 @@ image: /assets/img/integrations/cert-manager-crds/icons/color/cert-manager-crds-
 permalink: extensibility/integrations/cert-manager-crds
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-crds
 description: 
-category: Security & Compliance
-subcategory: Security & Compliance
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Cloud native certificate management
 howItWorksDetails: X.509 certificate management for Kubernetes and OpenShift
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

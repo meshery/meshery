@@ -6,8 +6,8 @@ image: /assets/img/integrations/distribution/icons/color/distribution-color.svg
 permalink: extensibility/integrations/distribution
 docURL: https://docs.meshery.io/extensibility/integrations/distribution
 description: 
-category: Provisioning
-subcategory: Container Registry
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

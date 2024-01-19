@@ -6,8 +6,8 @@ image: /assets/img/integrations/karpenter/icons/color/karpenter-color.svg
 permalink: extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 
-category: Provisioning
-subcategory: Automation & Configuration
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
 	- name: aws-node-template
@@ -29,6 +29,9 @@ howItWorksDetails: Set up provisioners: By applying a provisioner to Karpenter, 
 Deploy workloads: When deploying workloads, you can request that scheduling constraints be met to direct which nodes Karpenter provisions for those workloads. 
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

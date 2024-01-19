@@ -6,8 +6,8 @@ image: /assets/img/integrations/cortex/icons/color/cortex-color.svg
 permalink: extensibility/integrations/cortex
 docURL: https://docs.meshery.io/extensibility/integrations/cortex
 description: 
-category: Observability and Analysis
-subcategory: Metrics
+integrations-category: Observability and Analysis
+integrations-subcategory: Metrics
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

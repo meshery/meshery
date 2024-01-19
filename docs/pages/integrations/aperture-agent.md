@@ -6,8 +6,8 @@ image: /assets/img/integrations/aperture-agent/icons/color/aperture-agent-color.
 permalink: extensibility/integrations/aperture-agent
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent
 description: 
-category: Orchestration & Management
-subcategory: Scheduling & Orchestration
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 registrant: artifacthub
 components: 
 	- name: agent
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

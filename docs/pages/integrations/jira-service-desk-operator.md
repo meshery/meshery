@@ -6,8 +6,8 @@ image: /assets/img/integrations/jira-service-desk-operator/icons/color/jira-serv
 permalink: extensibility/integrations/jira-service-desk-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-operator
 description: 
-category: Tools
-subcategory: Tools
+integrations-category: Tools
+integrations-subcategory: Tools
 registrant: artifacthub
 components: 
 	- name: customer
@@ -27,6 +27,9 @@ howItWorks: Configure and customize Jira Projects and Issues
 howItWorksDetails: Automate the process of setting up the Jira Service Desk (JSD) operator configuration of alertmanager in a Kubernetes native way. 
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

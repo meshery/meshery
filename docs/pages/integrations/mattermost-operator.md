@@ -6,8 +6,8 @@ image: /assets/img/integrations/mattermost-operator/icons/color/mattermost-opera
 permalink: extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 
-category: Tools
-subcategory: Uncategorized
+integrations-category: Tools
+integrations-subcategory: Uncategorized
 registrant: artifacthub
 components: 
 	- name: cluster-installation
@@ -32,6 +32,9 @@ howItWorksDetails: Configuring your own Mattermost environment
 See the Mattermost documentation - https://docs.mattermost.com.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

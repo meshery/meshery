@@ -6,8 +6,8 @@ image: /assets/img/integrations/aad-pod-identity/icons/color/aad-pod-identity-co
 permalink: extensibility/integrations/aad-pod-identity
 docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
 description: 
-category: Provisioning
-subcategory: Security & Compliance
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Federate with any external identity provider
 howItWorksDetails: Azure AD workload identity authentication method replaces pod-managed identity, which integrates with the Kubernetes native capabilities to federate with any external identity providers on behalf of the application.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

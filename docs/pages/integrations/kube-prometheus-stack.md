@@ -6,8 +6,8 @@ image: /assets/img/integrations/kube-prometheus-stack/icons/color/kube-prometheu
 permalink: extensibility/integrations/kube-prometheus-stack
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus-stack
 description: 
-category: Observability and Analysis
-subcategory: Monitoring
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 registrant: artifacthub
 components: 
 	- name: alertmanager-config
@@ -51,6 +51,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

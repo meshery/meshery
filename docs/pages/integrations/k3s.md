@@ -6,8 +6,8 @@ image: /assets/img/integrations/k3s/icons/color/k3s-color.svg
 permalink: extensibility/integrations/k3s
 docURL: https://docs.meshery.io/extensibility/integrations/k3s
 description: 
-category: Platform
-subcategory: Kubernetes
+integrations-category: Platform
+integrations-subcategory: Kubernetes
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

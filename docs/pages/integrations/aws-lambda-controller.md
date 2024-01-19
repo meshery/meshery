@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-lambda-controller/icons/color/aws-lambda-con
 permalink: extensibility/integrations/aws-lambda-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-lambda-controller
 description: 
-category: App Definition and Development
-subcategory: Serverless
+integrations-category: App Definition and Development
+integrations-subcategory: Serverless
 registrant: aws
 components: 
 	- name: code-signing-config
@@ -47,6 +47,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

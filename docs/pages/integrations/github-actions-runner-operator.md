@@ -6,8 +6,8 @@ image: /assets/img/integrations/github-actions-runner-operator/icons/color/githu
 permalink: extensibility/integrations/github-actions-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner-operator
 description: 
-category: App Definition and Development
-subcategory: Source Version Control
+integrations-category: App Definition and Development
+integrations-subcategory: Source Version Control
 registrant: artifacthub
 components: 
 	- name: github-action-runner
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

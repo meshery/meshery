@@ -6,8 +6,8 @@ image: /assets/img/integrations/armory-spinnaker-operator/icons/color/armory-spi
 permalink: extensibility/integrations/armory-spinnaker-operator
 docURL: https://docs.meshery.io/extensibility/integrations/armory-spinnaker-operator
 description: 
-category: App Definition and Development
-subcategory: Continuous Integration & Delivery
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
 registrant: artifacthub
 components: 
 	- name: armory-account
@@ -27,6 +27,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

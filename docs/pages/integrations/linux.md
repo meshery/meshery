@@ -6,8 +6,8 @@ image: /assets/img/integrations/linux/icons/color/linux-color.svg
 permalink: extensibility/integrations/linux
 docURL: https://docs.meshery.io/installation/linux-mac
 description: 
-category: Platform
-subcategory: Operating System
+integrations-category: Platform
+integrations-subcategory: Operating System
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

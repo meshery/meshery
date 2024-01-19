@@ -6,8 +6,8 @@ image: /assets/img/integrations/prometheus-operator-crds/icons/color/prometheus-
 permalink: extensibility/integrations/prometheus-operator-crds
 docURL: https://docs.meshery.io/extensibility/integrations/prometheus-operator-crds
 description: 
-category: Observability and Analysis
-subcategory: Monitoring
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Meshery provides performance reports, including performance test res
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

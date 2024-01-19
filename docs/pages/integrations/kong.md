@@ -6,8 +6,8 @@ image: /assets/img/integrations/kong/icons/color/kong-color.svg
 permalink: extensibility/integrations/kong
 docURL: https://docs.meshery.io/extensibility/integrations/kong
 description: 
-category: Cloud Native Network
-subcategory: API Gateway
+integrations-category: Cloud Native Network
+integrations-subcategory: API Gateway
 registrant: artifacthub
 components: 
 	- name: ingress-class-parameters
@@ -51,6 +51,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

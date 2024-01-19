@@ -6,8 +6,8 @@ image: /assets/img/integrations/kube-rs/icons/color/kube-rs-color.svg
 permalink: extensibility/integrations/kube-rs
 docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
-category: Runtime
-subcategory: Scheduling & Orchestration
+integrations-category: Runtime
+integrations-subcategory: Scheduling & Orchestration
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

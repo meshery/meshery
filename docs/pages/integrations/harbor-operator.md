@@ -6,8 +6,8 @@ image: /assets/img/integrations/harbor-operator/icons/color/harbor-operator-colo
 permalink: extensibility/integrations/harbor-operator
 docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
 description: 
-category: Provisioning
-subcategory: Container Registry
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 registrant: artifacthub
 components: 
 	- name: instance-chart-repository
@@ -43,6 +43,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

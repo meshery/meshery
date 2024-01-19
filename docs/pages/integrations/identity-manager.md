@@ -6,8 +6,8 @@ image: /assets/img/integrations/identity-manager/icons/color/identity-manager-co
 permalink: extensibility/integrations/identity-manager
 docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
-category: Provisioning
-subcategory: Key Management
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 registrant: artifacthub
 components: 
 	- name: workload-identity
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

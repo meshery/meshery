@@ -6,8 +6,8 @@ image: /assets/img/integrations/fluent-operator/icons/color/fluent-operator-colo
 permalink: extensibility/integrations/fluent-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluent-operator
 description: 
-category: Observability and Analysis
-subcategory: Logging
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 registrant: artifacthub
 components: 
 	- name: cluster-filter
@@ -75,6 +75,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

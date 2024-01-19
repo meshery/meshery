@@ -6,8 +6,8 @@ image: /assets/img/integrations/kubernetes/icons/color/kubernetes-color.svg
 permalink: extensibility/integrations/kubernetes
 docURL: https://docs.meshery.io/installation/kubernetes
 description: 
-category: Orchestration & Management
-subcategory: Orchestration & Management
+integrations-category: Orchestration & Management
+integrations-subcategory: Orchestration & Management
 registrant: artifacthub
 components: 
 	- name: namespace
@@ -219,6 +219,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

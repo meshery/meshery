@@ -6,8 +6,8 @@ image: /assets/img/integrations/pulsar-resources-operator/icons/color/pulsar-res
 permalink: extensibility/integrations/pulsar-resources-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-resources-operator
 description: 
-category: App Definition and Development
-subcategory: Streaming & Messaging
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 registrant: artifacthub
 components: 
 	- name: pulsar-connection
@@ -43,6 +43,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

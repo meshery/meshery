@@ -6,8 +6,8 @@ image: /assets/img/integrations/kubeform-provider-aws/icons/color/kubeform-provi
 permalink: extensibility/integrations/kubeform-provider-aws
 docURL: https://docs.meshery.io/extensibility/integrations/kubeform-provider-aws
 description: 
-category: Provisioning
-subcategory: Cloud Provider
+integrations-category: Provisioning
+integrations-subcategory: Cloud Provider
 registrant: artifacthub
 components: 
 	- name: provider-config
@@ -197,6 +197,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

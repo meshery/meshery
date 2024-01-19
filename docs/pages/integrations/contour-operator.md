@@ -6,8 +6,8 @@ image: /assets/img/integrations/contour-operator/icons/color/contour-operator-co
 permalink: extensibility/integrations/contour-operator
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 
-category: Cloud Native Network
-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 registrant: artifacthub
 components: 
 	- name: contour
@@ -67,6 +67,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/fonio/icons/color/fonio-color.svg
 permalink: extensibility/integrations/fonio
 docURL: https://docs.meshery.io/extensibility/integrations/fonio
 description: 
-category: Observability and Analysis
-subcategory: Monitoring
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/istio-ratelimit-operator/icons/color/istio-ratel
 permalink: extensibility/integrations/istio-ratelimit-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
-category: Cloud Native Network
-subcategory: Service Mesh
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 registrant: artifacthub
 components: 
 	- name: global-rate-limit-config
@@ -39,6 +39,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

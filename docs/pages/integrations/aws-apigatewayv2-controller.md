@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-apigatewayv2-controller/icons/color/aws-apig
 permalink: extensibility/integrations/aws-apigatewayv2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-apigatewayv2-controller
 description: 
-category: Cloud Native Network
-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 registrant: aws
 components: 
 	- name: api
@@ -55,6 +55,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

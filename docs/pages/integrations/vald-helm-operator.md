@@ -6,8 +6,8 @@ image: /assets/img/integrations/vald-helm-operator/icons/color/vald-helm-operato
 permalink: extensibility/integrations/vald-helm-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
 description: 
-category: Provisioning
-subcategory: Key Management
+integrations-category: Provisioning
+integrations-subcategory: Key Management
 registrant: artifacthub
 components: 
 	- name: vald-helm-operator-release
@@ -27,6 +27,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

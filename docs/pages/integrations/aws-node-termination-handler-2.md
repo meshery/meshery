@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-node-termination-handler-2/icons/color/aws-n
 permalink: extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
 description: 
-category: Provisioning
-subcategory: Automation & Configuration
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
 	- name: terminator
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/knative/icons/color/knative-color.svg
 permalink: extensibility/integrations/knative
 docURL: https://docs.meshery.io/extensibility/integrations/knative
 description: 
-category: Serverless
-subcategory: Installable Platform
+integrations-category: Serverless
+integrations-subcategory: Installable Platform
 registrant: artifacthub
 components: 
 	- name: api-server-source
@@ -63,6 +63,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

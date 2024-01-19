@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-load-balancer-controller/icons/color/aws-loa
 permalink: extensibility/integrations/aws-load-balancer-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-load-balancer-controller
 description: 
-category: Cloud Native Network
-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 registrant: artifacthub
 components: 
 	- name: ingress-class-params
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

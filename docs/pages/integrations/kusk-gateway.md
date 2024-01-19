@@ -6,8 +6,8 @@ image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg
 permalink: extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
 description: 
-category: Orchestration & Management
-subcategory: API Gateway
+integrations-category: Orchestration & Management
+integrations-subcategory: API Gateway
 registrant: artifacthub
 components: 
 	- name: envoy-fleet
@@ -31,6 +31,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

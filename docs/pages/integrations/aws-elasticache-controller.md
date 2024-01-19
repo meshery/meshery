@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-elasticache-controller/icons/color/aws-elast
 permalink: extensibility/integrations/aws-elasticache-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-controller
 description: 
-category: App Definition and Development
-subcategory: Database
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 registrant: aws
 components: 
 	- name: cache-parameter-group
@@ -51,6 +51,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

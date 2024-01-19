@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-kms-controller/icons/color/aws-kms-controlle
 permalink: extensibility/integrations/aws-kms-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
 description: 
-category: Security & Compliance
-subcategory: Key Management Service
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management Service
 registrant: aws
 components: 
 	- name: field-export
@@ -39,6 +39,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

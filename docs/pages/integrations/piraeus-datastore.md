@@ -6,8 +6,8 @@ image: /assets/img/integrations/piraeus-datastore/icons/color/piraeus-datastore-
 permalink: extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
-category: App Definition and Development
-subcategory: Database
+integrations-category: App Definition and Development
+integrations-subcategory: Database
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Piraeus can run on all kinds of storage medium: RAID, SAN, NAS or EB
 howItWorksDetails: It deploys and scales out automatically within Kubernetes nodes. With Piraeus, Kubernetes workloads can now consume high performance local storage using the same volume APIs that app developers have become accustomed to.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
