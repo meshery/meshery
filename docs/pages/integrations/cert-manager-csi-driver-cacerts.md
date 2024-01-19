@@ -10,17 +10,17 @@ integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
-	- name: ca-provider-class
-		colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg
-		whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg
-		description: 
+- name: ca-provider-class
+  colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg
+  whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg
+  description: 
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",
   "Supports issuing certificates from a variety of sources.",
   "Ensures certificates remain valid and up to date."
 ]
-howItWorks: Cloud native certificate management
-howItWorksDetails: X.509 certificate management for Kubernetes and OpenShift
+howItWorks: "Cloud native certificate management"
+howItWorksDetails: "X.509 certificate management for Kubernetes and OpenShift"
 language: en
 list: include
 type: extensibility

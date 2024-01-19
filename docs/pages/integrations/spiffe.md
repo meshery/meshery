@@ -15,8 +15,8 @@ featureList: [
   "Configure your signing framework for securely issuing and renewing SVIDs.",
   "Simplify access from identified services to secret stores, databases, services meshes and cloud provider services."
 ]
-howItWorks: Wrangle the Workload API
-howItWorksDetails: Expertly use the Workload API specification to issue and retrieve SVIDs.
+howItWorks: "Wrangle the Workload API"
+howItWorksDetails: "Expertly use the Workload API specification to issue and retrieve SVIDs."
 language: en
 list: include
 type: extensibility

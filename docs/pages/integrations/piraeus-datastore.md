@@ -15,8 +15,8 @@ featureList: [
   "DRBD-9 has great data replication efficiency. It provides synchronous,semi-synchronous and asynchronous replication schemes, and also supports RDMA for high-speed across-node connection.",
   "Supports 1/2/3 replica numbers for persistent volumes. Piraeus place the replicas intelligently across the nodes to balance the workload."
 ]
-howItWorks: Piraeus can run on all kinds of storage medium: RAID, SAN, NAS or EBS
-howItWorksDetails: It deploys and scales out automatically within Kubernetes nodes. With Piraeus, Kubernetes workloads can now consume high performance local storage using the same volume APIs that app developers have become accustomed to.
+howItWorks: "Piraeus can run on all kinds of storage medium: RAID, SAN, NAS or EBS"
+howItWorksDetails: "It deploys and scales out automatically within Kubernetes nodes. With Piraeus, Kubernetes workloads can now consume high performance local storage using the same volume APIs that app developers have become accustomed to."
 language: en
 list: include
 type: extensibility

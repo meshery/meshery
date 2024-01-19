@@ -15,8 +15,8 @@ featureList: [
   "Integrate Meshery into your GitHub workflow",
   "Use Meshery GitHub Actions"
 ]
-howItWorks: Visual GitOps
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Visual GitOps"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

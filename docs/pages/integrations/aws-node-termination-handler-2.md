@@ -10,17 +10,17 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
-	- name: terminator
-		colorIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
-		whiteIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
-		description: 
+- name: terminator
+  colorIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
+  whiteIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
+  description: 
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
   "Deploy Meshery on your EKS clusters for App Mesh management"
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility
