@@ -6,8 +6,8 @@ image: /assets/img/integrations/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg
 permalink: extensibility/integrations/aks-appgw-fe
 docURL: https://docs.meshery.io/extensibility/integrations/aks-appgw-fe
 description: 
-category: Cloud Native Network
-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Proxy
 registrant: artifacthub
 components: 
 	- name: azure-assigned-identity
@@ -37,6 +37,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Application Gateway Ingress Controller runs in its own pod on the customer’s AKS. Ingress Controller monitors a subset of Kubernetes’ resources for changes. The state of the AKS cluster is translated to Application Gateway specific configuration and applied to the Azure Resource Manager. The continuous re-configuration of Application Gateway ensures uninterrupted flow of traffic to AKS’ services. The diagram below illustrates the flow of state and configuration changes from the Kubernetes API, via Application Gateway Ingress Controller, to Resource Manager and then Application Gateway.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

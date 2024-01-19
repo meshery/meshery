@@ -6,8 +6,8 @@ image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-colo
 permalink: extensibility/integrations/thanos-operator
 docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator
 description: 
-category: Observability and Analysis
-subcategory: Monitoring
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
 registrant: artifacthub
 components: 
 	- name: object-store
@@ -43,6 +43,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

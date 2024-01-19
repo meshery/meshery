@@ -6,8 +6,8 @@ image: /assets/img/integrations/newrelic-operator/icons/color/newrelic-operator-
 permalink: extensibility/integrations/newrelic-operator
 docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 
-category: Observability and Analysis
-subcategory: Observability and Analysis
+integrations-category: Observability and Analysis
+integrations-subcategory: Observability and Analysis
 registrant: artifacthub
 components: 
 	- name: alert-channel
@@ -39,6 +39,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

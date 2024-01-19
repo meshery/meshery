@@ -6,8 +6,8 @@ image: /assets/img/integrations/curiefense/icons/color/curiefense-color.svg
 permalink: extensibility/integrations/curiefense
 docURL: https://docs.meshery.io/extensibility/integrations/curiefense
 description: 
-category: Provisioning
-subcategory: Security & Compliance
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

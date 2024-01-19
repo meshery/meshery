@@ -6,8 +6,8 @@ image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
 permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 
-category: Orchestration & Management
-subcategory: App Definition and Development
+integrations-category: Orchestration & Management
+integrations-subcategory: App Definition and Development
 registrant: meshery
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

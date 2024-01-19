@@ -6,8 +6,8 @@ image: /assets/img/integrations/fluentbit-operator/icons/color/fluentbit-operato
 permalink: extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 
-category: Observability and Analysis
-subcategory: Logging
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 registrant: artifacthub
 components: 
 	- name: filter
@@ -50,6 +50,9 @@ Fluentd only mode: If you need to receive logs through networks like HTTP or Sys
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

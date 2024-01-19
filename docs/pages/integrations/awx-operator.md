@@ -6,8 +6,8 @@ image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg
 permalink: extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 
-category: Orchestration & Management
-subcategory: Automation & Configuration
+integrations-category: Orchestration & Management
+integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
 	- name: awx-backup
@@ -31,6 +31,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/helm-controller/icons/color/helm-controller-colo
 permalink: extensibility/integrations/helm-controller
 docURL: https://docs.meshery.io/installation/kubernetes/helm
 description: 
-category: App Definition and Development
-subcategory: Application Definition & Image Build
+integrations-category: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 registrant: artifacthub
 components: 
 	- name: bucket
@@ -31,6 +31,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

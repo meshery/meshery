@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-eks-controller/icons/color/aws-eks-controlle
 permalink: extensibility/integrations/aws-eks-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
 description: 
-category: Orchestration & Management
-subcategory: Containers
+integrations-category: Orchestration & Management
+integrations-subcategory: Containers
 registrant: aws
 components: 
 	- name: cluster
@@ -51,6 +51,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

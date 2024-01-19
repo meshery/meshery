@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-secretsmanager-controller/icons/color/aws-se
 permalink: extensibility/integrations/aws-secretsmanager-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
 description: 
-category: Security & Compliance
-subcategory: Security Identity Compliance
+integrations-category: Security & Compliance
+integrations-subcategory: Security Identity Compliance
 registrant: aws
 components: 
 	- name: field-export
@@ -31,6 +31,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

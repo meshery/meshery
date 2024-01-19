@@ -6,8 +6,8 @@ image: /assets/img/integrations/tinkerbell/icons/color/tinkerbell-color.svg
 permalink: extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
 description: 
-category: Provisioning
-subcategory: Automation & Configuration
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/aws-elasticsearchservice-controller/icons/color/
 permalink: extensibility/integrations/aws-elasticsearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
 description: 
-category: Observability and Analysis
-subcategory: Logging
+integrations-category: Observability and Analysis
+integrations-subcategory: Logging
 registrant: aws
 components: 
 	- name: elasticsearch-domain
@@ -27,6 +27,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

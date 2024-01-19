@@ -6,8 +6,8 @@ image: /assets/img/integrations/opentelemetry-operator/icons/color/opentelemetry
 permalink: extensibility/integrations/opentelemetry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/opentelemetry-operator
 description: 
-category: Observability and Analysis
-subcategory: Tracing
+integrations-category: Observability and Analysis
+integrations-subcategory: Tracing
 registrant: artifacthub
 components: 
 	- name: op-amp-bridge
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

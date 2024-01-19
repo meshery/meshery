@@ -6,8 +6,8 @@ image: /assets/img/integrations/k8svault-controller/icons/color/k8svault-control
 permalink: extensibility/integrations/k8svault-controller
 docURL: https://docs.meshery.io/extensibility/integrations/k8svault-controller
 description: 
-category: Security & Compliance
-subcategory: Security & Compliance
+integrations-category: Security & Compliance
+integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
 	- name: vault-binding
@@ -27,6 +27,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

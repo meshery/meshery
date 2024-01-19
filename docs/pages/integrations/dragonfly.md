@@ -6,8 +6,8 @@ image: /assets/img/integrations/dragonfly/icons/color/dragonfly-color.svg
 permalink: extensibility/integrations/dragonfly
 docURL: https://docs.meshery.io/extensibility/integrations/dragonfly
 description: 
-category: Provisioning
-subcategory: Container Registry
+integrations-category: Provisioning
+integrations-subcategory: Container Registry
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

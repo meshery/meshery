@@ -6,8 +6,8 @@ image: /assets/img/integrations/spire/icons/color/spire-color.svg
 permalink: extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 
-category: Security & Compliance
-subcategory: Key Management
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management
 registrant: artifacthub
 components: 
 	- name: cluster-federated-trust-domain
@@ -31,6 +31,9 @@ howItWorks: Configure your signing framework
 howItWorksDetails: Simplify access from identified services to secret stores, databases, services meshes and cloud provider services.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

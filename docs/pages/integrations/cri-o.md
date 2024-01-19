@@ -6,8 +6,8 @@ image: /assets/img/integrations/cri-o/icons/color/cri-o-color.svg
 permalink: extensibility/integrations/cri-o
 docURL: https://docs.meshery.io/extensibility/integrations/cri-o
 description: 
-category: Runtime
-subcategory: Container Runtime
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/admin-console-operator/icons/color/admin-console
 permalink: extensibility/integrations/admin-console-operator
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
 description: 
-category: Provisioning
-subcategory: Automation & Configuration
+integrations-category: Provisioning
+integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
 	- name: admin-console
@@ -23,11 +23,14 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 <p>
-A Helm chart for EDP Admin Console Operator
+EPAM Admin Console Operator
 </p>
 <p>
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.

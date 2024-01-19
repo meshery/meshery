@@ -6,8 +6,8 @@ image: /assets/img/integrations/docker/icons/color/docker-color.svg
 permalink: extensibility/integrations/docker
 docURL: https://docs.meshery.io/installation/docker 
 description: 
-category: Runtime
-subcategory: Container Runtime
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kuberentes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog. Use our no-code designer, MeshMap, to collaboratively design and operate your infra.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

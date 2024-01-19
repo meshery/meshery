@@ -6,8 +6,8 @@ image: /assets/img/integrations/ambassador/icons/color/ambassador-color.svg
 permalink: extensibility/integrations/ambassador
 docURL: https://docs.meshery.io/extensibility/integrations/ambassador
 description: 
-category: Cloud Native Network
-subcategory: API Gateway
+integrations-category: Cloud Native Network
+integrations-subcategory: API Gateway
 registrant: artifacthub
 components: 
 	- name: filter
@@ -95,6 +95,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

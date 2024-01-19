@@ -6,8 +6,8 @@ image: /assets/img/integrations/kyverno-operator/icons/color/kyverno-operator-co
 permalink: extensibility/integrations/kyverno-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno-operator
 description: 
-category: Provisioning
-subcategory: Security & Compliance
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
 registrant: artifacthub
 components: 
 	- name: kyverno-operator
@@ -25,6 +25,9 @@ howItWorks: Block non-conformant resources
 howItWorksDetails: Using MeshMap, apply best practice design templates for admission control over non-conformant resources.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

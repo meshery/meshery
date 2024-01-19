@@ -6,8 +6,8 @@ image: /assets/img/integrations/oras/icons/color/oras-color.svg
 permalink: extensibility/integrations/oras
 docURL: https://docs.meshery.io/extensibility/integrations/oras
 description: 
-category: Cloud Native Storage
-subcategory: Cloud Native Storage
+integrations-category: Cloud Native Storage
+integrations-subcategory: Cloud Native Storage
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

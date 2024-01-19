@@ -6,8 +6,8 @@ image: /assets/img/integrations/mpi-operator/icons/color/mpi-operator-color.svg
 permalink: extensibility/integrations/mpi-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
 description: 
-category: Machine Learning
-subcategory: Machine Learning
+integrations-category: Machine Learning
+integrations-subcategory: Machine Learning
 registrant: artifacthub
 components: 
 	- name: mpi-job
@@ -23,6 +23,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/volcano/icons/color/volcano-color.svg
 permalink: extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
 description: 
-category: Orchestration & Management
-subcategory: Scheduling & Orchestration
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

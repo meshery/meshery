@@ -6,8 +6,8 @@ image: /assets/img/integrations/spiffe/icons/color/spiffe-color.svg
 permalink: extensibility/integrations/spiffe
 docURL: https://docs.meshery.io/extensibility/integrations/spiffe
 description: 
-category: Security & Compliance
-subcategory: Key Management
+integrations-category: Security & Compliance
+integrations-subcategory: Key Management
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Wrangle the Workload API
 howItWorksDetails: Expertly use the Workload API specification to issue and retrieve SVIDs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

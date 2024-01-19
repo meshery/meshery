@@ -6,8 +6,8 @@ image: /assets/img/integrations/strimzi-kafka-operator/icons/color/strimzi-kafka
 permalink: extensibility/integrations/strimzi-kafka-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-kafka-operator
 description: 
-category: App Definition and Development
-subcategory: Streaming & Messaging
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

@@ -6,8 +6,8 @@ image: /assets/img/integrations/jitsi/icons/color/jitsi-color.svg
 permalink: extensibility/integrations/jitsi
 docURL: https://docs.meshery.io/extensibility/integrations/jitsi
 description: 
-category: Tools
-subcategory: Video Conferencing
+integrations-category: Tools
+integrations-subcategory: Video Conferencing
 registrant: artifacthub
 components: 
 	- name: backup
@@ -99,6 +99,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

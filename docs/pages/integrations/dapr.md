@@ -6,8 +6,8 @@ image: /assets/img/integrations/dapr/icons/color/dapr-color.svg
 permalink: extensibility/integrations/dapr
 docURL: https://docs.meshery.io/extensibility/integrations/dapr
 description: 
-category: Serverless
-subcategory: Framework
+integrations-category: Serverless
+integrations-subcategory: Framework
 registrant: artifacthub
 components: 
 	- name: component
@@ -39,6 +39,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 

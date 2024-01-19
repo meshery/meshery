@@ -6,8 +6,8 @@ image: /assets/img/integrations/cpx/icons/color/cpx-color.svg
 permalink: extensibility/integrations/cpx
 docURL: https://docs.meshery.io/extensibility/adapters/cpx
 description: 
-category: Cloud Native Network
-subcategory: Service Mesh
+integrations-category: Cloud Native Network
+integrations-subcategory: Service Mesh
 registrant: artifacthub
 components: 
 featureList: [
@@ -19,6 +19,9 @@ howItWorks: Collaborative Infrastructure as Code
 howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
