@@ -218,7 +218,6 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 	pathToIntegrationsMeshery := os.Args[5]
 	pathToIntegrationsMesheryDocs := os.Args[6]
 	mesheryioDocsJSON := "const data = ["
-	mesheryDocsJSON := "const data = ["
 	for _, model := range models {
 		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
 		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
@@ -240,7 +239,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 			fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		mesheryDocsJSON, err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations, mesheryDocsJSON)
+		err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
 		if err != nil {
 			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 		}
@@ -249,16 +248,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 
 	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
 	mesheryioDocsJSON += "]; export default data"
-	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-	mesheryDocsJSON += "]; export default data"
 	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryioDocsJSON); err != nil {
-		log.Fatal(err)
-	}
-	err := os.MkdirAll(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/"), 0777)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
 }

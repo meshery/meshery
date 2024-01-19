@@ -171,7 +171,7 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 	return mesheryioDocsJSON, nil
 }
 
-func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path, mesheryDocsJSON string) (string, error) {
+func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string) error {
 
 	modelName := FormatName(model.Model)
 	
@@ -179,7 +179,7 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path, mesher
 	mdDir := filepath.Join(path, "pages", "integrations")
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	// dir for icons
@@ -187,59 +187,54 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path, mesher
 	iconsDir := filepath.Join(path, _iconsSubDir)
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	// for color icons
 	colorIconsDir := filepath.Join(iconsDir, "icons", "color")
 	err = os.MkdirAll(colorIconsDir, 0777)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	err = WriteSVG(filepath.Join(colorIconsDir, modelName+"-color.svg"), model.SVGColor)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	// for white icons
 	whiteIconsDir := filepath.Join(iconsDir, "icons", "white")
 	err = os.MkdirAll(whiteIconsDir, 0777)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	err = WriteSVG(filepath.Join(whiteIconsDir, modelName+"-white.svg"), model.SVGWhite)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
 	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components, path, compIconsSubDir)
 	if err != nil {
-		return "", err
+return err
 	}
 
 	// generate markdown file
 	md := model.CreateMarkDownForMesheryDocs(componentMetadata)
 	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer file.Close()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	// generate data.js file
-	jsonItem := model.CreateJSONItem(_iconsSubDir)
-	mesheryDocsJSON += jsonItem + ","
-
-
-	return mesheryDocsJSON, nil
+	return nil
 }
 
 
