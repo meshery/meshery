@@ -332,8 +332,8 @@ image: /assets/img/integrations/%s/icons/color/%s-color.svg
 permalink: extensibility/integrations/%s
 docURL: %s
 description: %s
-category: %s
-subcategory: %s
+integrations-category: %s
+integrations-subcategory: %s
 registrant: %s
 components: %v
 featureList: [
@@ -345,6 +345,9 @@ howItWorks: %s
 howItWorksDetails: %s
 language: en
 list: include
+type: extensibility
+category: integrations
+display-title: "false"
 ---
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
