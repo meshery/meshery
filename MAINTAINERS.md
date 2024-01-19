@@ -11,7 +11,6 @@
 
 | Name                | GitHub                 | Affiliation |
 | ------------------- | ---------------------- | ----------- |
-| Abhishek Kumar      | Abhishek-kumar09       | Layer5      |
 | Uzair Shaikh        | MUzairS15              | Layer5      |
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
 | Antonette Caldwell  | acald-creator          | Acquia      |
