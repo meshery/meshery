@@ -22,8 +22,6 @@ type KeysRegistrationHelper struct {
 }
 
 func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) (*KeysRegistrationHelper, error) {
-	dbHandler.Lock()
-	defer dbHandler.Unlock()
 	krh := &KeysRegistrationHelper{
 		log:      log,
 		keysChan: make(chan Key, 1),
