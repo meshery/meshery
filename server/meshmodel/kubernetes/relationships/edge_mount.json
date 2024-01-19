@@ -16,7 +16,7 @@
   },
   "subType": "Mount",
   "evaluationQuery": "edge_binding_relationship",
-  "selectors": {
+  "selectors": [{
     "deny": {
       "from": [
         {
@@ -85,5 +85,5 @@
         }
       ]
     }
-  }
+  }]
 }
