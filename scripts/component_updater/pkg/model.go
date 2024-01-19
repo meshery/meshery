@@ -177,10 +177,10 @@ func CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components []ComponentC
 	componentMetadata := ""
 	for _, comp := range components {
 		componentTemplate := `
-	- name: %s
-		colorIcon: %s
-		whiteIcon: %s
-		description: %s`
+- name: %s
+  colorIcon: %s
+  whiteIcon: %s
+  description: %s`
 
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
@@ -338,8 +338,8 @@ featureList: [
   "%s",
   "%s"
 ]
-howItWorks: %s
-howItWorksDetails: %s
+howItWorks: "%s"
+howItWorksDetails: "%s"
 language: en
 list: include
 type: extensibility
@@ -373,6 +373,8 @@ display-title: "false"
 		m.AboutProject,
 		m.StandardBlurb,
 	)
+
+	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 
 	return markdown
 }
