@@ -15,8 +15,8 @@ featureList: [
   "No reinvention of the wheels. Simply create a plugin, and connect any tools you like with DevStream.",
   "Implement inbuilt best practices and share yours with the world."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

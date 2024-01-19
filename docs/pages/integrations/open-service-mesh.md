@@ -15,8 +15,8 @@ featureList: [
   "Configure and chain Envoy WASM filters",
   "Conformance to Service Mesh Interface specifications"
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

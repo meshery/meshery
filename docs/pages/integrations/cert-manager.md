@@ -15,8 +15,8 @@ featureList: [
   "Supports issuing certificates from a variety of sources.",
   "Ensures certificates remain valid and up to date."
 ]
-howItWorks: Cloud native certificate management
-howItWorksDetails: X.509 certificate management for Kubernetes and OpenShift
+howItWorks: "Cloud native certificate management"
+howItWorksDetails: "X.509 certificate management for Kubernetes and OpenShift"
 language: en
 list: include
 type: extensibility

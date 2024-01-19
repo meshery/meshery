@@ -15,8 +15,8 @@ featureList: [
   "A maximum of 200 pod-managed identities are allowed for a cluster.",
   "Pod-managed identities are available on Linux node pools only."
 ]
-howItWorks: Federate with any external identity provider
-howItWorksDetails: Azure AD workload identity authentication method replaces pod-managed identity, which integrates with the Kubernetes native capabilities to federate with any external identity providers on behalf of the application.
+howItWorks: "Federate with any external identity provider"
+howItWorksDetails: "Azure AD workload identity authentication method replaces pod-managed identity, which integrates with the Kubernetes native capabilities to federate with any external identity providers on behalf of the application."
 language: en
 list: include
 type: extensibility

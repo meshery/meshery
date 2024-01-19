@@ -15,8 +15,8 @@ featureList: [
   "Mechanism for teams to share configurations across projects, and provide a single source of truth throughout the application lifecycle.",
   "Central location management so updates can be applied once and be properly aligned across development teams."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility
