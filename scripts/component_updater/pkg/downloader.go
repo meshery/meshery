@@ -1,12 +1,12 @@
 package pkg
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-	"encoding/json"
-	"fmt"
 )
 
 func DownloadCSV(url string) (string, error) {

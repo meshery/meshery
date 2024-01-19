@@ -21,7 +21,7 @@ const (
 	Meshery SystemType = iota
 	Docs
 	RemoteProvider
-	rowIndex = 1
+	rowIndex               = 1
 	shouldRegisterColIndex = -1
 )
 
@@ -98,7 +98,6 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 		return err
 	}
 
-
 	// create dir for white model icons
 	iconsDir = filepath.Join(modelDir, "icons", "white")
 	err = os.MkdirAll(iconsDir, 0777)
@@ -113,11 +112,10 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join("icons", "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForLayer5io(components, modelDir, compIconsSubDir) 
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForLayer5io(components, modelDir, compIconsSubDir)
 	if err != nil {
 		return err
 	}
-
 
 	// generate markdown file
 	md := model.CreateMarkDownForLayer5(componentMetadata)
@@ -133,7 +131,7 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 
 	formattedName := FormatName(model.Model)
 
-	iconDir := filepath.Join( "../images", "integrations", formattedName)
+	iconDir := filepath.Join("../images", "integrations", formattedName)
 
 	// generate data.js file
 	jsonItem := model.CreateJSONItem(iconDir)
@@ -143,30 +141,29 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 	colorIconsDir := filepath.Join(path, iconDir, "icons", "color")
 	// create svg dir
 	err := os.MkdirAll(colorIconsDir, 0777)
-		if err != nil {
-			return "", err
-		}
+	if err != nil {
+		return "", err
+	}
 
-		// write color svg
-		err = WriteSVG(filepath.Join(colorIconsDir, formattedName+"-color.svg"), model.SVGColor)
-		if err != nil {
-			return "", err
-		}
+	// write color svg
+	err = WriteSVG(filepath.Join(colorIconsDir, formattedName+"-color.svg"), model.SVGColor)
+	if err != nil {
+		return "", err
+	}
 
-		// create white dir for icons
-		whiteIconsDir := filepath.Join(path, iconDir, "icons", "white")
+	// create white dir for icons
+	whiteIconsDir := filepath.Join(path, iconDir, "icons", "white")
 	// create svg dir
 	err = os.MkdirAll(whiteIconsDir, 0777)
-		if err != nil {
-			return "", err
-		}
+	if err != nil {
+		return "", err
+	}
 
-		// write white svg
-		err = WriteSVG(filepath.Join(whiteIconsDir,formattedName+"-white.svg"), model.SVGWhite)
-		if err != nil {
-				return "", err
-		}
-
+	// write white svg
+	err = WriteSVG(filepath.Join(whiteIconsDir, formattedName+"-white.svg"), model.SVGWhite)
+	if err != nil {
+		return "", err
+	}
 
 	return mesheryioDocsJSON, nil
 }
@@ -174,12 +171,12 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string) error {
 
 	modelName := FormatName(model.Model)
-	
+
 	// dir for markdown
 	mdDir := filepath.Join(path, "pages", "integrations")
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
-return err
+		return err
 	}
 
 	// dir for icons
@@ -187,38 +184,38 @@ return err
 	iconsDir := filepath.Join(path, _iconsSubDir)
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
-return err
+		return err
 	}
 
 	// for color icons
 	colorIconsDir := filepath.Join(iconsDir, "icons", "color")
 	err = os.MkdirAll(colorIconsDir, 0777)
 	if err != nil {
-return err
+		return err
 	}
 
 	err = WriteSVG(filepath.Join(colorIconsDir, modelName+"-color.svg"), model.SVGColor)
 	if err != nil {
-return err
+		return err
 	}
 
 	// for white icons
 	whiteIconsDir := filepath.Join(iconsDir, "icons", "white")
 	err = os.MkdirAll(whiteIconsDir, 0777)
 	if err != nil {
-return err
+		return err
 	}
 
 	err = WriteSVG(filepath.Join(whiteIconsDir, modelName+"-white.svg"), model.SVGWhite)
 	if err != nil {
-return err
+		return err
 	}
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
 	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components, path, compIconsSubDir)
 	if err != nil {
-return err
+		return err
 	}
 
 	// generate markdown file
@@ -236,7 +233,6 @@ return err
 
 	return nil
 }
-
 
 func NewSheetSRV() (*sheets.Service, error) {
 	ctx := context.Background()

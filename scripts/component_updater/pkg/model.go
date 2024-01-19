@@ -54,28 +54,27 @@ type ModelCSV struct {
 }
 
 type ModelCSVHelper struct {
-	SpreadsheetID int64
+	SpreadsheetID  int64
 	SpreadsheetURL string
-	Title 	string
-	CSVPath string
-	Models  []ModelCSV
+	Title          string
+	CSVPath        string
+	Models         []ModelCSV
 }
 
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-			csvPath, err := DownloadCSV(sheetURL)
+	csvPath, err := DownloadCSV(sheetURL)
 	if err != nil {
 		return nil, err
 	}
 
-
 	return &ModelCSVHelper{
-		SpreadsheetID: spreadsheetID,
+		SpreadsheetID:  spreadsheetID,
 		SpreadsheetURL: sheetURL,
-		Models:  []ModelCSV{},
-		CSVPath: csvPath,
-		Title: spreadsheetName,
+		Models:         []ModelCSV{},
+		CSVPath:        csvPath,
+		Title:          spreadsheetName,
 	}, nil
 }
 
@@ -118,10 +117,10 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 }
 
 func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV, path, svgDir string) (string, error) {
-		err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
-		if err != nil {
-			return "", err
-		}
+	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
+	if err != nil {
+		return "", err
+	}
 	componentMetadata := `[`
 	for idx, comp := range components {
 		componentTemplate := `
@@ -132,18 +131,17 @@ func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV,
 "description": "%s",
 }`
 
-// add comma if not last component
-		if idx != len(components) - 1 {
+		// add comma if not last component
+		if idx != len(components)-1 {
 			componentTemplate += ","
 		}
-
 
 		compName := FormatName(manifests.FormatToReadableString(comp.Component))
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
-		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
-		
+		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
+
 		// create color svg dir
 		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
 		if err != nil {
@@ -153,12 +151,12 @@ func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV,
 		// create white svg dir
 		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
 		if err != nil {
-return "", err
+			return "", err
 		}
 
 		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
 		if err != nil {
-return "", err
+			return "", err
 		}
 		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
 		if err != nil {
@@ -171,15 +169,14 @@ return "", err
 	return componentMetadata, nil
 }
 
-
 func CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components []ComponentCSV, path, svgDir string) (string, error) {
-		err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
-		if err != nil {
-			return "", err
-		}
+	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
+	if err != nil {
+		return "", err
+	}
 	componentMetadata := ""
 	for _, comp := range components {
-componentTemplate := `
+		componentTemplate := `
 	- name: %s
 		colorIcon: %s
 		whiteIcon: %s
@@ -189,8 +186,8 @@ componentTemplate := `
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
-		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir,  compName), comp.Description)
-		
+		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
+
 		// create color svg dir
 		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
 		if err != nil {
@@ -200,12 +197,12 @@ componentTemplate := `
 		// create white svg dir
 		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
 		if err != nil {
-return "", err
+			return "", err
 		}
 
 		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
 		if err != nil {
-return "", err
+			return "", err
 		}
 		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
 		if err != nil {
@@ -322,9 +319,9 @@ func (m ModelCSV) CreateJSONItem(iconDir string) string {
 }
 
 func (m ModelCSV) CreateMarkDownForMesheryDocs(componentsMetadata string) string {
-		formattedName := FormatName(m.Model)
+	formattedName := FormatName(m.Model)
 
-		var template string = `---
+	var template string = `---
 layout: enhanced
 title: %s
 subtitle: %s

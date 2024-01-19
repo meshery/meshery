@@ -105,7 +105,7 @@ func main() {
 		return
 	}
 	resp, err := srv.Spreadsheets.Get(url).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
+	if err != nil || resp.HTTPStatusCode != 200 {
 		log.Fatal(err)
 		return
 	}
@@ -122,14 +122,14 @@ func main() {
 				log.Fatal(err)
 				return
 			}
-		modelCSVHelper.ParseModelsSheet()
+			modelCSVHelper.ParseModelsSheet()
 		case "Components":
 			componentCSVHelper, err = pkg.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
 			if err != nil {
 				log.Fatal(err)
 				return
 			}
-		componentCSVHelper.ParseComponentsSheet()
+			componentCSVHelper.ParseComponentsSheet()
 		}
 	}
 	// filep, err := pkg.DownloadCSV(url)
@@ -155,7 +155,7 @@ func main() {
 	case pkg.Docs.String():
 		docsUpdater(modelCSVHelper.Models, componentCSVHelper.Components)
 	// commenting these for now
-		// case pkg.Meshery.String():
+	// case pkg.Meshery.String():
 	// 	mesheryUpdater(output)
 	// case pkg.RemoteProvider.String():
 	// 	remoteProviderUpdater(output)
@@ -165,16 +165,14 @@ func main() {
 	}
 
 	err = modelCSVHelper.Cleanup()
-		if err != nil {
-			log.Fatal(err)
-		}
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		err = componentCSVHelper.Cleanup()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-
+	err = componentCSVHelper.Cleanup()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
 
@@ -222,7 +220,7 @@ func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.C
 		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
 		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
-		
+
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			fmt.Println("no components found for ", model.Model)
@@ -487,5 +485,3 @@ func remoteProviderUpdater(output []map[string]string) {
 		}
 	}
 }
-
-

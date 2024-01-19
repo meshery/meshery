@@ -9,55 +9,53 @@ import (
 )
 
 type ComponentCSV struct {
-	Registrant string `json:"registrant"`
-	Model string `json:"model"`
-	Component string `json:"component"`
-	Shape string `json:"shape"`
-	PrimaryColor string `json:"primaryColor"`
-	SecondaryColor string `json:"secondaryColor"`
-	SVGColor string `json:"svgColor"`
-	SVGWhite string `json:"svgWhite"`
-	SVGComplete string `json:"svgComplete"`
-	HasSchema string `json:"hasSchema"`
-	Description string `json:"description"`
-	Docs string `json:"docs"`
-	StyleOverrides string `json:"styleOverrides"`
-	Styles string `json:"styles"`
+	Registrant         string `json:"registrant"`
+	Model              string `json:"model"`
+	Component          string `json:"component"`
+	Shape              string `json:"shape"`
+	PrimaryColor       string `json:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor"`
+	SVGColor           string `json:"svgColor"`
+	SVGWhite           string `json:"svgWhite"`
+	SVGComplete        string `json:"svgComplete"`
+	HasSchema          string `json:"hasSchema"`
+	Description        string `json:"description"`
+	Docs               string `json:"docs"`
+	StyleOverrides     string `json:"styleOverrides"`
+	Styles             string `json:"styles"`
 	ShapePolygonPoints string `json:"shapePolygonPoints"`
-	DefaultData string `json:"defaultData"`
-	Capabilities string `json:"capabilities"`
-	LogoURL string `json:"logoURL"`
-	Genealogy string `json:"genealogy"`
-	IsAnnotation string `json:"isAnnotation"`
+	DefaultData        string `json:"defaultData"`
+	Capabilities       string `json:"capabilities"`
+	LogoURL            string `json:"logoURL"`
+	Genealogy          string `json:"genealogy"`
+	IsAnnotation       string `json:"isAnnotation"`
 }
 type ComponentCSVHelper struct {
-	SpreadsheetID int64
+	SpreadsheetID  int64
 	SpreadsheetURL string
-	Title 	string
-	CSVPath string
-	Components map[string]map[string][]ComponentCSV
+	Title          string
+	CSVPath        string
+	Components     map[string]map[string][]ComponentCSV
 }
 
 func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
-		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-		fmt.Println("Downloading CSV from:", sheetURL)	
-		csvPath, err := DownloadCSV(sheetURL)
+	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+	fmt.Println("Downloading CSV from:", sheetURL)
+	csvPath, err := DownloadCSV(sheetURL)
 	if err != nil {
 		return nil, err
 	}
 
-
 	return &ComponentCSVHelper{
-		SpreadsheetID: spreadsheetID,
+		SpreadsheetID:  spreadsheetID,
 		SpreadsheetURL: sheetURL,
-		Title: spreadsheetName,
-		CSVPath: csvPath,
-		Components: make(map[string]map[string][]ComponentCSV),
+		Title:          spreadsheetName,
+		CSVPath:        csvPath,
+		Components:     make(map[string]map[string][]ComponentCSV),
 	}, nil
 }
 
-
-func (mch *ComponentCSVHelper) ParseComponentsSheet(){
+func (mch *ComponentCSVHelper) ParseComponentsSheet() {
 	ch := make(chan ComponentCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(_ []string, _ []string) bool {
