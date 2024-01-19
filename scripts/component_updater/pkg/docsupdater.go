@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-
 const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"
 
 func WriteToFile(path string, content string) error {
@@ -143,4 +142,3 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 	}
 	return svg, nil
 }
-
