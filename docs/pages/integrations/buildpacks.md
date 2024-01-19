@@ -15,8 +15,8 @@ featureList: [
   "Enable for swift rebasing of images and modular control over images.",
   "Replace Dockerfiles in the app development lifecycle."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

@@ -15,8 +15,8 @@ featureList: [
   "Auto scale runners based on demand.",
   "Setup across GitHub editions including GitHub Enterprise editions and GitHub Enterprise Cloud."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

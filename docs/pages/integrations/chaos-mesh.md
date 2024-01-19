@@ -10,21 +10,21 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Chaos Engineering
 registrant: artifacthub
 components: 
-	- name: block-chaos
-		colorIcon: assets/img/integrations/chaos-mesh/components/block-chaos/icons/color/block-chaos-color.svg
-		whiteIcon: assets/img/integrations/chaos-mesh/components/block-chaos/icons/white/block-chaos-white.svg
-		description: 
-	- name: remote-cluster
-		colorIcon: assets/img/integrations/chaos-mesh/components/remote-cluster/icons/color/remote-cluster-color.svg
-		whiteIcon: assets/img/integrations/chaos-mesh/components/remote-cluster/icons/white/remote-cluster-white.svg
-		description: 
+- name: block-chaos
+  colorIcon: assets/img/integrations/chaos-mesh/components/block-chaos/icons/color/block-chaos-color.svg
+  whiteIcon: assets/img/integrations/chaos-mesh/components/block-chaos/icons/white/block-chaos-white.svg
+  description: 
+- name: remote-cluster
+  colorIcon: assets/img/integrations/chaos-mesh/components/remote-cluster/icons/color/remote-cluster-color.svg
+  whiteIcon: assets/img/integrations/chaos-mesh/components/remote-cluster/icons/white/remote-cluster-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility
