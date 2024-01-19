@@ -52,6 +52,14 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
     }),
+    updateConnection: builder.mutation({
+      query: (queryArg) => ({
+        url: `integrations/connections/${queryArg.connectionKind}/status`,
+        method: 'PUT',
+        body: queryArg.connectionPayload,
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
   }),
 });
 
@@ -62,4 +70,5 @@ export const {
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
+  useUpdateConnectionMutation,
 } = connectionsApi;
