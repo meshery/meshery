@@ -206,15 +206,18 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		h.registryManager = rm
-		
-		krh := models.NewKeysRegistrationHelper(dbHandler, h.log)
-		ch := meshmodel.NewEntityRegistrationHelper(h.config, rm, h.log)
-		
+
+		krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
+		if err != nil {
+			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			return
+		}
+		ch := meshmodel.NewEntityRegistrationHelper(h.config, h.registryManager, h.log)
+
 		go func() {
 			ch.SeedComponents()
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
-		
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, "Database reset successful")
 	}
