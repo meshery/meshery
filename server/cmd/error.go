@@ -18,7 +18,7 @@ const (
 	ErrCleaningUpLocalProviderCode                = "1011"
 	ErrClosingDatabaseInstanceCode                = "1012"
 	ErrInitializingRegistryManagerCode            = "1013"
-	ErrInitializingKeysRegistrationCode           = "replace_me"
+	ErrInitializingKeysRegistrationCode           = "1569"
 )
 
 func ErrInitializingRegistryManager(err error) error {
