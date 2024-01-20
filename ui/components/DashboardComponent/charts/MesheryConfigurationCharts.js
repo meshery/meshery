@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, IconButton, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
@@ -11,7 +11,10 @@ import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const ACTION_TYPES = {
   FETCH_PATTERNS: {
@@ -106,17 +109,22 @@ export default function MesheryConfigurationChart({ classes }) {
             Configuration
           </Typography>
           <CustomTextTooltip
-            title="Learn more about Configuration Management in Meshery"
             placement="left"
+            interactive={true}
+            title={renderTooltipContent({
+              showInfotext: 'about Configuration Management',
+              link: url,
+            })}
           >
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
+            <IconButton disableRipple={true} disableFocusRipple={true}>
+              <InfoIcon
+                color={theme.palette.secondary.iconMain}
+                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              />
+            </IconButton>
           </CustomTextTooltip>
         </div>
         <Box

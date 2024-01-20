@@ -247,6 +247,7 @@ darkTheme = {
         color: '#F6F8F8',
         '&:hover': {
           color: '#00B39F',
+          backgroundColor: 'none',
         },
       },
       colorPrimary: {
@@ -481,6 +482,7 @@ theme = {
         padding: theme.spacing(1),
         '&:hover': {
           color: '#00B39F',
+          backgroundColor: 'none',
         },
         color: '#607d8b',
       },
