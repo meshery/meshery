@@ -53,7 +53,7 @@ You can develop and run Meshery in a Gitpod using your choice of tool:
 - A browser-based version of Visual Studio Code.
 #### Fork and Open in Gitpod:
 - Open your forked Meshery repository on GitHub.
-- Click on the "Gitpod" button in the top right corner of the repository page.
+- Click on the "Gitpod" button in the top right corner of the repository page (only visible with the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod browser extension</a> installed).
 
 {% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in VSCode by default. It will also automatically build the project for you on opening and comes with Docker and other tools pre-installed making it one of the fastest ways to spin up an environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
@@ -125,7 +125,7 @@ Meshery should now be connected with your managed Kubernetes instance. Take a lo
 
 ## Access Meshery UI
 
-To access Meshery's UI, please refer to the [instruction](/project/contributing/contributing-ui#setup) for detailed guidance.
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
 For accessing the UI in your localhost, read the [docs](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
