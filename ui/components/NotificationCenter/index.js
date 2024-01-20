@@ -202,7 +202,7 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
 });
 
 const NotificationCountChip = withErrorBoundary(
-  ({ classes, notificationStyle, count, type, handleClick }) => {
+  ({ classes, notificationStyle, count, type, handleClick, selectedSeverity, severity }) => {
     const theme = useTheme();
     const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
@@ -213,7 +213,13 @@ const NotificationCountChip = withErrorBoundary(
     count = Number(count).toLocaleString('en', { useGrouping: true });
     return (
       <Tooltip title={type} placement="bottom">
-        <Button style={{ backgroundColor: alpha(chipStyles.fill, 0.2) }} onClick={handleClick}>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border: selectedSeverity === severity ? `solid 0.1px ${chipStyles.fill}` : '',
+          }}
+          onClick={handleClick}
+        >
           <div className={classes.severityChip}>
             {<notificationStyle.icon {...chipStyles} />}
             <span>{count}</span>
@@ -226,12 +232,14 @@ const NotificationCountChip = withErrorBoundary(
 
 const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery();
+  const [selectedSeverity, setSelectedSeverity] = useState('');
   const { count_by_severity_level, total_count } = data || {
     count_by_severity_level: [],
     total_count: 0,
   };
   const classes = useStyles();
   const onClickSeverity = (severity) => {
+    setSelectedSeverity(severity);
     handleFilter({
       severity: [severity],
       status: STATUS.UNREAD,
@@ -258,6 +266,8 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
         {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
             key={severity}
+            severity={severity}
+            selectedSeverity={selectedSeverity}
             classes={classes}
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
@@ -270,6 +280,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
+          severity={STATUS.READ}
           count={unreadCount}
         />
       </div>
