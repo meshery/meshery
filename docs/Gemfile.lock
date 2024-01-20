@@ -97,7 +97,7 @@ GEM
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
     ffi (1.16.3)
-    ffi (1.16.3-x64-mingw-ucrt)
+    ffi (1.16.3-x64-unknown)
     forwardable-extended (2.6.0)
     gemoji (3.0.1)
     github-pages (228)
@@ -317,8 +317,6 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.15.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.2-x64-mingw-ucrt)
-      racc (~> 1.4)
     nokogiri (1.15.2-x64-unknown)
       racc (~> 1.4)
     nokogiri (1.15.2-x86_64-darwin)
@@ -405,7 +403,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
-  x64-mingw-ucrt
+  x64-unknown
   x64-unknown
   x86_64-darwin-22
   x86_64-darwin-23

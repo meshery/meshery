@@ -134,6 +134,7 @@ const (
 	ErrConvertingDockerComposeToDesignCode = "1563"
 	ErrMarshallingDesignIntoYAMLCode       = "1564"
 	ErrConvertingHelmChartToDesignCode     = "1565"
+	ErrInvalidUUIDCode                     = "1568"
 )
 
 var (
@@ -590,4 +591,8 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrConvertingHelmChartToDesign(err error) error {
 	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
+}
+
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
 }
