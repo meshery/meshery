@@ -13,7 +13,6 @@ import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-// import { IconButton } from '@layer5/sistent-components';
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
@@ -68,7 +67,7 @@ export default function ConnectionStatsChart({ classes }) {
           </Typography>
           <CustomTextTooltip
             interactive={true}
-            title={renderTooltipContent('about Connections', url)}
+            title={renderTooltipContent({ showInfotext: 'about Connections', link: url })}
             placement="left"
           >
             <IconButton

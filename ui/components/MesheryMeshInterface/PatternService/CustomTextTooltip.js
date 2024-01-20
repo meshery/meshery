@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const renderTooltipContent = (showInfotext, link) => {
+export const renderTooltipContent = ({ showInfotext, link }) => {
   const classes = useStyles();
 
   const handleClick = (e) => {
