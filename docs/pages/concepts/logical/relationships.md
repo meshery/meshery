@@ -72,8 +72,33 @@ Any namespaced Kubernetes component --> Kubernetes Namespace
 
 You can reference and search the full set of registered relationships in Meshery UI --> Setttings --> Registry
 
-{% include/alert.html type="info" title="Future Feature" %}
+## Selectors in Meshery
 
-```
-mesheryctl model import -f [ oci:// | file:// ]`
-```
+Selectors in Meshery are a powerful tool for defining relationships between different components within the service mesh environment. They are organized as an array, providing a flexible and reusable way to specify conditions for relationships.
+
+### Structure of Selectors
+
+Selectors consist of an array, and each item in the array contains the following fields:
+
+- `[from, to]`: Defines the relationship between components.
+- `[to, from]`: Specifies additional conditions for the relationship.
+
+These pairs establish hierarchical inventory relationships, and the policy and visual paradigm remain consistent across different components. To avoid ambiguity when defining relationships, selectors act as internal scopes within a relationship.
+
+### Example Selectors
+
+Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
+
+1. **WASMFilter - EnvoyFilter**
+2. **ConfigMap - Pod**
+3. **ConfigMap - Deployment**
+
+### Hierarchical Relationships
+
+When defining relationships that involve a large number of combinations between from and to, selectors provide a mechanism to organize and manage these relationships hierarchically. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
+
+### Patch Strategies
+
+Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
+
+{% include/alert.html type="info" title="Future Feature" %}
