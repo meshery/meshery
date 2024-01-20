@@ -56,7 +56,7 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/connections`;
+  const url = `https://docs.meshery.io/concepts/logical/connections`;
 
   return (
     <Link href="/management/connections">

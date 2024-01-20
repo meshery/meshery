@@ -77,7 +77,7 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/models`;
+  const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
     <Link href="/settings#registry">
@@ -156,7 +156,7 @@ function MeshModelCategories({ classes }) {
     });
   }, []);
 
-  const url = `https://docs.meshery.io/concepts/models`;
+  const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
     <Link href="/settings#registry">
