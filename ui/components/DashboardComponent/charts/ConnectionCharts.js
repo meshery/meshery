@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -9,7 +9,11 @@ import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+// import { IconButton } from '@layer5/sistent-components';
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
@@ -62,15 +66,23 @@ export default function ConnectionStatsChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Connections
           </Typography>
-          <CustomTextTooltip title="Learn more about Connections" placement="left">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
+          <CustomTextTooltip
+            interactive={true}
+            title={renderTooltipContent('about Connections', url)}
+            placement="left"
+          >
+            <IconButton
+              disableRipple={true}
+              disableFocusRipple={true}
+              disableTouchRipple={true}
+              sx={{ padding: '0px' }}
+            >
+              <InfoIcon
+                color={theme.palette.secondary.iconMain}
+                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </IconButton>
           </CustomTextTooltip>
         </div>
         <Box
