@@ -163,7 +163,7 @@ export function useMeshModelComponents() {
     if (!version) {
       if (!meshmodelComponents[modelName]) {
         const modelData = await getComponentFromModelApi(modelName);
-        console.log('modeled data....', modelData);
+
         setMeshModelComponents(
           Object.assign(
             { ...meshmodelComponents },

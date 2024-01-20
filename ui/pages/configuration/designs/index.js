@@ -17,7 +17,6 @@ const styles = {
 
 function Patterns({ updatepagepath }) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     updatepagepath({ path: getPath() });
   }, [updatepagepath]);
 

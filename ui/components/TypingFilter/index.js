@@ -162,7 +162,6 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  */
 const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
   const theme = useTheme();
-  // console.log("initialFilter", initialFilter)
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopperOpen = Boolean(anchorEl);

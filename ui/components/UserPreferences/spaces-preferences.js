@@ -28,7 +28,6 @@ const SpacesPreferences = (props) => {
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization, classes } = props;
   const [skip, setSkip] = React.useState(true);
-  console.log('props', props);
 
   const { notify } = useNotification();
 

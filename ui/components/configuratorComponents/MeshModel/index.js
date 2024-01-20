@@ -49,7 +49,6 @@ export default function DesignConfigurator() {
 
   const router = useRouter();
   const { design_id } = router.query;
-  console.log('design_id', design_id);
 
   useEffect(
     function loadDesignOnMount() {

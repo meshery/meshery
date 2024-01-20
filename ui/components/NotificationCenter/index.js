@@ -73,7 +73,6 @@ const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
   const eventsSubscription = useCallback(
     () =>
       subscribeEvents((result) => {
-        console.log('event received', result);
         if (!result.event) {
           console.error('Invalid event received', result);
           return;

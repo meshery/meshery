@@ -41,7 +41,6 @@ export const pingGrafana = (successCb, errorCb) =>
   dataFetch('/api/telemetry/metrics/grafana/ping', { credentials: 'include' }, successCb, errorCb);
 
 export const verifyPrometheusConnection = (prometheusUrl) => {
-  console.log(prometheusUrl);
   return new Promise((res, rej) => {
     if (prometheusUrl !== '') {
       pingPrometheus(
@@ -89,7 +88,6 @@ export const fetchPromGrafanaScanData = (ctx) => {
       (result) => {
         let metricsUrls = { grafana: [], prometheus: [] };
         if (!result) res(metricsUrls);
-        console.log();
 
         if (Array.isArray(result.prometheus)) {
           const urls = extractURLFromScanData(result.prometheus);
