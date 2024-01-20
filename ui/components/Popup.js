@@ -167,8 +167,8 @@ export function MeshMapEarlyAccessCard({
       </div>
       <Typography className={classes.caption} variant="subtitle1">
         <i>
-          Friends dont let friends GitOps alone. Visually design and collaborate in real-time with
-          other MeshMap users.
+          Friends don&apos;t let friends GitOps alone. Visually design and collaborate in real-time
+          with other MeshMap users.
         </i>
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
