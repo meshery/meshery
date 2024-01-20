@@ -102,3 +102,7 @@ When defining relationships that involve a large number of combinations between 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
 {% include/alert.html type="info" title="Future Feature" %}
+
+```
+mesheryctl model import -f [ oci:// | file:// ]`
+```
