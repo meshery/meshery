@@ -16,7 +16,7 @@
   },
   "subType": "Network",
   "evaluationQuery": "edge_network_relationship",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -69,5 +69,5 @@
         }
       ]
     }
-  }
+  }]
 }

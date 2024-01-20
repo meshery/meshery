@@ -220,7 +220,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 				if p1.Datasource != nil {
 					dataSource, ok := (p1.Datasource).(string)
 					if ok {
-						if strings.HasPrefix(dataSource, "$") { // Formating Datasource id
+						if strings.HasPrefix(dataSource, "$") { // Formatting Datasource id
 							p1.Datasource = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
 						}
 					}
@@ -232,7 +232,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" {
 						dataSource, ok := (p2.Datasource).(string)
 						if ok {
-							if strings.HasPrefix(dataSource, "$") { // Formating Datasource id
+							if strings.HasPrefix(dataSource, "$") { // Formatting Datasource id
 								p2.Datasource = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
 							}
 						}
@@ -253,7 +253,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 					dataSource, ok := (p2.Datasource).(map[string]interface{})
 					if ok {
 						dsType, ok := dataSource["type"].(string)
-						if ok && strings.HasPrefix(dsType, "$") { // Formating Datasource id
+						if ok && strings.HasPrefix(dsType, "$") { // Formatting Datasource id
 							p2.Datasource = tmpDsName[strings.Replace(dsType, "$", "", 1)]
 						}
 					}
