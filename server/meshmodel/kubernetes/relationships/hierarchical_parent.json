@@ -16,7 +16,7 @@
   },
   "evaluationQuery": "heirarcal_parent_relationship",
   "subType": "Parent",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -38,5 +38,5 @@
       "from": [],
       "to": []
     }
-  }
+  }]
 }
