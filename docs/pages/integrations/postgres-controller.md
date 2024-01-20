@@ -10,17 +10,17 @@ integrations-category: App Definition and Development
 integrations-subcategory: Database
 registrant: artifacthub
 components: 
-	- name: postgres-database
-		colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
-		whiteIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
-		description: 
+- name: postgres-database
+  colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
+  whiteIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

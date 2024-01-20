@@ -10,17 +10,17 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: artifacthub
 components: 
-	- name: pod-logs
-		colorIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg
-		whiteIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg
-		description: 
+- name: pod-logs
+  colorIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg
+  whiteIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg
+  description: 
 featureList: [
   "Meshery discovers your Grafana servers",
   "Easily import existing Grafana dashboards and panels into Meshery",
   "Integrate your boards and panels and new insights and metrics"
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility
