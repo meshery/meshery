@@ -15,8 +15,8 @@ featureList: [
   "Structured platform to distribute release binaries as a single coherent release bundle.",
   "Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node."
 language: en
 list: include
 type: extensibility

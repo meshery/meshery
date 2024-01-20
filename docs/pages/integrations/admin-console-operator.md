@@ -10,17 +10,17 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: artifacthub
 components: 
-	- name: admin-console
-		colorIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
-		whiteIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
-		description: 
+- name: admin-console
+  colorIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
+  whiteIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
+  description: 
 featureList: [
   "Deployed and configured CI/CD toolset (Jenkins, Gerrit, Nexus, SonarQube)",
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",
   "Gerrit, GitLab or GitHub as a version control system for your code"
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

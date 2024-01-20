@@ -15,8 +15,8 @@ featureList: [
   "BFE is designed to provide every tenant a dedicated share of the instance. Each tenant&ldquos configuration is isolated and remains invisible to other tenants",
   "BFE provides an advanced domain-specific language to describe routing rules which are easy to understand and maintain."
 ]
-howItWorks: Collaborative Infrastructure as Code
-howItWorksDetails: Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility
