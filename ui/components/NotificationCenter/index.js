@@ -42,6 +42,7 @@ import {
   selectAreAllEventsChecked,
   selectCheckedEvents,
   selectEvents,
+  selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
 } from '../../store/slices/events';
@@ -202,8 +203,10 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
 });
 
 const NotificationCountChip = withErrorBoundary(
-  ({ classes, notificationStyle, count, type, handleClick, selectedSeverity, severity }) => {
+  ({ classes, notificationStyle, count, type, handleClick, severity }) => {
     const theme = useTheme();
+    const selectedSeverity = useSelector(selectSeverity);
+    console.log(selectedSeverity);
     const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
       fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
@@ -232,14 +235,12 @@ const NotificationCountChip = withErrorBoundary(
 
 const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery();
-  const [selectedSeverity, setSelectedSeverity] = useState('');
   const { count_by_severity_level, total_count } = data || {
     count_by_severity_level: [],
     total_count: 0,
   };
   const classes = useStyles();
   const onClickSeverity = (severity) => {
-    setSelectedSeverity(severity);
     handleFilter({
       severity: [severity],
       status: STATUS.UNREAD,
@@ -267,7 +268,6 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
           <NotificationCountChip
             key={severity}
             severity={severity}
-            selectedSeverity={selectedSeverity}
             classes={classes}
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
