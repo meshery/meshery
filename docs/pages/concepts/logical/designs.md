@@ -8,7 +8,7 @@ language: en
 list: include
 ---
 
-Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes All the resources and their properties that you want for a single deployment written inAll the resources and their properties that you want for a single deployment written in YAML based on Meshery's declarative syntax (see [Meshery Schemas repo](<(https://github.com/meshery/schemas)>). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
+Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](<(https://github.com/meshery/schemas)>)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
 <!-- ### Using Designs -->
 

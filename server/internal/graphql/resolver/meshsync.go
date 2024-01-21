@@ -7,12 +7,13 @@ import (
 	"path"
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
+	"github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/spf13/viper"
 )
 
 // Global singleton instance of k8s connection tracker to map Each K8sContext to a unique Broker URL
@@ -101,21 +102,27 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				&models.PerformanceTestConfig{},
 				&models.SmiResultWithID{},
 				&models.K8sContext{},
-
-				// Registries
-				&registry.Registry{},
-				&registry.Host{},
-				&v1alpha1.ComponentDefinitionDB{},
-				&v1alpha1.RelationshipDefinitionDB{},
-				&v1alpha1.PolicyDefinitionDB{},
-				&v1alpha1.ModelDB{},
-				&v1alpha1.CategoryDB{},
 			)
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
 			}
 
+			krh, err := models.NewKeysRegistrationHelper(dbHandler, r.Log)
+			if err != nil {
+				return "", err
+			}
+
+			rm, err := registry.NewRegistryManager(dbHandler)
+			if err != nil {
+				return "", err
+			}
+			ch := meshmodel.NewEntityRegistrationHelper(r.Config, rm, r.Log)
+
+			go func() {
+				ch.SeedComponents()
+				krh.SeedKeys(viper.GetString("KEYS_PATH"))
+			}()
 			r.Log.Info("Hard reset successfully completed")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)

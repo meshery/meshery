@@ -20,7 +20,7 @@
     "metadata": {}
   },
   "subType": "Annotation",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -62,5 +62,5 @@
     "deny": {
       "from": []
     }
-  }
+  }]
 }

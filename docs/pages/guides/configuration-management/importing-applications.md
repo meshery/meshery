@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Importing Applications
-abstract: Learn how to import your existing application definitions and your existing infrastructure configruations into Meshery as you to manage, operate, and observe your cloud native infrastructure more effectively.
+abstract: Learn how to import your existing application definitions and your existing infrastructure configurations into Meshery as you to manage, operate, and observe your cloud native infrastructure more effectively.
 permalink: guides/configuration-management/importing-apps
 category: configuration
 type: guides
@@ -10,8 +10,7 @@ redirect_from:
   - /installation/quick-start.md
 ---
 
-Import your existing application definitions and your existing infrastructure configruations into Meshery
-Meshery supports a number of different application definition formats. You can import apps into Meshery using either the Meshery CLI or the Meshery UI.
+Import your existing application definitions and existing infrastructure configurations into Meshery. The platform supports a variety of application definition formats, and you can import apps using either the Meshery CLI or the Meshery UI.
 
 ## Supported Application Definition Formats
 
