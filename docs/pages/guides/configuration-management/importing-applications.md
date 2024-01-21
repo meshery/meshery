@@ -6,8 +6,6 @@ permalink: guides/configuration-management/importing-apps
 category: configuration
 type: guides
 language: en
-redirect_from:
-  - /installation/quick-start.md
 ---
 
 Import your existing application definitions and existing infrastructure configurations into Meshery. The platform supports a variety of application definition formats, and you can import apps using either the Meshery CLI or the Meshery UI.
