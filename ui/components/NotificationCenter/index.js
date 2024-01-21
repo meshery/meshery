@@ -206,7 +206,6 @@ const NotificationCountChip = withErrorBoundary(
   ({ classes, notificationStyle, count, type, handleClick, severity }) => {
     const theme = useTheme();
     const selectedSeverity = useSelector(selectSeverity);
-    console.log(selectedSeverity);
     const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
       fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
@@ -219,7 +218,10 @@ const NotificationCountChip = withErrorBoundary(
         <Button
           style={{
             backgroundColor: alpha(chipStyles.fill, 0.2),
-            border: selectedSeverity === severity ? `solid 0.1px ${chipStyles.fill}` : '',
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
           }}
           onClick={handleClick}
         >
