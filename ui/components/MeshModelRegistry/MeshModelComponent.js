@@ -200,6 +200,7 @@ const MeshModelComponent_ = ({
     page,
     rowsPerPage,
     resourcesDetail,
+    checked,
   ]);
 
   const getRegistrants = async () => {
@@ -225,7 +226,7 @@ const MeshModelComponent_ = ({
           {
             params: {
               page: page?.Models + 1,
-              pagesize: rowsPerPage,
+              pagesize: 'all',
               registrant: hostname,
               components: true,
               relationships: true,
@@ -233,10 +234,9 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-
         const updatedRegistrant = {
           ...registrant,
-          models: modelRes.models.filter((model) => model.duplicates > 0) || [],
+          models: removeDuplicateVersions(modelRes.models) || [],
         };
         tempResourcesDetail.push(updatedRegistrant);
       }
