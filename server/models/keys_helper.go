@@ -21,14 +21,18 @@ type KeysRegistrationHelper struct {
 	keyPersister *KeyPersister
 }
 
-func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) *KeysRegistrationHelper {
-	return &KeysRegistrationHelper{
+func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) (*KeysRegistrationHelper, error) {
+	krh := &KeysRegistrationHelper{
 		log:      log,
 		keysChan: make(chan Key, 1),
 		keyPersister: &KeyPersister{
 			DB: dbHandler,
 		},
 	}
+	err := krh.keyPersister.DB.AutoMigrate(
+		Key{},
+	)
+	return krh, err
 }
 
 // returns the spreadsheet column index that captures whether the key should be registered.
