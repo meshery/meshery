@@ -32,6 +32,7 @@ import {
   useLazyGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
+import { removeDuplicateVersions } from './helper';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -84,7 +85,6 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  // const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -111,7 +111,7 @@ const MeshModelComponent_ = ({
   const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   // const [loading, setLoading] = useState(false);
 
   /**
@@ -131,7 +131,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 1 : page.Models + 1,
-                pagesize: searchText ? 'all' : rowsPerPage,
+                pagesize: searchText || checked ? 'all' : rowsPerPage,
                 components: true,
                 relationships: true,
                 paginated: true,
@@ -177,9 +177,10 @@ const MeshModelComponent_ = ({
       }
 
       if (response.data) {
-        const newData = searchText
-          ? [...response.data[view.toLowerCase()]]
-          : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        const newData =
+          searchText || checked
+            ? [...response.data[view.toLowerCase()]]
+            : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         setResourcesDetail(newData);
 
         if (rowsPerPage !== 14) {
@@ -235,7 +236,7 @@ const MeshModelComponent_ = ({
 
         const updatedRegistrant = {
           ...registrant,
-          models: modelRes.models || [],
+          models: modelRes.models.filter((model) => model.duplicates > 0) || [],
         };
         tempResourcesDetail.push(updatedRegistrant);
       }
@@ -251,6 +252,10 @@ const MeshModelComponent_ = ({
   };
 
   const handleTabClick = (selectedView) => {
+    if (view !== selectedView) {
+      setSearchText(null);
+      setResourcesDetail([]);
+    }
     setView(() => {
       handleChangeSelectedTab(selectedView);
       return selectedView;
@@ -261,49 +266,21 @@ const MeshModelComponent_ = ({
       Relationships: 0,
       Registrants: 0,
     });
-    if (view !== selectedView) {
-      setSearchText(null);
-      setResourcesDetail([]);
-    }
     if (!animate) {
       setAnimate(true);
       setConvert(true);
     }
   };
 
-  // TODO: This is wrong logic, backend should enforce this
-  let filteredData =
-    !view === MODELS
-      ? resourcesDetail
-      : checked
-      ? resourcesDetail // Show all data, including duplicates
-      : resourcesDetail.filter((item, index, self) => {
-          // Filter out duplicates based on your criteria (e.g., name and version)
-          return (
-            index ===
-            self.findIndex(
-              (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-            )
-          );
-        });
-
-  useEffect(() => {
-    filteredData =
-      !view === MODELS
-        ? resourcesDetail
-        : checked
-        ? resourcesDetail // Show all data, including duplicates
-        : resourcesDetail.filter((item, index, self) => {
-            // Filter out duplicates based on your criteria (e.g., name and version)
-            return (
-              index ===
-              self.findIndex(
-                (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-              )
-            );
-          });
-  }, [checked]);
-
+  const modifyData = () => {
+    if (view === MODELS) {
+      return removeDuplicateVersions(
+        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
+      );
+    } else {
+      return resourcesDetail;
+    }
+  };
   useEffect(() => {
     if (selectedTab && selectedTab !== OVERVIEW) {
       setAnimate(true);
@@ -314,11 +291,11 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, searchText, rowsPerPage]);
+  }, [view, page, searchText, rowsPerPage, checked]);
 
   return (
     <div data-test="workloads">
-      <TabBar />
+      <TabBar animate={animate} />
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -363,14 +340,14 @@ const MeshModelComponent_ = ({
             <div
               className={StyleClass.treeContainer}
               style={{
-                alignItems: filteredData.length === 0 ? 'center' : '',
+                alignItems: resourcesDetail.length === 0 ? 'center' : '',
               }}
             >
-              {filteredData.length === 0 ? (
+              {resourcesDetail.length === 0 ? (
                 <CircularProgress sx={{ color: Colors.keppelGreen }} />
               ) : (
                 <MesheryTreeView
-                  data={filteredData}
+                  data={modifyData()}
                   view={view}
                   show={show}
                   setShow={setShow}

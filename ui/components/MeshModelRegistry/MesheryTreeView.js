@@ -93,78 +93,105 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
         });
       }}
     >
-      <StyledTreeItem
-        nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1`}
-        data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1`}
-        labelText={`Components (${model.components ? model.components.length : 0})`}
-      >
-        {model.components &&
-          model.components.map((component, subIndex) => (
+      {model.versionBasedData &&
+        model.versionBasedData.map((versionedModel) => (
+          <StyledTreeItem
+            key={versionedModel.id}
+            nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            labelText={versionedModel.version}
+          >
             <StyledTreeItem
-              key={subIndex}
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1.${component.id}`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.1.${component.id}`}
-              check
-              labelText={component.displayName}
-              onClick={() => {
-                setShow((prevShow) => {
-                  const { components } = prevShow;
-                  const compIndex = components.findIndex((item) => item === component);
-                  if (compIndex !== -1) {
-                    return {
-                      ...prevShow,
-                      model: model,
-                      components: components.filter((item) => item !== component),
-                    };
-                  } else {
-                    return {
-                      ...prevShow,
-                      model: model,
-                      components: [...components, component],
-                    };
-                  }
-                });
-              }}
-            />
-          ))}
-      </StyledTreeItem>
-      <StyledTreeItem
-        nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2`}
-        data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2`}
-        labelText={`Relationships (${model.relationships ? model.relationships.length : 0})`}
-      >
-        {model.relationships &&
-          model.relationships.map((relationship, subIndex) => (
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                versionedModel.id
+              }.1`}
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                versionedModel.id
+              }.1`}
+              labelText={`Components (${
+                versionedModel.components ? versionedModel.components.length : 0
+              })`}
+            >
+              {versionedModel.components &&
+                versionedModel.components.map((component, subIndex) => (
+                  <StyledTreeItem
+                    key={subIndex}
+                    nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                      versionedModel.id
+                    }.1.${component.id}`}
+                    data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                      versionedModel.id
+                    }.1.${component.id}`}
+                    check
+                    labelText={component.displayName}
+                    onClick={() => {
+                      setShow((prevShow) => {
+                        const { components } = prevShow;
+                        const compIndex = components.findIndex((item) => item === component);
+                        if (compIndex !== -1) {
+                          return {
+                            ...prevShow,
+                            model: model,
+                            components: components.filter((item) => item !== component),
+                          };
+                        } else {
+                          return {
+                            ...prevShow,
+                            model: model,
+                            components: [...components, component],
+                          };
+                        }
+                      });
+                    }}
+                  />
+                ))}
+            </StyledTreeItem>
             <StyledTreeItem
-              key={subIndex}
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2.${relationship.id}`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.2.${
-                relationship.id
-              }`}
-              check
-              labelText={relationship.displayhostname}
-              onClick={() => {
-                setShow((prevShow) => {
-                  const { relationships } = prevShow;
-                  const relaIndex = relationships.findIndex((item) => item === relationship);
-                  if (relaIndex !== -1) {
-                    return {
-                      ...prevShow,
-                      model: model,
-                      relationships: relationships.filter((item) => item !== relationship),
-                    };
-                  } else {
-                    return {
-                      ...prevShow,
-                      model: model,
-                      relationships: [...relationships, relationship],
-                    };
-                  }
-                });
-              }}
-            />
-          ))}
-      </StyledTreeItem>
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                versionedModel.id
+              }.2`}
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                versionedModel.id
+              }.2`}
+              labelText={`Relationships (${
+                versionedModel.relationships ? versionedModel.relationships.length : 0
+              })`}
+            >
+              {versionedModel.relationships &&
+                versionedModel.relationships.map((relationship, subIndex) => (
+                  <StyledTreeItem
+                    key={subIndex}
+                    nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                      versionedModel.id
+                    }.2.${relationship.id}`}
+                    data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                      versionedModel.id
+                    }.2.${relationship.id}`}
+                    check
+                    labelText={relationship.displayhostname}
+                    onClick={() => {
+                      setShow((prevShow) => {
+                        const { relationships } = prevShow;
+                        const relaIndex = relationships.findIndex((item) => item === relationship);
+                        if (relaIndex !== -1) {
+                          return {
+                            ...prevShow,
+                            model: model,
+                            relationships: relationships.filter((item) => item !== relationship),
+                          };
+                        } else {
+                          return {
+                            ...prevShow,
+                            model: model,
+                            relationships: [...relationships, relationship],
+                          };
+                        }
+                      });
+                    }}
+                  />
+                ))}
+            </StyledTreeItem>
+          </StyledTreeItem>
+        ))}
     </StyledTreeItem>
   );
 };
