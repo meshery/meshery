@@ -1,20 +1,9 @@
 import { withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
-import {
-  getComponentsDetailWithPageSize,
-  getMeshModels,
-  getRelationshipsDetailWithPageSize,
-  getComponentFromModelApi,
-  getRelationshipFromModelApi,
-  searchModels,
-  searchComponents,
-  getMeshModelRegistrants,
-  getMeshModelsByRegistrants,
-} from '../../api/meshmodel';
 import {
   OVERVIEW,
   MODELS,
@@ -24,7 +13,7 @@ import {
   GRAFANA,
   PROMETHEUS,
 } from '../../constants/navigator';
-import { SORT } from '../../constants/endpoints';
+// import { SORT } from '../../constants/endpoints';
 import useStyles from '../../assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
@@ -33,6 +22,17 @@ import { DisableButton } from './MeshModel.style';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { useRouter } from 'next/router';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
+import { ErrorBoundary } from '../General/ErrorBoundary';
+import {
+  useLazyGetMeshModelsQuery,
+  useLazyGetComponentsQuery,
+  useLazyGetRelationshipsQuery,
+  useLazyGetRegistrantsQuery,
+} from '@/rtk-query/meshModel';
+import NoSsr from '@material-ui/core/NoSsr';
+import { removeDuplicateVersions } from './helper';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -45,12 +45,12 @@ const meshmodelStyles = (theme) => ({
     paddingLeft: 0,
     paddingRight: 0,
     '&.Mui-selected': {
-      color: theme.palette.view === 'dark' ? '#00B39F' : theme.palette.primary,
+      color: theme.palette.secondary.focused,
     },
   },
   tabs: {
     '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.view === 'dark' ? '#00B39F' : theme.palette.primary,
+      backgroundColor: theme.palette.secondary.focused,
     },
   },
   dashboardSection: {
@@ -60,7 +60,7 @@ const meshmodelStyles = (theme) => ({
     overflowY: 'scroll',
   },
   duplicatesModelStyle: {
-    backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    backgroundColor: theme.palette.secondary.focused,
   },
 });
 
@@ -75,7 +75,7 @@ const useMeshModelComponentRouter = () => {
   return { searchQuery, selectedTab, selectedPageSize };
 };
 
-const MeshModelComponent = ({
+const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
   relationshipsCount,
@@ -85,7 +85,6 @@ const MeshModelComponent = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -96,10 +95,10 @@ const MeshModelComponent = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [sortOrder, setSortOrder] = useState({
-    sort: SORT.ASCENDING,
-    order: '',
-  });
+  // const [sortOrder] = useState({
+  //   sort: SORT.ASCENDING,
+  //   order: '',
+  // });
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
@@ -112,9 +111,176 @@ const MeshModelComponent = ({
   const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   // const [loading, setLoading] = useState(false);
 
+  /**
+   * RTK Lazy Queries
+   */
+  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
+  const [getComponentsData] = useLazyGetComponentsQuery();
+  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
+  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+
+  const fetchData = useCallback(async () => {
+    try {
+      let response;
+      switch (view) {
+        case MODELS:
+          response = await getMeshModelsData(
+            {
+              params: {
+                page: searchText ? 1 : page.Models + 1,
+                pagesize: searchText || checked ? 'all' : rowsPerPage,
+                components: true,
+                relationships: true,
+                paginated: true,
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          break;
+        case COMPONENTS:
+          response = await getComponentsData(
+            {
+              params: {
+                page: searchText ? 1 : page.Components + 1,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+                trim: false,
+              },
+            },
+            true,
+          );
+          setCount(response.total_count);
+          break;
+        case RELATIONSHIPS:
+          response = await getRelationshipsData(
+            {
+              params: {
+                page: searchText ? 1 : page.Relationships + 1,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                paginated: true,
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          setCount(response?.total_count);
+          break;
+        case REGISTRANTS:
+          response = await getRegistrants();
+          break;
+        default:
+          break;
+      }
+
+      if (response.data) {
+        const newData =
+          searchText || checked
+            ? [...response.data[view.toLowerCase()]]
+            : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        setResourcesDetail(newData);
+
+        if (rowsPerPage !== 14) {
+          setRowsPerPage(14);
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+    }
+  }, [
+    getMeshModelsData,
+    getComponentsData,
+    getRelationshipsData,
+    getRegistrantsData,
+    view,
+    searchText,
+    page,
+    rowsPerPage,
+    resourcesDetail,
+    checked,
+  ]);
+
+  const getRegistrants = async () => {
+    let registrantResponse;
+    let response;
+    registrantResponse = await getRegistrantsData(
+      {
+        params: {
+          page: searchText ? 1 : page.Registrants + 1,
+          pagesize: searchText ? 'all' : rowsPerPage,
+          search: searchText || '',
+        },
+      },
+      true,
+    );
+    if (registrantResponse.data && registrantResponse.data.registrants) {
+      const registrants = registrantResponse.data.registrants;
+      const tempResourcesDetail = [];
+
+      for (let registrant of registrants) {
+        let hostname = toLower(registrant?.hostname);
+        const { data: modelRes } = await getMeshModelsData(
+          {
+            params: {
+              page: page?.Models + 1,
+              pagesize: 'all',
+              registrant: hostname,
+              components: true,
+              relationships: true,
+            },
+          },
+          true,
+        );
+        const updatedRegistrant = {
+          ...registrant,
+          models: removeDuplicateVersions(modelRes.models) || [],
+        };
+        tempResourcesDetail.push(updatedRegistrant);
+      }
+      response = {
+        data: {
+          registrants: tempResourcesDetail,
+        },
+      };
+    }
+    setCount(response.total_count);
+    setRowsPerPage(14);
+    return response;
+  };
+
+  const handleTabClick = (selectedView) => {
+    if (view !== selectedView) {
+      setSearchText(null);
+      setResourcesDetail([]);
+    }
+    setView(() => {
+      handleChangeSelectedTab(selectedView);
+      return selectedView;
+    });
+    setPage({
+      Models: 0,
+      Components: 0,
+      Relationships: 0,
+      Registrants: 0,
+    });
+    if (!animate) {
+      setAnimate(true);
+      setConvert(true);
+    }
+  };
+
+  const modifyData = () => {
+    if (view === MODELS) {
+      return removeDuplicateVersions(
+        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
+      );
+    } else {
+      return resourcesDetail;
+    }
+  };
   useEffect(() => {
     if (selectedTab && selectedTab !== OVERVIEW) {
       setAnimate(true);
@@ -123,233 +289,13 @@ const MeshModelComponent = ({
     }
   }, [selectedTab]);
 
-  const getModels = async (page) => {
-    try {
-      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage, {
-        components: true,
-        relationships: true,
-        paginated: true,
-      });
-
-      if (!isRequestCancelled && models) {
-        setResourcesDetail((prev) =>
-          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
-        );
-      }
-    } catch (error) {
-      console.error('Failed to fetch models:', error);
-    }
-  };
-
-  // TODO: Use RTK
-  const getComponents = async (page, sortOrder) => {
-    try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(
-        page?.Components + 1,
-        rowsPerPage,
-        sortOrder.sort,
-        sortOrder.order,
-      ); // page+1 due to server side indexing starting from 1
-      setCount(total_count);
-      if (!isRequestCancelled && components) {
-        setResourcesDetail((prev) => [...prev, ...components]);
-        setSortOrder(sortOrder);
-      }
-      setRowsPerPage(14);
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
-  };
-
-  // TODO: Use RTK
-  const getRelationships = async (page, sortOrder) => {
-    try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(
-        page?.Relationships + 1,
-        rowsPerPage,
-        sortOrder.sort,
-        sortOrder.order,
-      );
-      setCount(total_count);
-      if (!isRequestCancelled && relationships) {
-        setResourcesDetail((prev) => [...prev, ...relationships]);
-        setSortOrder(sortOrder);
-      }
-      setRowsPerPage(14);
-    } catch (error) {
-      console.error('Failed to fetch relationships:', error);
-    }
-  };
-
-  // TODO: Use RTK
-  const getSearchedModels = async (searchText) => {
-    try {
-      const { total_count, models } = await searchModels(searchText, {
-        components: true,
-        relationships: true,
-      });
-      setCount(total_count);
-
-      if (!isRequestCancelled) {
-        setResourcesDetail(models ? models : []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
-  };
-  const getSearchedComponents = async (searchText) => {
-    try {
-      const { total_count, components } = await searchComponents(searchText);
-      setCount(total_count);
-      if (!isRequestCancelled) {
-        setResourcesDetail(components ? components : []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch components:', error);
-    }
-  };
-
-  const getRegistrants = async (page) => {
-    try {
-      const { total_count, registrants } = await getMeshModelRegistrants(
-        page?.Registrants + 1,
-        rowsPerPage,
-      );
-
-      if (!isRequestCancelled && registrants) {
-        let tempRegistrants = [];
-
-        for (const registrant of registrants) {
-          let hostname = toLower(registrant?.hostname);
-          const { models } = await getMeshModelsByRegistrants(
-            page?.Models + 1,
-            rowsPerPage,
-            hostname,
-          ); // page+1 due to server side indexing starting from 1
-
-          if (models) {
-            const updatedModels = [];
-
-            for (const model of models) {
-              const { components } = await getComponentFromModelApi(model.name);
-              const { relationships } = await getRelationshipFromModelApi(model.name);
-              model.components = components;
-              model.relationships = relationships;
-              updatedModels.push(model);
-            }
-
-            registrant.models = updatedModels;
-            tempRegistrants.push(registrant);
-          } else {
-            tempRegistrants.push(registrant);
-          }
-        }
-
-        setCount(total_count);
-
-        let tempResourcesDetail = [];
-        tempRegistrants.forEach((registrant) => {
-          let oldRegistrant = resourcesDetail.find(
-            (resource) => resource?.hostname === registrant?.hostname,
-          );
-
-          if (oldRegistrant !== undefined) {
-            let newModels = [...oldRegistrant.models, ...registrant.models];
-            registrant.models = newModels;
-          }
-
-          tempResourcesDetail.push(registrant);
-        });
-
-        setResourcesDetail(tempRegistrants);
-      }
-      setRowsPerPage(14);
-    } catch (error) {
-      console.error('Failed to fetch registrants:', error);
-    }
-  };
-
-  let filteredData = checked
-    ? resourcesDetail // Show all data, including duplicates
-    : resourcesDetail.filter((item, index, self) => {
-        // Filter out duplicates based on your criteria (e.g., name and version)
-        return (
-          index ===
-          self.findIndex(
-            (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-          )
-        );
-      });
-
   useEffect(() => {
-    filteredData = checked
-      ? resourcesDetail // Show all data, including duplicates
-      : resourcesDetail.filter((item, index, self) => {
-          // Filter out duplicates based on your criteria (e.g., name and version)
-          return (
-            index ===
-            self.findIndex(
-              (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-            )
-          );
-        });
-  }, [checked]);
-
-  useEffect(() => {
-    setRequestCancelled(false);
-    // setLoading(true);
-
-    if (view === MODELS && searchText === null) {
-      getModels(page);
-    } else if (view === COMPONENTS && searchText === null) {
-      getComponents(page, sortOrder);
-    } else if (view === RELATIONSHIPS) {
-      getRelationships(page, sortOrder);
-    } else if (view === MODELS && searchText) {
-      getSearchedModels(searchText);
-    } else if (view === COMPONENTS && searchText) {
-      getSearchedComponents(searchText);
-    } else if (view === REGISTRANTS && searchText === null) {
-      getRegistrants(page);
-    } else if (view === MODELS && searchText === '') {
-      getModels(page);
-    } else if (view === COMPONENTS && searchText === '') {
-      getComponents(page, sortOrder);
-    }
-
-    return () => {
-      setRequestCancelled(true);
-    };
-  }, [view, page, searchText, rowsPerPage]);
+    fetchData();
+  }, [view, page, searchText, rowsPerPage, checked]);
 
   return (
     <div data-test="workloads">
-      <div
-        className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
-      >
-        <DisableButton
-          disabled
-          variant="contained"
-          style={{
-            visibility: `${animate ? 'visible' : 'hidden'}`,
-          }}
-          size="large"
-          startIcon={<UploadIcon />}
-        >
-          Import
-        </DisableButton>
-        <DisableButton
-          disabled
-          variant="contained"
-          size="large"
-          style={{
-            visibility: `${animate ? 'visible' : 'hidden'}`,
-          }}
-          startIcon={<DoNotDisturbOnIcon />}
-        >
-          Ignore
-        </DisableButton>
-      </div>
+      <TabBar animate={animate} />
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -358,154 +304,34 @@ const MeshModelComponent = ({
             animate ? StyleClass.innerContainerAnimate : ''
           }`}
         >
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === MODELS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(MODELS);
-                return MODELS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== MODELS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${modelsCount})` : `${modelsCount}`}
-            </span>
-            Models
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === COMPONENTS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(COMPONENTS);
-                return COMPONENTS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== COMPONENTS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${componentsCount})` : `${componentsCount}`}
-            </span>
-            Components
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(RELATIONSHIPS);
-                return RELATIONSHIPS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== RELATIONSHIPS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${relationshipsCount})` : `${relationshipsCount}`}
-            </span>
-            Relationships
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === REGISTRANTS && animate ? StyleClass.activeTab : ''
-            }`}
-            onClick={() => {
-              setView(() => {
-                handleChangeSelectedTab(REGISTRANTS);
-                return REGISTRANTS;
-              });
-              setPage({
-                Models: 0,
-                Components: 0,
-                Relationships: 0,
-                Registrants: 0,
-              });
-              if (view !== REGISTRANTS) {
-                setSearchText(null);
-                setResourcesDetail([]);
-              }
-              if (!animate) {
-                setAnimate(true);
-                setConvert(true);
-              }
-            }}
-          >
-            <span
-              style={{
-                fontWeight: `${animate ? 'normal' : 'bold'}`,
-                fontSize: `${animate ? '1rem' : '3rem'}`,
-                marginLeft: `${animate && '4px'}`,
-              }}
-            >
-              {animate ? `(${registrantCount})` : `${registrantCount}`}
-            </span>
-            Registrants
-          </Paper>
+          <TabCard
+            label="Models"
+            count={modelsCount}
+            active={view === MODELS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(MODELS)}
+          />
+          <TabCard
+            label="Components"
+            count={componentsCount}
+            active={view === COMPONENTS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(COMPONENTS)}
+          />
+          <TabCard
+            label="Relationships"
+            count={relationshipsCount}
+            active={view === RELATIONSHIPS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(RELATIONSHIPS)}
+          />
+          <TabCard
+            label="Registrants"
+            count={registrantCount}
+            active={view === REGISTRANTS && animate}
+            animate={animate}
+            onClick={() => handleTabClick(REGISTRANTS)}
+          />
         </div>
         {convert && (
           <div
@@ -514,14 +340,14 @@ const MeshModelComponent = ({
             <div
               className={StyleClass.treeContainer}
               style={{
-                alignItems: filteredData.length === 0 ? 'center' : '',
+                alignItems: resourcesDetail.length === 0 ? 'center' : '',
               }}
             >
-              {filteredData.length === 0 ? (
+              {resourcesDetail.length === 0 ? (
                 <CircularProgress sx={{ color: Colors.keppelGreen }} />
               ) : (
                 <MesheryTreeView
-                  data={filteredData}
+                  data={modifyData()}
                   view={view}
                   show={show}
                   setShow={setShow}
@@ -544,6 +370,77 @@ const MeshModelComponent = ({
         )}
       </div>
     </div>
+  );
+};
+
+const TabBar = ({ animate }) => {
+  const StyleClass = useStyles();
+  return (
+    <div
+      className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
+    >
+      <DisableButton
+        disabled
+        variant="contained"
+        style={{
+          visibility: `${animate ? 'visible' : 'hidden'}`,
+        }}
+        size="large"
+        startIcon={<UploadIcon />}
+      >
+        Import
+      </DisableButton>
+      <DisableButton
+        disabled
+        variant="contained"
+        size="large"
+        style={{
+          visibility: `${animate ? 'visible' : 'hidden'}`,
+        }}
+        startIcon={<DoNotDisturbOnIcon />}
+      >
+        Ignore
+      </DisableButton>
+    </div>
+  );
+};
+
+const TabCard = ({ label, count, active, onClick, animate }) => {
+  const StyleClass = useStyles();
+  return (
+    <Paper
+      elevation={3}
+      className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+        active ? StyleClass.activeTab : ''
+      }`}
+      onClick={onClick}
+    >
+      <span
+        style={{
+          fontWeight: `${animate ? 'normal' : 'bold'}`,
+          fontSize: `${animate ? '1rem' : '3rem'}`,
+          marginLeft: `${animate && '4px'}`,
+        }}
+      >
+        {animate ? `(${count})` : `${count}`}
+      </span>
+      {label}
+    </Paper>
+  );
+};
+
+const MeshModelComponent = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
+        <Provider store={store}>
+          <MeshModelComponent_ {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
   );
 };
 

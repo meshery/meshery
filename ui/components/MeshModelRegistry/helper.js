@@ -1,4 +1,5 @@
 import { MODELS, REGISTRANTS } from '@/constants/navigator';
+import _ from 'lodash';
 
 /**
  * Retrieves filtered data for the details component based on the selected item ID.
@@ -26,4 +27,46 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID, view)
   );
 
   return { selectedComponent, selectedModel, selectedRelationship };
+};
+
+export const removeDuplicateVersions = (data) => {
+  const groupedModels = _.groupBy(data, 'name');
+
+  const result = _.reduce(
+    groupedModels,
+    (acc, models, name) => {
+      const uniqueVersions = _.uniqBy(models, 'version');
+
+      const versionDataArray = uniqueVersions.map((model) => {
+        return {
+          version: model.version,
+          components: _.uniq(model.components),
+          relationships: _.uniq(model.relationships),
+          ...model,
+        };
+      });
+
+      const existingModel = acc.find((m) => m.name === name);
+
+      if (existingModel) {
+        existingModel.version = _.union(
+          existingModel.version,
+          uniqueVersions.map((model) => model.version),
+        );
+        existingModel.versionBasedData = existingModel.versionBasedData.concat(versionDataArray);
+      } else {
+        const selectedModel = models[0];
+        acc.push({
+          ...selectedModel,
+          version: uniqueVersions.map((model) => model.version),
+          versionBasedData: versionDataArray,
+        });
+      }
+
+      return acc;
+    },
+    [],
+  );
+
+  return result;
 };
