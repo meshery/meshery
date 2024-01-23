@@ -454,7 +454,6 @@ class Header extends React.PureComponent {
     };
   }
   componentDidMount() {
-    console.log('header component mounted');
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -476,7 +475,6 @@ class Header extends React.PureComponent {
       },
       (err) => console.error(err),
     );
-    console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
   }
   componentWillUnmount = () => {

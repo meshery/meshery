@@ -85,6 +85,8 @@ import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
+import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -124,7 +126,12 @@ function ConnectionManagementPage(props) {
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
   });
-  const [createConnection, setCreateConnection] = useState({});
+
+  const { data: schemaResponse } = useGetSchemaQuery({
+    schemaName: 'helmRepo',
+  });
+
+  const createConnection = schemaResponse ?? {};
 
   const handleCreateConnectionModalOpen = () => {
     setCreateConnectionModal({ open: true });
@@ -135,19 +142,6 @@ function ConnectionManagementPage(props) {
   };
 
   const handleCreateConnectionSubmit = () => {};
-
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/helmRepo',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setCreateConnection(result);
-      },
-    );
-  }, []);
 
   return (
     <>
@@ -182,7 +176,6 @@ function Connections(props) {
     meshsyncControllerState,
     organization,
   } = props;
-  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -204,6 +197,7 @@ function Connections(props) {
   const [statusFilter, setStatusFilter] = useState(null);
   const [kindFilter, setKindFilter] = useState(null);
 
+  const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
@@ -964,19 +958,21 @@ function Connections(props) {
   };
 
   const updateConnectionStatus = (connectionKind, requestBody) => {
-    dataFetch(
-      `/api/integrations/connections/${connectionKind}/status`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody,
-      },
-      () => {
+    useUpdateConnectionMutator({
+      connectionKind: connectionKind,
+      connectionPayload: requestBody,
+    })
+      .unwrap()
+      .then(() => {
         getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
-      },
-      handleError(ACTION_TYPES.UPDATE_CONNECTION),
-    );
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
   };
 
   const handleStatusChange = async (e, connectionId, connectionKind) => {

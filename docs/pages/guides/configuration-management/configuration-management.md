@@ -7,6 +7,8 @@ type: guides
 category: configuration
 language: en
 abstract: Learn how to use Meshery Designs effectively
+redirect_from:
+  - /tasks/patterns.md
 ---
 
 As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
@@ -20,9 +22,9 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 ## Creating a Meshery Design
 
-You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
+You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
  
-Use Meshery UI or mesheryctl to manage [designs](../tasks/patterns.md).
+Use Meshery UI or mesheryctl to manage [designs](/tasks/pattern-management).
 
 ## Pattern Management Through Meshery UI
 
@@ -60,7 +62,7 @@ mesheryctl pattern apply BookInfoApp
 
 This will apply the pattern BookInfoApp, which has already been imported into Meshery.
 
-See [mesheryctl pattern subcommand section](../reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `pattern` subcommand.
+See [mesheryctl pattern subcommand section]({{ site.baseurl }}/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `pattern` subcommand.
 
 ## WASM Filters
 

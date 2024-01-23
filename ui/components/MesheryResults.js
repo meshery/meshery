@@ -79,9 +79,7 @@ class MesheryResults extends Component {
         credentials: 'include',
       },
       (result) => {
-        console.log('Results API', `${endpoint}${query}`);
         self.props.updateProgress({ showProgress: false });
-        // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
           this.setState({
             results: result.results,

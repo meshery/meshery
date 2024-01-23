@@ -94,7 +94,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -340,7 +339,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -448,7 +446,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -556,7 +553,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}

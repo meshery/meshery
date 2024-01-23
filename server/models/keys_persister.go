@@ -15,39 +15,38 @@ type KeyPersister struct {
 
 // GetUsersKeys returns all keys based on search, order, and updatedAfter without pagination
 func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte, error) {
-    order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
 
-    if order == "" {
-        order = "updated_at desc"
-    }
+	if order == "" {
+		order = "updated_at desc"
+	}
 
-    count := int64(0)
-    keys := []*Key{}
+	count := int64(0)
+	keys := []*Key{}
 
-    query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
 
-    if search != "" {
-        like := "%" + strings.ToLower(search) + "%"
-        query = query.Where("(lower(keys.function) like ? OR lower(keys.category) like ? OR lower(keys.subcategory) like ?)", like, like, like)
-    }
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("(lower(keys.function) like ? OR lower(keys.category) like ? OR lower(keys.subcategory) like ?)", like, like, like)
+	}
 
-    query.Table("keys").Count(&count).Find(&keys)
+	query.Table("keys").Count(&count).Find(&keys)
 
-    keysPage := &KeysPage{
-        Page:       1, // Assuming default page to be 1
-        PageSize:   int(count), // Set the total count as the page size for all keys
-        TotalCount: int(count),
-        Keys:       keys,
-    }
+	keysPage := &KeysPage{
+		Page:       1,          // Assuming default page to be 1
+		PageSize:   int(count), // Set the total count as the page size for all keys
+		TotalCount: int(count),
+		Keys:       keys,
+	}
 
-    return marshalKeysPage(keysPage), nil
+	return marshalKeysPage(keysPage), nil
 }
-
 
 // SaveUsersKey saves a key to the database
 func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
 	if err := kp.DB.Create(key).Error; err != nil {
-		return nil,  ErrDBCreate(err)
+		return nil, ErrDBCreate(err)
 	}
 
 	return key, nil
