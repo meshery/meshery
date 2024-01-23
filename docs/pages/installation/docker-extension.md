@@ -50,7 +50,7 @@ Meshery runs as a set of one or more containers inside your Docker Desktop virtu
 <pre class="codeblock-pre" style="padding: 0; font-size: 0px;">
   <div class="codeblock" style="display: block;">
     <!-- Updated style for clipboardjs -->
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
       <span style="font-size: 0;">docker extension install meshery/docker-extension-meshery</span> 
     </div>
     <div class="window-buttons"></div>
@@ -73,7 +73,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - First, stop the running Meshery container (if it's currently running) using the following Docker command:
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker stop meshery-container</span> 
     </div>
     <div class="window-buttons"></div>
@@ -88,7 +88,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - After stopping the container, you can remove it using the following command:
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker rm meshery-container</span> 
     </div>
     <div class="window-buttons"></div>
@@ -103,7 +103,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - Meshery might have pulled Docker images for its components. You can remove these images using the `docker rmi` command. Replace the image names with the actual ones you want to remove:
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker rmi meshery/meshery:latest</span> 
     </div>
     <div class="window-buttons"></div>
@@ -114,7 +114,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    </pre>
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker rmi meshery/adapters:latest</span> 
     </div>
     <div class="window-buttons"></div>
@@ -131,7 +131,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - Meshery may have created Docker volumes to persist data. You can list and remove these volumes using the `docker volume ls` and `docker volume rm` commands. For example:
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker volume ls</span> 
     </div>
     <div class="window-buttons"></div>
@@ -142,7 +142,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    </pre>
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker volume rm meshery-data-volume</span> 
     </div>
     <div class="window-buttons"></div>
@@ -159,7 +159,7 @@ If you want to remove Meshery as a Docker extension from your system, follow the
    - If Meshery created a custom Docker network, you can remove it using the `docker network rm` command. For example:
 
    <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0; height: 8px; overflow: hidden;">
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
     <span style="font-size:0;">docker network rm meshery-network</span> 
     </div>
     <div class="window-buttons"></div>
