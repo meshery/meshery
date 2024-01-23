@@ -57,10 +57,8 @@ const MetricsScreen = ({ grafana, prometheus, selectedK8sContexts }) => {
   };
 
   useEffect(() => {
-    console.log('Prometheus effect', prometheus);
     verifyPrometheusConnection(prometheus.prometheusURL)
       .then((res) => {
-        console.log(res);
         if (typeof res !== 'undefined') setIsPrometheusConnected(true);
         else setIsPrometheusConnected(false);
       })
@@ -71,7 +69,6 @@ const MetricsScreen = ({ grafana, prometheus, selectedK8sContexts }) => {
   }, [prometheus.ts]);
 
   useEffect(() => {
-    console.log('Greafana effect', grafana);
     verifyGrafanaConnection(grafana.grafanaURL)
       .then((res) => {
         if (typeof res !== 'undefined') setIsGrafanaConnected(true);

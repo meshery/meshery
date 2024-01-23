@@ -55,7 +55,6 @@ export const getOperatorStatusFromQueryResult = (res) => {
   };
 
   if (res.operator?.error) {
-    console.log('Operator could not be reached', res.operator?.error?.description);
     return [false, operatorInformation];
   }
 

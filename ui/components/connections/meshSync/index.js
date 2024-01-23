@@ -519,7 +519,6 @@ export default function MeshSyncTable(props) {
       },
       (res) => {
         setKindOptions(res?.kinds || []);
-        console.log(res?.kinds);
         setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),

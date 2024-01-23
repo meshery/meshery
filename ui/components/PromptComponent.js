@@ -113,7 +113,6 @@ class PromptComponent extends React.Component {
   show = async (passed) => {
     return new Promise((resolve, reject) => {
       this.promiseInfo = { resolve, reject };
-      console.log('show passed', passed);
       this.variant = passed.variant;
       this.setState({
         title: passed.title,
