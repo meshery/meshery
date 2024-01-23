@@ -22,7 +22,13 @@ const Troubleshoot = (props) => {
       <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
         Troubleshooting Guide
       </Button>
-      <Button variant="contained" color="primary" size="large" onClick={handleOpenSupportModal}>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={handleOpenSupportModal}
+        style={{ marginLeft: '1rem' }}
+      >
         Get Help
       </Button>
       <SupportModal open={openSupportModal} handleClose={handleCloseSupportModal} />

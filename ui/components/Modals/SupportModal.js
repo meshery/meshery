@@ -1,9 +1,10 @@
 import React from 'react';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import _ from 'lodash';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { connect } from 'react-redux';
+import { EVENT_TYPES } from '../../lib/event-types';
+import axios from 'axios';
 
 const helpModalSchema = {
   title: 'Support Form',

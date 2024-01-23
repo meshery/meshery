@@ -56,7 +56,7 @@ function NavigatorExtension({
   if (err != null) {
     return (
       <Fallback error={err}>
-        <TroubleshootingComponent/>
+        <TroubleshootingComponent />
       </Fallback>
     );
   }
