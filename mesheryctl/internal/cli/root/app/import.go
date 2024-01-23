@@ -89,12 +89,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		if err != nil {
 			return nil, utils.ErrFileRead(err)
 		}
-		text := string(content)
+		// text := string(content)
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
 			"pattern_data": map[string]interface{}{
 				"name":         path.Base(file),
-				"pattern_file": text,
+				"pattern_file": content,
 			},
 			"save": save,
 		})
