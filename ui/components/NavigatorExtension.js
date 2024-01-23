@@ -31,6 +31,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
+import { Fallback } from '@layer5/sistent-components';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -54,24 +55,10 @@ function NavigatorExtension({
 
   if (err != null) {
     return (
-      <div role="alert">
-        <h2>Uh-oh!😔 Please pardon our mesh.</h2>
-        <div
-          style={{
-            backgroundColor: '#1E2117',
-            color: '#FFFFFF',
-            padding: '.85rem',
-            borderRadius: '.2rem',
-          }}
-        >
-          <code>{err.toString()}</code>
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          <TroubleshootingComponent showDesignerButton={false} />
-        </div>
-      </div>
+      <Fallback error={err}>
+        <TroubleshootingComponent/>
+      </Fallback>
     );
-    // <div>Unknown Error: {err.toString()}</div>;
   }
 
   const getSelectedK8sClusters = () => {
