@@ -5,6 +5,7 @@ on:
       spreadsheet_uri:
         description: Link of the spreadsheet containing keys.
         type: string
+        default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
 jobs:
   fetch-keys:
     name: Fetch Keys
