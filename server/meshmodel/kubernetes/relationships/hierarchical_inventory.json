@@ -235,6 +235,91 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "LimitRange",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "limits", "_", "default", "memory"],
+                ["spec", "limits", "_", "default", "cpu"],
+                ["spec", "limits", "_", "defaultRequest", "memory"],
+                ["spec", "limits", "_", "defaultRequest", "cpu"]
+              ],
+              "description": "Define default memory and CPU limits (including defaultRequest) in LimitRange."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatedRef": [["spec", "limitFrom", "_", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Pod containers."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "template", "spec", "containers", "limitFrom", "_", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Deployment containers."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to StatefulSet containers."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to DaemonSet containers."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to ReplicaSet containers."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Job containers."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to CronJob containers."
+            }
+          }
+        ]
+      }
     }
   ]
 }
