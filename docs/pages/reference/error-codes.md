@@ -13,11 +13,18 @@ abstract: "Meshery Error Code Reference for all Meshery components so that you c
 .title {
   text-transform: capitalize;
 }
-
+div.error-heading {
+  text-transform: uppercase;
+}
+p.error-details {
+    margin-left: 1.5rem;
+    font-size: 1.4rem;
+    text-wrap: wrap;
+    width:85%
+}
 .tbl-head-row{
   background-color:#F2F2F2;
 }
-
 .tbl-head-row .error-name-code{
   display:flex;
   justify-content:space-between;
@@ -134,8 +141,8 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
 <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th class="error-name-code"><span>Error Name - Code</span></th>
       <th style="width:15%">Severity</th>
+      <th class="error-name-code"><span>Error Name - Code</span></th>
       <th style="width:85%">Short Description</th>
     </tr>
   </thead>
@@ -157,11 +164,12 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
         <td style="word-break:break-all;" colspan="3">
-          <div><i><b>Long Description:</b></i></div>
-          {{ err_code[1]["long_description"] | xml_escape }}
-          <div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}
-          <div><i><b>Suggested Remediation:</b></i></div>
-          {{ err_code[1]["suggested_remediation"] | xml_escape }}
+          <div class="error-heading">Long Description</div>
+          <p class="error-details">{{ err_code[1]["long_description"] | xml_escape }}</p>
+          <div class="error-heading">Probable Cause</div>
+          <p class="error-details">{{ err_code[1]["probable_cause"] | xml_escape }}</p>
+          <div class="error-heading">Suggested Remediation</div>
+          <p class="error-details">{{ err_code[1]["suggested_remediation"] | xml_escape }}</p>
         </td>
       </tr>
     {% endfor %}
