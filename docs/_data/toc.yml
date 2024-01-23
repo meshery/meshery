@@ -140,7 +140,7 @@
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/creating-a-meshery-design
+        url: guides/configuration-management/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
       - title: Importing Applications
