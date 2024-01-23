@@ -27,7 +27,7 @@ There cannot be two components with the same name within a Design. However, ther
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
   - Snapshots can be exported or embedded.
 - Designs can be embedded.
-- Designs can be converted into reusable Patterns. Creating a Pattern. involves replacing the values of the variables in the design with the values provided by another user.
+- Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user.
   - The user who creates a Pattern is called the **pattern owner**.
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
 - Designs can be deleted.
