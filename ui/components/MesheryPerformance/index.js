@@ -287,7 +287,6 @@ const MesheryPerformanceComponent = (props) => {
           name: file.name,
           file: evt.target.result,
         });
-        console.log('test: ', name);
       });
       reader.readAsText(file);
     }
@@ -525,7 +524,6 @@ const MesheryPerformanceComponent = (props) => {
     const params = Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join('&');
-    console.log(params);
 
     const runURL =
       ctxUrl(`/api/user/performance/profiles/${id}/run`, props?.selectedK8sContexts) + '&cert=true';

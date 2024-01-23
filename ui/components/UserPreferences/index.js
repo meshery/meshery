@@ -241,8 +241,6 @@ const UserPreference = (props) => {
       (result) => {
         props.updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
-          // console.log(result);
-
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
       },

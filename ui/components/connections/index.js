@@ -176,7 +176,6 @@ function Connections(props) {
     meshsyncControllerState,
     organization,
   } = props;
-  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);

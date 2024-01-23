@@ -17,7 +17,6 @@ const styles = {
 
 function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabadge }) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     updatepagepath({ path: getPath(), isBeta: true, title: 'Configure Design' });
     updatepagetitle({ title: 'Configure Design' });
     updatebetabadge({ isBeta: true });
