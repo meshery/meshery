@@ -9,7 +9,6 @@ export const usePingServer = (path, { host, port }) => {
     setInterval(() => {
       ping("http://127.0.0.1:9081/api/system/version").then((res) => {
         setIsServerAvailable(true)
-        console.log(res)
       }).catch(() => {
         setIsServerAvailable(false)
       })

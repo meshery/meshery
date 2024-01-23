@@ -8,8 +8,8 @@
   {% for item in sorted_reading %}
     {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url and item.language == include.language %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if page.abstract %}
-      - {{ page.abstract }}
+      {% if item.abstract %}
+      - {{ item.abstract }}
       {% endif %}
     </li>
     {% endif %}

@@ -141,6 +141,8 @@ spec:
                         type: string
                     type: object
                 type: object
+              version:  
+                type: string
               size:
                 format: int32
                 type: integer
