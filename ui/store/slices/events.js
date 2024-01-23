@@ -81,7 +81,6 @@ export const eventsSlice = createSlice({
           checked: payload,
         },
       }));
-      console.log('updates', updates);
       eventsEntityAdapter.updateMany(state, updates);
     },
 

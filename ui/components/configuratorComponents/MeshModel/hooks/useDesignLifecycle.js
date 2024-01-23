@@ -128,7 +128,6 @@ export default function useDesignLifecycle() {
   const loadDesign = async (design_id) => {
     try {
       const data = await promisifiedDataFetch('/api/pattern/' + design_id);
-      console.log('loaded data file', data);
       setDesignId(design_id);
       setDesignName(data.name);
       setDesignJson(jsYaml.load(data.pattern_file));

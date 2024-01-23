@@ -185,10 +185,6 @@ const MeshAdapterConfigComponent = (props) => {
   //   }));
   // };
   const handleMeshLocURLChange = (newValue) => {
-    // console.log(newValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-
     if (typeof newValue !== 'undefined') {
       setMeshLocationURL(newValue);
       setMeshLocationURLError(false);
@@ -196,7 +192,6 @@ const MeshAdapterConfigComponent = (props) => {
   };
   const handleDeployPortChange = (newValue) => {
     if (typeof newValue !== 'undefined') {
-      console.log('port change to ' + newValue.value);
       setMeshDeployURL(newValue.value);
       setMeshDeployURLError(false);
     }
@@ -312,7 +307,6 @@ const MeshAdapterConfigComponent = (props) => {
     }));
 
     if (!meshDeployURL || meshDeployURL === '') {
-      console.log(meshDeployURL);
       setMeshDeployURLError(true);
       return;
     }

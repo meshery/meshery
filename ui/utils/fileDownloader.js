@@ -30,7 +30,6 @@ export default function downloadContent({ id, type, name, source_type, params })
   if (!uri) {
     throw new Error('Invalid type of content to download', type);
   }
-  console.log('Download Uri', uri);
   downloadFileFromUrl(uri, name);
 }
 
