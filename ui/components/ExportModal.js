@@ -18,6 +18,7 @@ import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternServ
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DialogActions } from '@layer5/sistent-components';
 import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
+import { Colors } from '@/themes/app';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -84,6 +85,9 @@ const styles = (theme) => ({
   infoIcon: {
     color: theme.palette.secondary.focused,
     fill: 'currentColor',
+    '&:hover': {
+      color: Colors.keppelGreen,
+    },
   },
   toolTip: {
     textDecoration: 'underline',
@@ -107,8 +111,7 @@ const ExportModal = (props) => {
   } = props;
   const renderTooltipContent = () => {
     return getHyperLinkDiv(
-      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. https://docs.layer5.io/meshmap/designer/export-designs/)',
-      'Learn more.',
+      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)',
     );
   };
 
@@ -247,12 +250,12 @@ const ExportModal = (props) => {
       </DialogContent>
       <DialogActions className={classes.dialogAction}>
         <CustomTextTooltip
-          backgroundColor="#3C494F"
+          backgroundColor={Colors.charcoal}
           placement="top"
           interactive={true}
           title={renderTooltipContent()}
         >
-          <IconButton className={classes.infoIconButton}>
+          <IconButton className={classes.infoIconButton} color="primary">
             <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />
           </IconButton>
         </CustomTextTooltip>

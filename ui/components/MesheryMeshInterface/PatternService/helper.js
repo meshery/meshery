@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { Colors } from '@/themes/app';
 
 function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title: '' };
@@ -157,19 +158,28 @@ const sortProperties = (properties) => {
  * @param {*} linkText
  * @returns
  */
-const getHyperLinkWithDescription = (description, linkText = '') => {
+
+const getHyperLinkWithDescription = (description) => {
+  const markdownLinkRegex = /\[([^\]]+)]\((https?:\/\/[^\s]+)\)/g;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return description?.replace(
-    urlRegex,
-    (url) =>
-      `<a href="${url}" style="color: #00B39F;" target="_blank" rel="noreferrer">${
-        linkText || url
-      }</a>`,
-  );
+
+  let processedDescription = description?.replace(markdownLinkRegex, (match, text, url) => {
+    return `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${text}</a>`;
+  });
+
+  if (!markdownLinkRegex.test(description)) {
+    processedDescription = processedDescription?.replace(
+      urlRegex,
+      (url) =>
+        `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${url}</a>`,
+    );
+  }
+
+  return processedDescription;
 };
 
-export const getHyperLinkDiv = (text, linkText) => (
-  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text, linkText) }} />
+export const getHyperLinkDiv = (text) => (
+  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text) }} />
 );
 /**
  * Returns the schema for the credentials.
