@@ -19,7 +19,7 @@ jobs:
         fetch-depth: 1
     - name: Set spreadsheet_uri as environment variable
       run: echo "spreadsheet_uri=" >> $GITHUB_ENV
-      if: inputs.spreadshet_uri != ''
+      if: inputs.spreadsheet_uri != ''
           echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
       
     - name: Dump keys from the spreadsheet
