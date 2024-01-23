@@ -3,7 +3,7 @@ layout: enhanced
 title: Connections
 permalink: concepts/logical/connections
 type: concepts
-abstract: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed a state machine and used within one or more Environments."
+abstract: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments."
 language: en
 list: include
 ---
@@ -11,18 +11,20 @@ list: include
 ![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
 
 ## Managed and Unmanaged Connections
+
 Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
 
 Connections can be:
 
-1) a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/connections.yml) with hand-curated Connection attributes. 
-2) a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
+1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/connections.yml) with hand-curated Connection attributes.
+2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
 
 ### Managed Connections
 
 ### Unmanaged Connections
 
 <!-- Add about managed and unmanaged connections, state diff b/w maanged and munamanaged -->
+
 ## States and the Lifecycle of Connections
 
 Every connection can be in one of the below mentioned states at any given point of time. To better understand these states, consider you have a `Kubernetes` cluster with `Prometheus` already installed.
@@ -85,3 +87,4 @@ User tried registering the connection **manually** but Meshery could not connect
 {% include alert.html type="info" title="Not Found vs Disconnected" content="You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue." %}
 
 _Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
+

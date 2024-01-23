@@ -34,7 +34,6 @@ const MultiSelectWrapper = (props) => {
   );
 
   const Option = (props) => {
-    console.log('props: ', props);
     return (
       <MenuItem
         buttonRef={props.innerRef}

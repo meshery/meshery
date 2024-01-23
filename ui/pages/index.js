@@ -9,7 +9,6 @@ import { updatepagepath } from '../lib/store';
 
 function Index(props) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     props.updatepagepath({ path: getPath() });
   }, []);
 

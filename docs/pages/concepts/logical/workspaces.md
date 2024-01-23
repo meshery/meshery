@@ -3,7 +3,7 @@ layout: enhanced
 title: Workspaces
 permalink: concepts/logical/workspaces
 type: concepts
-abstract: "Meshery Workspaces act as central collaboration points for teams"
+abstract: "Meshery Workspaces act as central collaboration point for teams."
 language: en
 list: include
 ---
