@@ -86,7 +86,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
             {% if thecycle == 'even' %} 
             {% if component[1].component_type == 'adapter' %}
-              {% capture link %}meshery-adapter-for-{{component[1].component_name}}{% endcapture %}
+              {% capture link %}meshery-adapter-for-{{component[1].component_name | lowercase}}{% endcapture %}
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
             {% else %}
@@ -149,23 +149,19 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
         {% assign severity = "background-color: transparent; color: black;" %}
       {% endif %}
       <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
+        <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
         <td class="error-name-code">
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
-        <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
-        <td style="word-break:break-all;">
-          <div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}
-          </td>
-          <td>
-          <div><i><b>Suggested Remediation:</b></i></div>
-          {{ err_code[1]["suggested_remediation"] | xml_escape }}
-          </td>
-          <td>
+        <td style="word-break:break-all;" colspan="3">
           <div><i><b>Long Description:</b></i></div>
           {{ err_code[1]["long_description"] | xml_escape }}
+          <div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}
+          <div><i><b>Suggested Remediation:</b></i></div>
+          {{ err_code[1]["suggested_remediation"] | xml_escape }}
         </td>
       </tr>
     {% endfor %}
