@@ -107,7 +107,8 @@ const ExportModal = (props) => {
   } = props;
   const renderTooltipContent = () => {
     return getHyperLinkDiv(
-      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn More](https://docs.layer5.io/meshmap/designer/export-designs/)'
+      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. https://docs.layer5.io/meshmap/designer/export-designs/)',
+      'Learn more.',
     );
   };
 
