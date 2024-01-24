@@ -15,7 +15,10 @@
 package registry
 
 import (
-	// "fmt"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
 	// "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	// "github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -23,10 +26,17 @@ import (
 
 	// log "github.com/sirupsen/logrus"
 
-	"fmt"
 
 	"github.com/spf13/cobra"
 	// "github.com/spf13/viper"
+)
+
+var (
+	system string
+	googleSheetCredential string
+	sheetID string
+	modelsOutputPath string
+	imgsOutputPath string
 )
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
@@ -42,27 +52,78 @@ mesheryctl publish [system] [google-sheet-credential] [sheet-id] [models-output-
 mesheryctl registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
 
 // Publish To Remote Provider
-mesheryctl registry publish --system=remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish --system=website GoogleCredential $GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
+mesheryctl registry publish website GoogleCredential $GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
 	`,
 	// PreRunE: func(cmd *cobra.Command, args []string) error {
 	// 	//Check prerequisite
 	// },
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) != 5 {
 			return cmd.Help()
 		}
-		fmt.Println("args:", args)
-		return nil
+
+		system = args[0]
+		
+		switch system {
+			case "meshery":
+				return mesherySystem()
+			case "remote-provider":
+				return remoteProviderSystem()
+			case "website":
+				return websiteSystem()
+			default:
+			return fmt.Errorf("invalid system: %s", system) // update to meshkit
+		}
 	},
 }
 
-func init() {
-	publishCmd.Flags().StringVarP(&system, "system", "", "", "System to publish to. Available options: meshery, remote-provider, website")
-	publishCmd.Flags().StringVarP(&credential, "credential", "", "", "Google Credential File")
-	publishCmd.Flags().StringVarP(&sheetId, "sheetId", "", "", "Google Sheet ID to read from")
-	publishCmd.Flags().StringVarP(&modelsOutput, "models-output", "", "", "Path to Meshery Models output")
-	publishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "", "", "Path to Meshery Models Images output")
+func mesherySystem() error {
+	return nil
+}
+
+func remoteProviderSystem() error {
+	return nil
+}
+
+func websiteSystem() error {
+	pathToIntegrationsLayer5 := os.Args[4]
+	pathToIntegrationsMeshery := os.Args[5]
+	pathToIntegrationsMesheryDocs := os.Args[6]
+	mesheryioDocsJSON := "const data = ["
+	for _, model := range models {
+		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
+		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
+
+		comps, ok := components[model.Registrant][model.Model]
+		if !ok {
+			fmt.Println("no components found for ", model.Model)
+			comps = []pkg.ComponentCSV{}
+		}
+
+		err := pkg.GenerateLayer5Docs(model, comps, pathForLayer5ioIntegrations)
+		if err != nil {
+			fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
+		}
+
+		mesheryioDocsJSON, err = pkg.GenerateMesheryioDocs(model, pathForMesheryioIntegrations, mesheryioDocsJSON)
+		if err != nil {
+			fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
+		}
+
+		err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
+		if err != nil {
+			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+		}
+
+	}
+
+	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
+	mesheryioDocsJSON += "]; export default data"
+	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryioDocsJSON); err != nil {
+		log.Fatal(err)
+	}
 }
