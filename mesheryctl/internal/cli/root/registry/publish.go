@@ -29,28 +29,23 @@ import (
 	// "github.com/spf13/viper"
 )
 
-var (
-	system       string
-	credential   string
-	sheetId      string
-	modelsOutput string
-	imgsOutput   string
-)
-
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
-	Use:   "publish",
+	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery",
-	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider, Meshery by reading from a Google Spreadsheet.`,
+	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider and Meshery by reading from a Google Spreadsheet.`,
 	Example: `
+// Publish To System
+mesheryctl publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
+
 // Publish To Meshery
-mesheryctl registry publish --system=meshery --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-output=../../server/meshmodel
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
 
 // Publish To Remote Provider
-mesheryctl registry publish --system=remote-provider --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-output=<remote-provider>/meshmodels/models --imgs-output=<remote-provider>/ui/public/img/meshmodels
+mesheryctl registry publish --system=remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish --system=website --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-path=<repo>/integrations --imgs-output=<remote-provider>/ui/public/img/meshmodels
+mesheryctl registry publish --system=website GoogleCredential $GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
 	`,
 	// PreRunE: func(cmd *cobra.Command, args []string) error {
 	// 	//Check prerequisite
