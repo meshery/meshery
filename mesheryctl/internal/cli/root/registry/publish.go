@@ -23,33 +23,48 @@ import (
 
 	// log "github.com/sirupsen/logrus"
 
+	"fmt"
+
 	"github.com/spf13/cobra"
 	// "github.com/spf13/viper"
 )
 
 var (
-	silentFlagSet bool
+	system string
+	credential string
+	sheetId string
+	modelsOutput string
+	imgsOutput string
 )
 
-// restartCmd represents the restart command
-var restartCmd = &cobra.Command{
+// PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+var PublishCmd = &cobra.Command{
 	Use:   "publish",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery",
 	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider, Meshery by reading from a Google Spreadsheet.`,
 	Example: `
 // Publish To Meshery
-mesheryctl registry publish --system=meshery --credential=$GoogleCredential --sheetId=$GoogleSheetID --output=../../server/meshmodel
+mesheryctl registry publish --system=meshery --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-output=../../server/meshmodel
 
 // Publish To Remote Provider
-mesheryctl registry publish --system=remote-provider --credential=$GoogleCredential --sheetId=$GoogleSheetID --modeloutput=<remote-provider>/meshmodels/models --imgoutput=<remote-provider>/ui/public/img/meshmodels
+mesheryctl registry publish --system=remote-provider --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-output=<remote-provider>/meshmodels/models --imgs-output=<remote-provider>/ui/public/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish --system=website --credential=$GoogleCredential --sheetId=$GoogleSheetID --output-path= --img-output=<remote-provider>/ui/public/img/meshmodels
+mesheryctl registry publish --system=website --credential=$GoogleCredential --sheetId=$GoogleSheetID --models-path=<repo>/integrations --imgs-output=<remote-provider>/ui/public/img/meshmodels
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-	},
+	// PreRunE: func(cmd *cobra.Command, args []string) error {
+	// 	//Check prerequisite
+	// },
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// main
+		fmt.Println("args:", args)
+		return nil
 	},
+}
+
+func init() {
+	PublishCmd.Flags().StringVarP(&system, "system", "s", "", "System to publish to. Available options: meshery, remote-provider, website")
+	PublishCmd.Flags().StringVarP(&credential, "credential", "c", "", "Google Credential File")
+	PublishCmd.Flags().StringVarP(&sheetId, "sheetId", "i", "", "Google Sheet ID")
+	PublishCmd.Flags().StringVarP(&modelsOutput, "models-output", "m", "", "Path to Meshery Models")
+	PublishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "g", "", "Path to Meshery Models Images")
 }
