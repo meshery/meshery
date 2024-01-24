@@ -86,24 +86,27 @@ function MeshModelContructs({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Registry
           </Typography>
-          <CustomTextTooltip
-            placement="left"
-            interactive={true}
-            title={renderTooltipContent({
-              showInfotext: 'about Models, Components, and Relationships',
-              link: url,
-            })}
-          >
-            <IconButton disableRipple={true} disableFocusRipple={true}>
-              <InfoIcon
-                color={theme.palette.secondary.iconMain}
-                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </IconButton>
-          </CustomTextTooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="left"
+              interactive={true}
+              title={renderTooltipContent({
+                showInfotext: 'about Models, Components, and Relationships',
+                link: url,
+              })}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
@@ -165,21 +168,24 @@ function MeshModelCategories({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Categories
           </Typography>
-          <CustomTextTooltip
-            title={renderTooltipContent({ showInfotext: 'about Categories', link: url })}
-            placement="left"
-            interactive={true}
-          >
-            <IconButton disableRipple={true} disableFocusRipple={true}>
-              <InfoIcon
-                color={theme.palette.secondary.iconMain}
-                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </IconButton>
-          </CustomTextTooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              title={renderTooltipContent({ showInfotext: 'about Categories', link: url })}
+              placement="left"
+              interactive={true}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
