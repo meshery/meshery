@@ -22,6 +22,12 @@ jobs:
           ref: "master"
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
+          if: ${{ github.event_name != 'pull_request' }}
+      - uses: actions/checkout@master
+        with:
+          ref: "master" 
+          fetch-depth: 1
+          if: ${{ github.event_name == 'pull_request' }}
           
       - name: Setup Go
         uses: actions/setup-go@master
