@@ -618,9 +618,25 @@ function MesheryFilters({
   };
 
   const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(
+      meshModels,
+      (model) => _.toLower(model.display_name)
+    )
+      ?.filter(
+        (model) =>
+        formData?.compatibility?.some(
+            (comp) => _.toLower(comp) === _.toLower(model.display_name)
+          )
+      )
+      ?.map((model) => model.name)
+
     const payload = {
       id: publishModal.filter?.id,
-      catalog_data: formData,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type)
+      },
     };
     updateProgress({ showProgress: true });
     dataFetch(
