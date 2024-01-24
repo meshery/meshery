@@ -22,7 +22,7 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 ## Creating a Meshery Design
 
-You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
+You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
  
 Use Meshery UI or mesheryctl to manage [designs](/tasks/pattern-management).
 
@@ -76,7 +76,7 @@ Like patterns, Meshery also comes with some sample WebAssembly Filters for you t
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/layer5io/wasm-filters) repo.
 
-Meshery's sample application [ImageHub](../infrastructure-management/sample-apps#imagehub) will let you test out configuring these filters out-of-the-box.
+Meshery's sample application [ImageHub]({{ site.baseurl }}/guides/infrastructure-management/deploying-sample-apps) will let you test out configuring these filters out-of-the-box.
 
 You can onboard ImageHub to an installed service mesh as shown below.
 
@@ -106,7 +106,7 @@ Meshery can also manage your Kubernetes applications and deploy them to any of y
 
 ### Managing Applications Through Meshery UI
 
-Meshery has a set of [sample applications](../infrastructure-management/sample-apps) which you can use to quickly test out your deployment.
+Meshery has a set of [sample applications]({{ site.baseurl }}/guides/infrastructure-management/deploying-sample-apps) which you can use to quickly test out your deployment.
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications-seeded.png" width="50%" />
 
@@ -120,7 +120,7 @@ The application files can be described in following formats:
 - Helm charts
 - Docker Compose Apps
 
-You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery](../performance/performance-management) for more details.
+You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery]({{ site.baseurl }}/guides/performance-management/performance-management) for more details.
 
 ### Managing Applications Through Meshery CLI
 

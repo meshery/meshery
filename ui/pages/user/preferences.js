@@ -25,8 +25,6 @@ const UserPref = (props) => {
   }, []);
 
   const handleFetchData = async (selectedK8sContexts) => {
-    // console.log(`path: ${getPath()}`);
-
     try {
       const result = await promisifiedDataFetch(ctxUrl('/api/user/prefs', selectedK8sContexts), {
         method: 'GET',
