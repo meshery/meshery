@@ -28,7 +28,7 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// ExpCmd represents the Performance Management CLI command
+// ExpCmd represents the Experimental commands
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
