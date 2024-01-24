@@ -62,9 +62,9 @@ mesheryctl registry publish --system=website --credential=$GoogleCredential --sh
 }
 
 func init() {
-	PublishCmd.Flags().StringVarP(&system, "system", "s", "", "System to publish to. Available options: meshery, remote-provider, website")
-	PublishCmd.Flags().StringVarP(&credential, "credential", "c", "", "Google Credential File")
-	PublishCmd.Flags().StringVarP(&sheetId, "sheetId", "i", "", "Google Sheet ID")
-	PublishCmd.Flags().StringVarP(&modelsOutput, "models-output", "m", "", "Path to Meshery Models")
-	PublishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "g", "", "Path to Meshery Models Images")
+	PublishCmd.Flags().StringVarP(&system, "system", "sys", "", "System to publish to. Available options: meshery, remote-provider, website")
+	PublishCmd.Flags().StringVarP(&credential, "credential", "cred", "", "Google Credential File")
+	PublishCmd.Flags().StringVarP(&sheetId, "sheetId", "", "", "Google Sheet ID to read from")
+	PublishCmd.Flags().StringVarP(&modelsOutput, "models-output", "", "", "Path to Meshery Models output")
+	PublishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "g", "", "Path to Meshery Models Images output")
 }
