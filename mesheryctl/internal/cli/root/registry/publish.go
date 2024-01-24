@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package system
+package registry
 
 import (
 	// "fmt"
@@ -30,15 +30,15 @@ import (
 )
 
 var (
-	system string
-	credential string
-	sheetId string
+	system       string
+	credential   string
+	sheetId      string
 	modelsOutput string
-	imgsOutput string
+	imgsOutput   string
 )
 
-// PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
-var PublishCmd = &cobra.Command{
+// publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+var publishCmd = &cobra.Command{
 	Use:   "publish",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery",
 	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider, Meshery by reading from a Google Spreadsheet.`,
@@ -56,15 +56,18 @@ mesheryctl registry publish --system=website --credential=$GoogleCredential --sh
 	// 	//Check prerequisite
 	// },
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		fmt.Println("args:", args)
 		return nil
 	},
 }
 
 func init() {
-	PublishCmd.Flags().StringVarP(&system, "system", "sys", "", "System to publish to. Available options: meshery, remote-provider, website")
-	PublishCmd.Flags().StringVarP(&credential, "credential", "cred", "", "Google Credential File")
-	PublishCmd.Flags().StringVarP(&sheetId, "sheetId", "", "", "Google Sheet ID to read from")
-	PublishCmd.Flags().StringVarP(&modelsOutput, "models-output", "", "", "Path to Meshery Models output")
-	PublishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "g", "", "Path to Meshery Models Images output")
+	publishCmd.Flags().StringVarP(&system, "system", "", "", "System to publish to. Available options: meshery, remote-provider, website")
+	publishCmd.Flags().StringVarP(&credential, "credential", "", "", "Google Credential File")
+	publishCmd.Flags().StringVarP(&sheetId, "sheetId", "", "", "Google Sheet ID to read from")
+	publishCmd.Flags().StringVarP(&modelsOutput, "models-output", "", "", "Path to Meshery Models output")
+	publishCmd.Flags().StringVarP(&imgsOutput, "imgs-output", "", "", "Path to Meshery Models Images output")
 }
