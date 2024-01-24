@@ -79,23 +79,19 @@ const InfoModal_ = React.memo((props) => {
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
 
-      const compatibilityStore = _.uniqBy(
-        meshModels,
-        (model) => _.toLower(model.display_name)
-      )
-        ?.filter(
-          (model) =>
+      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.display_name))
+        ?.filter((model) =>
           formState?.compatibility?.some(
-              (comp) => _.toLower(comp) === _.toLower(model.display_name)
-            )
+            (comp) => _.toLower(comp) === _.toLower(model.display_name),
+          ),
         )
-        ?.map((model) => model.name)
+        ?.map((model) => model.name);
 
       let body = null;
       let modifiedData = {
         ...formState,
         type: formState?.type?.toLowerCase(),
-        compatibility: compatibilityStore
+        compatibility: compatibilityStore,
       };
       if (dataName === PATTERN_PLURAL) {
         body = JSON.stringify({
