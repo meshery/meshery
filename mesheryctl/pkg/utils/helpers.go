@@ -14,9 +14,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
-	"runtime"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -540,16 +540,16 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 
 // ClearLine clears the last line from output
 func ClearLine() {
-    if runtime.GOOS == "windows" {
-        fmt.Print("\r")
-    } else {
-        clearLineUnix()
-    }
+	if runtime.GOOS == "windows" {
+		fmt.Print("\r")
+	} else {
+		clearLineUnix()
+	}
 }
 
 func clearLineUnix() {
-    fmt.Print("\033[1A") // Move cursor one line up
-    fmt.Print("\033[K")  // Clear the line
+	fmt.Print("\033[1A") // Move cursor one line up
+	fmt.Print("\033[K")  // Clear the line
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
