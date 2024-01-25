@@ -78,10 +78,20 @@ const InfoModal_ = React.memo((props) => {
   const handleSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
+
+      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+        ?.filter((model) =>
+          formState?.compatibility?.some(
+            (comp) => _.toLower(comp) === _.toLower(model.displayName),
+          ),
+        )
+        ?.map((model) => model.name);
+
       let body = null;
       let modifiedData = {
         ...formState,
         type: formState?.type?.toLowerCase(),
+        compatibility: compatibilityStore,
       };
       if (dataName === PATTERN_PLURAL) {
         body = JSON.stringify({
@@ -142,15 +152,13 @@ const InfoModal_ = React.memo((props) => {
   useEffect(() => {
     if (selectedResource?.catalog_data && Object.keys(selectedResource?.catalog_data).length > 0) {
       if (meshModels) {
-        const compatibilitySet = new Set(
-          (selectedResource?.catalog_data?.compatibility || []).map((comp) => comp.toLowerCase()),
-        );
+        const compatibilitySet = new Set(selectedResource?.catalog_data?.compatibility || []);
 
         const filteredCompatibilityArray = _.uniq(
           meshModels
             .filter((obj) => {
-              const displayName = obj.displayName.toLowerCase();
-              return compatibilitySet.has(displayName);
+              const modelName = obj.name.toLowerCase();
+              return compatibilitySet.has(modelName);
             })
             .map((obj) => obj.displayName),
         );

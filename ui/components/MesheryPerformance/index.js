@@ -832,7 +832,7 @@ const MesheryPerformanceComponent = (props) => {
   }
   return (
     <NoSsr>
-      {CAN(keys.VIEW_PERFORMANCE_PROFILES.actions, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
+      {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
             <div className={classes.wrapperClss} style={props.style || {}}>
