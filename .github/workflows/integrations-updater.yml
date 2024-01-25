@@ -63,4 +63,14 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
+      - name: Commit changes to Meshery repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          repository: ./meshery
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
 
