@@ -15,12 +15,16 @@
 package system
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
+
+	"github.com/aws/aws-sdk-go-v2/service/eks"
+	cfg "github.com/aws/aws-sdk-go-v2/config"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
@@ -238,16 +242,64 @@ mesheryctl system config eks
 			}
 		}
 
-		// Build the aws CLI syntax to fetch cluster config in kubeconfig.yaml file
-		eksCmd := exec.Command("aws", "eks", "--region", regionName, "update-kubeconfig", "--name", clusterName, "--kubeconfig", utils.ConfigPath)
-		eksCmd.Stdout = os.Stdout
-		eksCmd.Stderr = os.Stderr
-		// Write EKS compatible config to the filesystem
-		err = eksCmd.Run()
+		// Load AWS SDK configuration
+		config, err := cfg.LoadDefaultConfig(context.Background(), cfg.WithRegion(regionName))
 		if err != nil {
-			log.Fatalf("Error generating kubeconfig: %s", err.Error())
-			return err
+			log.Fatalf("unable to load SDK config, %s", err.Error())
 		}
+
+		// Create Amazon EKS client
+		client := eks.NewFromConfig(config)
+
+		// Describe the cluster to obtain the endpoint and certificate
+		describeClusterOutput, err := client.DescribeCluster(context.Background(), &eks.DescribeClusterInput{
+			Name: &clusterName,
+		})
+		if err != nil {
+			log.Fatalf("unable to describe cluster, %s", err.Error())
+		}
+	
+		// Create a new kubeconfig API object
+		kubeconfig, err := clientcmd.LoadFromFile(utils.ConfigPath)
+		if err != nil {
+			log.Fatalf("unable to load kubeconfig file, %s", err.Error())
+		}
+		// Set the cluster information
+		cluster := clientcmdapi.NewCluster()
+		arnname := *describeClusterOutput.Cluster.Arn
+		cluster.Server = *describeClusterOutput.Cluster.Endpoint
+		cluster.CertificateAuthorityData = []byte(*describeClusterOutput.Cluster.CertificateAuthority.Data)
+		kubeconfig.Clusters[arnname] = cluster
+
+		// Set the context information
+		contextObj := clientcmdapi.NewContext()
+		contextObj.Cluster = arnname
+		contextObj.AuthInfo = arnname
+		kubeconfig.Contexts[arnname] = contextObj
+		kubeconfig.CurrentContext = arnname
+
+		// Set the authentication information
+		authInfo := clientcmdapi.NewAuthInfo()
+		authInfo.Exec = &clientcmdapi.ExecConfig{
+			APIVersion: "client.authentication.k8s.io/v1beta1",
+			Command: "aws",
+			Args: []string{
+				"--region", regionName,
+				"eks",
+				"get-token",
+				"--name", clusterName,
+				"--output", "json",
+			},
+		}
+		kubeconfig.AuthInfos[arnname] = authInfo
+
+		// Write the kubeconfig file
+		err = clientcmd.WriteToFile(*kubeconfig, utils.ConfigPath)
+		if err != nil {
+			log.Fatalf("unable to write kubeconfig file, %s", err.Error())
+		}
+		
+		log.Infof("Updated context %s in %s",arnname,utils.ConfigPath)
 		log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
 		// set the token in the chosen context
