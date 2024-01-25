@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@master
         with:
           path: meshery
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Checkout Layer5.io repo
         uses: actions/checkout@master
         with:
