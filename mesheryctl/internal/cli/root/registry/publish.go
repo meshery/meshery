@@ -46,16 +46,16 @@ var publishCmd = &cobra.Command{
 	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider and Meshery by reading from a Google Spreadsheet.`,
 	Example: `
 // Publish To System
-mesheryctl publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
+mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
 
 // Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
+mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
 
 // Publish To Remote Provider
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
+mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish website GoogleCredential $GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
+mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
 	`,
 	// PreRunE: func(cmd *cobra.Command, args []string) error {
 	// 	//Check prerequisite
