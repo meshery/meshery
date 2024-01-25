@@ -17,7 +17,7 @@
 - [Red Hat](https://www.redhat.com)
 - [Metabit Trading](https://www.metabit-trading.com/)
 - [PITS Global Data Recovery Services](https://www.pitsdatarecovery.net/)
-- [AYA Innovation Labs](https://www.ayabank.com/)
+- [AYA Innovation Labs](https://ayapay.com/)
 ---
 
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!
