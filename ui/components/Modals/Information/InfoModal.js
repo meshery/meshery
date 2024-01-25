@@ -79,10 +79,10 @@ const InfoModal_ = React.memo((props) => {
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
 
-      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.display_name))
+      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
         ?.filter((model) =>
           formState?.compatibility?.some(
-            (comp) => _.toLower(comp) === _.toLower(model.display_name),
+            (comp) => _.toLower(comp) === _.toLower(model.displayName),
           ),
         )
         ?.map((model) => model.name);
