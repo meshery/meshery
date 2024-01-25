@@ -152,7 +152,9 @@ const InfoModal_ = React.memo((props) => {
   useEffect(() => {
     if (selectedResource?.catalog_data && Object.keys(selectedResource?.catalog_data).length > 0) {
       if (meshModels) {
-        const compatibilitySet = new Set(selectedResource?.catalog_data?.compatibility || []);
+        const compatibilitySet = new Set(
+          (selectedResource?.catalog_data?.compatibility || []).map((comp) => comp.toLowerCase()),
+        );
 
         const filteredCompatibilityArray = _.uniq(
           meshModels
