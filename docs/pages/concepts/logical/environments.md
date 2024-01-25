@@ -6,6 +6,8 @@ type: concepts
 abstract: "Meshery offers support for Kubernetes cluster and cloud state synchronization with the help of MeshSync."
 language: en
 list: include
+redirect_from:
+- concepts/environments
 ---
 
 Meshery Environments allow you to logically group related [Connections](#connections) and their associated [Credentials](#credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis. 
