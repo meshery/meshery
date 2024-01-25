@@ -876,9 +876,9 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
-    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.display_name))
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
-        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.display_name)),
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
       )
       ?.map((model) => model.name);
 
