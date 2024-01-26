@@ -214,12 +214,13 @@ When defining relationships that involve a large number of combinations between 
 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
+## Meshery Registry
+
+You can reference and search the full set of registered relationships in Meshery UI --> Setttings --> Registry
+
 {% include/alert.html type="info" title="Future Feature" %}
 
 ```
 mesheryctl model import -f [ oci:// | file:// ]`
 ```
 
-## Meshery Registry
-
-You can reference and search the full set of registered relationships in Meshery UI --> Setttings --> Registry
