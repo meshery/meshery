@@ -74,13 +74,6 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		imgsOutputPath, _ = filepath.Abs(filepath.Join("../", args[4]))
 		outputFormat = args[5]
 
-		fmt.Println(modelsOutputPath, imgsOutputPath)
-		return nil
-
-		// pathToIntegrationsLayer5 = args[3]
-		// pathToIntegrationsMeshery = args[4]
-		// pathToIntegrationsMesheryDocs = args[5]
-
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
 			return err
