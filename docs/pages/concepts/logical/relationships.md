@@ -6,6 +6,8 @@ type: concepts
 abstract: "Meshery Relationships identify and facilitate genealogy between Components."
 language: en
 list: include
+redirect_from:
+- concepts/relationships
 ---
 
 [Relationships](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as hierarchical,  relationships. Relationships have selectors, metadata, and optional parameters.

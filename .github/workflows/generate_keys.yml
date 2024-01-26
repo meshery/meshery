@@ -5,6 +5,7 @@ on:
       spreadsheet_uri:
         description: Link of the spreadsheet containing keys.
         type: string
+        default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
 jobs:
   fetch-keys:
     name: Fetch Keys
@@ -17,9 +18,8 @@ jobs:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         fetch-depth: 1
     - name: Set spreadsheet_uri as environment variable
-      run: echo "spreadsheet_uri=" >> $GITHUB_ENV
-      if: inputs.spreadshet_uri != ''
-          echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
+      run: echo "spreadsheet_uri=${{inputs.spreadsheet_uri}}" >> $GITHUB_ENV
+      if: inputs.spreadsheet_uri != ''
       
     - name: Dump keys from the spreadsheet
       run: |

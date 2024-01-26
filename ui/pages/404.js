@@ -9,7 +9,6 @@ import Head from 'next/head';
 
 const Error = () => {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     updatepagepath({ path: getPath() });
   }, [updatepagepath]);
 

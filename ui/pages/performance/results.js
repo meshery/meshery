@@ -11,7 +11,6 @@ const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } 
 
 function Results({ classes, updatepagepath }) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     updatepagepath({ path: getPath() });
   }, [updatepagepath]);
 

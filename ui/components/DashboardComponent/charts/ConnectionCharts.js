@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -9,7 +9,10 @@ import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
@@ -53,7 +56,7 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/connections`;
+  const url = `https://docs.meshery.io/concepts/logical/connections`;
 
   return (
     <Link href="/management/connections">
@@ -62,16 +65,27 @@ export default function ConnectionStatsChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Connections
           </Typography>
-          <CustomTextTooltip title="Learn more about Connections" placement="left">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </CustomTextTooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              interactive={true}
+              title={renderTooltipContent({ showInfotext: 'about Connections', link: url })}
+              placement="left"
+            >
+              <IconButton
+                disableRipple={true}
+                disableFocusRipple={true}
+                disableTouchRipple={true}
+                sx={{ padding: '0px' }}
+              >
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <Box
           sx={{

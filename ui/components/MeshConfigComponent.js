@@ -146,7 +146,6 @@ function MesherySettingsNew({
   const setTableData = () => {
     let tableInfo = [];
     handleContexts(k8sconfig);
-    console.log('k8sconfig: ', k8sconfig);
     k8sconfig.forEach((ctx) => {
       let data = {
         context: ctx.name,
