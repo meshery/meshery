@@ -27,43 +27,43 @@ The `isAnnotation` attribute of a Component determines whether the give Componen
 - Selectors
 
 ## Kind - Subtypes of Relationships
-The combination of `kind` and `subType` uniquely defines the visual paradigm for that relationship. i.e. For all relations that have same `kind` and `subType` have identical visual representation irrespective of components involved.
-
+The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 ### 1. Edge - Network
 Configures the networking.
 
 **Example**
 - Service --> Deployment,
 - Service --> Pod,
-- Ingress Controller --> Ingress --> Service
+- IngressController --> Ingress --> Service
 
 ### 2. Edge - Mount
 **Example**
 
-Assignment of Pods to PersistentVolumes via PersistenVolumeClaim .
+Assignment of PersistentVolumes to Pods via PersistenVolumeClaim .
 
-Pod --> Persisten Volume Claim --> Persistent Volume
+- Pod --> PersistenVolumeClaim --> PersistentVolume
 
 ### 3. Edge - Permission
 **Example**
 
 The set of Service Accounts that are entitled with the one or more Roles/ClusterRoles bound via Role/ClusterRoleBinding.
 
-Cluster Role --> Cluser Role Binding --> Service Account
+- ClusterRole --> CluserRoleBinding --> ServiceAccount
+- Role --> RoleBinding --> ServiceAccount
 
 ### 4. Edge - Firewall
 
 #### Example
 Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to-Pod
 
-Pod --> NetworkPolicy --> Pod
+- Pod --> NetworkPolicy --> Pod
 
 ### 5. Heirarchical - Inventory
 
 **Example**
 
-WASM Filter (binary and configuration) --> Istio WASM Plugin
-WASM Filter (Binary and Configuration) --> Istio Envoy Filter
+- WASMFilter (binary and configuration) --> IstioWASMPlugin
+- WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
 ### 6. Heirarchical - Parent
 
@@ -95,8 +95,8 @@ A snippet of the selector backing this relationship is listed below.
  <b>Selector</b>
 </summary>
 
-
 _https://github.com/meshery/meshery/blob/master/server/meshmodel/kubernetes/relationships/hierarchical_inventory.json_
+
 
 ```json
 selector: [
