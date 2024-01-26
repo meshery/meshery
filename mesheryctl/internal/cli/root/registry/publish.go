@@ -25,22 +25,21 @@ import (
 
 	// log "github.com/sirupsen/logrus"
 
-
 	"github.com/spf13/cobra"
 	// "github.com/spf13/viper"
 )
 
 var (
-	system string
-	googleSheetCredential string
-	sheetID string
-	modelsOutputPath string
-	imgsOutputPath string
-	GoogleSpreadSheetURL        = "https://docs.google.com/spreadsheets/d/"
-	models = []utils.ModelCSV{}
-	components = map[string]map[string][]utils.ComponentCSV{}
-	pathToIntegrationsLayer5 string
-	pathToIntegrationsMeshery string
+	system                        string
+	googleSheetCredential         string
+	sheetID                       string
+	modelsOutputPath              string
+	imgsOutputPath                string
+	GoogleSpreadSheetURL          = "https://docs.google.com/spreadsheets/d/"
+	models                        = []utils.ModelCSV{}
+	components                    = map[string]map[string][]utils.ComponentCSV{}
+	pathToIntegrationsLayer5      string
+	pathToIntegrationsMeshery     string
 	pathToIntegrationsMesheryDocs string
 )
 
@@ -74,71 +73,64 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		// imgsOutputPath = args[4]
 
 		pathToIntegrationsLayer5 = args[3]
-	pathToIntegrationsMeshery = args[4]
-	pathToIntegrationsMesheryDocs = args[5]
+		pathToIntegrationsMeshery = args[4]
+		pathToIntegrationsMesheryDocs = args[5]
 
-		
-
-
-	srv, err := utils.NewSheetSRV(googleSheetCredential)
-	if err != nil {
-		return err
-	}
-	resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
-	if err != nil || resp.HTTPStatusCode != 200 {
-		return err
-	}
-
-	modelCSVHelper := &utils.ModelCSVHelper{}
-	componentCSVHelper := &utils.ComponentCSVHelper{}
-	GoogleSpreadSheetURL += sheetID
-
-	for _, v := range resp.Sheets {
-		switch v.Properties.Title {
-		case "Models":
-			modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
-			if err != nil {	
-				return err
-			}
-			modelCSVHelper.ParseModelsSheet()
-		case "Components":
-			componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
-			if err != nil {
-				return err
-			}
-			componentCSVHelper.ParseComponentsSheet()
+		srv, err := utils.NewSheetSRV(googleSheetCredential)
+		if err != nil {
+			return err
 		}
-	}
+		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
+		if err != nil || resp.HTTPStatusCode != 200 {
+			return err
+		}
 
-	models = modelCSVHelper.Models
-	components = componentCSVHelper.Components
+		modelCSVHelper := &utils.ModelCSVHelper{}
+		componentCSVHelper := &utils.ComponentCSVHelper{}
+		GoogleSpreadSheetURL += sheetID
 
+		for _, v := range resp.Sheets {
+			switch v.Properties.Title {
+			case "Models":
+				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				if err != nil {
+					return err
+				}
+				modelCSVHelper.ParseModelsSheet()
+			case "Components":
+				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				if err != nil {
+					return err
+				}
+				componentCSVHelper.ParseComponentsSheet()
+			}
+		}
 
-		
+		models = modelCSVHelper.Models
+		components = componentCSVHelper.Components
+
 		switch system {
-			case "meshery":
-				return mesherySystem()
-			case "remote-provider":
-				return remoteProviderSystem()
-			case "website":
-				return websiteSystem()
-			default:
+		case "meshery":
+			return mesherySystem()
+		case "remote-provider":
+			return remoteProviderSystem()
+		case "website":
+			return websiteSystem()
+		default:
 			fmt.Errorf("invalid system: %s", system) // update to meshkit
 		}
 
+		err = modelCSVHelper.Cleanup()
+		if err != nil {
+			return err
+		}
 
+		err = componentCSVHelper.Cleanup()
+		if err != nil {
+			return err
+		}
 
-	err = modelCSVHelper.Cleanup()
-	if err != nil {
-return err
-	}
-
-	err = componentCSVHelper.Cleanup()
-	if err != nil {
-return err
-	}
-
-	return nil
+		return nil
 	},
 }
 
@@ -162,7 +154,7 @@ func websiteSystem() error {
 			fmt.Println("no components found for ", model.Model)
 			comps = []utils.ComponentCSV{}
 		}
-		
+
 		err := utils.GenerateLayer5Docs(model, comps, pathForLayer5ioIntegrations)
 		if err != nil {
 			fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
