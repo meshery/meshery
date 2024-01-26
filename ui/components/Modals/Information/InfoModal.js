@@ -35,7 +35,7 @@ import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
-import { getUnit8ArrayForDesign } from '@/utils/utils'
+import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
