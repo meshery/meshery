@@ -19,14 +19,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	// "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	// "github.com/utils/errors"
 
-	// log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
-	// "github.com/spf13/viper"
 )
 
 var (
@@ -62,9 +58,9 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <
 mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 5 {
-			return cmd.Help()
-		}
+		// if len(args) != 5 {
+		// 	return cmd.Help()
+		// }
 
 		system = args[0]
 		googleSheetCredential = args[1]
@@ -143,12 +139,14 @@ func remoteProviderSystem() error {
 }
 
 func websiteSystem() error {
+	pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsLayer5))
+	pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMeshery))
+	pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMesheryDocs))
+
+	fmt.Println(pathForLayer5ioIntegrations, pathForMesheryioIntegrations, pathForMesheryDocsIntegrations)
+
 	mesheryioDocsJSON := "const data = ["
 	for _, model := range models {
-		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
-		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
-		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
-
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			fmt.Println("no components found for ", model.Model)
@@ -174,7 +172,7 @@ func websiteSystem() error {
 
 	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
 	mesheryioDocsJSON += "]; export default data"
-	if err := utils.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryioDocsJSON); err != nil {
+	if err := utils.WriteToFile(filepath.Join(pathForMesheryioIntegrations, "data.js"), mesheryioDocsJSON); err != nil {
 		fmt.Printf("Error writing to file: %v\n", err.Error())
 		return err
 	}
