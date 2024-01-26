@@ -1,0 +1,37 @@
+<!-- related-content.html -->
+
+<style>
+    .related-content {
+      list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
+    }
+    .related-post {
+      padding: 0.3rem 0.4rem;
+    }
+  </style>
+  
+  <h2>Related {{ include.type | capitalize }} Content</h2>
+  <ul class="related-content">
+    {% assign related_tutorials = site.data.toc | where: "title", "Tutorials" | first %}
+    {% if related_tutorials %}
+      {% for tutorial in related_tutorials.children %}
+        {% if tutorial.title == include.title %}
+          {% for child in tutorial.children %}
+            {% assign related_content = site.related_content[child.url] %}
+            {% if related_content %}
+              {% for post in related_content %}
+                <li class="related-post">
+                  <a href="{{ post.url }}">{{ post.title }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>No related content found for '{{ include.title }}'.</li>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <li>No related tutorials found.</li>
+    {% endif %}
+  </ul>
+  
+  

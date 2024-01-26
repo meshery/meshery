@@ -136,6 +136,11 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: Tutorials ↆ
+      url: guides/tutorials
+      children:
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
