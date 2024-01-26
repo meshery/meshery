@@ -203,6 +203,25 @@ language: en
     <details>
       <summary>
         <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">Hands-on Labs using Meshery Playground</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_tutorials = site.pages | where: "type","guides" %}
+        {% for item in sorted_tutorials %}
+        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
         </p>
       </summary>
@@ -278,7 +297,7 @@ language: en
     </details>    
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.language=="en" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="tutorials" and item.category!="performance" and item.category!="configuration" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
