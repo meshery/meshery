@@ -35,6 +35,7 @@ import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
+import { getUnit8ArrayForDesign } from '@/utils/utils'
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -97,7 +98,7 @@ const InfoModal_ = React.memo((props) => {
         body = JSON.stringify({
           pattern_data: {
             catalog_data: modifiedData,
-            pattern_file: selectedResource.pattern_file,
+            pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
             id: selectedResource.id,
           },
           save: true,
