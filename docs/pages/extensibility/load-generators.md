@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: "Extensibility: Load Generators"
 permalink: extensibility/load-generators
 type: Extensibility

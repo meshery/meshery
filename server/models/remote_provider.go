@@ -374,7 +374,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		logrus.Infof("user profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf(fmt.Sprintf("error retrieving user with id: %s", userID)), "User Profile", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
@@ -2673,11 +2673,10 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 
 // GetDesignSourceContent returns design source-content from provider
 func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID string) ([]byte, error) {
-		if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
 	}
-
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, designID)
@@ -3780,9 +3779,13 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
 		var conn connections.Connection
@@ -3793,7 +3796,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 	}
 
 	l.Log.Debug(string(bdr))
-	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to update connection with id %s", connectionID), "connection", resp.StatusCode)
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
@@ -3840,13 +3843,13 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID u
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	bf := bytes.NewBuffer([]byte(connectionStatus))
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
-	// logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		l.Log.Error(err)
-		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, resp.StatusCode)
+		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, http.StatusInternalServerError)
 	}
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4165,7 +4168,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Save Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Credential", http.StatusInternalServerError)
 	}
 	defer resp.Body.Close()
 
@@ -4279,7 +4282,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Update Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Update Credential", http.StatusInternalServerError)
 	}
 	defer resp.Body.Close()
 
@@ -4606,7 +4609,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environments.
 }
 
 func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
-  if !l.Capabilities.IsSupported(PersistEnvironments) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
@@ -4645,13 +4648,13 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 }
 
 func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
-if !l.Capabilities.IsSupported(PersistEnvironments) {
+	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep +  "/" + environmentID + "/connections/" + connectionID)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID + "/connections/" + connectionID)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -4680,11 +4683,11 @@ if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Infof("Connection successfully removed from environment")
 		return bdr, nil
 	}
-	
+
 	return nil, ErrFetch(fmt.Errorf("failed to unassign connection from environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
@@ -4705,6 +4708,9 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
@@ -4788,7 +4794,7 @@ func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, 
 		logrus.Infof("user data successfully retrieved from remote provider")
 		return bd, nil
 	}
-	
+
 	return nil, ErrFetch(fmt.Errorf("failed to get organizations"), "Organization", resp.StatusCode)
 }
 
@@ -5272,4 +5278,3 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get designs of workspace"), "Workspace", resp.StatusCode)
 }
-

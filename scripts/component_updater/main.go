@@ -26,7 +26,9 @@ Usage: (order of flags matters)
 
 Examples:
 
-	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations docs/ --published-only
+	1. CRED=$CRED go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --system docs layer5/src/collections/integrations meshery.io/integrations docs
+
+	following are to be migrated from older logic
 	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/meshmodels/models <remote-provider>/ui/public/img/meshmodels
 	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
 
@@ -42,7 +44,6 @@ The flags are:
 package main
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -57,11 +58,12 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete","capabilities", "genealogy", "styleOverrides"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "isModelAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "capabilities", "genealogy", "styleOverrides", "capabilities"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
 	ExcludeDirs                 = []string{"relationships", "policies"}
+	GoogleSpreadSheetURL        = "https://docs.google.com/spreadsheets/d/"
 )
 
 var System string
@@ -99,35 +101,79 @@ func main() {
 	}
 	System = os.Args[3]
 
-	filep, err := pkg.DownloadCSV(url)
+	srv, err := pkg.NewSheetSRV()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	file, err := os.Open(filep)
-	if err != nil {
+	resp, err := srv.Spreadsheets.Get(url).Fields().Do()
+	if err != nil || resp.HTTPStatusCode != 200 {
 		log.Fatal(err)
 		return
 	}
-	csvReader := csv.NewReader(file)
-	output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
-	if err != nil {
-		log.Fatal(err)
-		return
+
+	modelCSVHelper := &pkg.ModelCSVHelper{}
+	componentCSVHelper := &pkg.ComponentCSVHelper{}
+	GoogleSpreadSheetURL += url
+
+	for _, v := range resp.Sheets {
+		switch v.Properties.Title {
+		case "Models":
+			modelCSVHelper, err = pkg.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+			modelCSVHelper.ParseModelsSheet()
+		case "Components":
+			componentCSVHelper, err = pkg.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+			componentCSVHelper.ParseComponentsSheet()
+		}
 	}
-	file.Close()
-	os.Remove(file.Name())
+	// filep, err := pkg.DownloadCSV(url)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// file, err := os.Open(filep)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// csvReader := csv.NewReader(file)
+	// output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
+	// file.Close()
+	// os.Remove(file.Name())
 
 	switch System {
 	case pkg.Docs.String():
-		docsUpdater(output)
-	case pkg.Meshery.String():
-		mesheryUpdater(output)
-	case pkg.RemoteProvider.String():
-		remoteProviderUpdater(output)
+		docsUpdater(modelCSVHelper.Models, componentCSVHelper.Components)
+	// commenting these for now
+	// case pkg.Meshery.String():
+	// 	mesheryUpdater(output)
+	// case pkg.RemoteProvider.String():
+	// 	remoteProviderUpdater(output)
 	default:
 		log.Fatal("invalid system name")
 		return
+	}
+
+	err = modelCSVHelper.Cleanup()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = componentCSVHelper.Cleanup()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 }
@@ -163,7 +209,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 	return out2
 }
 
-func docsUpdater(output []map[string]string) {
+func docsUpdater(models []pkg.ModelCSV, components map[string]map[string][]pkg.ComponentCSV) {
 	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
@@ -171,134 +217,38 @@ func docsUpdater(output []map[string]string) {
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
 	pathToIntegrationsMesheryDocs := os.Args[6]
-	updateOnlyPublished := true
-	if len(os.Args) > 6 {
-		if os.Args[6] == "--published-only" {
-			updateOnlyPublished = true
-		}
-	}
-	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-	mesheryDocsJSON := "const data = ["
-	for _, out := range output {
-		var t pkg.TemplateAttributes
-		publishValue, err := strconv.ParseBool(out["Publish?"])
-		if err != nil {
-			publishValue = false
-		}
-		if updateOnlyPublished && !publishValue {
-			continue
-		}
-		for key, val := range out {
-			switch key {
-			case "modelDisplayName":
-				t.Title = val
-			case "model":
-				t.ModelName = val
-			case "Page Subtitle":
-				t.Subtitle = val
-			case "Docs URL":
-				t.DocURL = val
-			case "category":
-				t.Category = val
-			case "subCategory":
-				t.Subcategory = val
-			case "howItWorks":
-				t.HowItWorks = val
-			case "hotItWorksDetails":
-				t.HowItWorksDetails = val
-			case "Publish?":
-				t.Published = val
-			case "About Project":
-				t.AboutProject = val
-			case "Standard Blurb":
-				t.StandardBlurb = val
-			case "Full Page":
-				t.FullPage = val
-			case "svgColor":
-				t.ColorSVG = val
-			case "svgWhite":
-				t.WhiteSVG = val
-			}
-		}
-		t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
-		t.WorkingSlides = `[
-				../_images/meshmap-visualizer.png,
-				../_images/meshmap-designer.png]`
+	mesheryioDocsJSON := "const data = ["
+	for _, model := range models {
+		pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5))
+		pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+		pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs))
 
-		md := t.CreateMarkDown()
-		jsonItem := t.CreateJSONItem()
-		mesheryDocsJSON += jsonItem + ","
-		modelName := strings.TrimSpace(out["model"])
-		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
-		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
-		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))
-		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
-		if err != nil {
-			panic(err)
-		}
-		_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
-		svgcolor := out["svgColor"]
-		svgwhite := out["svgWhite"]
-
-		// Write SVGs to Layer5 docs
-		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
-		if err != nil {
-			panic(err)
+		comps, ok := components[model.Registrant][model.Model]
+		if !ok {
+			fmt.Println("no components found for ", model.Model)
+			comps = []pkg.ComponentCSV{}
 		}
 
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		err := pkg.GenerateLayer5Docs(model, comps, pathForLayer5ioIntegrations)
 		if err != nil {
-			panic(err)
-		}
-		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
-		if err != nil {
-			panic(err)
-		}
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		if err != nil {
-			panic(err)
+			fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		// Write SVGs to Meshery website
-		err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
+		mesheryioDocsJSON, err = pkg.GenerateMesheryioDocs(model, pathForMesheryioIntegrations, mesheryioDocsJSON)
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		err = pkg.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 		}
 
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		if err != nil {
-			panic(err)
-		}
-
-		// Write SVGs to Meshery docs
-		err = os.MkdirAll(filepath.Join(pathToIntegrationsMesheryDocs), 0777)
-		if err != nil {
-			panic(err)
-		}
-
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-color.svg"), svgcolor) //CHANGE PATH
-		if err != nil {
-			panic(err)
-		}
-
-		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-white.svg"), svgwhite) //CHANGE PATH
-		if err != nil {
-			panic(err)
-		}
 	}
 
-	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-	mesheryDocsJSON += "]; export default data"
-	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
+	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
+	mesheryioDocsJSON += "]; export default data"
+	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryioDocsJSON); err != nil {
 		log.Fatal(err)
 	}
 }

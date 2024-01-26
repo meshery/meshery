@@ -17,7 +17,6 @@ Delete context
 ## Synopsis
 
 Delete an existing context (a named Meshery deployment) from Meshery config file
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context delete [context-name] [flags]

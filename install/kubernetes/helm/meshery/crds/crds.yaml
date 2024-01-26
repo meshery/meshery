@@ -144,6 +144,8 @@ spec:
               size:
                 format: int32
                 type: integer
+              version:
+                type: string
               watch-list:
                 type: object
                 properties:

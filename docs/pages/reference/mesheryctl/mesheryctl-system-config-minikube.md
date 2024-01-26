@@ -17,7 +17,6 @@ Configure Meshery to use minikube cluster
 ## Synopsis
 
 Configure Meshery to connect to minikube cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config minikube [flags]

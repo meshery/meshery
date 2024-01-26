@@ -1,11 +1,12 @@
 ---
-layout: default
+layout: enhanced
 title: Publishing a Design
 permalink: extensions/publishing-a-design
 language: en
 display-title: "false"
-list: exclude
-type: meshmap
+list: include
+type: extensions
+category: meshmap
 ---
 
 # Publishing a Design

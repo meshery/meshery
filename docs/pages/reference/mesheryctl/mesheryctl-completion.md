@@ -17,7 +17,6 @@ Output shell completion code
 ## Synopsis
 
 Output shell completion code
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion [bash|zsh|fish]

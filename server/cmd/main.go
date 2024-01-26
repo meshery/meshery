@@ -9,15 +9,18 @@ import (
 	"path"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
+	"github.com/layer5io/meshery/server/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/machines"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -54,14 +57,34 @@ func main() {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
 
+	viper.AutomaticEnv()
+
+	viper.SetConfigFile("./runtime_logs_config.env")
+	viper.WatchConfig()
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		logrus.Errorf("error reading config %v", err)
+	}
+
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
-		Format: logger.SyslogLogFormat,
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
 	})
 	if err != nil {
 		logrus.Error(err)
 		os.Exit(1)
 	}
+
+	viper.OnConfigChange(func(event fsnotify.Event) {
+		logrus.Info("received change for", event.Name)
+		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
+	})
 
 	instanceID, err := uuid.NewV4()
 	if err != nil {
@@ -121,11 +144,7 @@ func main() {
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
-
-	if viper.GetBool("DEBUG") {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-	log.Info("Log level: ", logrus.GetLevel())
+	logrus.Info("Log level: ", log.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -177,6 +196,7 @@ func main() {
 		&models.SmiResultWithID{},
 		models.K8sContext{},
 		models.Organization{},
+		models.Key{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -197,6 +217,7 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
@@ -231,11 +252,16 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-
+	krh, err := models.NewKeysRegistrationHelper(dbHandler, log)
+	if err != nil {
+		log.Error(ErrInitializingKeysRegistration(err))
+		os.Exit(1)
+	}
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {
 		ch.SeedComponents()
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
@@ -272,7 +298,7 @@ func main() {
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
-	connToInstanceTracker := handlers.ConnectionToStateMachineInstanceTracker{
+	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
 
@@ -281,6 +307,9 @@ func main() {
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
 	}
+
+	models.InitMeshSyncRegistrationQueue()
+	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)

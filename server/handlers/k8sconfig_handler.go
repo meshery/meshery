@@ -8,20 +8,19 @@ import (
 	"net/http"
 	"path/filepath"
 
-	mhelpers "github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models/machines"
 
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/layer5io/meshkit/models/events"
 
@@ -103,7 +102,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	len := len(contexts)
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-	smInstanceTracker.mx.Lock()
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
@@ -123,7 +121,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				Provider:           provider,
 				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
@@ -140,25 +137,24 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
 
-			inst, ok := smInstanceTracker.ConnectToInstanceMap[connection.ID]
-			if !ok {
-				inst, err = InitializeMachineWithContext(
-					machineCtx,
-					req.Context(),
-					connection.ID,
-					smInstanceTracker,
-					h.log,
-					provider,
-					machines.DefaultState,
-					"kubernetes",
-					kubernetes.AssignInitialCtx,
-				)
-				if err != nil {
-					h.log.Error(err)
-				}
+			inst, err := mhelpers.InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				connection.ID,
+				userID,
+				smInstanceTracker,
+				h.log,
+				provider,
+				machines.DefaultState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
+			)
+			if err != nil {
+				h.log.Error(err)
 			}
+
 			go func(inst *machines.StateMachine) {
-				event, err := inst.SendEvent(req.Context(), mhelpers.StatusToEvent(status), nil)
+				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
@@ -172,7 +168,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
-	smInstanceTracker.mx.Unlock()
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(event)

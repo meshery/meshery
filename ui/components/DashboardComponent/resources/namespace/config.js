@@ -5,11 +5,11 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
+import { FormatId } from '@/components/DataFormatter';
 
 export const NamespaceTableConfig = (
   switchView,
@@ -21,8 +21,8 @@ export const NamespaceTableConfig = (
   return {
     name: 'Namespace',
     colViews: [
-      ['id', 'xs'],
-      ['metadata.name', 'm'],
+      ['id', 'na'],
+      ['metadata.name', 'xs'],
       ['apiVersion', 'm'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
@@ -33,7 +33,7 @@ export const NamespaceTableConfig = (
         label: 'ID',
         options: {
           display: false,
-          customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={10} />,
+          customBodyRender: (value) => <FormatId id={value} />,
         },
       },
       {
@@ -95,7 +95,6 @@ export const NamespaceTableConfig = (
           },
           customBodyRender: function CustomBody(val) {
             let context = getK8sContextFromClusterId(val, k8sConfig);
-            console.log('TESTL ', context);
             return (
               <TootltipWrappedConnectionChip
                 title={context.name}

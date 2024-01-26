@@ -17,7 +17,6 @@ Configure Meshery to use GKE cluster
 ## Synopsis
 
 Configure Meshery to connect to GKE cluster
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config gke [flags]

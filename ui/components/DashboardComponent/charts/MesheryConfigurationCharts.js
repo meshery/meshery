@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip } from '@material-ui/core';
+import { Box, IconButton, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
@@ -11,6 +11,10 @@ import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const ACTION_TYPES = {
   FETCH_PATTERNS: {
@@ -104,16 +108,27 @@ export default function MesheryConfigurationChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Configuration
           </Typography>
-          <Tooltip title="Learn more about Configuration Management in Meshery" placement="right">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </Tooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="left"
+              interactive={true}
+              title={renderTooltipContent({
+                showInfotext: 'about Configuration Management',
+                link: url,
+              })}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <Box
           sx={{

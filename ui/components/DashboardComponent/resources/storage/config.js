@@ -8,6 +8,7 @@ import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionCh
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const StorageTableConfig = (
   switchView,
@@ -35,6 +36,7 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -192,6 +194,7 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -327,7 +330,6 @@ export const StorageTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -373,6 +375,7 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -434,7 +437,6 @@ export const StorageTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}

@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Typography, Tooltip } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut, pie } from 'billboard.js';
 import {
@@ -15,6 +15,10 @@ import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import InfoIcon from '@material-ui/icons/Info';
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0);
@@ -73,7 +77,7 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/models`;
+  const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
     <Link href="/settings#registry">
@@ -82,19 +86,27 @@ function MeshModelContructs({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Registry
           </Typography>
-          <Tooltip
-            title="Learn more about Models, Components, and Relationships in Meshery"
-            placement="right"
-          >
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </Tooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="left"
+              interactive={true}
+              title={renderTooltipContent({
+                showInfotext: 'about Models, Components, and Relationships',
+                link: url,
+              })}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
@@ -147,7 +159,7 @@ function MeshModelCategories({ classes }) {
     });
   }, []);
 
-  const url = `https://docs.meshery.io/concepts/models`;
+  const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
     <Link href="/settings#registry">
@@ -156,16 +168,24 @@ function MeshModelCategories({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Categories
           </Typography>
-          <Tooltip title="Learn more about Categories" placement="right">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </Tooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              title={renderTooltipContent({ showInfotext: 'about Categories', link: url })}
+              placement="left"
+              interactive={true}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />

@@ -16,7 +16,7 @@ import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuer
 import { withStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../../css/icons.styles';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
-import { useNotification } from '../../utils/hooks/useNotification';
+import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import Moment from 'react-moment';
@@ -28,11 +28,13 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ReusableTooltip from '../reusable-tooltip';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import ViewSwitch from '../ViewSwitch';
-import SearchBar from '../../utils/custom-search';
+import SearchBar from '@/utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
-import { updateVisibleColumns } from '../../utils/responsive-column';
-import { useWindowDimensions } from '../../utils/dimension';
-import { ConditionalTooltip } from '../../utils/utils';
+import { updateVisibleColumns } from '@/utils/responsive-column';
+import { useWindowDimensions } from '@/utils/dimension';
+import { ConditionalTooltip } from '@/utils/utils';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -401,6 +403,9 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                   aria-label="edit"
                   // @ts-ignore
                   color="rgba(0, 0, 0, 0.54)"
+                  disabled={
+                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                  }
                 >
                   <EditIcon style={iconMedium} />
                 </IconButton>
@@ -416,6 +421,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                   aria-label="run"
                   // @ts-ignore
                   color="rgba(0, 0, 0, 0.54)"
+                  disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                 >
                   <PlayArrowIcon style={iconMedium} />
                 </IconButton>
@@ -471,7 +477,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
     onRowsDelete: async function handleDeleteRow(row) {
       let response = await showModal(Object.keys(row.lookup).length);
-      console.log(response);
       if (response === 'Yes') {
         const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
         pids.forEach((pid) => handleDelete(pid));
@@ -550,6 +555,12 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                     color="primary"
                     size="large"
                     onClick={() => setProfileForModal({})}
+                    disabled={
+                      !CAN(
+                        keys.ADD_PERFORMANCE_PROFILE.action,
+                        keys.ADD_PERFORMANCE_PROFILE.subject,
+                      )
+                    }
                   >
                     <AddIcon style={iconMedium} className={classes.addIcon} />
                     <span className={classes.btnText}> Add Performance Profile </span>
@@ -610,6 +621,9 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                 color="primary"
                 size="large"
                 onClick={() => setProfileForModal({})}
+                disabled={
+                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
+                }
               >
                 <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Tooltip, Tabs, Tab, Paper } from '@material-ui/core';
+import { Tabs, Tab, Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -13,6 +13,7 @@ import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -35,6 +36,9 @@ const styles = (theme) => ({
     flexGrow: 1,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+    '& .MuiTab-fullWidth': {
+      flexBasis: 'unset', // Remove flex-basis
     },
   },
   icon: {
@@ -110,7 +114,7 @@ const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
 
-  const resourceCategory = query.resourceCategory || 'overview';
+  const resourceCategory = query.resourceCategory || 'Overview';
   const selectedResource = query.resource;
 
   const changeResourceTab = (resourceCategory) => {
@@ -136,7 +140,7 @@ const useDashboardRouter = () => {
   return { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource };
 };
 
-const ResourceCategoryTabs = ['overview', ...Object.keys(ResourcesConfig)];
+const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
@@ -167,13 +171,13 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
-                <Tooltip key={idx} title={`View ${resource}`} placement="top">
+                <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
                   <Tab
                     value={idx}
                     key={resource}
                     className={classes.tab}
                     icon={
-                      resource === 'overview' ? (
+                      resource === 'Overview' ? (
                         <MesheryIcon style={{ width: '28px', height: '28px' }} />
                       ) : (
                         <KubernetesIcon style={{ width: '28px', height: '28px' }} />
@@ -181,13 +185,13 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     }
                     label={resource}
                   />
-                </Tooltip>
+                </CustomTextTooltip>
               );
             })}
           </Tabs>
         </Paper>
 
-        <TabPanel value={resourceCategory} index={'overview'}>
+        <TabPanel value={resourceCategory} index={'Overview'}>
           <Overview />
         </TabPanel>
         {Object.keys(ResourcesConfig).map((resource, idx) => (

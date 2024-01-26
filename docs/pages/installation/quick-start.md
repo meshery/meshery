@@ -2,7 +2,7 @@
 layout: default
 title: Quick Start Guide
 permalink: installation/quick-start
-redirect_from: installation/quick-start/
+# redirect_from: installation/quick-start/
 language: en
 type: installation
 abstract: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
@@ -19,9 +19,6 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }}/installation/mesheryctl). If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server with the command shown in the figure.
 
  <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span> 
- </div>
  <div class="window-buttons"></div>
   <div id="termynal0" style="width:100%; height:150px; max-width:100%;" data-termynal="">
             <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
@@ -30,6 +27,7 @@ To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }
             <span data-ty="input">mesheryctl system dashboard</span>
   </div>
   </div>
+
  </pre>
 
 {% include alert.html type="info" title="Meshery CLI Package Managers" content="In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
@@ -48,7 +46,7 @@ Your default browser will be opened and directed to Meshery's web-based user int
 
 ### Select a Provider
 
-Select from the list of [Providers]({{ site.baseurl }}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen Provider.
+Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />

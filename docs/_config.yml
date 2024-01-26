@@ -65,7 +65,7 @@ fixedNav: 'true' # true or false
 
 permalink: /:year/:title/
 markdown: kramdown
-exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
+exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile, v0.4, v0.5, v0.6]
 
 plugins:
   - jekyll-redirect-from
@@ -76,12 +76,9 @@ sass:
 
 # Collections
 collections:
-  docs:
-    output: true
-    permalink: /:collection/:path
   adapters:
     output: true
-    permalink: /service-meshes/:collection/:path
+    permalink: /extensibility/:collection/:path
     name: adapters
   compatibility:
     output: true
@@ -90,9 +87,10 @@ collections:
   guides:
     output: true
     permalink: /:collection/:path
-  es:
-    output: true
-    permalink: /:collection/:path
+  # Spanish version
+  # es:
+  #   output: true
+  #   permalink: /:collection/:path
   releases:
     output: true
     permalink: project/:collection/:path
@@ -100,18 +98,18 @@ collections:
     output: true
     permalink: reference/mesheryctl/:collection/:path
     name: mesheryctlcommands
-  integrations:
-    output: true
-    permalink: /:collection/:path    
-    name: integrations
+  # integrations:
+  #   output: true
+  #   permalink: /extensibility/:collection/:path    
+  #   name: integrations
 
 # Defaults
 defaults:
-  - scope:
-      path: "_docs"
-      type: "docs"
-    values:
-      layout: page
+  # - scope:
+  #     path: "_docs"
+  #     type: "docs"
+  #   values:
+  #     layout: page
   -
     scope:
       path: ""

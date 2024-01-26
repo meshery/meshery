@@ -235,7 +235,7 @@ type MesheryControllersStatusListItem struct {
 	ContextID  string                  `json:"contextId"`
 	Controller MesheryController       `json:"controller"`
 	Status     MesheryControllerStatus `json:"status"`
-	Version    *string                 `json:"version,omitempty"`
+	Version    string                  `json:"version"`
 }
 
 type MesheryResult struct {
@@ -251,6 +251,9 @@ type MesheryResult struct {
 	UserID             *string                `json:"user_id,omitempty"`
 	UpdatedAt          *string                `json:"updated_at,omitempty"`
 	CreatedAt          *string                `json:"created_at,omitempty"`
+}
+
+type Mutation struct {
 }
 
 type NameSpace struct {
@@ -332,6 +335,7 @@ type PatternResult struct {
 	Errmsg      *string                `json:"errmsg,omitempty"`
 	CreatedAt   *string                `json:"created_at,omitempty"`
 	UpdatedAt   *string                `json:"updated_at,omitempty"`
+	Type        *NullString            `json:"type,omitempty"`
 }
 
 type PerfPageProfiles struct {
@@ -369,6 +373,9 @@ type PerfProfile struct {
 	Metadata          map[string]interface{} `json:"metadata,omitempty"`
 }
 
+type Query struct {
+}
+
 type ReSyncActions struct {
 	ClearDb   string `json:"clearDB"`
 	ReSync    string `json:"ReSync"`
@@ -383,6 +390,9 @@ type Resource struct {
 type ServiceMeshFilter struct {
 	Type          *MeshType `json:"type,omitempty"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs,omitempty"`
+}
+
+type Subscription struct {
 }
 
 type TelemetryComp struct {

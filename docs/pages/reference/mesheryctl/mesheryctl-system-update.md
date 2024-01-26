@@ -17,7 +17,6 @@ Pull new Meshery images/manifest files.
 ## Synopsis
 
 Pull new Meshery container images and manifests from artifact repository.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system update [flags]

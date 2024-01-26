@@ -288,6 +288,8 @@ paths:
 
                 ```?search={environments_name}``` If search is non empty then a greedy search is performed
 
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
+
                 Returns all connections of environment
             operationId: idGetConnectionsOfEnvironmentHandler
             responses:
@@ -684,16 +686,6 @@ paths:
             summary: Handle PUT request for updating an existing connection
             tags:
                 - PutConnection
-    /api/integrations/connections/{connectionKind}/transitions:
-        get:
-            description: Get all possible state transitions for a particular connection kind.
-            operationId: idGetConnectionsStatus
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryConnectionsStatusPage'
-            summary: Handle GET request for getting all possible connection transitions
-            tags:
-                - GetAvailableTransitionsByKind
     /api/integrations/connections/status:
         get:
             description: Get all connections status
@@ -1229,7 +1221,7 @@ paths:
                 - GetAllMeshmodelRelationships
     /api/meshmodels/relationships/evaluate:
         post:
-            description: Handle POST request for evaluating relationships in the provided design file by running a set of provided rego queries on the design file
+            description: Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
             operationId: relationshipPolicyEvalPayloadWrapper
             responses: {}
             tags:
@@ -1391,6 +1383,24 @@ paths:
                 "200":
                     description: ""
             summary: Handle POST request for Pattern Deploy
+            tags:
+                - PatternsAPI
+    /api/pattern/download/{id}:
+        get:
+            description: Fetches the pattern with the given id
+            operationId: idGetMesheryPattern
+            parameters:
+                - description: id for a specific
+                  format: uuid
+                  in: path
+                  name: id
+                  required: true
+                  type: string
+                  x-go-name: ID
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
+            summary: Handle GET for a Meshery Pattern
             tags:
                 - PatternsAPI
     /api/pattern/download/{id}/{sourcetype}:
@@ -2394,7 +2404,7 @@ paths:
                 - PostWorkspace
     /api/workspaces/{id}/designs:
         get:
-            description: |4-
+            description: |-
                 ```?order={field}``` orders on the passed field
 
                 ```?page={page-number}``` Default page number is 0
@@ -2403,7 +2413,7 @@ paths:
 
                 ```?search={name}``` If search is non empty then a greedy search is performed
 
-                ```?filter={condition}```
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
             operationId: idGetWorkspaceMesheryDesigns
             responses:
                 "200":
@@ -2432,7 +2442,7 @@ paths:
                 - WorkspacesAPI
     /api/workspaces/{id}/environments:
         get:
-            description: |4-
+            description: |-
                 ```?order={field}``` orders on the passed field
 
                 ```?page={page-number}``` Default page number is 0
@@ -2443,7 +2453,7 @@ paths:
 
                 ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
 
-                ```?filter={condition}```
+                ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
             operationId: idGetWorkspaceEnvironments
             responses:
                 "200":
@@ -2621,6 +2631,8 @@ responses:
                 type: string
             displayhostname:
                 type: string
+            evaluationQuery:
+                type: string
             hostID: {}
             hostname:
                 type: string
@@ -2628,8 +2640,6 @@ responses:
                 type: string
             metadata: {}
             model: {}
-            rego_query:
-                type: string
             selectors: {}
             subType:
                 type: string

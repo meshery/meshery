@@ -22,13 +22,21 @@ import SearchBar from '../../../utils/custom-search';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { JsonParse, camelcaseToSnakecase, getColumnValue } from '../../../utils/utils';
+import {
+  JsonParse,
+  camelcaseToSnakecase,
+  getColumnValue,
+  getVisibilityColums,
+} from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
 import classNames from 'classnames';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 import UniversalFilter from '../../../utils/custom-filter';
+import { updateVisibleColumns } from '../../../utils/responsive-column';
+import { useWindowDimensions } from '../../../utils/dimension';
+import { FormatId } from '../../DataFormatter';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -57,6 +65,7 @@ export default function MeshSyncTable(props) {
     kind: '',
   });
   const StyleClass = useStyles();
+  const { width } = useWindowDimensions();
 
   const icons = {
     [MESHSYNC_STATES.REGISTER]: () => <AssignmentTurnedInIcon />,
@@ -72,6 +81,17 @@ export default function MeshSyncTable(props) {
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
   };
+
+  let colViews = [
+    ['metadata.name', 'xs'],
+    ['apiVersion', 'xs'],
+    ['kind', 'm'],
+    ['cluster_id', 'na'],
+    ['pattern_resources', 'na'],
+    ['metadata.creationTimestamp', 'l'],
+    ['status', 'xs'],
+  ];
+
   const columns = [
     {
       name: 'metadata.name',
@@ -152,6 +172,7 @@ export default function MeshSyncTable(props) {
             />
           );
         },
+        customBodyRender: (value) => <FormatId id={value} />,
       },
     },
     {
@@ -309,19 +330,7 @@ export default function MeshSyncTable(props) {
       name: 'component_metadata',
       label: 'Component Metadata',
       options: {
-        sort: false,
-        sortThirdClickReset: false,
         display: false,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
       },
     },
     {
@@ -454,11 +463,6 @@ export default function MeshSyncTable(props) {
   /**
    * fetch connections when the page loads
    */
-  useEffect(() => {
-    if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder, selectedKind);
-    }
-  }, [page, pageSize, search, sortOrder, selectedKind]);
 
   const getMeshsyncResources = (page, pageSize, search, sortOrder, selectedKind) => {
     setLoading(true);
@@ -515,14 +519,11 @@ export default function MeshSyncTable(props) {
       },
       (res) => {
         setKindOptions(res?.kinds || []);
-        console.log(res?.kinds);
         setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
   };
-
-  console.log('options', kindoptions);
 
   useEffect(() => {
     getAllMeshsyncKind(page, pageSize, search, sortOrder);
@@ -561,13 +562,21 @@ export default function MeshSyncTable(props) {
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
+
+  useEffect(() => {
+    updateCols(columns);
+    if (!loading) {
+      getMeshsyncResources(page, pageSize, search, sortOrder, selectedKind);
+    }
+  }, [page, pageSize, search, sortOrder, selectedKind]);
 
   return (
     <>
@@ -599,7 +608,7 @@ export default function MeshSyncTable(props) {
 
           <CustomColumnVisibilityControl
             id="ref"
-            columns={columns}
+            columns={getVisibilityColums(columns)}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
         </div>

@@ -1,5 +1,5 @@
 import React from "react";
-const InfoIcon = ({ fill = 'currentColor', height, width, style = {} }) => {
+const InfoIcon = ({ fill = 'currentColor', height = 24, width = 24, style = {} }) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} style={style} viewBox="0 0 20 20" fill="none">
       <g clip-path="url(#clip0_19460_1750)">

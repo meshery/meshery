@@ -17,7 +17,6 @@ list models
 ## Synopsis
 
 list name of all registered models
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model list [flags]
@@ -39,6 +38,13 @@ View list of models with specified page number (25 models per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model list --page 2
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+    
 
 </div>
 </pre> 

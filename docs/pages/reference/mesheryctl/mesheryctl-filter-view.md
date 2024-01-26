@@ -17,7 +17,6 @@ View filter(s)
 ## Synopsis
 
 Displays the contents of a specific filter based on name or id
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view [filter-name | ID] [flags]

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FormGroup, FormControlLabel, Grid } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
-import { setOrganization } from '../../lib/store';
+import { setOrganization, setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useGetOrgsQuery } from '../../rtk-query/organization';
@@ -16,6 +16,7 @@ import { withStyles } from '@material-ui/core';
 import { Select, MenuItem, FormControl, FormLabel } from '@material-ui/core';
 import styles from './style';
 import theme from '../../themes/app';
+import { useGetCurrentAbilities } from '../../rtk-query/ability';
 
 const SpacesPreferences = (props) => {
   const {
@@ -26,9 +27,11 @@ const SpacesPreferences = (props) => {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization, classes } = props;
-  console.log('props', props);
+  const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
+
+  useGetCurrentAbilities(organization, props.setKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -43,6 +46,7 @@ const SpacesPreferences = (props) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
+    setSkip(false);
   };
 
   return (
@@ -96,6 +100,7 @@ const SpacesPreferences = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   setOrganization: bindActionCreators(setOrganization, dispatch),
+  setKeys: bindActionCreators(setKeys, dispatch),
 });
 
 const mapStateToProps = (state) => {

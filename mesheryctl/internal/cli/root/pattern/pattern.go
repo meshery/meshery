@@ -31,26 +31,27 @@ var (
 var PatternCmd = &cobra.Command{
 	Use:   "pattern",
 	Short: "Cloud Native Patterns Management",
-	Long:  `Manage service meshes using predefined patterns`,
+	Long: `Manage service meshes using predefined patterns.
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Apply pattern file
+// Apply pattern file:
 mesheryctl pattern apply --file [path to pattern file | URL of the file]
 
-// Delete pattern file
+// Delete pattern file:
 mesheryctl pattern delete --file [path to pattern file]
 
-// View pattern file
+// View pattern file:
 mesheryctl pattern view [pattern name | ID]
 
-// List all patterns
+// List all patterns:
 mesheryctl pattern list
-	`,
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},

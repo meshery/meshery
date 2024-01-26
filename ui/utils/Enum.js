@@ -89,7 +89,7 @@ export const MESHSYNC_STATES = {
   REGISTER: 'register',
 };
 
-export const TRANSFER_COMPONET = {
+export const TRANSFER_COMPONENT = {
   CHIP: 'chip',
   OTHER: 'other',
 };
@@ -104,3 +104,6 @@ export const CONNECTION_STATE_TO_TRANSITION_MAP = {
   [CONNECTION_STATES.DISCONNECTED]: 'Disconnect',
   [CONNECTION_STATES.NOTFOUND]: 'Not Found',
 };
+
+export const FILTER = 'filter';
+export const PATTERN = 'pattern';

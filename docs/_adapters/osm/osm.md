@@ -4,12 +4,13 @@ title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
 port: 10009/gRPC
-project_status: stable
+project_status: archived
 lab: osm-meshery-adapter
 github_link: https://github.com/meshery/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 white_image: /assets/img/service-meshes/osm.svg
-permalink: service-meshes/adapters/osm
+permalink: extensibility/adapters/osm
+redirect_from: service-meshes/adapters/osm
 earliest_version: v0.9.2
 language: en
 ---
@@ -33,7 +34,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ## Lifecycle management
 

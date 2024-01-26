@@ -5,10 +5,11 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
-import { ConditionalTooltip, ResizableCell } from '../../../../utils/utils';
+import { ResizableCell } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { FormatId } from '@/components/DataFormatter';
 
 export const WorkloadTableConfig = (
   switchView,
@@ -38,7 +39,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
-            customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={10} />,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -50,7 +51,6 @@ export const WorkloadTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(value, tableMeta) {
-              console.log(meshSyncResources, value, ';;;;;pp');
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
@@ -71,15 +71,10 @@ export const WorkloadTableConfig = (
           options: {
             sort: true,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
+            setCellProps: () => ({ style: { paddingRight: '0px', width: '0%' } }),
+            setCellHeaderProps: () => ({ style: { paddingRight: '0px' } }),
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
             },
           },
         },
@@ -88,6 +83,8 @@ export const WorkloadTableConfig = (
           label: 'Phase',
           options: {
             sort: false,
+            setCellProps: () => ({ style: { paddingLeft: '0px' } }),
+            setCellHeaderProps: () => ({ style: { paddingLeft: '0px' } }),
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -201,6 +198,7 @@ export const WorkloadTableConfig = (
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
+                    width="10.5rem"
                     handlePing={() => ping(context.name, context.server, context.connection_id)}
                   />
                 </>
@@ -242,6 +240,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -414,6 +413,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -519,7 +519,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -567,6 +566,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -670,7 +670,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -720,6 +719,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -854,7 +854,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -903,6 +902,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1021,7 +1021,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -1068,6 +1067,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1156,7 +1156,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -1205,6 +1204,7 @@ export const WorkloadTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customBodyRender: (value) => <FormatId id={value} />,
           },
         },
         {
@@ -1323,7 +1323,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}

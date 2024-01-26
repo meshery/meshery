@@ -9,16 +9,25 @@
       autocomplete="off"
     />
   </form>
-
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
   <script type="text/javascript">
-    <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
-    <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    // <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    // <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
     (() => {
       window.addEventListener("load", function () {
         let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
-        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        if (scrollElem) {
+         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        }
+        let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
+      activeSections.forEach(function (activeSection) {
+        let parentCollapse = activeSection.closest(".collapse");
+        if (parentCollapse) {
+          parentCollapse.classList.add("show");
+        }
       });
-    })();
+    });
+  })();
   </script>
 
   <nav class="sidebar-nav" id="td-section-nav">
@@ -26,16 +35,19 @@
     <ul class="sidebar-nav__section">
       {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
       page.url | replace: "/", "" }}{% endcapture %}
+
       <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false" aria-controls="section{{forloop.index0}}"> ⇅ </div>
         <a
           href="{% if section.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ section.url }}{% else %}{{
 		  section.external_url }}{% endif %}"
           class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section {% if pageUrl == sectionUrl %} active {% endif %}"
-          >{{ section.title }}
+          > {{ section.title }}
         </a>
   
       {% if section.links %}
-          <ul class="td-sidebar-nav__section">
+          <ul class="td-sidebar-nav__section collapse" id="section{{forloop.index0}}">
             {% for entry in section.links %} {% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{%
             endcapture %}
             <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
@@ -71,7 +83,7 @@
                         class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
                         id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
                         href="{{grandchildUrl}}"
-                        >{{ grandchild.title }}</a
+                        ><strong style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a
                       >
                       </li>
                       {% endfor %} <!-- grandchild -->

@@ -47,10 +47,12 @@ type DefaultLocalProvider struct {
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
-	OrganizationPersister          *OrganizationPersister
-	GenericPersister                *database.Handler
-	KubeClient                      *mesherykube.Client
-	Log                             logger.Handler
+	OrganizationPersister           *OrganizationPersister
+	KeyPersister                    *KeyPersister
+
+	GenericPersister *database.Handler
+	KubeClient       *mesherykube.Client
+	Log              logger.Handler
 }
 
 // Initialize will initialize the local provider
@@ -163,12 +165,7 @@ func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, 
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
-}
-
-
-func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
@@ -1140,9 +1137,9 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			ID:          &id,
 			Name:        "My Org",
 			Country:     "",
-			Region: 		"",
+			Region:      "",
 			Description: "This is default organization",
-			Owner: 		 uuid.Nil,
+			Owner:       uuid.Nil,
 		}
 		_, err := l.OrganizationPersister.SaveOrganization(org)
 		if err != nil {
@@ -1160,6 +1157,11 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
 		return err
 	}
+
+	if err := l.KeyPersister.DB.Migrator().DropTable(&Key{}); err != nil {
+		return err
+	}
+
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
@@ -1259,6 +1261,27 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
 }
 
+// GetKeys returns the list of keys
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
+	keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
+	if err != nil {
+		return nil, err
+	}
+	return keys, nil
+}
+
+// GetKey returns the key for the given keyID
+func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(keyID)
+	return l.KeyPersister.GetUsersKey(id)
+}
+
+// SaveKey saves the given key with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
+	// fmt.Printf(keys)
+	return l.KeyPersister.SaveUsersKeys(keys)
+}
+
 func (l *DefaultLocalProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
@@ -1295,14 +1318,13 @@ func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _ , _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
-
 
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {

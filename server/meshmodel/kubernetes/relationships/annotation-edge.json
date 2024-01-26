@@ -7,6 +7,15 @@
       "lineStyle": "solid",
       "lineColor": "#00B39F",
       "targetArrowShape": "triangle"
+    },
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
     }
   },
   "model": {
@@ -20,7 +29,7 @@
     "metadata": {}
   },
   "subType": "Annotation",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -62,5 +71,5 @@
     "deny": {
       "from": []
     }
-  }
+  }]
 }

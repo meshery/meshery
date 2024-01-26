@@ -11,8 +11,12 @@ import {
   FormControlLabel,
   Checkbox,
   styled,
+  IconButton,
 } from '@material-ui/core';
 import theme from '../themes/app';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 
 const styles = (theme) => ({
   title: {
@@ -77,6 +81,12 @@ const PromptActionButton = styled(Button)(({ theme }) => ({
   minWidth: 100,
 }));
 
+const IconButtonWrapper = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  right: 10,
+  color: theme.palette.secondary.focused,
+}));
+
 export const PROMPT_VARIANTS = {
   WARNING: 'warning',
   DANGER: 'danger',
@@ -94,6 +104,7 @@ class PromptComponent extends React.Component {
       options: [],
       isChecked: false,
       showCheckbox: false,
+      showInfoIcon: null,
     };
     this.promiseInfo = {};
     this.variant = this.props.variant;
@@ -102,7 +113,6 @@ class PromptComponent extends React.Component {
   show = async (passed) => {
     return new Promise((resolve, reject) => {
       this.promiseInfo = { resolve, reject };
-      console.log('show passed', passed);
       this.variant = passed.variant;
       this.setState({
         title: passed.title,
@@ -110,6 +120,7 @@ class PromptComponent extends React.Component {
         options: passed.options,
         showCheckbox: !!passed.showCheckbox,
         show: true,
+        showInfoIcon: passed.showInfoIcon || null,
       });
     });
   };
@@ -129,7 +140,7 @@ class PromptComponent extends React.Component {
   };
 
   render() {
-    const { show, options, title, subtitle, isChecked, showCheckbox } = this.state;
+    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
     return (
@@ -198,6 +209,19 @@ class PromptComponent extends React.Component {
                 {options[0]}{' '}
               </Typography>
             </PromptActionButton>
+            {showInfoIcon && (
+              <CustomTextTooltip
+                backgroundColor="#3C494F"
+                placement="top"
+                interactive={true}
+                style={{ whiteSpace: 'pre-line' }}
+                title={getHyperLinkDiv(showInfoIcon)}
+              >
+                <IconButtonWrapper color="primary">
+                  <InfoOutlinedIcon />
+                </IconButtonWrapper>
+              </CustomTextTooltip>
+            )}
           </DialogActions>
         </Dialog>
       </div>
