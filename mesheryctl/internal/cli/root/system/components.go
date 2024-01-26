@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package system
 
 import (
@@ -8,6 +22,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -20,11 +35,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the `mesheryctl exp components list` command
+// represents the mesheryctl exp components list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
-	Long:  `List all components registered in Meshery Server`,
+	Long:  List all components registered in Meshery Server,
 	Example: `
 	// View list of components
 mesheryctl exp components list
@@ -108,15 +123,46 @@ mesheryctl exp components list --page 2
 		if len(rows) == 0 {
 			// if no component is found
 			utils.Log.Info("No components(s) found")
-		} else {
+			return nil
+		}
+
+		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
+		} else {
+			paginator := utils.NewPaginator(header, rows)
+			paginator.Render()
+			keysEvents, err := keyboard.GetKeys(10)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				_ = keyboard.Close()
+			}()
+
+			for {
+				event := <-keysEvents
+				if event.Err != nil {
+					utils.Log.Error(fmt.Errorf("Unable to capture keyboard events"))
+					break
+				}
+				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+					break
+				}
+				if event.Key == keyboard.KeyArrowDown || event.Key == keyboard.KeyEnter {
+					isLastLine := paginator.AddLine()
+					if isLastLine {
+						break
+					}
+				}
+			}
+			utils.ClearLine()
 		}
 
 		return nil
 	},
 }
 
-// represents the `mesheryctl exp components view [component-name]` subcommand.
+// represents the mesheryctl exp components view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view registered components",
@@ -224,7 +270,7 @@ mesheryctl exp components view [component-name]
 	},
 }
 
-// represents the `mesheryctl exp components search [query-text]` subcommand.
+// represents the mesheryctl exp components search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search registered components",
@@ -309,7 +355,7 @@ mesheryctl exp components search [query-text]
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
+			// if no component is found
 			utils.Log.Info("No components(s) found")
 		} else {
 			utils.PrintToTable(header, rows)
@@ -319,11 +365,11 @@ mesheryctl exp components search [query-text]
 	},
 }
 
-// ComponentsCmd represents the `mesheryctl exp components` command
+// ComponentsCmd represents the mesheryctl exp components command
 var ComponentsCmd = &cobra.Command{
 	Use:   "components",
 	Short: "View list of components and detail of components",
-	Long:  `View list of components and detailed information of a specific component`,
+	Long:  View list of components and detailed information of a specific component,
 	Example: `
 // To view list of components
 mesheryctl exp components list
@@ -353,7 +399,7 @@ mesheryctl exp components view [component-name]
 	},
 }
 
-// `selectComponentPrompt` lets user to select a model if models are more than one
+// selectComponentPrompt lets user to select a model if models are more than one
 
 func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.ComponentDefinition {
 	componentNames := []string{}
