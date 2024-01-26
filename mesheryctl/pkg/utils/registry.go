@@ -2,11 +2,11 @@ package utils
 
 import (
 	"context"
-	"net/http"
 	"encoding/base64"
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -78,17 +78,24 @@ func CreateFiles(path, filetype, name, content string) {
 	}
 }
 
-func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) error {
+func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
 	modelName := FormatName(model.Model)
 	// create dir for model
-	modelDir := filepath.Join(path, modelName)
+	modelDir := filepath.Join(modelPath, modelName)
 	err := os.MkdirAll(modelDir, 0777)
 	if err != nil {
 		return err
 	}
 
+	// create img for model
+	imgDir := filepath.Join(imgPath, modelName)
+	err = os.MkdirAll(imgDir, 0777)
+	if err != nil {
+		return err
+	}
+
 	// create dir for color model icons
-	iconsDir := filepath.Join(modelDir, "icons", "color")
+	iconsDir := filepath.Join(imgDir, "icons", "color")
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
 		return err
@@ -113,13 +120,13 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join("icons", "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForLayer5io(components, modelDir, compIconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDXStyle(components, modelDir, compIconsSubDir)
 	if err != nil {
 		return err
 	}
 
 	// generate markdown file
-	md := model.CreateMarkDownForLayer5(componentMetadata)
+	md := model.CreateMarkDownForMDXStyle(componentMetadata)
 	err = WriteToFile(filepath.Join(modelDir, "index.mdx"), md)
 	if err != nil {
 		return err
@@ -128,18 +135,18 @@ func GenerateLayer5Docs(model ModelCSV, components []ComponentCSV, path string) 
 	return nil
 }
 
-func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (string, error) {
+func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, error) {
 
 	formattedName := FormatName(model.Model)
 
-	iconDir := filepath.Join("../images", "integrations", formattedName)
+	iconDir := filepath.Join(imgPath, formattedName) // "../images", "integrations"
 
 	// generate data.js file
 	jsonItem := model.CreateJSONItem(iconDir)
-	mesheryioDocsJSON += jsonItem + ","
+	docsJSON += jsonItem + ","
 
 	// create color dir for icons
-	colorIconsDir := filepath.Join(path, iconDir, "icons", "color")
+	colorIconsDir := filepath.Join(imgPath, iconDir, "icons", "color")
 	// create svg dir
 	err := os.MkdirAll(colorIconsDir, 0777)
 	if err != nil {
@@ -153,7 +160,7 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 	}
 
 	// create white dir for icons
-	whiteIconsDir := filepath.Join(path, iconDir, "icons", "white")
+	whiteIconsDir := filepath.Join(imgPath, iconDir, "icons", "white")
 	// create svg dir
 	err = os.MkdirAll(whiteIconsDir, 0777)
 	if err != nil {
@@ -166,23 +173,23 @@ func GenerateMesheryioDocs(model ModelCSV, path, mesheryioDocsJSON string) (stri
 		return "", err
 	}
 
-	return mesheryioDocsJSON, nil
+	return docsJSON, nil
 }
 
-func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string) error {
+func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
 
 	modelName := FormatName(model.Model)
 
 	// dir for markdown
-	mdDir := filepath.Join(path, "pages", "integrations")
+	mdDir := filepath.Join(modelPath) // path, "pages", "integrations"
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
 		return err
 	}
 
 	// dir for icons
-	_iconsSubDir := filepath.Join("assets", "img", "integrations", modelName)
-	iconsDir := filepath.Join(path, _iconsSubDir)
+	_iconsSubDir := filepath.Join(imgPath, modelName) // "assets", "img", "integrations"
+	iconsDir := filepath.Join(modelPath, _iconsSubDir)
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
 		return err
@@ -214,13 +221,13 @@ func GenerateMesheryDocs(model ModelCSV, components []ComponentCSV, path string)
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components, path, compIconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(components, modelPath, compIconsSubDir)
 	if err != nil {
 		return err
 	}
 
 	// generate markdown file
-	md := model.CreateMarkDownForMesheryDocs(componentMetadata)
+	md := model.CreateMarkDownForMDStyle(componentMetadata)
 	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
 	if err != nil {
 		return err
@@ -252,7 +259,6 @@ func NewSheetSRV(cred string) (*sheets.Service, error) {
 	}
 	return srv, nil
 }
-
 
 func DownloadCSV(url string) (string, error) {
 	file, err := os.CreateTemp("./", "*.csv")

@@ -116,7 +116,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 	}
 }
 
-func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV, path, svgDir string) (string, error) {
+func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV, path, svgDir string) (string, error) {
 	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
 	if err != nil {
 		return "", err
@@ -169,7 +169,7 @@ func CreateComponentsMetadataAndCreateSVGsForLayer5io(components []ComponentCSV,
 	return componentMetadata, nil
 }
 
-func CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components []ComponentCSV, path, svgDir string) (string, error) {
+func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, path, svgDir string) (string, error) {
 	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
 	if err != nil {
 		return "", err
@@ -241,7 +241,7 @@ func CreateComponentsMetadataAndCreateSVGsForMesheryDocs(components []ComponentC
 //	<Standard Blurb>
 //
 // </p>`
-func (m ModelCSV) CreateMarkDownForLayer5(componentsMetadata string) string {
+func (m ModelCSV) CreateMarkDownForMDXStyle(componentsMetadata string) string {
 	formattedName := FormatName(m.Model)
 	var template string = `---
 title: %s
@@ -298,7 +298,7 @@ published: %s
 	return markdown
 }
 
-// Creates JSON formatted meshmodel attribute item for Meshery docs
+// Creates JSON formatted meshmodel attribute item for JSON Style docs
 func (m ModelCSV) CreateJSONItem(iconDir string) string {
 	formattedModelName := FormatName(m.Model)
 	json := "{"
@@ -318,7 +318,7 @@ func (m ModelCSV) CreateJSONItem(iconDir string) string {
 	return json
 }
 
-func (m ModelCSV) CreateMarkDownForMesheryDocs(componentsMetadata string) string {
+func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata string) string {
 	formattedName := FormatName(m.Model)
 
 	var template string = `---
@@ -381,6 +381,7 @@ display-title: "false"
 
 func (m ModelCSVHelper) Cleanup() error {
 	// remove csv file
+	fmt.Println("Removing CSV file:", m.CSVPath)
 	err := os.Remove(m.CSVPath)
 	if err != nil {
 		return err

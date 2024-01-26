@@ -26,17 +26,18 @@ import (
 )
 
 var (
-	system                        string
-	googleSheetCredential         string
-	sheetID                       string
-	modelsOutputPath              string
-	imgsOutputPath                string
-	GoogleSpreadSheetURL          = "https://docs.google.com/spreadsheets/d/"
-	models                        = []utils.ModelCSV{}
-	components                    = map[string]map[string][]utils.ComponentCSV{}
-	pathToIntegrationsLayer5      string
-	pathToIntegrationsMeshery     string
-	pathToIntegrationsMesheryDocs string
+	system                string
+	googleSheetCredential string
+	sheetID               string
+	modelsOutputPath      string
+	imgsOutputPath        string
+	GoogleSpreadSheetURL  = "https://docs.google.com/spreadsheets/d/"
+	models                = []utils.ModelCSV{}
+	components            = map[string]map[string][]utils.ComponentCSV{}
+	// pathToIntegrationsLayer5      string
+	// pathToIntegrationsMeshery     string
+	// pathToIntegrationsMesheryDocs string
+	outputFormat string
 )
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
@@ -56,21 +57,29 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <
 
 // Publish To Website
 mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
+
+// meshery
+./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery/docs/pages/integrations meshery/docs/assets/img/integrations md
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// if len(args) != 5 {
-		// 	return cmd.Help()
-		// }
+		fmt.Println(len(args), args[len(args)-1])
+		if len(args) != 6 {
+			return cmd.Help()
+		}
 
 		system = args[0]
 		googleSheetCredential = args[1]
 		sheetID = args[2]
-		// modelsOutputPath = args[3]
-		// imgsOutputPath = args[4]
+		modelsOutputPath, _ = filepath.Abs(filepath.Join("../", args[3]))
+		imgsOutputPath, _ = filepath.Abs(filepath.Join("../", args[4]))
+		outputFormat = args[5]
 
-		pathToIntegrationsLayer5 = args[3]
-		pathToIntegrationsMeshery = args[4]
-		pathToIntegrationsMesheryDocs = args[5]
+		fmt.Println(modelsOutputPath, imgsOutputPath)
+		return nil
+
+		// pathToIntegrationsLayer5 = args[3]
+		// pathToIntegrationsMeshery = args[4]
+		// pathToIntegrationsMesheryDocs = args[5]
 
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -113,7 +122,7 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		case "website":
 			return websiteSystem()
 		default:
-			fmt.Errorf("invalid system: %s", system) // update to meshkit
+			fmt.Println("invalid system: %s", system) // update to meshkit
 		}
 
 		err = modelCSVHelper.Cleanup()
@@ -139,13 +148,14 @@ func remoteProviderSystem() error {
 }
 
 func websiteSystem() error {
-	pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsLayer5))
-	pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMeshery))
-	pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMesheryDocs))
+	// pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsLayer5))
+	// pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMeshery))
+	// pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMesheryDocs))
+	var err error
 
-	fmt.Println(pathForLayer5ioIntegrations, pathForMesheryioIntegrations, pathForMesheryDocsIntegrations)
+	// fmt.Println(pathForLayer5ioIntegrations, pathForMesheryioIntegrations, pathForMesheryDocsIntegrations)
 
-	mesheryioDocsJSON := "const data = ["
+	docsJSON := "const data = ["
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
@@ -153,28 +163,48 @@ func websiteSystem() error {
 			comps = []utils.ComponentCSV{}
 		}
 
-		err := utils.GenerateLayer5Docs(model, comps, pathForLayer5ioIntegrations)
-		if err != nil {
-			fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
+		switch outputFormat {
+		case "mdx":
+			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
+			if err != nil {
+				fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
+			}
+		case "md":
+			err := utils.GenerateMDStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates md file
+			if err != nil {
+				fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+			}
+		case "js":
+			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, imgsOutputPath) // json file
+			if err != nil {
+				fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
+			}
 		}
 
-		mesheryioDocsJSON, err = utils.GenerateMesheryioDocs(model, pathForMesheryioIntegrations, mesheryioDocsJSON)
-		if err != nil {
-			fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
-		}
+		// err := utils.GenerateMDXStyleDocs(model, comps, pathForLayer5ioIntegrations) // creates mdx file
+		// if err != nil {
+		// 	fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
+		// }
 
-		err = utils.GenerateMesheryDocs(model, comps, pathForMesheryDocsIntegrations)
-		if err != nil {
-			fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
-		}
+		// docsJSON, err = utils.GenerateJSStyleDocs(model, pathForMesheryioIntegrations, docsJSON) // json file
+		// if err != nil {
+		// 	fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
+		// }
+
+		// err = utils.GenerateMDStyleDocs(model, comps, pathForMesheryDocsIntegrations) // creates md file
+		// if err != nil {
+		// 	fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+		// }
 
 	}
 
-	mesheryioDocsJSON = strings.TrimSuffix(mesheryioDocsJSON, ",")
-	mesheryioDocsJSON += "]; export default data"
-	if err := utils.WriteToFile(filepath.Join(pathForMesheryioIntegrations, "data.js"), mesheryioDocsJSON); err != nil {
-		fmt.Printf("Error writing to file: %v\n", err.Error())
-		return err
+	if outputFormat == "js" {
+		docsJSON = strings.TrimSuffix(docsJSON, ",")
+		docsJSON += "]; export default data"
+		if err := utils.WriteToFile(filepath.Join(modelsOutputPath, "data.js"), docsJSON); err != nil {
+			fmt.Printf("Error writing to file: %v\n", err.Error())
+			return err
+		}
 	}
 
 	return nil
