@@ -224,8 +224,6 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 
 	// generate components metadata and create svg files
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
-	// fmt.Println("iconSubDir: ", _iconsSubDir)
-	// compIconsSubDir := filepath.Join(_iconsSubDir, "components")
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
 	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(components, _imgOutputPath, _iconsSubDir)
 	if err != nil {

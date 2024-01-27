@@ -34,10 +34,7 @@ var (
 	GoogleSpreadSheetURL  = "https://docs.google.com/spreadsheets/d/"
 	models                = []utils.ModelCSV{}
 	components            = map[string]map[string][]utils.ComponentCSV{}
-	// pathToIntegrationsLayer5      string
-	// pathToIntegrationsMeshery     string
-	// pathToIntegrationsMesheryDocs string
-	outputFormat string
+	outputFormat          string
 )
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
@@ -70,14 +67,9 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		system = args[0]
 		googleSheetCredential = args[1]
 		sheetID = args[2]
-		// modelsOutputPath, _ = filepath.Abs(filepath.Join("../", args[3]))
-		// imgsOutputPath, _ = filepath.Abs(filepath.Join("../", args[4]))
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
 		outputFormat = args[5]
-
-		// fmt.Println(strings.Split(modelsOutputPath, "/"), strings.Split(modelsOutputPath, "/"))
-		// return nil
 
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -114,13 +106,17 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 
 		switch system {
 		case "meshery":
-			return mesherySystem()
+			err = mesherySystem()
 		case "remote-provider":
-			return remoteProviderSystem()
+			err = remoteProviderSystem()
 		case "website":
-			return websiteSystem()
+			err = websiteSystem()
 		default:
-			fmt.Println("invalid system: %s", system) // update to meshkit
+			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
+		}
+
+		if err != nil {
+			return err
 		}
 
 		err = modelCSVHelper.Cleanup()
@@ -146,12 +142,7 @@ func remoteProviderSystem() error {
 }
 
 func websiteSystem() error {
-	// pathForLayer5ioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsLayer5))
-	// pathForMesheryioIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMeshery))
-	// pathForMesheryDocsIntegrations, _ := filepath.Abs(filepath.Join("../", pathToIntegrationsMesheryDocs))
 	var err error
-
-	// fmt.Println(pathForLayer5ioIntegrations, pathForMesheryioIntegrations, pathForMesheryDocsIntegrations)
 
 	docsJSON := "const data = ["
 	for _, model := range models {
