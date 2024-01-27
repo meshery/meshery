@@ -3,7 +3,8 @@ layout: default
 title: Install Meshery CLI on Linux or Mac
 permalink: installation/linux-mac
 type: installation
-category: linux-mac
+# category: linux-mac
+type-child: linux-mac
 redirect_from:
 - installation/platforms/linux-mac
 display-title: "false"

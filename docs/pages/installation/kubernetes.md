@@ -3,7 +3,8 @@ layout: default
 title: Kubernetes
 permalink: installation/kubernetes
 type: installation
-category: kubernetes
+# category: kubernetes
+type-child: kubernetes
 redirect_from:
 - installation/platforms/kubernetes
 display-title: "false"

@@ -70,8 +70,36 @@
           </li>
 
           <ul style="margin-bottom: 0;" id="section01">
+            {% for child in sorted_pages %}
+            {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
+            child.language == "en" and child.category == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+                {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
+                aria-controls="section{{forloop.index0}}"> ↆ </div>
+                {% endif %}
+            </li>
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="installation" and grandchild.category!="integrations" and grandchild.list=="include" and
+              grandchild.language == "en" and grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
+              </li>
+              {% endif %}
+              {% endfor %}
+              
+            </ul>
+            {% endif %}
 
-            <li id="docker-ↆ">
+            {% endif %}
+              {% endfor %}
+            <!-- <li id="docker-ↆ">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-docker-ↆ"
                 href="/installation/docker">Docker </a>
               <div class="toggle" data-toggle="collapse" data-target="#section02" aria-expanded="false"
@@ -79,26 +107,25 @@
             </li>
 
             <ul style="margin-bottom: 0;" id="section02">
-              {% for child in sorted_pages %}
-              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
-              child.language == "en" and child.category=="docker" and child.title!="Docker" -%}
-              <li id="{{ child.title | slugify }}">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
-                  href="{{ site.baseurl }}{{ child.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="installation" and grandchild.category!="integrations" and grandchild.list=="include" and
+              grandchild.language == "en" and grandchild.category=="docker" and grandchild.title!="Docker" -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
               </li>
               {% endif %}
               {% endfor %}
-              <!-- grandchild -->
             </ul>
 
-            <!-- end grandchild -->
+            
 
             <li id="github-codespaces">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-github-codespaces"
                 href="/installation/codespaces">GitHub Codespaces</a>
             </li>
-            <!-- end grandchild -->
+            
 
             <li id="kubernetes-ↆ">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-kubernetes-ↆ"
@@ -139,10 +166,10 @@
               </li>
               {% endif %}
               {% endfor %}
-              <!-- grandchild -->
+              
             </ul>
 
-            <!-- end grandchild -->
+            
 
             <li id="windows-ↆ">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-windows-ↆ"
@@ -163,148 +190,13 @@
               </li>
               {% endif %}
               {% endfor %}
-            </ul>
+            </ul> -->
 
-            <!-- end grandchild -->
-            <!-- children -->
+            
           </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-          <!--  section.links -->
+          
         </ul>
-        <!--  section.links -->
-      </li>
-    </ul> <!-- end of "sidebar-nav__section" -->
-
-    <ul class="sidebar-nav__section">
-
-
-      <li class="sidebar-nav__section-title">
-        <!-- Toggle button -->
-        <div class="toggle" data-toggle="collapse" data-target="#section1" aria-expanded="false"
-          aria-controls="section1"> ⇅ </div>
-        <a href="/project" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🧑‍💻 Contributing &
-          Community
-        </a>
-
-
-        <ul class="td-sidebar-nav__section collapse" id="section1">
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/project/community"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Community</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/project/contributing"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Contributing </a>
-            <div class="toggle" data-toggle="collapse" data-target="#section06" aria-expanded="false"
-              aria-controls="section06"> ↆ </div>
-          </li>
-
-          <ul style="margin-bottom: 0;" id="section06">
-
-
-            <li id="build-release-ci-ↆ">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-build-release-ci-ↆ"
-                href="/project/contributing/build-and-release">Build & Release (CI) </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section07" aria-expanded="false"
-                aria-controls="section07"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section07">
-
-              <li id="end-to-end-testing">
-                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-end-to-end-testing"
-                  href="/project/contributing/contributing-cypress"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">End-to-End Testing</strong></a>
-              </li>
-              <!-- grandchild -->
-            </ul>
-
-            <!-- end grandchild -->
-
-            <li id="adapters">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-adapters"
-                href="/project/contributing/contributing-adapters">Adapters</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="cli-ↆ">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-cli-ↆ"
-                href="/project/contributing/contributing-cli">CLI ↆ</a>
-              <div class="toggle" data-toggle="collapse" data-target="#section08" aria-expanded="false"
-                aria-controls="section08"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section08">
-
-              <li id="design-principles">
-                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-design-principles"
-                  href="/project/contributing/contributing-cli-guide"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Design Principles</strong></a>
-              </li>
-              <!-- grandchild -->
-            </ul>
-
-            <!-- end grandchild -->
-
-            <li id="docs">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docs"
-                href="/project/contributing/contributing-docs">Docs</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="server-ↆ">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-ↆ"
-                href="/project/contributing/contributing-server">Server </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section09" aria-expanded="false"
-                aria-controls="section09"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section09">
-
-              <li id="server-events">
-                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-events"
-                  href="/project/contributing/contributing-server-events"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Events</strong></a>
-              </li>
-
-              <li id="server-errors">
-                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-errors"
-                  href="/project/contributing/contributing-error"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Errors</strong></a>
-              </li>
-              <!-- grandchild -->
-            </ul>
-
-            <!-- end grandchild -->
-
-            <li id="ui">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-ui"
-                href="/project/contributing/contributing-ui">UI</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="docker-extension">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docker-extension"
-                href="/project/contributing/contributing-docker-extension">Docker Extension</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="models">
-              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-models"
-                href="/project/contributing/contributing-models">Models</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-          <!--  section.links -->
-        </ul>
-        <!--  section.links -->
+        
       </li>
     </ul> <!-- end of "sidebar-nav__section" -->
 
@@ -888,6 +780,138 @@
             <li id="gitops-snapshots">
               <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-extensions-ↆ-gitops-snapshots"
                 href="/extensions/snapshot">GitOps: Snapshots</a>
+            </li>
+            <!-- end grandchild -->
+            <!-- children -->
+          </ul>
+          <!-- end children -->
+          <!-- end pageurl -->
+          <!--  section.links -->
+        </ul>
+        <!--  section.links -->
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section1" aria-expanded="false"
+          aria-controls="section1"> ⇅ </div>
+        <a href="/project" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🧑‍💻 Contributing &
+          Community
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section1">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/project/community"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Community</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/project/contributing"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Contributing </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section06" aria-expanded="false"
+              aria-controls="section06"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section06">
+
+
+            <li id="build-release-ci-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-build-release-ci-ↆ"
+                href="/project/contributing/build-and-release">Build & Release (CI) </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section07" aria-expanded="false"
+                aria-controls="section07"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section07">
+
+              <li id="end-to-end-testing">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-end-to-end-testing"
+                  href="/project/contributing/contributing-cypress"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">End-to-End Testing</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="adapters">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-adapters"
+                href="/project/contributing/contributing-adapters">Adapters</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="cli-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-cli-ↆ"
+                href="/project/contributing/contributing-cli">CLI ↆ</a>
+              <div class="toggle" data-toggle="collapse" data-target="#section08" aria-expanded="false"
+                aria-controls="section08"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section08">
+
+              <li id="design-principles">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-design-principles"
+                  href="/project/contributing/contributing-cli-guide"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Design Principles</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="docs">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docs"
+                href="/project/contributing/contributing-docs">Docs</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="server-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-ↆ"
+                href="/project/contributing/contributing-server">Server </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section09" aria-expanded="false"
+                aria-controls="section09"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section09">
+
+              <li id="server-events">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-events"
+                  href="/project/contributing/contributing-server-events"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Events</strong></a>
+              </li>
+
+              <li id="server-errors">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-errors"
+                  href="/project/contributing/contributing-error"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Errors</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="ui">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-ui"
+                href="/project/contributing/contributing-ui">UI</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="docker-extension">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docker-extension"
+                href="/project/contributing/contributing-docker-extension">Docker Extension</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="models">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-models"
+                href="/project/contributing/contributing-models">Models</a>
             </li>
             <!-- end grandchild -->
             <!-- children -->
