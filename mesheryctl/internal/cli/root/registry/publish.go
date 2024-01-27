@@ -54,7 +54,7 @@ var publishCmd = &cobra.Command{
 	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider and Meshery by reading from a Google Spreadsheet.`,
 	Example: `
 // Publish To System
-mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
+mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
 // Publish To Meshery
 mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
@@ -77,7 +77,7 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println(len(args), args[len(args)-1])
-		if len(args) != 6 {
+		if len(args) != 5 {
 			return cmd.Help()
 		}
 
@@ -86,6 +86,10 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		sheetID = args[2]
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
+
+		if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
+			return fmt.Errorf("invalid output format: %s", outputFormat)
+		}
 
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -212,10 +216,11 @@ func init() {
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format (supported: md, mdx, js)")
-	publishCmd.MarkFlagRequired("system")
-	publishCmd.MarkFlagRequired("google-sheet-credential")
-	publishCmd.MarkFlagRequired("sheet-id")
-	publishCmd.MarkFlagRequired("models-output-path")
-	publishCmd.MarkFlagRequired("imgs-output-path")
 	publishCmd.MarkFlagRequired("output-format")
+
+	// publishCmd.MarkFlagRequired("system")
+	// publishCmd.MarkFlagRequired("google-sheet-credential")
+	// publishCmd.MarkFlagRequired("sheet-id")
+	// publishCmd.MarkFlagRequired("models-output-path")
+	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
