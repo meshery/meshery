@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitUtils "github.com/layer5io/meshkit/utils"
 	// "github.com/utils/errors"
 
 	"github.com/spf13/cobra"
@@ -90,7 +91,8 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 			return fmt.Errorf("invalid output format: %s", outputFormat)
 		}
 
-		srv, err := utils.NewSheetSRV(googleSheetCredential)
+		// move to meshkit
+		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
 			return err
 		}
@@ -197,7 +199,7 @@ func websiteSystem() error {
 		docsJSON = strings.TrimSuffix(docsJSON, ",")
 		docsJSON += "]; export default data"
 		mOut, _ := filepath.Abs(filepath.Join("../", modelsOutputPath, "data.js"))
-		if err := utils.WriteToFile(mOut, docsJSON); err != nil {
+		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
 			fmt.Printf("Error writing to file: %v\n", err.Error())
 			return err
 		}
@@ -208,6 +210,7 @@ func websiteSystem() error {
 
 func init() {
 	// these flags are making the command too long. So currently using args instead of flags @theBeginner86
+	
 	// publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
 	// publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
 	// publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")

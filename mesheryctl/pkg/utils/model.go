@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/utils/csv"
-	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/layer5io/meshkit/utils"
 )
 
 var (
@@ -64,7 +64,8 @@ type ModelCSVHelper struct {
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-	csvPath, err := DownloadCSV(sheetURL)
+	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, err
 	}
@@ -116,102 +117,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 	}
 }
 
-func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV, path, svgDir string) (string, error) {
-	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
-	if err != nil {
-		return "", err
-	}
-	componentMetadata := `[`
-	for idx, comp := range components {
-		componentTemplate := `
-{
-"name": "%s",
-"colorIcon": "%s",
-"whiteIcon": "%s",
-"description": "%s",
-}`
 
-		// add comma if not last component
-		if idx != len(components)-1 {
-			componentTemplate += ","
-		}
-
-		compName := FormatName(manifests.FormatToReadableString(comp.Component))
-		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
-		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
-
-		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
-
-		// create color svg dir
-		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
-		if err != nil {
-			return "", err
-		}
-
-		// create white svg dir
-		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
-		if err != nil {
-			return "", err
-		}
-
-		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
-		if err != nil {
-			return "", err
-		}
-		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	componentMetadata += `]`
-
-	return componentMetadata, nil
-}
-
-func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, path, svgDir string) (string, error) {
-	err := os.MkdirAll(filepath.Join(path), 0777)
-	if err != nil {
-		return "", err
-	}
-	componentMetadata := ""
-	for _, comp := range components {
-		componentTemplate := `
-- name: %s
-  colorIcon: %s
-  whiteIcon: %s
-  description: %s`
-
-		compName := FormatName(manifests.FormatToReadableString(comp.Component))
-		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
-		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
-
-		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
-
-		// create color svg dir
-		err = os.MkdirAll(filepath.Join(path, compName, "icons", "color"), 0777)
-		if err != nil {
-			return "", err
-		}
-
-		// create white svg dir
-		err = os.MkdirAll(filepath.Join(path, compName, "icons", "white"), 0777)
-		if err != nil {
-			return "", err
-		}
-
-		err = WriteSVG(filepath.Join(path, compName, "icons", "color", compName+"-color.svg"), comp.SVGColor)
-		if err != nil {
-			return "", err
-		}
-		err = WriteSVG(filepath.Join(path, compName, "icons", "white", compName+"-white.svg"), comp.SVGWhite)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	return componentMetadata, nil
-}
 
 // template := `---
 // title: <model-display-name>
@@ -242,7 +148,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 //
 // </p>`
 func (m ModelCSV) CreateMarkDownForMDXStyle(componentsMetadata string) string {
-	formattedName := FormatName(m.Model)
+	formattedName := utils.FormatName(m.Model)
 	var template string = `---
 title: %s
 subtitle: %s
@@ -300,7 +206,7 @@ published: %s
 
 // Creates JSON formatted meshmodel attribute item for JSON Style docs
 func (m ModelCSV) CreateJSONItem(iconDir string) string {
-	formattedModelName := FormatName(m.Model)
+	formattedModelName := utils.FormatName(m.Model)
 	json := "{"
 	json += fmt.Sprintf("\"name\":\"%s\"", m.Model)
 	// If SVGs exist, then add the paths to json
@@ -319,7 +225,7 @@ func (m ModelCSV) CreateJSONItem(iconDir string) string {
 }
 
 func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata string) string {
-	formattedName := FormatName(m.Model)
+	formattedName := utils.FormatName(m.Model)
 
 	var template string = `---
 layout: enhanced
