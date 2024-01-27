@@ -29,6 +29,10 @@ type ComponentCSV struct {
 	LogoURL            string `json:"logoURL"`
 	Genealogy          string `json:"genealogy"`
 	IsAnnotation       string `json:"isAnnotation"`
+
+	ModelDisplayName string `json:"modelDisplayName"`
+	Category         string `json:"category"`
+	SubCategory      string `json:"subCategory"`
 }
 type ComponentCSVHelper struct {
 	SpreadsheetID  int64

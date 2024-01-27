@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
 )
@@ -53,6 +54,24 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites"`
 }
 
+func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
+	model := v1alpha1.Model{
+		Name:        mcv.Model,
+		Version:     version,
+		DisplayName: mcv.ModelDisplayName,
+		Metadata:    map[string]interface{}{
+			"isAnnotation": mcv.IsAnnotation,
+			"svgColor": mcv.SVGColor,
+			"svgWhite": mcv.SVGWhite,
+			"svgComplete": mcv.SVGComplete,
+		},
+		Category: v1alpha1.Category{
+			Name: mcv.Category,
+		},
+	}
+	return model
+}
+
 type ModelCSVHelper struct {
 	SpreadsheetID  int64
 	SpreadsheetURL string
@@ -79,7 +98,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 }
 
 func (mch *ModelCSVHelper) ParseModelsSheet() {
-	defer func(){
+	defer func() {
 		_ = os.RemoveAll(mch.CSVPath)
 	}()
 	ch := make(chan ModelCSV, 1)
