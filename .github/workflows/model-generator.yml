@@ -1,0 +1,112 @@
+name: MeshModel Component Generator and Updater
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  generate-components:
+    name: Generate Components
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+          
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+#       - name: Setup Cache
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/go/pkg/mod
+#           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#           restore-keys: |
+#             ${{ runner.os }}-go-
+
+      - name: Pull changes from remote
+        run: git pull origin master
+      - name: Build mesheryctl
+        run: |
+            cd mesheryctl; make;
+      - name: Generate Models and Components
+        run: |
+          ./mesheryctl registry import --spreadsheet_id "17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw" --spreadsheet_cred ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+
+      - name: Commit changes 
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "New Meshmodel components generated"
+          branch: master
+      
+      - name: Send Email on Meshmodel Generators Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Meshmodel Generator" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.
+
+            
+  update-components:
+    name: Update Components
+    needs: generate-components
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+          
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.21"
+      - name: Pull changes from remote
+        run: git pull origin master    
+      - name: Build mesheryctl
+        run: |
+            cd mesheryctl; make;
+      - name: Run Component Updater
+        run: |
+          ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw" --spreadsheet_cred $CRED
+      - name: Commit changes 
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "Meshmodel components updated"
+          branch: master
+      - name: Send Email on Meshmodel Updaters Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+            server_address: smtp.gmail.com
+            server_port: 465
+            username: ${{ secrets.MAIL_USERNAME }}
+            password: ${{ secrets.MAIL_PASSWORD }}
+            subject: GitHub Actions - Workflow Failure
+            from: |
+              "Meshmodel Updater" <no-reply@meshery.io>
+            to: developers@meshery.io
+            body: |
+              The GitHub Actions workflow in ${{ github.repository }} has failed.
+              You can find more details in the GitHub Actions log ${{ github.workflow }}.
