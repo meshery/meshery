@@ -37,6 +37,15 @@ var (
 	outputFormat          string
 )
 
+// Example publishing to meshery docs
+//./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery/docs/pages/integrations meshery/docs/assets/img/integrations md
+
+// Example publishing to mesheryio docs
+//./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration js
+
+// Example publishing to layer5 docs
+// ./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations mdx
+
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
@@ -54,15 +63,6 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <
 
 // Publish To Website
 mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
-
-// meshery
-./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery/docs/pages/integrations meshery/docs/assets/img/integrations md
-
-// meshery.io
-./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration js
-
-// layer5.io
- ./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations mdx
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println(len(args), args[len(args)-1])
