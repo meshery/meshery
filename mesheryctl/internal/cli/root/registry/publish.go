@@ -69,14 +69,13 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 // cd docs;
 // mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
-// Publishing to mesheryio docs
+// Publishing to mesheryio site
 // mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-// Publishing to layer5 docs
+// Publishing to layer5 site
 // mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println(len(args), args[len(args)-1])
 		if len(args) != 5 {
 			return cmd.Help()
 		}
