@@ -48,12 +48,12 @@ var updateCmd = &cobra.Command{
 		logDirPath := filepath.Join(mutils.GetHome(), ".meshery", "logs")
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
-			return ErrUpdateRegistry(err)
+			return ErrUpdateRegistry(err, modelLocation)
 		}
 		logFilePath := filepath.Join(logDirPath, "registry-update")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
-			return ErrUpdateRegistry(err)
+			return ErrUpdateRegistry(err, modelLocation)
 		}
 		utils.Log.UpdateLogOutput(logFile)
 		return nil
@@ -108,7 +108,7 @@ func InvokeCompUpdate() error {
 
 	err = componentCSVHelper.ParseComponentsSheet()
 	if err != nil {
-		err = ErrUpdateRegistry(err)
+		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
 		return err
 	}
@@ -157,19 +157,19 @@ func InvokeCompUpdate() error {
 					compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
 					componentByte, err := os.ReadFile(compPath)
 					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 						continue
 					}
 					componentDef := v1alpha1.ComponentDefinition{}
 					err = json.Unmarshal(componentByte, &componentDef)
 					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 						continue
 					}
 
 					err = component.UpdateCompDefinition(&componentDef)
 					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 						continue
 					}
 					err = writeToFileSystem[v1alpha1.ComponentDefinition](compPath, componentDef)

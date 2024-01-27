@@ -55,7 +55,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *v1alpha1.ComponentDefinitio
 		return err
 	}
 	metadata = utils.MergeMaps(metadata, compDef.Metadata)
-	
+
 	for _, key := range compMetadataValues {
 		metadata[key] = compMetadata[key]
 	}
