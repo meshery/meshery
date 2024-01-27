@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -32,7 +33,36 @@ type ComponentCSV struct {
 	LogoURL            string `json:"logoURL"`
 	Genealogy          string `json:"genealogy"`
 	IsAnnotation       string `json:"isAnnotation"`
+
+	ModelDisplayName string `json:"modelDisplayName"`
+	Category         string `json:"category"`
+	SubCategory      string `json:"subCategory"`
 }
+
+// "isModelAnnotation": "FALSE", is presnt in comp metadata is it required?
+// "published": true, is present in comp metadata is it required?
+// subCategory should be in comp metadata?
+// isCustomResource? is present in comp metadata is it required? what is is for?
+var compMetadataValues = []string{
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "genealogy", "isAnnotation", "shape", "subCategory",
+}
+
+func (c *ComponentCSV) UpdateCompDefinition(compDef *v1alpha1.ComponentDefinition) error {
+
+	metadata := map[string]interface{}{}
+	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
+	if err != nil {
+		return err
+	}
+	metadata = utils.MergeMaps(metadata, compDef.Metadata)
+	
+	for _, key := range compMetadataValues {
+		metadata[key] = compMetadata[key]
+	}
+	compDef.Metadata = metadata
+	return nil
+}
+
 type ComponentCSVHelper struct {
 	SpreadsheetID  int64
 	SpreadsheetURL string

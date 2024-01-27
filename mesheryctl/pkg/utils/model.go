@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -51,6 +52,25 @@ type ModelCSV struct {
 	Screenshots        string `json:"screenshots"`
 	FullPage           string `json:"fullPage"`
 	PublishToSites     string `json:"publishToSites"`
+}
+
+func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
+	model := v1alpha1.Model{
+		Name:        mcv.Model,
+		Version:     version,
+		DisplayName: mcv.ModelDisplayName,
+		Metadata: map[string]interface{}{
+			"isAnnotation": mcv.IsAnnotation,
+			"svgColor":     mcv.SVGColor,
+			"svgWhite":     mcv.SVGWhite,
+			"svgComplete":  mcv.SVGComplete,
+			"subCategory":  mcv.SubCategory, // move as first class attribute
+		},
+		Category: v1alpha1.Category{
+			Name: mcv.Category,
+		},
+	}
+	return model
 }
 
 type ModelCSVHelper struct {

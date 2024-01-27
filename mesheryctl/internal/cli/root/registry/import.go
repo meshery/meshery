@@ -10,7 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry/helpers"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -24,9 +23,6 @@ import (
 //https://docs.google.com/spreadsheets/d/e/2PACX-1vRPea3kydCnCYHBe2nmj8fV-XJeVi1nTQMkMWX0MYwyKeORpooM7at2v5RNpYEu-iRQoCi3xS-JP4gO/pub?output=csv
 
 var (
-	spreadsheeetID   string
-	spreadsheeetCred string
-
 	outputLocation string
 
 	pathToRegistrantConnDefinition string
@@ -47,7 +43,7 @@ var importCmd = &cobra.Command{
 	`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("test ", spreadsheeetCred, spreadsheeetID, pathToRegistrantConnDefinition, pathToRegistrantCredDefinition)
+		fmt.Println("spreadsheeetCred:  ", spreadsheeetCred, "spreadsheeetID: ", spreadsheeetID, pathToRegistrantConnDefinition, pathToRegistrantCredDefinition)
 		var err error
 		if spreadsheeetID != "" {
 			// err := os.Setenv("CRED", spreadsheeetCred)
@@ -73,15 +69,13 @@ var importCmd = &cobra.Command{
 
 func InvokeGenerationFromSheet() error {
 	// _spreadsheetID, _ := strconv.Atoi(spreadsheeetID)
-	modelCSVHelper, err := helpers.NewModelCSVHelper(GoogleSpreadSheetURL, "Models", 1502185467)
+	modelCSVHelper, err := utils.NewModelCSVHelper(GoogleSpreadSheetURL, "Models", 1502185467)
 	if err != nil {
 		return err // add meshkit err
 	}
-	if err != nil {
-		return err // add meshkit err
-	}
+	
 	modelCSVHelper.ParseModelsSheet()
-	fmt.Println("length of models: ", len(modelCSVHelper.Models))
+	fmt.Println("total models: ", len(modelCSVHelper.Models))
 	weightedSem := semaphore.NewWeighted(20)
 	pwd, _ := os.Getwd()
 
@@ -95,7 +89,7 @@ func InvokeGenerationFromSheet() error {
 		}
 		utils.Log.Info("Current model: ", model.Model)
 		wg.Add(1)
-		go func(model helpers.ModelCSV) {
+		go func(model utils.ModelCSV) {
 			defer func() {
 				defer wg.Done()
 				weightedSem.Release(1)
@@ -125,7 +119,7 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, modelDefPath))
 				return
 			}
-			
+
 			fmt.Println("AFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
@@ -190,14 +184,6 @@ func init() {
 
 	// importCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
 
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
-
-	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
-
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
-	// importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
-	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodels", "location to output generated models, defaults to ../server/meshmodels")
 	// importCmd.MarkFlagsMutuallyExclusive()
 
 }

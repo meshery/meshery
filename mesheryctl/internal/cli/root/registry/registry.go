@@ -17,19 +17,24 @@ package registry
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"errors"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
+
 var (
 	availableSubcommands = []*cobra.Command{importCmd, publishCmd}
+
+	spreadsheeetID   string
+	spreadsheeetCred string
 )
+
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Meshery Registry Management",
 	Long:  `Manage the state and configuration of Meshery Registry.`,
-		Example: `
+	Example: `
 	mesheryctl registry [subcommand]
 	`,
 
@@ -46,4 +51,13 @@ var RegistryCmd = &cobra.Command{
 
 func init() {
 	RegistryCmd.AddCommand(availableSubcommands...)
+	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
+	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
+
+	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
+
+	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
+	// importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
+	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodels", "location to output generated models, defaults to ../server/meshmodels")
+
 }

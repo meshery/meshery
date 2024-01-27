@@ -33,7 +33,6 @@ var (
 	sheetID               string
 	modelsOutputPath      string
 	imgsOutputPath        string
-	GoogleSpreadSheetURL  = meshkitUtils.GoogleSpreadSheetURL
 	models                = []utils.ModelCSV{}
 	components            = map[string]map[string][]utils.ComponentCSV{}
 	outputFormat          string

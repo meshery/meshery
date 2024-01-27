@@ -5,6 +5,8 @@ import "github.com/layer5io/meshkit/errors"
 var (
 	ErrGenerateModelCode     = "replace_me"
 	ErrGenerateComponentCode = "replace_me"
+	ErrUpdateModelCode       = "replace_me"
+	ErrUpdateComponentCode   = "replace_me"
 )
 
 func ErrGenerateModel(err error, modelName string) error {
@@ -13,4 +15,12 @@ func ErrGenerateModel(err error, modelName string) error {
 
 func ErrGenerateComponent(err error, compName string) error {
 	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrUpdateModel(err error, modelName string) error {
+	return errors.New(ErrUpdateModelCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrUpdateComponent(err error, compName string) error {
+	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }
