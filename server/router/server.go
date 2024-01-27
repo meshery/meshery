@@ -187,6 +187,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth))).Methods("GET")
 
+	gMux.Handle("/api/meshmodel/download", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.DownloadEntity), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodel/view", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ViewHandler), models.NoAuth))).Methods("GET")
+
 	gMux.Handle("/api/meshmodels/registrants", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRegistrants), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/nonRegisterEntity", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.NonRegisterEntity), models.ProviderAuth))).Methods("POST")
 	gMux.Handle("/api/meshmodels/categories/{category}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategoriesByName), models.NoAuth))).Methods("GET")

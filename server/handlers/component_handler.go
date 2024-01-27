@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path"
 	"strconv"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/spf13/viper"
+
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
@@ -19,6 +22,8 @@ import (
 
 /**Meshmodel endpoints **/
 const DefaultPageSizeForMeshModelComponents = 25
+
+var isDisplayed = false
 
 // swagger:route GET /api/meshmodels/categories/{category}/models GetMeshmodelModelsByCategories idGetMeshmodelModelsByCategories
 //
@@ -1289,72 +1294,79 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 // request body should be of Host format
 
 func (handler *Handler) NonRegisterEntity(responseWriter http.ResponseWriter, request *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	responseWriter.Header().Set("Content-Type", "application/json")
-	defer request.Body.Close()
-
-	var receivedHost registry.Host
-	if err := json.NewDecoder(request.Body).Decode(&receivedHost); err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	filter := &v1alpha1.HostFilter{
-		DisplayName: receivedHost.Hostname,
-	}
-
-	hosts, _, _ := handler.registryManager.GetRegistrants(filter)
-
-	successMessage := ""
-	for _, host := range hosts {
-		successMessage = fmt.Sprintf("For registrant %s successfully imported", receivedHost.Hostname)
-
-		appendIfNonZero := func(value int64, label string) {
-			if value != 0 {
-				successMessage += fmt.Sprintf(" %d %s", value, label)
-			}
+	if !isDisplayed {
+		registry.Mutex.Lock()
+		isDisplayed = true
+		responseWriter.Header().Set("Content-Type", "application/json")
+		defer request.Body.Close()
+		var receivedHost registry.Host
+		if err := json.NewDecoder(request.Body).Decode(&receivedHost); err != nil {
+			http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+			return
+		}
+		filter := &v1alpha1.HostFilter{
+			DisplayName: receivedHost.Hostname,
 		}
 
-		appendIfNonZero(host.Summary.Models, "models")
-		appendIfNonZero(host.Summary.Components, "components")
-		appendIfNonZero(host.Summary.Relationships, "relationships")
-		appendIfNonZero(host.Summary.Policies, "policies")
+		hosts, _, _ := handler.registryManager.GetRegistrants(filter)
+		successMessage := ""
+		for _, host := range hosts {
+			successMessage = fmt.Sprintf("For registrant %s successfully imported", receivedHost.Hostname)
 
-	}
+			appendIfNonZero := func(value int64, label string) {
+				if value != 0 {
+					successMessage += fmt.Sprintf(" %d %s", value, label)
+				}
+			}
 
-	// Event creation
-	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+			appendIfNonZero(host.Summary.Models, "models")
+			appendIfNonZero(host.Summary.Components, "components")
+			appendIfNonZero(host.Summary.Relationships, "relationships")
+			appendIfNonZero(host.Summary.Policies, "policies")
 
-	// Adding metadata for the event
-	eventBuilder.WithMetadata(map[string]interface{}{
-		"Hostname": receivedHost.Hostname,
-	})
+		}
 
-	// Success event
-	eventBuilder.WithSeverity(events.Success).WithDescription(successMessage)
-	successEvent := eventBuilder.Build()
-
-	// Build and publish the events
-	_ = provider.PersistEvent(successEvent)
-
-	go handler.config.EventBroadcaster.Publish(userID, successEvent)
-
-	failedMessage, _ := registry.FailedMsgCompute("", receivedHost.Hostname)
-	if failedMessage != "" {
-		failedMessage = fmt.Sprintf("For registrant %s %s", receivedHost.Hostname, failedMessage)
-		// Error event
-		errorEventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
-		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMessage)
-		errorEvent := errorEventBuilder.Build()
-		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"Hostname":              receivedHost.Hostname,
-			"Details":               fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", receivedHost.Hostname, failedMessage),
-			"Suggested-remediation": "Check /server/cmd/registery_attempts.json for futher details",
+		userID := uuid.FromStringOrNil(user.ID)
+		eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+		// Adding metadata for the event
+		eventBuilder.WithMetadata(map[string]interface{}{
+			"Hostname": receivedHost.Hostname,
 		})
-		_ = provider.PersistEvent(errorEvent)
-		go handler.config.EventBroadcaster.Publish(userID, errorEvent)
-	}
 
+		// Success event
+		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
+		successEvent := eventBuilder.Build()
+
+		// Build and publish the events
+		_ = provider.PersistEvent(successEvent)
+		go handler.config.EventBroadcaster.Publish(userID, successEvent)
+		host := request.Host
+		protocol := "http"
+		if request.TLS != nil {
+			protocol = "https"
+		}
+		home := viper.GetString("SERVER_CONTENT_FOLDER")
+		fmt.Println(home)
+		filePath := path.Join(home, "entities", "entities.json")
+
+		failedMessage, _ := registry.FailedMsgCompute("", receivedHost.Hostname)
+		if failedMessage != "" {
+			failedMessage = fmt.Sprintf("For registrant %s %s", receivedHost.Hostname, failedMessage)
+			// Error event
+			errorEventBuilder := events.NewEvent().FromUser(userID).FromSystem(*handler.SystemID).WithCategory("entity").WithAction("get_summary")
+			errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMessage)
+			errorEvent := errorEventBuilder.Build()
+			errorEventBuilder.WithMetadata(map[string]interface{}{
+				"Details":               fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", receivedHost.Hostname, failedMessage),
+				"Suggested-remediation": fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
+				"DownloadLink":          fmt.Sprintf("%s://%s%s%s", protocol, host, "/api/meshmodel/download?file=", filePath),
+				"View-Link":             fmt.Sprintf("%s://%s%s%s", protocol, host, "/api/meshmodel/view?file=", filePath),
+			})
+			_ = provider.PersistEvent(errorEvent)
+			go handler.config.EventBroadcaster.Publish(userID, errorEvent)
+		}
+		registry.Mutex.Unlock()
+	}
 }
 
 // swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants

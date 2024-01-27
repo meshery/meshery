@@ -45,6 +45,8 @@ type HandlerInterface interface {
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	DownloadEntity(w http.ResponseWriter, req *http.Request)
+
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -121,6 +123,7 @@ type HandlerInterface interface {
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
+	ViewHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
 	NonRegisterEntity(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
