@@ -32,7 +32,7 @@ var (
 	sheetID               string
 	modelsOutputPath      string
 	imgsOutputPath        string
-	GoogleSpreadSheetURL  = "https://docs.google.com/spreadsheets/d/"
+	GoogleSpreadSheetURL  = meshkitUtils.GoogleSpreadSheetURL
 	models                = []utils.ModelCSV{}
 	components            = map[string]map[string][]utils.ComponentCSV{}
 	outputFormat          string
@@ -210,7 +210,7 @@ func websiteSystem() error {
 
 func init() {
 	// these flags are making the command too long. So currently using args instead of flags @theBeginner86
-	
+
 	// publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
 	// publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
 	// publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")

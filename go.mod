@@ -11,6 +11,8 @@ replace (
 	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
 )
 
+replace github.com/layer5io/meshkit v0.7.9 => ../meshkit
+
 require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.60.3
@@ -63,7 +65,6 @@ require (
 	golang.org/x/oauth2 v0.15.0
 	golang.org/x/text v0.14.0
 	gonum.org/v1/gonum v0.14.0
-	google.golang.org/api v0.152.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -304,6 +305,7 @@ require (
 	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.16.0 // indirect
+	google.golang.org/api v0.152.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

@@ -44,7 +44,7 @@ type ComponentCSVHelper struct {
 func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content", "components.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, err
@@ -197,6 +197,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 
 func (m ComponentCSVHelper) Cleanup() error {
 	// remove csv file
+	fmt.Println("Removing CSV file:", m.CSVPath)
 	err := os.Remove(m.CSVPath)
 	if err != nil {
 		return err

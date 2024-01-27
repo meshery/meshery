@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/csv"
 )
 
 var (
@@ -64,7 +64,7 @@ type ModelCSVHelper struct {
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content", "models.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, err
@@ -116,8 +116,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 		}
 	}
 }
-
-
 
 // template := `---
 // title: <model-display-name>
