@@ -9,7 +9,6 @@ import { getPath } from '../../lib/path';
 
 function Performance({ updatepagepath }) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     updatepagepath({ path: getPath() });
   }, [updatepagepath]);
 

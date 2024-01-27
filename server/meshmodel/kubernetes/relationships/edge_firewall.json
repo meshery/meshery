@@ -2,7 +2,16 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
-    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods."
+    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": false
+        }
+      }
+    }
   },
   "model": {
     "name": "kubernetes",
@@ -16,7 +25,7 @@
   },
   "subType": "Firewall",
   "evaluationQuery": "edge_binding_relationship",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -39,5 +48,5 @@
         }
       ]
     }
-  }
+  }]
 }

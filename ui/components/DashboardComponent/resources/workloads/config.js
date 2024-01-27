@@ -51,7 +51,6 @@ export const WorkloadTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(value, tableMeta) {
-              console.log(meshSyncResources, value, ';;;;;pp');
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
@@ -520,7 +519,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -672,7 +670,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -857,7 +854,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -1025,7 +1021,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -1161,7 +1156,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -1329,7 +1323,6 @@ export const WorkloadTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}

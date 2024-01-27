@@ -323,7 +323,6 @@ class PrometheusSelectionComponent extends Component {
                       clearTimeout(self.boardTimeout);
                     }
                     self.boardTimeout = setTimeout(() => {
-                      console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
                       if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
                         self.setState({ grafanaBoardError: false });
                       } else {

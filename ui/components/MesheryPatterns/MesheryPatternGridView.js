@@ -202,8 +202,6 @@ function MesheryPatternGrid({
     });
   };
 
-  console.log('user-->', user);
-
   return (
     <div>
       {selectedPattern.show && (

@@ -64,24 +64,27 @@ function PatternServiceForm({
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
-      description: 'The name for the service',
+      description: 'A descriptive label for this component. Must be unique within this design.',
       default: '<Name of the Component>',
       type: 'string',
     };
     schemaSet.workload.properties.namespace = {
-      description: 'The namespace for the service',
+      description:
+        'A descriptive label for the Kubernetes namespace in which this component resides. All namespaced components must have a value in this field.',
       default: 'default',
       type: 'string',
     };
     schemaSet.workload.properties.labels = {
-      description: 'The label for the service',
+      description:
+        'Use one or more labels to annotate your component with descriptive information in the form of key-value pairs. Components with matching key-value pairs are automatically visually grouped together.',
       additionalProperties: {
         type: 'string',
       },
       type: 'object',
     };
     schemaSet.workload.properties.annotations = {
-      description: 'The annotation for the service',
+      description:
+        'Use one or more annotations to capture additional, extended details about this component in the form of key-value pairs. Components with matching annotations are automatically visually grouped together.',
       additionalProperties: {
         type: 'string',
       },
