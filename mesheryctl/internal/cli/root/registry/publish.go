@@ -38,13 +38,14 @@ var (
 )
 
 // Example publishing to meshery docs
-//./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery/docs/pages/integrations meshery/docs/assets/img/integrations md
+// cd docs;
+// mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
 // Example publishing to mesheryio docs
-//./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration js
+// mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 // Example publishing to layer5 docs
-// ./mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations mdx
+// mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
@@ -63,6 +64,16 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <
 
 // Publish To Website
 mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
+
+// Publishing to meshery docs
+// cd docs;
+// mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+
+// Publishing to mesheryio docs
+// mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+
+// Publishing to layer5 docs
+// mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println(len(args), args[len(args)-1])
@@ -75,7 +86,6 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		sheetID = args[2]
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
-		outputFormat = args[5]
 
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -139,10 +149,12 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 	},
 }
 
+// TODO
 func mesherySystem() error {
 	return nil
 }
 
+// TODO
 func remoteProviderSystem() error {
 	return nil
 }
@@ -189,4 +201,21 @@ func websiteSystem() error {
 	}
 
 	return nil
+}
+
+func init() {
+	// these flags are making the command too long. So currently using args instead of flags @theBeginner86
+	// publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
+	// publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
+	// publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")
+	// publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
+	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
+
+	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format (supported: md, mdx, js)")
+	publishCmd.MarkFlagRequired("system")
+	publishCmd.MarkFlagRequired("google-sheet-credential")
+	publishCmd.MarkFlagRequired("sheet-id")
+	publishCmd.MarkFlagRequired("models-output-path")
+	publishCmd.MarkFlagRequired("imgs-output-path")
+	publishCmd.MarkFlagRequired("output-format")
 }
