@@ -81,8 +81,7 @@ func CreateFiles(path, filetype, name, content string) {
 func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
 	modelName := FormatName(model.Model)
 	// create dir for model
-	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
-	modelDir := filepath.Join(modelsOutputPath, modelName)
+	modelDir, _ := filepath.Abs(filepath.Join("../", modelPath, modelName))
 	err := os.MkdirAll(modelDir, 0777)
 	if err != nil {
 		return err
