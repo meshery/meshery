@@ -1,3 +1,17 @@
+// # Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package registry
 
 import (
@@ -5,37 +19,62 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	// "sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mutils "github.com/layer5io/meshkit/utils"
+
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
 )
 
 var (
 	modelLocation string
+	logFile       *os.File
+	sheetGID      int64
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import Models",
-	Long:  "Import models from spreadsheet, GitHub or ArtifactHub repositories",
+	Use:   "update",
+	Short: "Update the registry with latest data.",
+	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
 	Example: `
-	// Import models from Meshery Integration Spreadsheet
-	mesheryctl registry import --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
-	
-	// Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-	mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
-	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("model location: ", modelLocation)
+	// Update models from Meshery Integration Spreadsheet
+	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -f [path to the directory containing models].
 
+	// Updating models in the meshery/meshery repo
+	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
+	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		logDirPath := filepath.Join(mutils.GetHome(), ".meshery", "logs")
+		err := os.MkdirAll(logDirPath, 0755)
+		if err != nil {
+			return ErrUpdateRegistry(err)
+		}
+		logFilePath := filepath.Join(logDirPath, "registry-update")
+		logFile, err = os.Create(logFilePath)
+		if err != nil {
+			return ErrUpdateRegistry(err)
+		}
+		utils.Log.UpdateLogOutput(logFile)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
+		if err != nil || resp.HTTPStatusCode != 200 {
+			utils.Log.Error(err)
+			return err
+		}
+
+		sheetGID = GetSheetIDFromTitle(resp, "Components")
 		if spreadsheeetID != "" {
-			// err := os.Setenv("CRED", spreadsheeetCred)
-			// fmt.Println("SET ENV ERR : ", err)
-			err := InvokeGenerationFromSheet()
+			err := InvokeCompUpdate()
 			if err != nil {
-				// meshkit
 				utils.Log.Error(err)
 				return err
 			}
@@ -43,76 +82,136 @@ var updateCmd = &cobra.Command{
 
 		return nil
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		utils.Log.UpdateLogOutput(os.Stdout)
+	},
 }
 var (
 	ExcludeDirs = []string{"relationships", "policies"}
 )
 
+type updateTracker struct {
+	totalComps        int
+	totalCompsUpdated int
+}
+
 func InvokeCompUpdate() error {
-	componentCSVHelper, err := utils.NewComponentCSVHelper(GoogleSpreadSheetURL, "Components", 1502185467)
+	defer func() {
+		_ = logFile.Close()
+	}()
+	modelToCompUpdateTracker := make(map[string]updateTracker, 200)
+	url := GoogleSpreadSheetURL + spreadsheeetID
+	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
 	if err != nil {
 		return err // add meshkit err
 	}
 
-	componentCSVHelper.ParseComponentsSheet()
-	utils.Log.Info("total components: ", len(componentCSVHelper.Components))
+	err = componentCSVHelper.ParseComponentsSheet()
+	if err != nil {
+		err = ErrUpdateRegistry(err)
+		utils.Log.Error(err)
+		return err
+	}
 
-	// Since component update doesn;t take long skip doing it concurrently
+	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
+
+	// Since component update doesn't take long skip doing it concurrently
 	// weightedSem := semaphore.NewWeighted(20)
 	pwd, _ := os.Getwd()
 
 	// var wg sync.WaitGroup
 
-	for _, model := range componentCSVHelper.Components {
+	for registrant, model := range componentCSVHelper.Components {
+		if registrant == "" {
+			continue
+		}
+
+		totalCompsUpdated := 0
+		availableComponents := 0
 		for modelName, components := range model {
 			modelPath := filepath.Join(pwd, modelLocation, modelName)
-			utils.Log.Info("Updating component for model %s", modelName)
+			utils.Log.Info("Starting to update components of model ", modelName)
 
-			modelVersions, err := os.ReadDir(modelPath)
+			modelContents, err := os.ReadDir(modelPath)
 			if err != nil {
 				err = ErrUpdateModel(err, modelName)
 				utils.Log.Error(err)
-				return err
+				continue
 			}
-			for _, version := range modelVersions {
-				entries, _ := os.ReadDir(version.Name())
-				for _, entry := range entries {
-					if entry.IsDir() {
-						if utils.Contains(entry.Name(), ExcludeDirs) != -1 {
-							continue
-						}
-						componentsDirPath := filepath.Join(modelPath, version.Name(), entry.Name())
-						for _, component := range components {
-							utils.Log.Debug("Updating", component.Component)
-							compPath := fmt.Sprintf("%s/%s", componentsDirPath, component.Component)
-							componentByte, err := os.ReadFile(compPath)
-							if err != nil {
-								utils.Log.Error(ErrUpdateComponent(err, component.Component))
-								continue
-							}
-							componentDef := v1alpha1.ComponentDefinition{}
-							err = json.Unmarshal(componentByte, &componentDef)
-							if err != nil {
-								utils.Log.Error(ErrUpdateComponent(err, component.Component))
-								continue
-							}
 
-							err = component.UpdateCompDefinition(&componentDef)
-							if err != nil {
-								utils.Log.Error(ErrUpdateComponent(err, component.Component))
-								continue
-							}
-						}
+			for _, content := range modelContents {
+				if content.IsDir() {
+					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+						continue
 					}
 				}
-			}
 
+				versionPath := filepath.Join(modelPath, content.Name())
+				entries, _ := os.ReadDir(versionPath)
+				availableComponents += len(entries)
+
+				utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
+
+				for _, component := range components {
+					utils.Log.Info("Updating ", component.Component)
+					compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
+					componentByte, err := os.ReadFile(compPath)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						continue
+					}
+					componentDef := v1alpha1.ComponentDefinition{}
+					err = json.Unmarshal(componentByte, &componentDef)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						continue
+					}
+
+					err = component.UpdateCompDefinition(&componentDef)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, component.Component))
+						continue
+					}
+					err = writeToFileSystem[v1alpha1.ComponentDefinition](compPath, componentDef)
+					if err != nil {
+						utils.Log.Error(err)
+						continue
+					}
+					totalCompsUpdated++
+				}
+				modelUpdateTracker := updateTracker{
+					totalComps:        availableComponents,
+					totalCompsUpdated: totalCompsUpdated,
+				}
+				modelToCompUpdateTracker[modelName] = modelUpdateTracker
+			}
+			utils.Log.Info("\n")
 		}
+
+		logAggregateModelUpdates(modelToCompUpdateTracker)
 
 	}
 	return nil
 }
 
+func logAggregateModelUpdates(modelToCompUpdateTracker map[string]updateTracker) {
+	totalAggregateModel := 0
+	totalAggregateComponents := 0
+	for key, value := range modelToCompUpdateTracker {
+		totalAggregateModel++
+		totalAggregateComponents += value.totalCompsUpdated
+		utils.Log.Info(fmt.Sprintf("For model %s, updated %d out of %d components.", key, value.totalCompsUpdated, value.totalComps))
+	}
+
+	utils.Log.Info(fmt.Sprintf("total available models %d, total available components %d", totalAggregateModel, totalAggregateComponents))
+}
+
 func init() {
+	// utils.Log.SetLevel(logrus.InfoLevel)
 	updateCmd.PersistentFlags().StringVarP(&modelLocation, "path", "p", "", "relative or absolute path to the models directory")
+	updateCmd.MarkPersistentFlagRequired("path")
+
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
+	updateCmd.MarkPersistentFlagRequired("spreadsheet_id")
+
 }

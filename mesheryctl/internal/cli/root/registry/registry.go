@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{importCmd, publishCmd}
+	availableSubcommands = []*cobra.Command{importCmd, publishCmd, updateCmd}
 
 	spreadsheeetID   string
 	spreadsheeetCred string
@@ -51,13 +51,5 @@ var RegistryCmd = &cobra.Command{
 
 func init() {
 	RegistryCmd.AddCommand(availableSubcommands...)
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
-
-	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
-
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
-	// importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
-	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodels", "location to output generated models, defaults to ../server/meshmodels")
 
 }
