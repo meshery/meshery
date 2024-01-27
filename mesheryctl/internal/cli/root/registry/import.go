@@ -83,6 +83,8 @@ func InvokeGenerationFromSheet() error {
 	modelCSVHelper.ParseModelsSheet()
 	fmt.Println("length of models: ", len(modelCSVHelper.Models))
 	weightedSem := semaphore.NewWeighted(20)
+	pwd, _ := os.Getwd()
+
 	var wg sync.WaitGroup
 	for _, model := range modelCSVHelper.Models {
 		ctx := context.Background()
@@ -108,12 +110,23 @@ func InvokeGenerationFromSheet() error {
 				fmt.Println("QWERTY", model.Model)
 				time.Sleep(1 * time.Second)
 			}
+			fmt.Println("AFTER GET PACKAGE: ERR", err)
 			pkg, err := generator.GetPackage()
-			fmt.Println("AFTER GET PACKAGE : ERR", err)
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+			version := pkg.GetVersion()
+
+			modelDef := model.CreateModelDefinition(version)
+			modelDefPath := filepath.Join(pwd, modelDef.Name, version) + ".json"
+			err = writeToFileSystem[v1alpha1.Model](modelDefPath, modelDef)
+			if err != nil {
+				utils.Log.Error(ErrGenerateModel(err, modelDefPath))
+				return
+			}
+			
+			fmt.Println("AFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				fmt.Println("AFTER GENERATE COMPS : ERR", err.Error())
@@ -127,7 +140,6 @@ func InvokeGenerationFromSheet() error {
 			_, err = os.Stat(dirName)
 
 			if errors.Is(err, os.ErrNotExist) {
-				pwd, _ := os.Getwd()
 				err = os.MkdirAll(filepath.Join(pwd, dirName), 0755)
 				if err != nil {
 					utils.Log.Error(ErrGenerateComponent(err, model.Model))
@@ -137,7 +149,7 @@ func InvokeGenerationFromSheet() error {
 
 			for _, comp := range comps {
 				location := fmt.Sprintf("%s%s", filepath.Join(dirName, comp.Kind), ".json")
-				err := writeCompsToFileSystem[v1alpha1.ComponentDefinition](location, comp)
+				err := writeToFileSystem[v1alpha1.ComponentDefinition](location, comp)
 				if err != nil {
 					fmt.Println("INSIDE COMPS : ERR", err)
 					utils.Log.Info(err)
@@ -152,7 +164,7 @@ func InvokeGenerationFromSheet() error {
 	return nil
 }
 
-func writeCompsToFileSystem[K any](outputPath string, data K) error {
+func writeToFileSystem[K any](outputPath string, data K) error {
 	byt, err := json.MarshalIndent(data, "", "")
 	if err != nil {
 		return utils.ErrMarshal(err)
