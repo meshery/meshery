@@ -59,18 +59,42 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 </pre> 
 
 Publishing to meshery docs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 cd docs;
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+
+</div>
+</pre> 
+
 Publishing to mesheryio site
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+
+</div>
+</pre> 
+
 Publishing to layer5 site
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for publish
-  -o, --output-format string   output format (supported: md, mdx, js)
+  -o, --output-format string   output format [md | mdx | js]
 
 </div>
 </pre>
