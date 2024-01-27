@@ -175,7 +175,8 @@ func websiteSystem() error {
 	if outputFormat == "js" {
 		docsJSON = strings.TrimSuffix(docsJSON, ",")
 		docsJSON += "]; export default data"
-		if err := utils.WriteToFile(filepath.Join(modelsOutputPath, "data.js"), docsJSON); err != nil {
+		mOut, _ := filepath.Abs(filepath.Join("../", modelsOutputPath, "data.js"))
+		if err := utils.WriteToFile(mOut, docsJSON); err != nil {
 			fmt.Printf("Error writing to file: %v\n", err.Error())
 			return err
 		}

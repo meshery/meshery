@@ -54,15 +54,15 @@ func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
 }
 
 func FormatName(input string) string {
-	formattedName := strings.ReplaceAll(input, " ", "-")
-	formattedName = strings.ToLower(formattedName)
-	return formattedName
+	modelName := strings.ReplaceAll(input, " ", "-")
+	modelName = strings.ToLower(modelName)
+	return modelName
 }
 
 func CreateFiles(path, filetype, name, content string) {
-	formattedName := FormatName(name)
+	modelName := FormatName(name)
 
-	fullPath := path + "/" + formattedName + filetype
+	fullPath := path + "/" + modelName + filetype
 
 	file, err := os.Create(fullPath)
 	fmt.Println("Creating file:", fullPath)
@@ -138,16 +138,16 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 }
 
 func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, error) {
-	formattedName := FormatName(model.Model)
+	modelName := FormatName(model.Model)
 
-	iconDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), formattedName) // "../images", "integrations"
+	iconDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName) // "../images", "integrations"
 
 	// generate data.js file
 	jsonItem := model.CreateJSONItem(iconDir)
 	docsJSON += jsonItem + ","
 
 	// create color dir for icons
-	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath))
+	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath, modelName))
 	colorIconsDir := filepath.Join(imgsOutputPath, "icons", "color")
 	// create svg dir
 	err := os.MkdirAll(colorIconsDir, 0777)
@@ -156,7 +156,7 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, erro
 	}
 
 	// write color svg
-	err = WriteSVG(filepath.Join(colorIconsDir, formattedName+"-color.svg"), model.SVGColor)
+	err = WriteSVG(filepath.Join(colorIconsDir, modelName+"-color.svg"), model.SVGColor)
 	if err != nil {
 		return "", err
 	}
@@ -170,7 +170,7 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, erro
 	}
 
 	// write white svg
-	err = WriteSVG(filepath.Join(whiteIconsDir, formattedName+"-white.svg"), model.SVGWhite)
+	err = WriteSVG(filepath.Join(whiteIconsDir, modelName+"-white.svg"), model.SVGWhite)
 	if err != nil {
 		return "", err
 	}
