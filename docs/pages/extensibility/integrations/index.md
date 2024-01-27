@@ -1,4 +1,4 @@
----
+<!-- ---
 layout: page
 title: Integrations
 abstract: Integrations with other services.
@@ -23,7 +23,7 @@ Meshery provides 220+ built-in integrations which refer to the supported connect
 
 <!--
 UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
-### All Integrations by Name ({{ site.integrations.size }}) -->
+### All Integrations by Name ({{ site.integrations.size }}) 
 
 <ul>
   {% assign sorted_index = site.pages | where: "type", "extensibility" | sort: "name" | alphabetical %}
@@ -37,4 +37,4 @@ UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
       </li>
       {% endif %}
     {% endfor %}
-</ul>
+</ul> -->

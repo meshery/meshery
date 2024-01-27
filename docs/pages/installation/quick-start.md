@@ -19,8 +19,6 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }}/installation/mesheryctl). If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server with the command shown in the figure.
 
  <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs">
-</div>
  <div class="window-buttons"></div>
   <div id="termynal0" style="width:100%; height:150px; max-width:100%;" data-termynal="">
             <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>

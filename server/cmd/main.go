@@ -14,11 +14,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
-	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
@@ -252,7 +252,11 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-	krh := models.NewKeysRegistrationHelper(dbHandler, log)
+	krh, err := models.NewKeysRegistrationHelper(dbHandler, log)
+	if err != nil {
+		log.Error(ErrInitializingKeysRegistration(err))
+		os.Exit(1)
+	}
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {

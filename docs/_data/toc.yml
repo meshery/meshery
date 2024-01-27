@@ -30,8 +30,8 @@
             url: installation/kubernetes/kind
           - title: "Minikube"
             url: installation/kubernetes/minikube
-      - title: KubeSphere
-        url: installation/kubesphere
+          - title: KubeSphere
+            url: installation/kubernetes/kubesphere
       - title: Linux or macOS ↆ
         url: installation/linux-mac
         grandchildren: 
