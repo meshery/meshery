@@ -50,6 +50,12 @@ To deploy a web application on Meshery, follow these steps:
 [![Click import button]({{site.baseurl}}/assets/img/meshery-design/click-import.png)]({{site.baseurl}}/assets/img/meshery-design/click-import.png)
 6. Upon successful import, a pop-up message will confirm the completion, and it will also indicate that your design has been automatically saved in Meshery.
 [![Design is auto-saved]({{site.baseurl}}/assets/img/meshery-design/design-auto-save.png)]({{site.baseurl}}/assets/img/meshery-design/design-auto-save.png)
+7. Locate your design and click the deploy button to initiate the deployment process.
+[![Located App]({{site.baseurl}}/assets/img/meshery-design/app-deploy.png)]({{site.baseurl}}/assets/img/meshery-design/app-deploy.png)
+8. Once the popup window opens, wait for the dry run to complete, and then click the deploy button.
+[![Dry Run]({{site.baseurl}}/assets/img/meshery-design/click-deploy.png)]({{site.baseurl}}/assets/img/meshery-design/click-deploy.png)
+9. Upon successful deployment, a confirmation pop-up will appear, indicating that your app has been successfully deployed.
+[![Deployment Success]({{site.baseurl}}/assets/img/meshery-design/deploy-success.png)]({{site.baseurl}}/assets/img/meshery-design/deploy-success.png)
 
 <!-- 
 
