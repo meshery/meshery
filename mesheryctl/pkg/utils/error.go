@@ -141,6 +141,15 @@ func SystemModelSubError(msg string, cmd string) string {
 	}
 }
 
+func RegistryError(msg string, cmd string) string {
+	switch cmd {
+	case "publish":
+		return formatError(msg, cmdRegistryPublish)
+	default:
+		return formatError(msg, cmdRegistry)
+	}
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 func MeshError(msg string) string {
 	return formatError(msg, cmdMesh)
