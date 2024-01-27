@@ -81,7 +81,7 @@
             <ul style="margin-bottom: 0;" id="section02">
               {% for child in sorted_pages %}
               {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
-              child.language == "en" and child.category=="docker" and child.title!="docker" -%}
+              child.language == "en" and child.category=="docker" and child.title!="Docker" -%}
               <li id="{{ child.title | slugify }}">
                 <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
                   href="{{ site.baseurl }}{{ child.url }}"><strong
@@ -108,52 +108,17 @@
             </li>
 
             <ul style="margin-bottom: 0;" id="section03">
-
-              <li id="aks">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-aks"
-                  href="/installation/kubernetes/aks"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">AKS</strong></a>
+              {% for child in sorted_pages %}
+              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
+              child.language == "en" and child.category=="kubernetes" and child.title!="Kubernetes" -%}
+              <li id="{{ child.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
+                  href="{{ site.baseurl }}{{ child.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
               </li>
-
-              <li id="eks">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-eks"
-                  href="/installation/kubernetes/eks"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">EKS</strong></a>
-              </li>
-
-              <li id="gke">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-gke"
-                  href="/installation/kubernetes/gke"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">GKE</strong></a>
-              </li>
-
-              <li id="helm">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-helm"
-                  href="/installation/kubernetes/helm"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Helm</strong></a>
-              </li>
-
-              <li id="kind">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-kind"
-                  href="/installation/kubernetes/kind"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">KinD</strong></a>
-              </li>
-
-              <li id="minikube">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-minikube"
-                  href="/installation/kubernetes/minikube"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Minikube</strong></a>
-              </li>
-              <!-- grandchild -->
+              {% endif %}
+              {% endfor %}
             </ul>
-
-            <!-- end grandchild -->
-
-            <li id="kubesphere">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-kubesphere"
-                href="/installation/kubesphere">KubeSphere</a>
-            </li>
-            <!-- end grandchild -->
 
             <li id="linux-or-macos-ↆ">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-linux-or-macos-ↆ"
@@ -164,17 +129,16 @@
 
             <ul style="margin-bottom: 0;" id="section04">
 
-              <li id="bash">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-bash"
-                  href="/installation/linux-mac/bash"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Bash</strong></a>
+              {% for child in sorted_pages %}
+              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
+              child.language == "en" and child.category=="linux-mac" and child.title!="Install Meshery CLI on Linux or Mac" -%}
+              <li id="{{ child.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
+                  href="{{ site.baseurl }}{{ child.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
               </li>
-
-              <li id="brew">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-brew"
-                  href="/installation/linux-mac/brew"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Brew</strong></a>
-              </li>
+              {% endif %}
+              {% endfor %}
               <!-- grandchild -->
             </ul>
 
@@ -189,12 +153,16 @@
 
             <ul style="margin-bottom: 0;" id="section05">
 
-              <li id="scoop">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-scoop"
-                  href="/installation/windows/scoop"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Scoop</strong></a>
+              {% for child in sorted_pages %}
+              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
+              child.language == "en" and child.category=="windows" and child.title!="Install Meshery CLI on Windows" -%}
+              <li id="{{ child.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
+                  href="{{ site.baseurl }}{{ child.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
               </li>
-              <!-- grandchild -->
+              {% endif %}
+              {% endfor %}
             </ul>
 
             <!-- end grandchild -->

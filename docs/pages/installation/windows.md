@@ -3,7 +3,7 @@ layout: default
 title: Install Meshery CLI on Windows
 permalink: installation/windows
 type: installation
-category: mesheryctl
+category: windows
 redirect_from:
 - installation/platforms/windows
 display-title: "true"
