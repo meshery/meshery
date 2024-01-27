@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -14,13 +15,14 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
 var ModelsPath = "../meshmodel"
 var RelativeRelationshipsPath = "relationships"
+
+// var InstanceID uuid.UUID
 
 type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
@@ -46,6 +48,8 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
 	ctx, cancel := context.WithCancel(context.TODO())
+	// ctx = context.WithValue(ctx, models.SystemIDKey, &InstanceID)
+
 	defer cancel()
 
 	go erh.watchComponents(ctx)
@@ -67,7 +71,6 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 			erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
 			continue
 		}
-
 		for _, entity := range entities {
 			entityPath := filepath.Join(entitiesPath, entity.Name())
 			if entity.IsDir() {
@@ -183,7 +186,7 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
-			registryLog(erh.regManager)
+			erh.registryLog(ctx)
 			meshmodel.Mutex.Unlock()
 			return
 		}
@@ -207,49 +210,51 @@ func writeToFile(filePath string, data []byte) error {
 
 	return nil
 }
-func registryLog(regManager *meshmodel.RegistryManager) {
-	logLevel := viper.GetInt("LOG_LEVEL")
-	if viper.GetBool("DEBUG") {
-		logLevel = int(logrus.DebugLevel)
-	}
-	// Initialize Logger instance
-	log, err := logger.New("meshery", logger.Options{
-		Format:   logger.SyslogLogFormat,
-		LogLevel: logLevel,
-	})
-
-	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
-	}
-
-	hosts, _, err := regManager.GetRegistrants(&v1alpha1.HostFilter{})
+func (erh *EntityRegistrationHelper) registryLog(ctx context.Context) {
+	log := erh.log
+	hosts, _, err := erh.regManager.GetRegistrants(&v1alpha1.HostFilter{})
 	if err != nil {
 		log.Error(err)
 	}
+	//In future send event directly from here
+	// sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	// eventBuilder := events.NewEvent().FromSystem(*sysID).WithCategory("entity").WithAction("get_summary")
+
 	for _, host := range hosts {
-		summary := host.Summary
-		addNonZero := func(a, b int64) int64 {
-			if b != 0 {
-				return a + b
+
+		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Hostname)
+		appendIfNonZero := func(value int64, label string) {
+			if value != 0 {
+				successMessage += fmt.Sprintf(" %d %s", value, label)
 			}
-			return a
 		}
-		totalModels := addNonZero(0, summary.Models)
-		totalComponents := addNonZero(0, summary.Components)
-		totalRelationships := addNonZero(0, summary.Relationships)
-		totalPolicies := addNonZero(0, summary.Policies)
 
-		log.Info(fmt.Sprintf("For registrant %s successfully imported %d models %d components %d relationships %d policy",
-			host.Hostname, totalModels, totalComponents, totalRelationships, totalPolicies))
+		appendIfNonZero(host.Summary.Models, "models")
+		appendIfNonZero(host.Summary.Components, "components")
+		appendIfNonZero(host.Summary.Relationships, "relationships")
+		appendIfNonZero(host.Summary.Policies, "policies")
 
+		log.Info(successMessage)
+		// eventBuilder.WithMetadata(map[string]interface{}{
+		// 	"Hostname": host.Hostname,
+		// })
+		// eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
+		// successEvent := eventBuilder.Build()
 		failedMsg, _ := meshmodel.FailedMsgCompute("", host.Hostname)
 		if failedMsg != "" {
 			log.Error(meshmodel.ErrRegisteringEntity(failedMsg, host.Hostname))
 		}
+
 	}
 
-	filePath := "register_attempts.json"
+	fileRoute := path.Join(viper.GetString("SERVER_CONTENT_FOLDER"), "entities")
+	errDir := os.MkdirAll(fileRoute, 0755)
+	if errDir != nil {
+		log.Error(meshmodel.ErrCreatingUserDataDirectory(viper.GetString("SERVER_CONTENT_FOLDER")))
+		os.Exit(1)
+	}
+
+	filePath := fileRoute + "/entities.json"
 	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
 	if err != nil {
 		log.Error(meshmodel.ErrMarshalingRegisteryAttempts(err))
