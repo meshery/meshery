@@ -18,11 +18,11 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/spf13/cobra"
 )
 var (
-	availableSubcommands = []*cobra.Command{importCmd}
+	availableSubcommands = []*cobra.Command{importCmd, publishCmd}
 )
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
