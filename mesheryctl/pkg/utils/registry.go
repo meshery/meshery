@@ -81,14 +81,16 @@ func CreateFiles(path, filetype, name, content string) {
 func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
 	modelName := FormatName(model.Model)
 	// create dir for model
-	modelDir := filepath.Join(modelPath, modelName)
+	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
+	modelDir := filepath.Join(modelsOutputPath, modelName)
 	err := os.MkdirAll(modelDir, 0777)
 	if err != nil {
 		return err
 	}
 
 	// create img for model
-	imgDir := filepath.Join(imgPath, modelName)
+	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath))
+	imgDir := filepath.Join(imgsOutputPath, modelName)
 	err = os.MkdirAll(imgDir, 0777)
 	if err != nil {
 		return err
@@ -136,17 +138,17 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 }
 
 func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, error) {
-
 	formattedName := FormatName(model.Model)
 
-	iconDir := filepath.Join(imgPath, formattedName) // "../images", "integrations"
+	iconDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), formattedName) // "../images", "integrations"
 
 	// generate data.js file
 	jsonItem := model.CreateJSONItem(iconDir)
 	docsJSON += jsonItem + ","
 
 	// create color dir for icons
-	colorIconsDir := filepath.Join(imgPath, iconDir, "icons", "color")
+	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath))
+	colorIconsDir := filepath.Join(imgsOutputPath, "icons", "color")
 	// create svg dir
 	err := os.MkdirAll(colorIconsDir, 0777)
 	if err != nil {
@@ -160,7 +162,7 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, erro
 	}
 
 	// create white dir for icons
-	whiteIconsDir := filepath.Join(imgPath, iconDir, "icons", "white")
+	whiteIconsDir := filepath.Join(imgsOutputPath, "icons", "white")
 	// create svg dir
 	err = os.MkdirAll(whiteIconsDir, 0777)
 	if err != nil {
@@ -181,15 +183,16 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 	modelName := FormatName(model.Model)
 
 	// dir for markdown
-	mdDir := filepath.Join(modelPath) // path, "pages", "integrations"
+	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
+	mdDir := filepath.Join(modelsOutputPath) // path, "pages", "integrations"
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
 		return err
 	}
 
 	// dir for icons
-	_iconsSubDir := filepath.Join(imgPath, modelName) // "assets", "img", "integrations"
-	iconsDir := filepath.Join(modelPath, _iconsSubDir)
+	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath, modelName))
+	iconsDir := filepath.Join(imgsOutputPath)
 	err = os.MkdirAll(iconsDir, 0777)
 	if err != nil {
 		return err
@@ -220,8 +223,11 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 	}
 
 	// generate components metadata and create svg files
-	compIconsSubDir := filepath.Join(_iconsSubDir, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(components, modelPath, compIconsSubDir)
+	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
+	// fmt.Println("iconSubDir: ", _iconsSubDir)
+	// compIconsSubDir := filepath.Join(_iconsSubDir, "components")
+	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return err
 	}

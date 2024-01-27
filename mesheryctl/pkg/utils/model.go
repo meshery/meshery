@@ -170,7 +170,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV,
 }
 
 func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, path, svgDir string) (string, error) {
-	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
+	err := os.MkdirAll(filepath.Join(path), 0777)
 	if err != nil {
 		return "", err
 	}
@@ -189,22 +189,22 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
 
 		// create color svg dir
-		err = os.MkdirAll(filepath.Join(path, colorIconDir), 0777)
+		err = os.MkdirAll(filepath.Join(path, compName, "icons", "color"), 0777)
 		if err != nil {
 			return "", err
 		}
 
 		// create white svg dir
-		err = os.MkdirAll(filepath.Join(path, whiteIconDir), 0777)
+		err = os.MkdirAll(filepath.Join(path, compName, "icons", "white"), 0777)
 		if err != nil {
 			return "", err
 		}
 
-		err = WriteSVG(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
+		err = WriteSVG(filepath.Join(path, compName, "icons", "color", compName+"-color.svg"), comp.SVGColor)
 		if err != nil {
 			return "", err
 		}
-		err = WriteSVG(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
+		err = WriteSVG(filepath.Join(path, compName, "icons", "white", compName+"-white.svg"), comp.SVGWhite)
 		if err != nil {
 			return "", err
 		}

@@ -70,9 +70,14 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		system = args[0]
 		googleSheetCredential = args[1]
 		sheetID = args[2]
-		modelsOutputPath, _ = filepath.Abs(filepath.Join("../", args[3]))
-		imgsOutputPath, _ = filepath.Abs(filepath.Join("../", args[4]))
+		// modelsOutputPath, _ = filepath.Abs(filepath.Join("../", args[3]))
+		// imgsOutputPath, _ = filepath.Abs(filepath.Join("../", args[4]))
+		modelsOutputPath = args[3]
+		imgsOutputPath = args[4]
 		outputFormat = args[5]
+
+		// fmt.Println(strings.Split(modelsOutputPath, "/"), strings.Split(modelsOutputPath, "/"))
+		// return nil
 
 		srv, err := utils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -173,21 +178,6 @@ func websiteSystem() error {
 				fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 			}
 		}
-
-		// err := utils.GenerateMDXStyleDocs(model, comps, pathForLayer5ioIntegrations) // creates mdx file
-		// if err != nil {
-		// 	fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
-		// }
-
-		// docsJSON, err = utils.GenerateJSStyleDocs(model, pathForMesheryioIntegrations, docsJSON) // json file
-		// if err != nil {
-		// 	fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
-		// }
-
-		// err = utils.GenerateMDStyleDocs(model, comps, pathForMesheryDocsIntegrations) // creates md file
-		// if err != nil {
-		// 	fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
-		// }
 
 	}
 
