@@ -13,7 +13,8 @@ import (
 )
 
 var (
-	shouldRegisterMod = "publishToSites"
+	shouldRegisterMod        = "publishToSites"
+	shouldRegisterToRegsitry = "publishToRegistry"
 )
 
 type ModelCSV struct {
@@ -99,11 +100,17 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet() error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
-		index := GetIndexForRegisterCol(columns, shouldRegisterMod)
+		index := 0
+
+		if parseForDocs {
+			index = GetIndexForRegisterCol(columns, shouldRegisterMod)
+		} else {
+			index = GetIndexForRegisterCol(columns, shouldRegisterToRegsitry)
+		}
 		if index != -1 && index < len(currentRow) {
 			shouldRegister := currentRow[index]
 			return strings.ToLower(shouldRegister) == "true"

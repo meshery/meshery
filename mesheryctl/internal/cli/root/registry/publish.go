@@ -115,7 +115,7 @@ mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRV
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet()
+				err := modelCSVHelper.ParseModelsSheet(true)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil

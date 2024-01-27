@@ -2,7 +2,6 @@ package registry
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -18,16 +17,12 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-// gid: 1502185467
-// sid: 17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw
-//https://docs.google.com/spreadsheets/d/e/2PACX-1vRPea3kydCnCYHBe2nmj8fV-XJeVi1nTQMkMWX0MYwyKeORpooM7at2v5RNpYEu-iRQoCi3xS-JP4gO/pub?output=csv
-
 var (
 	outputLocation string
 
 	pathToRegistrantConnDefinition string
 	pathToRegistrantCredDefinition string
-	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw"
+	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 )
 
 var importCmd = &cobra.Command{
@@ -41,41 +36,74 @@ var importCmd = &cobra.Command{
 	// Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 	mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		err := os.MkdirAll(logDirPath, 0755)
+		if err != nil {
+			return ErrUpdateRegistry(err, modelLocation)
+		}
+		logFilePath := filepath.Join(logDirPath, "registry-generate")
+		logFile, err = os.Create(logFilePath)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("spreadsheeetCred:  ", spreadsheeetCred, "spreadsheeetID: ", spreadsheeetID, pathToRegistrantConnDefinition, pathToRegistrantCredDefinition)
-		var err error
-		if spreadsheeetID != "" {
-			// err := os.Setenv("CRED", spreadsheeetCred)
-			// fmt.Println("SET ENV ERR : ", err)
-			err = InvokeGenerationFromSheet()
-			if err != nil {
-				// meshkit
-				utils.Log.Error(err)
-				return err
-			}
-		} else {
-			fmt.Println("test.....", utils.Log.GetLevel())
+
+		if pathToRegistrantConnDefinition != "" {
 			utils.Log.Info("Model Generation from registrant definitions not yet supproted.")
 			return nil
 		}
 
+		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
+		if err != nil {
+			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
+			return err
+		}
+
+		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+		if err != nil || resp.HTTPStatusCode != 200 {
+			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+			return err
+		}
+
+		sheetGID = GetSheetIDFromTitle(resp, "Models")
+
+		err = InvokeGenerationFromSheet()
+		if err != nil {
+			// meshkit
+			utils.Log.Error(err)
+			return err
+		}
+
 		return err
 	},
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	fmt.Println(args)
-	// },
 }
 
 func InvokeGenerationFromSheet() error {
-	// _spreadsheetID, _ := strconv.Atoi(spreadsheeetID)
-	modelCSVHelper, err := utils.NewModelCSVHelper(GoogleSpreadSheetURL, "Models", 1502185467)
+	// utils.Log.UpdateLogOutput(logFile)
+
+	defer func() {
+		_ = logFile.Close()
+		utils.Log.UpdateLogOutput(os.Stdout)
+		// Change this
+		utils.Log.Info(fmt.Sprintf("Updated %d models, updated %d components", totalAggregateModel, totalAggregateComponents))
+
+		utils.Log.Info("refer ", logDirPath, " for detailed registry generate logs")
+
+		totalAggregateModel = 0
+		totalAggregateComponents = 0
+	}()
+
+	url := GoogleSpreadSheetURL + spreadsheeetID
+
+	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
 	if err != nil {
-		return err // add meshkit err
+		return err
 	}
-	
-	modelCSVHelper.ParseModelsSheet()
-	fmt.Println("total models: ", len(modelCSVHelper.Models))
+
+	modelCSVHelper.ParseModelsSheet(false)
 	weightedSem := semaphore.NewWeighted(20)
 	pwd, _ := os.Getwd()
 
@@ -91,7 +119,7 @@ func InvokeGenerationFromSheet() error {
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
-				defer wg.Done()
+				wg.Done()
 				weightedSem.Release(1)
 			}()
 
@@ -101,10 +129,8 @@ func InvokeGenerationFromSheet() error {
 				return
 			}
 			if model.Registrant == "artifacthub" {
-				fmt.Println("QWERTY", model.Model)
 				time.Sleep(1 * time.Second)
 			}
-			fmt.Println("AFTER GET PACKAGE: ERR", err)
 			pkg, err := generator.GetPackage()
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
@@ -113,24 +139,28 @@ func InvokeGenerationFromSheet() error {
 			version := pkg.GetVersion()
 
 			modelDef := model.CreateModelDefinition(version)
-			modelDefPath := filepath.Join(pwd, modelDef.Name, version) + ".json"
-			err = writeToFileSystem[v1alpha1.Model](modelDefPath, modelDef)
+			modelDefPath := filepath.Join(pwd, outputLocation, modelDef.Name)
+			err = os.MkdirAll(modelDefPath, 0755)
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				utils.Log.Error(err)
+				return
+			}
+			modelFilePath := fmt.Sprintf("%s/model.json", modelDefPath)
+			err = mutils.WriteJSONToFile[v1alpha1.Model](modelFilePath, modelDef)
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, modelDefPath))
 				return
 			}
 
-			fmt.Println("AFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
-				fmt.Println("AFTER GENERATE COMPS : ERR", err.Error())
 				utils.Log.Error(ErrGenerateComponent(err, model.Model))
 				return
 			}
-			fmt.Println("AFTER GENERATE COMP NO ERR")
 			utils.Log.Info("Extracted", len(comps), "for model %s", model.ModelDisplayName)
 
-			dirName := filepath.Join(outputLocation, model.Model)
+			dirName := filepath.Join(outputLocation, model.Model, version)
 			_, err = os.Stat(dirName)
 
 			if errors.Is(err, os.ErrNotExist) {
@@ -143,47 +173,32 @@ func InvokeGenerationFromSheet() error {
 
 			for _, comp := range comps {
 				location := fmt.Sprintf("%s%s", filepath.Join(dirName, comp.Kind), ".json")
-				err := writeToFileSystem[v1alpha1.ComponentDefinition](location, comp)
+				err := mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](location, comp)
 				if err != nil {
-					fmt.Println("INSIDE COMPS : ERR", err)
 					utils.Log.Info(err)
 				}
 			}
 
 		}(model)
-		// Create an new logger instance and write logs to file instead?
 
 	}
 	wg.Wait()
 	return nil
 }
 
-func writeToFileSystem[K any](outputPath string, data K) error {
-	byt, err := json.MarshalIndent(data, "", "")
-	if err != nil {
-		return utils.ErrMarshal(err)
-	}
-	fmt.Println("LINE 153 : ")
-	file, err := os.Create(outputPath)
-	if err != nil {
-		return mutils.ErrCreateFile(err, outputPath)
-	}
-	fmt.Println("LINE 158 : ")
-	_, err = file.Write(byt)
-	if err != nil {
-		return mutils.ErrWriteFile(err, outputPath)
-	}
-	fmt.Println("LINE 163 : ")
-	return nil
-
-}
-
 func init() {
 	importCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	// importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+	importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
 
-	// importCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
+	importCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
 
-	// importCmd.MarkFlagsMutuallyExclusive()
+	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
+	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
 
+	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
+
+	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
+	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
+
+	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }

@@ -28,9 +28,12 @@ import (
 )
 
 var (
-	modelLocation string
-	logFile       *os.File
-	sheetGID      int64
+	modelLocation            string
+	logFile                  *os.File
+	sheetGID                 int64
+	totalAggregateModel      int
+	totalAggregateComponents int
+	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs")
 )
 
 var updateCmd = &cobra.Command{
@@ -45,7 +48,7 @@ var updateCmd = &cobra.Command{
 	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		logDirPath := filepath.Join(mutils.GetHome(), ".meshery", "logs")
+
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
@@ -55,35 +58,31 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
-		utils.Log.UpdateLogOutput(logFile)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			utils.Log.Error(err)
+			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
+			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
-		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
+		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(err)
+			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
 			return err
 		}
 
 		sheetGID = GetSheetIDFromTitle(resp, "Components")
-		if spreadsheeetID != "" {
-			err := InvokeCompUpdate()
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
+
+		err = InvokeCompUpdate()
+		if err != nil {
+			utils.Log.Error(err)
+			return err
 		}
 
 		return nil
-	},
-	PostRun: func(cmd *cobra.Command, args []string) {
-		utils.Log.UpdateLogOutput(os.Stdout)
 	},
 }
 var (
@@ -96,14 +95,22 @@ type updateTracker struct {
 }
 
 func InvokeCompUpdate() error {
+	utils.Log.UpdateLogOutput(logFile)
+
 	defer func() {
 		_ = logFile.Close()
+		utils.Log.UpdateLogOutput(os.Stdout)
+		utils.Log.Info(fmt.Sprintf("Updated %d models, updated %d components", totalAggregateModel, totalAggregateComponents))
+		utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
+
+		totalAggregateModel = 0
+		totalAggregateComponents = 0
 	}()
 	modelToCompUpdateTracker := make(map[string]updateTracker, 200)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
 	if err != nil {
-		return err // add meshkit err
+		return err
 	}
 
 	err = componentCSVHelper.ParseComponentsSheet()
@@ -126,9 +133,9 @@ func InvokeCompUpdate() error {
 			continue
 		}
 
-		totalCompsUpdated := 0
-		availableComponents := 0
 		for modelName, components := range model {
+			totalCompsUpdated := 0
+			availableComponents := 0
 			modelPath := filepath.Join(pwd, modelLocation, modelName)
 			utils.Log.Info("Starting to update components of model ", modelName)
 
@@ -144,46 +151,46 @@ func InvokeCompUpdate() error {
 					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
+
+					versionPath := filepath.Join(modelPath, content.Name())
+					entries, _ := os.ReadDir(versionPath)
+					availableComponents += len(entries)
+
+					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
+
+					for _, component := range components {
+						utils.Log.Info("Updating ", component.Component)
+						compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
+						componentByte, err := os.ReadFile(compPath)
+						if err != nil {
+							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							continue
+						}
+						componentDef := v1alpha1.ComponentDefinition{}
+						err = json.Unmarshal(componentByte, &componentDef)
+						if err != nil {
+							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							continue
+						}
+
+						err = component.UpdateCompDefinition(&componentDef)
+						if err != nil {
+							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							continue
+						}
+						err = mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdated++
+					}
+					modelUpdateTracker := updateTracker{
+						totalComps:        availableComponents,
+						totalCompsUpdated: totalCompsUpdated,
+					}
+					modelToCompUpdateTracker[modelName] = modelUpdateTracker
 				}
-
-				versionPath := filepath.Join(modelPath, content.Name())
-				entries, _ := os.ReadDir(versionPath)
-				availableComponents += len(entries)
-
-				utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
-
-				for _, component := range components {
-					utils.Log.Info("Updating ", component.Component)
-					compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
-					componentByte, err := os.ReadFile(compPath)
-					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
-						continue
-					}
-					componentDef := v1alpha1.ComponentDefinition{}
-					err = json.Unmarshal(componentByte, &componentDef)
-					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
-						continue
-					}
-
-					err = component.UpdateCompDefinition(&componentDef)
-					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
-						continue
-					}
-					err = writeToFileSystem[v1alpha1.ComponentDefinition](compPath, componentDef)
-					if err != nil {
-						utils.Log.Error(err)
-						continue
-					}
-					totalCompsUpdated++
-				}
-				modelUpdateTracker := updateTracker{
-					totalComps:        availableComponents,
-					totalCompsUpdated: totalCompsUpdated,
-				}
-				modelToCompUpdateTracker[modelName] = modelUpdateTracker
 			}
 			utils.Log.Info("\n")
 		}
@@ -195,23 +202,23 @@ func InvokeCompUpdate() error {
 }
 
 func logAggregateModelUpdates(modelToCompUpdateTracker map[string]updateTracker) {
-	totalAggregateModel := 0
-	totalAggregateComponents := 0
+
 	for key, value := range modelToCompUpdateTracker {
 		totalAggregateModel++
 		totalAggregateComponents += value.totalCompsUpdated
 		utils.Log.Info(fmt.Sprintf("For model %s, updated %d out of %d components.", key, value.totalCompsUpdated, value.totalComps))
 	}
 
-	utils.Log.Info(fmt.Sprintf("total available models %d, total available components %d", totalAggregateModel, totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("Updated %d models, updated %d components", totalAggregateModel, totalAggregateComponents))
 }
 
 func init() {
-	// utils.Log.SetLevel(logrus.InfoLevel)
-	updateCmd.PersistentFlags().StringVarP(&modelLocation, "path", "p", "", "relative or absolute path to the models directory")
+	updateCmd.PersistentFlags().StringVarP(&modelLocation, "path", "p", "../server/meshmodel", "relative or absolute path to the models directory")
 	updateCmd.MarkPersistentFlagRequired("path")
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	updateCmd.MarkPersistentFlagRequired("spreadsheet_id")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+
+	updateCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
 
 }
