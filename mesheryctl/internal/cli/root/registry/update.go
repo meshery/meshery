@@ -64,7 +64,6 @@ var updateCmd = &cobra.Command{
 
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
