@@ -22,6 +22,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -52,7 +53,7 @@ mesheryctl exp model list
 
 // View list of models with specified page number (25 models per page)
 mesheryctl exp model list --page 2
-	`,
+    `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 
@@ -118,20 +119,51 @@ mesheryctl exp model list --page 2
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no model is found
 			utils.Log.Info("No model(s) found")
-		} else {
+			return nil
+		}
+
+		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
+		} else {
+			paginator := utils.NewPaginator(header, rows)
+			paginator.Render()
+			keysEvents, err := keyboard.GetKeys(10)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				_ = keyboard.Close()
+			}()
+
+			for {
+				event := <-keysEvents
+				if event.Err != nil {
+					utils.Log.Error(fmt.Errorf("Unable to capture keyboard events"))
+					break
+				}
+				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+					break
+				}
+				if event.Key == keyboard.KeyArrowDown || event.Key == keyboard.KeyEnter {
+					isLastLine := paginator.AddLine()
+					if isLastLine {
+						break
+					}
+				}
+			}
+			utils.ClearLine()
 		}
 
 		return nil
@@ -321,12 +353,12 @@ mesheryctl exp model search [query-text]
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
 			}
 		}
 

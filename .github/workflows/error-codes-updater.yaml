@@ -20,7 +20,9 @@ jobs:
       - uses: actions/checkout@master
         with:
           ref: "master"
-
+          token: ${{ secrets.GH_ACCESS_TOKEN != '' && secrets.GH_ACCESS_TOKEN || ''}}
+          fetch-depth: 1
+          
       - name: Setup Go
         uses: actions/setup-go@master
         with:
