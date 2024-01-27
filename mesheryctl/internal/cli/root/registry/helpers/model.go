@@ -79,6 +79,9 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 }
 
 func (mch *ModelCSVHelper) ParseModelsSheet() {
+	defer func(){
+		_ = os.RemoveAll(mch.CSVPath)
+	}()
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {

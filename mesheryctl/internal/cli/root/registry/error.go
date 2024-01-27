@@ -8,7 +8,7 @@ var (
 )
 
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{}, []string{}, []string{}, []string{}) 
+	return errors.New(ErrGenerateModelCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }
 
 func ErrGenerateComponent(err error, compName string) error {
