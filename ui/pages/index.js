@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import DashboardComponent from '../components/DashboardComponent';
 import { getPath } from '../lib/path';
 import { updatepagepath } from '../lib/store';
+import NotifyRegistrant from '../components/DashboardComponent/notifyRegistrant';
 
 function Index(props) {
   useEffect(() => {
@@ -18,6 +19,7 @@ function Index(props) {
         <title>Dashboard | Meshery</title>
       </Head>
       <DashboardComponent />
+      <NotifyRegistrant />
     </NoSsr>
   );
 }

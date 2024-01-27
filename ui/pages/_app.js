@@ -56,7 +56,6 @@ import { formatToTitleCase, updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
-import NotifyRegistrant from '../components/DashboardComponent/notifyRegistrant';
 
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
@@ -751,7 +750,6 @@ const MesheryWithRedux = withStyles(styles)(
 const MesheryAppWrapper = (props) => {
   return (
     <Provider store={props.store}>
-      <NotifyRegistrant />
       <Head>
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
