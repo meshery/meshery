@@ -23,6 +23,7 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: cloud native patterns and Open Application Model integration
 - `mesheryctl app` - Cloud Native Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
+- `mesheryctl exp` - Experimental features
 
 ## Global Commands and Flags
 
@@ -723,4 +724,57 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 </thead>
 </table>
+
+
+## Experimental Features
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command10 = site.data.mesheryctlcommands.cmds.exp %}
+    <tr>
+      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command10.description }}</td>
+    </tr>
+    {% for flag_hash in command10.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+{% assign subcommand1 = command10.subcommands.registry %}
+      <tr>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/exp/registry">{{ subcommand1.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand1.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% assign sub_subcommand1 = subcommand1.subcommands.publish %}
+      <tr>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/exp/registry/publish">{{ sub_subcommand1.name }}</a></td>
+        <td></td>
+        <td>{{ sub_subcommand1.description }}</td>
+      </tr>
+      {% for flag_hash in sub_subcommand1.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+</thead>
+</table>
+
 {% include related-discussions.html tag="mesheryctl" %}
