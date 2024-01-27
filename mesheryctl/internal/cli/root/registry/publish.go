@@ -19,11 +19,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
-	// "github.com/utils/errors"
-
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -88,17 +89,19 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		imgsOutputPath = args[4]
 
 		if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
-			return fmt.Errorf("invalid output format: %s", outputFormat)
+			return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
 		}
 
 		// move to meshkit
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		modelCSVHelper := &utils.ModelCSVHelper{}
@@ -110,15 +113,25 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 			case "Models":
 				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
-				modelCSVHelper.ParseModelsSheet()
+				err := modelCSVHelper.ParseModelsSheet()
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
 			case "Components":
 				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
-				componentCSVHelper.ParseComponentsSheet()
+				err := componentCSVHelper.ParseComponentsSheet()
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
 			}
 		}
 
@@ -137,17 +150,20 @@ mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/in
 		}
 
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		return nil
@@ -171,7 +187,7 @@ func websiteSystem() error {
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
-			fmt.Println("no components found for ", model.Model)
+			utils.Log.Debug("no components found for ", model.Model)
 			comps = []utils.ComponentCSV{}
 		}
 
@@ -179,17 +195,17 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error())
+				log.Fatalln(fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, imgsOutputPath) // json file
 			if err != nil {
-				fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
+				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		}
 
@@ -200,8 +216,8 @@ func websiteSystem() error {
 		docsJSON += "]; export default data"
 		mOut, _ := filepath.Abs(filepath.Join("../", modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
-			fmt.Printf("Error writing to file: %v\n", err.Error())
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 	}
 

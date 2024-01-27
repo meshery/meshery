@@ -79,7 +79,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet() {
+func (mch *ModelCSVHelper) ParseModelsSheet() error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
@@ -92,15 +92,15 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 	})
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return ErrFileRead(err)
 	}
 
-	go func() {
+	go func() error {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
-			fmt.Println(err)
+			return ErrFileRead(err)
 		}
+		return nil
 	}()
 	for {
 		select {
@@ -109,10 +109,10 @@ func (mch *ModelCSVHelper) ParseModelsSheet() {
 			mch.Models = append(mch.Models, data)
 			fmt.Printf("Reading Modal: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:
-			fmt.Println(err)
+			return ErrFileRead(err)
 
 		case <-csvReader.Context.Done():
-			return
+			return nil
 		}
 	}
 }

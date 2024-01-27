@@ -59,7 +59,7 @@ func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64
 	}, nil
 }
 
-func (mch *ComponentCSVHelper) ParseComponentsSheet() {
+func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 	ch := make(chan ComponentCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(_ []string, _ []string) bool {
@@ -67,16 +67,17 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() {
 	})
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return ErrFileRead(err)
 	}
 
-	go func() {
+	go func() error {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
-			fmt.Println(err)
+			return ErrFileRead(err)
 		}
+		return nil
 	}()
+
 	for {
 		select {
 
@@ -93,7 +94,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() {
 			fmt.Println(err)
 
 		case <-csvReader.Context.Done():
-			return
+			return nil
 		}
 	}
 }
