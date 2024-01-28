@@ -85,7 +85,9 @@ type ModelCSVHelper struct {
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content", "models.csv")
+	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+	_ = os.MkdirAll(dirPath, 0755)
+	csvPath := filepath.Join(dirPath, "models.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, err
