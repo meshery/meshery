@@ -9,7 +9,7 @@ on:
       spreadsheet_cred:
         description: Credential for the Spreadsheet.
         type: string
-        default: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+        default: 
   schedule:
     - cron: "0 0 * * *"
 jobs:
