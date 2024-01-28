@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
 )
@@ -41,6 +42,7 @@ var importCmd = &cobra.Command{
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "registry-generate")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
@@ -84,7 +86,7 @@ var importCmd = &cobra.Command{
 
 func InvokeGenerationFromSheet() error {
 	utils.Log.UpdateLogOutput(logFile)
-
+	fmt.Println("TEST LOG LEVEL ", utils.Log.GetLevel())
 	defer func() {
 		_ = logFile.Close()
 		utils.Log.UpdateLogOutput(os.Stdout)
