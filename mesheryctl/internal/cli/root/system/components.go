@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -39,12 +40,14 @@ import (
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
-	Long:  List all components registered in Meshery Server,
+	Long:  "List all components registered in Meshery Server",
 	Example: `
 	// View list of components
 mesheryctl exp components list
 // View list of components with specified page number (25 components per page)
 mesheryctl exp components list --page 2
+// View Total number of components
+mesheryctl exp components list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites for the command here
@@ -111,53 +114,75 @@ mesheryctl exp components list --page 2
 			return err
 		}
 
-		header := []string{"Kind", "APIVersion", "Model"}
+		header := []string{"Model", "kind", "Version"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Kind, component.APIVersion, component.Model.Name})
+				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no component is found
-			utils.Log.Info("No components(s) found")
+			fmt.Println("No components(s) found")
+			return nil
+		}
+
+		if cmd.Flag("count").Value.String() == "true" {
+			fmt.Println("Total components: ", componentsResponse.Count)
 			return nil
 		}
 
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
-			paginator := utils.NewPaginator(header, rows)
-			paginator.Render()
-			keysEvents, err := keyboard.GetKeys(10)
-			if err != nil {
-				return err
-			}
-			defer func() {
-				_ = keyboard.Close()
-			}()
-
+			maxRowsPerPage := 25
+			startIndex := 0
+			endIndex := min(len(rows), startIndex+maxRowsPerPage)
+			whiteBoardPrinter := color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 			for {
+				// Clear the entire terminal screen
+				utils.ClearLine()
+
+				// Print number of models and current page number
+				whiteBoardPrinter.Print("Total number of models: ", len(rows))
+				fmt.Println()
+				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
+				fmt.Println()
+
+				utils.PrintToTable(header, rows[startIndex:endIndex])
+				keysEvents, err := keyboard.GetKeys(10)
+				if err != nil {
+					return err
+				}
+
+				defer func() {
+					_ = keyboard.Close()
+				}()
+
 				event := <-keysEvents
 				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("Unable to capture keyboard events"))
+					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
 					break
 				}
+
 				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
 					break
 				}
-				if event.Key == keyboard.KeyArrowDown || event.Key == keyboard.KeyEnter {
-					isLastLine := paginator.AddLine()
-					if isLastLine {
-						break
-					}
-				}
-			}
-			utils.ClearLine()
-		}
 
+				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+					startIndex += maxRowsPerPage
+					endIndex = min(len(rows), startIndex+maxRowsPerPage)
+				}
+
+				if startIndex >= len(rows) {
+					break
+				}
+
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+			}
+		}
 		return nil
 	},
 }
@@ -242,7 +267,7 @@ mesheryctl exp components view [component-name]
 		var selectedComponent v1alpha1.ComponentDefinition
 
 		if componentResponse.Count == 0 {
-			utils.Log.Info("No component(s) found for the given name ", component)
+			fmt.Println("No component(s) found for the given name ", component)
 			return nil
 		} else if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
@@ -345,18 +370,19 @@ mesheryctl exp components search [query-text]
 			return err
 		}
 
-		header := []string{"Kind", "APIVersion", "Model"}
+		header := []string{"Model", "kind", "Version"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Kind, component.APIVersion, component.Model.Name})
+				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no component is found
-			utils.Log.Info("No components(s) found")
+			fmt.Println("No components(s) found")
+			return nil
 		} else {
 			utils.PrintToTable(header, rows)
 		}
@@ -369,7 +395,7 @@ mesheryctl exp components search [query-text]
 var ComponentsCmd = &cobra.Command{
 	Use:   "components",
 	Short: "View list of components and detail of components",
-	Long:  View list of components and detailed information of a specific component,
+	Long:  "View list of components and detailed information of a specific component",
 	Example: `
 // To view list of components
 mesheryctl exp components list
@@ -400,7 +426,6 @@ mesheryctl exp components view [component-name]
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-
 func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.ComponentDefinition {
 	componentNames := []string{}
 	componentArray := []v1alpha1.ComponentDefinition{}
@@ -458,6 +483,7 @@ func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
 func init() {
 	// Add the new exp components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of components in total")
 	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands := []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 	ComponentsCmd.AddCommand(availableSubcommands...)
