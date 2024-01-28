@@ -82,7 +82,7 @@ var importCmd = &cobra.Command{
 }
 
 func InvokeGenerationFromSheet() error {
-	// utils.Log.UpdateLogOutput(logFile)
+	utils.Log.UpdateLogOutput(logFile)
 
 	defer func() {
 		_ = logFile.Close()
