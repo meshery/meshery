@@ -6,6 +6,7 @@ LDFLAGS="-w -s -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/const
 
 make:
 	gofmt -l -s -w .
+	go mod tidy
 	go build -ldflags=${LDFLAGS} -o mesheryctl cmd/mesheryctl/main.go
 forwin:
 	go build -ldflags=${LDFLAGS} -o mesheryctl.exe cmd/mesheryctl/main.go
