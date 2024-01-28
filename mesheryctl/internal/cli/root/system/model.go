@@ -1,4 +1,4 @@
-/ Copyright 2023 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -411,7 +411,7 @@ mesheryctl exp model search [query-text]
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "View list of models and detail of models",
-	Long:  View list of models and detailed information of a specific model,
+	Long:  "View list of models and detailed information of a specific model",
 	Example: `
 // To view list of components
 mesheryctl exp model list
