@@ -112,7 +112,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -132,7 +132,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -152,7 +152,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -172,7 +172,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -190,7 +190,7 @@
                 ["settings",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -210,7 +210,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -232,7 +232,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+"resources",                   "_",
                   "envFrom",
                   "configMapRef",
                   "name"
@@ -259,8 +259,8 @@
               "mutatedRef": [
                 ["spec", "limits", "_", "default", "memory"],
                 ["spec", "limits", "_", "default", "cpu"],
-                ["spec", "limits", "_", "defaultRequest", "memory"],
-                ["spec", "limits", "_", "defaultRequest", "cpu"]
+                ["spec", "limits", "defaultRequest", "memory"],
+                ["spec", "limits", "defaultRequest", "cpu"]
               ],
               "description": "Define default memory and CPU limits (including defaultRequest) in LimitRange."
             }
@@ -271,8 +271,11 @@
             "kind": "Pod",
             "model": "kubernetes",
             "patch": {
-              "patchStrategy": "merge",
-              "mutatedRef": [["spec", "limitFrom", "_", "name"]],
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "containers", "resources", "resources", "limits", "memory"],
+                ["settings", "spec", "containers", "resources", "limits", "cpu"],
+                ["settings", "spec", "containers", "resources", "requests", "memory"],
+                ["settings", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Pod containers."
             }
           },
@@ -281,7 +284,10 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["spec", "template", "spec", "containers", "limitFrom", "_", "name"]],
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+                ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+                ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+                ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Deployment containers."
             }
           },
@@ -290,7 +296,10 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to StatefulSet containers."
             }
           },
@@ -298,8 +307,11 @@
             "kind": "DaemonSet",
             "model": "kubernetes",
             "patch": {
-              "patchStrategy": "merge",
-              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to DaemonSet containers."
             }
           },
@@ -307,8 +319,11 @@
             "kind": "ReplicaSet",
             "model": "kubernetes",
             "patch": {
-              "patchStrategy": "merge",
-              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to ReplicaSet containers."
             }
           },
@@ -316,8 +331,11 @@
             "kind": "Job",
             "model": "kubernetes",
             "patch": {
-              "patchStrategy": "merge",
-              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Job containers."
             }
           },
@@ -325,8 +343,11 @@
             "kind": "CronJob",
             "model": "kubernetes",
             "patch": {
-              "patchStrategy": "merge",
-              "mutatedRef": [["spec", "template", "spec", "containers", "_", "limitFrom", "name"]],
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", "resources", "requests", "cpu"]],
               "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to CronJob containers."
             }
           }
