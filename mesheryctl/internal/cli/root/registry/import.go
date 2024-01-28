@@ -30,12 +30,12 @@ var importCmd = &cobra.Command{
 	Short: "Import Models",
 	Long:  "Import models from spreadsheet, GitHub or ArtifactHub repositories",
 	Example: `
-	// Import models from Meshery Integration Spreadsheet
-	mesheryctl registry import --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
-	
-	// Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-	mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
-	`,
+    // Import models from Meshery Integration Spreadsheet
+    mesheryctl registry import --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
+    
+    // Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
+    mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
+    `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
@@ -58,6 +58,7 @@ var importCmd = &cobra.Command{
 
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
+			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
@@ -104,6 +105,7 @@ func InvokeGenerationFromSheet() error {
 	}
 
 	modelCSVHelper.ParseModelsSheet(false)
+	fmt.Println("total models: ", len(modelCSVHelper.Models))
 	weightedSem := semaphore.NewWeighted(20)
 	pwd, _ := os.Getwd()
 
@@ -136,6 +138,7 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+			fmt.Println("\nAFTER GET PACKAGE FOR MODEL", model.Model, " : ERR", err)
 			version := pkg.GetVersion()
 
 			modelDef := model.CreateModelDefinition(version)
@@ -149,15 +152,19 @@ func InvokeGenerationFromSheet() error {
 			modelFilePath := fmt.Sprintf("%s/model.json", modelDefPath)
 			err = mutils.WriteJSONToFile[v1alpha1.Model](modelFilePath, modelDef)
 			if err != nil {
+				fmt.Println("ERR GENERATE MODEL DEFINITION FOR MODEL : ", model.Model)
 				utils.Log.Error(ErrGenerateModel(err, modelDefPath))
 				return
 			}
 
+			fmt.Println("\nAFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
+				fmt.Println("\nAFTER GENERATE COMPS FOR MODEL", model.Model, ": ERR")
 				utils.Log.Error(ErrGenerateComponent(err, model.Model))
 				return
 			}
+			fmt.Println("\nAFTER GENERATE COMP NO ERR")
 			utils.Log.Info("Extracted", len(comps), "for model %s", model.ModelDisplayName)
 
 			dirName := filepath.Join(outputLocation, model.Model, version)
@@ -175,6 +182,7 @@ func InvokeGenerationFromSheet() error {
 				location := fmt.Sprintf("%s%s", filepath.Join(dirName, comp.Kind), ".json")
 				err := mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](location, comp)
 				if err != nil {
+					fmt.Println("INSIDE COMPS : ERR", err)
 					utils.Log.Info(err)
 				}
 			}
