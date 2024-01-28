@@ -6,6 +6,10 @@ on:
         description: Spreadsheet ID to generate models
         type: string
         default: 17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw
+      spreadsheet_cred:
+        description: Credential for the Spreadsheet.
+        type: string
+        default: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
   schedule:
     - cron: "0 0 * * *"
 jobs:
@@ -39,7 +43,7 @@ jobs:
             cd mesheryctl; make;
       - name: Generate Models and Components
         run: |
-          ./mesheryctl registry import --spreadsheet_id "${{ inputs.spreadsheet_id }}" --spreadsheet_cred ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+          ./mesheryctl registry import --spreadsheet_id "${{ inputs.spreadsheet_id }}" --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
 
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -90,7 +94,7 @@ jobs:
             cd mesheryctl; make;
       - name: Run Component Updater
         run: |
-          ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred $CRED
+          ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
