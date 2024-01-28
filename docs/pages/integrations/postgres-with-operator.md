@@ -6,8 +6,8 @@ image: /assets/img/integrations/postgres-with-operator/icons/color/postgres-with
 permalink: extensibility/integrations/postgres-with-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-with-operator
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
+integrations-category: Database
+integrations-subcategory: App Definition and Development
 registrant: artifacthub
 components: 
 - name: kubegres
