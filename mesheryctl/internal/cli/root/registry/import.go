@@ -140,7 +140,7 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("\nAFTER GET PACKAGE FOR MODEL", model.Model, " : ERR", err)
+			utils.Log.Info("\nAFTER GET PACKAGE FOR MODEL", model.Model, " : ERR", err, pkg)
 			version := pkg.GetVersion()
 
 			modelDef := model.CreateModelDefinition(version)
