@@ -208,13 +208,6 @@ mesheryctl system config eks
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		eksCheck := exec.Command("aws", "--version")
-		eksCheck.Stdout = os.Stdout
-		eksCheck.Stderr = os.Stderr
-		err := eksCheck.Run()
-		if err != nil {
-			log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
-		}
 		log.Info("Configuring Meshery to access EKS...")
 		var regionName, clusterName string
 
