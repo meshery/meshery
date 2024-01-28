@@ -2,7 +2,6 @@ package registry
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -16,14 +15,26 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
+	"google.golang.org/api/sheets/v4"
 )
 
 var (
-	outputLocation string
-
+	componentSpredsheetGID         int64
+	outputLocation                 string
 	pathToRegistrantConnDefinition string
 	pathToRegistrantCredDefinition string
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
+	srv                            *sheets.Service
+
+	// Tracks the indexed mapping between component spreadsheet columns.
+	// Used when generating component definition from spreadsheet itself, for eg: Compnent of Meshery core model.
+	// The GoogleSpreadsheetAPI doesn't return column names, hence when invoking generation columns names are retrived by dumoing the sheet in CSV format then extrcting the columns (ComponentCSVHelper)
+	componentSpreadsheetCols []string
+
+	// current working directory location
+	cwd string
+
+	registryLocation string
 )
 
 var importCmd = &cobra.Command{
@@ -53,12 +64,16 @@ var importCmd = &cobra.Command{
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		cwd, _ = os.Getwd()
+		registryLocation = filepath.Join(cwd, outputLocation)
+
 		if pathToRegistrantConnDefinition != "" {
 			utils.Log.Info("Model Generation from registrant definitions not yet supproted.")
 			return nil
 		}
+		var err error
 
-		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
+		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
@@ -72,6 +87,7 @@ var importCmd = &cobra.Command{
 		}
 
 		sheetGID = GetSheetIDFromTitle(resp, "Models")
+		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 
 		err = InvokeGenerationFromSheet()
 		if err != nil {
@@ -86,7 +102,6 @@ var importCmd = &cobra.Command{
 
 func InvokeGenerationFromSheet() error {
 	utils.Log.UpdateLogOutput(logFile)
-	fmt.Println("TEST LOG LEVEL ", utils.Log.GetLevel())
 	defer func() {
 		_ = logFile.Close()
 		utils.Log.UpdateLogOutput(os.Stdout)
@@ -107,10 +122,16 @@ func InvokeGenerationFromSheet() error {
 	}
 
 	modelCSVHelper.ParseModelsSheet(false)
-	utils.Log.Info("total models: ", len(modelCSVHelper.Models))
+
+	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	if err != nil {
+		return err
+	}
+
+	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
+
 	weightedSem := semaphore.NewWeighted(20)
-	pwd, _ := os.Getwd()
-	// return nil
+
 	var wg sync.WaitGroup
 	for _, model := range modelCSVHelper.Models {
 		ctx := context.Background()
@@ -126,12 +147,20 @@ func InvokeGenerationFromSheet() error {
 				wg.Done()
 				weightedSem.Release(1)
 			}()
+			if model.Registrant == "meshery" {
+				err = GenerateDefsForCoreRegistrant(model)
+				if err != nil {
+					utils.Log.Error(err)
+				}
+				return
+			}
 
 			generator, err := generators.NewGenerator(model.Registrant, model.SourceURL, model.Model)
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+
 			if model.Registrant == "artifacthub" {
 				time.Sleep(1 * time.Second)
 			}
@@ -143,45 +172,29 @@ func InvokeGenerationFromSheet() error {
 			utils.Log.Info("\nAFTER GET PACKAGE FOR MODEL", model.Model, " : ERR", err, pkg)
 			version := pkg.GetVersion()
 
-			modelDef := model.CreateModelDefinition(version)
-			modelDefPath := filepath.Join(pwd, outputLocation, modelDef.Name)
-			err = os.MkdirAll(modelDefPath, 0755)
+			modelDefPath, _, err := writeModelDefToFileSystem(&model, version)
 			if err != nil {
-				err = ErrGenerateModel(err, model.Model)
 				utils.Log.Error(err)
-				return
-			}
-			modelFilePath := fmt.Sprintf("%s/model.json", modelDefPath)
-			err = mutils.WriteJSONToFile[v1alpha1.Model](modelFilePath, modelDef)
-			if err != nil {
-				utils.Log.Info("ERR GENERATE MODEL DEFINITION FOR MODEL : ", model.Model)
-				utils.Log.Error(ErrGenerateModel(err, modelDefPath))
 				return
 			}
 
 			utils.Log.Info("\nAFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
-				utils.Log.Info("\nAFTER GENERATE COMPS FOR MODEL", model.Model, ": ERR")
-				utils.Log.Error(ErrGenerateComponent(err, model.Model))
+				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
 			utils.Log.Info("\nAFTER GENERATE COMP NO ERR")
 			utils.Log.Info("Extracted", len(comps), "for model %s", model.ModelDisplayName)
 
-			dirName := filepath.Join(outputLocation, model.Model, version)
-			_, err = os.Stat(dirName)
-
-			if errors.Is(err, os.ErrNotExist) {
-				err = os.MkdirAll(filepath.Join(pwd, dirName), 0755)
-				if err != nil {
-					utils.Log.Error(ErrGenerateComponent(err, model.Model))
-					return
-				}
+			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
+			if err != nil {
+				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				return
 			}
 
 			for _, comp := range comps {
-				location := fmt.Sprintf("%s%s", filepath.Join(dirName, comp.Kind), ".json")
+				location := fmt.Sprintf("%s%s", filepath.Join(compDirName, comp.Kind), ".json")
 				err := mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](location, comp)
 				if err != nil {
 					utils.Log.Info("INSIDE COMPS : ERR", err)
@@ -196,6 +209,87 @@ func InvokeGenerationFromSheet() error {
 	return nil
 }
 
+// For registrants eg: meshery, whose components needs to be directly created by referencing the sheet.
+// the sourceURL contains the "rangeString" : the value that describes the sheet in which the components are listed, and their starting row to ending row.
+func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
+
+	modelPath, modelDef, err := writeModelDefToFileSystem(&model, "v1.0.0") // how to infer this? @Beginner86 any idea? new column?
+	components, err := srv.Spreadsheets.Values.Get(spreadsheeetID, model.SourceURL).Do()
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
+	compDirName, err := createVersionDirectoryForModel(modelPath, modelDef.Version)
+	if err != nil {
+		err = ErrGenerateModel(err, modelDef.Name)
+		return err
+	}
+
+	if len(componentSpreadsheetCols) > 0 {
+		for _, comp := range components.Values {
+			component := make(map[string]interface{}, len(comp))
+			for i, compValue := range comp {
+				component[componentSpreadsheetCols[i]] = compValue
+			}
+			compName, _ := component["component"].(string)
+			compCSV, err := mutils.MarshalAndUnmarshal[map[string]interface{}, utils.ComponentCSV](component)
+			if err != nil {
+				err = ErrGenerateComponent(err, model.Model, compName)
+				continue
+			}
+
+			componentDef := compCSV.CreateComponentDefinition()
+			componentDef.Model = *modelDef // remove this, left for backward compatibility
+
+			componentPath := filepath.Join(compDirName, componentDef.Kind+".json")
+
+			err = mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](componentPath, componentDef)
+
+			if err != nil {
+				err = ErrGenerateComponent(err, model.Model, compName)
+				continue
+			}
+		}
+	}
+	return nil
+}
+
+func createDirectoryForModel(modelName string) (string, error) {
+	modelDefPath := filepath.Join(registryLocation, modelName)
+	err := os.MkdirAll(modelDefPath, 0755)
+	if err != nil {
+		err = ErrGenerateModel(err, modelName)
+
+		return "", err
+	}
+	return modelDefPath, nil
+}
+
+func createVersionDirectoryForModel(modelDefPath, version string) (string, error) {
+	versionDirPath := filepath.Join(modelDefPath, version)
+	err := os.MkdirAll(versionDirPath, 0755)
+	if err != nil {
+		err = ErrGenerateModel(err, modelDefPath)
+		return "", err
+	}
+	return versionDirPath, nil
+}
+
+func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1alpha1.Model, error) {
+	modelDef := model.CreateModelDefinition(version)
+
+	modelDefPath, err := createDirectoryForModel(model.Model)
+	if err != nil {
+		return "", nil, err
+	}
+
+	modelFilePath := fmt.Sprintf("%s/model.json", modelDefPath)
+	err = mutils.WriteJSONToFile[v1alpha1.Model](modelFilePath, modelDef)
+	if err != nil {
+		err = ErrGenerateModel(err, modelDefPath)
+		return "", nil, err
+	}
+	return modelDefPath, &modelDef, nil
+}
 func init() {
 	importCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
 	importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")

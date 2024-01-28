@@ -39,6 +39,21 @@ type ComponentCSV struct {
 	SubCategory      string `json:"subCategory"`
 }
 
+// The Component Definition generated assumes or is only for components which have registrant as "meshery"
+func (c *ComponentCSV) CreateComponentDefinition() v1alpha1.ComponentDefinition {
+	componentDefinition := &v1alpha1.ComponentDefinition{
+		TypeMeta: v1alpha1.TypeMeta{
+			Kind:       c.Component,
+			APIVersion: "core.meshery.io/v1alpha1",
+		},
+		DisplayName: c.Component,
+		Format:      "JSON",
+		Schema:      "",
+	}
+	c.UpdateCompDefinition(componentDefinition)
+	return *componentDefinition
+}
+
 // "isModelAnnotation": "FALSE", is presnt in comp metadata is it required?
 // "published": true, is present in comp metadata is it required?
 // subCategory should be in comp metadata?
@@ -89,6 +104,17 @@ func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64
 		CSVPath:        csvPath,
 		Components:     make(map[string]map[string][]ComponentCSV),
 	}, nil
+}
+
+func (mch *ComponentCSVHelper) GetColumns() ([]string, error) {
+	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(_ []string, _ []string) bool {
+		return true
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return csvReader.ExtractCols(rowIndex)
 }
 
 func (mch *ComponentCSVHelper) ParseComponentsSheet() error {

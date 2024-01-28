@@ -22,8 +22,8 @@ func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model %s", modelName)}, []string{err.Error()}, []string{"Registrant used for the model is not available", "Failed to create model directory"}, []string{"Check network connevtivity and try again.", "Ensure sufficient permissions to allow creation of model directory"})
 }
 
-func ErrGenerateComponent(err error, modelName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", modelName}, []string{err.Error()}, []string{}, []string{})
+func ErrGenerateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUpdateModel(err error, modelName string) error {
