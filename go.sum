@@ -1224,8 +1224,8 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c/go.mod h1:X0CRv0ky0k6m906ixxpzmDRLvX58TFUKS2eePweuyxk=
-github.com/MUzairS15/meshkit v0.5.28-0.20240128100046-7df749340475 h1:59DsJFPJV0qfU4DHxUNT2qnVlSGTy1Y87ocYCzlhR3A=
-github.com/MUzairS15/meshkit v0.5.28-0.20240128100046-7df749340475/go.mod h1:JYMa+b2ePuwci0Nw/fIiEHHgHfcjczNHNYfDD09p2z4=
+github.com/MUzairS15/meshkit v0.7.11 h1:aQBjgiMbJnvXViY4oSh28HsSVIP6Iy+TVCszGeAOUqU=
+github.com/MUzairS15/meshkit v0.7.11/go.mod h1:JYMa+b2ePuwci0Nw/fIiEHHgHfcjczNHNYfDD09p2z4=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
