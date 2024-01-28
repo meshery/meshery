@@ -1,4 +1,4 @@
-name: MeshModel Component Generator and Updater
+name: Model Component Generator and Updater
 on: 
   workflow_dispatch:
     inputs:
