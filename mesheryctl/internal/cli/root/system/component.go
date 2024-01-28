@@ -36,30 +36,21 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
-	// flag used to specify the page number in list command
-	pageNumberFlag int
-	// flag used to specify format of output of view {model-name} command
-	outFormatFlag string
-
-	// Maximum number of rows to be displayed in a page
-	maxRowsPerPage = 25
-)
-
-// represents the mesheryctl exp model list subcommand.
-var listModelCmd = &cobra.Command{
+// represents the mesheryctl exp components list command
+var listComponentCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list models",
-	Long:  "list name of all registered models",
+	Short: "List registered components",
+	Long:  "List all components registered in Meshery Server",
 	Example: `
-// View list of models
-mesheryctl exp model list
-
-// View list of models with specified page number (25 models per page)
-mesheryctl exp model list --page 2
-    `,
+	// View list of components
+mesheryctl exp components list
+// View list of components with specified page number (25 components per page)
+mesheryctl exp components list --page 2
+// View Total number of components
+mesheryctl exp components list --count
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+		// Check prerequisites for the command here
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -91,9 +82,9 @@ mesheryctl exp model list --page 2
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		var url string
 		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/meshmodels/models?page=%d", baseUrl, pageNumberFlag)
+			url = fmt.Sprintf("%s/api/meshmodels/components?page=%d", baseUrl, pageNumberFlag)
 		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
+			url = fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
 		}
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
@@ -116,30 +107,30 @@ mesheryctl exp model list --page 2
 			return err
 		}
 
-		modelsResponse := &models.MeshmodelsAPIResponse{}
-		err = json.Unmarshal(data, modelsResponse)
+		componentsResponse := &models.MeshmodelComponentsAPIResponse{}
+		err = json.Unmarshal(data, componentsResponse)
 		if err != nil {
 			utils.Log.Error(err)
 			return err
 		}
 
-		header := []string{"Model", "Category", "Version"}
+		header := []string{"Model", "kind", "Version"}
 		rows := [][]string{}
 
-		for _, model := range modelsResponse.Models {
-			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+		for _, component := range componentsResponse.Components {
+			if len(component.DisplayName) > 0 {
+				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
-			fmt.Println("No model(s) found")
+			// if no component is found
+			fmt.Println("No components(s) found")
 			return nil
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			fmt.Println("Total number of models: ", len(rows))
+			fmt.Println("Total components: ", componentsResponse.Count)
 			return nil
 		}
 
@@ -158,8 +149,6 @@ mesheryctl exp model list --page 2
 				fmt.Println()
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
 				keysEvents, err := keyboard.GetKeys(10)
@@ -189,29 +178,22 @@ mesheryctl exp model list --page 2
 				if startIndex >= len(rows) {
 					break
 				}
+
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
 			}
 		}
-
 		return nil
 	},
 }
 
-// min returns the smaller of x or y.
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
-
-// represents the mesheryctl exp model view [model-name] subcommand.
-var viewModelCmd = &cobra.Command{
+// represents the mesheryctl exp components view [component-name] subcommand.
+var viewComponentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view model",
-	Long:  "view a model queried by its name",
+	Short: "view registered components",
+	Long:  "view a component registered in Meshery Server",
 	Example: `
-// View current provider
-mesheryctl exp model view [model-name]
+// View details of a specific component
+mesheryctl exp components view [component-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -235,9 +217,9 @@ mesheryctl exp model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model view [model-name]\nRun 'mesheryctl exp model view --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
+			return fmt.Errorf("component name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
 			return fmt.Errorf("too many arguments\n\n%v", errMsg)
 		}
@@ -250,9 +232,9 @@ mesheryctl exp model view [model-name]
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		model := args[0]
+		component := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, model)
+		url := fmt.Sprintf("%s/api/meshmodels/components/%s?pagesize=all", baseUrl, component)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -274,22 +256,22 @@ mesheryctl exp model view [model-name]
 			return err
 		}
 
-		modelsResponse := &models.MeshmodelsAPIResponse{}
-		err = json.Unmarshal(data, modelsResponse)
+		componentResponse := &models.MeshmodelComponentsAPIResponse{}
+		err = json.Unmarshal(data, componentResponse)
 		if err != nil {
 			utils.Log.Error(err)
 			return err
 		}
 
-		var selectedModel v1alpha1.Model
+		var selectedComponent v1alpha1.ComponentDefinition
 
-		if modelsResponse.Count == 0 {
-			fmt.Println("No model(s) found for the given name ", model)
+		if componentResponse.Count == 0 {
+			fmt.Println("No component(s) found for the given name ", component)
 			return nil
-		} else if modelsResponse.Count == 1 {
-			selectedModel = modelsResponse.Models[0]
+		} else if componentResponse.Count == 1 {
+			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
 		} else {
-			selectedModel = selectModelPrompt(modelsResponse.Models)
+			selectedComponent = selectComponentPrompt(componentResponse.Components)
 		}
 
 		var output []byte
@@ -298,12 +280,12 @@ mesheryctl exp model view [model-name]
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
 		if outFormatFlag == "yaml" {
-			if output, err = yaml.Marshal(selectedModel); err != nil {
+			if output, err = yaml.Marshal(selectedComponent); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
 			fmt.Print(string(output))
 		} else if outFormatFlag == "json" {
-			return outputJson(selectedModel)
+			return outputComponentJson(selectedComponent)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
@@ -312,14 +294,14 @@ mesheryctl exp model view [model-name]
 	},
 }
 
-// represents the mesheryctl exp model search [query-text] subcommand.
-var searchModelCmd = &cobra.Command{
+// represents the mesheryctl exp components search [query-text] subcommand.
+var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
-	Short: "search models",
-	Long:  "search a models by search string",
+	Short: "search registered components",
+	Long:  "search components registered in Meshery Server",
 	Example: `
-// View current provider
-mesheryctl exp model search [query-text]
+// Search for components using a query
+mesheryctl exp components search [query-text]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -343,9 +325,9 @@ mesheryctl exp model search [query-text]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+			return fmt.Errorf("search term is missing\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -358,7 +340,7 @@ mesheryctl exp model search [query-text]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		queryText := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, queryText)
+		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, queryText)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -380,25 +362,25 @@ mesheryctl exp model search [query-text]
 			return err
 		}
 
-		modelsResponse := &models.MeshmodelsAPIResponse{}
-		err = json.Unmarshal(data, modelsResponse)
+		componentsResponse := &models.MeshmodelComponentsAPIResponse{}
+		err = json.Unmarshal(data, componentsResponse)
 		if err != nil {
 			utils.Log.Error(err)
 			return err
 		}
 
-		header := []string{"Model", "Category", "Version"}
+		header := []string{"Model", "kind", "Version"}
 		rows := [][]string{}
 
-		for _, model := range modelsResponse.Models {
-			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+		for _, component := range componentsResponse.Components {
+			if len(component.DisplayName) > 0 {
+				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
-			fmt.Println("No model(s) found")
+			// if no component is found
+			fmt.Println("No components(s) found")
 			return nil
 		} else {
 			utils.PrintToTable(header, rows)
@@ -408,45 +390,23 @@ mesheryctl exp model search [query-text]
 	},
 }
 
-// ModelCmd represents the mesheryctl exp model command
-var ModelCmd = &cobra.Command{
-	Use:   "model",
-	Short: "View list of models and detail of models",
-	Long:  "View list of models and detailed information of a specific model",
+// ComponentsCmd represents the mesheryctl exp components command
+var ComponentsCmd = &cobra.Command{
+	Use:   "components",
+	Short: "View list of components and detail of components",
+	Long:  "View list of components and detailed information of a specific component",
 	Example: `
 // To view list of components
-mesheryctl exp model list
-
-// To view a specific model
-mesheryctl exp model view [model-name]
+mesheryctl exp components list
+// To view a specific component
+mesheryctl exp components view [component-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			_ = cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp component --help' to display usage guide.\n", args[0]), "component"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -464,29 +424,21 @@ mesheryctl exp model view [model-name]
 	},
 }
 
-func init() {
-	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
-	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
-	ModelCmd.AddCommand(availableSubcommands...)
-}
+// selectComponentPrompt lets user to select a model if models are more than one
+func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.ComponentDefinition {
+	componentNames := []string{}
+	componentArray := []v1alpha1.ComponentDefinition{}
 
-// selectModelPrompt lets user to select a model if models are more than one
-func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
-	modelArray := []v1alpha1.Model{}
-	modelNames := []string{}
+	componentArray = append(componentArray, components...)
 
-	modelArray = append(modelArray, models...)
-
-	for _, model := range modelArray {
-		modelName := fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-		modelNames = append(modelNames, modelName)
+	for _, component := range componentArray {
+		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.TypeMeta.APIVersion)
+		componentNames = append(componentNames, componentName)
 	}
 
 	prompt := promptui.Select{
-		Label: "Select a model",
-		Items: modelNames,
+		Label: "Select component",
+		Items: componentNames,
 	}
 
 	for {
@@ -495,16 +447,16 @@ func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
 			continue
 		}
 
-		return modelArray[i]
+		return componentArray[i]
 	}
 }
 
-func outputJson(model v1alpha1.Model) error {
-	if err = prettifyJson(model); err != nil {
+func outputComponentJson(component v1alpha1.ComponentDefinition) error {
+	if err := prettifyComponentJson(component); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
 		// e.g unicode representation of '&' will be printed as '\u0026'
-		if output, err := json.MarshalIndent(model, "", "  "); err != nil {
+		if output, err := json.MarshalIndent(component, "", "  "); err != nil {
 			return errors.Wrap(err, "failed to format output in JSON")
 		} else {
 			fmt.Print(string(output))
@@ -515,7 +467,7 @@ func outputJson(model v1alpha1.Model) error {
 
 // prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyJson(model v1alpha1.Model) error {
+func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.
@@ -524,5 +476,14 @@ func prettifyJson(model v1alpha1.Model) error {
 	enc.SetIndent("", "  ")
 
 	// Any errors during the encoding process will be returned as an error.
-	return enc.Encode(model)
+	return enc.Encode(component)
+}
+
+func init() {
+	// Add the new exp components commands to the ComponentsCmd
+	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of components in total")
+	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	availableSubcommands := []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
+	ComponentsCmd.AddCommand(availableSubcommands...)
 }
