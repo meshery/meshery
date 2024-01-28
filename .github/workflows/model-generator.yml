@@ -15,7 +15,6 @@ on:
 jobs:
   generate-components:
     name: Generate Components
-    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
