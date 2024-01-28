@@ -42,6 +42,7 @@ jobs:
             cd mesheryctl; make;
       - name: Generate Models and Components
         run: |
+          cd mesheryctl;
           ./mesheryctl registry import --spreadsheet_id "${{ inputs.spreadsheet_id }}" --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
 
       - name: Commit changes 
@@ -93,6 +94,7 @@ jobs:
             cd mesheryctl; make;
       - name: Run Component Updater
         run: |
+          cd mesheryctl;
           ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
