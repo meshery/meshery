@@ -3,6 +3,7 @@ layout: default
 title: Policies
 permalink: concepts/policies
 type: concepts
+category: models
 abstract: "Meshery Policies enable you with a broad set of controls and governance of the behavior of systems under Meshery's management."
 language: en
 list: include

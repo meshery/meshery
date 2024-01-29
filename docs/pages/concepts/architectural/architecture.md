@@ -6,7 +6,7 @@ redirect_from: architecture
 type: components
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.
 language: en
-list: include
+list: exclude
 ---
 
 ## Components, their Purpose, and Languages

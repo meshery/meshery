@@ -99,98 +99,6 @@
 
             {% endif %}
               {% endfor %}
-            <!-- <li id="docker-ↆ">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-docker-ↆ"
-                href="/installation/docker">Docker </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section02" aria-expanded="false"
-                aria-controls="section02"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section02">
-              {% for grandchild in sorted_pages %}
-              {% if grandchild.type=="installation" and grandchild.category!="integrations" and grandchild.list=="include" and
-              grandchild.language == "en" and grandchild.category=="docker" and grandchild.title!="Docker" -%}
-              <li id="{{ grandchild.title | slugify }}">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
-                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
-              </li>
-              {% endif %}
-              {% endfor %}
-            </ul>
-
-            
-
-            <li id="github-codespaces">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-github-codespaces"
-                href="/installation/codespaces">GitHub Codespaces</a>
-            </li>
-            
-
-            <li id="kubernetes-ↆ">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-kubernetes-ↆ"
-                href="/installation/kubernetes">Kubernetes </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section03" aria-expanded="false"
-                aria-controls="section03"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section03">
-              {% for child in sorted_pages %}
-              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
-              child.language == "en" and child.category=="kubernetes" and child.title!="Kubernetes" -%}
-              <li id="{{ child.title | slugify }}">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
-                  href="{{ site.baseurl }}{{ child.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
-              </li>
-              {% endif %}
-              {% endfor %}
-            </ul>
-
-            <li id="linux-or-macos-ↆ">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-linux-or-macos-ↆ"
-                href="/installation/linux-mac">Linux or macOS </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section04" aria-expanded="false"
-                aria-controls="section04"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section04">
-
-              {% for child in sorted_pages %}
-              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
-              child.language == "en" and child.category=="linux-mac" and child.title!="Install Meshery CLI on Linux or Mac" -%}
-              <li id="{{ child.title | slugify }}">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
-                  href="{{ site.baseurl }}{{ child.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
-              </li>
-              {% endif %}
-              {% endfor %}
-              
-            </ul>
-
-            
-
-            <li id="windows-ↆ">
-              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ-windows-ↆ"
-                href="/installation/windows">Windows </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section05" aria-expanded="false"
-                aria-controls="section05"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section05">
-
-              {% for child in sorted_pages %}
-              {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
-              child.language == "en" and child.category=="windows" and child.title!="Install Meshery CLI on Windows" -%}
-              <li id="{{ child.title | slugify }}">
-                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ child.title | slugify}}"
-                  href="{{ site.baseurl }}{{ child.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ child.title }}</strong></a>
-              </li>
-              {% endif %}
-              {% endfor %}
-            </ul> -->
 
             
           </ul>
@@ -221,45 +129,33 @@
           </li>
 
           <ul style="margin-bottom: 0;" id="section010">
-
-
-            <li id="adapters">
-              <a class="sidebar-nav__section-link " id="m-concepts-architectural-ↆ-adapters"
-                href="/concepts/architecture/adapters">Adapters</a>
+            {% for child in sorted_pages %}
+            {% if child.type=="components" and child.language == "en" and child.category == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+                {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
+                aria-controls="section{{forloop.index0}}"> ↆ </div>
+                {% endif %}
             </li>
-            <!-- end grandchild -->
-
-            <li id="database">
-              <a class="sidebar-nav__section-link " id="m-concepts-architectural-ↆ-database"
-                href="/concepts/architecture/database">Database</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="operator-ↆ">
-              <a class="sidebar-nav__section-link " id="m-concepts-architectural-ↆ-operator-ↆ"
-                href="/concepts/architecture/operator">Operator </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section011" aria-expanded="false"
-                aria-controls="section011"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section011">
-
-              <li id="broker">
-                <a class="sidebar-nav__section-link " id="m-concepts-architectural-ↆ-broker"
-                  href="/concepts/architecture/broker"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Broker</strong></a>
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="components" and grandchild.language == "en" and grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
               </li>
-
-              <li id="meshsync">
-                <a class="sidebar-nav__section-link " id="m-concepts-architectural-ↆ-meshsync"
-                  href="/concepts/architecture/meshsync"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Meshsync</strong></a>
-              </li>
-              <!-- grandchild -->
+              {% endif %}
+              {% endfor %}
+              
             </ul>
+            {% endif %}
 
-            <!-- end grandchild -->
-            <!-- children -->
+            {% endif %}
+              {% endfor %}
           </ul>
           <!-- end children -->
           <!-- end pageurl -->
@@ -295,46 +191,33 @@
 
             <ul style="margin-bottom: 0;" id="section013">
 
-              <li id="components">
-                <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-components"
-                  href="/concepts/logical/components"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Components</strong></a>
-              </li>
-
-              <li id="relationships">
-                <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-relationships"
-                  href="/concepts/logical/relationships"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Relationships</strong></a>
-              </li>
-
-              <li id="policies">
-                <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-policies"
-                  href="/concepts/logical/policies"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Policies</strong></a>
-              </li>
-
-              <li id="connections">
-                <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-connections"
-                  href="/concepts/logical/connections"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Connections</strong></a>
-              </li>
-
-              <li id="credentials">
-                <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-credentials"
-                  href="/concepts/logical/credentials"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">Credentials</strong></a>
-              </li>
-              <!-- grandchild -->
-            </ul>
-
-            <!-- end grandchild -->
-
-            <li id="workspaces">
-              <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-workspaces"
-                href="/concepts/logical/workspaces">Workspaces</a>
+              {% for child in sorted_pages %}
+            {% if child.type=="concepts" and child.language == "en" and child.category == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+                {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
+                aria-controls="section{{forloop.index0}}"> ↆ </div>
+                {% endif %}
             </li>
-            <!-- end grandchild -->
-            <!-- children -->
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="concepts" and grandchild.language == "en" and grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
+              </li>
+              {% endif %}
+              {% endfor %}
+              
+            </ul>
+            {% endif %}
+
+            {% endif %}
+              {% endfor %}
           </ul>
           <!-- end children -->
           <!-- end pageurl -->

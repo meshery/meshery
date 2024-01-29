@@ -3,6 +3,7 @@ layout: enhanced
 title: Credentials
 permalink: concepts/logical/credentials
 type: concepts
+category: models
 abstract: Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
 language: en
 list: include

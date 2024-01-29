@@ -91,7 +91,7 @@ language: en
       <ul>
         {% assign sorted_components = site.pages | where: "type","components" %}
         {% for item in sorted_components %}
-        {% if item.type=="components" and item.language=="en" -%}
+        {% if item.type=="components" and item.language=="en" and child.list=="include" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             {% if item.abstract != " " %}
             - {{ item.abstract }}

@@ -3,6 +3,7 @@ layout: enhanced
 title: Relationships
 permalink: concepts/logical/relationships
 type: concepts
+category: models
 abstract: "Meshery Relationships identify and facilitate genealogy between Components."
 language: en
 list: include

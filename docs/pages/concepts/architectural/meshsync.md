@@ -3,6 +3,7 @@ layout: default
 title: MeshSync
 permalink: concepts/architecture/meshsync
 type: components
+category: operator
 redirect_from: architecture/meshsync
 abstract: "Meshery offers support for Kubernetes cluster and cloud state synchronization with the help of MeshSync."
 language: en
