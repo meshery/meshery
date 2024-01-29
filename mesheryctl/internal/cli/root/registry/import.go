@@ -34,7 +34,8 @@ var (
 	// current working directory location
 	cwd string
 
-	registryLocation string
+	registryLocation    string
+	totalAggregateModel int
 )
 
 var importCmd = &cobra.Command{
@@ -100,13 +101,21 @@ var importCmd = &cobra.Command{
 	},
 }
 
+type compGenerateTracker struct {
+	totalComps int
+	version    string
+}
+
+var modelToCompGenerateTracker = make(map[string]compGenerateTracker, 200)
+
 func InvokeGenerationFromSheet() error {
 	utils.Log.UpdateLogOutput(logFile)
+
+	totalAvailableModels := 0
 	defer func() {
 		_ = logFile.Close()
 		utils.Log.UpdateLogOutput(os.Stdout)
-		// Change this
-		utils.Log.Info(fmt.Sprintf("Updated %d models, updated %d components", totalAggregateModel, totalAggregateComponents))
+		utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 
 		utils.Log.Info("refer ", logDirPath, " for detailed registry generate logs")
 
@@ -133,7 +142,11 @@ func InvokeGenerationFromSheet() error {
 	weightedSem := semaphore.NewWeighted(20)
 
 	var wg sync.WaitGroup
+
+	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
+		totalAvailableModels++
+
 		ctx := context.Background()
 
 		err := weightedSem.Acquire(ctx, 1)
@@ -201,7 +214,10 @@ func InvokeGenerationFromSheet() error {
 					utils.Log.Info(err)
 				}
 			}
-
+			modelToCompGenerateTracker[model.Model] = compGenerateTracker{
+				totalComps: len(comps),
+				version:    version,
+			}
 		}(model)
 
 	}
@@ -212,8 +228,12 @@ func InvokeGenerationFromSheet() error {
 // For registrants eg: meshery, whose components needs to be directly created by referencing the sheet.
 // the sourceURL contains the "rangeString" : the value that describes the sheet in which the components are listed, and their starting row to ending row.
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
-
-	modelPath, modelDef, err := writeModelDefToFileSystem(&model, "v1.0.0") // how to infer this? @Beginner86 any idea? new column?
+	totalComps := 0
+	version := "v1.0.0"
+	modelPath, modelDef, err := writeModelDefToFileSystem(&model, version) // how to infer this? @Beginner86 any idea? new column?
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
 	components, err := srv.Spreadsheets.Values.Get(spreadsheeetID, model.SourceURL).Do()
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
@@ -224,8 +244,13 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		return err
 	}
 
+	modelToCompGenerateTracker[model.Model] = compGenerateTracker{
+		totalComps: totalComps,
+		version:    version,
+	}
 	if len(componentSpreadsheetCols) > 0 {
 		for _, comp := range components.Values {
+			totalComps++
 			component := make(map[string]interface{}, len(comp))
 			for i, compValue := range comp {
 				component[componentSpreadsheetCols[i]] = compValue
@@ -234,6 +259,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 			compCSV, err := mutils.MarshalAndUnmarshal[map[string]interface{}, utils.ComponentCSV](component)
 			if err != nil {
 				err = ErrGenerateComponent(err, model.Model, compName)
+				utils.Log.Error(err)
 				continue
 			}
 
@@ -246,10 +272,12 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 
 			if err != nil {
 				err = ErrGenerateComponent(err, model.Model, compName)
+				utils.Log.Error(err)
 				continue
 			}
 		}
 	}
+	logModelGenerationSummary(modelToCompGenerateTracker)
 	return nil
 }
 
@@ -290,6 +318,18 @@ func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *
 	}
 	return modelDefPath, &modelDef, nil
 }
+
+func logModelGenerationSummary(modelToCompGenerateTracker map[string]compGenerateTracker) {
+
+	for key, val := range modelToCompGenerateTracker {
+		utils.Log.Info(fmt.Sprintf("For model %s-%s, generated %d components.", key, val.version, val.totalComps))
+		totalAggregateComponents += val.totalComps
+		totalAggregateModel++
+	}
+
+	utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+}
+
 func init() {
 	importCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
 	importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
