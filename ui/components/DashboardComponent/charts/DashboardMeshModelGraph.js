@@ -14,11 +14,11 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
 import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { InfoOutlined } from '@material-ui/icons';
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0);
@@ -92,12 +92,14 @@ function MeshModelContructs({ classes }) {
               placement="left"
               interactive={true}
               title={renderTooltipContent({
-                showInfotext: 'about Models, Components, and Relationships',
+                showPriortext:
+                  'Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.',
+                showAftertext: 'to learn more about Models, Components, and Relationships',
                 link: url,
               })}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoIcon
+                <InfoOutlined
                   color={theme.palette.secondary.iconMain}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                   onClick={(e) => {
@@ -171,12 +173,15 @@ function MeshModelCategories({ classes }) {
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               backgroundColor="#3C494F"
-              title={renderTooltipContent({ showInfotext: 'about Categories', link: url })}
+              title={renderTooltipContent({
+                showAftertext: 'to learn more about all Categories',
+                link: url,
+              })}
               placement="left"
               interactive={true}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoIcon
+                <InfoOutlined
                   color={theme.palette.secondary.iconMain}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                   onClick={(e) => {
