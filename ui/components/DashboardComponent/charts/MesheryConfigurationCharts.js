@@ -10,11 +10,11 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
 import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { InfoOutlined } from '@material-ui/icons';
 
 const ACTION_TYPES = {
   FETCH_PATTERNS: {
@@ -114,12 +114,12 @@ export default function MesheryConfigurationChart({ classes }) {
               placement="left"
               interactive={true}
               title={renderTooltipContent({
-                showInfotext: 'about Configuration Management',
+                showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
                 link: url,
               })}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoIcon
+                <InfoOutlined
                   color={theme.palette.secondary.iconMain}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                   onClick={(e) => {
