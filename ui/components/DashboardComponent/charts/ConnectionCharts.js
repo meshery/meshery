@@ -7,12 +7,12 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
 import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
+import { InfoOutlined } from '@material-ui/icons';
 
 export default function ConnectionStatsChart({ classes }) {
   const { data: statusData } = useGetAllConnectionStatusQuery();
@@ -78,7 +78,7 @@ export default function ConnectionStatsChart({ classes }) {
                 disableTouchRipple={true}
                 sx={{ padding: '0px' }}
               >
-                <InfoIcon
+                <InfoOutlined
                   color={theme.palette.secondary.iconMain}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                   onClick={(e) => e.stopPropagation()}
