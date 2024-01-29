@@ -114,7 +114,7 @@ export default function MesheryConfigurationChart({ classes }) {
               placement="left"
               interactive={true}
               title={renderTooltipContent({
-                showInfotext: 'about Configuration Management',
+                showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
                 link: url,
               })}
             >

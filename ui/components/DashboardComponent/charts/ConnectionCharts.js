@@ -69,7 +69,12 @@ export default function ConnectionStatsChart({ classes }) {
             <CustomTextTooltip
               backgroundColor="#3C494F"
               interactive={true}
-              title={renderTooltipContent({ showInfotext: 'about Connections', link: url })}
+              title={renderTooltipContent({
+                showPriortext:
+                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
+                link: url,
+                showAftertext: 'to know more about Meshery Connections',
+              })}
               placement="left"
             >
               <IconButton

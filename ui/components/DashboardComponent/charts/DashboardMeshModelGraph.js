@@ -92,7 +92,9 @@ function MeshModelContructs({ classes }) {
               placement="left"
               interactive={true}
               title={renderTooltipContent({
-                showInfotext: 'about Models, Components, and Relationships',
+                showPriortext:
+                  'Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.',
+                showAftertext: 'to learn more about Models, Components, and Relationships',
                 link: url,
               })}
             >
@@ -171,7 +173,10 @@ function MeshModelCategories({ classes }) {
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               backgroundColor="#3C494F"
-              title={renderTooltipContent({ showInfotext: 'about Categories', link: url })}
+              title={renderTooltipContent({
+                showAftertext: 'to learn more about all Categories',
+                link: url,
+              })}
               placement="left"
               interactive={true}
             >
