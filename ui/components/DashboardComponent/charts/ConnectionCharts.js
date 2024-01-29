@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
-import { getConnectionStatusSummary } from '../../../api/connections';
 import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
@@ -13,19 +12,15 @@ import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
 
 export default function ConnectionStatsChart({ classes }) {
-  const [chartData, setChartData] = useState([]);
+  const { data: statusData } = useGetAllConnectionStatusQuery();
 
-  useEffect(() => {
-    getConnectionStatusSummary().then((json) => {
-      setChartData(
-        json.connections_status
-          .filter((data) => isValidColumnName(data.status))
-          .map((data) => [data.status, data.count]),
-      );
-    });
-  }, []);
+  const chartData =
+    statusData?.connections_status
+      ?.filter((data) => isValidColumnName(data.status))
+      .map((data) => [data.status, data.count]) || [];
 
   const chartOptions = {
     data: {
