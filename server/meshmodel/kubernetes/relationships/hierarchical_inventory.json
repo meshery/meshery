@@ -267,23 +267,6 @@
         ],
         "to": [
           {
-            "kind": "CSINode",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "drivers",
-                  "_",
-                  "name"
-                ]
-              ],
-              "description": "CSINodes are used to configure the CSI drivers that are available on each node in the cluster.\n\nThe CSINode object is created automatically by the kubelet when a CSI driver is deployed to the node. The CSINode object is used to configure the CSI driver on the node."
-            }
-          },
-          {
             "kind": "Pod",
             "model": "kubernetes",
             "patch": {
