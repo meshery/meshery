@@ -4,6 +4,7 @@ title: Managing Events with Notification Center
 abstract: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management
 type: guides
+category: operating
 language: en
 abstract: "Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on."
 ---
