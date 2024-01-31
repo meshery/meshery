@@ -150,6 +150,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/pod-disruption-budget/icons/color/pod-disruption-budget-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/pod-disruption-budget/icons/white/pod-disruption-budget-white.svg
   description: 
+- name: pod-metrics
+  colorIcon: assets/img/integrations/kubernetes/components/pod-metrics/icons/color/pod-metrics-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/pod-metrics/icons/white/pod-metrics-white.svg
+  description: 
 - name: pod-template
   colorIcon: assets/img/integrations/kubernetes/components/pod-template/icons/color/pod-template-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/pod-template/icons/white/pod-template-white.svg
