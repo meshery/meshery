@@ -13,7 +13,6 @@ import classNames from 'classnames';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import dataFetch from '../../../lib/data-fetch';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -38,33 +37,7 @@ import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-
-const ERROR_MESSAGE = {
-  FETCH_ENVIRONMENTS: {
-    name: 'FETCH_ENVIRONMENTS',
-    error_msg: 'Failed to fetch environments',
-  },
-  CREATE_ENVIRONMENT: {
-    name: 'CREATE_ENVIRONMENT',
-    error_msg: 'Failed to create environment',
-  },
-  UPDATE_ENVIRONMENT: {
-    name: 'UPDATE_ENVIRONMENT',
-    error_msg: 'Failed to update environment',
-  },
-  DELETE_ENVIRONMENT: {
-    name: 'DELETE_ENVIRONMENT',
-    error_msg: 'Failed to delete environment',
-  },
-  FETCH_ORGANIZATIONS: {
-    name: 'FETCH_ORGANIZATIONS',
-    error_msg: 'There was an error fetching available orgs',
-  },
-  FETCH_CONNECTIONS: {
-    name: 'FETCH_CONNECTIONS',
-    error_msg: 'There was an error fetching connections',
-  },
-};
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -79,8 +52,6 @@ const Environments = ({ organization, classes }) => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editEnvId, setEditEnvId] = useState('');
-  const [orgValue, setOrgValue] = useState([]);
-  const [orgLabel, setOrgLabel] = useState([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [orgId, setOrgId] = useState('');
@@ -157,6 +128,10 @@ const Environments = ({ organization, classes }) => {
     },
   );
 
+  const { data: schemaEnvironment } = useGetSchemaQuery({
+    schemaName: 'environment',
+  });
+
   const environments = environmentsData?.environments ? environmentsData.environments : [];
   const connectionsDataRtk = connections?.connections ? connections.connections : [];
   const environmentConnectionsDataRtk = environmentConnections?.connections
@@ -212,49 +187,33 @@ const Environments = ({ organization, classes }) => {
 
   useEffect(() => {
     setOrgId(organization?.id);
-    fetchAvailableOrgs();
   }, [organization]);
 
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const label = result?.organizations.map((option) => option.name);
-          const value = result?.organizations.map((option) => option.id);
-          setOrgLabel(label);
-          setOrgValue(value);
-        }
-      },
-      handleError(ERROR_MESSAGE.FETCH_ORGANIZATIONS),
-    );
-  };
-
-  const fetchSchema = async () => {
-    dataFetch(
-      `/api/schema/resource/environment`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        if (res) {
-          const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
-          const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = orgValue;
-          rjsfSchemaOrg.enumNames = orgLabel;
-          uiSchemaOrg['ui:widget'] = 'hidden';
-          setEnvironmentModal({
-            open: true,
-            schema: res,
-          });
-        }
-      },
-    );
+  const fetchSchema = () => {
+    const updatedSchema = { ...schemaEnvironment };
+    updatedSchema.rjsfSchema?.properties?.organization &&
+      ((updatedSchema.rjsfSchema = {
+        ...updatedSchema.rjsfSchema,
+        properties: {
+          ...updatedSchema.rjsfSchema.properties,
+          organization: {
+            ...updatedSchema.rjsfSchema.properties.organization,
+            enum: [organization?.id],
+            enumName: [organization?.name],
+          },
+        },
+      }),
+      (updatedSchema.uiSchema = {
+        ...updatedSchema.uiSchema,
+        organization: {
+          ...updatedSchema.uiSchema.organization,
+          ['ui:widget']: 'hidden',
+        },
+      }));
+    setEnvironmentModal({
+      open: true,
+      schema: updatedSchema,
+    });
   };
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
