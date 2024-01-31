@@ -42,13 +42,6 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 
-const ERROR_MESSAGE = {
-  FETCH_ORGANIZATIONS: {
-    name: 'FETCH_ORGANIZATIONS',
-    error_msg: 'There was an error fetching available orgs',
-  },
-};
-
 const ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
@@ -65,8 +58,6 @@ const Workspaces = ({ organization, classes }) => {
   const [search, setSearch] = useState('');
 
   const [orgId, setOrgId] = useState('');
-  const [orgValue, setOrgValue] = useState([]);
-  const [orgLabel, setOrgLabel] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
@@ -278,27 +269,7 @@ const Workspaces = ({ organization, classes }) => {
 
   useEffect(() => {
     setOrgId(organization?.id);
-    fetchAvailableOrgs();
   }, [organization]);
-
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const label = result?.organizations.map((option) => option.name);
-          const value = result?.organizations.map((option) => option.id);
-          setOrgLabel(label);
-          setOrgValue(value);
-        }
-      },
-      handleError(ERROR_MESSAGE.FETCH_ORGANIZATIONS),
-    );
-  };
 
   const fetchSchema = async () => {
     dataFetch(
@@ -311,8 +282,8 @@ const Workspaces = ({ organization, classes }) => {
         if (res) {
           const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
           const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = orgValue;
-          rjsfSchemaOrg.enumNames = orgLabel;
+          rjsfSchemaOrg.enum = [organization?.id];
+          rjsfSchemaOrg.enumNames = [organization?.name];
           uiSchemaOrg['ui:widget'] = 'hidden';
           setWorkspaceModal({
             open: true,

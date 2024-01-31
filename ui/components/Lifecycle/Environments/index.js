@@ -39,33 +39,6 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
 
-const ERROR_MESSAGE = {
-  FETCH_ENVIRONMENTS: {
-    name: 'FETCH_ENVIRONMENTS',
-    error_msg: 'Failed to fetch environments',
-  },
-  CREATE_ENVIRONMENT: {
-    name: 'CREATE_ENVIRONMENT',
-    error_msg: 'Failed to create environment',
-  },
-  UPDATE_ENVIRONMENT: {
-    name: 'UPDATE_ENVIRONMENT',
-    error_msg: 'Failed to update environment',
-  },
-  DELETE_ENVIRONMENT: {
-    name: 'DELETE_ENVIRONMENT',
-    error_msg: 'Failed to delete environment',
-  },
-  FETCH_ORGANIZATIONS: {
-    name: 'FETCH_ORGANIZATIONS',
-    error_msg: 'There was an error fetching available orgs',
-  },
-  FETCH_CONNECTIONS: {
-    name: 'FETCH_CONNECTIONS',
-    error_msg: 'There was an error fetching connections',
-  },
-};
-
 const ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
@@ -79,8 +52,6 @@ const Environments = ({ organization, classes }) => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editEnvId, setEditEnvId] = useState('');
-  const [orgValue, setOrgValue] = useState([]);
-  const [orgLabel, setOrgLabel] = useState([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [orgId, setOrgId] = useState('');
@@ -212,27 +183,7 @@ const Environments = ({ organization, classes }) => {
 
   useEffect(() => {
     setOrgId(organization?.id);
-    fetchAvailableOrgs();
   }, [organization]);
-
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const label = result?.organizations.map((option) => option.name);
-          const value = result?.organizations.map((option) => option.id);
-          setOrgLabel(label);
-          setOrgValue(value);
-        }
-      },
-      handleError(ERROR_MESSAGE.FETCH_ORGANIZATIONS),
-    );
-  };
 
   const fetchSchema = async () => {
     dataFetch(
@@ -245,8 +196,8 @@ const Environments = ({ organization, classes }) => {
         if (res) {
           const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
           const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = orgValue;
-          rjsfSchemaOrg.enumNames = orgLabel;
+          rjsfSchemaOrg.enum = [organization?.id];
+          rjsfSchemaOrg.enumNames = [organization?.name];
           uiSchemaOrg['ui:widget'] = 'hidden';
           setEnvironmentModal({
             open: true,
