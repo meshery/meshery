@@ -19,17 +19,6 @@ const connectionsApi = api.injectEndpoints({
       }),
       providesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
-    getDatabaseSummary: builder.query({
-      query: (queryArg) => ({
-        url: `system/database`,
-        params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-        },
-        method: 'GET',
-      }),
-    }),
     getConnectionStatus: builder.query({
       query: (queryArg) => ({
         url: `integrations/connections/${queryArg.connectionKind}/status`,
@@ -76,7 +65,6 @@ const connectionsApi = api.injectEndpoints({
 
 export const {
   useGetConnectionsQuery,
-  useGetDatabaseSummaryQuery,
   useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,

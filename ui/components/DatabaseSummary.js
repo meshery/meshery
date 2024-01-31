@@ -13,7 +13,7 @@ import SearchBar from '../utils/custom-search';
 import useStyles from '../assets/styles/general/tool.styles';
 import { PROMPT_VARIANTS } from './PromptComponent';
 import { store } from '../store';
-import { useGetDatabaseSummaryQuery } from '@/rtk-query/connection';
+import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 
 const styles = (theme) => ({
   textCenter: {
@@ -59,7 +59,7 @@ const DatabaseSummary = (props) => {
     });
   };
 
-  const { data: databaseSummary } = useGetDatabaseSummaryQuery({
+  const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
     page: page + 1,
     pagesize: rowsPerPage,
     search: searchText,
@@ -87,7 +87,7 @@ const DatabaseSummary = (props) => {
             props.updateProgress({ showProgress: false });
             if (res.resetStatus === 'PROCESSING') {
               notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
-              // getDatabaseSummary();
+              refetch();
             }
           },
           error: handleError('Database is not reachable, try restarting server.'),
