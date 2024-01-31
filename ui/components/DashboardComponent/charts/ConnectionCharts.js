@@ -8,11 +8,11 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
 import {
   CustomTextTooltip,
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { InfoOutlined } from '@material-ui/icons';
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
@@ -65,24 +65,32 @@ export default function ConnectionStatsChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Connections
           </Typography>
-          <CustomTextTooltip
-            interactive={true}
-            title={renderTooltipContent({ showInfotext: 'about Connections', link: url })}
-            placement="left"
-          >
-            <IconButton
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              sx={{ padding: '0px' }}
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              interactive={true}
+              title={renderTooltipContent({
+                showPriortext:
+                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
+                link: url,
+                showAftertext: 'to know more about Meshery Connections',
+              })}
+              placement="left"
             >
-              <InfoIcon
-                color={theme.palette.secondary.iconMain}
-                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </IconButton>
-          </CustomTextTooltip>
+              <IconButton
+                disableRipple={true}
+                disableFocusRipple={true}
+                disableTouchRipple={true}
+                sx={{ padding: '0px' }}
+              >
+                <InfoOutlined
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <Box
           sx={{

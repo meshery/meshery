@@ -12,16 +12,16 @@ As a cloud-native management plane, Meshery empowers you with a wide range of to
 The logical concepts included in Meshery establish a set of constructs with clearly-defined boundaries, each of which is extensible. These contructs set a foundation for the project to build upon and provide a consistent way of relating between multiple components. The logical concepts are:
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
-1. Extensible (see [Extension Points](/extensibility)
-1. Composable (see Patterns)
-1. Portable (see Export/Import)
-1. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
-1. Configurable (see [Lifecycle Management](/tasks/lifecycle-management))
-1. Documented (_you are here_)
-1. Testable
-1. Maintainable
-1. Secure (v0.9.0)
-1. Observable (v0.1.0)
+2. Extensible (see [Extension Points](/extensibility)
+3. Composable (see Patterns)
+4. Portable (see Export/Import)
+5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
+6. Configurable (see [Lifecycle Management](/tasks/lifecycle-management))
+7. Documented (_you are here_)
+8. Testable
+9. Maintainable
+10. Secure (v0.9.0)
+11. Observable (v0.1.0)
 
 Every construct is represented in multiple forms:
 

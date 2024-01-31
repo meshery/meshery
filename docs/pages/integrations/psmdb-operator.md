@@ -6,8 +6,8 @@ image: /assets/img/integrations/psmdb-operator/icons/color/psmdb-operator-color.
 permalink: extensibility/integrations/psmdb-operator
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-operator
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
+integrations-category: Database
+integrations-subcategory: App Definition and Development
 registrant: artifacthub
 components: 
 - name: percona-server-mongo-db-backup
