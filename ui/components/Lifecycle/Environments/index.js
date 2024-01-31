@@ -13,7 +13,6 @@ import classNames from 'classnames';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import dataFetch from '../../../lib/data-fetch';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -38,6 +37,7 @@ import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -128,6 +128,10 @@ const Environments = ({ organization, classes }) => {
     },
   );
 
+  const { data: schemaEnvironment } = useGetSchemaQuery({
+    schemaName: 'environment',
+  });
+
   const environments = environmentsData?.environments ? environmentsData.environments : [];
   const connectionsDataRtk = connections?.connections ? connections.connections : [];
   const environmentConnectionsDataRtk = environmentConnections?.connections
@@ -185,27 +189,31 @@ const Environments = ({ organization, classes }) => {
     setOrgId(organization?.id);
   }, [organization]);
 
-  const fetchSchema = async () => {
-    dataFetch(
-      `/api/schema/resource/environment`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        if (res) {
-          const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
-          const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = [organization?.id];
-          rjsfSchemaOrg.enumNames = [organization?.name];
-          uiSchemaOrg['ui:widget'] = 'hidden';
-          setEnvironmentModal({
-            open: true,
-            schema: res,
-          });
-        }
-      },
-    );
+  const fetchSchema = () => {
+    const updatedSchema = { ...schemaEnvironment };
+    updatedSchema.rjsfSchema?.properties?.organization &&
+      ((updatedSchema.rjsfSchema = {
+        ...updatedSchema.rjsfSchema,
+        properties: {
+          ...updatedSchema.rjsfSchema.properties,
+          organization: {
+            ...updatedSchema.rjsfSchema.properties.organization,
+            enum: [organization?.id],
+            enumName: [organization?.name],
+          },
+        },
+      }),
+      (updatedSchema.uiSchema = {
+        ...updatedSchema.uiSchema,
+        organization: {
+          ...updatedSchema.uiSchema.organization,
+          ['ui:widget']: 'hidden',
+        },
+      }));
+    setEnvironmentModal({
+      open: true,
+      schema: updatedSchema,
+    });
   };
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();

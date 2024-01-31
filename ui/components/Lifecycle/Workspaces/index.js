@@ -27,7 +27,6 @@ import {
   useUnassignEnvironmentFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
-import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
@@ -41,6 +40,7 @@ import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -174,6 +174,10 @@ const Workspaces = ({ organization, classes }) => {
     },
   );
 
+  const { data: schemaWorkspace } = useGetSchemaQuery({
+    schemaName: 'workspace',
+  });
+
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
 
   const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
@@ -271,27 +275,31 @@ const Workspaces = ({ organization, classes }) => {
     setOrgId(organization?.id);
   }, [organization]);
 
-  const fetchSchema = async () => {
-    dataFetch(
-      `/api/schema/resource/workspace`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        if (res) {
-          const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
-          const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = [organization?.id];
-          rjsfSchemaOrg.enumNames = [organization?.name];
-          uiSchemaOrg['ui:widget'] = 'hidden';
-          setWorkspaceModal({
-            open: true,
-            schema: res,
-          });
-        }
-      },
-    );
+  const fetchSchema = () => {
+    const updatedSchema = { ...schemaWorkspace };
+    updatedSchema.rjsfSchema?.properties?.organization &&
+      ((updatedSchema.rjsfSchema = {
+        ...updatedSchema.rjsfSchema,
+        properties: {
+          ...updatedSchema.rjsfSchema.properties,
+          organization: {
+            ...updatedSchema.rjsfSchema.properties.organization,
+            enum: [organization?.id],
+            enumName: [organization?.name],
+          },
+        },
+      }),
+      (updatedSchema.uiSchema = {
+        ...updatedSchema.uiSchema,
+        organization: {
+          ...updatedSchema.uiSchema.organization,
+          ['ui:widget']: 'hidden',
+        },
+      }));
+    setWorkspaceModal({
+      open: true,
+      schema: updatedSchema,
+    });
   };
 
   const handleError = (action) => (error) => {
