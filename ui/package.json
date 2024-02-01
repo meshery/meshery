@@ -136,7 +136,7 @@
     "cypress-file-upload": "^5.0.8",
     "eslint": "^8.52.0",
     "eslint-config-next": "^13.1.2",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.31.8",
