@@ -109,7 +109,7 @@
     "react-share": "^4.4.1",
     "react-slick": "^0.29.0",
     "redux": "^4.2.0",
-    "redux-thunk": "^2.4.0",
+    "redux-thunk": "^3.1.0",
     "relay-runtime": "^15.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "^5.1.2",
