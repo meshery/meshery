@@ -233,9 +233,7 @@ mesheryctl pattern apply [pattern-name]
 
 		}
 
-		var payload = struct {
-			PatternFile string `json:"pattern_file"`
-		}{
+		payload := models.MesheryPatternFileDeployPayload{
 			PatternFile: patternFile,
 		}
 
