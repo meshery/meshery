@@ -121,14 +121,14 @@ mesheryctl pattern apply [pattern-name]
 					utils.Log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
 					return nil
 				}
-				text := string(content)
+				// text := string(content)
 
 				// if --skip-save is not passed we save the pattern first
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
 						"pattern_data": map[string]interface{}{
 							"name":         path.Base(file),
-							"pattern_file": text,
+							"pattern_file": content,
 						},
 						"save": true,
 					})
@@ -162,7 +162,7 @@ mesheryctl pattern apply [pattern-name]
 				}
 
 				// setup pattern file
-				patternFile = text
+				patternFile = string(content)
 			} else {
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
@@ -231,9 +231,23 @@ mesheryctl pattern apply [pattern-name]
 				// setup pattern file here
 				patternFile = response[0].PatternFile
 			}
+			
 		}
 
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
+
+		var payload = struct {
+			PatternFile string `json:"pattern_file"`
+		}{
+			PatternFile: patternFile,
+		}
+
+			payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
