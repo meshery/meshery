@@ -47,7 +47,7 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Component
 
-[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [example components in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/components).
+[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [example components in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/v1.25.2).
 
 ### Designs
 
