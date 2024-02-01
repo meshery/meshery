@@ -230,9 +230,8 @@ mesheryctl pattern apply [pattern-name]
 				// setup pattern file here
 				patternFile = response[0].PatternFile
 			}
-			
-		}
 
+		}
 
 		var payload = struct {
 			PatternFile string `json:"pattern_file"`
@@ -240,7 +239,7 @@ mesheryctl pattern apply [pattern-name]
 			PatternFile: patternFile,
 		}
 
-			payloadBytes, err := json.Marshal(payload)
+		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
