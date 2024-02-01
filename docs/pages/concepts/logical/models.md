@@ -47,7 +47,7 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Component
 
-[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [example components in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/components).
+[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
 ### Designs
 
@@ -61,11 +61,11 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Policy
 
-[Policy](policy) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [example policies in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/policies) for more information.
+[Policy](policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. 
 
 ### Relationships
 
-[Relationships](relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [example relationships in GitHub](https://github.com/meshery/meshery/tree/master/server/meshmodel/kubernetes/relationships).
+[Relationships](relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. 
 
 #### Evaluation of Relationships
 
