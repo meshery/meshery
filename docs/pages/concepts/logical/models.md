@@ -47,11 +47,11 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Component
 
-[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
+[Components](components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates. See [Component]({{site.baseurl}}/concepts/logical/components) for more details.
 
 ### Designs
 
-[Designs](designs) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
+[Designs](designs) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems. See [Designs]({{site.baseurl}}/concepts/logical/designs) for more details.
 
 ### Patterns
 
@@ -61,11 +61,11 @@ You might not fully comprehend the Meshery Models figure above. The following an
 
 ### Policy
 
-[Policy](policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. 
+[Policy](policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem. See [Policies]({{site.baseurl}}/concepts/logical/policies) for more details.
 
 ### Relationships
 
-[Relationships](relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. 
+[Relationships](relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters. See [Relationships]({{site.baseurl}}/concepts/logical/relationships) fro more details.
 
 #### Evaluation of Relationships
 
