@@ -121,7 +121,6 @@ mesheryctl pattern apply [pattern-name]
 					utils.Log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
 					return nil
 				}
-				// text := string(content)
 
 				// if --skip-save is not passed we save the pattern first
 				if !skipSave {
