@@ -224,7 +224,6 @@ export function makeTitle(rawdata, res) {
       // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      console.log(res.Labels);
       var labels = res.Labels.split(' -_- ');
       // title.push(`Labels: ${labels.map(item => item + '\n')}`)
       title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`);
@@ -726,7 +725,6 @@ export function makeMultiChart(rawdata, results) {
     // Not very efficient but there are only a handful of percentiles
     var pA = res.DurationHistogram.Percentiles;
     if (!pA) {
-      //    console.log('No percentiles in res', res)
       return;
     }
     var pN = Number(p);
@@ -736,8 +734,6 @@ export function makeMultiChart(rawdata, results) {
         return;
       }
     }
-    console.log('Not Found', p, pN, pA);
-    // not found, not set
   };
 
   const fortioAddToMultiResult = (i, res) => {

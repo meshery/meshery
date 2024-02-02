@@ -49,7 +49,7 @@ This command enable users to import their existing applications from sources as
 
 **Step 1: Access the Meshery UI**
 
-To import a Docker Compose app into Meshery using the Meshery UI, you must first [install Meshery](../installation/quick-start.md)
+To import a Docker Compose app into Meshery using the Meshery UI, you must first [install Meshery](/installation/quick-start)
 
 **Step 2: Navigate to the Application section in the Configuration**
 
@@ -66,3 +66,4 @@ When you import an app into Meshery, it will create a Meshery App based on defin
 <a href="{{ site.baseurl }}/assets/img/applications/ImportApp.png"><img alt="Import-Application" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/applications/ImportApp.png" /></a>
 
 Once the Meshery App has been created, you can use Meshery to manage, operate and observe your cloud native infrastructure. You can also use Meshery to deploy your Meshery App to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
+

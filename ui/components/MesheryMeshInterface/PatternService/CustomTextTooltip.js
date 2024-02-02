@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const renderTooltipContent = ({ showInfotext, link }) => {
+export const renderTooltipContent = ({ showPriortext, showAftertext, link }) => {
   const classes = useStyles();
 
   const handleClick = (e) => {
@@ -21,15 +21,16 @@ export const renderTooltipContent = ({ showInfotext, link }) => {
 
   return (
     <div>
+      <span style={{ marginRight: '2px' }}>{showPriortext}</span>
       <a
         onClick={handleClick}
         className={classes.toolTip}
         target="_blank"
         rel="noopener noreferrer"
       >
-        Learn more
+        Checkout docs
       </a>
-      <span style={{ marginLeft: '2px' }}>{showInfotext}</span>
+      <span style={{ marginLeft: '2px' }}>{showAftertext}</span>
     </div>
   );
 };
