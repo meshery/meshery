@@ -61,6 +61,14 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      updateEntityIgnoreStatus: builder.mutation({
+        query: (queryArgs) => ({
+          url: `meshmodel/update/status`,
+          method: 'PUT',
+          body: queryArgs.body,
+        }),
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
     }),
   });
 
@@ -71,4 +79,5 @@ export const {
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
+  useUpdateEntityIgnoreStatusMutation,
 } = meshModelApi;
