@@ -53,18 +53,14 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
 		mutator_path := get_path(mutator_paths[i], mutator)
 		update_value := object.get(mutator, mutator_path, "")
 		update_value != null
-		mutated_path := array.concat(["/"], get_path(mutated_paths[i], mutated))
-		print("PATH : ", mutated_path)
-		stringified_path := concat("/", mutated_path)
-		print("stringified_path : ", mutated_path)
+		mutated_path := get_path(mutated_paths[i], mutated)
 
 		patch := {
 			"op": "add",
-			"path": stringified_path,
+			"path": mutated_path,
 			"value": update_value,
 		}
 	]
 	resultantPatchesToApply := ensureParentPathsExist(patches, mutated)
 	mutated_design = json.patch(mutated, resultantPatchesToApply)
-	print(resultantPatchesToApply, mutated_design)
 }

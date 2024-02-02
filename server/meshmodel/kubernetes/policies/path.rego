@@ -2,38 +2,32 @@ package path_builder
 
 import future.keywords.in
 
-
 ensureParentPathsExist(patches, object) = result {
-	# Convert patches to a set
+	# Extract paths from the patches to a set of paths
 	paths := {p.path | p := patches[_]}
 
-	# Compute all missing subpaths.
-	#    Iterate over all paths and over all subpaths
-	#    If subpath doesn't exist, add it to the set after making it a string
+	# Compute all missing subpaths to ensure correct patch.
+	# Iterate all paths.
+	# Add missing subpaths to the set as an array.
+
 	missingPaths := {sprintf("/%s", [concat("/", prefixPath)]) |
 		paths[path]
-		pathArray := split(path, "/")
-		pathArray[i] # walk over path
-		i > 0 # skip initial element
+		path[i]
 
+		# If a path is missing, all its subpaths will be added.
+		# Eg: a/b/c: If path b is missing all its subpaths will be added.
 		# array of all elements in path up to i
-		prefixPath := [pathArray[j] | pathArray[j]; j <= i; j > 0] # j > 0: skip initial element
+		prefixPath := [path[j] | path[j]; j <= i]
 		walkPath := [toWalkElement(x) | x := prefixPath[_]]
-		print("WALK PATH : ", walkPath)
 		not inputPathExists(object, walkPath)
 	}
 
-	# Sort paths, to ensure they apply in correct order
+	# Sort the paths.
 	ordered_paths := sort(missingPaths)
-	print("ORDERED PATHS", ordered_paths)
 
-	# Return new patches prepended to original patches.
-	#  Don't forget to prepend all paths with a /
 	new_patches := [{"op": "add", "path": p, "value": value} |
 		some i, p in ordered_paths
-		print("CURRENT PATH: ", p)
 		value := add_path(i, p, ordered_paths)
-		print("VALUE", value)
 	]
 
 	result := array.concat(new_patches, patches)
@@ -43,7 +37,6 @@ ensureParentPathsExist(patches, object) = result {
 add_path(currentPathIndex, currentPath, allPaths) := value {
 	count(allPaths) > currentPathIndex + 1
 	nextPath := allPaths[currentPathIndex + 1]
-	print("NEXT PATH FOR 47: ", nextPath)
 	re_match("[0-9]+$", nextPath)
 	value = []
 }
@@ -52,7 +45,6 @@ add_path(currentPathIndex, currentPath, allPaths) := value {
 add_path(currentPathIndex, currentPath, allPaths) := value {
 	count(allPaths) > currentPathIndex + 1
 	nextPath := allPaths[currentPathIndex + 1]
-	print("NEXT PATH FOR 56: ", nextPath)
 	not re_match("[0-9]+$", nextPath)
 	value = {}
 }

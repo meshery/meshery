@@ -11,7 +11,6 @@ is_array(arr, mutated) = path {
 	suffix_path := array.slice(arr, index + 1, count(arr))
 	value_to_patch := object.get(mutated, prefix_path, "")
 	arrayIndexToBePatched := get_array_index_to_patch(count(value_to_patch))
-	print(arrayIndexToBePatched, "arrayIndexToBePatched: ")
 	intermediate_path := array.concat(prefix_path, [arrayIndexToBePatched])
 	path = array.concat(intermediate_path, suffix_path)
 }
