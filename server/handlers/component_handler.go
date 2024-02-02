@@ -1350,3 +1350,39 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+// swagger:route POST /api/meshmodel/update/status MeshModelUpdateIgnoreStatus idPostMeshModelUpdateIgnoreStatus
+// Handle POST request for updating the ignore status of a model.
+//
+// Update the ignore status of a model based on the provided parameters.
+//
+// responses:
+// 	200: NoContent
+
+// request body should be json
+// request body should be of struct containing ID and Status fields
+func (h *Handler) UpdateIgnoreStatus(rw http.ResponseWriter, r *http.Request) {
+    dec := json.NewDecoder(r.Body)
+    var updateData struct {
+        ID         string      `json:"id"`
+        Status     bool        `json:"status"`
+        EntityType string      `json:"entity_type"`
+    }
+
+    err := dec.Decode(&updateData)
+    if err != nil {
+        http.Error(rw, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Update the ignore status of the model using the RegistryManager
+    err = h.registryManager.UpdateEntityIgnoreStatus(updateData.ID, updateData.Status, updateData.EntityType)
+    if err != nil {
+        http.Error(rw, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Respond with success status
+    rw.WriteHeader(http.StatusNoContent)
+}
+
