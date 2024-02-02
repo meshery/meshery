@@ -12,7 +12,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
-import SettingsIcon from '@material-ui/icons/Settings';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
@@ -41,6 +40,8 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
+import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
+import { WHITE } from '@layer5/sistent-components';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -102,7 +103,7 @@ const styles = (theme) => ({
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
-  itemActiveItem: { color: '#00B39F' },
+  itemActiveItem: { fill: '#00B39F' },
   headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
   cbadge: {
     fontSize: '0.65rem',
@@ -579,7 +580,8 @@ class Header extends React.PureComponent {
                         }
                         color="inherit"
                       >
-                        <SettingsIcon
+                        <OutlinedSettingsIcon
+                          fill={WHITE}
                           className={
                             classes.headerIcons +
                             ' ' +
