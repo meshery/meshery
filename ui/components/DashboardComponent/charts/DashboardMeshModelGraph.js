@@ -1,15 +1,9 @@
 import Grid from '@material-ui/core/Grid';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut, pie } from 'billboard.js';
-import {
-  getAllComponents,
-  getMeshModels,
-  getRelationshipsDetail,
-  fetchCategories,
-  getModelFromCategoryApi,
-} from '../../../api/meshmodel';
+import { fetchCategories, getModelFromCategoryApi } from '../../../api/meshmodel';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
@@ -19,25 +13,49 @@ import {
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
-
-const useFetchTotal = (fetchr) => {
-  const [total, setTotal] = useState(0);
-
-  useEffect(() => {
-    fetchr()
-      .then((json) => {
-        setTotal(json['total_count']);
-      })
-      .catch((e) => console.log('Api Error : ', e));
-  }, []);
-  return total;
-};
+import {
+  useLazyGetComponentsQuery,
+  useLazyGetMeshModelsQuery,
+  useLazyGetRelationshipsQuery,
+} from '@/rtk-query/meshModel';
 
 function MeshModelContructs({ classes }) {
-  // API Calls
-  const totalModels = useFetchTotal(() => getMeshModels(1, 1));
-  const totalComponents = useFetchTotal(() => getAllComponents(1, 1));
-  const totalRelationships = useFetchTotal(() => getRelationshipsDetail(1, 1));
+  const [getAllModels] = useLazyGetMeshModelsQuery();
+  const [getAllComponents] = useLazyGetComponentsQuery();
+  const [getAllRelationships] = useLazyGetRelationshipsQuery();
+
+  // States to hold total counts
+  const [totalModels, setTotalModels] = useState(0);
+  const [totalComponents, setTotalComponents] = useState(0);
+  const [totalRelationships, setTotalRelationships] = useState(0);
+
+  // Fetch data and update state on component mount
+  const fetchData = useCallback(async () => {
+    try {
+      const models = await getAllModels({
+        page: 1,
+        pagesize: 'all',
+      });
+      const components = await getAllComponents({
+        page: 1,
+        pagesize: 'all',
+      });
+      const relationships = await getAllRelationships({
+        page: 1,
+        pagesize: 'all',
+      });
+
+      setTotalModels(models.data.total_count);
+      setTotalComponents(components.data.total_count);
+      setTotalRelationships(relationships.data.total_count);
+    } catch (error) {
+      console.error('Error fetching Mesh Models data:', error);
+    }
+  }, [getAllModels, getAllComponents, getAllRelationships]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Data Cleanup
   const data = useMemo(() => {
