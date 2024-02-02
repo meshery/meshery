@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut, pie } from 'billboard.js';
-import { fetchCategories, getModelFromCategoryApi } from '../../../api/meshmodel';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
@@ -14,8 +13,10 @@ import {
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import {
+  useGetModelCategoriesQuery,
   useLazyGetComponentsQuery,
   useLazyGetMeshModelsQuery,
+  useLazyGetModelFromCategoryQuery,
   useLazyGetRelationshipsQuery,
 } from '@/rtk-query/meshModel';
 
@@ -138,6 +139,31 @@ function MeshModelContructs({ classes }) {
 
 function MeshModelCategories({ classes }) {
   const [categoryMap, setCategoryMap] = useState({});
+  const { data: categories } = useGetModelCategoriesQuery();
+  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
+
+  useEffect(() => {
+    const fetchModelsForCategories = async () => {
+      if (categories) {
+        const updatedCategoryMap = { ...categoryMap };
+        for (const category of categories.categories) {
+          const categoryName = category.name;
+          if (!updatedCategoryMap[categoryName]) {
+            const { data: models } = await getModelFromCategory({
+              page: 1,
+              pagesize: 'all',
+              category: categoryName,
+            });
+            updatedCategoryMap[categoryName] = models?.total_count || 0;
+          }
+        }
+        setCategoryMap(updatedCategoryMap);
+      }
+    };
+
+    fetchModelsForCategories();
+  }, [categories]);
+
   const cleanedData = useMemo(
     () => Object.keys(categoryMap).map((key) => [key, categoryMap[key]]),
     [categoryMap],
@@ -163,21 +189,6 @@ function MeshModelCategories({ classes }) {
     }),
     [cleanedData],
   );
-
-  // API Calls
-  useEffect(() => {
-    fetchCategories().then((categoriesJson) => {
-      categoriesJson['categories'].forEach((category) => {
-        let categoryName = category.name;
-        getModelFromCategoryApi(categoryName).then((modelsJson) => {
-          setCategoryMap((prevState) => ({
-            ...prevState,
-            [categoryName]: modelsJson['total_count'],
-          }));
-        });
-      });
-    });
-  }, []);
 
   const url = `https://docs.meshery.io/concepts/logical/models`;
 
