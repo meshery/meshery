@@ -14,7 +14,7 @@
           - title: Docker Extension
             url: installation/docker/docker-extension
       - title: GitHub Codespaces
-        url: installation/codespaces 
+        url: installation/codespaces
       - title: Kubernetes ↆ
         url: installation/kubernetes
         grandchildren:
