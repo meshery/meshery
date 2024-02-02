@@ -4,8 +4,9 @@ title: Managing Events with Notification Center
 abstract: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management
 type: guides
+category: operating
 language: en
-abstract: "Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on."
+abstract: "Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on."
 ---
 
 Meshery Server, while running, generates a variety of events for operations happening inside your Kubernetes and Cloud-Native clusters and Meshery Server itself. To observe, monitor, and effectively manage these events, Meshery provides a powerful and user-friendly Notification Center.
