@@ -35,7 +35,7 @@ While the default shape for new components is a circle, each component should be
 
 ### Instructions for Relationships
 1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models or potentially other components, models, or environmental considerations.
-1. Propose a specific visual representation for the relationship. Visual representation examples: [Hierarchical](https://docs.meshery.io/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png), [Sibling](https://docs.meshery.io/assets/img/meshmodel/relationships/sibling_relationship.png), [Binding](https://docs.meshery.io/assets/img/meshmodel/relationships/binding_relationship.png), [Edge](https://docs.meshery.io/assets/img/meshmodel/relationships/mount_edge_relationship.png)
+1. Propose a specific visual representation for the relationship. See example on [Modeling Relationships.](https://docs.meshery.io/project/contributing/contributing-models)
 1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 1. Create a Relationship Definition (yaml).
 1. Create a policy for evaluation of the relationship (rego).
