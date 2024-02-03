@@ -107,7 +107,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
@@ -127,7 +128,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
@@ -147,7 +149,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
@@ -167,7 +170,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
@@ -187,7 +191,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings",
+                [
+                  "settings",
                   "spec",
                   "containers",
                   "_",
@@ -205,7 +210,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
@@ -225,7 +231,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "jobTemplate",
                   "spec",
