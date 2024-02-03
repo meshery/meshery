@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Popper } from '@mui/material';
-import FilterIcon from '../assets/icons/filter';
 import {
   Button,
   Card,
@@ -12,6 +11,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { FilterIcon } from '@layer5/sistent-svg';
 
 const styles = (theme) => ({
   epaper: {
@@ -27,7 +27,7 @@ const styles = (theme) => ({
     }`,
   },
   icon: {
-    color: theme.palette.secondary.iconMain,
+    fill: theme.palette.secondary.iconMain,
   },
 });
 
@@ -87,7 +87,7 @@ const UniversalFilter = ({
           }}
           disableRipple
         >
-          <FilterIcon />
+          <FilterIcon className={classes.icon} />
         </IconButton>
       </Tooltip>
       <Popper
