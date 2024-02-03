@@ -19,7 +19,7 @@ require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/docker/cli v24.0.6+incompatible
 	github.com/docker/docker v24.0.7+incompatible
-	github.com/docker/go-connections v0.4.0
+	github.com/docker/go-connections v0.5.0
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
 	github.com/envoyproxy/go-control-plane v0.11.1
 	github.com/fatih/color v1.15.0
