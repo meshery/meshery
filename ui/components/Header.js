@@ -41,7 +41,6 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
-import { WHITE } from '@layer5/sistent-components';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -581,7 +580,7 @@ class Header extends React.PureComponent {
                         color="inherit"
                       >
                         <OutlinedSettingsIcon
-                          fill={WHITE}
+                          fill="currentColor"
                           className={
                             classes.headerIcons +
                             ' ' +
