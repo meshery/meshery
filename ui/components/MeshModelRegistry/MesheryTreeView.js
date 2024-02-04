@@ -445,7 +445,7 @@ const MesheryTreeView = ({
       <div>
         {width < 1370 && isSearchExpanded ? null : (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <CustomTextTooltip title="Expand All" placement="top" backgroundColor="#3C494F">
+            <CustomTextTooltip title="Expand All" placement="top">
               <IconButton
                 onClick={expandAll}
                 size="large"
@@ -456,7 +456,7 @@ const MesheryTreeView = ({
               </IconButton>
             </CustomTextTooltip>
 
-            <CustomTextTooltip title="Collapse All" placement="top" backgroundColor="#3C494F">
+            <CustomTextTooltip title="Collapse All" placement="top">
               <IconButton
                 onClick={() => setExpanded([])}
                 style={{ marginRight: '4px' }}
@@ -482,7 +482,6 @@ const MesheryTreeView = ({
                   style={{ margin: 0 }}
                 />
                 <CustomTextTooltip
-                  backgroundColor="#3C494F"
                   placement="right"
                   interactive={true}
                   title={`View all duplicate entries of ${_.toLower(
