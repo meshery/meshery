@@ -441,3 +441,9 @@ The assign tag is used to create a new variable. It is written in the following 
 
 {% include suggested-reading.html %}
 
+Two helpful resources:
+
+1. Liquid Docs - [https://shopify.github.io/liquid/](https://shopify.github.io/liquid/)
+2. Jekyll Docs - [https://jekyllrb.com/docs/](https://jekyllrb.com/docs/)
+
+
