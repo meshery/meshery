@@ -10,6 +10,8 @@ import blue from '@material-ui/core/colors/blue';
 import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
 import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
+import { Provider } from 'react-redux';
+import { store } from '@/store/index';
 
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
@@ -81,24 +83,26 @@ const Overview = ({ classes }) => {
   return (
     <NoSsr>
       <Popup />
-      <div className={classes.rootClass}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
-            <DashboardMeshModelGraph classes={classes} />
-          </Grid>
+      <Provider store={store}>
+        <div className={classes.rootClass}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={12}>
+              <DashboardMeshModelGraph classes={classes} />
+            </Grid>
 
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <ConnectionStatsChart classes={classes} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <MesheryConfigurationChart classes={classes} />
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <ConnectionStatsChart classes={classes} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <MesheryConfigurationChart classes={classes} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </Provider>
     </NoSsr>
   );
 };

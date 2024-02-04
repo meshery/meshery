@@ -108,6 +108,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
@@ -126,6 +129,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
@@ -144,6 +150,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
@@ -162,6 +171,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
@@ -179,7 +191,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings",
+                [
+                  "settings",
                   "spec",
                   "containers",
                   "_",
@@ -198,6 +211,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
@@ -216,8 +232,11 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
                   "spec",
                   "jobTemplate",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",

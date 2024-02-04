@@ -35,6 +35,7 @@ import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
+import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -78,16 +79,26 @@ const InfoModal_ = React.memo((props) => {
   const handleSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
+
+      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+        ?.filter((model) =>
+          formState?.compatibility?.some(
+            (comp) => _.toLower(comp) === _.toLower(model.displayName),
+          ),
+        )
+        ?.map((model) => model.name);
+
       let body = null;
       let modifiedData = {
         ...formState,
         type: formState?.type?.toLowerCase(),
+        compatibility: compatibilityStore,
       };
       if (dataName === PATTERN_PLURAL) {
         body = JSON.stringify({
           pattern_data: {
             catalog_data: modifiedData,
-            pattern_file: selectedResource.pattern_file,
+            pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
             id: selectedResource.id,
           },
           save: true,
@@ -149,8 +160,8 @@ const InfoModal_ = React.memo((props) => {
         const filteredCompatibilityArray = _.uniq(
           meshModels
             .filter((obj) => {
-              const displayName = obj.displayName.toLowerCase();
-              return compatibilitySet.has(displayName);
+              const modelName = obj.name.toLowerCase();
+              return compatibilitySet.has(modelName);
             })
             .map((obj) => obj.displayName),
         );
