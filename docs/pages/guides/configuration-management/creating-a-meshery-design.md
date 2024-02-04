@@ -3,6 +3,7 @@ layout: enhanced
 title: Creating a Meshery Design
 abstract: Learn how to create a Meshery design from scratch or from a template.
 permalink: guides/configuration-management/creating-a-meshery-design
+redirect_from: guides/creating-a-meshery-design
 type: guides
 category: configuration
 language: en

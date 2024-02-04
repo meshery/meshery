@@ -61,6 +61,20 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getModelCategories: builder.query({
+        query: () => ({
+          url: `meshmodels/categories`,
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getModelFromCategory: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/categories/${queryArgs.category}/models`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
@@ -71,4 +85,6 @@ export const {
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
+  useGetModelCategoriesQuery,
+  useLazyGetModelFromCategoryQuery,
 } = meshModelApi;

@@ -1,10 +1,10 @@
 ---
-layout : default
-title : Mesheryctl system commands
-permalink : guides/mesheryctl/system-commands
-language : en
-type : Guides
-category : mesheryctl
+layout: default
+title: Mesheryctl system commands
+permalink: guides/mesheryctl/system-commands
+language: en
+type: guides
+category: mesheryctl
 abstract: Mesheryctl system commands for managing Meshery deployments.
 ---
 

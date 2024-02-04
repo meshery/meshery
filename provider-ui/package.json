@@ -20,13 +20,13 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/eslint-parser": "^7.22.15",
+    "@babel/eslint-parser": "^7.23.10",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.3",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.15.2",
+    "@mui/material": "^5.15.7",
     "babel-plugin-istanbul": "^6.1.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
@@ -36,10 +36,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.17",
-    "cypress": "^13.6.2",
+    "@cypress/code-coverage": "^3.12.19",
+    "cypress": "^13.6.4",
     "eslint": "^8.55.0",
-    "eslint-config-next": "^14.0.4",
+    "eslint-config-next": "^14.1.0",
     "eslint-plugin-cypress": "^2.15.1",
     "start-server-and-test": "^2.0.3"
   },
