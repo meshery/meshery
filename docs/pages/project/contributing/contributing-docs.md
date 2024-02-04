@@ -197,17 +197,17 @@ Automatically the `Gemfile.lock` will update once the `make docs` is given (for 
 - Open your forked Meshery repository on GitHub.
 - Click on the "Gitpod" button in the top right corner of the repository page (only visible with the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod browser extension</a> installed).
 
-{% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on opening and comes with Docker and other tools pre-installed making it one of the fastest ways to spin up an environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+{% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in VSCode by default. It will also automatically build the project for you on opening and comes with Docker and other tools pre-installed making it one of the fastest ways to spin up an environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
 - After opening the project on Gitpod, change to the docs directory
-{% capture code_content %}cd docs{% endcapture %}
-{% include code.html code=code_content %}
-
+```
+ cd docs
+```
 - Serve the code locally
-{% capture code_content %}make docs{% endcapture %}
-{% include code.html code=code_content %}
-
-You should be able to access the site at your Gitpod port `4000` . If you want to access it in your localhost read the [docs for port-forwrding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
+```
+make docs
+```
+You should be able to access the site at your Gitpod port 4000. If you want to access it in your localhost read the [docs for port-forwrding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
 
 ### Make Necessary Changes
