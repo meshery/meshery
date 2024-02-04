@@ -102,15 +102,11 @@ const MeshModelComponent_ = ({
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
-  const [show, setShow] = useState({
-    model: {},
-    components: [],
-    relationships: [],
+  const [showDetailsData, setShowDetailsData] = useState({
+    type: '', // Type of selected data eg. (models, components)
+    data: {},
   });
-  const [comp, setComp] = useState({});
-  const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
-  const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(false);
   // const [loading, setLoading] = useState(false);
 
@@ -266,6 +262,10 @@ const MeshModelComponent_ = ({
       Relationships: 0,
       Registrants: 0,
     });
+    setShowDetailsData({
+      type: '',
+      data: {},
+    });
     if (!animate) {
       setAnimate(true);
       setConvert(true);
@@ -349,23 +349,21 @@ const MeshModelComponent_ = ({
                 <MesheryTreeView
                   data={modifyData()}
                   view={view}
-                  show={show}
-                  setShow={setShow}
-                  comp={comp}
-                  setComp={setComp}
-                  rela={rela}
-                  setRela={setRela}
-                  regi={regi}
-                  setRegi={setRegi}
                   setSearchText={setSearchText}
                   setPage={setPage}
                   checked={checked}
                   setChecked={setChecked}
                   searchText={searchText}
+                  setShowDetailsData={setShowDetailsData}
+                  showDetailsData={showDetailsData}
                 />
               )}
             </div>
-            <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} />
+            <MeshModelDetails
+              view={view}
+              setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
+            />
           </div>
         )}
       </div>
