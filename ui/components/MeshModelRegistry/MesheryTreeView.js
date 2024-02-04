@@ -118,6 +118,12 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
             labelText={versionedModel.version}
+            onClick={() => {
+              setShowDetailsData({
+                type: MODELS,
+                data: versionedModel,
+              });
+            }}
           >
             <StyledTreeItem
               nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
