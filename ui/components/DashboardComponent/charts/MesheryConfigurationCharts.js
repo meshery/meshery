@@ -4,7 +4,9 @@ import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-// import { useNotification } from '../../../utils/hooks/useNotification';
+import dataFetch from '../../../lib/data-fetch';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
@@ -13,35 +15,60 @@ import {
   renderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
-import { useGetPatternsQuery } from '@/rtk-query/design';
-import { useGetFiltersQuery } from '@/rtk-query/filter';
+
+const ACTION_TYPES = {
+  FETCH_PATTERNS: {
+    name: 'FETCH_PATTERNS',
+    error_msg: 'Failed to fetch designs',
+  },
+  FETCH_FILTERS: {
+    name: 'FETCH_FILTERS',
+    error_msg: 'Failed to fetch WASM filters',
+  },
+};
 
 export default function MesheryConfigurationChart({ classes }) {
-  // const { notify } = useNotification();
-
   const [chartData, setChartData] = useState([]);
 
-  const { data: patternsData, error: patternsError } = useGetPatternsQuery({
-    page: 0,
-    pagesize: 25,
-  });
+  const { notify } = useNotification();
 
-  const { data: filtersData, error: filtersError } = useGetFiltersQuery({
-    page: 0,
-    pagesize: 25,
-  });
+  const handleError = (action) => (error) => {
+    notify({
+      message: `${action.error_msg}: ${error}`,
+      event_type: EVENT_TYPES.ERROR,
+    });
+  };
+
+  function fetchDesigns() {
+    dataFetch(
+      `/api/pattern`,
+      { credentials: 'include' },
+      (result) => {
+        if (result) {
+          setChartData((prevData) => [...prevData, ['Designs', result.total_count]]);
+        }
+      },
+      handleError(ACTION_TYPES.FETCH_PATTERNS),
+    );
+  }
+
+  function fetchFilters() {
+    dataFetch(
+      `/api/filter`,
+      { credentials: 'include' },
+      (result) => {
+        if (result) {
+          setChartData((prevData) => [...prevData, ['Filters', result.total_count]]);
+        }
+      },
+      handleError(ACTION_TYPES.FETCH_FILTERS),
+    );
+  }
 
   useEffect(() => {
-    if (!patternsError && patternsData?.patterns) {
-      setChartData((prevData) => [...prevData, ['Designs', patternsData.total_count]]);
-    }
-  }, [patternsData, patternsError]);
-
-  useEffect(() => {
-    if (!filtersError && filtersData?.filters) {
-      setChartData((prevData) => [...prevData, ['Filters', filtersData.total_count]]);
-    }
-  }, [filtersData, filtersError]);
+    fetchDesigns();
+    fetchFilters();
+  }, []);
 
   const chartOptions = {
     data: {

@@ -60,12 +60,6 @@ const connectionsApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
-    getAllConnectionStatus: builder.query({
-      query: () => ({
-        url: `integrations/connections/status`,
-        method: 'GET',
-      }),
-    }),
   }),
 });
 
@@ -77,5 +71,4 @@ export const {
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
-  useGetAllConnectionStatusQuery,
 } = connectionsApi;
