@@ -173,7 +173,7 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                       versionedModel.id
                     }.2.${relationship.id}`}
                     check
-                    labelText={relationship.displayhostname}
+                    labelText={relationship.subType}
                     onClick={() => {
                       setShowDetailsData({
                         type: COMPONENTS,

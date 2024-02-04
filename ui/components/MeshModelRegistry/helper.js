@@ -16,7 +16,7 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
     (obj) => _.get(obj, 'id') === selectedIdArr[selectedIdArr.length - 1],
   );
 
-  const propertiesArr = Object.keys(resultObject).map(_.toLower);
+  const propertiesArr = resultObject ? Object.keys(resultObject).map(_.toLower) : [];
   const isPropertyIncluded = (property) => propertiesArr.includes(_.toLower(property));
 
   const isDepthCheck = () => {
