@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { IconButton, FormControlLabel, Switch, Tooltip } from '@material-ui/core';
+import { IconButton, FormControlLabel, Switch } from '@material-ui/core';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
@@ -16,6 +14,8 @@ import { getFilteredDataForDetailsComponent } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
+import CollapseAllIcon from '@/assets/icons/CollapseAll';
+import ExpandAllIcon from '@/assets/icons/ExpandAll';
 
 const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect, data }) => {
   return (
@@ -345,7 +345,7 @@ const MesheryTreeView = ({
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
   const scrollRef = useRef();
 
   const handleScroll = (scrollingView) => (event) => {
@@ -447,6 +447,10 @@ const MesheryTreeView = ({
     }
   }, [view]);
 
+  const disabledExpand = () => {
+    return view === RELATIONSHIPS || view === COMPONENTS;
+  };
+
   useEffect(() => {
     setComp({});
     setRela({});
@@ -465,22 +469,28 @@ const MesheryTreeView = ({
       <div>
         {width < 1370 && isSearchExpanded ? null : (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Tooltip title="Expand All" placement="top">
-              <IconButton onClick={expandAll} size="large" disableRipple>
-                <KeyboardArrowDownIcon />
+            <CustomTextTooltip title="Expand All" placement="top" backgroundColor="#3C494F">
+              <IconButton
+                onClick={expandAll}
+                size="large"
+                disableRipple
+                disabled={disabledExpand()}
+              >
+                <ExpandAllIcon height={15} width={15} />
               </IconButton>
-            </Tooltip>
+            </CustomTextTooltip>
 
-            <Tooltip title="Collapse All" placement="top">
+            <CustomTextTooltip title="Collapse All" placement="top" backgroundColor="#3C494F">
               <IconButton
                 onClick={() => setExpanded([])}
                 style={{ marginRight: '4px' }}
                 size="large"
                 disableRipple
+                disabled={disabledExpand()}
               >
-                <KeyboardArrowUpIcon />
+                <CollapseAllIcon height={15} width={15} />
               </IconButton>
-            </Tooltip>
+            </CustomTextTooltip>
             {type === MODELS && (
               <>
                 <FormControlLabel
@@ -518,6 +528,7 @@ const MesheryTreeView = ({
           expanded={isSearchExpanded}
           setExpanded={setIsSearchExpanded}
           placeholder="Search"
+          value={searchText}
         />
       </div>
     </div>

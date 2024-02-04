@@ -49,8 +49,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
-  const [searchText, setSearchText] = useState('');
+const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' }) => {
+  const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
   const classes = useStyles();
 
