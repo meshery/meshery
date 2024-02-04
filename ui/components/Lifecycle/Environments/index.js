@@ -199,7 +199,7 @@ const Environments = ({ organization, classes }) => {
           organization: {
             ...updatedSchema.rjsfSchema.properties.organization,
             enum: [organization?.id],
-            enumName: [organization?.name],
+            enumNames: [organization?.name],
           },
         },
       }),
