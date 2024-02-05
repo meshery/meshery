@@ -15,7 +15,7 @@ const KeyValue = ({ property, value }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        margin: '0.3rem 0',
+        margin: '0.6rem 0',
       }}
     >
       <p
@@ -32,10 +32,10 @@ const KeyValue = ({ property, value }) => {
     </div>
   );
 };
+
 const Title = ({ title }) => (
   <p
     style={{
-      marginTop: '0px',
       fontSize: '19px',
       fontWeight: 'bold',
     }}
@@ -130,12 +130,14 @@ const ComponentContents = ({ component }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
     kind: (value) => <KeyValue property="Kind" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub Category" value={value} />
   };
 
   const metaDataLeft = {
     version: component?.apiVersion,
     modelName: component?.metadata?.modelDisplayName,
     kind: component?.kind,
+    subCategory: component?.metadata?.subCategory,
   };
 
   const orderLeft = ['version', 'modelName', 'kind'];
@@ -144,13 +146,13 @@ const ComponentContents = ({ component }) => {
   const PropertyFormattersRight = {
     registrant: (value) => <KeyValue property="Registrant" value={value} />,
     duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    category: (value) => <KeyValue property="Category" value={value} />
   };
 
   const metaDataRight = {
     registrant: component?.displayhostname,
     duplicates: component?.duplicates?.toString(),
-    subCategory: component?.metadata?.subCategory,
+    category: component?.model?.category?.name,
   };
 
   const orderRight = ['registrant', 'duplicates'];
@@ -302,9 +304,16 @@ const RegistrantContent = ({ registrant }) => {
 };
 
 const Description = ({ description }) => (
-  <div style={{ margin: '0.3rem 0' }}>
+  <div style={{ margin: '0.6rem 0' }}>
     <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
     <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
+  </div>
+);
+
+const TitleWithImg = ({ displayName, iconSrc }) => (
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />
+    <Title title={displayName} />
   </div>
 );
 
@@ -319,7 +328,10 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
       {isEmptyDetails && <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>}
       {showDetailsData.type === MODELS && (
         <div>
-          <Title title={showDetailsData.data.displayName} />
+          <TitleWithImg
+            displayName={showDetailsData.data.displayName}
+            iconSrc={showDetailsData.data.metadata?.svgColor}
+          />
           <ModelContents model={showDetailsData.data} />
         </div>
       )}
@@ -332,7 +344,10 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
       )}
       {showDetailsData.type === COMPONENTS && (
         <div>
-          <Title title={showDetailsData.data.displayName} />
+          <TitleWithImg
+            displayName={showDetailsData.data.displayName}
+            iconSrc={showDetailsData.data.metadata?.svgColor}
+          />
           {showDetailsData.data.schema && (
             <Description description={JSON.parse(showDetailsData.data.schema)?.description} />
           )}
