@@ -37,7 +37,10 @@ heirarchical_inventory_relationship[updated_comps] {
 
 		allowed_component.traits.meshmap["meshmodel-metadata"].parentId == i
 		updated_comp := apply_patch(allowed_component, service, from_selectors, to_selectors)
-		id := updated_comp.traits.meshmap.id
+		# The id is the combination of the <id of the node from which the config was patched>_<id of the node from which the config was patched>
+		# eg: <configmap node id>_<deployment_node_id>
+		# The client interceptor should rely on the id present in the traits only and hsould not bother to parse the above id, the above id is included to provided more context.
+		id := sprintf("%s_%s", [j, i])
 	}
 }
 
