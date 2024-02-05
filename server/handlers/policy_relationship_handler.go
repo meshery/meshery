@@ -108,6 +108,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		}
 		evalresults[query] = result
 	}
+	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
+	// The results contain the updated config.
+	// Prettify the results before sending it to client.
 	evalResults = core.Format.Prettify(evalresults, false)
 
 	// write the response
