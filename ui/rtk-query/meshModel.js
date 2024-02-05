@@ -7,7 +7,7 @@ const TAGS = {
 
 const defaultOptions = {
   trim: false,
-  annotations: false,
+  // annotations: false,
   search: '',
   page: 1,
   pagesize: 'all',
