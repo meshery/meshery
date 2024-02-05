@@ -64,8 +64,8 @@ const ModelContents = ({ model }) => {
           relationships + (model?.relationships === null ? 0 : model.relationships.length);
       });
     } else {
-      components = model?.components === null ? 0 : model.components.length;
-      relationships = model?.relationships === null ? 0 : model.relationships.length;
+      components = model?.components === null ? 0 : model?.components?.length;
+      relationships = model?.relationships === null ? 0 : model?.relationships?.length;
     }
     return {
       components,
@@ -76,7 +76,7 @@ const ModelContents = ({ model }) => {
   const metaDataLeft = {
     version: model?.version,
     hostname: model?.hostname,
-    components: getCompRelValue().components.toString(),
+    components: getCompRelValue()?.components?.toString(),
     subCategory: model?.subCategory,
   };
 
@@ -327,7 +327,8 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const StyleClass = useStyles();
-  const isEmptyDetails = Object.keys(showDetailsData.data).length === 0;
+  const isEmptyDetails =
+    Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
   return (
     <div

@@ -32,7 +32,7 @@ import {
   useLazyGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
-import { removeDuplicateVersions } from './helper';
+import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -155,8 +155,8 @@ const MeshModelComponent_ = ({
           response = await getRelationshipsData(
             {
               params: {
-                page: searchText ? 1 : page.Relationships + 1,
-                pagesize: searchText ? 'all' : rowsPerPage,
+                page: 1,
+                pagesize: 'all',
                 paginated: true,
                 search: searchText || '',
               },
@@ -174,7 +174,7 @@ const MeshModelComponent_ = ({
 
       if (response.data) {
         const newData =
-          searchText || checked
+          searchText || checked || view === RELATIONSHIPS
             ? [...response.data[view.toLowerCase()]]
             : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         setResourcesDetail(newData);
@@ -275,6 +275,8 @@ const MeshModelComponent_ = ({
       return removeDuplicateVersions(
         checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
       );
+    } else if (view === RELATIONSHIPS) {
+      return groupRelationshipsByKind(resourcesDetail);
     } else {
       return resourcesDetail;
     }

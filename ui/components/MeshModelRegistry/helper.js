@@ -39,6 +39,23 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
   };
 };
 
+export const groupRelationshipsByKind = (relationships) => {
+  const groupedRelationships = {};
+
+  relationships.forEach((relationship) => {
+    const { id, kind } = relationship;
+
+    if (!groupedRelationships[kind]) {
+      groupedRelationships[kind] = { kind, relationships: [] };
+    }
+
+    groupedRelationships[kind].relationships.push({ id, ...relationship });
+  });
+  console.log('groupedRelationships', groupedRelationships);
+  const resultArray = Object.values(groupedRelationships);
+  return resultArray;
+};
+
 export const removeDuplicateVersions = (data) => {
   const groupedModels = _.groupBy(data, 'name');
 

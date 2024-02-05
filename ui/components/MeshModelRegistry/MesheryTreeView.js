@@ -79,20 +79,38 @@ const RelationshipTree = ({
       expanded={expanded}
       selected={selected}
     >
-      {data.map((relationship, index) => (
+      {data.map((relationshipByKind, index) => (
         <StyledTreeItem
           key={index}
-          nodeId={`${relationship.id}`}
-          data-id={`${relationship.id}`}
+          nodeId={`${relationshipByKind.relationships[0].id}`}
+          data-id={`${relationshipByKind.relationships[0].id}`}
           check
-          labelText={relationship.subType}
+          labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
           onClick={() => {
             setShowDetailsData({
-              type: RELATIONSHIPS,
-              data: relationship,
+              type: 'none',
+              data: {
+                id: relationshipByKind.relationships[0].id,
+              },
             });
           }}
-        />
+        >
+          {relationshipByKind.relationships.map((relationship) => (
+            <StyledTreeItem
+              key={index}
+              nodeId={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
+              data-id={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
+              check
+              labelText={relationship.subType}
+              onClick={() => {
+                setShowDetailsData({
+                  type: RELATIONSHIPS,
+                  data: relationship,
+                });
+              }}
+            />
+          ))}
+        </StyledTreeItem>
       ))}
     </TreeView>
   );
@@ -187,7 +205,7 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     labelText={relationship.subType}
                     onClick={() => {
                       setShowDetailsData({
-                        type: COMPONENTS,
+                        type: RELATIONSHIPS,
                         data: relationship,
                       });
                     }}
@@ -377,12 +395,18 @@ const MesheryTreeView = ({
     setChecked((prevChecked) => !prevChecked);
   }, [setChecked]);
 
+  // Expand first level tree
   const expandAll = () => {
     const arr = [];
     data.map((parent) => {
-      arr.push(parent.id);
-      arr.push(`${parent.id}.1`);
-      arr.push(`${parent.id}.2`);
+      if (view === RELATIONSHIPS) {
+        // Hard coded for relationships
+        // parent id will be same as relationships[0].id
+        // so we can use that id for expanding first level tree for relationships
+        arr.push(parent.relationships[0].id);
+      } else {
+        arr.push(parent.id);
+      }
     });
     setExpanded(arr);
   };
@@ -412,6 +436,8 @@ const MesheryTreeView = ({
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
+      // Check if showDetailsData data matches with item from route
+      // This will prevent unnecessary state update
       if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
         setExpanded(
           selectedIdArr.reduce(
@@ -421,7 +447,6 @@ const MesheryTreeView = ({
         );
         setSelected([selectedItemUUID]);
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-        console.log('showData', showData);
         setShowDetailsData(showData);
       }
     } else {
@@ -449,7 +474,7 @@ const MesheryTreeView = ({
   }, [view]);
 
   const disabledExpand = () => {
-    return view === RELATIONSHIPS || view === COMPONENTS;
+    return view === COMPONENTS;
   };
 
   const renderHeader = (type) => (
@@ -465,6 +490,7 @@ const MesheryTreeView = ({
         {width < 1370 && isSearchExpanded ? null : (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <CustomTextTooltip title="Expand All" placement="top">
+              {/* span is added to make sure tooltip is not listening to disabled elements to prevent MUI error */}
               <span>
                 <IconButton
                   onClick={expandAll}
