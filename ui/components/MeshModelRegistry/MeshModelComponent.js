@@ -338,9 +338,13 @@ const MeshModelComponent_ = ({
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
             <div
-              className={StyleClass.treeContainer}
+              className={StyleClass.detailsContainer}
               style={{
+                display: 'flex',
                 alignItems: resourcesDetail.length === 0 ? 'center' : '',
+                justifyContent: resourcesDetail.length === 0 ? 'center' : '',
+                padding: '0.6rem 0.6rem 0rem 0.6rem',
+                overflow: 'hidden',
               }}
             >
               {resourcesDetail.length === 0 ? (

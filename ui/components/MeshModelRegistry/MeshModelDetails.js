@@ -3,28 +3,35 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 
-const KeyValue = ({ property, value }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      margin: '0.3rem 0',
-    }}
-  >
-    <p
+const KeyValue = ({ property, value }) => {
+  let formattedValue = value;
+
+  if (Array.isArray(value)) {
+    formattedValue = value.join(', ');
+  }
+
+  return (
+    <div
       style={{
-        padding: '0',
-        margin: '0 0.5rem 0 0',
-        fontSize: '16px',
-        fontWeight: '600',
+        display: 'flex',
+        flexDirection: 'column',
+        margin: '0.3rem 0',
       }}
     >
-      {property}
-    </p>
-    <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{value}</p>
-  </div>
-);
-
+      <p
+        style={{
+          padding: '0',
+          margin: '0 0.5rem 0 0',
+          fontSize: '16px',
+          fontWeight: '600',
+        }}
+      >
+        {property}
+      </p>
+      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{formattedValue}</p>
+    </div>
+  );
+};
 const Title = ({ title }) => (
   <p
     style={{
@@ -45,10 +52,30 @@ const ModelContents = ({ model }) => {
     components: (value) => <KeyValue property="Components" value={value} />,
   };
 
+  const getCompRelValue = () => {
+    let components = 0;
+    let relationships = 0;
+
+    if (model.versionBasedData) {
+      model?.versionBasedData.forEach((model) => {
+        components = components + (model?.components === null ? 0 : model.components.length);
+        relationships =
+          relationships + (model?.relationships === null ? 0 : model.relationships.length);
+      });
+    } else {
+      components = model?.components === null ? 0 : model.components.length;
+      relationships = model?.relationships === null ? 0 : model.relationships.length;
+    }
+    return {
+      components,
+      relationships,
+    };
+  };
+
   const metaDataLeft = {
     version: model?.version,
     hostname: model?.hostname,
-    components: model?.components === null ? '0' : model.components?.length?.toString(),
+    components: getCompRelValue().components.toString(),
   };
 
   const orderLeft = ['version', 'hostname', 'components'];
@@ -63,7 +90,7 @@ const ModelContents = ({ model }) => {
   const metaDataRight = {
     category: model?.category?.name,
     duplicates: model?.duplicates?.toString(),
-    relationships: model?.relationships === null ? '0' : model.relationships?.length?.toString(),
+    relationships: getCompRelValue().relationships.toString(),
   };
 
   const orderRight = ['category', 'duplicates', 'relationships'];
@@ -107,7 +134,7 @@ const ComponentContents = ({ component }) => {
 
   const metaDataLeft = {
     version: component?.apiVersion,
-    modelName: component.model?.displayName,
+    modelName: component?.metadata?.modelDisplayName,
     kind: component?.kind,
   };
 
@@ -117,43 +144,43 @@ const ComponentContents = ({ component }) => {
   const PropertyFormattersRight = {
     registrant: (value) => <KeyValue property="Registrant" value={value} />,
     duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
   };
 
   const metaDataRight = {
     registrant: component?.displayhostname,
     duplicates: component?.duplicates?.toString(),
+    subCategory: component?.metadata?.subCategory,
   };
 
   const orderRight = ['registrant', 'duplicates'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <>
-      <div className={StyleClass.segment}>
-        <div
-          className={StyleClass.fullWidth}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            paddingRight: '1rem',
-          }}
-        >
-          <FormatStructuredData
-            data={orderdMetadataLeft}
-            propertyFormatters={PropertyFormattersLeft}
-            order={orderLeft}
-          />
-        </div>
-
-        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-          <FormatStructuredData
-            data={orderdMetadataRight}
-            propertyFormatters={PropertyFormattersRight}
-            order={orderRight}
-          />
-        </div>
+    <div className={StyleClass.segment}>
+      <div
+        className={StyleClass.fullWidth}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          paddingRight: '1rem',
+        }}
+      >
+        <FormatStructuredData
+          data={orderdMetadataLeft}
+          propertyFormatters={PropertyFormattersLeft}
+          order={orderLeft}
+        />
       </div>
-    </>
+
+      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+        <FormatStructuredData
+          data={orderdMetadataRight}
+          propertyFormatters={PropertyFormattersRight}
+          order={orderRight}
+        />
+      </div>
+    </div>
   );
 };
 
@@ -274,6 +301,13 @@ const RegistrantContent = ({ registrant }) => {
   );
 };
 
+const Description = ({ description }) => (
+  <div style={{ margin: '0.3rem 0' }}>
+    <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
+    <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
+  </div>
+);
+
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const StyleClass = useStyles();
   const isEmptyDetails = Object.keys(showDetailsData.data).length === 0;
@@ -292,16 +326,16 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
       {showDetailsData.type === RELATIONSHIPS && (
         <div>
           <Title title={showDetailsData.data.kind} />
-          <p style={{ fontWeight: '600', margin: '0', fontSize: '14px' }}>Description</p>
-          <p style={{ margin: '0', fontSize: '14px' }}>
-            {showDetailsData.data.metadata?.description}
-          </p>
+          <Description description={showDetailsData.data.metadata?.description} />
           <RelationshipContents relationship={showDetailsData.data} />
         </div>
       )}
       {showDetailsData.type === COMPONENTS && (
         <div>
           <Title title={showDetailsData.data.displayName} />
+          {showDetailsData.data.schema && (
+            <Description description={JSON.parse(showDetailsData.data.schema)?.description} />
+          )}
           <ComponentContents component={showDetailsData.data} />
         </div>
       )}
@@ -309,7 +343,6 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
         <div>
           <Title title={showDetailsData.data.hostname} />
           <RegistrantContent registrant={showDetailsData.data} />
-          {/* {showDetailsData.data.model.displayName && <hr style={{ margin: '1rem 0' }} />} */}
         </div>
       )}
     </div>
