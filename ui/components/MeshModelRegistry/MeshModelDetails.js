@@ -279,7 +279,13 @@ const RegistrantContent = ({ registrant }) => {
   const orderRight = ['relationships', 'policies'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        marginTop: '12px',
+        flexDirection: 'row',
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -301,7 +307,7 @@ const RegistrantContent = ({ registrant }) => {
           order={orderRight}
         />
       </div>
-    </>
+    </div>
   );
 };
 
