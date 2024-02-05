@@ -26,7 +26,6 @@ get_array_index_to_patch(no_of_elements) := index {
 	not no_of_elements == 0
 
 	# 0 based array indexing is followed
-	# patch the cofnig to the next position
 	index = format_int(no_of_elements - 1, 10)
 }
 

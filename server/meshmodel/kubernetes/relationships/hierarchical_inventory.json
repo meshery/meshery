@@ -1,4 +1,4 @@
- {
+{
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Hierarchical",
   "metadata": {
