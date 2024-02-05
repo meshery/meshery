@@ -4,7 +4,7 @@ title: Security Vulnerabilities
 permalink: project/security-vulnerabilities
 abstract: How the Meshery team handles security vulnerabilities.
 language: en
-type: project
+type: Reference
 category: none
 list: include
 ---

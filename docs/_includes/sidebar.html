@@ -76,35 +76,35 @@
             <li id="{{ child.title | slugify }}">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
                 href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
-                {% if child.type-child != nil -%}
-              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
-                aria-controls="section{{forloop.index0}}"> ↆ </div>
-                {% endif %}
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
             </li>
             {% if child.type-child != nil -%}
             <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
               {% for grandchild in sorted_pages %}
-              {% if grandchild.type=="installation" and grandchild.category!="integrations" and grandchild.list=="include" and
+              {% if grandchild.type=="installation" and grandchild.category!="integrations" and
+              grandchild.list=="include" and
               grandchild.language == "en" and grandchild.category==child.type-child -%}
               <li id="{{ grandchild.title | slugify }}">
                 <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
                   href="{{ site.baseurl }}{{ grandchild.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
               </li>
               {% endif %}
               {% endfor %}
-              
+
             </ul>
             {% endif %}
 
             {% endif %}
-              {% endfor %}
-
-            
+            {% endfor %}
           </ul>
-          
+
         </ul>
-        
+
       </li>
     </ul> <!-- end of "sidebar-nav__section" -->
 
@@ -134,28 +134,30 @@
             <li id="{{ child.title | slugify }}">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
                 href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
-                {% if child.type-child != nil -%}
-              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
-                aria-controls="section{{forloop.index0}}"> ↆ </div>
-                {% endif %}
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
             </li>
             {% if child.type-child != nil -%}
             <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
               {% for grandchild in sorted_pages %}
-              {% if grandchild.type=="components" and grandchild.language == "en" and grandchild.category==child.type-child -%}
+              {% if grandchild.type=="components" and grandchild.language == "en" and
+              grandchild.category==child.type-child -%}
               <li id="{{ grandchild.title | slugify }}">
                 <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
                   href="{{ site.baseurl }}{{ grandchild.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
               </li>
               {% endif %}
               {% endfor %}
-              
+
             </ul>
             {% endif %}
 
             {% endif %}
-              {% endfor %}
+            {% endfor %}
           </ul>
           <!-- end children -->
           <!-- end pageurl -->
@@ -168,62 +170,37 @@
           </li>
 
           <ul style="margin-bottom: 0;" id="section012">
-
-
-            <li id="designs">
-              <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-designs"
-                href="/concepts/logical/designs">Designs</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="environments">
-              <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-environments"
-                href="/concepts/logical/environments">Environments</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="models-ↆ">
-              <a class="sidebar-nav__section-link " id="m-concepts-logical-ↆ-models-ↆ"
-                href="/concepts/logical/models">Models </a>
-              <div class="toggle" data-toggle="collapse" data-target="#section013" aria-expanded="false"
-                aria-controls="section013"> ↆ </div>
-            </li>
-
-            <ul style="margin-bottom: 0;" id="section013">
-
-              {% for child in sorted_pages %}
-            {% if child.type=="concepts" and child.language == "en" and child.category == nil -%}
+            {% for child in sorted_pages %}
+            {% if child.type=="concepts" and child.language == "en" and child.concepts == nil -%}
             <li id="{{ child.title | slugify }}">
               <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
                 href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
-                {% if child.type-child != nil -%}
-              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false"
-                aria-controls="section{{forloop.index0}}"> ↆ </div>
-                {% endif %}
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
             </li>
             {% if child.type-child != nil -%}
             <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
               {% for grandchild in sorted_pages %}
-              {% if grandchild.type=="concepts" and grandchild.language == "en" and grandchild.category==child.type-child -%}
+              {% if grandchild.type=="concepts" and grandchild.language == "en" and
+              grandchild.category==child.type-child -%}
               <li id="{{ grandchild.title | slugify }}">
                 <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
                   href="{{ site.baseurl }}{{ grandchild.url }}"><strong
-                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a>
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
               </li>
               {% endif %}
               {% endfor %}
-              
+
             </ul>
             {% endif %}
 
             {% endif %}
-              {% endfor %}
+            {% endfor %}
           </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
           <!--  section.links -->
-        </ul>
-        <!--  section.links -->
       </li>
     </ul> <!-- end of "sidebar-nav__section" -->
 
@@ -249,32 +226,17 @@
           </li>
 
           <ul style="margin-bottom: 0;" id="section014">
-
-
-            <li id="creating-a-meshery-design">
+            {% assign configuration = site.pages | where: "type","guides" %}
+            {% for item in configuration %}
+            {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
               <a class="sidebar-nav__section-link "
-                id="m-guides-all-configuring-kubernetes-infrastructure-ↆ-creating-a-meshery-design"
-                href="/guides/configuration-management/creating-a-meshery-design">Creating a Meshery Design</a>
+                id="m-guides-all-configuring-kubernetes-infrastructure-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             </li>
-            <!-- end grandchild -->
-
-            <li id="working-with-designs">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-configuring-kubernetes-infrastructure-ↆ-working-with-designs"
-                href="/guides/configuration-management/working-with-designs">Working with Designs</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="importing-applications">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-configuring-kubernetes-infrastructure-ↆ-importing-applications"
-                href="/guides/configuration-management/importing-apps">Importing Applications</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
+            {% endif %}
+            {% endfor %}
           </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
 
           <li class="sidebar-nav__section-link ">
             <a href="/guides/events-management"
@@ -282,7 +244,10 @@
               Center</a>
           </li>
           <!-- end pageurl -->
-
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/gitops-with-meshery"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">GitOps with Meshery</a>
+          </li>
           <li class="sidebar-nav__section-link ">
             <a href="/guides/performance-management"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using Metrics in Meshery </a>
@@ -292,72 +257,17 @@
 
           <ul style="margin-bottom: 0;" id="section024">
 
-
-            <li id="integrating-prometheus-and-grafana">
+            {% assign performance = site.pages | where: "type","guides" %}
+            {% for item in performance %}
+            {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
               <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-integrating-prometheus-and-grafana"
-                href="/guides/performance-management/meshery-metrics">Integrating Prometheus and Grafana</a>
+                id="m-guides-all-using-metrics-in-meshery-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             </li>
-            <!-- end grandchild -->
-
-            <li id="interpreting-performance-test-results">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-interpreting-performance-test-results"
-                href="/guides/performance-management/interpreting-performance-test-results">Interpreting Performance
-                Test Results</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="performance-management-with-meshery">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-performance-management-with-meshery"
-                href="/guides/performance-management/performance-management">Performance Management with Meshery</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
+            {% endif %}
+            {% endfor %}
           </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/guides/gitops-with-meshery"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">GitOps with Meshery</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/guides/performance-management"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using Metrics in Meshery </a>
-            <div class="toggle" data-toggle="collapse" data-target="#section015" aria-expanded="false"
-              aria-controls="section015"> ↆ </div>
-          </li>
-          <ul style="margin-bottom: 0;" id="section015">
-
-
-            <li id="integrating-prometheus-and-grafana">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-integrating-prometheus-and-grafana"
-                href="/guides/performance-management/meshery-metrics">Integrating Prometheus and Grafana</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="interpreting-performance-test-results">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-interpreting-performance-test-results"
-                href="/guides/performance-management/interpreting-performance-test-results">Interpreting Performance
-                Test Results</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="performance-management-with-meshery">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-metrics-in-meshery-ↆ-performance-management-with-meshery"
-                href="/guides/performance-management/performance-management">Performance Management with Meshery</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
           <!-- end pageurl -->
 
           <li class="sidebar-nav__section-link ">
@@ -369,97 +279,46 @@
 
           <ul style="margin-bottom: 0;" id="section016">
 
-
-            <li id="using-mesheryctl">
-              <a class="sidebar-nav__section-link " id="m-guides-all-using-meshery-cli-guides-ↆ-using-mesheryctl"
-                href="/guides/mesheryctl/working-with-mesheryctl">Using mesheryctl</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="configure-autocompletion-for-mesheryctl">
+            {% assign sorted_mesheryctl = site.pages | where: "type","guides" %}
+            {% for item in sorted_mesheryctl %}
+            {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
               <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-meshery-cli-guides-ↆ-configure-autocompletion-for-mesheryctl"
-                href="/guides/mesheryctl/configuring-autocompletion-for-mesheryctl">Configure autocompletion for
-                mesheryctl</a>
+                id="m-guides-all-using-meshery-cli-guides-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
             </li>
-            <!-- end grandchild -->
+            {% endif %}
+            {% endfor %}
+            </ul>
 
-            <li id="authenticate-via-meshery-cli">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-meshery-cli-guides-ↆ-authenticate-via-meshery-cli"
-                href="/guides/mesheryctl/authenticate-with-meshery-via-cli">Authenticate via Meshery CLI</a>
+            <li class="sidebar-nav__section-link ">
+              <a href="/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Troubleshooting Guides </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section017" aria-expanded="false"
+                aria-controls="section017"> ↆ </div>
             </li>
-            <!-- end grandchild -->
 
-            <li id="running-system-checks-using-meshery-cli">
-              <a class="sidebar-nav__section-link "
-                id="m-guides-all-using-meshery-cli-guides-ↆ-running-system-checks-using-meshery-cli"
-                href="/guides/mesheryctl/running-system-checks-using-mesheryctl">Running system checks using Meshery
-                CLI</a>
+            <ul style="margin-bottom: 0;" id="section017">
+              {% assign troubleshooting = site.pages | where: "category","troubleshooting" %}
+              {% for item in troubleshooting %}
+              {% if item.type=="guides" and item.category=="troubleshooting" and item.language=="en" -%}
+              <li id="{{ item.title | slugify }}">
+                <a class="sidebar-nav__section-link "
+                  id="m-guides-all-troubleshooting-guides-ↆ-{{ item.title | slugify }}"
+                  href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+
+            <li class="sidebar-nav__section-link ">
+              <a href="/guides/upgrade" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Upgrading
+                Meshery </a>
             </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/guides/troubleshooting"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Troubleshooting Guides </a>
-            <div class="toggle" data-toggle="collapse" data-target="#section017" aria-expanded="false"
-              aria-controls="section017"> ↆ </div>
-          </li>
-
-          <ul style="margin-bottom: 0;" id="section017">
-
-
-            <li id="installation">
-              <a class="sidebar-nav__section-link " id="m-guides-all-troubleshooting-guides-ↆ-installation"
-                href="/guides/troubleshooting/installation">Installation</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="meshery-operator">
-              <a class="sidebar-nav__section-link " id="m-guides-all-troubleshooting-guides-ↆ-meshery-operator"
-                href="/guides/troubleshooting/meshery-operator-meshsync">Meshery Operator</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="meshery-server">
-              <a class="sidebar-nav__section-link " id="m-guides-all-troubleshooting-guides-ↆ-meshery-server"
-                href="/guides/troubleshooting/meshery-server">Meshery Server</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/guides/upgrade" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Upgrading
-              Meshery </a>
-            <div class="toggle" data-toggle="collapse" data-target="#section018" aria-expanded="false"
-              aria-controls="section018"> ↆ </div>
-          </li>
-
-          <ul style="margin-bottom: 0;" id="section018">
-
-
-            <li id="meshery-cli">
-              <a class="sidebar-nav__section-link " id="m-guides-all-upgrading-meshery-ↆ-meshery-cli"
-                href="/guides/upgrade#upgrading-meshery-cli">Meshery CLI</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-          <!--  section.links -->
-        </ul>
-        <!--  section.links -->
+          
       </li>
-    </ul> <!-- end of "sidebar-nav__section" -->
+    </ul>
 
     <ul class="sidebar-nav__section">
 
@@ -474,38 +333,19 @@
 
         <ul class="td-sidebar-nav__section collapse" id="section4">
 
+          {% assign sorted_tasks = site.pages | where: "type","tasks" %}
+          {% for item in sorted_tasks %}
+          {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
           <li class="sidebar-nav__section-link ">
-            <a href="/tasks/infrastructure-management"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Infrastructure Management</a>
+            <a href="{{ site.baseurl }}{{ item.url }}"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{
+              item.title }}</a>
           </li>
-          <!-- end pageurl -->
+          {% endif %}
+          {% endfor %}
 
-          <li class="sidebar-nav__section-link ">
-            <a href="/tasks/filter-management"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Filter Management</a>
-          </li>
-          <!-- end pageurl -->
 
-          <li class="sidebar-nav__section-link ">
-            <a href="/tasks/lifecycle-management"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Managing Connections</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/tasks/pattern-management"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Pattern Management</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/tasks/performance/managing-performance"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Performance Management</a>
-          </li>
-          <!-- end pageurl -->
-          <!--  section.links -->
         </ul>
-        <!--  section.links -->
       </li>
     </ul> <!-- end of "sidebar-nav__section" -->
 
@@ -796,14 +636,8 @@
               <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-models"
                 href="/project/contributing/contributing-models">Models</a>
             </li>
-            <!-- end grandchild -->
-            <!-- children -->
           </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-          <!--  section.links -->
         </ul>
-        <!--  section.links -->
       </li>
     </ul> <!-- end of "sidebar-nav__section" -->
 
@@ -819,63 +653,15 @@
 
 
         <ul class="td-sidebar-nav__section collapse" id="section6">
-
+          {% for item in sorted_pages %}
+          {% if item.type=="Reference" and item.list!="exclude" and item.language!="es" -%}
           <li class="sidebar-nav__section-link ">
-            <a href="/reference/error-codes" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Error
-              Code Reference</a>
+            <a href="{{ site.baseurl }}{{ item.url }}"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{
+              item.title }}</a>
           </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/extensibility/api" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">REST &
-              GraphQL APIs </a>
-            <div class="toggle" data-toggle="collapse" data-target="#section021" aria-expanded="false"
-              aria-controls="section021"> ↆ </div>
-          </li>
-
-          <ul style="margin-bottom: 0;" id="section021">
-
-
-            <li id="graphql-api-reference">
-              <a class="sidebar-nav__section-link " id="m-reference-rest-graphql-apis-ↆ-graphql-api-reference"
-                href="/reference/graphql-apis">GraphQL API Reference</a>
-            </li>
-            <!-- end grandchild -->
-
-            <li id="rest-api-reference">
-              <a class="sidebar-nav__section-link " id="m-reference-rest-graphql-apis-ↆ-rest-api-reference"
-                href="/reference/rest-apis">REST API Reference</a>
-            </li>
-            <!-- end grandchild -->
-            <!-- children -->
-          </ul>
-          <!-- end children -->
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/reference/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">CLI
-              Command Reference</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/reference/meshery-operator-crds"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Meshery Operator CRDs</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/project/releases"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Releases</a>
-          </li>
-          <!-- end pageurl -->
-
-          <li class="sidebar-nav__section-link ">
-            <a href="/project/security-vulnerabilities"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Vulnerabilities</a>
-          </li>
-          <!-- end pageurl -->
-          <!--  section.links -->
+          {% endif %}
+          {% endfor %}
         </ul>
         <!--  section.links -->
       </li>

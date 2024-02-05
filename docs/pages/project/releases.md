@@ -5,7 +5,7 @@ permalink: project/releases
 abstract: List of released Meshery versions and their release notes.
 redirect_from: project/releases/
 language: en
-type: project
+type: Reference
 category: none
 list: include
 ---
