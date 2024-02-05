@@ -284,7 +284,7 @@ const MesheryTreeViewRegistrants = ({
           labelText={
             <TootltipWrappedConnectionChip
               title={registrant.hostname}
-              iconSrc="ui/public/static/img/artifact-hub-color.svg"
+              iconSrc="/static/img/artifact-hub-color.svg" //TODO: remove this hardcoded iconSrc for artifact hub as we will get from API
             />
           }
           newParentId={registrant.id}
