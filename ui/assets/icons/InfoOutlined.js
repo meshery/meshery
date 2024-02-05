@@ -1,6 +1,6 @@
 import React from "react";
 
-const InfoOutlinedIcon = ({ height, width, style = {}, className={}, fill }) => {
+const InfoOutlinedIcon = ({ height, width, style = {}, className={} }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
