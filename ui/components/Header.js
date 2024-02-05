@@ -6,7 +6,6 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
@@ -41,7 +40,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
-import { WHITE } from '@layer5/sistent-components';
+import { CHARCOAL, WHITE } from '@layer5/sistent-components';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -399,7 +399,8 @@ function K8sContextMenu({
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
-                      <Tooltip
+                      <CustomTextTooltip
+                        backgroundColor={CHARCOAL}
                         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
                           operatorState,
                         )}, MeshSync: ${formatToTitleCase(
@@ -430,7 +431,7 @@ function K8sContextMenu({
                             status={operatorState}
                           />
                         </div>
-                      </Tooltip>
+                      </CustomTextTooltip>
                     </div>
                   );
                 })}
