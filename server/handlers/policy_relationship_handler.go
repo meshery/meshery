@@ -108,7 +108,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		}
 		evalresults[query] = result
 	}
-	evalResults = evalresults
+	evalResults = core.Format.Prettify(evalresults, false)
 
 	// write the response
 	ec := json.NewEncoder(rw)
