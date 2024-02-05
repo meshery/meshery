@@ -103,7 +103,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	for _, query := range verifiedEvaluationQueries {
 		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
 		if err != nil {
-			h.log.Warn(err)
+			h.log.Debug(err)
 			continue
 		}
 		evalresults[query] = result
