@@ -5,6 +5,7 @@ permalink: tasks/notification-management
 type: tasks
 language: en
 list: include
+abstract: "Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on."
 ---
 
 Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on.

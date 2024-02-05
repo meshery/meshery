@@ -818,3 +818,24 @@ filter:
           description: (optional) format to display in [json|yaml] (default "yaml")
           usage: mesheryctl filter view [filter-name | ID] -o [json/yaml]
           example: mesheryctl filter view myfilter.wasm -o json
+
+exp:
+  name: exp
+  description: Experimental features
+  usage: mesheryctl exp [command] [flags]
+  subcommands:
+    registry:
+      name: registry
+      description: Manage Meshery registries
+      usage: mesheryctl exp registry [command] [flags]
+      subcommands:
+        publish:
+          name: publish
+          description: Publish Meshery Models to Websites, Remote Provider, Meshery
+          usuage: mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
+          flags:
+            output-format:
+              name: --output-format, -o
+              description: (optional) format to display in [md | mdx | js]
+              usuage: mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md | mdx | js]
+              example: mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o md

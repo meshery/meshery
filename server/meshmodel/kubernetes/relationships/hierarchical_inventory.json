@@ -108,10 +108,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -126,10 +130,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -144,10 +152,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -162,10 +174,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -179,11 +195,13 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings",
+                [
+                  "settings",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -198,10 +216,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -216,12 +238,16 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
                   "spec",
                   "jobTemplate",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
