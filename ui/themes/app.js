@@ -396,7 +396,7 @@ let theme = createTheme({
       innertableBg2: '#ECECED',
       tabContainer: '#51636B',
       card: '#51636B',
-      detailsContainer: '#d9dadb80',
+      detailsContainer: 'rgb(100, 120, 129, 5%)',
       tabCard: '#677a84',
       disableButtonBg: '#e0e0e0',
       disableButton: '#9d9d9d',
