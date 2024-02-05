@@ -37,7 +37,7 @@ mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [m
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID <repo>/server/meshmodel
+mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID <repo>/se
 Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <repo>/meshmodels/models <repo>/ui/public/img/meshmodels
+mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
 </div>
 </pre> 
@@ -53,24 +53,48 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID <
 Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish website GoogleCredential GoogleSheetID <repo>/integrations <repo>/ui/public/img/meshmodels
+mesheryctl exp registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
 </div>
 </pre> 
 
 Publishing to meshery docs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 cd docs;
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+
+</div>
+</pre> 
+
 Publishing to mesheryio site
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+
+</div>
+</pre> 
+
 Publishing to layer5 site
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for publish
-  -o, --output-format string   output format (supported: md, mdx, js)
+  -o, --output-format string   output format [md | mdx | js]
 
 </div>
 </pre>
