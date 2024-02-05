@@ -39,6 +39,10 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
   };
 };
 
+/**
+ * Group relationships by kind
+ * @param {object} - Relationships arrays
+ */
 export const groupRelationshipsByKind = (relationships) => {
   const groupedRelationships = {};
 
@@ -51,42 +55,52 @@ export const groupRelationshipsByKind = (relationships) => {
 
     groupedRelationships[kind].relationships.push({ id, ...relationship });
   });
-  console.log('groupedRelationships', groupedRelationships);
   const resultArray = Object.values(groupedRelationships);
   return resultArray;
 };
 
+/**
+ * Function takes models data and merges the duplicate data
+ * @param {object} - models data
+ */
 export const removeDuplicateVersions = (data) => {
   const groupedModels = _.groupBy(data, 'name');
 
   const result = _.reduce(
     groupedModels,
     (acc, models, name) => {
-      const uniqueVersions = _.uniqBy(models, 'version');
-
-      const versionDataArray = uniqueVersions.map((model) => {
-        return {
-          version: model.version,
-          components: _.uniq(model.components),
-          relationships: _.uniq(model.relationships),
-          ...model,
-        };
-      });
+      const uniqueVersions = _.groupBy(models, 'version');
+      const arrayOfUniqueVersions = Object.values(uniqueVersions);
 
       const existingModel = acc.find((m) => m.name === name);
+
+      const mergedData = arrayOfUniqueVersions.map((modelsWithSameVersion) => {
+        let subVal = {
+          relationships: {},
+          components: {},
+        };
+        modelsWithSameVersion.map((model) => {
+          subVal.relationships = _.union(subVal.relationships, model.relationships);
+          subVal.components = _.union(subVal.components, model.components);
+        });
+        return {
+          ...modelsWithSameVersion[0],
+          ...subVal,
+        };
+      });
 
       if (existingModel) {
         existingModel.version = _.union(
           existingModel.version,
-          uniqueVersions.map((model) => model.version),
+          mergedData.map((model) => model.version),
         );
-        existingModel.versionBasedData = existingModel.versionBasedData.concat(versionDataArray);
+        existingModel.versionBasedData = existingModel.versionBasedData.concat(mergedData);
       } else {
         const selectedModel = models[0];
         acc.push({
           ...selectedModel,
-          version: uniqueVersions.map((model) => model.version),
-          versionBasedData: versionDataArray,
+          version: mergedData.map((model) => model.version),
+          versionBasedData: mergedData,
         });
       }
 
