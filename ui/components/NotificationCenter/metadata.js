@@ -126,7 +126,6 @@ export const FormattedMetadata = ({ event }) => {
     dryRunResponse: (value) => <DryRunResponse response={value} />,
   };
   if (!event || !event.metadata || isEmptyAtAllDepths(event.metadata)) {
-    console.log('return from here');
     return <EmptyState event={event} />;
   }
   const metadata = {
