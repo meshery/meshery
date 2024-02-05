@@ -26,7 +26,8 @@ get_array_index_to_patch(no_of_elements) := index {
 	not no_of_elements == 0
 
 	# 0 based array indexing is followed
-	index = format_int(no_of_elements - 1, 10)
+	# patch the cofnig to the next position
+	index = format_int(no_of_elements, 10)
 }
 
 is_array(arr, mutated) = path {
