@@ -33,9 +33,13 @@ import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { ctxUrl } from '../utils/multi-ctx';
-import { generateValidatePayload, getComponentsinFile, getDecodedFile } from '../utils/utils';
+import {
+  generateValidatePayload,
+  getComponentsinFile,
+  getUnit8ArrayDecodedFile,
+  getUnit8ArrayForDesign,
+} from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
-import CatalogFilter from './CatalogFilter';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -51,7 +55,7 @@ import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import Modal from './Modal';
-import downloadFile from '../utils/fileDownloader';
+import downloadContent from '../utils/fileDownloader';
 import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import ReusableTooltip from './reusable-tooltip';
@@ -75,6 +79,8 @@ import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
 import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import ExportModal from './ExportModal';
+import UniversalFilter from '../utils/custom-filter';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -204,9 +210,6 @@ const styles = (theme) => ({
       width: '100%',
     },
   },
-  // text : {
-  //   padding : "5px"
-  // }
 });
 
 function TooltipIcon({ children, onClick, title, placement }) {
@@ -219,7 +222,7 @@ function TooltipIcon({ children, onClick, title, placement }) {
 
 function YAMLEditor({ pattern, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState('');
+  const [yaml, setYaml] = useState(pattern.pattern_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -327,7 +330,7 @@ function MesheryPatterns({
   classes,
   selectedK8sContexts,
   catalogVisibility,
-  toggleCatalogContent,
+  // toggleCatalogContent,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -338,10 +341,11 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const [extensionPreferences, setExtensionPreferences] = useState({});
+  const [setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -356,6 +360,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -382,6 +387,28 @@ function MesheryPatterns({
     pattern: {},
     name: '',
   });
+
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+
+  const handleDownloadDialogClose = () => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: false,
+      content: null,
+    }));
+  };
+
+  const handleDesignDownloadModal = (e, pattern) => {
+    e.stopPropagation();
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: true,
+      content: pattern,
+    }));
+  };
 
   console.log('updated ability in pattern', ability);
 
@@ -468,9 +495,9 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
-    fetchPatterns(page, pageSize, search, sortOrder);
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -478,26 +505,26 @@ function MesheryPatterns({
     }
   }, [viewType]);
 
-  const handleCatalogPreference = (catalogPref) => {
-    let body = Object.assign({}, extensionPreferences);
-    body['catalogContent'] = catalogPref;
+  // const handleCatalogPreference = (catalogPref) => {
+  //   let body = Object.assign({}, extensionPreferences);
+  //   body['catalogContent'] = catalogPref;
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
-        notify({
-          message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      (err) => console.error(err),
-    );
-  };
+  //   dataFetch(
+  //     '/api/user/prefs',
+  //     {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       body: JSON.stringify({ usersExtensionPreferences: body }),
+  //     },
+  //     () => {
+  //       notify({
+  //         message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
+  //         event_type: EVENT_TYPES.SUCCESS,
+  //       });
+  //     },
+  //     (err) => console.error(err),
+  //   );
+  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -556,11 +583,11 @@ function MesheryPatterns({
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
 
-  const handleCatalogVisibility = () => {
-    handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility;
-    toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  };
+  // const handleCatalogVisibility = () => {
+  //   handleCatalogPreference(!catalogVisibilityRef.current);
+  //   catalogVisibilityRef.current = !catalogVisibility;
+  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
+  // };
 
   useEffect(() => {
     fetchUserPrefs();
@@ -645,12 +672,12 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  useEffect(() => {
-    setPage(0);
-    setPageSize(10);
-    setCount(0);
-    fetchPatterns(0, 10, search, sortOrder);
-  }, [viewType]);
+  // useEffect(() => {
+  //   setPage(0);
+  //   setPageSize(10);
+  //   setCount(0);
+  //   fetchPatterns(0, 10, search, sortOrder,visibilityFilter);
+  // }, [viewType]);
 
   const handleModalClose = () => {
     // @ts-ignore
@@ -849,9 +876,19 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
     const payload = {
       id: publishModal.pattern?.id,
-      catalog_data: formData,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
     };
     updateProgress({ showProgress: true });
     dataFetch(
@@ -896,12 +933,16 @@ function MesheryPatterns({
     );
   }
 
-  function fetchPatterns(page, pageSize, search, sortOrder) {
+  function fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const query =
+      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        search,
+      )}&order=${encodeURIComponent(sortOrder)}` +
+      (visibilityFilter
+        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
+        : '');
 
     updateProgress({ showProgress: true });
     dataFetch(
@@ -912,10 +953,17 @@ function MesheryPatterns({
         updateProgress({ showProgress: false });
         stillLoading(false);
         if (result) {
+          const filteredPatterns = result.patterns.filter((content) => {
+            if (visibilityFilter === null || content.visibility === visibilityFilter) {
+              return true;
+            }
+            return false;
+          });
           // setPage(result.page || 0);
           // setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
-          handleSetPatterns(result.patterns || []);
+          handleSetPatterns(filteredPatterns);
+          setVisibilityFilter(visibilityFilter);
           // setPatterns(result.patterns || []);
         }
       },
@@ -969,7 +1017,7 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: data, catalog_data },
+            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
             save: true,
           }),
         },
@@ -988,7 +1036,7 @@ function MesheryPatterns({
         body = JSON.stringify({
           pattern_data: {
             name: metadata?.name || name,
-            pattern_file: data,
+            pattern_file: getUnit8ArrayDecodedFile(data),
             catalog_data,
           },
           save: true,
@@ -1018,11 +1066,13 @@ function MesheryPatterns({
     }
   }
 
-  const handleDownload = (e, id, name) => {
+  const handleDownload = (e, design, source_type, params) => {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadFile({ id, name, type: 'pattern' });
+      let id = design.id;
+      let name = design.name;
+      downloadContent({ id, name, type: 'pattern', source_type, params });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
@@ -1126,14 +1176,14 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          const visibility = patterns[tableMeta.rowIndex]?.visibility;
-          return (
-            <div style={{ cursor: 'default' }}>
-              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-            </div>
-          );
-        },
+        // customBodyRender: function CustomBody(_, tableMeta) {
+        //   const visibility = patterns[tableMeta.rowIndex]?.visibility;
+        //   return (
+        //     <div style={{ cursor: 'default' }}>
+        //       <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
+        //     </div>
+        //   );
+        // },
       },
     },
     {
@@ -1180,7 +1230,7 @@ function MesheryPatterns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} TODO: uncomment when clone key will get seeded
+                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
@@ -1247,7 +1297,7 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Download"
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
-                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+                onClick={(e) => handleDesignDownloadModal(e, rowData)}
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
@@ -1423,6 +1473,7 @@ function MesheryPatterns({
                 pageSize,
                 tableState.searchText !== null ? tableState.searchText : '',
                 sortOrder,
+                visibilityFilter,
               );
               setSearch(tableState.searchText);
             }
@@ -1470,7 +1521,6 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
-    console.log('data....', data);
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
@@ -1480,7 +1530,7 @@ function MesheryPatterns({
           save: true,
           pattern_data: {
             name,
-            pattern_file: getDecodedFile(file),
+            pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
@@ -1503,8 +1553,32 @@ function MesheryPatterns({
     );
   }
 
+  const filter = {
+    visibility: {
+      name: 'visibility',
+      //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
+      options: catalogVisibility
+        ? [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+            { label: 'Published', value: 'published' },
+          ]
+        : [
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+          ],
+    },
+  };
+
+  const handleApplyFilter = () => {
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  };
+
   return (
     <NoSsr>
+      {console.log('updated ui')}
       {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
         <>
           {selectedRowData && Object.keys(selectedRowData).length > 0 && (
@@ -1560,11 +1634,11 @@ function MesheryPatterns({
                 )}
                 {!selectedPattern.show && (
                   <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                    <CatalogFilter
+                    {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    />
+                    /> */}
                   </div>
                 )}
               </div>
@@ -1578,6 +1652,13 @@ function MesheryPatterns({
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
                 placeholder="Search designs..."
+              />
+              <UniversalFilter
+                id="ref"
+                filters={filter}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                handleApplyFilter={handleApplyFilter}
               />
               {viewType === 'table' && (
                 <CustomColumnVisibilityControl
@@ -1593,16 +1674,23 @@ function MesheryPatterns({
             </div>
           </div>
           {!selectedPattern.show && viewType === 'table' && (
-            <ResponsiveDataTable
-              data={patterns}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <>
+              <ResponsiveDataTable
+                data={patterns}
+                columns={columns}
+                // @ts-ignore
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+              <ExportModal
+                downloadModal={downloadModal}
+                handleDownloadDialogClose={handleDownloadDialogClose}
+                handleDesignDownload={handleDownload}
+              />
+            </>
           )}
           {!selectedPattern.show && viewType === 'grid' && (
             // grid vieww
@@ -1628,6 +1716,7 @@ function MesheryPatterns({
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
               user={user}
+              fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
               handleInfoModal={handleInfoModal}
             />
           )}
@@ -1715,7 +1804,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <>
@@ -1726,7 +1815,7 @@ const PublishModal = React.memo((props) => {
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
-        handleSubmit={handlePublish}
+        handleSubmit={handleSubmit}
         showInfoIcon={{
           text: 'Upon submitting your catalog item, an approval flow will be initiated.',
           link: 'https://docs.meshery.io/concepts/catalog',

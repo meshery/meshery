@@ -94,7 +94,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -195,17 +194,21 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
+                  {value ? (
+                    <div
+                      style={{
+                        color: 'inherit',
+                        textDecorationLine: 'underline',
+                        cursor: 'pointer',
+                        marginBottom: '0.5rem',
+                      }}
+                      onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                    >
+                      {value}
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center' }}>-</div>
+                  )}
                 </>
               );
             },
@@ -336,7 +339,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -444,7 +446,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}
@@ -552,7 +553,6 @@ export const SecurityTypesConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
-              console.log('TESTL ', context);
               return (
                 <TootltipWrappedConnectionChip
                   title={context.name}

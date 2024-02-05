@@ -63,8 +63,7 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
-import InfoIcon from '@material-ui/icons/Info';
-import { SortableTableCell } from './common';
+import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
@@ -85,6 +84,10 @@ import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
+import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { renderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -124,7 +127,12 @@ function ConnectionManagementPage(props) {
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
   });
-  const [createConnection, setCreateConnection] = useState({});
+
+  const { data: schemaResponse } = useGetSchemaQuery({
+    schemaName: 'helmRepo',
+  });
+
+  const createConnection = schemaResponse ?? {};
 
   const handleCreateConnectionModalOpen = () => {
     setCreateConnectionModal({ open: true });
@@ -135,19 +143,6 @@ function ConnectionManagementPage(props) {
   };
 
   const handleCreateConnectionSubmit = () => {};
-
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/helmRepo',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setCreateConnection(result);
-      },
-    );
-  }, []);
 
   return (
     <>
@@ -182,7 +177,6 @@ function Connections(props) {
     meshsyncControllerState,
     organization,
   } = props;
-  console.log('props: ', props);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -204,6 +198,7 @@ function Connections(props) {
   const [statusFilter, setStatusFilter] = useState(null);
   const [kindFilter, setKindFilter] = useState(null);
 
+  const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
@@ -301,7 +296,8 @@ function Connections(props) {
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
-  const url = `https://docs.meshery.io/concepts/connections`;
+  const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
+  const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
   const icons = {
     [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
@@ -435,13 +431,31 @@ function Connections(props) {
       options: {
         sort: false,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead({ ...column }) {
           return (
-            <SortableTableCell
-              index={index}
+            <DefaultTableCell
               columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
+              icon={
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
+                    style={{
+                      cursor: 'pointer',
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
+              }
+              tooltip={renderTooltipContent({
+                showPriortext:
+                  'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
+                link: envUrl,
+                showAftertext: 'to learn more about Environments',
+              })}
             />
           );
         },
@@ -622,20 +636,26 @@ function Connections(props) {
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
               icon={
-                <InfoIcon
-                  color={theme.palette.secondary.iconMain}
-                  style={{
-                    cursor: 'pointer',
-                    height: 20,
-                    width: 20,
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(url, '_blank');
-                  }}
-                />
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
+                    style={{
+                      cursor: 'pointer',
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
               }
-              tooltip="Click to learn about connection and status"
+              tooltip={renderTooltipContent({
+                showPriortext:
+                  'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
+                link: url,
+                showAftertext: 'to learn more about Connection States',
+              })}
             />
           );
         },
@@ -964,19 +984,21 @@ function Connections(props) {
   };
 
   const updateConnectionStatus = (connectionKind, requestBody) => {
-    dataFetch(
-      `/api/integrations/connections/${connectionKind}/status`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody,
-      },
-      () => {
+    useUpdateConnectionMutator({
+      connectionKind: connectionKind,
+      connectionPayload: requestBody,
+    })
+      .unwrap()
+      .then(() => {
         getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
-      },
-      handleError(ACTION_TYPES.UPDATE_CONNECTION),
-    );
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
   };
 
   const handleStatusChange = async (e, connectionId, connectionKind) => {

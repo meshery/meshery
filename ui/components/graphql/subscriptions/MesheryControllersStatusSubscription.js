@@ -7,6 +7,7 @@ const mesheryControllersStatusSubscription = graphql`
       contextId
       controller
       status
+      version
     }
   }
 `;

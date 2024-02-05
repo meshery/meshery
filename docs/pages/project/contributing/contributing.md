@@ -3,8 +3,8 @@ layout: page
 title: Contributing
 permalink: project/contributing
 abstract: How to contribute to the Meshery project.
-redirect_from:
- - project/contributing/
+# redirect_from:
+#  - project/contributing/
 display-title: "false"
 language: en
 type: project

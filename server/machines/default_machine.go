@@ -23,7 +23,15 @@ func Registered() State {
 func Connected() State {
 	state := &State{}
 	return *state.
-		RegisterEvent(Disconnect, DISCONNECTED)
+		RegisterEvent(Disconnect, DISCONNECTED).
+		RegisterEvent(Delete, DELETED)
+}
+
+func Disconnected() State {
+	state := &State{}
+	return *state.
+		RegisterEvent(Connect, CONNECTED).
+		RegisterEvent(Delete, DELETED)
 }
 
 func Initial() State {
@@ -52,6 +60,7 @@ func New(initialState StateType, ID string, userID uuid.UUID, log logger.Handler
 			DISCOVERED:   Discovered(),
 			REGISTERED:   Registered(),
 			CONNECTED:    Connected(),
+			DISCONNECTED: Disconnected(),
 			InitialState: Initial(),
 		},
 	}, nil

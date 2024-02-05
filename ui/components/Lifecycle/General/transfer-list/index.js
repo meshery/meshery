@@ -17,6 +17,7 @@ import {
 import { Typography } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { TRANSFER_COMPONENT } from '../../../../utils/Enum';
+import { Colors } from '@/themes/app';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -101,7 +102,7 @@ export default function TransferList({
         observer.unobserve(sentinel);
       }
     };
-  }, [assignablePage]);
+  }, [assignableData]);
 
   useEffect(() => {
     const handleScroll = (entries) => {
@@ -122,7 +123,7 @@ export default function TransferList({
         observer.unobserve(sentinel);
       }
     };
-  }, [assignedPage]);
+  }, [originalAssignedData]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -255,8 +256,13 @@ export default function TransferList({
             disabled={left?.length === 0 || left.length < leftCount}
             aria-label="move all right"
           >
-            <RightArrowIcon width={18} height={18} />
-            <RightArrowIcon style={{ position: 'absolute', left: '27px' }} width={18} height={18} />
+            <RightArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
+            <RightArrowIcon
+              primaryFill={Colors.keppelGreen}
+              style={{ position: 'absolute', left: '27px' }}
+              width={18}
+              height={18}
+            />
           </TransferButton>
           <TransferButton
             variant="outlined"
@@ -266,7 +272,7 @@ export default function TransferList({
             disabled={leftChecked.length === 0}
             aria-label="move selected right"
           >
-            <RightArrowIcon width={18} height={18} />
+            <RightArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
           </TransferButton>
           <TransferButton
             variant="outlined"
@@ -276,7 +282,7 @@ export default function TransferList({
             disabled={rightChecked.length === 0}
             aria-label="move selected left"
           >
-            <LeftArrowIcon width={18} height={18} />
+            <LeftArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
           </TransferButton>
           <TransferButton
             variant="outlined"
@@ -286,8 +292,13 @@ export default function TransferList({
             disabled={right.length === 0 || right.length < rightCount}
             aria-label="move all left"
           >
-            <LeftArrowIcon width={18} height={18} />
-            <LeftArrowIcon style={{ position: 'absolute', left: '27px' }} width={18} height={18} />
+            <LeftArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
+            <LeftArrowIcon
+              primaryFill={Colors.keppelGreen}
+              style={{ position: 'absolute', left: '27px' }}
+              width={18}
+              height={18}
+            />
           </TransferButton>
         </Grid>
       </ButtonGrid>

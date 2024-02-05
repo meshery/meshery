@@ -49,12 +49,12 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 	promClient := models.NewPrometheusClient()
 
-	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth) // change this to accept credentials either basicauth or API Key.
+	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth)
 
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)
 	}
-	return machines.NoOp, nil, nil
+	return machines.Exit, nil, nil
 }
 
 func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {

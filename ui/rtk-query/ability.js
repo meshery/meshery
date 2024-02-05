@@ -32,13 +32,11 @@ export const useGetUserAbilities = (org, skip) => {
   return data;
 };
 
-export const useGetCurrentAbilities = (org, skip) => {
+export const useGetCurrentAbilities = (org, setKeys, skip) => {
   const res = useGetUserAbilities(org, skip);
   if (res?.abilities) {
     ability.update(res.abilities);
-
-    // set keys to session storage
-    sessionStorage.setItem('keys', JSON.stringify(res.keys));
+    setKeys({ keys: res.keys });
   }
   return res;
 };

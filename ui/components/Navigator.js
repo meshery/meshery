@@ -74,6 +74,8 @@ import {
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CHARCOAL } from '@layer5/sistent-components';
 
 const styles = (theme) => ({
   root: {
@@ -360,7 +362,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Connections',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
-        disabled: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject),
+        permission: {
+          action: keys.VIEW_CONNECTIONS.action,
+          subject: keys.VIEW_CONNECTIONS.subject,
+        },
       },
       {
         id: ENVIRONMENT,
@@ -368,7 +373,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Environments',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
-        disabled: !CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject),
+        permission: {
+          action: keys.VIEW_ENVIRONMENTS.action,
+          subject: keys.VIEW_ENVIRONMENTS.subject,
+        },
       },
       {
         id: WORKSPACE,
@@ -376,7 +384,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Workspaces',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
-        disabled: !CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject),
+        permission: {
+          action: keys.VIEW_WORKSPACE.action,
+          subject: keys.VIEW_WORKSPACE.subject,
+        },
       },
       {
         id: SERVICE_MESH,
@@ -385,7 +396,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
-        disabled: !CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject),
+        permission: {
+          action: keys.VIEW_SERVICE_MESH.action,
+          subject: keys.VIEW_SERVICE_MESH.subject,
+        },
       },
     ],
   },
@@ -407,7 +421,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link: true,
         isBeta: true,
-        disabled: !CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject),
+        permission: {
+          action: keys.VIEW_FILTERS.action,
+          subject: keys.VIEW_FILTERS.subject,
+        },
       },
       {
         id: DESIGN,
@@ -417,7 +434,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
-        disabled: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
+        permission: {
+          action: keys.VIEW_DESIGNS.action,
+          subject: keys.VIEW_DESIGNS.subject,
+        },
       },
     ],
   },
@@ -438,10 +458,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
-        disabled: !CAN(
-          keys.VIEW_PERFORMANCE_PROFILES.action,
-          keys.VIEW_PERFORMANCE_PROFILES.subject,
-        ),
+        permission: {
+          action: keys.VIEW_PERFORMANCE_PROFILES.action,
+          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
+        },
       },
     ],
   },
@@ -455,7 +475,10 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     link: true,
     href: '/extensions',
     submenu: false,
-    disabled: !CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject),
+    permission: {
+      action: keys.VIEW_EXTENSIONS.action,
+      subject: keys.VIEW_EXTENSIONS.subject,
+    },
   },
 ];
 
@@ -536,12 +559,6 @@ class Navigator extends React.Component {
   componentDidMount() {
     this.fetchCapabilities();
     this.fetchVersionDetails();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.organization !== this.props.organization) {
-      this.fetchCapabilities();
-    }
   }
 
   fetchCapabilities() {
@@ -892,7 +909,7 @@ class Navigator extends React.Component {
               show: showc,
               link: linkc,
               children: childrenc,
-              disabled: disabledc,
+              permission: permissionc,
             }) => {
               if (typeof showc !== 'undefined' && !showc) {
                 return '';
@@ -909,7 +926,7 @@ class Navigator extends React.Component {
                       path === hrefc && classes.itemActiveItem,
                       isDrawerCollapsed && classes.noPadding,
                     )}
-                    disabled={disabledc || false}
+                    disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                   >
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
@@ -934,7 +951,7 @@ class Navigator extends React.Component {
                 show: showc,
                 link: linkc,
                 children: childrenc,
-                disabled: disabledc,
+                permission: permissionc,
               }) => {
                 if (typeof showc !== 'undefined' && !showc) {
                   return '';
@@ -954,7 +971,7 @@ class Navigator extends React.Component {
                         !showc && classes.disabled,
                       )}
                       onClick={() => this.handleAdapterClick(idc, linkc)}
-                      disabled={disabledc || false}
+                      disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
                       {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
@@ -1054,9 +1071,13 @@ class Navigator extends React.Component {
             rel="noreferrer"
             style={{ color: 'white' }}
           >
-            <Tooltip title={`Newer version of Meshery available: ${latest}`} placement="right">
+            <CustomTextTooltip
+              backgroundColor={CHARCOAL}
+              title={`Newer version of Meshery available: ${latest}`}
+              placement="right"
+            >
               <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
-            </Tooltip>
+            </CustomTextTooltip>
           </a>
         </span>
       );
@@ -1150,7 +1171,7 @@ class Navigator extends React.Component {
             children,
             hovericon,
             submenu,
-            disabled,
+            permission,
           }) => {
             // if (typeof show !== "undefined" && !show) {
             //   return "";
@@ -1176,7 +1197,7 @@ class Navigator extends React.Component {
                       ? this.setState({ hoveredId: false })
                       : null
                   }
-                  disabled={disabled || false}
+                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
                   <Link href={link ? href : ''}>
                     <div data-cy={childId} className={classNames(classes.link)}>
@@ -1273,11 +1294,15 @@ class Navigator extends React.Component {
                     isDrawerCollapsed ? classes.extraPadding : '',
                   )}
                 >
-                  <Tooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
+                  <CustomTextTooltip
+                    backgroundColor={CHARCOAL}
+                    title={title}
+                    placement={isDrawerCollapsed ? 'right' : 'top'}
+                  >
                     <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
                       {icon}
                     </ListItemIcon>
-                  </Tooltip>
+                  </CustomTextTooltip>
                 </a>
               </Grow>
             </ListItem>
@@ -1287,7 +1312,11 @@ class Navigator extends React.Component {
           className={classes.rightMargin}
           style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
         >
-          <Tooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
+          <CustomTextTooltip
+            backgroundColor={CHARCOAL}
+            title="Help"
+            placement={isDrawerCollapsed ? 'right' : 'top'}
+          >
             <IconButton
               className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
               onClick={this.toggleSpacing}
@@ -1297,7 +1326,7 @@ class Navigator extends React.Component {
                 style={{ fontSize: '1.45rem', ...iconSmall }}
               />
             </IconButton>
-          </Tooltip>
+          </CustomTextTooltip>
         </ListItem>
       </ButtonGroup>
     );
@@ -1351,7 +1380,7 @@ class Navigator extends React.Component {
           <FontAwesomeIcon
             icon={faAngleLeft}
             fixedWidth
-            size="1.5x"
+            size="2x"
             style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
             alt="Sidebar collapse toggle icon"
           />
@@ -1403,6 +1432,7 @@ const mapStateToProps = (state) => {
   const isDrawerCollapsed = state.get('isDrawerCollapsed');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
   const organization = state.get('organization');
+  const keys = state.get('keys');
   return {
     meshAdapters,
     meshAdaptersts,
@@ -1410,6 +1440,7 @@ const mapStateToProps = (state) => {
     isDrawerCollapsed,
     capabilitiesRegistry,
     organization,
+    keys,
   };
 };
 

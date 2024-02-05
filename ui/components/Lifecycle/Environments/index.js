@@ -13,7 +13,6 @@ import classNames from 'classnames';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import dataFetch from '../../../lib/data-fetch';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -38,33 +37,7 @@ import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-
-const ERROR_MESSAGE = {
-  FETCH_ENVIRONMENTS: {
-    name: 'FETCH_ENVIRONMENTS',
-    error_msg: 'Failed to fetch environments',
-  },
-  CREATE_ENVIRONMENT: {
-    name: 'CREATE_ENVIRONMENT',
-    error_msg: 'Failed to create environment',
-  },
-  UPDATE_ENVIRONMENT: {
-    name: 'UPDATE_ENVIRONMENT',
-    error_msg: 'Failed to update environment',
-  },
-  DELETE_ENVIRONMENT: {
-    name: 'DELETE_ENVIRONMENT',
-    error_msg: 'Failed to delete environment',
-  },
-  FETCH_ORGANIZATIONS: {
-    name: 'FETCH_ORGANIZATIONS',
-    error_msg: 'There was an error fetching available orgs',
-  },
-  FETCH_CONNECTIONS: {
-    name: 'FETCH_CONNECTIONS',
-    error_msg: 'There was an error fetching connections',
-  },
-};
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -79,8 +52,6 @@ const Environments = ({ organization, classes }) => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editEnvId, setEditEnvId] = useState('');
-  const [orgValue, setOrgValue] = useState([]);
-  const [orgLabel, setOrgLabel] = useState([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [orgId, setOrgId] = useState('');
@@ -94,6 +65,7 @@ const Environments = ({ organization, classes }) => {
   const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
   const [skip, setSkip] = useState(true);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const pageSize = 10;
   const connectionPageSize = 25;
@@ -156,6 +128,10 @@ const Environments = ({ organization, classes }) => {
     },
   );
 
+  const { data: schemaEnvironment } = useGetSchemaQuery({
+    schemaName: 'environment',
+  });
+
   const environments = environmentsData?.environments ? environmentsData.environments : [];
   const connectionsDataRtk = connections?.connections ? connections.connections : [];
   const environmentConnectionsDataRtk = environmentConnections?.connections
@@ -211,51 +187,33 @@ const Environments = ({ organization, classes }) => {
 
   useEffect(() => {
     setOrgId(organization?.id);
-    fetchAvailableOrgs();
   }, [organization]);
 
-  const fetchAvailableOrgs = async () => {
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const label = result?.organizations.map((option) => option.name);
-          const value = result?.organizations.map((option) => option.id);
-          setOrgLabel(label);
-          setOrgValue(value);
-        }
-      },
-      handleError(ERROR_MESSAGE.FETCH_ORGANIZATIONS),
-    );
-  };
-
-  const fetchSchema = async (actionType) => {
-    dataFetch(
-      `/api/schema/resource/environment`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        if (res) {
-          const rjsfSchemaOrg = res.rjsfSchema?.properties?.organization;
-          const uiSchemaOrg = res.uiSchema?.organization;
-          rjsfSchemaOrg.enum = orgValue;
-          rjsfSchemaOrg.enumNames = orgLabel;
-          actionType === ACTION_TYPES.CREATE
-            ? (uiSchemaOrg['ui:widget'] = 'select')
-            : (uiSchemaOrg['ui:widget'] = 'hidden');
-          setEnvironmentModal({
-            open: true,
-            schema: res,
-          });
-        }
-      },
-    );
+  const fetchSchema = () => {
+    const updatedSchema = { ...schemaEnvironment };
+    updatedSchema.rjsfSchema?.properties?.organization &&
+      ((updatedSchema.rjsfSchema = {
+        ...updatedSchema.rjsfSchema,
+        properties: {
+          ...updatedSchema.rjsfSchema.properties,
+          organization: {
+            ...updatedSchema.rjsfSchema.properties.organization,
+            enum: [organization?.id],
+            enumNames: [organization?.name],
+          },
+        },
+      }),
+      (updatedSchema.uiSchema = {
+        ...updatedSchema.uiSchema,
+        organization: {
+          ...updatedSchema.uiSchema.organization,
+          ['ui:widget']: 'hidden',
+        },
+      }));
+    setEnvironmentModal({
+      open: true,
+      schema: updatedSchema,
+    });
   };
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
@@ -282,13 +240,13 @@ const Environments = ({ organization, classes }) => {
     } else {
       setActionType(ACTION_TYPES.CREATE);
       setInitialData({
-        name: '',
+        name: undefined,
         description: '',
         organization: orgId,
       });
       setEditEnvId('');
     }
-    fetchSchema(actionType);
+    fetchSchema();
   };
 
   const handleEnvironmentModalClose = () => {
@@ -393,15 +351,8 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleAssignConnection = () => {
-    const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
-    const updatedConnectionsIds = assignedConnections.map((conn) => conn.id);
-
-    const addedConnectionsIds = updatedConnectionsIds.filter(
-      (id) => !originalConnectionsIds.includes(id),
-    );
-    const removedConnectionsIds = originalConnectionsIds.filter(
-      (id) => !updatedConnectionsIds.includes(id),
-    );
+    const { addedConnectionsIds, removedConnectionsIds } =
+      getAddedAndRemovedConnection(assignedConnections);
 
     addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
 
@@ -428,7 +379,30 @@ const Environments = ({ organization, classes }) => {
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
+    const { addedConnectionsIds, removedConnectionsIds } =
+      getAddedAndRemovedConnection(updatedAssignedData);
+    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0
+      ? setDisableTranferButton(false)
+      : setDisableTranferButton(true);
+
     setAssignedConnections(updatedAssignedData);
+  };
+
+  const getAddedAndRemovedConnection = (allAssignedConnections) => {
+    const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
+    const updatedConnectionsIds = allAssignedConnections.map((conn) => conn.id);
+
+    const addedConnectionsIds = updatedConnectionsIds.filter(
+      (id) => !originalConnectionsIds.includes(id),
+    );
+    const removedConnectionsIds = originalConnectionsIds.filter(
+      (id) => !updatedConnectionsIds.includes(id),
+    );
+
+    return {
+      addedConnectionsIds,
+      removedConnectionsIds,
+    };
   };
 
   const handleAssignablePage = () => {
@@ -567,29 +541,26 @@ const Environments = ({ organization, classes }) => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-          {actionType === ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)
-            : CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject) &&
-              environmentModal.open && (
-                <Modal
-                  open={environmentModal.open}
-                  schema={environmentModal.schema.rjsfSchema}
-                  uiSchema={environmentModal.schema.uiSchema}
-                  handleClose={handleEnvironmentModalClose}
-                  handleSubmit={
-                    actionType === ACTION_TYPES.CREATE
-                      ? handleCreateEnvironment
-                      : handleEditEnvironment
-                  }
-                  title={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                  }
-                  submitBtnText={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                  }
-                  initialData={initialData}
-                />
-              )}
+          {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
+            CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
+            environmentModal.open && (
+              <Modal
+                open={environmentModal.open}
+                schema={environmentModal.schema.rjsfSchema}
+                uiSchema={environmentModal.schema.uiSchema}
+                handleClose={handleEnvironmentModalClose}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE
+                    ? handleCreateEnvironment
+                    : handleEditEnvironment
+                }
+                title={
+                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                }
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+              />
+            )}
           <GenericModal
             open={assignConnectionModal}
             handleClose={handleonAssignConnectionModalClose}
@@ -617,6 +588,7 @@ const Environments = ({ organization, classes }) => {
             }
             action={handleAssignConnection}
             buttonTitle="Save"
+            disabled={disableTranferButton}
             leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
             helpText="Assign connections to environment"
             maxWidth="md"

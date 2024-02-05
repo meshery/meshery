@@ -2,15 +2,16 @@ import React, { useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import { Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import SearchIcon from '../assets/icons/search';
-import CloseIcon from '@mui/icons-material/Close';
+// import SearchIcon from '../assets/icons/search';
+// import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import debounce from './debounce';
+import { CloseIcon, SearchIcon } from '@layer5/sistent-svg';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
-    color: theme.palette.secondary.iconMain,
+    fill: theme.palette.secondary.iconMain,
     width: '1.5rem',
     height: '1.5rem',
   },
@@ -138,7 +139,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
               },
             }}
           >
-            <SearchIcon />
+            <SearchIcon className={classes.icon} />
           </IconButton>
         </Tooltip>
       )}

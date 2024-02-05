@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       transform: 'rotate(0deg)',
     },
     to: {
-      transform: 'rotate(360deg)',
+      transform: 'rotate(90deg)',
     },
   },
   infoIcon: {
@@ -48,17 +48,18 @@ const useStyles = makeStyles((theme) => ({
   },
   iconStyle: {
     color: '#fff',
-  },
-  iconContainer: {
-    transition: 'all .3s',
     '&:hover': {
       backgroundColor: 'transparent !important',
       animation: '$rotateCloseIcon 1s',
     },
   },
+  iconContainer: {
+    // transition: 'all .3s',
+  },
   submitButton: {
     backgroundColor: theme.palette.secondary.focused,
     color: '#fff',
+    textTransform: 'uppercase',
   },
   iconPatt: {
     display: 'flex',
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   btnText: {
-    textTransform: 'none',
+    textTransform: 'uppercase',
   },
   toolTip: {
     textDecoration: 'underline',
@@ -232,7 +233,7 @@ function Modal(props) {
               />
             )}
           </Typography>
-          <IconButton className={classes.iconContainer} onClick={handleClose}>
+          <IconButton className={classes.iconContainer} onClick={handleClose} disableRipple>
             <CloseIcon className={classes.iconStyle} />
           </IconButton>
         </div>

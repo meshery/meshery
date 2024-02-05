@@ -18,6 +18,7 @@ const (
 	ErrCleaningUpLocalProviderCode                = "1011"
 	ErrClosingDatabaseInstanceCode                = "1012"
 	ErrInitializingRegistryManagerCode            = "1013"
+	ErrInitializingKeysRegistrationCode           = "1569"
 )
 
 func ErrInitializingRegistryManager(err error) error {
@@ -66,4 +67,8 @@ func ErrCleaningUpLocalProvider(err error) error {
 
 func ErrClosingDatabaseInstance(err error) error {
 	return errors.New(ErrClosingDatabaseInstanceCode, errors.Alert, []string{"Error closing database instance"}, []string{"Error closing database instance: ", err.Error()}, []string{}, []string{})
+}
+
+func ErrInitializingKeysRegistration(err error) error {
+	return errors.New(ErrInitializingKeysRegistrationCode, errors.Fatal, []string{"could not initialize keys registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
 }

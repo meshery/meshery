@@ -1,42 +1,36 @@
 ---
-layout: default
+layout: enhanced
 title: Kubedb Ops Manager
-permalink: integrations/kubedb-ops-manager
-type: installation
-category: integrations
-display-title: "false"
+subtitle: Collaborative and visual infrastructure as code for Kubedb Ops Manager
+image: /assets/img/integrations/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
+permalink: extensibility/integrations/kubedb-ops-manager
+docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ops-manager
+description: 
+integrations-category: App Definition and Development
+integrations-subcategory: Database
+registrant: artifacthub
+components: 
+featureList: [
+  "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
+  "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
+  "KubeDB uses Persistent Volume Claims (PVC) to dynamically provision disks for database instances. Using appropriately defined StorageClasses, KubeDB provisioned database instances are designed to scale from small development workloads up to performance-intensive workloads on private and public cloud environments."
+]
+howItWorks: "Collaborative Infrastructure as Code"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
-image: /assets/img/integrations/kubedb-ops-manager.svg
+type: extensibility
+category: integrations
+display-title: "false"
 ---
-
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
-
-<!-- This needs replaced with the Category property, not the sub-category.
- #### Category: kubedb-ops-manager -->
-
-### Overview & Features:
-1. KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud
-
-2. Collaborative and visual infrastructure as code for Kubedb Ops Manager
-
-4. 
+<p>
+KubeDB simplifies Provision, Upgrade, Scaling, Volume Expansion, Monitor, Backup, Restore for various Databases in Kubernetes on any Public & Private Cloud
+</p>
+<p>
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-
-
-
+</p>
+<p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-
-
-
-5. KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.
-
-6. Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.
-
-7. KubeDB uses Persistent Volume Claims (PVC) to dynamically provision disks for database instances. Using appropriately defined StorageClasses, KubeDB provisioned database instances are designed to scale from small development workloads up to performance-intensive workloads on private and public cloud environments.
-
-8. Collaborative Infrastructure as Code
-
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
-
+</p>

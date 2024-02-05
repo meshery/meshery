@@ -11,7 +11,6 @@ const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } 
 
 function Settings(props) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     props.updatepagepath({ path: getPath() });
     props.updatepagetitle({ title: 'Settings' });
   }, []);

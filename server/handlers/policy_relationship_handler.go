@@ -27,7 +27,7 @@ const (
 )
 
 type relationshipPolicyEvalPayload struct {
-	PatternFile string   `json:"pattern_file"`
+	PatternFile       string   `json:"pattern_file"`
 	EvaluationQueries []string `json:"evaluation_queries"`
 }
 
@@ -103,12 +103,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	for _, query := range verifiedEvaluationQueries {
 		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
 		if err != nil {
-			h.log.Warn(err)
+			h.log.Debug(err)
 			continue
 		}
 		evalresults[query] = result
 	}
-	evalResults = evalresults
+	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
+	// The results contain the updated config.
+	// Prettify the results before sending it to client.
+	evalResults = core.Format.Prettify(evalresults, false)
 
 	// write the response
 	ec := json.NewEncoder(rw)

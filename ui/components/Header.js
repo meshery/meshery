@@ -6,13 +6,11 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
-import SettingsIcon from '@material-ui/icons/Settings';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
@@ -41,6 +39,9 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
+import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
+import { CHARCOAL, WHITE } from '@layer5/sistent-components';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -102,7 +103,7 @@ const styles = (theme) => ({
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
-  itemActiveItem: { color: '#00B39F' },
+  itemActiveItem: { fill: '#00B39F' },
   headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
   cbadge: {
     fontSize: '0.65rem',
@@ -398,7 +399,8 @@ function K8sContextMenu({
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
-                      <Tooltip
+                      <CustomTextTooltip
+                        backgroundColor={CHARCOAL}
                         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
                           operatorState,
                         )}, MeshSync: ${formatToTitleCase(
@@ -429,7 +431,7 @@ function K8sContextMenu({
                             status={operatorState}
                           />
                         </div>
-                      </Tooltip>
+                      </CustomTextTooltip>
                     </div>
                   );
                 })}
@@ -454,7 +456,6 @@ class Header extends React.PureComponent {
     };
   }
   componentDidMount() {
-    console.log('header component mounted');
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -476,7 +477,6 @@ class Header extends React.PureComponent {
       },
       (err) => console.error(err),
     );
-    console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
   }
   componentWillUnmount = () => {
@@ -581,7 +581,8 @@ class Header extends React.PureComponent {
                         }
                         color="inherit"
                       >
-                        <SettingsIcon
+                        <OutlinedSettingsIcon
+                          fill={WHITE}
                           className={
                             classes.headerIcons +
                             ' ' +

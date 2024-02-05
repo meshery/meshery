@@ -1,70 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip } from '@material-ui/core';
+import { Box, IconButton, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-import dataFetch from '../../../lib/data-fetch';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
+// import { useNotification } from '../../../utils/hooks/useNotification';
 import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
-
-const ACTION_TYPES = {
-  FETCH_PATTERNS: {
-    name: 'FETCH_PATTERNS',
-    error_msg: 'Failed to fetch designs',
-  },
-  FETCH_FILTERS: {
-    name: 'FETCH_FILTERS',
-    error_msg: 'Failed to fetch WASM filters',
-  },
-};
+import {
+  CustomTextTooltip,
+  renderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { InfoOutlined } from '@material-ui/icons';
+import { useGetPatternsQuery } from '@/rtk-query/design';
+import { useGetFiltersQuery } from '@/rtk-query/filter';
 
 export default function MesheryConfigurationChart({ classes }) {
+  // const { notify } = useNotification();
+
   const [chartData, setChartData] = useState([]);
 
-  const { notify } = useNotification();
+  const { data: patternsData, error: patternsError } = useGetPatternsQuery({
+    page: 0,
+    pagesize: 25,
+  });
 
-  const handleError = (action) => (error) => {
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-    });
-  };
-
-  function fetchDesigns() {
-    dataFetch(
-      `/api/pattern`,
-      { credentials: 'include' },
-      (result) => {
-        if (result) {
-          setChartData((prevData) => [...prevData, ['Designs', result.total_count]]);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_PATTERNS),
-    );
-  }
-
-  function fetchFilters() {
-    dataFetch(
-      `/api/filter`,
-      { credentials: 'include' },
-      (result) => {
-        if (result) {
-          setChartData((prevData) => [...prevData, ['Filters', result.total_count]]);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_FILTERS),
-    );
-  }
+  const { data: filtersData, error: filtersError } = useGetFiltersQuery({
+    page: 0,
+    pagesize: 25,
+  });
 
   useEffect(() => {
-    fetchDesigns();
-    fetchFilters();
-  }, []);
+    if (!patternsError && patternsData?.patterns) {
+      setChartData((prevData) => [...prevData, ['Designs', patternsData.total_count]]);
+    }
+  }, [patternsData, patternsError]);
+
+  useEffect(() => {
+    if (!filtersError && filtersData?.filters) {
+      setChartData((prevData) => [...prevData, ['Filters', filtersData.total_count]]);
+    }
+  }, [filtersData, filtersError]);
 
   const chartOptions = {
     data: {
@@ -104,16 +81,27 @@ export default function MesheryConfigurationChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Configuration
           </Typography>
-          <Tooltip title="Learn more about Configuration Management in Meshery" placement="right">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </Tooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="left"
+              interactive={true}
+              title={renderTooltipContent({
+                showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
+                link: url,
+              })}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoOutlined
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <Box
           sx={{

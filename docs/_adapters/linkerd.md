@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 white_image: /assets/img/service-meshes/linkerd-white.svg
 permalink: extensibility/adapters/linkerd
+redirect_from: service-meshes/adapters/linkerd
 language: en
 ---
 

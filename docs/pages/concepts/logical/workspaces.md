@@ -1,11 +1,13 @@
 ---
-layout: default
+layout: enhanced
 title: Workspaces
-permalink: concepts/workspaces
+permalink: concepts/logical/workspaces
 type: concepts
-abstract: "Meshery Workspaces act as central collaboration points for teams"
+abstract: "Meshery Workspaces act as central collaboration point for teams."
 language: en
 list: include
+redirect_from:
+- concepts/workspaces
 ---
 
 Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.
@@ -39,7 +41,7 @@ After creating a Workspace, of your next steps is to resource that Workspace. Li
 - One or more environments can be assigned to a workspace.
 - Same environment can be assigned to multiple workspaces.
 
-See "[Environments](/concepts/environments)" section for more information.
+See "[Environments](/concepts/logical/environments)" section for more information.
 
 ### Designs
 
@@ -48,15 +50,25 @@ See "[Environments](/concepts/environments)" section for more information.
 - One ore more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
-See "[Meshery Designs](/concepts/designs)" section for more information.
+See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
-### Teams
+### Organizations
+
+- Organizationa are the unit of tenancy in Meshery. Organizations group users together.
+- Organizations own all resources created by users, like Workspaces, Designs, Environments, and so on.
+- Remote Providers can extend Meshery to include additional identity and user management features like heirarchical organizations, or teams (as user groups), and so on.
+- Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.
+
+Learn more about [extensible authorization](/extensibility/authorization).
+ <!-- "[Organizations](/extensions/team-management)" section for more information. -->
+
+<!-- ### Teams
 
 - A Workspace is closely associated with Teams in Meshery. Teams are groups of users with varying permissions, and they are at the center of resource access and management within a Workspace.
 - One ore more teams can be assigned to a workspace.
 - Same team can be assigned to multiple workspaces.
 
-See "[Teams](/extensions/team-management)" section for more information.
+See "[Teams](/extensions/team-management)" section for more information. -->
 
 ### Connections
 
@@ -64,7 +76,7 @@ See "[Teams](/extensions/team-management)" section for more information.
 - Connections can be assigned to one or more environments.
 - Same connection can be assigned to multiple environments.
 
-See "[Connections](/concepts/connections)" section for more information.
+See "[Connections](/concepts/logical/connections)" section for more information.
 
 ## Best Practices
 
