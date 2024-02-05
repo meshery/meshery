@@ -16,6 +16,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
+import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
 
 const ComponentTree = ({
   expanded,
@@ -262,7 +263,12 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={registrant.hostname}
+          labelText={
+            <TootltipWrappedConnectionChip
+              title={registrant.hostname}
+              iconSrc="ui/public/static/img/artifact-hub-color.svg"
+            />
+          }
           newParentId={registrant.id}
           onClick={() => {
             setShowDetailsData({
@@ -339,6 +345,7 @@ const MesheryTreeView = ({
   checked,
   setChecked,
   setShowDetailsData,
+  showDetailsData,
 }) => {
   const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
   const [expanded, setExpanded] = React.useState([]);
@@ -405,16 +412,18 @@ const MesheryTreeView = ({
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
-      setExpanded(
-        selectedIdArr.reduce(
-          (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
-          [],
-        ),
-      );
-      setSelected([selectedItemUUID]);
-
-      const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-      setShowDetailsData(showData);
+      if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
+        setExpanded(
+          selectedIdArr.reduce(
+            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+            [],
+          ),
+        );
+        setSelected([selectedItemUUID]);
+        const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
+        console.log('showData', showData);
+        setShowDetailsData(showData);
+      }
     } else {
       setExpanded([]);
       setSelected([]);
