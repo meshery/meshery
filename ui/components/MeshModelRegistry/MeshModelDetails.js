@@ -50,6 +50,7 @@ const ModelContents = ({ model }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -76,9 +77,10 @@ const ModelContents = ({ model }) => {
     version: model?.version,
     hostname: model?.hostname,
     components: getCompRelValue().components.toString(),
+    subCategory: model?.subCategory,
   };
 
-  const orderLeft = ['version', 'hostname', 'components'];
+  const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
