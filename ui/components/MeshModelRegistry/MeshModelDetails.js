@@ -130,7 +130,7 @@ const ComponentContents = ({ component }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
     kind: (value) => <KeyValue property="Kind" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />
+    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
   };
 
   const metaDataLeft = {
@@ -146,7 +146,7 @@ const ComponentContents = ({ component }) => {
   const PropertyFormattersRight = {
     registrant: (value) => <KeyValue property="Registrant" value={value} />,
     duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    category: (value) => <KeyValue property="Category" value={value} />
+    category: (value) => <KeyValue property="Category" value={value} />,
   };
 
   const metaDataRight = {
