@@ -1583,9 +1583,9 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	}
 	var response string
 	if URL == "" {
-		response = fmt.Sprintf("Design imported from uploaded file.")
+		response = "Design imported from uploaded file."
 	} else {
-		response = fmt.Sprintf("Design \"%s\" imported from %s .", strings.Join(names, ","), URL)
+		response = "Design \"" + strings.Join(names, ",") + "\" imported from " + URL + " ."
 	}
 	eventBuilder.WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
