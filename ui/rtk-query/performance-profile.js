@@ -47,22 +47,22 @@ const performanceProfile = api
         providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
       getPerformanceProfileById: builder.query({
-        query: (id) => ({
-          url: `user/performance/profiles/${id}`,
+        query: (queryArg) => ({
+          url: `user/performance/profiles/${queryArg.id}`,
           method: 'GET',
         }),
         providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
       deletePerformanceProfile: builder.mutation({
-        query: (id) => ({
-          url: `user/performance/profiles/${id}`,
+        query: (queryArg) => ({
+          url: `user/performance/profiles/${queryArg.id}`,
           method: 'DELETE',
         }),
         invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
       getProfileResultsById: builder.query({
-        query: (id) => ({
-          url: `user/performance/profiles/${id}/results`,
+        query: (queryArg) => ({
+          url: `user/performance/profiles/${queryArg.id}/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
