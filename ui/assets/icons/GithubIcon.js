@@ -1,28 +1,27 @@
-import React from "react";
+import React from 'react';
 
 const GithubIcon = (props) => {
   return (
     <svg
-      width={props.width ? props.width : "24px"}
-      height={props.height ? props.height : "24px"}
+      width={props.width ? props.width : '24px'}
+      height={props.height ? props.height : '24px'}
       //   fill={props.fill ? props.fill : "currentColor"}
       onClick={props.onClick}
       className={props.className}
-      color={props.color ? props.color : "unset"}
-      fontSize={props.fontSize ? props.fontSize : "unset"}
+      color={props.color ? props.color : 'unset'}
+      fontSize={props.fontSize ? props.fontSize : 'unset'}
       style={{ ...props.style }}
       viewBox="0 0 20 20"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <title>github [#142]</title>
       <desc>Created with Sketch.</desc>
       <defs></defs>
       <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g
           id="Dribbble-Light-Preview"
           transform="translate(-140.000000, -7559.000000)"
-          fill={props.fill ? props.fill : "currentColor"}
+          fill={props.fill ? props.fill : 'currentColor'}
         >
           <g id="icons" transform="translate(56.000000, 160.000000)">
             <path
@@ -37,4 +36,3 @@ const GithubIcon = (props) => {
 };
 
 export default GithubIcon;
-

@@ -74,6 +74,7 @@ import {
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const styles = (theme) => ({
   root: {
@@ -1288,11 +1289,16 @@ class Navigator extends React.Component {
                     isDrawerCollapsed ? classes.extraPadding : '',
                   )}
                 >
-                  <Tooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
+                  <CustomTextTooltip
+                    backgroundColor="#3C494F"
+                    placement={isDrawerCollapsed ? 'right' : 'top'}
+                    interactive={true}
+                    title={title}
+                  >
                     <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
                       {icon}
                     </ListItemIcon>
-                  </Tooltip>
+                  </CustomTextTooltip>
                 </a>
               </Grow>
             </ListItem>
