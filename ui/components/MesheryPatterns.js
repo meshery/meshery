@@ -876,9 +876,19 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
     const payload = {
       id: publishModal.pattern?.id,
-      catalog_data: formData,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
     };
     updateProgress({ showProgress: true });
     dataFetch(

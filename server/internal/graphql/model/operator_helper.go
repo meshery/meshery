@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -73,7 +74,7 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) ([]*OperatorControllerStatus, error) {
+func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, log logger.Handler) ([]*OperatorControllerStatus, error) {
 	controllers := make([]*OperatorControllerStatus, 0)
 
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
@@ -84,19 +85,22 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		return controllers, ErrMesheryClient(err)
 	}
 
-	broker := GetBrokerInfo(mesheryKubeClient)
+	broker := GetBrokerInfo(mesheryKubeClient, log)
 
 	controllers = append(controllers, &broker)
 
-	meshsync := GetMeshSyncInfo(mesheryKubeClient, nil)
+	meshsync := GetMeshSyncInfo(mesheryKubeClient, nil, log)
 	controllers = append(controllers, &meshsync)
 
 	return controllers, nil
 }
 
-func GetBrokerInfo(mesheryKubeClient *mesherykube.Client) OperatorControllerStatus {
+func GetBrokerInfo(mesheryKubeClient *mesherykube.Client, log logger.Handler) OperatorControllerStatus {
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	brokerStatus := broker.GetStatus().String()
+
+	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
+	log.Debug("broker monitor endpoint", monitorEndpoint, err)
 
 	if brokerStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
@@ -112,13 +116,16 @@ func GetBrokerInfo(mesheryKubeClient *mesherykube.Client) OperatorControllerStat
 	return brokerControllerStatus
 }
 
-func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.IMesheryController) OperatorControllerStatus {
+func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
 	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
 	meshsyncStatus := meshsync.GetStatus().String()
 	if broker == nil {
 		broker = controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	}
 
+	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
+	log.Debug("broker monitor endpoint", monitorEndpoint, err)
+	
 	if meshsyncStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
