@@ -6,6 +6,7 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   metadataNameCell: {
+    textTransform: 'uppercase',
     fontSize: '1rem',
     textAlign: 'left',
     maxWidth: '100%',
