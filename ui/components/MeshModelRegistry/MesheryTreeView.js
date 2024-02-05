@@ -117,7 +117,11 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
           <StyledTreeItem
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
-            labelText={versionedModel.version}
+            labelText={
+              versionedModel.version[0] == 'v'
+                ? versionedModel.version
+                : `v${versionedModel.version}`
+            }
             onClick={() => {
               setShowDetailsData({
                 type: MODELS,
@@ -419,7 +423,7 @@ const MesheryTreeView = ({
         data: {},
       });
     }
-  }, [view]);
+  }, [view, selectedItemUUID]);
 
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
@@ -431,7 +435,7 @@ const MesheryTreeView = ({
             selectedNode.scrollIntoView({ behavior: 'smooth' });
           }
         });
-      }, 200);
+      }, 100);
     }
   }, [view]);
 
@@ -452,26 +456,30 @@ const MesheryTreeView = ({
         {width < 1370 && isSearchExpanded ? null : (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <CustomTextTooltip title="Expand All" placement="top">
-              <IconButton
-                onClick={expandAll}
-                size="large"
-                disableRipple
-                disabled={disabledExpand()}
-              >
-                <ExpandAllIcon height={15} width={15} />
-              </IconButton>
+              <span>
+                <IconButton
+                  onClick={expandAll}
+                  size="large"
+                  disableRipple
+                  disabled={disabledExpand()}
+                >
+                  <ExpandAllIcon height={17} width={17} />
+                </IconButton>
+              </span>
             </CustomTextTooltip>
 
             <CustomTextTooltip title="Collapse All" placement="top">
-              <IconButton
-                onClick={() => setExpanded([])}
-                style={{ marginRight: '4px' }}
-                size="large"
-                disableRipple
-                disabled={disabledExpand()}
-              >
-                <CollapseAllIcon height={15} width={15} />
-              </IconButton>
+              <span>
+                <IconButton
+                  onClick={() => setExpanded([])}
+                  style={{ marginRight: '4px' }}
+                  size="large"
+                  disableRipple
+                  disabled={disabledExpand()}
+                >
+                  <CollapseAllIcon height={17} width={17} />
+                </IconButton>
+              </span>
             </CustomTextTooltip>
             {type === MODELS && (
               <>

@@ -248,20 +248,18 @@ const MeshModelComponent_ = ({
   };
 
   const handleTabClick = (selectedView) => {
+    handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
       setSearchText(null);
       setResourcesDetail([]);
     }
-    setView(() => {
-      handleChangeSelectedTab(selectedView);
-      return selectedView;
-    });
     setPage({
       Models: 0,
       Components: 0,
       Relationships: 0,
       Registrants: 0,
     });
+    setView(selectedView);
     setShowDetailsData({
       type: '',
       data: {},
