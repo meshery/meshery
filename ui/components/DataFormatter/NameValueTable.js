@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '7px 12px',
     [theme.breakpoints.down('sm')]: {
       color: theme.palette.text.primary,
-      fontSize: '1.5rem',
+      fontSize: '1rem',
       minWidth: '100%',
       width: '100%',
       maxWidth: '100%',
