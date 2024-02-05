@@ -203,6 +203,8 @@ function MeshModelCategories({ classes }) {
             <CustomTextTooltip
               backgroundColor="#3C494F"
               title={renderTooltipContent({
+                showPriortext:
+                  'Each Model corresponds to a category, so the category shows the high-level use case of that model, e.g., prometheus is under “Observability and Analysis category.',
                 showAftertext: 'to learn more about all Categories',
                 link: url,
               })}
