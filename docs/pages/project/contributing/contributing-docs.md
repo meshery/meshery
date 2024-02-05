@@ -207,7 +207,7 @@ Automatically the `Gemfile.lock` will update once the `make docs` is given (for 
 {% capture code_content %}make docs{% endcapture %}
 {% include code.html code=code_content %}
 
-You should be able to access the site at your Gitpod port `4000` . If you want to access it in your localhost read the [docs for port-forwrding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
+You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
 ### Make Necessary Changes
 - Make changes as required by the issue you are solving
