@@ -20,7 +20,7 @@ export const common = {
           color: '#00b39f !important',
         },
         '&$checked + $track': {
-          backgroundColor: 'rgba(0,179,159,0.5)',
+          backgroundColor: 'rgba(0,179,159,0.5) !important',
         },
       },
     },
