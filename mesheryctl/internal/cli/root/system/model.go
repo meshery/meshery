@@ -44,12 +44,15 @@ var (
 
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
+
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 // represents the mesheryctl exp model list subcommand.
 var listModelCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list models",
+	Short: "list registered models",
 	Long:  "list name of all registered models",
 	Example: `
 // View list of models
@@ -134,12 +137,14 @@ mesheryctl exp model list --page 2
 
 		if len(rows) == 0 {
 			// if no model is found
-			fmt.Println("No model(s) found")
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
 			return nil
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			fmt.Println("Total number of models: ", len(rows))
+			// fmt.Println("Total number of models: ", len(rows))
+			whiteBoardPrinter.Println("Total number of models: ", len(rows))
 			return nil
 		}
 
@@ -148,7 +153,6 @@ mesheryctl exp model list --page 2
 		} else {
 			startIndex := 0
 			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			whiteBoardPrinter := color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 			for {
 				// Clear the entire terminal screen
 				utils.ClearLine()
@@ -159,7 +163,7 @@ mesheryctl exp model list --page 2
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
 				keysEvents, err := keyboard.GetKeys(10)
@@ -398,7 +402,8 @@ mesheryctl exp model search [query-text]
 
 		if len(rows) == 0 {
 			// if no model is found
-			fmt.Println("No model(s) found")
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
 			return nil
 		} else {
 			utils.PrintToTable(header, rows)

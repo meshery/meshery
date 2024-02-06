@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -125,12 +124,14 @@ mesheryctl exp components list --count
 
 		if len(rows) == 0 {
 			// if no component is found
-			fmt.Println("No components(s) found")
+			// fmt.Println("No components(s) found")
+			whiteBoardPrinter.Println("No components(s) found")
 			return nil
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			fmt.Println("Total components: ", componentsResponse.Count)
+			// fmt.Println("Total components: ", componentsResponse.Count)
+			whiteBoardPrinter.Print("Total components: ", componentsResponse.Count)
 			return nil
 		}
 
@@ -139,7 +140,6 @@ mesheryctl exp components list --count
 		} else {
 			startIndex := 0
 			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			whiteBoardPrinter := color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 			for {
 				// Clear the entire terminal screen
 				utils.ClearLine()
@@ -179,7 +179,7 @@ mesheryctl exp components list --count
 					break
 				}
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
 			}
 		}
 		return nil
@@ -189,7 +189,7 @@ mesheryctl exp components list --count
 // represents the mesheryctl exp components view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view registered components",
+	Short: "view registered component",
 	Long:  "view a component registered in Meshery Server",
 	Example: `
 // View details of a specific component
@@ -279,7 +279,7 @@ mesheryctl exp components view [component-name]
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
-		if outFormatFlag == "yaml" {
+		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
 			if output, err = yaml.Marshal(selectedComponent); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
@@ -380,7 +380,8 @@ mesheryctl exp components search [query-text]
 
 		if len(rows) == 0 {
 			// if no component is found
-			fmt.Println("No components(s) found")
+			// fmt.Println("No components(s) found")
+			whiteBoardPrinter.Println("No components(s) found")
 			return nil
 		} else {
 			utils.PrintToTable(header, rows)
