@@ -139,7 +139,7 @@ language: en
       <ul class="section-title">
         {% assign sorted_extensions = site.pages | where: "type","extensions" %}
         {% for item in sorted_extensions %}
-        {% if item.type=="extensions" and item.language=="en" -%}
+        {% if item.type=="extensions" and item.language=="en" and item.abstract -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           {% if item.abstract != " " %}
             - {{ item.abstract }}
