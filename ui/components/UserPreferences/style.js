@@ -7,7 +7,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.primary,
     color: theme.palette.secondary.text,
     '@media (max-width: 368px)': {
-      width: '180px',
+      width: '100%',
     },
     position: 'relative',
     overflow: 'hidden',
@@ -51,6 +51,18 @@ const styles = (theme) => ({
     'flex-wrap': 'wrap',
     'justify-content': 'space-evenly',
     padding: 50,
+  },
+
+  '@media (min-width: 600px) and (max-width: 700px)': {
+    formContainerWrapper: {
+      padding: 10,
+    },
+  },
+
+  '@media (min-width: 300px)': {
+    formContainerWrapper: {
+      padding: 5,
+    },
   },
 });
 

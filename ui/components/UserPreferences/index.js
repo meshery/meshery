@@ -76,6 +76,20 @@ const styles = (theme) => ({
     'justify-content': 'space-evenly',
     padding: 50,
   },
+
+  // adding media query for formcontainer
+  '@media (min-width: 600px) and (max-width: 700px)': {
+    formContainer: {
+      padding: 10,
+    },
+  },
+
+  '@media (min-width: 300px)': {
+    formContainer: {
+      padding: 5,
+    },
+  },
+
   formGrp: {
     padding: 20,
     border: '1.5px solid #969696',
