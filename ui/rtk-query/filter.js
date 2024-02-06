@@ -1,17 +1,17 @@
 import { api } from './index';
 
 const TAGS = {
-  DESIGNS: 'designs',
+  FILTERS: 'filters',
 };
-const designs = api
+const filters = api
   .enhanceEndpoints({
-    addTagTypes: [TAGS.DESIGNS],
+    addTagTypes: [TAGS.FILTERS],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getPatterns: builder.query({
+      getFilters: builder.query({
         query: (queryArg) => ({
-          url: `pattern`,
+          url: `filter`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -21,9 +21,9 @@ const designs = api
           },
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.DESIGNS }],
+        providesTags: () => [{ type: TAGS.FILTERS }],
       }),
     }),
   });
 
-export const { useGetPatternsQuery } = designs;
+export const { useGetFiltersQuery } = filters;
