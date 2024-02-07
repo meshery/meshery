@@ -42,6 +42,7 @@ import { CONNECTION_KINDS } from '../utils/Enum';
 import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
 import { CHARCOAL } from '@layer5/sistent-components';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { Colors } from '@/themes/app';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -109,6 +110,9 @@ const styles = (theme) => ({
     height: '1.5rem',
     width: '1.5rem',
     fill: theme.palette.secondary.whiteIcon,
+    '&:hover': {
+      fill: Colors.keppelGreen,
+    },
   },
   cbadge: {
     fontSize: '0.65rem',
