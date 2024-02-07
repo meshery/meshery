@@ -131,7 +131,10 @@ func InvokeGenerationFromSheet() error {
 		return err
 	}
 
-	modelCSVHelper.ParseModelsSheet(false)
+	err = modelCSVHelper.ParseModelsSheet(false)
+	if err != nil {
+		return ErrGenerateModel(err, "all")
+	}
 
 	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
 	if err != nil {
@@ -265,7 +268,12 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				continue
 			}
 
-			componentDef := compCSV.CreateComponentDefinition(isModelPublished)
+			componentDef, err := compCSV.CreateComponentDefinition(isModelPublished)
+			if err != nil {
+				err = ErrGenerateComponent(err, model.Model, compName)
+				utils.Log.Error(err)
+				continue
+			}
 			componentDef.Model = *modelDef // remove this, left for backward compatibility
 
 			err = componentDef.WriteComponentDefinition(compDirName)

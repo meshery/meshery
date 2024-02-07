@@ -41,7 +41,7 @@ type ComponentCSV struct {
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
-func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) v1alpha1.ComponentDefinition {
+func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) (v1alpha1.ComponentDefinition, error) {
 	componentDefinition := &v1alpha1.ComponentDefinition{
 		TypeMeta: v1alpha1.TypeMeta{
 			Kind:       c.Component,
@@ -54,8 +54,8 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) v1alpha1
 			"published": isModelPublished,
 		},
 	}
-	c.UpdateCompDefinition(componentDefinition)
-	return *componentDefinition
+	err := c.UpdateCompDefinition(componentDefinition)
+	return *componentDefinition, err
 }
 
 var compMetadataValues = []string{
@@ -134,7 +134,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 		return ErrFileRead(err)
 	}
 
-	go func(){
+	go func() {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			errorChan <- err

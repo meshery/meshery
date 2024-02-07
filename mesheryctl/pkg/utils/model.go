@@ -133,7 +133,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		return ErrFileRead(err)
 	}
 
-	go func(){
+	go func() {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			errorChan <- err
