@@ -159,7 +159,7 @@ language: en
         {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
         See all <a href="{{site.baseurl}}/extensibility/integrations">{{ sorted_ints | size }} integations</a>
         {% for item in sorted_ints %}
-        {% if item.type=="extensibility" and item.category="integration" and item.language=="en" -%}
+        {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           {% if item.abstract != " " %}
             - {{ item.abstract }}
