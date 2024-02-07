@@ -227,7 +227,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
@@ -245,7 +245,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, &res, eventBuilder, parsedBody.URL)
 
 		return
 	}
@@ -404,7 +404,7 @@ func (h *Handler) handlePatternPOST(
 					return
 				}
 
-				h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+				h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -421,7 +421,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, byt, format, &res, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -623,7 +623,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -654,7 +654,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 
 			eventBuilder.WithSeverity(events.Informational)
 			event := eventBuilder.Build()
@@ -704,8 +704,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
-
+		h.formatPatternOutput(rw, byt, format, &res, eventBuilder, parsedBody.URL)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -1525,7 +1524,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder, URL string) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
@@ -1582,10 +1581,16 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 		go h.EventsBuffer.Publish(res)
 		return
 	}
-	eventBuilder.WithDescription(fmt.Sprintf("Design %s saved", strings.Join(names, ",")))
+	var response string
+	if URL == "" {
+		response = "Design imported from uploaded file."
+	} else {
+		response = "Design \"" + strings.Join(names, ",") + "\" imported from " + URL + " ."
+	}
+	eventBuilder.WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-	res.Details = "\"" + strings.Join(names, ",") + "\" design saved"
+	res.Details = "Design \"" + strings.Join(names, ",") + "\" imported from " + URL + " ."
 	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
 	// go h.EventsBuffer.Publish(res)
 }
@@ -1765,7 +1770,7 @@ func (h *Handler) handlePatternUpdate(
 			eventBuilder.WithSeverity(events.Informational)
 
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			// go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
@@ -1780,7 +1785,7 @@ func (h *Handler) handlePatternUpdate(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, &res, eventBuilder, parsedBody.URL)
 		return
 	}
 	mesheryPattern := parsedBody.PatternData
@@ -1810,7 +1815,7 @@ func (h *Handler) handlePatternUpdate(
 	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
-	h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+	h.formatPatternOutput(rw, resp, format, &res, eventBuilder, parsedBody.URL)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)

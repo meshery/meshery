@@ -134,12 +134,11 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 		return ErrFileRead(err)
 	}
 
-	go func() error {
+	go func(){
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
-			return ErrFileRead(err)
+			errorChan <- err
 		}
-		return nil
 	}()
 
 	for {

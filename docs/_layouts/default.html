@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-  {% include head.html %} {% include header.html %}
+  {% include_cached head.html %} {% include_cached header.html %}
   <body class="td-section dark-mode">
     <script>
       if(localStorage.getItem("mode") == "light-mode")  {
@@ -11,13 +11,13 @@
   }
     </script>
     <!-- Google Tag Manager -->
-    {% include scripts/google-tagmanager-body.html %}
+    {% include_cached scripts/google-tagmanager-body.html %}
     <!-- End Google Tag Manager -->
 
     <div class="flex-container">
       <div class="left-container">
         <div class="sidebar-container-wrapper">
-          <div class="sidebar-container">{% include sidebar.html %}</div>
+          <div class="sidebar-container">{% include_cached sidebar.html %}</div>
         </div>
 
         <div class="icon-container">
@@ -37,7 +37,7 @@
       <main class="main-container" role="main">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb spb-1">
-            <li class="breadcrumb-item active" aria-current="page">{% include breadcrumbs.html %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% include_cached breadcrumbs.html %}</li>
           </ol>
         </nav>
         <div class="td-content">
@@ -58,13 +58,13 @@
             </div>
             {% endfor %}
           </div>
-          {% endif %} {% include feedback.html %}
+          {% endif %} {% include_cached feedback.html %}
         </div>
       </main>
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
       <div class="content-table-wrapper">
         <div class="content-table">
-          <div class="content-table__editable">{% include editable.html %}</div>
+          <div class="content-table__editable">{% include_cached editable.html %}</div>
           <nav id="TableOfContents">
             <strong>Contents</strong>
             <ul>
@@ -79,8 +79,8 @@
       </div>
       {% endif %}
     </div>
-    {% include footer.html %} {% include scripts.html %} {% include google-analytics.html %}
+    {% include_cached footer.html %} {% include_cached scripts.html %} {% include_cached google-analytics.html %}
   </body>
 </html>
-{% include toc.html %}
+{% include_cached toc.html %}
 
