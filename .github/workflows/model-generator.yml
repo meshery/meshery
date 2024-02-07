@@ -6,12 +6,9 @@ on:
         description: Spreadsheet ID to generate models
         type: string
         default: 17_ZLXFkBUdTQu39t49sZTSU4sVMumBRhXOxIP8Jw-nw
-      spreadsheet_cred:
-        description: Credential for the Spreadsheet.
-        type: string
-        default: ""
-  schedule:
-    - cron: "0 0 * * *"
+
+  # schedule:
+  #   - cron: "0 0 * * *"
 jobs:
   generate-components:
     name: Generate Components
@@ -27,13 +24,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.21"
-#       - name: Setup Cache
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/go/pkg/mod
-#           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-#           restore-keys: |
-#             ${{ runner.os }}-go-
 
       - name: Pull changes from remote
         run: git pull origin master
@@ -43,7 +33,7 @@ jobs:
       - name: Generate Models and Components
         run: |
           cd mesheryctl;
-          ./mesheryctl registry import --spreadsheet_id "${{ inputs.spreadsheet_id }}" --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
+          ./mesheryctl registry import --spreadsheet_id "${{ inputs.spreadsheet_id }}" --spreadsheet_cred "${{ inputs.INTEGRATION_SPREADSHEET_CRED }}"
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v3
