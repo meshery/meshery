@@ -93,5 +93,55 @@
         }
       ]
     }
-  }]
+  },
+  {
+    "deny": {
+      "from": [],
+      "to": []
+    },
+    "allow": {
+      "from": [
+        {
+          "kind": "Pod",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "settings",
+                "spec",
+                "serviceAccountName"
+              ]
+            ],
+            "ServiceAccount": [
+              [
+                "name"
+              ]
+            ]
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Secret",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "name"
+              ]
+            ],
+            "ServiceAccount": [
+              [
+                "settings",
+                "secrets",
+                "_",
+                "name"
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
 }
