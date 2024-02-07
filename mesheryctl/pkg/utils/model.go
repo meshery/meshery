@@ -56,16 +56,25 @@ type ModelCSV struct {
 }
 
 func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
+	var isModelPublished, isAnnotation bool
+	if strings.ToLower(mcv.PublishToRegistry) == "true" {
+		isModelPublished = true
+	}
+	if strings.ToLower(mcv.IsAnnotation) == "true" {
+		isAnnotation = true
+	}
+
 	model := v1alpha1.Model{
 		Name:        mcv.Model,
 		Version:     version,
 		DisplayName: mcv.ModelDisplayName,
 		Metadata: map[string]interface{}{
-			"isAnnotation": mcv.IsAnnotation,
+			"isAnnotation": isAnnotation,
 			"svgColor":     mcv.SVGColor,
 			"svgWhite":     mcv.SVGWhite,
 			"svgComplete":  mcv.SVGComplete,
 			"subCategory":  mcv.SubCategory, // move as first class attribute
+			"published":    isModelPublished,
 		},
 		Category: v1alpha1.Category{
 			Name: mcv.Category,

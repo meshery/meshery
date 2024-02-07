@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
@@ -40,7 +41,7 @@ type ComponentCSV struct {
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
-func (c *ComponentCSV) CreateComponentDefinition() v1alpha1.ComponentDefinition {
+func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) v1alpha1.ComponentDefinition {
 	componentDefinition := &v1alpha1.ComponentDefinition{
 		TypeMeta: v1alpha1.TypeMeta{
 			Kind:       c.Component,
@@ -49,15 +50,14 @@ func (c *ComponentCSV) CreateComponentDefinition() v1alpha1.ComponentDefinition 
 		DisplayName: c.Component,
 		Format:      "JSON",
 		Schema:      "",
+		Metadata: map[string]interface{}{
+			"published": isModelPublished,
+		},
 	}
 	c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition
 }
 
-// "isModelAnnotation": "FALSE", is presnt in comp metadata is it required?
-// "published": true, is present in comp metadata is it required?
-// subCategory should be in comp metadata?
-// isCustomResource? is present in comp metadata is it required? what is is for?
 var compMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "genealogy", "isAnnotation", "shape", "subCategory",
 }
@@ -74,6 +74,12 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *v1alpha1.ComponentDefinitio
 	for _, key := range compMetadataValues {
 		metadata[key] = compMetadata[key]
 	}
+
+	isAnnotation := false
+	if strings.ToLower(c.IsAnnotation) == "true" {
+		isAnnotation = true
+	}
+	metadata["isAnnotation"] = isAnnotation
 	compDef.Metadata = metadata
 	return nil
 }

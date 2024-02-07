@@ -22,6 +22,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/store"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
@@ -41,7 +42,7 @@ var updateCmd = &cobra.Command{
 	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
 	Example: `
 	// Update models from Meshery Integration Spreadsheet
-	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -f [path to the directory containing models].
+	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
 
 	// Updating models in the meshery/meshery repo
 	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
@@ -107,7 +108,8 @@ func InvokeCompUpdate() error {
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
-	modelToCompUpdateTracker := make(map[string][]compUpdateTracker, 200)
+	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
+
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
 	if err != nil {
@@ -199,7 +201,7 @@ func InvokeCompUpdate() error {
 					})
 				}
 			}
-			modelToCompUpdateTracker[modelName] = compUpdateArray
+			modelToCompUpdateTracker.Set(modelName, compUpdateArray)
 			utils.Log.Info("\n")
 		}
 
@@ -208,20 +210,20 @@ func InvokeCompUpdate() error {
 	return nil
 }
 
-func logModelUpdateSummary(modelToCompUpdateTracker map[string][]compUpdateTracker) {
-
-	for key, val := range modelToCompUpdateTracker {
+func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker]) {
+	values := modelToCompUpdateTracker.GetAllPairs()
+	for key, val := range values {
 		for _, value := range val {
 			utils.Log.Info(fmt.Sprintf("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps))
 			totalAggregateComponents += value.totalCompsUpdated
 		}
 	}
 
-	utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", len(modelToCompUpdateTracker), totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", len(values), totalAggregateComponents))
 }
 
 func init() {
-	updateCmd.PersistentFlags().StringVarP(&modelLocation, "path", "p", "../server/meshmodel", "relative or absolute path to the models directory")
+	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "../server/meshmodel", "relative or absolute input path to the models directory")
 	updateCmd.MarkPersistentFlagRequired("path")
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")

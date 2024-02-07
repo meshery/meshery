@@ -12,6 +12,7 @@ import (
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -106,8 +107,7 @@ type compGenerateTracker struct {
 	version    string
 }
 
-var modelToCompGenerateTracker = make(map[string]compGenerateTracker, 200)
-var mx sync.Mutex
+var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 func InvokeGenerationFromSheet() error {
 	utils.Log.UpdateLogOutput(logFile)
@@ -152,7 +152,7 @@ func InvokeGenerationFromSheet() error {
 
 		err := weightedSem.Acquire(ctx, 1)
 		if err != nil {
-			break // or sometheing else?
+			break
 		}
 		utils.Log.Info("Current model: ", model.Model)
 		wg.Add(1)
@@ -162,7 +162,6 @@ func InvokeGenerationFromSheet() error {
 				weightedSem.Release(1)
 			}()
 			if model.Registrant == "meshery" {
-				fmt.Println("tsetse............")
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
 					utils.Log.Error(err)
@@ -184,7 +183,6 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("\nAFTER GET PACKAGE FOR MODEL", model.Model, " : ERR", err, pkg)
 			version := pkg.GetVersion()
 
 			modelDefPath, _, err := writeModelDefToFileSystem(&model, version)
@@ -193,14 +191,12 @@ func InvokeGenerationFromSheet() error {
 				return
 			}
 
-			utils.Log.Info("\nAFTER GET PACKAGE NO ERR", version)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("\nAFTER GENERATE COMP NO ERR")
-			utils.Log.Info("Extracted", len(comps), "for model %s", model.ModelDisplayName)
+			utils.Log.Info("Extracted ", len(comps), "for model: %s", model.ModelDisplayName)
 
 			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
 			if err != nil {
@@ -211,14 +207,13 @@ func InvokeGenerationFromSheet() error {
 			for _, comp := range comps {
 				err := comp.WriteComponentDefinition(compDirName)
 				if err != nil {
-					utils.Log.Info("INSIDE COMPS : ERR", err)
 					utils.Log.Info(err)
 				}
 			}
-			modelToCompGenerateTracker[model.Model] = compGenerateTracker{
+			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 				totalComps: len(comps),
 				version:    version,
-			}
+			})
 		}(model)
 
 	}
@@ -232,18 +227,19 @@ func InvokeGenerationFromSheet() error {
 // the sourceURL contains the "rangeString" : the value that describes the sheet in which the components are listed, and their starting row to ending row.
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	totalComps := 0
-	version := "v1.0.0"
+	version := "1.0.0"
 	defer func() {
-		modelToCompGenerateTracker[model.Model] = compGenerateTracker{
+		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 			totalComps: totalComps,
 			version:    version,
-		}
+		})
 	}()
 
 	modelPath, modelDef, err := writeModelDefToFileSystem(&model, version) // how to infer this? @Beginner86 any idea? new column?
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
+	isModelPublished, _ := modelDef.Metadata["published"].(bool)
 	components, err := srv.Spreadsheets.Values.Get(spreadsheeetID, model.SourceURL).Do()
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
@@ -269,7 +265,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				continue
 			}
 
-			componentDef := compCSV.CreateComponentDefinition()
+			componentDef := compCSV.CreateComponentDefinition(isModelPublished)
 			componentDef.Model = *modelDef // remove this, left for backward compatibility
 
 			err = componentDef.WriteComponentDefinition(compDirName)
@@ -303,8 +299,8 @@ func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *
 	return modelDefPath, &modelDef, nil
 }
 
-func logModelGenerationSummary(modelToCompGenerateTracker map[string]compGenerateTracker) {
-	for key, val := range modelToCompGenerateTracker {
+func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
+	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
 		utils.Log.Info(fmt.Sprintf("For model %s-%s, generated %d components.", key, val.version, val.totalComps))
 		totalAggregateComponents += val.totalComps
 		totalAggregateModel++
