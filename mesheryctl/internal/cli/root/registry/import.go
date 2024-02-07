@@ -107,6 +107,7 @@ type compGenerateTracker struct {
 }
 
 var modelToCompGenerateTracker = make(map[string]compGenerateTracker, 200)
+var mx sync.Mutex
 
 func InvokeGenerationFromSheet() error {
 	utils.Log.UpdateLogOutput(logFile)
@@ -161,6 +162,7 @@ func InvokeGenerationFromSheet() error {
 				weightedSem.Release(1)
 			}()
 			if model.Registrant == "meshery" {
+				fmt.Println("tsetse............")
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
 					utils.Log.Error(err)
@@ -207,8 +209,7 @@ func InvokeGenerationFromSheet() error {
 			}
 
 			for _, comp := range comps {
-				location := fmt.Sprintf("%s%s", filepath.Join(compDirName, comp.Kind), ".json")
-				err := mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](location, comp)
+				err := comp.WriteComponentDefinition(compDirName)
 				if err != nil {
 					utils.Log.Info("INSIDE COMPS : ERR", err)
 					utils.Log.Info(err)
@@ -222,6 +223,8 @@ func InvokeGenerationFromSheet() error {
 
 	}
 	wg.Wait()
+	logModelGenerationSummary(modelToCompGenerateTracker)
+
 	return nil
 }
 
@@ -230,6 +233,13 @@ func InvokeGenerationFromSheet() error {
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	totalComps := 0
 	version := "v1.0.0"
+	defer func() {
+		modelToCompGenerateTracker[model.Model] = compGenerateTracker{
+			totalComps: totalComps,
+			version:    version,
+		}
+	}()
+
 	modelPath, modelDef, err := writeModelDefToFileSystem(&model, version) // how to infer this? @Beginner86 any idea? new column?
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
@@ -244,10 +254,6 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		return err
 	}
 
-	modelToCompGenerateTracker[model.Model] = compGenerateTracker{
-		totalComps: totalComps,
-		version:    version,
-	}
 	if len(componentSpreadsheetCols) > 0 {
 		for _, comp := range components.Values {
 			totalComps++
@@ -266,9 +272,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 			componentDef := compCSV.CreateComponentDefinition()
 			componentDef.Model = *modelDef // remove this, left for backward compatibility
 
-			componentPath := filepath.Join(compDirName, componentDef.Kind+".json")
-
-			err = mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](componentPath, componentDef)
+			err = componentDef.WriteComponentDefinition(compDirName)
 
 			if err != nil {
 				err = ErrGenerateComponent(err, model.Model, compName)
@@ -277,50 +281,29 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 			}
 		}
 	}
-	logModelGenerationSummary(modelToCompGenerateTracker)
+
 	return nil
-}
-
-func createDirectoryForModel(modelName string) (string, error) {
-	modelDefPath := filepath.Join(registryLocation, modelName)
-	err := os.MkdirAll(modelDefPath, 0755)
-	if err != nil {
-		err = ErrGenerateModel(err, modelName)
-
-		return "", err
-	}
-	return modelDefPath, nil
 }
 
 func createVersionDirectoryForModel(modelDefPath, version string) (string, error) {
 	versionDirPath := filepath.Join(modelDefPath, version)
-	err := os.MkdirAll(versionDirPath, 0755)
-	if err != nil {
-		err = ErrGenerateModel(err, modelDefPath)
-		return "", err
-	}
-	return versionDirPath, nil
+	err := mutils.CreateDirectory(versionDirPath)
+	return versionDirPath, err
 }
 
 func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1alpha1.Model, error) {
 	modelDef := model.CreateModelDefinition(version)
+	modelDefPath := filepath.Join(registryLocation, modelDef.Name)
 
-	modelDefPath, err := createDirectoryForModel(model.Model)
+	err := modelDef.WriteModelDefinition(modelDefPath)
 	if err != nil {
 		return "", nil, err
 	}
 
-	modelFilePath := fmt.Sprintf("%s/model.json", modelDefPath)
-	err = mutils.WriteJSONToFile[v1alpha1.Model](modelFilePath, modelDef)
-	if err != nil {
-		err = ErrGenerateModel(err, modelDefPath)
-		return "", nil, err
-	}
 	return modelDefPath, &modelDef, nil
 }
 
 func logModelGenerationSummary(modelToCompGenerateTracker map[string]compGenerateTracker) {
-
 	for key, val := range modelToCompGenerateTracker {
 		utils.Log.Info(fmt.Sprintf("For model %s-%s, generated %d components.", key, val.version, val.totalComps))
 		totalAggregateComponents += val.totalComps
