@@ -10,7 +10,7 @@ redirect_from:
 - concepts/relationships
 ---
 
-[Relationships](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
+[Relationships](https://docs.meshery.io/project/contributing/contributing-models) define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
 
 {% include/alert.html type="info" title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
 
@@ -18,7 +18,7 @@ redirect_from:
 
 Shapes (all styles) convertable to Components
 
-The `isAnnotation` attribute of a Component determines whether the give Component reflects an infrastructure concern - is sematically meaningful, and whose lifecycle is managed by Meshery.
+The isAnnotation attribute of a Component determines whether the give Component reflects an infrastructure concern - is sematically meaningful, and whose lifecycle is managed by Meshery.
 
 ## Core Constructs of Relationships
 
@@ -27,24 +27,24 @@ The `isAnnotation` attribute of a Component determines whether the give Componen
 - Selectors
 
 ## Kind - Subtypes of Relationships
-The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
+The combination of kind and subType uniquely determines the visual paradigm for a given relationship i.e., relationships with the same kind and subType will share an identical visual representation regardless of the specific components involved in the relationship.
 ### 1. Edge - Network
 Configures the networking.
 
-**Example**
+*Example*
 - Service --> Deployment,
 - Service --> Pod,
 - IngressController --> Ingress --> Service
 
 ### 2. Edge - Mount
-**Example**
+*Example*
 
 Assignment of PersistentVolumes to Pods via PersistenVolumeClaim .
 
 - Pod --> PersistenVolumeClaim --> PersistentVolume
 
 ### 3. Edge - Permission
-**Example**
+*Example*
 
 The set of Service Accounts that are entitled with the one or more Roles/ClusterRoles bound via Role/ClusterRoleBinding.
 
@@ -60,14 +60,14 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 ### 5. Heirarchical - Inventory
 
-**Example**
+*Example*
 
 - WASMFilter (binary and configuration) --> IstioWASMPlugin
 - WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
 ### 6. Heirarchical - Parent
 
-**Example**
+*Example*
 
 Any namespaced Kubernetes component --> Kubernetes Namespace
 
@@ -76,17 +76,17 @@ Any namespaced Kubernetes component --> Kubernetes Namespace
 ### Structure of Selectors
 <!-- Define allow and deny -->
 
-Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field (`[from: [{..}], to: [{..}]]`), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
-Each item in the selector, uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
+Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field ([from: [{..}], to: [{..}]]), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
+Each item in the selector, uniquely defines a relation between the components listed. i.e. from and to fields are evaluated within the context of the selector.
 
 This arrangement enhances flexibility and reusability in the definition and configuration of relationships among components.
 
 ### Example Selector
 
 Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
-1. **ConfigMap - Pod**
-2. **ConfigMap - Deployment**
-3. **WASMFilter - EnvoyFilter**
+1. *ConfigMap - Pod*
+2. *ConfigMap - Deployment*
+3. *WASMFilter - EnvoyFilter*
 
 The above pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components.
 A snippet of the selector backing this relationship is listed below.
@@ -95,11 +95,7 @@ A snippet of the selector backing this relationship is listed below.
  <b>Selector</b>
 </summary>
 
-_https://github.com/meshery/meshery/blob/master/server/meshmodel/kubernetes/relationships/hierarchical_inventory.json_
-
-
-```json
-selector: [
+<pre><code class="language-json">selector: [
   {
     "allow": {
       "from": [
@@ -159,7 +155,7 @@ selector: [
                 "name"
               ]
             ],
-            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
           }
         }
       ],
@@ -188,25 +184,26 @@ selector: [
       ...
     }
   }
-]
-```
-The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely distinct from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships.
+]</code></pre>
+
+<p>The <code>selector</code> defined for the relationship between <code>WasmFilter</code> and <code>EnvoyFilter</code> (the first item in the array) is entirely distinct from the <code>selector</code> defined for the relationship between <code>ConfigMap</code> and <code>Deployment</code>. This ensures independence in how these components relate to each other while still permitting similar types of relationships.</p>
 </details>
+
 
  <!-- add images -->
 ### Types of Relationships
-1. **Inventory** 
-2. **Mount** 
-3. **Firewall** 
-4. **Permission**
-5. **Network**
+1. *Inventory* 
+2. *Mount* 
+3. *Firewall* 
+4. *Permission*
+5. *Network*
 
 ### Hierarchical Relationships
 
 When defining relationships that involve a large number of combinations between from and to, selectors provide a mechanism to organize and manage these relationships hierarchically. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
 
 <!-- Explain how and what configs get patched when relationships are created -->
-<!-- Explain real time evaluationof relationships on -->
+<!-- Explain real time evaluation of relationships on -->
 <!-- 1. Import -->
 <!-- 2. When compoennt config is update and it statisfied the condition for the relationship -->
 
@@ -220,7 +217,5 @@ You can reference and search the full set of registered relationships in Meshery
 
 {% include/alert.html type="info" title="Future Feature" %}
 
-```
-mesheryctl model import -f [ oci:// | file:// ]`
-```
 
+mesheryctl model import -f [ oci:// | file:// ]`
