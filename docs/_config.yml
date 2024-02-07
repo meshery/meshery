@@ -69,7 +69,8 @@ exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile, v0.4, v0.5,
 
 plugins:
   - jekyll-redirect-from
-
+  - jekyll-include-cache
+  
 sass:
     sass_dir: _sass
     style: compact
