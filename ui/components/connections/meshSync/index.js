@@ -37,6 +37,7 @@ import UniversalFilter from '../../../utils/custom-filter';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { FormatId } from '../../DataFormatter';
+import { useGetMeshSyncResourcesQuery } from '@/rtk-query/meshsync';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -50,16 +51,16 @@ export default function MeshSyncTable(props) {
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [pageSize, setPageSize] = useState(25);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('');
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [setFilter] = useState('');
+  // const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
   const [registerConnection, setRegisterConnection] = useState({
     metadata: {},
     kind: '',
@@ -81,6 +82,25 @@ export default function MeshSyncTable(props) {
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
   };
+
+  const { data: meshSyncData } = useGetMeshSyncResourcesQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    kind: selectedKind,
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+  });
+
+  const meshSyncResources = meshSyncData?.resources || [];
+  const filteredData = meshSyncResources?.filter((item) => {
+    if (selectedFilters.kind === 'All') {
+      return true;
+    }
+    return item.kind === selectedFilters.kind;
+  });
+  const count = meshSyncData?.total_count || 0;
+  console.log('total_count', count);
 
   let colViews = [
     ['metadata.name', 'xs'],
@@ -351,7 +371,7 @@ export default function MeshSyncTable(props) {
       // resizableColumns: true,
       serverSide: true,
       selectableRows: false,
-      count,
+      count: count,
       rowsPerPage: pageSize,
       rowsPerPageOptions: [10, 25, 30],
       fixedHeader: true,
@@ -460,40 +480,6 @@ export default function MeshSyncTable(props) {
 
   const [selectedKind, setSelectedKind] = useState('');
 
-  /**
-   * fetch connections when the page loads
-   */
-
-  const getMeshsyncResources = (page, pageSize, search, sortOrder, selectedKind) => {
-    setLoading(true);
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    dataFetch(
-      `/api/system/meshsync/resources?kind=${selectedKind}&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        const filteredData = res?.resources?.filter((item) => {
-          if (selectedFilters.kind === 'All') {
-            return true;
-          }
-          return item.kind === selectedFilters.kind;
-        });
-        setMeshSyncResources(filteredData);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
-        setLoading(false);
-        setFilter(filter);
-        // setSelectedKind(selectedKind);
-      },
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
-    );
-  };
-
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
     notify({
@@ -541,8 +527,6 @@ export default function MeshSyncTable(props) {
     },
   };
 
-  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
-
   const handleApplyFilter = () => {
     const columnName = Object.keys(selectedFilters)[0];
     const columnValue = selectedFilters[columnName];
@@ -556,7 +540,7 @@ export default function MeshSyncTable(props) {
 
     setFilter(filter);
     setSelectedKind(newSelectedKind); // Update the selected kind
-    getMeshsyncResources(page, pageSize, search, sortOrder, newSelectedKind);
+    // getMeshsyncResources(page, pageSize, search, sortOrder, newSelectedKind);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -573,10 +557,7 @@ export default function MeshSyncTable(props) {
 
   useEffect(() => {
     updateCols(columns);
-    if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder, selectedKind);
-    }
-  }, [page, pageSize, search, sortOrder, selectedKind]);
+  }, []);
 
   return (
     <>
@@ -614,7 +595,7 @@ export default function MeshSyncTable(props) {
         </div>
       </div>
       <ResponsiveDataTable
-        data={meshSyncResources}
+        data={filteredData}
         columns={columns}
         options={options}
         className={classes.muiRow}
