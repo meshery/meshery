@@ -51,10 +51,7 @@ func (h *Handler) PatternFileHandler(
 ) {
 	userID := uuid.FromStringOrNil(user.ID)
 
-	var payload struct {
-		PatternFile string `json:"pattern_file"`
-		PatternID   string `json:"pattern_id"`
-	}
+	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
 	// Read the PatternFile
