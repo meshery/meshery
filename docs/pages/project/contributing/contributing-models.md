@@ -87,6 +87,165 @@ Relationships within Model play a crucial role in establishing concrete visualis
 3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category.
 - [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
+### Structure of Selectors
+
+Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field (`[from: [{..}], to: [{..}]]`), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
+Each item in the selector, uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
+
+Only the components within the same selector relates to each other via 1:many kind of relation between components listed inside the `from` and `to` field. i.e. Each object inside the `from`  relates to each item inside the `two` field within a particular selector. 
+
+When defining relationships that involve a large number of combinations between `from` and `to`, selectors provide a mechanism to organize and manage these relationships. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
+
+This arrangement enhances flexibility and reusability in the definition and configuration of relationships among components.
+
+<details open>
+<summary>
+ <b>Example Selector</b>
+</summary>
+
+```json
+selector: [
+  {
+    "allow": {
+      "from": [
+        {
+          "kind": "WASMFilter",
+          "model": "istio-base",
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              [
+                "settings",
+                "config"
+              ],
+              [
+                "settings",
+                "wasm-filter"
+              ]
+            ],
+            "description": "WASM filter configuration to be applied to Envoy Filter."
+          }
+        },
+        {
+          "kind": "EBPFFilter",
+          .....
+        }
+      ],
+      "to": [
+        {
+          "kind": "EnvoyFilter",
+          "model": "istio-base",
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              [
+                "settings",
+                "configPatches",
+                "_",
+                "patch",
+                "value"
+              ]
+            ],
+            "description": "Receive the WASM filter configuration."
+          }
+        },
+        {
+          "kind" : "WASMPlugin",
+          ....
+        }
+        ...
+      ]
+    },
+    "deny": {
+      ...
+    }
+  },
+  {
+    "allow": {
+      "from": [
+        {
+          "kind": "ConfigMap",
+          "model": "kubernetes",
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              [
+                "name"
+              ]
+            ],
+            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Deployment",
+          "model": "kubernetes",
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              [
+                "spec",
+                "containers",
+                "_",
+                "envFrom",
+                "configMapRef",
+                "name"
+              ]
+            ],
+            "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
+          }
+        },
+        {
+          "kind": "StatefulSets",
+          "model": "kubernetes",
+          "patch": {
+            ....
+          }
+        }
+        ...
+      ]
+    },
+    "deny": {
+      ...
+    }
+  }
+]
+```
+The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely independent from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships. 
+
+The above relation shows `WASMFilter` and `EBPFFilter` defined inside `from` relates to each component defined inside `to` `(EnvoyFilter, WASMPlugin...)`. 
+Similarly, `ConfigMap` defined inside `from` relates to each component defined inside `to`  `(Deployment, StatefulSet,...)`
+</details>
+
+#### What is `evaluationQuery` attribute and how to determine value for `evaluationQuery` inside relationship definition?
+
+As all relationship definitions are backed by OPA policies and the relationships depending upon their Kind and Subtype needs to be evaluated with respective policies, the policy to invoke for evaluation is determined by the property `evaluationQuery`, which follows the convention as `kind_subtype_relationship`.
+```
+Eg: If you are defining/updating a relationship definition with kind: Edge and subType: Network, the value for the attribute `evaluationQuery` should be edge_network_relationship.
+```
+
+Each policy has set of rules defined and the `evaluationQuery` attribute corresponds to the main rule defined inside the policy, during the policy eval the results are collected from this rule.
+
+## Configuring the scopes of the relationship definitions
+Relationships has concept of scopes, which determine the extent upto which the relationships work
+1. Global Scope:
+The relationships can be configured to be applied to specific model, a specific model version or can be configured to be applied across model. The relationship schema has a `model` and `version` attribute which facilitates this control.
+Eg: If the model is specified as `aws-ec2-controller`, the relationship will work for those components which belongs to the `aws-ec2-controller` model.
+2. Local Scope:
+It is controlled via the `selectors` attribute in the relationships.
+
+
+### Best practises for defining new relationships
+
+1. Ensure that the `deny` selectors and `allow` selectors do not conflict each other i.e. relations are not getting overlapped for `allow` and `deny` selectors.
+2. To configure a relationship to be applied across models, ensure `model` property for those relationships are set to `*`, to limit the relationships to specific model, specify correct `model`(case sensitive).
+3. To configure a relationship to be applied across all versions of a particular model, ensure `version` property for those relationships are set to `*`, to limit the relationships to specific version of a model, specify correct model version.
+4. Support for specifying version property as a regex to ensure relationships are applied to a subset of versions of a model is coming soon.
+5. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify correct rego query. To understand what query to specify [refer](#what-is-evaluationquery-attribute-and-how-to-determine-value-for-evaluationquery-inside-relationship-definition).
+6. If a path `mutatedRef/mutatorRef` contains more than one array path then only first array positin can be sprciifced as _ for others explicity meniton them as 0
+7. Currently `mutatedRef` doesn’t supoort having an aaray
+
 
 <details open>
 <summary>See all Visual Representations</summary>
