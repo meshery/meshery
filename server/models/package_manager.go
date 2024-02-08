@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshkit/models"
-	"github.com/layer5io/meshkit/utils/artifacthub"
+	"github.com/layer5io/meshkit/generators/artifacthub"
 )
 
 type ArtifactHubPackageManager struct {
