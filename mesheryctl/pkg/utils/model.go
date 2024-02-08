@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
@@ -143,6 +144,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		select {
 
 		case data := <-ch:
+			data.Registrant = mutils.ReplaceSpacesAndConvertToLowercase(data.Registrant)
 			mch.Models = append(mch.Models, data)
 			fmt.Printf("Reading Modal: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:
