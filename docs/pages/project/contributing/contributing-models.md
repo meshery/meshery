@@ -92,7 +92,7 @@ Relationships within Model play a crucial role in establishing concrete visualis
 Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field (`[from: [{..}], to: [{..}]]`), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
 Each item in the selector, uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
 
-Only the components within the same selector relates to each other via 1:many kind of relation between components listed inside the `from` and `to` field. i.e. Each object inside the `from`  relates to each item inside the `two` field within a particular selector. 
+Only the components within the same selector relates to each other via 1:many kind of relation between components listed inside the `from` and `to` field. i.e. Each object inside the `from` relates to each item inside the `two` field within a particular selector. 
 
 When defining relationships that involve a large number of combinations between `from` and `to`, selectors provide a mechanism to organize and manage these relationships. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
 
@@ -233,8 +233,7 @@ Relationships has concept of scopes, which determine the extent upto which the r
 The relationships can be configured to be applied to specific model, a specific model version or can be configured to be applied across model. The relationship schema has a `model` and `version` attribute which facilitates this control.
 Eg: If the model is specified as `aws-ec2-controller`, the relationship will work for those components which belongs to the `aws-ec2-controller` model.
 2. Local Scope:
-It is controlled via the `selectors` attribute in the relationships.
-
+It is controlled via the `selectors` [Selectors](#structure-of-selectors) attribute in the relationships.
 
 ### Best practises for defining new relationships
 
