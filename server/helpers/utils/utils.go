@@ -353,3 +353,7 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 	}
 	return
 }
+
+func ReplaceSpacesAndConvertToLowercase(s string) string {
+	return strings.ToLower(strings.ReplaceAll(s, " ", ""))
+}
