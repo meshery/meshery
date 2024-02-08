@@ -73,13 +73,6 @@ Any namespaced Kubernetes component --> Kubernetes Namespace
 
 ## Selectors in Relationships
 
-### Structure of Selectors
-<!-- Define allow and deny -->
-
-Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field (`[from: [{..}], to: [{..}]]`), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
-Each item in the selector, uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
-
-This arrangement enhances flexibility and reusability in the definition and configuration of relationships among components.
 
 ### Example Selector
 
@@ -90,121 +83,28 @@ Selectors can be applied to various components, enabling a wide range of relatio
 
 The above pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components.
 A snippet of the selector backing this relationship is listed below.
-<details open>
-<summary>
- <b>Selector</b>
-</summary>
 
-_https://github.com/meshery/meshery/blob/master/server/meshmodel/kubernetes/relationships/hierarchical_inventory.json_
-
-
-```json
-selector: [
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "WASMFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "settings",
-                "config"
-              ],
-              [
-                "settings",
-                "wasm-filter"
-              ]
-            ],
-            "description": "WASM filter configuration to be applied to Envoy Filter."
-          }
-        }
-      ],
-      "to": [
-        {
-          "kind": "EnvoyFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "settings",
-                "configPatches",
-                "_",
-                "patch",
-                "value"
-              ]
-            ],
-            "description": "Receive the WASM filter configuration."
-          }
-        }
-      ]
-    },
-    "deny": {
-      ...
-    }
-  },
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "ConfigMap",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "name"
-              ]
-            ],
-            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-          }
-        }
-      ],
-      "to": [
-        {
-          "kind": "Deployment",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "spec",
-                "containers",
-                "_",
-                "envFrom",
-                "configMapRef",
-                "name"
-              ]
-            ],
-            "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-          }
-        }
-      ]
-    },
-    "deny": {
-      ...
-    }
-  }
-]
-```
-The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely distinct from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships.
-</details>
 
  <!-- add images -->
 ### Types of Relationships
 1. **Inventory** 
-2. **Mount** 
-3. **Firewall** 
-4. **Permission**
-5. **Network**
+2. **Parent**
+3. **Mount** 
+4. **Firewall** 
+5. **Permission**
+6. **Network**
 
-### Hierarchical Relationships
+### How Relationships are formed?
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a node inisde other node.
 
-When defining relationships that involve a large number of combinations between from and to, selectors provide a mechanism to organize and manage these relationships hierarchically. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
+_Note: It may happen that, you created a relationship from the UI, but the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) disapproved/overrided the decision if all the constraints for a particular relationship are not satisfied._
 
+2. Relationships gets auto-created if the user update's the node config such that the relationship criteria is satisfied. _Open the [catalog item](https://playground.meshery.io/extension/meshmap?design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa) and follow the steps in the description._
+<!--  Update the link with meshery.io/catalog item once site is loaded. -->
+
+When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
+
+The Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluationof relationships on -->
 <!-- 1. Import -->
