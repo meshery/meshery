@@ -99,8 +99,7 @@ A snippet of the selector backing this relationship is listed below.
 
 _Note: It may happen that, you created a relationship from the UI, but the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) disapproved/overrided the decision if all the constraints for a particular relationship are not satisfied._
 
-2. Relationships gets auto-created if the user update's the node config such that the relationship criteria is satisfied. _Open the [catalog item](https://playground.meshery.io/extension/meshmap?design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa) and follow the steps in the description._
-<!--  Update the link with meshery.io/catalog item once site is loaded. -->
+2. Relationships gets auto-created if the user update's the node config such that the relationship criteria is satisfied. _Open the [catalog item](https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html) in playground and follow the steps in the description._
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
 

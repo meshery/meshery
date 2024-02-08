@@ -31,4 +31,8 @@ There are different points in time where the policy evaluations are invoked
 2. A Design/HelmChart/K8s Manifest/Docker Compose app is imported/uploaded.
 3. Ad-hoc invocation from the Actions Center (coming soon).
 
+### How conflicts are resolved?
+Refer the OPA FAQs to know how conflicts are resolved. _https://www.openpolicyagent.org/docs/latest/faq/_
 
+**Limitations:**
+It may happen that certain eval decisions contains results such that two different nodes are creating a conflicting relationship (conflicting in terms of Meshery visualization) with same node, while this is semantically correct, the visual representation for such cases of relationship may be undesirable, and you may see edges/nodes getting switched from one to other.
