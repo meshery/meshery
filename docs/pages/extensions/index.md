@@ -2,6 +2,7 @@
 layout: default
 title: Extensions
 permalink: extensions/
+redirect_from: extensibility/extensions
 language: en
 display-title: true
 list: include

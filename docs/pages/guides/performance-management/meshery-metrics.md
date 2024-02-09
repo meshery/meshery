@@ -2,7 +2,7 @@
 layout: default
 title: Using Metrics in Meshery
 abstract: How to connect and use Prometheus and Grafana metrics in Meshery
-permalink: guides/performance/meshery-metrics
+permalink: guides/performance-management/meshery-metrics
 language: en
 type: guides
 category: performance

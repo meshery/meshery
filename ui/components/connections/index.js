@@ -63,7 +63,6 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
-import InfoIcon from '@material-ui/icons/Info';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
@@ -88,6 +87,7 @@ import DefaultError from '../General/error-404/index';
 import { useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { renderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -437,8 +437,8 @@ function Connections(props) {
               columnData={column}
               icon={
                 <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoIcon
-                    color={theme.palette.secondary.iconMain}
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
                     style={{
                       cursor: 'pointer',
                       height: 20,
@@ -451,8 +451,10 @@ function Connections(props) {
                 </IconButton>
               }
               tooltip={renderTooltipContent({
-                showInfotext: 'about enviroments and about assigning resources',
+                showPriortext:
+                  'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
                 link: envUrl,
+                showAftertext: 'to learn more about Environments',
               })}
             />
           );
@@ -635,8 +637,8 @@ function Connections(props) {
               onSort={() => sortColumn(index)}
               icon={
                 <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoIcon
-                    color={theme.palette.secondary.iconMain}
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
                     style={{
                       cursor: 'pointer',
                       height: 20,
@@ -649,8 +651,10 @@ function Connections(props) {
                 </IconButton>
               }
               tooltip={renderTooltipContent({
-                showInfotext: 'about connection and status',
+                showPriortext:
+                  'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
                 link: url,
+                showAftertext: 'to learn more about Connection States',
               })}
             />
           );

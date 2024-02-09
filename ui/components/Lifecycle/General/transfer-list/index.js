@@ -102,7 +102,7 @@ export default function TransferList({
         observer.unobserve(sentinel);
       }
     };
-  }, [assignablePage]);
+  }, [assignableData]);
 
   useEffect(() => {
     const handleScroll = (entries) => {
@@ -123,7 +123,7 @@ export default function TransferList({
         observer.unobserve(sentinel);
       }
     };
-  }, [assignedPage]);
+  }, [originalAssignedData]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
