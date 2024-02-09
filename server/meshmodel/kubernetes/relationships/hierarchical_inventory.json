@@ -408,6 +408,7 @@
                     "mutatedRef": [
                         [
                             "spec",
+                            "template",
                             "containers",
                             "_",
                             "envFrom",
