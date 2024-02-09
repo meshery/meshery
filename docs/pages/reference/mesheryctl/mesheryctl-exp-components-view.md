@@ -1,50 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-model-list
-permalink: reference/mesheryctl/exp/model/list
-redirect_from: reference/mesheryctl/exp/model/list/
+title: mesheryctl-exp-components-view
+permalink: reference/mesheryctl/exp/components/view
+redirect_from: reference/mesheryctl/exp/components/view/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: model
+subcommand: components
 ---
 
-# mesheryctl exp model list
+# mesheryctl exp components view
 
-list registered models
+view registered component
 
 ## Synopsis
 
-list name of all registered models
+view a component registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list [flags]
+mesheryctl exp components view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View list of models
+View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-View list of models with specified page number (25 models per page)
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model list --page 2
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
+mesheryctl exp components view [component-name]
 
 </div>
 </pre> 
@@ -53,9 +38,8 @@ mesheryctl exp model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of models in total
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>

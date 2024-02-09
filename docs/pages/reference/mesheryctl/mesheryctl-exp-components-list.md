@@ -1,50 +1,57 @@
 ---
 layout: default
-title: mesheryctl-exp-model-list
-permalink: reference/mesheryctl/exp/model/list
-redirect_from: reference/mesheryctl/exp/model/list/
+title: mesheryctl-exp-components-list
+permalink: reference/mesheryctl/exp/components/list
+redirect_from: reference/mesheryctl/exp/components/list/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: model
+subcommand: components
 ---
 
-# mesheryctl exp model list
+# mesheryctl exp components list
 
-list registered models
+List registered components
 
 ## Synopsis
 
-list name of all registered models
+List all components registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list [flags]
+mesheryctl exp components list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View list of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-View list of models with specified page number (25 models per page)
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model list --page 2
+	// View list of components
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+mesheryctl exp components list
+
+</div>
+</pre> 
+
+View list of components with specified page number (25 components per page)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp components list --page 2
+
+</div>
+</pre> 
+
+View Total number of components
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp components list --count
 
 </div>
 </pre> 
@@ -53,7 +60,7 @@ mesheryctl exp model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of models in total
+  -c, --count      (optional) Get the number of components in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 
