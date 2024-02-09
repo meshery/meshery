@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/k8svault-controller
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: vault-binding
   colorIcon: assets/img/integrations/k8svault-controller/components/vault-binding/icons/color/vault-binding-color.svg

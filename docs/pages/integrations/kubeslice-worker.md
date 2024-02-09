@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubeslice-worker
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: service-export
   colorIcon: assets/img/integrations/kubeslice-worker/components/service-export/icons/color/service-export-color.svg

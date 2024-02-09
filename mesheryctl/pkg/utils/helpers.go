@@ -1128,3 +1128,12 @@ func CheckFileExists(name string) (bool, error) {
 	}
 	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
 }
+
+func Contains(key string, col []string) int {
+	for i, n := range col {
+		if n == key {
+			return i
+		}
+	}
+	return -1
+}

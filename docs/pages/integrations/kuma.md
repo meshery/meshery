@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kuma
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: circuit-breaker
   colorIcon: assets/img/integrations/kuma/components/circuit-breaker/icons/color/circuit-breaker-color.svg

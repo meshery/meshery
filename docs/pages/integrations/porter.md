@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/porter
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: bgp-conf
   colorIcon: assets/img/integrations/porter/components/bgp-conf/icons/color/bgp-conf-color.svg
