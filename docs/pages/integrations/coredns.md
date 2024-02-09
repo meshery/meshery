@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/coredns
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Serves zone data from a file; both DNSSEC (NSEC only) and DNS are supported (file and auto).",

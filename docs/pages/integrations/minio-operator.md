@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/minio-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: tenant
   colorIcon: assets/img/integrations/minio-operator/components/tenant/icons/color/tenant-color.svg

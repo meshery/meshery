@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation//windows
 description: 
 integrations-category: Platform
 integrations-subcategory: Operating System
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Windows-native builds of Meshery CLI",

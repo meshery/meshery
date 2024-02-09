@@ -66,7 +66,6 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onC
               mode: 'text/x-yaml',
             }}
             onChange={(a, b, c) => {
-              console.log('onChange', a, b, c);
               onChange(a, b, c);
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}

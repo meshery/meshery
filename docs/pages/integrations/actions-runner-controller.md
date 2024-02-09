@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/actions-runner-contro
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Deploy self hosted runners on Kubernetes cluster with a simple set of commands.",

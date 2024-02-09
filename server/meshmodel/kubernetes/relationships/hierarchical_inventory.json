@@ -108,10 +108,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -126,10 +130,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -144,10 +152,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -162,10 +174,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -179,11 +195,13 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings",
+                [
+                  "settings",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -198,10 +216,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -216,12 +238,16 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "settings",
                   "spec",
                   "jobTemplate",
+                  "spec",
+                  "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -234,6 +260,126 @@
       "deny": {
         "from": [],
         "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Pod "
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Deployment "
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A StatefulSet "
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A ReplicaSet "
+            }
+          },
+          {
+            "kind": "Service",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Service "
+            }
+          },
+          {
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A ConfigMap "
+            }
+          },
+          {
+            "kind": "Secret",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Secret "
+            }
+          }
+        ], 
+        "to": [
+          {
+            "kind": "Event",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "metadata", "name"],
+                ["settings", "metadata", "namespace"],
+                ["settings", "metadata", "kind"],
+                ["settings", "metadata", "apiVersion"]
+              ],
+              "description": "An Event "
+            }
+          }
+        ]
       }
     }
   ]

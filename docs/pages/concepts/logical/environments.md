@@ -6,6 +6,8 @@ type: concepts
 abstract: "Meshery offers support for Kubernetes cluster and cloud state synchronization with the help of MeshSync."
 language: en
 list: include
+redirect_from:
+- concepts/environments
 ---
 
 Meshery Environments allow you to logically group related [Connections](#connections) and their associated [Credentials](#credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis. 
@@ -18,6 +20,8 @@ Assign any number of Connections to an environment whether that Connection is ma
 
 Environments can share resources. For example, you might create an environment named "production" and assign three connections: a GitHub connection, a Kubernetes connection, and a Prometheus connection. Subsequently, you also define a an environment named "dev/test "and assign three connections: a different Cooper, Netties connection, a different Prometheus connection, _and_ the same GitHub connection that is also assigned to the "production" environment.
 
+### Deleting an Environment
+Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. Learn more about the behavior of [lifecycle of connections]({{site.baseurl}}/concepts/logical/connections).
 
 ## Summary
 

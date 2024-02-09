@@ -6,9 +6,9 @@ image: /assets/img/integrations/postgres-operator/icons/color/postgres-operator-
 permalink: extensibility/integrations/postgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-operator
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 - name: operator-configuration
   colorIcon: assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg

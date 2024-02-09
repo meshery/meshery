@@ -107,7 +107,6 @@ function UserPrefsExtensionSchemaDecoder(content) {
  * @returns {CollaboratorSchema[]}
  */
 function CollaboratorExtensionSchemaDecoder(content) {
-  console.log('content', content);
   if (Array.isArray(content)) {
     return content.map((item) => {
       return { component: item.component || '' };

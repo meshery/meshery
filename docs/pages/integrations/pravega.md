@@ -6,9 +6,9 @@ image: /assets/img/integrations/pravega/icons/color/pravega-color.svg
 permalink: extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega
 description: 
-integrations-category: App Definition and Development
+integrations-category: Cloud Native Storage
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

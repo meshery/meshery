@@ -135,7 +135,17 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			appFile = app.PatternFile
 		}
 
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
+		payload := models.MesheryPatternFileDeployPayload{
+			PatternFile: appFile,
+		}
+
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil

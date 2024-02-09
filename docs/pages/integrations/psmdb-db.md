@@ -6,9 +6,9 @@ image: /assets/img/integrations/psmdb-db/icons/color/psmdb-db-color.svg
 permalink: extensibility/integrations/psmdb-db
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
