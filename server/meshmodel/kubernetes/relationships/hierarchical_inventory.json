@@ -107,13 +107,15 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -127,13 +129,15 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -147,13 +151,15 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -167,13 +173,15 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -187,11 +195,13 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings",
+                [
+                  "settings",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -205,13 +215,15 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "template",
                   "spec",
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -225,7 +237,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [ "settings",
+                [
+                  "settings",
                   "spec",
                   "jobTemplate",
                   "spec",
@@ -234,6 +247,7 @@
                   "containers",
                   "_",
                   "envFrom",
+                  "0",
                   "configMapRef",
                   "name"
                 ]
@@ -252,58 +266,31 @@
       "allow": {
         "from": [
           {
-            "kind": "CSIDriver",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "name"
-                ]
-              ],
-              "description": "CSI drivers are responsible for the actual operations of a CSI volume. They are responsible for communicating with the external storage provider and exposing the volume to the kubelet.\n\nCSI drivers are installed on the cluster as a CustomResourceDefinition (CRD) and a DaemonSet. The CRD is used to create a CSIDriver object, which is used to configure the CSI driver. The DaemonSet is used to deploy the CSI driver to each node in the cluster."
-            }
-          }
-        ],
-        "to": [
-          {
             "kind": "Pod",
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
               ],
-              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "A Pod "
             }
           },
           {
-            "kind":"Deployment",
-            "model":"kubernetes",
-            "patch":{
-              "patchStrategy":"replace",
-              "mutatedRef":[
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
               ],
-              "description":"CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "A Deployment "
             }
           },
           {
@@ -311,113 +298,88 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
               ],
-              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
-            }
-          },
-          {
-            "kind": "DaemonSet",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
-              ],
-              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "A StatefulSet "
             }
           },
           {
             "kind": "ReplicaSet",
-            "model": "kubernetes", 
+            "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
               ],
-              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "A ReplicaSet "
             }
           },
           {
-            "kind":"CronJob",
-            "model":"kubernetes",
-            "patch":{
-              "patchStrategy":"replace",
-              "mutatedRef":[
-                [
-                  "settings",
-                  "spec",
-                  "jobTemplate",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+            "kind": "Service",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
               ],
-              "description":"CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "A Service "
             }
           },
           {
-            "kind": "Job",
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A ConfigMap "
+            }
+          },
+          {
+            "kind": "Secret",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["namespace"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Secret "
+            }
+          }
+        ], 
+        "to": [
+          {
+            "kind": "Event",
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "csi",
-                  "driver",
-                  "name"
-                ]
+                ["settings", "metadata", "name"],
+                ["settings", "metadata", "namespace"],
+                ["settings", "metadata", "kind"],
+                ["settings", "metadata", "apiVersion"]
               ],
-              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+              "description": "An Event "
             }
           }
         ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
       }
     }
   ]
