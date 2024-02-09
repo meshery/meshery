@@ -1,7 +1,7 @@
 ---
 layout: enhanced
 title: Importing a Design
-abstract: Import your existing designs into Meshery.
+abstract: Import your existing application definitions and infrastructure configuration into Meshery.
 permalink: extensions/importing-a-design
 language: en
 display-title: "false"
