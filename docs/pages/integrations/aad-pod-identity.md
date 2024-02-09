@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Use Azure Active Directory pod-managed identities in Azure Kubernetes Service.",

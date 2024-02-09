@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-sns-controller
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: App Integration
-registrant: aws
+registrant: AWS
 components: 
 - name: platform-endpoint
   colorIcon: assets/img/integrations/aws-sns-controller/components/platform-endpoint/icons/color/platform-endpoint-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/trickster
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: trickster-backend
   colorIcon: assets/img/integrations/trickster/components/trickster-backend/icons/color/trickster-backend-color.svg

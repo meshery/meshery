@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kube-ui-server
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: app-binding
   colorIcon: assets/img/integrations/kube-ui-server/components/app-binding/icons/color/app-binding-color.svg

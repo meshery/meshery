@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: workload-identity
   colorIcon: assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
