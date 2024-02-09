@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/dapr
 description: 
 integrations-category: Serverless
 integrations-subcategory: Framework
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: component
   colorIcon: assets/img/integrations/dapr/components/component/icons/color/component-color.svg

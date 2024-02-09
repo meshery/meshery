@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/kubernetes
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Orchestration & Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: namespace
   colorIcon: assets/img/integrations/kubernetes/components/namespace/icons/color/namespace-color.svg

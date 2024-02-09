@@ -74,6 +74,8 @@ import {
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CHARCOAL } from '@layer5/sistent-components';
 
 const styles = (theme) => ({
   root: {
@@ -1069,9 +1071,13 @@ class Navigator extends React.Component {
             rel="noreferrer"
             style={{ color: 'white' }}
           >
-            <Tooltip title={`Newer version of Meshery available: ${latest}`} placement="right">
+            <CustomTextTooltip
+              backgroundColor={CHARCOAL}
+              title={`Newer version of Meshery available: ${latest}`}
+              placement="right"
+            >
               <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
-            </Tooltip>
+            </CustomTextTooltip>
           </a>
         </span>
       );
@@ -1288,11 +1294,15 @@ class Navigator extends React.Component {
                     isDrawerCollapsed ? classes.extraPadding : '',
                   )}
                 >
-                  <Tooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
+                  <CustomTextTooltip
+                    backgroundColor={CHARCOAL}
+                    title={title}
+                    placement={isDrawerCollapsed ? 'right' : 'top'}
+                  >
                     <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
                       {icon}
                     </ListItemIcon>
-                  </Tooltip>
+                  </CustomTextTooltip>
                 </a>
               </Grow>
             </ListItem>
@@ -1302,7 +1312,11 @@ class Navigator extends React.Component {
           className={classes.rightMargin}
           style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
         >
-          <Tooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
+          <CustomTextTooltip
+            backgroundColor={CHARCOAL}
+            title="Help"
+            placement={isDrawerCollapsed ? 'right' : 'top'}
+          >
             <IconButton
               className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
               onClick={this.toggleSpacing}
@@ -1312,7 +1326,7 @@ class Navigator extends React.Component {
                 style={{ fontSize: '1.45rem', ...iconSmall }}
               />
             </IconButton>
-          </Tooltip>
+          </CustomTextTooltip>
         </ListItem>
       </ButtonGroup>
     );

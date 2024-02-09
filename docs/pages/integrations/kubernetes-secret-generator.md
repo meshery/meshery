@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-secret-gen
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: basic-auth
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/basic-auth/icons/color/basic-auth-color.svg

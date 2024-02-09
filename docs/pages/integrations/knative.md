@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/knative
 description: 
 integrations-category: Serverless
 integrations-subcategory: Installable Platform
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: api-server-source
   colorIcon: assets/img/integrations/knative/components/api-server-source/icons/color/api-server-source-color.svg

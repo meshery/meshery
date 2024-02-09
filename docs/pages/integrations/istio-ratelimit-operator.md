@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: global-rate-limit-config
   colorIcon: assets/img/integrations/istio-ratelimit-operator/components/global-rate-limit-config/icons/color/global-rate-limit-config-color.svg

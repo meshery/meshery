@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: percona-pg-backup
   colorIcon: assets/img/integrations/pg-operator/components/percona-pg-backup/icons/color/percona-pg-backup-color.svg

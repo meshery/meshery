@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cri-o
 description: 
 integrations-category: Runtime
 integrations-subcategory: Container Runtime
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Supports multiple image formats including the existing Docker image format.",

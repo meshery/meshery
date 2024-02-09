@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controll
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-dynamodb-controller/components/field-export/icons/color/field-export-color.svg

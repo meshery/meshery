@@ -132,6 +132,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		result = result.Offset(offset)
 	}
 
+	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
 		if sort == "desc" {
 			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
