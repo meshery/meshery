@@ -90,7 +90,7 @@ jobs:
       - name: Run Model Updater
         run: |
           cd mesheryctl;
-          ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
+          ./mesheryctl registry update -i ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
