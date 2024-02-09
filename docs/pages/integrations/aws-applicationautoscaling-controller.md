@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-applicationautosc
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Management Governance
-registrant: aws
+registrant: AWS
 components: 
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/color/adopted-resource-color.svg

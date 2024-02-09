@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/ambassador
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: API Gateway
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: filter
   colorIcon: assets/img/integrations/ambassador/components/filter/icons/color/filter-color.svg

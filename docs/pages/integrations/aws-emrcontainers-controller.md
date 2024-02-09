@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-emrcontainers-con
 description: 
 integrations-category: Analytics
 integrations-subcategory: Analytics
-registrant: aws
+registrant: AWS
 components: 
 - name: virtual-cluster
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/virtual-cluster/icons/color/virtual-cluster-color.svg

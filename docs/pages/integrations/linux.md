@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/linux-mac
 description: 
 integrations-category: Platform
 integrations-subcategory: Operating System
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Faster and easier configuration",

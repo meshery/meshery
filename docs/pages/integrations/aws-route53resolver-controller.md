@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-route53resolver-c
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Networking Content Delivery
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-route53resolver-controller/components/field-export/icons/color/field-export-color.svg
