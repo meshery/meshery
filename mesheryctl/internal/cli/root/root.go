@@ -26,6 +26,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -112,6 +113,7 @@ func init() {
 		app.AppCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
+		registry.RegistryCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/grafana-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: grafana-dashboard
   colorIcon: assets/img/integrations/grafana-operator/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg

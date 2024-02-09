@@ -66,6 +66,18 @@ const connectionsApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getConnectionByKind: builder.query({
+      query: (queryArg) => ({
+        url: `integrations/connections/${queryArg.connectionKind}`,
+        params: {
+          page: queryArg.page,
+          pagesize: queryArg.pagesize,
+          search: queryArg.search,
+          order: queryArg.order,
+        },
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -78,4 +90,5 @@ export const {
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
   useGetAllConnectionStatusQuery,
+  useGetConnectionByKindQuery,
 } = connectionsApi;

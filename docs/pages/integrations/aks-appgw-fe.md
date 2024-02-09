@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aks-appgw-fe
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: azure-assigned-identity
   colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg

@@ -4,6 +4,7 @@ import { Launch as LaunchIcon } from '@material-ui/icons';
 import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
+import { TextWithLinks } from '../DataFormatter';
 
 const DryRunResponse = ({ response }) => {
   const cleanedResponse = {};
@@ -104,7 +105,15 @@ const EmptyState = ({ event }) => {
       }}
     >
       {' '}
-      {event.description}{' '}
+      {
+        <TextWithLinks
+          variant="body1"
+          style={{
+            wordWrap: 'break-word',
+          }}
+          text={event.description || ''}
+        ></TextWithLinks>
+      }{' '}
     </Typography>
   );
 };

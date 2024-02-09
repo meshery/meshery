@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/ps-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: percona-server-my-sql-backup
   colorIcon: assets/img/integrations/ps-operator/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg

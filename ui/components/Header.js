@@ -40,8 +40,9 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
-import { CHARCOAL, WHITE } from '@layer5/sistent-components';
+import { CHARCOAL } from '@layer5/sistent-components';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { Colors } from '@/themes/app';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -104,7 +105,15 @@ const styles = (theme) => ({
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   itemActiveItem: { fill: '#00B39F' },
-  headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
+  headerIcons: {
+    fontSize: '1.5rem',
+    height: '1.5rem',
+    width: '1.5rem',
+    fill: theme.palette.secondary.whiteIcon,
+    '&:hover': {
+      fill: Colors.keppelGreen,
+    },
+  },
   cbadge: {
     fontSize: '0.65rem',
     backgroundColor: 'white',
@@ -582,7 +591,7 @@ class Header extends React.PureComponent {
                         color="inherit"
                       >
                         <OutlinedSettingsIcon
-                          fill={WHITE}
+                          // fill={WHITE}
                           className={
                             classes.headerIcons +
                             ' ' +
