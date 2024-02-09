@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-contro
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Networking Content Delivery
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/field-export/icons/color/field-export-color.svg

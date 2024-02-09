@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Cloud Native Network
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: eni-config
   colorIcon: assets/img/integrations/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg

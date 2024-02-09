@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/vault-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: vault
   colorIcon: assets/img/integrations/vault-operator/components/vault/icons/color/vault-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-mq-controller/components/field-export/icons/color/field-export-color.svg

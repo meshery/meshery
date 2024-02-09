@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-contr
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: aws
+registrant: AWS
 components: 
 - name: archive
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg

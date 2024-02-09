@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/jaeger
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Tracing
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

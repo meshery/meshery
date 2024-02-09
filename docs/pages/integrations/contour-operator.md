@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: contour
   colorIcon: assets/img/integrations/contour-operator/components/contour/icons/color/contour-color.svg

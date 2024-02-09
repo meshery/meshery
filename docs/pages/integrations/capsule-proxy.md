@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/capsule-proxy
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: proxy-setting
   colorIcon: assets/img/integrations/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg

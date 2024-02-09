@@ -25,23 +25,28 @@ h5 {
 }
 
 @mixin swagger-method($color) {
-  .swagger-method-title {
+  .swagger-method-title > .swagger-method-link > .swagger-method-name {
     background: $color;
   }
 }
 
 @mixin swagger-response($color) {
-  .swagger-response-title {
+  .swagger-response-title > .swagger-response-code {
     background: $color;
   }
 }
 
 .swagger-path {
-  font-weight: normal;
+  font-weight: bold;
   font-size: $base-font-size * 1.2;
   margin: 5.5rem 0 1rem 0;
+  padding-left:.5rem;
+  border-left: 2px solid #444;
   font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
     apple color emoji, segoe ui emoji, segoe ui symbol;
+  h2 {
+    border-left: none;
+  }
 }
 
 .swagger-method {
@@ -62,7 +67,6 @@ h5 {
 .swagger-method-description {
   padding-bottom: 10px;
   font-size: $base-font-size * 1.2;
-  margin-left: 2rem;
 }
 
 .swagger-method-link {
@@ -76,17 +80,23 @@ h5 {
 
 .swagger-method-name {
   display: flex;
-  width: 100px;
+  width: 50;
+  height: 50%;
+  border-radius: .25rem;
+  align-items: center;
+  padding: 5px;
   text-align: center;
   color: white;
   justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
 }
 
 .swagger-method-summary {
   color: white;
-  border-left: 1px solid white;
+  // border-left: 1px solid white;
   height: 100%;
-  padding: 10px;
+  padding: 5px;
   display: flex;
   align-items: center;
 }
@@ -128,15 +138,23 @@ h5 {
     display: block;
   }
   p {
+    margin-left: 2rem;
     font-size: $base-font-size * 1.1;
+  }
+  h5 {
+    color: #666666;
+    font-size: 1.1rem;
   }
 }
 
 .swagger-response {
   font-size: $small-font-size;
   display: block;
+
   h5 {
     margin: 10px 0;
+    font-size: 1.1rem;
+    color: #666666;
   }
 }
 
@@ -147,10 +165,15 @@ h5 {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  margin-left: 2rem;
+
 }
 
 .swagger-response-code {
   margin: 2px 0 2px 0;
+  font-size: 1.1rem;
+  padding: 5px;
+  border-radius: .5rem;
 }
 
 .swagger-response-seperator {
@@ -162,6 +185,7 @@ h5 {
 }
 
 .swagger-response-description {
+  background-color: none;
   a {
     color: #212529;
     :hover {
@@ -172,6 +196,10 @@ h5 {
 
 .swagger-parameters {
   margin-bottom: 20px;
+  margin-left: 2rem;
+  > h5 {
+    margin-left: -2rem;
+  }
 }
 
 .swagger-parameters-table {
@@ -181,7 +209,6 @@ h5 {
   width: 100%;
   display: table-header-group;
   font-size: 1.35rem;
-  
   th,
   td {
     padding: 8px 15px;
