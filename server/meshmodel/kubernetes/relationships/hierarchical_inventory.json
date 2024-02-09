@@ -395,7 +395,7 @@
                             "name"
                         ]
                     ],
-                    "description": "In Kubernetes, Secrets are versatile resources that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing Secrets in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+                    "description": "In Kubernetes, Secrets are versatile resources that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources securely.\n\nBy referencing Secrets in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
                 }
             }
         ],
