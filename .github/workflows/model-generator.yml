@@ -50,7 +50,7 @@ jobs:
           commit_message: "New Meshmodel components generated"
           branch: master
       
-      - name: Send Email on Meshmodel Generators Failure
+      - name: Send Email on Model Generator Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3.7.1
         with:
@@ -87,7 +87,7 @@ jobs:
       - name: Build mesheryctl
         run: |
             cd mesheryctl; make;
-      - name: Run Component Updater
+      - name: Run Model Updater
         run: |
           cd mesheryctl;
           ./mesheryctl registry update -p ../server/meshmodel --spreadsheet_id "${{ inputs.spreadsheet_id }}"  --spreadsheet_cred "${{ inputs.spreadsheet_cred }}"
@@ -98,9 +98,9 @@ jobs:
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
-          commit_message: "Meshmodel components updated"
+          commit_message: "Models updated"
           branch: master
-      - name: Send Email on Meshmodel Updaters Failure
+      - name: Send Email on Model Updaters Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3.7.1
         with:
@@ -110,7 +110,7 @@ jobs:
             password: ${{ secrets.MAIL_PASSWORD }}
             subject: GitHub Actions - Workflow Failure
             from: |
-              "Meshmodel Updater" <no-reply@meshery.io>
+              "Model Updater" <no-reply@meshery.io>
             to: developers@meshery.io
             body: |
               The GitHub Actions workflow in ${{ github.repository }} has failed.
