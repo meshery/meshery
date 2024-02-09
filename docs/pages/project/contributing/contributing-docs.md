@@ -398,6 +398,10 @@ You can include block quotes to emphasize text.
 ## Development
 
 
+### Suggested Reading
+
+Disable suggested reading by setting the `suggested-reading` frontmatter variable to `false`.
+
 ### Editable Intra-page Table of Contents Toolbar
 
 Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
@@ -456,4 +460,10 @@ The assign tag is used to create a new variable. It is written in the following 
 {% include code.html code=code_content %}
 
 {% include suggested-reading.html %}
+
+Two helpful resources:
+
+1. Liquid Docs - [https://shopify.github.io/liquid/](https://shopify.github.io/liquid/)
+2. Jekyll Docs - [https://jekyllrb.com/docs/](https://jekyllrb.com/docs/)
+
 
