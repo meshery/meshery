@@ -1,6 +1,7 @@
 ---
 layout: enhanced
 title: Importing a Design
+abstract: Import your existing designs into Meshery.
 permalink: extensions/importing-a-design
 language: en
 display-title: "false"
