@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Key Management Service
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-kms-controller/components/field-export/icons/color/field-export-color.svg

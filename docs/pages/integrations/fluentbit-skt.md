@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-skt
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",

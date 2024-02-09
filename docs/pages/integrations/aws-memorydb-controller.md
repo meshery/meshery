@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-memorydb-controll
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Database
-registrant: aws
+registrant: AWS
 components: 
 - name: cluster
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/cluster/icons/color/cluster-color.svg

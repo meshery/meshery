@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/apisix
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: apisix-route
   colorIcon: assets/img/integrations/apisix/components/apisix-route/icons/color/apisix-route-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Compute
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-ec2-controller/components/field-export/icons/color/field-export-color.svg
