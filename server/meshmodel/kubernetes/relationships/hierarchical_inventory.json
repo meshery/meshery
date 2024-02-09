@@ -469,7 +469,7 @@
                             "name"
                         ]
                     ],
-                    "description": "When deploying applications using ReplicaSets, you may need to configure each replica with specific settings, such as environment variables or configuration files. Secrets can be referenced in the Pod template specification of a ReplicaSet to provide configuration data to each replica pod. DaemonSets, which ensure that a copy of a pod runs on each node, can utilize Secrets to supply configuration data to their pods.\n\nThe keys from the Secret will be exposed as environment variables to the containers within the pods managed by the ReplicaSet."
+                    "description": "When deploying applications using ReplicaSets, you may need to configure each replica with specific settings, such as environment variables or configuration files. Secrets can be referenced in the Pod template specification of a ReplicaSet to provide configuration data to each replica pod."
                 }
             },
             {
