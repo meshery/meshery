@@ -67,8 +67,6 @@ h5 {
 .swagger-method-description {
   padding-bottom: 10px;
   font-size: $base-font-size * 1.2;
-  margin-left: 2rem;
-  
 }
 
 .swagger-method-link {
@@ -140,6 +138,7 @@ h5 {
     display: block;
   }
   p {
+    margin-left: 2rem;
     font-size: $base-font-size * 1.1;
   }
   h5 {
