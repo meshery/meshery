@@ -398,6 +398,10 @@ You can include block quotes to emphasize text.
 ## Development
 
 
+### Suggested Reading
+
+Disable suggested reading by setting the `suggested-reading` frontmatter variable to `false`.
+
 ### Editable Intra-page Table of Contents Toolbar
 
 Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
