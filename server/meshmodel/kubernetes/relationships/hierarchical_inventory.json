@@ -407,11 +407,14 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
                             "spec",
                             "template",
+                            "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -426,10 +429,14 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
+                            "spec",
+                            "template",
                             "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -444,11 +451,14 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
                             "spec",
-                            "template"
+                            "template",
+                            "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -463,11 +473,14 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
                             "spec",
                             "template",
+                            "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -482,10 +495,12 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
                             "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -500,10 +515,14 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
+                            "spec",
+                            "template",
                             "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
@@ -518,12 +537,16 @@
                     "patchStrategy": "replace",
                     "mutatedRef": [
                         [
+                            "settings",
                             "spec",
                             "jobTemplate",
+                            "spec",
+                            "template",
                             "spec",
                             "containers",
                             "_",
                             "envFrom",
+                            "0",
                             "secretRef",
                             "name"
                         ]
