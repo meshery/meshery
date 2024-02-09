@@ -381,6 +381,178 @@
           }
         ]
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CSIDriver",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are responsible for the actual operations of a CSI volume. They are responsible for communicating with the external storage provider and exposing the volume to the kubelet.\n\nCSI drivers are installed on the cluster as a CustomResourceDefinition (CRD) and a DaemonSet. The CRD is used to create a CSIDriver object, which is used to configure the CSI driver. The DaemonSet is used to deploy the CSI driver to each node in the cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind":"Deployment",
+            "model":"kubernetes",
+            "patch":{
+              "patchStrategy":"replace",
+              "mutatedRef":[
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description":"CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes", 
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind":"CronJob",
+            "model":"kubernetes",
+            "patch":{
+              "patchStrategy":"replace",
+              "mutatedRef":[
+                [
+                  "settings",
+                  "spec",
+                  "jobTemplate",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description":"CSI drivers are used to provide persistent storage to containers."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to containers."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
