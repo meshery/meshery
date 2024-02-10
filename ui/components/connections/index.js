@@ -86,7 +86,7 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { renderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 
 const ACTION_TYPES = {
@@ -450,7 +450,7 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={renderTooltipContent({
+              tooltip={RenderTooltipContent({
                 showPriortext:
                   'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
                 link: envUrl,
@@ -650,7 +650,7 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={renderTooltipContent({
+              tooltip={RenderTooltipContent({
                 showPriortext:
                   'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
                 link: url,
@@ -983,7 +983,7 @@ function Connections(props) {
     });
   };
 
-  const updateConnectionStatus = (connectionKind, requestBody) => {
+  const UpdateConnectionStatus = (connectionKind, requestBody) => {
     useUpdateConnectionMutator({
       connectionKind: connectionKind,
       connectionPayload: requestBody,

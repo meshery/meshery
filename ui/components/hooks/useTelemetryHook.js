@@ -8,13 +8,13 @@ import { useDispatch } from 'react-redux';
 export function useTelemetryHook(connectionType) {
   switch (connectionType) {
     case CONNECTION_KINDS.PROMETHEUS:
-      return pingPrometheus();
+      return usePrometheusPing();
     case CONNECTION_KINDS.GRAFANA:
-      return pingGrafana();
+      return useGrafanaPing();
   }
 }
 
-function pingPrometheus() {
+function usePrometheusPing() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
@@ -39,7 +39,7 @@ function pingPrometheus() {
   return ping;
 }
 
-function pingGrafana() {
+function useGrafanaPing() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
