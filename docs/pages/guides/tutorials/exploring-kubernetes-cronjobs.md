@@ -74,6 +74,18 @@ Show user how to do this using MeshMap Designer to drag and drop components and 
 
 -->
 
+1. Open the MeshMap tab located in the left panel.
+2. Upon opening MeshMap, ensure that you are on the Design tab, which can be found at the top center of the canvas.
+3. Navigate to the Design option located in the top menu of the left panel. Using the search bar, type in the name of your app, which in this instance is the Minecraft App.
+4. Once your app appears in the list, click on it to upload the design file onto the canvas.
+[![Navigate MeshMap]({{site.baseurl}}/assets/img/meshmap/navigate-meshmap.png)]({{site.baseurl}}/assets/img/meshmap/navigate-meshmap.png)
+5. Locate the control panel at the bottom of the canvas and choose the Kubernetes option.
+6. Using the search bar, enter "Cron Job" and click on the corresponding icon to display it on the canvas.
+[![Navigate MeshMap]({{site.baseurl}}/assets/img/meshmap/select-cronjob.png)]({{site.baseurl}}/assets/img/meshmap/select-cronjob.png)
+7. Once the cronjob component appears on the canvas, click on it to open the toolbar and begin configuration.
+[![CronJob Toolbar]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)
+8. Fill out the details for the CronJob i.e Name field: "backup-cronjob". Under **Spec**, enter the specifications, i.e schedule: "0 * * * *" to run every hour.
+    
    
 <details>
 <summary>
@@ -100,6 +112,10 @@ spec:
 \```
 
 </details>
+
+9. Click on the deploy icon located in the top right corner.
+10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button. You'll receive a confirmation message indicating that your app has been successfully deployed.
+[![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy.png)
 
 Apply the CronJob configuration:
 
@@ -146,12 +162,6 @@ Show user how to use Designs and components in MeshMap Designer.
 -->
 
 
-
-\```bash
-kubectl delete cronjob backup-cronjob
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/deploying-wordpress/mysql-deployment.yaml
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/deploying-wordpress/wordpress-deployment.yaml
-\```
 
 #### 7. **Saving and Sharing**
    - Save your scenario in Meshery Playground for future reference.
