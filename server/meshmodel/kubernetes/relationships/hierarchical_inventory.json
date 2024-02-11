@@ -600,14 +600,14 @@
             }
           },
           {
-            "kind": "ReplicaSet",
+            "kind": "DaemonSet",
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 ["settings", "spec", "template"]
               ],
-              "description": "A ReplicaSet "
+              "description": "A DaemonSet "
             }
           }
         ],
