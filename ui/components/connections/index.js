@@ -1014,7 +1014,7 @@ function Connections(props) {
       const requestBody = JSON.stringify({
         [connectionId]: e.target.value,
       });
-      updateConnectionStatus(connectionKind, requestBody);
+      UpdateConnectionStatus(connectionKind, requestBody);
     }
   };
 
@@ -1031,7 +1031,7 @@ function Connections(props) {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
-        updateConnectionStatus(connectionKind, requestBody);
+        UpdateConnectionStatus(connectionKind, requestBody);
       }
     }
   };
@@ -1059,7 +1059,7 @@ function Connections(props) {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
           });
-          updateConnectionStatus(connections[index].kind, requestBody);
+          UpdateConnectionStatus(connections[index].kind, requestBody);
         });
       }
     }
