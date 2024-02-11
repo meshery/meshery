@@ -572,7 +572,7 @@
               "mutatorRef": [
                 ["settings", "template"]
               ],
-              "description": "A PodTemplate "
+              "description": "A Pod template is a blueprint defining the configuration for creating Kubernetes pods, encapsulating specifications for containers, volumes, and other settings"
             }
           }
         ],
