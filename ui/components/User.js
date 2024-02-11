@@ -13,8 +13,10 @@ import Popper from '@material-ui/core/Popper';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import dataFetch from '../lib/data-fetch';
+import { Provider, connect } from 'react-redux';
+import { store } from '../store';
+import { bindActionCreators } from 'redux';
+import { useLazyGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { styled } from '@mui/material/styles';
@@ -45,10 +47,10 @@ const User = (props) => {
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   // const anchorEl = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const dispatch = useDispatch();
   const router = useRouter();
 
-  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+  const [triggerGetLoggedInUser] = useLazyGetLoggedInUserQuery();
+  const [triggerGetToken] = useLazyGetTokenQuery();
 
   const handleToggle = (event) => {
     setAnchorEl(event.currentTarget);
@@ -67,31 +69,27 @@ const User = (props) => {
   };
 
   const handleGetToken = () => {
-    dataFetch(
-      '/api/token',
-      { credentials: 'same-origin' },
-      (data) => {
+    triggerGetToken()
+      .unwrap()
+      .then((data) => {
         exportToJsonFile(data, 'auth.json');
-      },
-      (error) => ({ error }),
-    );
+      })
+      .catch((error) => {
+        console.error('Error fetching token through useLazyGetTokenQuery() hook: ', error);
+      });
   };
 
   useEffect(() => {
-    dataFetch(
-      '/api/user',
-      {
-        credentials: 'same-origin',
-      },
-      (userData) => {
+    triggerGetLoggedInUser()
+      .unwrap()
+      .then((userData) => {
         setUser(userData);
-        dispatch(updateUser({ user: userData }));
-      },
-      (error) => ({
-        error,
-      }),
-    );
-  }, [dispatch]);
+        props.updateUser({ user: userData });
+      })
+      .catch((error) => {
+        console.error('Error fetching user through useLazyGetLoggedInUserQuery() hook: ', error);
+      });
+  }, []);
 
   useEffect(() => {
     const { capabilitiesRegistry } = props;
@@ -101,7 +99,7 @@ const User = (props) => {
         ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
       );
     }
-  }, [capabilitiesRegistry, capabilitiesLoaded]);
+  }, [capabilitiesLoaded]);
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
@@ -212,4 +210,20 @@ const User = (props) => {
   );
 };
 
-export default User;
+const UserProvider = (props) => {
+  return (
+    <Provider store={store}>
+      <User {...props} />
+    </Provider>
+  );
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: bindActionCreators(updateUser, dispatch),
+});
+
+const mapStateToProps = (state) => ({
+  capabilitiesRegistry: state.get('capabilitiesRegistry'),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProvider);
