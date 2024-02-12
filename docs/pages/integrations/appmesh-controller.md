@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/appmesh-controller
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: backend-group
   colorIcon: assets/img/integrations/appmesh-controller/components/backend-group/icons/color/backend-group-color.svg

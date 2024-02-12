@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-control
 description: 
 integrations-category: Machine Learning
 integrations-subcategory: Machine Learning
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/field-export/icons/color/field-export-color.svg

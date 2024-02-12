@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-iam-controller
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security Identity Compliance
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-iam-controller/components/field-export/icons/color/field-export-color.svg

@@ -16,7 +16,7 @@
     <div class="flex-container">
       <div class="left-container">
         <div class="sidebar-container-wrapper">
-          <div class="sidebar-container">{% include_cached sidebar.html %}</div>
+          <div class="sidebar-container">{% include sidebar.html %}</div>
         </div>
 
         <div class="icon-container">
@@ -58,9 +58,9 @@
             {% endfor %}
           </div>
           {% endif %}  
-          
-          {% include_cached suggested-reading.html language="en" %} 
-          
+          {% if page.suggested-reading != false %}
+            {% include_cached suggested-reading.html language="en" %} 
+          {% endif %}  
           {% include_cached feedback.html %}
         </div>
       </main>
