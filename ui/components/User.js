@@ -77,7 +77,7 @@ const User = (props) => {
         exportToJsonFile(data, 'auth.json');
       })
       .catch((error) => {
-        console.error('Error fetching token through useLazyGetTokenQuery() hook: ', error);
+        console.error('Error fetching token: ', error);
       });
   };
 
@@ -89,7 +89,7 @@ const User = (props) => {
         props.updateUser({ user: userData });
       })
       .catch((error) => {
-        console.error('Error fetching user through useLazyGetLoggedInUserQuery() hook: ', error);
+        console.error('Error fetching user: ', error);
       });
   }, []);
 
