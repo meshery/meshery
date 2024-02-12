@@ -371,10 +371,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings", "metadata", "name"],
-                ["settings", "metadata", "namespace"],
-                ["settings", "metadata", "kind"],
-                ["settings", "metadata", "apiVersion"]
+                ["settings", "regarding", "name"],
+                ["settings", "regarding", "namespace"],
+                ["settings", "regarding", "kind"],
+                ["settings", "regarding", "apiVersion"]
               ],
               "description": "An Event "
             }
