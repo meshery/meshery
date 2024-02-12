@@ -178,8 +178,6 @@
           url: installation/compatibility-matrix
         - title: App Mesh
           url: extensibility/adapters/app-mesh
-        - title: Citrix Service Mesh
-          url: extensibility/adapters/cpx
         - title: Cilium Service Mesh
           url: extensibility/adapters/cilium
         - title: Consul
@@ -194,8 +192,6 @@
           url: extensibility/adapters/nsm
         - title: NGINX Service Mesh
           url: extensibility/adapters/nginx-sm
-        - title: Open Service Mesh
-          url: extensibility/adapters/osm
         - title: Tanzu
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
