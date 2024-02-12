@@ -585,7 +585,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template"]
               ],
-              "description": "A Deployment "
+              "description": "Deployments use pod templates to define the desired state of pods, enabling easy scaling, rolling updates, and self-healing of applications within Kubernetes clusters, ensuring consistency and reliability during deployment operations."
             }
           },
           {
@@ -596,7 +596,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template"]
               ],
-              "description": "A StatefulSet "
+              "description": "StatefulSets utilize pod templates to maintain stateful applications' unique identities and ordered scaling behaviors, ensuring persistent storage and network identifiers, crucial for databases and distributed systems' reliable operation."
             }
           },
           {
@@ -607,7 +607,40 @@
               "mutatedRef": [
                 ["settings", "spec", "template"]
               ],
-              "description": "A DaemonSet "
+              "description": "DaemonSets utilize pod templates to ensure specific pods run on designated nodes within the cluster, facilitating the deployment of essential system services such as logging, monitoring, and networking across the Kubernetes infrastructure, enhancing cluster management and operational efficiency."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "ReplicaSets leverage pod templates to ensure the desired number of identical pod replicas are running, providing fault tolerance and high availability for applications by automatically managing pod lifecycle based on defined specifications."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "Jobs use pod templates to specify the container images, commands, and resources required for executing batch processing tasks reliably within Kubernetes clusters, ensuring consistency and repeatability in job execution."
+            }
+          }, 
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "jobTemplate", "spec", "container"]
+              ],
+              "description":"CronJobs employ pod templates to define periodic or scheduled tasks' configurations, automating the creation and execution of pods based on defined schedules, enabling efficient handling of repetitive tasks within Kubernetes clusters."
             }
           }
         ],
