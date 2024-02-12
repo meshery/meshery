@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Performance Management with Meshery
 abstract: This guide is to help users get a better overview of running and managing performance tests in Meshery
 permalink: guides/performance-management/performance-management
