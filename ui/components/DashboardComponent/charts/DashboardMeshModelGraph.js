@@ -9,7 +9,7 @@ import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import {
   CustomTextTooltip,
-  renderTooltipContent,
+  RenderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import {
@@ -110,7 +110,7 @@ function MeshModelContructs({ classes }) {
               backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={renderTooltipContent({
+              title={RenderTooltipContent({
                 showPriortext:
                   'Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.',
                 showAftertext: 'to learn more about Models, Components, and Relationships',
@@ -202,7 +202,7 @@ function MeshModelCategories({ classes }) {
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               backgroundColor="#3C494F"
-              title={renderTooltipContent({
+              title={RenderTooltipContent({
                 showPriortext:
                   'Each Model corresponds to a category, so the category shows the high-level use case of that model, e.g., prometheus is under “Observability and Analysis category.',
                 showAftertext: 'to learn more about all Categories',

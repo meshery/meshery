@@ -9,7 +9,7 @@ import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import {
   CustomTextTooltip,
-  renderTooltipContent,
+  RenderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
 import { InfoOutlined } from '@material-ui/icons';
@@ -64,7 +64,7 @@ export default function ConnectionStatsChart({ classes }) {
             <CustomTextTooltip
               backgroundColor="#3C494F"
               interactive={true}
-              title={renderTooltipContent({
+              title={RenderTooltipContent({
                 showPriortext:
                   'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
                 link: url,
