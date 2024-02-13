@@ -1066,7 +1066,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings", "spec", "jobTemplate", "spec", "container"]
+                ["settings", "spec", "jobTemplate", "spec", "template"]
               ],
               "description":"CronJobs employ pod templates to define periodic or scheduled tasks' configurations, automating the creation and execution of pods based on defined schedules, enabling efficient handling of repetitive tasks within Kubernetes clusters."
             }
