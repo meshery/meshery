@@ -1,1 +1,48 @@
-{"kind":"GitTag","apiVersion":"v2.edp.epam.com/v1","displayName":"Git Tag","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"","model":"edp-install","modelDisplayName":"EDP Install","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"edp-install","version":"3.1.0","displayName":"EDP Install","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"isAnnotation":false,"source_uri":"https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.3.0.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"GitTag is the Schema for the GitTags API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GitTagSpec defines the desired state of GitTag.\",\n   \"properties\": {\n    \"branch\": {\n     \"description\": \"Name of a branch.\",\n     \"type\": \"string\"\n    },\n    \"codebase\": {\n     \"description\": \"Name of Codebase associated with.\",\n     \"type\": \"string\"\n    },\n    \"tag\": {\n     \"description\": \"Name of a git tag.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"branch\",\n    \"codebase\",\n    \"tag\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Git Tag\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GitTag",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Git Tag",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "edp-install",
+   "modelDisplayName": "EDP Install",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "edp-install",
+   "version": "3.1.0",
+   "displayName": "EDP Install",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.3.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GitTag is the Schema for the GitTags API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GitTagSpec defines the desired state of GitTag.\",\n   \"properties\": {\n    \"branch\": {\n     \"description\": \"Name of a branch.\",\n     \"type\": \"string\"\n    },\n    \"codebase\": {\n     \"description\": \"Name of Codebase associated with.\",\n     \"type\": \"string\"\n    },\n    \"tag\": {\n     \"description\": \"Name of a git tag.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"branch\",\n    \"codebase\",\n    \"tag\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Git Tag\",\n \"type\": \"object\"\n}"
+ }
