@@ -6,6 +6,7 @@ permalink: guides/configuration-management/working-with-designs
 type: guides
 category: configuration
 language: en
+suggested-reading: false
 abstract: Learn how to use Meshery Designs effectively
 redirect_from:
   - /tasks/patterns.md

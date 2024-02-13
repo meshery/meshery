@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Extensions
 permalink: extensions/
 redirect_from: extensibility/extensions
