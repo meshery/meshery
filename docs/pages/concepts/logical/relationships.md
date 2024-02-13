@@ -12,7 +12,7 @@ redirect_from:
 
 Relationships define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
 
-{% include/alert.html type="info" title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
+{% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>Contributing to Meshery Relationships</a> guide." %}
 
 ## Semantic and Non-Semantic Relationships
 
@@ -38,7 +38,7 @@ The `isAnnotation` attribute of a Relationship or Component determines whether t
 - Subtypes
 - Selectors
 
-## Kind - Subtypes of Relationships
+## Kind and Subtypes of Relationships
 
 The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 
@@ -86,14 +86,38 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 ## Selectors in Relationships
 
+In Meshery, a selector is a way to specify which set of components a certain other component should affect or interact with. Selectors provide a flexible and powerful way to manage and orchestrate resources within a under Meshery's management.
+
 Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
 
-1. **ConfigMap - Pod**
-2. **ConfigMap - Deployment**
-3. **WASMFilter - EnvoyFilter**
+<table class="table table-dark table-active">
+    <tr>
+        <th>Model Component</th>
+        <th>Relationship Kind</th>
+        <th>Relationship SubType</th>
+        <th>Model Component</th>
+    </tr>
+    <tr>
+        <td>Kubernetes ConfigMap</td>
+        <td>Hierarchical</td>
+        <td>Inventory</td>
+        <td>Kubernetes Pod</td>
+    </tr>
+    <tr>
+        <td>Kubernetes ConfigMap</td>
+        <td>Hierarchical</td>
+        <td>Inventory</td>
+        <td>Kubernetes Deployment</td>
+    </tr>
+    <tr>
+        <td>Meshery WASMFilter</td>
+        <td>Hierarchical</td>
+        <td>Inventory</td>
+        <td>Istio EnvoyFilter</td>
+    </tr>
+</table>
 
-The above pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components.
-A snippet of the selector backing this relationship is listed below.
+The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
 
  <!-- add images -->
 
@@ -112,11 +136,11 @@ A snippet of the selector backing this relationship is listed below.
 
 ### How Relationships are formed?
 
-1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a node inisde other node.
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies)'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
-_Note: It may happen that, you created a relationship from the UI, but the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) disapproved/overrided the decision if all the constraints for a particular relationship are not satisfied._
-
-2. Relationships gets auto-created if the user update's the node config such that the relationship criteria is satisfied. _Open the [catalog item](https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html) in playground and follow the steps in the description._
+2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied. 
+  
+{% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
 
@@ -133,11 +157,17 @@ Patches in Meshery relationships utilize strategies and references (mutatorRef/m
 
 ## Meshery Registry
 
-You can reference and search the full set of registered relationships in Meshery UI --> Setttings --> Registry
+In any given Meshery deployment, you can reference and search the full set of registered relationships in using either of Meshery's client interfaces.
 
-{% include/alert.html type="info" title="Future Feature" %}
+**Meshery UI**
 
+- Visit *Setttings* --> *Registry*
+
+**Meshery CLI**
+
+- Run `mesheryctl model list relationships`
+
+<!-- 
 ```
 mesheryctl model import -f [ oci:// | file:// ]`
-```
-
+``` -->
