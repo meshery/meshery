@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cockroachdb-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: crdb-cluster
   colorIcon: assets/img/integrations/cockroachdb-operator/components/crdb-cluster/icons/color/crdb-cluster-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-ecr-controller
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Containers
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-ecr-controller/components/field-export/icons/color/field-export-color.svg

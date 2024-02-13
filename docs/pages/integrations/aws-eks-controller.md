@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Containers
-registrant: aws
+registrant: AWS
 components: 
 - name: cluster
   colorIcon: assets/img/integrations/aws-eks-controller/components/cluster/icons/color/cluster-color.svg

@@ -1,11 +1,11 @@
 ---
-layout: default
+layout: enhanced
 title: Upgrading Meshery and all of its components
 abstract: How to Meshery and all of its components
 permalink: guides/upgrade
 display-title: "false"
 type: guides
-category: administration
+category: operating
 language: en
 abstract: How to upgrade Meshery and all of its components
 ---

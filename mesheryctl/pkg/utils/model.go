@@ -7,12 +7,15 @@ import (
 	"strconv"
 	"strings"
 
+	mutils "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
 
 var (
-	shouldRegisterMod = "publishToSites"
+	shouldRegisterMod        = "publishToSites"
+	shouldRegisterToRegsitry = "publishToRegistry"
 )
 
 type ModelCSV struct {
@@ -53,6 +56,34 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites"`
 }
 
+func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
+	var isModelPublished, isAnnotation bool
+	if strings.ToLower(mcv.PublishToRegistry) == "true" {
+		isModelPublished = true
+	}
+	if strings.ToLower(mcv.IsAnnotation) == "true" {
+		isAnnotation = true
+	}
+
+	model := v1alpha1.Model{
+		Name:        mcv.Model,
+		Version:     version,
+		DisplayName: mcv.ModelDisplayName,
+		Metadata: map[string]interface{}{
+			"isAnnotation": isAnnotation,
+			"svgColor":     mcv.SVGColor,
+			"svgWhite":     mcv.SVGWhite,
+			"svgComplete":  mcv.SVGComplete,
+			"subCategory":  mcv.SubCategory, // move as first class attribute
+			"published":    isModelPublished,
+		},
+		Category: v1alpha1.Category{
+			Name: mcv.Category,
+		},
+	}
+	return model
+}
+
 type ModelCSVHelper struct {
 	SpreadsheetID  int64
 	SpreadsheetURL string
@@ -64,7 +95,9 @@ type ModelCSVHelper struct {
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	fmt.Println("Downloading CSV from:", sheetURL)
-	csvPath := filepath.Join(utils.GetHome(), ".meshery", "content", "models.csv")
+	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+	_ = os.MkdirAll(dirPath, 0755)
+	csvPath := filepath.Join(dirPath, "models.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, err
@@ -79,11 +112,17 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet() error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
-		index := GetIndexForRegisterCol(columns, shouldRegisterMod)
+		index := 0
+
+		if parseForDocs {
+			index = GetIndexForRegisterCol(columns, shouldRegisterMod)
+		} else {
+			index = GetIndexForRegisterCol(columns, shouldRegisterToRegsitry)
+		}
 		if index != -1 && index < len(currentRow) {
 			shouldRegister := currentRow[index]
 			return strings.ToLower(shouldRegister) == "true"
@@ -95,17 +134,17 @@ func (mch *ModelCSVHelper) ParseModelsSheet() error {
 		return ErrFileRead(err)
 	}
 
-	go func() error {
+	go func() {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
-			return ErrFileRead(err)
+			errorChan <- err
 		}
-		return nil
 	}()
 	for {
 		select {
 
 		case data := <-ch:
+			data.Registrant = mutils.ReplaceSpacesAndConvertToLowercase(data.Registrant)
 			mch.Models = append(mch.Models, data)
 			fmt.Printf("Reading Modal: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:

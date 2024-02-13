@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

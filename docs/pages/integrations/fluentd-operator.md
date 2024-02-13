@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fluentd-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: fluentd-config
   colorIcon: assets/img/integrations/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg

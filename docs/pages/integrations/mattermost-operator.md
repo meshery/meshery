@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 
 integrations-category: Tools
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: cluster-installation
   colorIcon: assets/img/integrations/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg
