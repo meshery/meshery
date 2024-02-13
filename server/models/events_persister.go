@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/events"
 	"gorm.io/gorm/clause"
@@ -68,10 +69,11 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
+	sortOn := models.SanitizeOrderInput(eventsFilter.SortOn, []string{"created_at", "updated_at", "name"})
 	if eventsFilter.Order == "asc" {
-		finder = finder.Order(eventsFilter.SortOn)
+		finder = finder.Order(sortOn)
 	} else {
-		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
+		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: sortOn}, Desc: true})
 	}
 
 	var count int64
