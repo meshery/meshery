@@ -1,1 +1,48 @@
-{"kind":"Gerrit","apiVersion":"v2.edp.epam.com/v1","displayName":"Gerrit","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"","model":"edp-install","modelDisplayName":"EDP Install","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"edp-install","version":"3.1.0","displayName":"EDP Install","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"isAnnotation":false,"source_uri":"https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"Gerrit is the Schema for the gerrits API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritSpec defines the desired state of Gerrit.\",\n   \"properties\": {\n    \"basePath\": {\n     \"description\": \"BasePath gerrit http route base path.\",\n     \"type\": \"string\"\n    },\n    \"externalURL\": {\n     \"description\": \"ExternalURL gerrit full external url for keycloak or other integrations\",\n     \"type\": \"string\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"restAPIUrl\": {\n     \"description\": \"RestAPIUrl gerrit http full api url.\",\n     \"type\": \"string\"\n    },\n    \"sshPort\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"sshUrl\": {\n     \"description\": \"SSHUrl gerrit ssh url.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"keycloakSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Gerrit",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Gerrit",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "edp-install",
+   "modelDisplayName": "EDP Install",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "edp-install",
+   "version": "3.1.0",
+   "displayName": "EDP Install",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Gerrit is the Schema for the gerrits API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritSpec defines the desired state of Gerrit.\",\n   \"properties\": {\n    \"basePath\": {\n     \"description\": \"BasePath gerrit http route base path.\",\n     \"type\": \"string\"\n    },\n    \"externalURL\": {\n     \"description\": \"ExternalURL gerrit full external url for keycloak or other integrations\",\n     \"type\": \"string\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"restAPIUrl\": {\n     \"description\": \"RestAPIUrl gerrit http full api url.\",\n     \"type\": \"string\"\n    },\n    \"sshPort\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"sshUrl\": {\n     \"description\": \"SSHUrl gerrit ssh url.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"keycloakSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit\",\n \"type\": \"object\"\n}"
+ }

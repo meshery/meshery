@@ -10,7 +10,10 @@ table {
   background-color: transparent;
 }
 
-.table th,
+table th { 
+  font-weight: bold;
+  background-color: var(--color-primary-dark); 
+}
 .td-box .row.section > table th,
 .td-content > table th,
 .table td,
