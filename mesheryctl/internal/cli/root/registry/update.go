@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	"github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
@@ -53,6 +54,7 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "registry-update")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
