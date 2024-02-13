@@ -793,6 +793,70 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for Deployments."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for StatefulSet."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for ReplicaSet."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "HorizontalPodAutoscaler",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "scaleTargetRef", "apiVersion"], 
+                ["settings", "spec", "scaleTargetRef", "name"], 
+                ["settings", "spec", "scaleTargetRef", "kind"]
+              ],
+              "description": "Horizontal Pod Autoscaler automatically scales the number of pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics). Horizontal Pod Autoscaling does not apply to objects that can't be scaled, for example, DaemonSets."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
