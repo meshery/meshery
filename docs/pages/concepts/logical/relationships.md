@@ -155,9 +155,9 @@ The Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logic
 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
-## Meshery Registry
+# Itemizing your Relationship Definitions in your Meshery deployment
 
-In any given Meshery deployment, you can reference and search the full set of registered relationships in using either of Meshery's client interfaces.
+In any given Meshery deployment, you can reference and search the full set of registered relationships (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
 **Meshery UI**
 
@@ -165,7 +165,7 @@ In any given Meshery deployment, you can reference and search the full set of re
 
 **Meshery CLI**
 
-- Run `mesheryctl model list relationships`
+- Run `mesheryctl relationship list`
 
 <!-- 
 ```

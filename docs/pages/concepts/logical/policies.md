@@ -8,7 +8,7 @@ language: en
 list: include
 ---
 
-Policies offer an evaluation algorithm to ensure desired behavior enforcement. [Policies](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
+Policies offer an evaluation algorithm to ensure desired behavior enforcement. Policies can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
 [![Meshery Models Policy Evaluation]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg
 )]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg)
@@ -40,8 +40,17 @@ Refer the OPA FAQs to know how conflicts are resolved. _https://www.openpolicyag
 **Limitations:**
 It may happen that certain eval decisions contain results such that two different components create a conflicting relationship with same component. While this is semantically correct, the visual representation of the relationship in such cases may be undesirable, and you may see relationships and components being redrawn depending upon how the client / Meshery UI visualizes the relationships.
 
-### Policy Registry
+# Itemizing your Policy Definitions in your Meshery deployment
 
-The Policy Registry is a place where you can reference and search the full set of registered policies in Meshery UI --> Setttings --> Registry
+In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
-{% include alert.html type="info" title="Future Feature" content="Policy evaluation in WASM runtime is on roadmap for Meshery v0.8.3." %}
+**Meshery UI**
+
+- Visit *Setttings* --> *Registry*
+
+**Meshery CLI**
+
+- Run `mesheryctl policy list`
+
+{% include alert.html type="warning" title="Future Feature" content="Policy evaluation in WASM runtime is on roadmap for Meshery v0.8.3." %}
+
