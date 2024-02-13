@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-load-balancer-con
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: ingress-class-params
   colorIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg

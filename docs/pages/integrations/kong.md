@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kong
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: API Gateway
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: ingress-class-parameters
   colorIcon: assets/img/integrations/kong/components/ingress-class-parameters/icons/color/ingress-class-parameters-color.svg

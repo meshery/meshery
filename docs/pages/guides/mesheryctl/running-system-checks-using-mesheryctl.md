@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Running system checks using Meshery CLI
 permalink: guides/mesheryctl/running-system-checks-using-mesheryctl
 language: en

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubeflow
 description: 
 integrations-category: Machine Learning
 integrations-subcategory: Machine Learning
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: scheduled-workflow
   colorIcon: assets/img/integrations/kubeflow/components/scheduled-workflow/icons/color/scheduled-workflow-color.svg

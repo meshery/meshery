@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cortex
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Metrics
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Durably store data for longer than the lifetime of any single machine, and use this data for long term capacity planning.",

@@ -1,7 +1,9 @@
 ---
-layout: default
+layout: enhanced
 title: Performance Management Guides
 permalink: guides/performance-management
+type: guides
+category: performance
 language: en
 list: exclude
 abstract: Guides for understanding Meshery's ability to characterize and analyze performance of your infrastructure and applications.

@@ -2,6 +2,7 @@ import { withStyles } from '@material-ui/styles';
 import { Tooltip } from '@material-ui/core';
 import { ziCalc } from '../../../utils/zIndex';
 import { makeStyles } from '@material-ui/core/styles';
+import { Colors } from '@/themes/app';
 
 const useStyles = makeStyles((theme) => ({
   toolTip: {
@@ -11,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const renderTooltipContent = ({ showInfotext, link }) => {
+export const RenderTooltipContent = ({ showPriortext, showAftertext, link }) => {
   const classes = useStyles();
 
   const handleClick = (e) => {
@@ -21,20 +22,21 @@ export const renderTooltipContent = ({ showInfotext, link }) => {
 
   return (
     <div>
+      <span style={{ marginRight: '2px' }}>{showPriortext}</span>
       <a
         onClick={handleClick}
         className={classes.toolTip}
         target="_blank"
         rel="noopener noreferrer"
       >
-        Learn more
+        Read docs
       </a>
-      <span style={{ marginLeft: '2px' }}>{showInfotext}</span>
+      <span style={{ marginLeft: '2px' }}>{showAftertext}</span>
     </div>
   );
 };
 
-export const CustomTextTooltip = ({ backgroundColor, flag, ...props }) => {
+export const CustomTextTooltip = ({ backgroundColor = Colors.charcoal, flag, ...props }) => {
   const CustomTooltip = withStyles(() => ({
     tooltip: {
       backgroundColor: backgroundColor,

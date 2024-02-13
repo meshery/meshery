@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-rds-controller
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: aws
+registrant: AWS
 components: 
 - name: db-cluster
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster/icons/color/db-cluster-color.svg

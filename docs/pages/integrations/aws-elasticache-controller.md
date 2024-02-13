@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-contr
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: aws
+registrant: AWS
 components: 
 - name: cache-parameter-group
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-parameter-group/icons/color/cache-parameter-group-color.svg

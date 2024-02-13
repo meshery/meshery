@@ -63,7 +63,6 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
-import InfoIcon from '@material-ui/icons/Info';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
@@ -87,7 +86,8 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { renderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -437,8 +437,8 @@ function Connections(props) {
               columnData={column}
               icon={
                 <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoIcon
-                    color={theme.palette.secondary.iconMain}
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
                     style={{
                       cursor: 'pointer',
                       height: 20,
@@ -450,9 +450,11 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={renderTooltipContent({
-                showInfotext: 'about enviroments and about assigning resources',
+              tooltip={RenderTooltipContent({
+                showPriortext:
+                  'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
                 link: envUrl,
+                showAftertext: 'to learn more about Environments',
               })}
             />
           );
@@ -635,8 +637,8 @@ function Connections(props) {
               onSort={() => sortColumn(index)}
               icon={
                 <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoIcon
-                    color={theme.palette.secondary.iconMain}
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
                     style={{
                       cursor: 'pointer',
                       height: 20,
@@ -648,9 +650,11 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={renderTooltipContent({
-                showInfotext: 'about connection and status',
+              tooltip={RenderTooltipContent({
+                showPriortext:
+                  'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
                 link: url,
+                showAftertext: 'to learn more about Connection States',
               })}
             />
           );
@@ -979,7 +983,7 @@ function Connections(props) {
     });
   };
 
-  const updateConnectionStatus = (connectionKind, requestBody) => {
+  const UpdateConnectionStatus = (connectionKind, requestBody) => {
     useUpdateConnectionMutator({
       connectionKind: connectionKind,
       connectionPayload: requestBody,
@@ -1000,16 +1004,17 @@ function Connections(props) {
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
     let response = await modalRef.current.show({
-      title: `Connection status transition`,
+      title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       options: ['Confirm', 'No'],
+      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.CONFIRMATION,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
         [connectionId]: e.target.value,
       });
-      updateConnectionStatus(connectionKind, requestBody);
+      UpdateConnectionStatus(connectionKind, requestBody);
     }
   };
 
@@ -1019,13 +1024,14 @@ function Connections(props) {
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
         options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
-        updateConnectionStatus(connectionKind, requestBody);
+        UpdateConnectionStatus(connectionKind, requestBody);
       }
     }
   };
@@ -1036,6 +1042,7 @@ function Connections(props) {
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
         options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
@@ -1052,7 +1059,7 @@ function Connections(props) {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
           });
-          updateConnectionStatus(connections[index].kind, requestBody);
+          UpdateConnectionStatus(connections[index].kind, requestBody);
         });
       }
     }

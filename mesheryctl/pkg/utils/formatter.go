@@ -3,7 +3,7 @@ package utils
 import (
 	"io"
 	"os"
-	
+
 	"github.com/layer5io/meshkit/logger"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -41,4 +41,3 @@ func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 		os.Exit(1)
 	}
 	Log = logger
-}

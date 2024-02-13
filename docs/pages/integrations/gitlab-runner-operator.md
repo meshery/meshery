@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/gitlab-runner-operato
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: runner
   colorIcon: assets/img/integrations/gitlab-runner-operator/components/runner/icons/color/runner-color.svg

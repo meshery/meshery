@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-lambda-controller
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Serverless
-registrant: aws
+registrant: AWS
 components: 
 - name: code-signing-config
   colorIcon: assets/img/integrations/aws-lambda-controller/components/code-signing-config/icons/color/code-signing-config-color.svg

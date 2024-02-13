@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/brigade
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Designed to quickly and efficently handle large volumes of events.",

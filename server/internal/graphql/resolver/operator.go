@@ -199,7 +199,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return nil, model.ErrMesheryClientNil
 	}
 
-	status := model.GetMeshSyncInfo(kubeclient, nil)
+	status := model.GetMeshSyncInfo(kubeclient, nil, r.Log)
 	return &status, nil
 }
 
@@ -223,7 +223,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 		return nil, model.ErrMesheryClientNil
 	}
 
-	status := model.GetBrokerInfo(kubeclient)
+	status := model.GetBrokerInfo(kubeclient, r.Log)
 	return &status, nil
 }
 

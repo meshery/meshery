@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: compute-node
   colorIcon: assets/img/integrations/apache-shardingsphere-operator-charts/components/compute-node/icons/color/compute-node-color.svg

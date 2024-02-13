@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: node-feature
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
