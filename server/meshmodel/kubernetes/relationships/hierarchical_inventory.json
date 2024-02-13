@@ -921,6 +921,73 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationController",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec"]
+              ],
+              "description": "In Kubernetes, Replication Controllers  are used to ensure that a specified number of pod replicas are running at any given time."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A Deployment manages a set of identical Pods, often referred to as a ReplicaSet. Replication Controller provides declarative updates to applications, managing the deployment and scaling of Pods."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "ReplicaSet use Replication Controllers internally to manage the desired number of replicas. Replication Controllers ensure that if a Pod fails or is deleted, a new Pod is created to maintain the desired number of replicas. "
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A StatefulSet manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods. StatefulSets are used for stateful applications, such as databases."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A DaemonSet ensures that all (or some) nodes run a copy of a Pod. It's typically used for running system daemons or agents on every node in a Kubernetes cluster."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
     }
   ]
 }
