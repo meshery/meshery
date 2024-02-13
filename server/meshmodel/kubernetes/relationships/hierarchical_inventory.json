@@ -857,6 +857,70 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Deployment "
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A StatefulSet "
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A DaemonSet "
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Lease",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["ownerReferences", "_", "name"],
+                ["ownerReferences", "_", "kind"],
+                ["ownerReferences", "_", "apiVersion"]
+              ],
+              "description": "A Lease is a mechanism used for coordinating activities between multiple instances of a controller, ensuring that only one instance is actively performing certain tasks at any given time."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
