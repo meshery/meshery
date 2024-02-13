@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-apigatewayv2-cont
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: aws
+registrant: AWS
 components: 
 - name: api
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api/icons/color/api-color.svg

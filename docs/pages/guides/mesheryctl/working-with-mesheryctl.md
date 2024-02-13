@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Using Meshery CLI
 abstract: How to use mesheryctl
 permalink: guides/mesheryctl/working-with-mesheryctl

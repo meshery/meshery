@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchserv
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: aws
+registrant: AWS
 components: 
 - name: elasticsearch-domain
   colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
