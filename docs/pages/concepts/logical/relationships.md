@@ -7,18 +7,30 @@ abstract: "Meshery Relationships identify and facilitate genealogy between Compo
 language: en
 list: include
 redirect_from:
-- concepts/relationships
+  - concepts/relationships
 ---
 
-[Relationships](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships) define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
+Relationships define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
 
 {% include/alert.html type="info" title="Contributing a new Relationship" content="<a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>contributing to relationships</a>" %}
 
 ## Semantic and Non-Semantic Relationships
 
-Shapes (all styles) convertable to Components
+### Semantic Relationships
 
-The `isAnnotation` attribute of a Component determines whether the give Component reflects an infrastructure concern - is sematically meaningful, and whose lifecycle is managed by Meshery.
+Semantic relationships are those that are meaningful in the context of the application or infrastructure. For example, a `Service` in Kubernetes is semantically related to a `Deployment` or a `Pod`. These relationships are meaningful and are managed by Meshery.
+
+_[TODO: a visual example is needed here]_
+
+### Non-Semantic Relationships
+
+Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-sematic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
+
+_[TODO: a visual example is needed here]_
+
+#### Identifiying Non-Semantic Relationships
+
+The `isAnnotation` attribute of a Relationship or Component determines whether the given Relationship or Component represents a management concern for Meshery; whether the given Relationship or Component is sematically meaningful, and whose lifecycle is managed by Meshery.
 
 ## Core Constructs of Relationships
 
@@ -27,56 +39,55 @@ The `isAnnotation` attribute of a Component determines whether the give Componen
 - Selectors
 
 ## Kind - Subtypes of Relationships
-The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
-### 1. Edge - Network
-Configures the networking.
 
-**Example**
-- Service --> Deployment,
-- Service --> Pod,
-- IngressController --> Ingress --> Service
+The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
+
+### 1. Edge - Network
+
+This Relationship type configures the networking between one or more components.
+
+**Examples**: Relationships between a Service and a Deployment, or between a Service and a Pod, or between an Ingress and a Service.
+
+- Example 1) Service --> Deployment
+- Example 2) Service --> Pod
+- Example 3) IngressController --> Ingress --> Service
 
 ### 2. Edge - Mount
-**Example**
 
-Assignment of PersistentVolumes to Pods via PersistenVolumeClaim .
+**Example**: Assignment of PersistentVolumes to Pods via PersistenVolumeClaim.
 
-- Pod --> PersistenVolumeClaim --> PersistentVolume
+- Example 1) Pod --> PersistenVolumeClaim --> PersistentVolume
 
 ### 3. Edge - Permission
-**Example**
 
-The set of Service Accounts that are entitled with the one or more Roles/ClusterRoles bound via Role/ClusterRoleBinding.
+**Example**: The set of Service Accounts that are entitled with the one or more Roles/ClusterRoles bound via Role/ClusterRoleBinding.
 
-- ClusterRole --> CluserRoleBinding --> ServiceAccount
-- Role --> RoleBinding --> ServiceAccount
+- Example 1) ClusterRole --> CluserRoleBinding --> ServiceAccount
+- Example 2) Role --> RoleBinding --> ServiceAccount
 
 ### 4. Edge - Firewall
 
-#### Example
 Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to-Pod
 
-- Pod --> NetworkPolicy --> Pod
+- Example 1) Pod --> NetworkPolicy --> Pod
 
 ### 5. Heirarchical - Inventory
 
 **Example**
 
-- WASMFilter (binary and configuration) --> IstioWASMPlugin
-- WASMFilter (binary and configuration) --> IstioEnvoyFilter
+- Example 1) (binary and configuration) --> IstioWASMPlugin
+- Example 2)  WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
 ### 6. Heirarchical - Parent
 
-**Example**
+**Example**:
 
-Any namespaced Kubernetes component --> Kubernetes Namespace
+- Example 1) Any namespaced Kubernetes component --> Kubernetes Namespace
 
 ## Selectors in Relationships
 
-
-### Example Selector
-
 Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
+
 1. **ConfigMap - Pod**
 2. **ConfigMap - Deployment**
 3. **WASMFilter - EnvoyFilter**
@@ -84,17 +95,23 @@ Selectors can be applied to various components, enabling a wide range of relatio
 The above pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components.
 A snippet of the selector backing this relationship is listed below.
 
-
  <!-- add images -->
+
 ### Types of Relationships
-1. **Inventory** 
+
+1. **Inventory**
 2. **Parent**
-3. **Mount** 
-4. **Firewall** 
+3. **Mount**
+4. **Firewall**
 5. **Permission**
 6. **Network**
 
+## Relationship Evaluation
+
+![Meshery Relationship](/assets/img/concepts/logical/relationship-evaluation-flow.svg)
+
 ### How Relationships are formed?
+
 1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a node inisde other node.
 
 _Note: It may happen that, you created a relationship from the UI, but the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) disapproved/overrided the decision if all the constraints for a particular relationship are not satisfied._
@@ -103,7 +120,8 @@ _Note: It may happen that, you created a relationship from the UI, but the [Poli
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
 
-The Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships 
+The Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships
+
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluationof relationships on -->
 <!-- 1. Import -->
