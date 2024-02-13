@@ -162,7 +162,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
-        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1][code] }}" target="_blank">search forum</a></td>
+        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
         <td style="word-break:break-all;" colspan="3">
