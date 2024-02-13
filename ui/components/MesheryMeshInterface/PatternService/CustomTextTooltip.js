@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const renderTooltipContent = ({ showPriortext, showAftertext, link }) => {
+export const RenderTooltipContent = ({ showPriortext, showAftertext, link }) => {
   const classes = useStyles();
 
   const handleClick = (e) => {

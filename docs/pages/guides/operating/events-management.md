@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Managing Events with Notification Center
 abstract: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management

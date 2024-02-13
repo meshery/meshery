@@ -271,10 +271,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A Pod "
             }
@@ -285,10 +293,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A Deployment "
             }
@@ -299,10 +315,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A StatefulSet "
             }
@@ -313,10 +337,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A ReplicaSet "
             }
@@ -327,10 +359,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A Service "
             }
@@ -341,10 +381,18 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A ConfigMap "
             }
@@ -355,15 +403,23 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["name"],
-                ["namespace"],
-                ["kind"],
-                ["apiVersion"]
+                [
+                  "name"
+                ],
+                [
+                  "namespace"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
               ],
               "description": "A Secret "
             }
           }
-        ], 
+        ],
         "to": [
           {
             "kind": "Event",
@@ -371,15 +427,371 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings", "metadata", "name"],
-                ["settings", "metadata", "namespace"],
-                ["settings", "metadata", "kind"],
-                ["settings", "metadata", "apiVersion"]
+                [
+                  "settings",
+                  "metadata",
+                  "name"
+                ],
+                [
+                  "settings",
+                  "metadata",
+                  "namespace"
+                ],
+                [
+                  "settings",
+                  "metadata",
+                  "kind"
+                ],
+                [
+                  "settings",
+                  "metadata",
+                  "apiVersion"
+                ]
               ],
               "description": "An Event "
             }
           }
         ]
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Secret",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "In Kubernetes, Secrets are versatile resources that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources securely.\n\nBy referencing Secrets in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "Deployments can reference Secrets to inject confidential configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the Secret will be exposed as environment variables to the containers within the pods managed by the Deployment."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "StatefulSets can use Secrets to provide confidential configuration data to their pods in a similar way to Deployments.\n\nSecrets can be referenced in the Pod template specification of a StatefulSet to provide configuration data to each pod in a consistent manner."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "DaemonSets, which ensure that a copy of a pod runs on each node, can utilize Secret to supply confidential configuration data to their pods.\n\nThe keys from the Secret will be exposed as environment variables to the containers within the pods managed by the DaemonSet."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "When deploying applications using ReplicaSets, you may need to configure each replica with specific settings, such as environment variables or configuration files. Secrets can be referenced in the Pod template specification of a ReplicaSet to provide configuration data to each replica pod."
+            }
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "Secret can be referenced in the Pod specification to inject confidential configuration data into the Pod's environment.\n\nThe keys from the Secret will be exposed as environment variables to the container within the Pod."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "Secret can be referenced in the Pod template specification within the Job definition to inject confidential configuration data into the pods.\n\nThe keys from the Secret will be exposed as environment variables to the container within the pod created by the Job."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "jobTemplate",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "secretRef",
+                  "name"
+                ]
+              ],
+              "description": "Secret can be referenced in the Pod template specification within the CronJob definition to inject confidential configuration data into the pods.\n\nThe keys from the Secret will be exposed as environment variables to the container within the pod created by the CronJob."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CSIDriver",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers are responsible for the actual operations of a CSI volume. They are responsible for communicating with the external storage provider and exposing the volume to the kubelet.\n\nCSI drivers are installed on the cluster as a CustomResourceDefinition (CRD) and a DaemonSet. The CRD is used to create a CSIDriver object, which is used to configure the CSI driver. The DaemonSet is used to deploy the CSI driver to each node in the cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "jobTemplate",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
   ]

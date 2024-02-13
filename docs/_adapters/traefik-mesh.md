@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh

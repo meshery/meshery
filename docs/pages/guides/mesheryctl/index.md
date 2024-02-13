@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery CLI Guides
 permalink: guides/mesheryctl
 redirect_from: guides/mesheryctl/
