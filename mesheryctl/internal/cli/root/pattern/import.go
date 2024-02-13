@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bytes"
@@ -37,7 +37,7 @@ var importCmd = &cobra.Command{
 	Long:  `Import the app manifest into Meshery`,
 	Example: `
 // Import app manifest
-mesheryctl app import -f [file/URL] -s [source-type]
+mesheryctl pattern import -f [file/URL] -s [source-type]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 

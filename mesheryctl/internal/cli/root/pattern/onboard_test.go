@@ -1,4 +1,4 @@
-package app
+package pattern
 
 import (
 	"path/filepath"
@@ -126,9 +126,9 @@ func TestOnboardCmd(t *testing.T) {
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
-			AppCmd.SetArgs(tt.Args)
-			AppCmd.SetOutput(b)
-			err := AppCmd.Execute()
+			PatternCmd.SetArgs(tt.Args)
+			PatternCmd.SetOutput(b)
+			err := PatternCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {

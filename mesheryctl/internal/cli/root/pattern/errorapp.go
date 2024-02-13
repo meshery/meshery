@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License
-package app
+package pattern
 
 import (
 	"fmt"
@@ -30,11 +30,11 @@ const (
 	ErrAppManifestCode        = "1188"
 )
 const (
-	errAppMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
-Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
+	errAppMsg = `Usage: mesheryctl pattern import -f [file/url] -s [source-type]
+Example: mesheryctl pattern import -f ./application.yml -s "Kubernetes Manifest"`
 
-	errOnboardMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
-Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
+	errOnboardMsg = `Usage: mesheryctl pattern onboard -f [filepath] -s [source type]
+Example: mesheryctl pattern onboard -f ./application.yml -s "Kubernetes Manifest"
 Description: Onboard application`
 )
 

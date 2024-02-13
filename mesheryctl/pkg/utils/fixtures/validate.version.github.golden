@@ -7408,7 +7408,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/trees/39b63dbdf096bc9363b994b4349c7f810b6968fe"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/list.application.api.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/list.application.api.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "d4c51004660460558a23d6a5a590931976eb675e",
@@ -7416,7 +7416,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/d4c51004660460558a23d6a5a590931976eb675e"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/offboard.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/offboard.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "dddd394f88b2cb69be3c1740432c93b4147228dd",
@@ -7424,7 +7424,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/dddd394f88b2cb69be3c1740432c93b4147228dd"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/onboard.applicationSave.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/onboard.applicationSave.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "808af1477a7bbe5c503a22415c40cb898be2133b",
@@ -7432,7 +7432,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/808af1477a7bbe5c503a22415c40cb898be2133b"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/onboard.applicationdeploy.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/onboard.applicationdeploy.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "3f6f44e2eb35b6c0fcf48e0fa7dfc744562c53ec",
@@ -7440,7 +7440,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/3f6f44e2eb35b6c0fcf48e0fa7dfc744562c53ec"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/sampleApp.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/sampleApp.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "b0ecfa33fea3480a32048a0746238e43779f3a57",
@@ -7448,7 +7448,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/b0ecfa33fea3480a32048a0746238e43779f3a57"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/token.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/token.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "18d60ebb776993e0b20a3dfe0621f99d2f85e23b",
@@ -7456,7 +7456,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/18d60ebb776993e0b20a3dfe0621f99d2f85e23b"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/view.application.api.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/view.application.api.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "f80fe08f2e43f05744c0ee07b8a2e9d5f4ab2eae",
@@ -7464,7 +7464,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/f80fe08f2e43f05744c0ee07b8a2e9d5f4ab2eae"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/view.applicationName.api.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/view.applicationName.api.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "310727d1d4ad1fa4dd9cf29862a3e34ef0abf072",
@@ -7472,7 +7472,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/310727d1d4ad1fa4dd9cf29862a3e34ef0abf072"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/view.applicationid.api.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/view.applicationid.api.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "16838f67b962bc5cb5f7b10f19672dd83f42c9f1",
@@ -7480,7 +7480,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/16838f67b962bc5cb5f7b10f19672dd83f42c9f1"
     },
     {
-      "path": "mesheryctl/internal/cli/root/app/fixtures/view.invalid.application.api.response.golden",
+      "path": "mesheryctl/internal/cli/root/pattern/fixtures/view.invalid.application.api.response.golden",
       "mode": "100644",
       "type": "blob",
       "sha": "4ab0609107133cecb8aaecdae78a17ce8bc67641",

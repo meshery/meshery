@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"encoding/json"
@@ -29,29 +29,24 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	viewAllFlag   bool
-	outFormatFlag string
-)
-
 var linkDocAppView = map[string]string{
 	"link":    "![app-view-usage](/assets/img/mesheryctl/app-view.png)",
 	"caption": "Usage of mesheryctl app view",
 }
 
-var viewCmd = &cobra.Command{
-	Use:   "view application name",
+var viewappCmd = &cobra.Command{
+	Use:   "viewapp",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
 	Example: `
 // View applictaions with name
-mesheryctl app view [app-name]
+mesheryctl pattern viewapp [app-name]
 
 // View applications with id
-mesheryctl app view [app-id]
+mesheryctl pattern viewapp [app-id]
 
 // View all applications
-mesheryctl app view --all
+mesheryctl pattern viewapp --all
 	`,
 	Annotations: linkDocAppView,
 	Args:        cobra.MinimumNArgs(0),
@@ -179,6 +174,6 @@ mesheryctl app view --all
 }
 
 func init() {
-	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all applications available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewappCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all applications available")
+	viewappCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }

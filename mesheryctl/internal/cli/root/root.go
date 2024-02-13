@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
@@ -110,7 +109,6 @@ func init() {
 		pattern.PatternCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
-		app.AppCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
 		registry.RegistryCmd,

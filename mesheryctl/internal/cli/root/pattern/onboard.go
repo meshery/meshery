@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bufio"
@@ -34,7 +34,6 @@ import (
 )
 
 var (
-	skipSave   bool   // skip saving the app
 	appFile    string // app file
 	sourceType string // app file type (manifest / compose)
 )
@@ -50,8 +49,8 @@ var onboardCmd = &cobra.Command{
 	Long:  `Command will trigger deploy of application`,
 	Example: `
 // Onboard application by providing file path
-mesheryctl app onboard -f [filepath] -s [source type]
-mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
+mesheryctl pattern onboard -f [filepath] -s [source type]
+mesheryctl pattern onboard -f ./application.yml -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocAppOnboard,
 	Args: func(_ *cobra.Command, args []string) error {

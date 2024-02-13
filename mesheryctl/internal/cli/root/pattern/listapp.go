@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"encoding/json"
@@ -28,23 +28,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	verbose bool
-)
-
 var linkDocAppList = map[string]string{
 	"link":    "![app-list-usage](/assets/img/mesheryctl/app-list.png)",
 	"caption": "Usage of mesheryctl app list",
 }
 
-var listCmd = &cobra.Command{
-	Use:   "list",
+var listappCmd = &cobra.Command{
+	Use:   "listapp",
 	Short: "List applications",
 	Long:  `Display list of all available applications.`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List all the applications
-mesheryctl app list
+mesheryctl pattern listapp
 	`,
 	Annotations: linkDocAppList,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -149,5 +145,5 @@ mesheryctl app list
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and app file identifiers")
+	listappCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and app file identifiers")
 }

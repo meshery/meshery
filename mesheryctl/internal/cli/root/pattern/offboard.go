@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bytes"
@@ -38,7 +38,7 @@ var offboardCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
-mesheryctl app offboard -f [filepath]
+mesheryctl pattern offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
