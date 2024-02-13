@@ -41,3 +41,4 @@ func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 		os.Exit(1)
 	}
 	Log = logger
+}
