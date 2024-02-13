@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-s3-controller
 description: 
 integrations-category: Cloud Native Storage
 integrations-subcategory: Storage
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-s3-controller/components/field-export/icons/color/field-export-color.svg

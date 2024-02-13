@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: aws-node-template
   colorIcon: assets/img/integrations/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg

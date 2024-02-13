@@ -18,11 +18,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
-        with:
+        if: ${{ github.event_name == 'pull_request' }}
+        with:          
           ref: "master"
-          token: ${{ secrets.GH_ACCESS_TOKEN != '' && secrets.GH_ACCESS_TOKEN || ''}}
           fetch-depth: 1
-          
+      - uses: actions/checkout@master
+        if: ${{ github.event_name == 'push' }}
+        with:          
+          ref: "master"
+          fetch-depth: 1
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup Go
         uses: actions/setup-go@master
         with:
@@ -62,4 +67,3 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Error Codes]: Update Meshery server and mehseryctl error codes and reference"
-

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fonio
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",

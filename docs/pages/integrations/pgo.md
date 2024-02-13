@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pgo
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: pg-upgrade
   colorIcon: assets/img/integrations/pgo/components/pg-upgrade/icons/color/pg-upgrade-color.svg

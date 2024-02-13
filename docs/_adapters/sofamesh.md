@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: SOFAmesh
 name: Meshery Adapter for SOFAmesh
 project_status: 

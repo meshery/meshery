@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: pod-logs
   colorIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg

@@ -1093,7 +1093,7 @@ function MesheryPatterns({
   let colViews = [
     ['name', 'xs'],
     ['created_at', 'm'],
-    ['updated_at', 'l'],
+    ['updated_at', 'm'],
     ['visibility', 's'],
     ['Actions', 'xs'],
   ];

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pulsar-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: book-keeper-cluster
   colorIcon: assets/img/integrations/pulsar-operator/components/book-keeper-cluster/icons/color/book-keeper-cluster-color.svg
