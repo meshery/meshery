@@ -72,6 +72,7 @@ RUN set -ex && \
     apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
     for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
     do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+    apk del gcompat && \
     apk add --allow-untrusted /tmp/*.apk && \
     rm -v /tmp/*.apk && \
     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
