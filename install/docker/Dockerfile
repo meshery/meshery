@@ -63,14 +63,14 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 
 
 FROM alpine:3.19.1
-ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
-# ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
+# ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
+ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
     apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
     for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
-    do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+    do curl -sSL ${GLIBC_REPO}/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
     apk del gcompat && \
     apk add --force-overwrite --no-cache --allow-untrusted /tmp/*.apk && \
     rm -v /tmp/*.apk && \
