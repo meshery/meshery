@@ -66,7 +66,6 @@ FROM alpine:3.19.1
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
 # ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
-# To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
     apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
@@ -77,29 +76,7 @@ RUN set -ex && \
     rm -v /tmp/*.apk && \
     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
-# RUN set -ex && \
-#     apk --update add libstdc++ curl ca-certificates && \
-#     apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
-#     # curl -LfsS https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub && \
-#     # echo "${SGERRAND_RSA_SHA256} */etc/apk/keys/sgerrand.rsa.pub" | sha256sum -c - && \
-#     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk > /tmp/glibc-${GLIBC_VERSION}.apk && \
-#     # apk add --force-overwrite --no-cache /tmp/glibc-${GLIBC_VERSION}.apk && \
-#     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk > /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
-#     # apk add --no-cache /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
-#     curl -Ls ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk > /tmp/glibc-i18n-${GLIBC_VERSION}.apk && \
-#     # apk add --no-cache /tmp/glibc-i18n-${GLIBC_VERSION}.apk
-#     apk upgrade --no-cache && \
-#     apk add --allow-untrusted /tmp/*.apk
-#     # rm -v /tmp/*.apk && \
-
-
 RUN update-ca-certificates
-
-# FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
-# RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
-# RUN apk upgrade --no-cache && \
-#     apk add --no-cache libstdc++
 
 COPY ./server/meshmodel /app/server/meshmodel
 COPY ./permissions /app/permissions/
