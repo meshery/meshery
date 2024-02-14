@@ -1077,6 +1077,90 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ControllerRevision",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "settings", "revision"
+                ]
+              ],
+              "description": "ControllerRevisions are used to store the historical state of a ReplicaSet, Deployment, StatefulSet or Pod. They are used to rollback to a previous version of the resource.\n\nControllerRevisions are created when a ReplicaSet, Deployment, or StatefulSet is updated. They store the historical state of the resource, including the Pod template and the revision number."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "Deployments can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the Deployment.\n\nThe revisionHistoryLimit field in the Deployment specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "StatefulSets can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the StatefulSet.\n\nThe revisionHistoryLimit field in the StatefulSet specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "ReplicaSets can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the ReplicaSet.\n\nThe revisionHistoryLimit field in the ReplicaSet specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "metadata",
+                  "ownerReferences",
+                  "_",
+                  "controller",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "Pods can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the Pod.\n\nThe revisionHistoryLimit field in the Pod specification is used to configure the number of ControllerRevisions to store."
+            }
+          }
+        ]
+      }
     }
   ]
 }
