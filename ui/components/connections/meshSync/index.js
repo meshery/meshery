@@ -12,8 +12,8 @@ import {
   Chip,
 } from '@material-ui/core';
 import Moment from 'react-moment';
-// import { useNotification } from '../../../utils/hooks/useNotification';
-// import { EVENT_TYPES } from '../../../lib/event-types';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import CustomColumnVisibilityControl from '../../../utils/custom-column';
 import useStyles from '../../../assets/styles/general/tool.styles';
@@ -41,15 +41,15 @@ import {
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
 
-// const ACTION_TYPES = {
-//   FETCH_MESHSYNC_RESOURCES: {
-//     name: 'FETCH_MESHSYNC_RESOURCES',
-//     error_msg: 'Failed to fetch meshsync resources',
-//   },
-// };
+const ACTION_TYPES = {
+  FETCH_MESHSYNC_RESOURCES: {
+    name: 'FETCH_MESHSYNC_RESOURCES',
+    error_msg: 'Failed to fetch meshsync resources',
+  },
+};
 
 export default function MeshSyncTable(props) {
-  const { classes, selectedK8sContexts, k8sconfig } = props;
+  const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -73,13 +73,13 @@ export default function MeshSyncTable(props) {
     [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
   };
 
-  // const { notify } = useNotification();
+  const { notify } = useNotification();
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
   };
 
-  const { data: meshSyncData } = useGetMeshSyncResourcesQuery({
+  const { data: meshSyncData, error: meshSyncError } = useGetMeshSyncResourcesQuery({
     page: page,
     pagesize: pageSize,
     search: search,
@@ -496,14 +496,20 @@ export default function MeshSyncTable(props) {
 
   const [selectedKind, setSelectedKind] = useState('');
 
-  // const handleError = (action) => (error) => {
-  //   updateProgress({ showProgress: false });
-  //   notify({
-  //     message: `${action.error_msg}: ${error}`,
-  //     event_type: EVENT_TYPES.ERROR,
-  //     details: error.toString(),
-  //   });
-  // };
+  const handleError = (action) => (error) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: `${action.error_msg}: ${error}`,
+      event_type: EVENT_TYPES.ERROR,
+      details: error.toString(),
+    });
+  };
+
+  useEffect(() => {
+    if (meshSyncError) {
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
+    }
+  }, [meshSyncError]);
 
   const filters = {
     kind: {
