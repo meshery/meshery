@@ -306,7 +306,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A Deployment "
+              "description": "A Deployment is used to provide seamless application scaling and management. Monitor deployment events for efficient tracking of updates, rollouts, and scaling operations, ensuring your applications are always available and performant."
             }
           },
           {
@@ -328,7 +328,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A StatefulSet "
+              "description": "Maximize reliability for your stateful applications with Kubernetes StatefulSets. Track stateful pod events to maintain data integrity and ensure consistent, ordered deployments, empowering your critical workloads with resilience and stability."
             }
           },
           {
@@ -350,7 +350,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A ReplicaSet "
+              "description": "Ensure high availability and fault tolerance for your Kubernetes workloads with ReplicaSets. Monitor replica set events to manage pod replicas dynamically, scale resources as needed, and maintain optimal performance for your applications."
             }
           },
           {
@@ -372,7 +372,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A Service "
+              "description": "Facilitate seamless communication between microservices with Kubernetes Services. Monitor service events to ensure consistent connectivity, load balancing, and service discovery, empowering you to build robust and resilient distributed applications."
             }
           },
           {
@@ -394,7 +394,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A ConfigMap "
+              "description": "Centralize configuration management for your Kubernetes applications with ConfigMaps. Monitor config map events to dynamically update configuration data, ensuring agility, consistency, and reliability across your deployment pipeline."
             }
           },
           {
@@ -416,7 +416,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A Secret "
+              "description": "Safeguard sensitive information and credentials in your Kubernetes cluster with Secrets. Monitor secret events to manage encryption, access control, and lifecycle management, ensuring the security and integrity of your application data."
             }
           }
         ],
@@ -448,7 +448,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "An Event "
+              "description": "In Kubernetes, Events serve as a crucial mechanism for observing and tracking the state changes and activities within the cluster. They offer valuable information about resource creation, updates, errors, and other significant occurrences, aiding administrators and developers in troubleshooting, monitoring, and maintaining the health and performance of their applications."
             }
           }
         ]
@@ -871,7 +871,7 @@
                 ["kind"],
                 ["apiVersion"]
               ],
-              "description": "A Deployment "
+              "description": "A Deployment in Kubernetes orchestrates the rollout and management of application replicas. By integrating leases into Deployment strategies, Kubernetes maintains control over the deployment process, orchestrating rolling updates or rollbacks with precision and reliability, thus ensuring seamless transitions and high availability of your application."
             }
           },
           {
@@ -884,9 +884,9 @@
                 ["kind"],
                 ["apiVersion"]
               ],
-              "description": "A StatefulSet "
+              "description": "A StatefulSet in Kubernetes is designed for managing stateful applications, providing stable, unique network identifiers, and persistent storage. By integrating leases within StatefulSets, Kubernetes guarantees precise ordering during updates or scaling events, maintaining the integrity of the application's state across pods and ensuring data consistency and reliability throughout the cluster."
             }
-          },
+          },  
           {
             "kind": "DaemonSet",
             "model": "kubernetes",
@@ -897,7 +897,20 @@
                 ["kind"],
                 ["apiVersion"]
               ],
-              "description": "A DaemonSet "
+              "description": " A DaemonSet in Kubernetes ensures that a copy of a pod runs on all or certain nodes in the cluster. By incorporating leases within the DaemonSet configuration, Kubernetes ensures that each node hosts exactly one instance of the designated pod, maintaining uniformity and consistency across the cluster while efficiently managing resources and updates."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "ReplicaSets in Kubernetes ensure a specified number of pod replicas are running at any given time. By incorporating leases within ReplicaSets, Kubernetes ensures fault tolerance and scalability by automatically replacing failed or terminated pods, maintaining the desired replica count and preserving the availability and performance of your application."
             }
           }
         ],
