@@ -74,7 +74,9 @@ ENV GLIBC_VERSION=2.35-r1
 #     rm -v /tmp/*.apk && \
 #     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
-RUN apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
+RUN set -ex && \
+    apk --update add libstdc++ curl ca-certificates && \
+    apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
     curl -LfsS https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub && \
     echo "${SGERRAND_RSA_SHA256} */etc/apk/keys/sgerrand.rsa.pub" | sha256sum -c - && \
     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk > /tmp/glibc-${GLIBC_VERSION}.apk && \
