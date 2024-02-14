@@ -42,6 +42,7 @@
     "transitions": {
      "connected": [
       "disconnected",
+      "ignored",
       "not found",
       "deleted"
      ],
