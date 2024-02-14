@@ -82,10 +82,10 @@ RUN set -ex && \
     # curl -LfsS https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub && \
     # echo "${SGERRAND_RSA_SHA256} */etc/apk/keys/sgerrand.rsa.pub" | sha256sum -c - && \
     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk > /tmp/glibc-${GLIBC_VERSION}.apk && \
-    apk add --force-overwrite --no-cache /tmp/glibc-${GLIBC_VERSION}.apk && \
+    # apk add --force-overwrite --no-cache /tmp/glibc-${GLIBC_VERSION}.apk && \
     apk del gcompat && \
     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk > /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
-    apk add --no-cache /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
+    # apk add --no-cache /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
     curl -Ls ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk > /tmp/glibc-i18n-${GLIBC_VERSION}.apk && \
     # apk add --no-cache /tmp/glibc-i18n-${GLIBC_VERSION}.apk
     apk add --allow-untrusted /tmp/*.apk && \
