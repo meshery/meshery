@@ -110,6 +110,7 @@ export default function MeshSyncTable(props) {
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
     ['status', 'xs'],
+    ['metadata', 'na'],
   ];
 
   const columns = [
@@ -360,6 +361,13 @@ export default function MeshSyncTable(props) {
         display: false,
       },
     },
+    {
+      name: 'metadata',
+      label: 'Metadata',
+      options: {
+        display: false,
+      },
+    },
   ];
 
   const options = useMemo(
@@ -436,10 +444,13 @@ export default function MeshSyncTable(props) {
         setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
         setShowMore(false);
       },
-      renderExpandableRow: (rowData, tableMeta) => {
+      renderExpandableRow: (rowData) => {
         const colSpan = rowData.length;
-        const meshSyncResourcesMetaData =
-          meshSyncResources && meshSyncResources[tableMeta.rowIndex];
+        const columnName = 'metadata'; // Name of the column containing the metadata
+        const columnIndex = columns.findIndex((column) => column.name === columnName);
+
+        // Access the metadata value using the column index
+        const metadata = rowData[columnIndex];
 
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
@@ -462,7 +473,7 @@ export default function MeshSyncTable(props) {
                             }}
                             className={classes.contentContainer}
                           >
-                            <MeshSyncDataFormatter metadata={meshSyncResourcesMetaData.metadata} />
+                            <MeshSyncDataFormatter metadata={metadata} />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -492,7 +503,7 @@ export default function MeshSyncTable(props) {
   const [kindoptions, setKindOptions] = useState([]);
 
   const getAllMeshsyncKind = (page, pageSize, search, sortOrder) => {
-    setLoading(true);
+    // setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
