@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudtrail-contro
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: aws
+registrant: AWS
 components: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/field-export/icons/color/field-export-color.svg

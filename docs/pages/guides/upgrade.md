@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Upgrading Meshery and all of its components
 abstract: How to Meshery and all of its components
 permalink: guides/upgrade

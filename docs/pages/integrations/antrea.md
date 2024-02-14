@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/antrea
 description: 
 integrations-category: Runtime
 integrations-subcategory: Cloud Native Network
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: antrea-agent-info
   colorIcon: assets/img/integrations/antrea/components/antrea-agent-info/icons/color/antrea-agent-info-color.svg

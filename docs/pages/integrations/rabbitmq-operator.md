@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: rabbitmq-cluster
   colorIcon: assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
