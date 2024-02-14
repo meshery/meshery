@@ -12,9 +12,8 @@ import {
   Chip,
 } from '@material-ui/core';
 import Moment from 'react-moment';
-import dataFetch from '../../../lib/data-fetch';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
+// import { useNotification } from '../../../utils/hooks/useNotification';
+// import { EVENT_TYPES } from '../../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import CustomColumnVisibilityControl from '../../../utils/custom-column';
 import useStyles from '../../../assets/styles/general/tool.styles';
@@ -37,28 +36,29 @@ import UniversalFilter from '../../../utils/custom-filter';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { FormatId } from '../../DataFormatter';
-import { useGetMeshSyncResourcesQuery } from '@/rtk-query/meshsync';
+import {
+  useGetMeshSyncResourceKindsQuery,
+  useGetMeshSyncResourcesQuery,
+} from '@/rtk-query/meshsync';
 
-const ACTION_TYPES = {
-  FETCH_MESHSYNC_RESOURCES: {
-    name: 'FETCH_MESHSYNC_RESOURCES',
-    error_msg: 'Failed to fetch meshsync resources',
-  },
-};
+// const ACTION_TYPES = {
+//   FETCH_MESHSYNC_RESOURCES: {
+//     name: 'FETCH_MESHSYNC_RESOURCES',
+//     error_msg: 'Failed to fetch meshsync resources',
+//   },
+// };
 
 export default function MeshSyncTable(props) {
-  const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const { classes, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   const [search, setSearch] = useState('');
   const [setFilter] = useState('');
-  // const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [setLoading] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
   const [registerConnection, setRegisterConnection] = useState({
@@ -73,11 +73,7 @@ export default function MeshSyncTable(props) {
     [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
   };
 
-  const clusterIds = encodeURIComponent(
-    JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
-  );
-
-  const { notify } = useNotification();
+  // const { notify } = useNotification();
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -91,6 +87,15 @@ export default function MeshSyncTable(props) {
     kind: selectedKind,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
   });
+
+  const { data: allKinds } = useGetMeshSyncResourceKindsQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+  });
+  const kindoptions = allKinds?.kinds || [];
 
   const meshSyncResources = meshSyncData?.resources || [];
   const filteredData = meshSyncResources?.filter((item) => {
@@ -491,40 +496,14 @@ export default function MeshSyncTable(props) {
 
   const [selectedKind, setSelectedKind] = useState('');
 
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  const [kindoptions, setKindOptions] = useState([]);
-
-  const getAllMeshsyncKind = (page, pageSize, search, sortOrder) => {
-    // setLoading(true);
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    dataFetch(
-      `/api/system/meshsync/resources/kinds?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setKindOptions(res?.kinds || []);
-        setLoading(false);
-      },
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
-    );
-  };
-
-  useEffect(() => {
-    getAllMeshsyncKind(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+  // const handleError = (action) => (error) => {
+  //   updateProgress({ showProgress: false });
+  //   notify({
+  //     message: `${action.error_msg}: ${error}`,
+  //     event_type: EVENT_TYPES.ERROR,
+  //     details: error.toString(),
+  //   });
+  // };
 
   const filters = {
     kind: {

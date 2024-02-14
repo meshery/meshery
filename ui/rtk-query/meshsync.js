@@ -38,7 +38,7 @@ const meshSyncApi = api
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
-            clusterId: queryArg.clusterId,
+            clusterIds: queryArg.clusterIds,
           },
           method: 'GET',
         }),
