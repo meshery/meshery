@@ -64,8 +64,6 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 
-import { inspect } from '@xstate/inspect';
-
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
@@ -79,11 +77,6 @@ if (typeof window !== 'undefined') {
     // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
     window.jsonlint = require('jsonlint-mod');
   }
-  inspect({
-    // options
-    // url: 'https://stately.ai/viz?inspect', // (default)
-    iframe: false, // open in new window
-  });
 }
 
 async function fetchContexts(number = 10, search = '') {
