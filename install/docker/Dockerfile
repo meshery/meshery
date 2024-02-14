@@ -83,7 +83,11 @@ RUN apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
     curl -LfsS ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk > /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
     apk add --no-cache /tmp/glibc-bin-${GLIBC_VERSION}.apk && \
     curl -Ls ${GLIBC_REPO}/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk > /tmp/glibc-i18n-${GLIBC_VERSION}.apk && \
-    apk add --no-cache /tmp/glibc-i18n-${GLIBC_VERSION}.apk
+    # apk add --no-cache /tmp/glibc-i18n-${GLIBC_VERSION}.apk
+    apk add --allow-untrusted /tmp/*.apk && \
+    rm -v /tmp/*.apk && \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
+
 
 RUN update-ca-certificates
 
