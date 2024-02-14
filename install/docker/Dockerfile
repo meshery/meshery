@@ -63,7 +63,6 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 
 
 FROM alpine:3.19.1
-# ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \
