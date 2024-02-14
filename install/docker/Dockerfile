@@ -62,7 +62,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM alpine:3.19.1
+FROM alpine:3.18.6
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
 # ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r0
