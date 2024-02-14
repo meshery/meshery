@@ -8,7 +8,7 @@
       "lineColor": "#00B39F",
       "targetArrowShape": "triangle"
     },
-    "capabilities":{
+    "capabilities": {
       "designer": {
         "edit": {
           "style": true,
@@ -29,47 +29,49 @@
     "metadata": {}
   },
   "subType": "Annotation",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "*",
-          "model": "meshery-shapes"
-        },
-        {
-          "kind": "*",
-          "model": "aws"
-        },
-        {
-          "kind": "*",
-          "model": "gcp"
-        },
-        {
-          "kind": "*",
-          "model": "meshery-flowcharts"
-        }
-      ],
-      "to": [
-        {
-          "kind": "*",
-          "model": "meshery-shapes"
-        },
-        {
-          "kind": "*",
-          "model": "aws"
-        },
-        {
-          "kind": "*",
-          "model": "gcp"
-        },
-        {
-          "kind": "*",
-          "model": "meshery-flowcharts"
-        }
-      ]
-    },
-    "deny": {
-      "from": []
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "*",
+            "model": "meshery-shapes"
+          },
+          {
+            "kind": "*",
+            "model": "aws"
+          },
+          {
+            "kind": "*",
+            "model": "gcp"
+          },
+          {
+            "kind": "*",
+            "model": "meshery-flowchart"
+          }
+        ],
+        "to": [
+          {
+            "kind": "*",
+            "model": "meshery-shapes"
+          },
+          {
+            "kind": "*",
+            "model": "aws"
+          },
+          {
+            "kind": "*",
+            "model": "gcp"
+          },
+          {
+            "kind": "*",
+            "model": "meshery-flowchart"
+          }
+        ]
+      },
+      "deny": {
+        "from": []
+      }
     }
-  }]
+  ]
 }
