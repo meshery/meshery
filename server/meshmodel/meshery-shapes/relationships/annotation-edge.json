@@ -19,9 +19,9 @@
     }
   },
   "model": {
-    "name": "kubernetes",
-    "version": "v1.25.2",
-    "displayName": "Kubernetes",
+    "name": "meshery-shapes",
+    "version": "v1.0,0",
+    "displayName": "Meshery Shapes",
     "category": {
       "name": "Orchestration \u0026 Management",
       "metadata": null
