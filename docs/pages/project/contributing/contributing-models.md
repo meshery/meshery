@@ -103,115 +103,115 @@ This arrangement enhances flexibility and reusability in the definition and conf
  <b>Example Selector</b>
 </summary>
 
-<code>
-selector: [
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "WASMFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "settings",
-                "config"
-              ],
-              [
-                "settings",
-                "wasm-filter"
-              ]
-            ],
-            "description": "WASM filter configuration to be applied to Envoy Filter."
-          }
-        },
-        {
-          "kind": "EBPFFilter",
-          .....
-        }
-      ],
-      "to": [
-        {
-          "kind": "EnvoyFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "settings",
-                "configPatches",
-                "_",
-                "patch",
-                "value"
-              ]
-            ],
-            "description": "Receive the WASM filter configuration."
-          }
-        },
-        {
-          "kind" : "WASMPlugin",
-          ....
-        }
-        ...
-      ]
-    },
-    "deny": {
-      ...
-    }
-  },
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "ConfigMap",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "name"
-              ]
-            ],
-            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-          }
-        }
-      ],
-      "to": [
-        {
-          "kind": "Deployment",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "spec",
-                "containers",
-                "_",
-                "envFrom",
-                "configMapRef",
-                "name"
-              ]
-            ],
-            "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-          }
-        },
-        {
-          "kind": "StatefulSets",
-          "model": "kubernetes",
-          "patch": {
-            ....
-          }
-        }
-        ...
-      ]
-    },
-    "deny": {
-      ...
-    }
-  }
-]
-</code>
+	{% highlight yaml %}
+	selector: [
+	  {
+	    "allow": {
+	      "from": [
+		{
+		  "kind": "WASMFilter",
+		  "model": "istio-base",
+		  "patch": {
+		    "patchStrategy": "replace",
+		    "mutatorRef": [
+		      [
+			"settings",
+			"config"
+		      ],
+		      [
+			"settings",
+			"wasm-filter"
+		      ]
+		    ],
+		    "description": "WASM filter configuration to be applied to Envoy Filter."
+		  }
+		},
+		{
+		  "kind": "EBPFFilter",
+		  .....
+		}
+	      ],
+	      "to": [
+		{
+		  "kind": "EnvoyFilter",
+		  "model": "istio-base",
+		  "patch": {
+		    "patchStrategy": "replace",
+		    "mutatedRef": [
+		      [
+			"settings",
+			"configPatches",
+			"_",
+			"patch",
+			"value"
+		      ]
+		    ],
+		    "description": "Receive the WASM filter configuration."
+		  }
+		},
+		{
+		  "kind" : "WASMPlugin",
+		  ....
+		}
+		...
+	      ]
+	    },
+	    "deny": {
+	      ...
+	    }
+	  },
+	  {
+	    "allow": {
+	      "from": [
+		{
+		  "kind": "ConfigMap",
+		  "model": "kubernetes",
+		  "patch": {
+		    "patchStrategy": "replace",
+		    "mutatorRef": [
+		      [
+			"name"
+		      ]
+		    ],
+		    "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+		  }
+		}
+	      ],
+	      "to": [
+		{
+		  "kind": "Deployment",
+		  "model": "kubernetes",
+		  "patch": {
+		    "patchStrategy": "replace",
+		    "mutatedRef": [
+		      [
+			"spec",
+			"containers",
+			"_",
+			"envFrom",
+			"configMapRef",
+			"name"
+		      ]
+		    ],
+		    "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
+		  }
+		},
+		{
+		  "kind": "StatefulSets",
+		  "model": "kubernetes",
+		  "patch": {
+		    ....
+		  }
+		}
+		...
+	      ]
+	    },
+	    "deny": {
+	      ...
+	    }
+	  }
+	]
+  {% endhighlight %}
 
 The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely independent from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships. 
 
