@@ -367,27 +367,27 @@ export const keys = {
     action: 'd5267c04-b3ee-43fe-8b97-2a3321eb7f8e',
   },
   MANAGE_SERVICE_MESH_LIFE_CYCLE: {
-    subject: 'Manage lifecycle',
+    subject: 'Manage service mesh life cycle',
     action: '255fd148-e3fd-4408-a48c-0d157a57d4d9',
   },
   MANAGE_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Manage configuration',
+    subject: 'Manage service mesh configuration',
     action: '0eb0558d-9b21-4e50-b4c6-bd8e9e3414f5',
   },
   APPLY_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Apply configuration',
+    subject: 'Apply service mesh configuration',
     action: '3f20a106-24f5-4da6-a8eb-6eddaad50944',
   },
   VALIDATE_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Validate configuration',
+    subject: 'Validate service mesh configuration',
     action: '8bb93f97-fcfb-4827-9fed-f931fdca7b95',
   },
   APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Apply custom configuration',
+    subject: 'Apply custom service mesh configuration',
     action: '2f4e2300-4c7e-4d48-95aa-74614a4826fe',
   },
   DEPLOY_SERVICE_MESH: {
-    subject: 'Provision',
+    subject: 'Deploy service mesh',
     action: 'f7e70ffb-333d-43b3-a76e-0e6c63b9fbfa',
   },
   UNDEPLOY_SERVICE_MESH: {
