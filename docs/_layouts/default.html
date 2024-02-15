@@ -64,7 +64,7 @@
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
       <div class="content-table-wrapper">
         <div class="content-table">
-          <div class="content-table__editable">{% include_cached editable.html %}</div>
+          <div class="content-table__editable">{% include_cached editable.html path=page.path %}</div>
           <nav id="TableOfContents">
             <strong>Contents</strong>
             <ul>
