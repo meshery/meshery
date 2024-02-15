@@ -13,6 +13,11 @@ import (
 	"github.com/layer5io/meshkit/utils/manifests"
 )
 
+const (
+	SVG_WIDTH  = 20
+	SVG_HEIGHT = 20
+)
+
 type ComponentCSV struct {
 	Registrant         string `json:"registrant"`
 	Model              string `json:"model"`
@@ -72,6 +77,16 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *v1alpha1.ComponentDefinitio
 	metadata = utils.MergeMaps(metadata, compDef.Metadata)
 
 	for _, key := range compMetadataValues {
+		if key == "svgColor" || key == "svgWhite" {
+			svg, err := utils.Cast[string](compMetadata[key])
+			if err == nil {
+				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				if err != nil {
+					// If svg cannot be updated, assign the svg value as it is
+					metadata[key] = compMetadata[key]
+				}
+			}
+		}
 		metadata[key] = compMetadata[key]
 	}
 
