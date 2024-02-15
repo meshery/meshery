@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "HTTPRouteGroup",
+  "apiVersion": "specs.smi-spec.io/v1alpha3",
+  "displayName": "HTTP Route Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"HTTPRouteGroup is the Schema for the httproutegroups API It is used to describe HTTP/1 and HTTP/2 traffic. It enumerates the routes that can be served by an application.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HTTPRouteGroupSpec defines the desired state of HTTPRouteGroup It is the specification for a HTTPRouteGroup\",\n   \"properties\": {\n    \"matches\": {\n     \"description\": \"Routes for inbound traffic\",\n     \"items\": {\n      \"description\": \"HTTPMatch defines an individual route for HTTP traffic\",\n      \"properties\": {\n       \"headers\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Headers is a list of headers used to match HTTP traffic\",\n        \"type\": \"object\"\n       },\n       \"methods\": {\n        \"description\": \"Methods for inbound traffic as defined in RFC 7231 https://tools.ietf.org/html/rfc7231#section-4\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of the match for referencing in a TrafficTarget\",\n        \"type\": \"string\"\n       },\n       \"pathRegex\": {\n        \"description\": \"PathRegex is a regular expression defining the route\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"HTTP Route Group\",\n \"type\": \"object\"\n}"
+ }

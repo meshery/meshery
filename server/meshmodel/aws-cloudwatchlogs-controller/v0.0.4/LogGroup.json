@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "LogGroup",
+  "apiVersion": "cloudwatchlogs.services.k8s.aws/v1alpha1",
+  "displayName": "Log Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-cloudwatchlogs-controller",
+   "version": "v0.0.4",
+   "displayName": "aws-cloudwatchlogs-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudwatchlogs-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"LogGroup is the Schema for the LogGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LogGroupSpec defines the desired state of LogGroup.\\n\\n\\nRepresents a log group.\",\n   \"properties\": {\n    \"kmsKeyID\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the KMS key to use when encrypting log\\ndata. For more information, see Amazon Resource Names (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-kms).\",\n     \"type\": \"string\"\n    },\n    \"kmsKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"retentionDays\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The key-value pairs to use for the tags.\\n\\n\\nYou can grant users access to certain log groups while preventing them from\\naccessing other log groups. To do so, tag your groups and use IAM policies\\nthat refer to those tags. To assign tags when you create a log group, you\\nmust have either the logs:TagResource or logs:TagLogGroup permission. For\\nmore information about tagging, see Tagging Amazon Web Services resources\\n(https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html). For more\\ninformation about using tags to control access, see Controlling access to\\nAmazon Web Services resources using tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_tags.html).\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Log Group\",\n \"type\": \"object\"\n}"
+ }

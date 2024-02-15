@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SpiffeID",
+  "apiVersion": "spiffeid.spiffe.io/v1beta1",
+  "displayName": "Spiffe ID",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"SpiffeID is the Schema for the spiffeid API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SpiffeIDSpec defines the desired state of SpiffeID\",\n   \"properties\": {\n    \"dnsNames\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"federatesWith\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"parentId\": {\n     \"type\": \"string\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"agent_node_uid\": {\n       \"description\": \"UID of the node\",\n       \"type\": \"string\"\n      },\n      \"arbitrary\": {\n       \"description\": \"Arbitrary selectors\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"cluster\": {\n       \"description\": \"The k8s_psat cluster name\",\n       \"type\": \"string\"\n      },\n      \"containerImage\": {\n       \"description\": \"Container image to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"containerName\": {\n       \"description\": \"Container name to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"nodeName\": {\n       \"description\": \"Node name to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"podLabel\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Pod label name/value to match for this spiffe ID\",\n       \"type\": \"object\"\n      },\n      \"podName\": {\n       \"description\": \"Pod name to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"podUid\": {\n       \"description\": \"Pod UID to match for this spiffe ID\",\n       \"type\": \"string\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"ServiceAccount to match for this spiffe ID\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"spiffeId\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parentId\",\n    \"selector\",\n    \"spiffeId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Spiffe ID\",\n \"type\": \"object\"\n}"
+ }

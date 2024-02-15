@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Subscription",
+  "apiVersion": "dapr.io/v1alpha1",
+  "displayName": "Subscription",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "dapr",
+   "version": "1.12.5",
+   "displayName": "dapr",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.wener.tech/dapr-1.12.5.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Subscription describes an pub/sub event subscription.\",\n \"properties\": {\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"description\": \"SubscriptionSpec is the spec for an event subscription.\",\n   \"properties\": {\n    \"bulkSubscribe\": {\n     \"description\": \"Represents bulk subscribe properties\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"maxAwaitDurationMs\": {\n       \"type\": \"integer\"\n      },\n      \"maxMessagesCount\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deadLetterTopic\": {\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"pubsubname\": {\n     \"type\": \"string\"\n    },\n    \"route\": {\n     \"type\": \"string\"\n    },\n    \"topic\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"pubsubname\",\n    \"route\",\n    \"topic\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subscription\",\n \"type\": \"object\"\n}"
+ }

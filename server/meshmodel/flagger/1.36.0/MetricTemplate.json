@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MetricTemplate",
+  "apiVersion": "flagger.app/v1beta1",
+  "displayName": "Metric Template",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "flagger",
+   "version": "1.36.0",
+   "displayName": "flagger",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://flagger.app/flagger-1.36.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MetricTemplate is the Schema for the MetricTemplates API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetricTemplateSpec defines the desired state of a MetricTemplate.\",\n   \"properties\": {\n    \"provider\": {\n     \"description\": \"Provider of this metric template\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"API address of this provider\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipVerify\": {\n       \"description\": \"Disable SSL certificate validation for the provider address\",\n       \"type\": \"boolean\"\n      },\n      \"region\": {\n       \"description\": \"Region of the provider\",\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"Kubernetes secret reference containing the provider credentials\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the Kubernetes secret\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"description\": \"Type of this provider\",\n       \"enum\": [\n        \"prometheus\",\n        \"influxdb\",\n        \"datadog\",\n        \"stackdriver\",\n        \"cloudwatch\",\n        \"newrelic\",\n        \"graphite\",\n        \"dynatrace\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"query\": {\n     \"description\": \"Query of this metric template\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\",\n    \"query\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metric Template\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "DNSEndpoint",
+  "apiVersion": "externaldns.nginx.org/v1",
+  "displayName": "DNS Endpoint",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-ingress",
+   "version": "1.1.2",
+   "displayName": "nginx-ingress",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"DNSEndpoint is the CRD wrapper for Endpoint\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DNSEndpointSpec holds information about endpoints.\",\n   \"properties\": {\n    \"endpoints\": {\n     \"items\": {\n      \"description\": \"Endpoint describes DNS Endpoint.\",\n      \"properties\": {\n       \"dnsName\": {\n        \"description\": \"The hostname for the DNS record\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels stores labels defined for the Endpoint\",\n        \"type\": \"object\"\n       },\n       \"providerSpecific\": {\n        \"description\": \"ProviderSpecific stores provider specific config\",\n        \"items\": {\n         \"description\": \"ProviderSpecificProperty represents provider specific config property.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the property\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value of the property\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"recordTTL\": {\n        \"description\": \"TTL for the record\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"recordType\": {\n        \"description\": \"RecordType type of record, e.g. CNAME, A, SRV, TXT, MX\",\n        \"type\": \"string\"\n       },\n       \"targets\": {\n        \"description\": \"The targets the DNS service points to\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DNS Endpoint\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ENIConfig",
+  "apiVersion": "crd.k8s.amazonaws.com/v1alpha1",
+  "displayName": "ENI Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-vpc-cni",
+   "version": "1.16.2",
+   "displayName": "aws-vpc-cni",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://aws.github.io/eks-charts/aws-vpc-cni-1.16.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"title\": \"ENI Config\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
+ }

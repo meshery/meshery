@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "NetworkACL",
+  "apiVersion": "ec2.services.k8s.aws/v1alpha1",
+  "displayName": "Network ACL",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ec2-controller",
+   "version": "v1.2.3",
+   "displayName": "aws-ec2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"NetworkACL is the Schema for the NetworkACLS API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkAclSpec defines the desired state of NetworkAcl.\\n\\n\\nDescribes a network ACL.\",\n   \"properties\": {\n    \"associations\": {\n     \"items\": {\n      \"description\": \"Describes an association between a network ACL and a subnet.\",\n      \"properties\": {\n       \"networkACLAssociationID\": {\n        \"type\": \"string\"\n       },\n       \"networkACLID\": {\n        \"type\": \"string\"\n       },\n       \"subnetID\": {\n        \"type\": \"string\"\n       },\n       \"subnetRef\": {\n        \"description\": \"Reference field for SubnetID\",\n        \"properties\": {\n         \"from\": {\n          \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"entries\": {\n     \"items\": {\n      \"description\": \"Describes an entry in a network ACL.\",\n      \"properties\": {\n       \"cidrBlock\": {\n        \"type\": \"string\"\n       },\n       \"egress\": {\n        \"type\": \"boolean\"\n       },\n       \"icmpTypeCode\": {\n        \"description\": \"Describes the ICMP type and code.\",\n        \"properties\": {\n         \"code\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"type_\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"ipv6CIDRBlock\": {\n        \"type\": \"string\"\n       },\n       \"portRange\": {\n        \"description\": \"Describes a range of ports.\",\n        \"properties\": {\n         \"from\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"to\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"ruleAction\": {\n        \"type\": \"string\"\n       },\n       \"ruleNumber\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcID\": {\n     \"description\": \"The ID of the VPC.\",\n     \"type\": \"string\"\n    },\n    \"vpcRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network ACL\",\n \"type\": \"object\"\n}"
+ }

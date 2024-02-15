@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CircuitBreaker",
+  "apiVersion": "specs.smi.nginx.com/v1alpha1",
+  "displayName": "Circuit Breaker",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specifications of this circuit breaker.\",\n   \"properties\": {\n    \"destination\": {\n     \"description\": \"The destination of this circuit breaker.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the destination.\",\n       \"enum\": [\n        \"Service\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the destination.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the destination.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    },\n    \"errors\": {\n     \"description\": \"The number of errors allowed within the timeout before tripping the circuit.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"fallback\": {\n     \"description\": \"The fallback Service to send traffic to when the circuit is tripped.\",\n     \"properties\": {\n      \"port\": {\n       \"description\": \"The port of the fallback Service.\",\n       \"maximum\": 65535,\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      },\n      \"service\": {\n       \"description\": \"The fallback Service to send traffic to when the circuit is tripped.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"timeoutSeconds\": {\n     \"description\": \"The timeout window for errors to occur, and the amount of time to wait before closing the circuit.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"destination\",\n    \"errors\",\n    \"timeoutSeconds\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Circuit Breaker\",\n \"type\": \"object\"\n}"
+ }

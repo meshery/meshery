@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ConstraintTemplate",
+  "apiVersion": "templates.gatekeeper.sh/v1",
+  "displayName": "Constraint Template",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gatekeeper",
+   "version": "3.16.0-beta.0",
+   "displayName": "gatekeeper",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://open-policy-agent.github.io/gatekeeper/charts/gatekeeper-3.16.0-beta.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ConstraintTemplate is the Schema for the constrainttemplates API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ConstraintTemplateSpec defines the desired state of ConstraintTemplate.\",\n   \"properties\": {\n    \"crd\": {\n     \"properties\": {\n      \"spec\": {\n       \"properties\": {\n        \"names\": {\n         \"properties\": {\n          \"kind\": {\n           \"type\": \"string\"\n          },\n          \"shortNames\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"validation\": {\n         \"default\": {\n          \"legacySchema\": false\n         },\n         \"properties\": {\n          \"legacySchema\": {\n           \"default\": false,\n           \"type\": \"boolean\"\n          },\n          \"openAPIV3Schema\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targets\": {\n     \"items\": {\n      \"properties\": {\n       \"code\": {\n        \"description\": \"The source code options for the constraint template. \\\"Rego\\\" can only be specified in one place (either here or in the \\\"rego\\\" field)\",\n        \"items\": {\n         \"properties\": {\n          \"engine\": {\n           \"description\": \"The engine used to evaluate the code. Example: \\\"Rego\\\". Required.\",\n           \"type\": \"string\"\n          },\n          \"source\": {\n           \"description\": \"The source code for the template. Required.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"engine\",\n          \"source\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-map-keys\": [\n         \"engine\"\n        ],\n        \"x-kubernetes-list-type\": \"map\"\n       },\n       \"libs\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"rego\": {\n        \"type\": \"string\"\n       },\n       \"target\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Constraint Template\",\n \"type\": \"object\"\n}"
+ }

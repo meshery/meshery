@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Provider",
+  "apiVersion": "externaldata.gatekeeper.sh/v1alpha1",
+  "displayName": "Provider",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gatekeeper",
+   "version": "3.16.0-beta.0",
+   "displayName": "gatekeeper",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://open-policy-agent.github.io/gatekeeper/charts/gatekeeper-3.16.0-beta.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Provider is the Schema for the Provider API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the Provider specifications.\",\n   \"properties\": {\n    \"caBundle\": {\n     \"description\": \"CABundle is a base64-encoded string that contains the TLS CA bundle in PEM format. It is used to verify the signature of the provider's certificate.\",\n     \"type\": \"string\"\n    },\n    \"timeout\": {\n     \"description\": \"Timeout is the timeout when querying the provider.\",\n     \"type\": \"integer\"\n    },\n    \"url\": {\n     \"description\": \"URL is the url for the provider. URL is prefixed with https://.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Provider\",\n \"type\": \"object\"\n}"
+ }

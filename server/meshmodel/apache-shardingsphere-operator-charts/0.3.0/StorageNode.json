@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "StorageNode",
+  "apiVersion": "shardingsphere.apache.org/v1alpha1",
+  "displayName": "Storage Node",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "apache-shardingsphere-operator-charts",
+   "version": "0.3.0",
+   "displayName": "apache-shardingsphere-operator-charts",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/apache/shardingsphere-on-cloud/releases/download/0.3.0/apache-shardingsphere-operator-charts-0.3.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"StorageNode is the Schema for the ShardingSphere storage unit\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StorageNodeSpec defines the desired state of a set of storage units\",\n   \"properties\": {\n    \"replicas\": {\n     \"default\": 1,\n     \"description\": \"Only for aws aurora storage provider right now. And the default value is 1. aws rds instance is always 1. aws rds cluster will auto create 3 instances(1 primary and 2 replicas).\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"schema\": {\n     \"description\": \"the default database name of the storage node. if not set, will NOT create database\",\n     \"type\": \"string\"\n    },\n    \"storageProviderName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"storageProviderName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Storage Node\",\n \"type\": \"object\"\n}"
+ }

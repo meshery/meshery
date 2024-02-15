@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GerritGroupMember",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Gerrit Group Member",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gerrit-operator",
+   "version": "2.19.0",
+   "displayName": "gerrit-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/gerrit-operator-2.19.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GerritGroupMember is the Schema for the gerrit group member API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritGroupMemberSpec defines the desired state of GerritGroupMember.\",\n   \"properties\": {\n    \"accountId\": {\n     \"type\": \"string\"\n    },\n    \"groupId\": {\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"description\": \"OwnerName indicates which gerrit CR should be taken to initialize correct client.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"accountId\",\n    \"groupId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Group Member\",\n \"type\": \"object\"\n}"
+ }

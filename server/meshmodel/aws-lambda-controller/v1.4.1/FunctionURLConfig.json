@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "FunctionURLConfig",
+  "apiVersion": "lambda.services.k8s.aws/v1alpha1",
+  "displayName": "Function URL Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-lambda-controller",
+   "version": "v1.4.1",
+   "displayName": "aws-lambda-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"FunctionURLConfig is the Schema for the FunctionURLConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FunctionUrlConfigSpec defines the desired state of FunctionUrlConfig.\\n\\n\\nDetails about a Lambda function URL.\",\n   \"properties\": {\n    \"authType\": {\n     \"description\": \"The type of authentication that your function URL uses. Set to AWS_IAM if\\nyou want to restrict access to authenticated IAM users only. Set to NONE\\nif you want to bypass IAM authentication to create a public endpoint. For\\nmore information, see Security and auth model for Lambda function URLs (https://docs.aws.amazon.com/lambda/latest/dg/urls-auth.html).\",\n     \"type\": \"string\"\n    },\n    \"cors\": {\n     \"description\": \"The cross-origin resource sharing (CORS) (https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)\\nsettings for your function URL.\",\n     \"properties\": {\n      \"allowCredentials\": {\n       \"type\": \"boolean\"\n      },\n      \"allowHeaders\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowMethods\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowOrigins\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"exposeHeaders\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"maxAge\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionName\": {\n     \"description\": \"The name of the Lambda function.\\n\\n\\nName formats\\n\\n\\n  - Function name – my-function.\\n\\n\\n  - Function ARN – arn:aws:lambda:us-west-2:123456789012:function:my-function.\\n\\n\\n  - Partial ARN – 123456789012:function:my-function.\\n\\n\\nThe length constraint applies only to the full ARN. If you specify only the\\nfunction name, it is limited to 64 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"functionRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"qualifier\": {\n     \"description\": \"The alias name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Function URL Config\",\n \"type\": \"object\"\n}"
+ }

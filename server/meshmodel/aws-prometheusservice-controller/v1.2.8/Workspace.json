@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Workspace",
+  "apiVersion": "prometheusservice.services.k8s.aws/v1alpha1",
+  "displayName": "Workspace",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-prometheusservice-controller",
+   "version": "v1.2.8",
+   "displayName": "aws-prometheusservice-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/prometheusservice-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Workspace is the Schema for the Workspaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkspaceSpec defines the desired state of Workspace.\",\n   \"properties\": {\n    \"alias\": {\n     \"description\": \"An optional user-assigned alias for this workspace. This alias is for user\\nreference and does not need to be unique.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Optional, user-provided tags for this workspace.\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workspace\",\n \"type\": \"object\"\n}"
+ }

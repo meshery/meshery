@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Endpoint",
+  "apiVersion": "eventbridge.services.k8s.aws/v1alpha1",
+  "displayName": "Endpoint",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-eventbridge-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-eventbridge-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/eventbridge-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Endpoint is the Schema for the Endpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EndpointSpec defines the desired state of Endpoint.\\n\\n\\nA global endpoint used to improve your application's availability by making\\nit regional-fault tolerant. For more information about global endpoints,\\nsee Making applications Regional-fault tolerant with global endpoints and\\nevent replication (https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-global-endpoints.html)\\nin the Amazon EventBridge User Guide.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description of the global endpoint.\",\n     \"type\": \"string\"\n    },\n    \"eventBuses\": {\n     \"description\": \"Define the event buses used.\\n\\n\\nThe names of the event buses must be identical in each Region.\",\n     \"items\": {\n      \"description\": \"The event buses the endpoint is associated with.\",\n      \"properties\": {\n       \"eventBusARN\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"description\": \"The name of the global endpoint. For example, \\\"Name\\\":\\\"us-east-2-custom_bus_A-endpoint\\\".\",\n     \"type\": \"string\"\n    },\n    \"replicationConfig\": {\n     \"description\": \"Enable or disable event replication. The default state is ENABLED which means\\nyou must supply a RoleArn. If you don't have a RoleArn or you don't want\\nevent replication enabled, set the state to DISABLED.\",\n     \"properties\": {\n      \"state\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"roleARN\": {\n     \"description\": \"The ARN of the role used for replication.\",\n     \"type\": \"string\"\n    },\n    \"routingConfig\": {\n     \"description\": \"Configure the routing policy, including the health check and secondary Region..\",\n     \"properties\": {\n      \"failoverConfig\": {\n       \"description\": \"The failover configuration for an endpoint. This includes what triggers failover\\nand what happens when it's triggered.\",\n       \"properties\": {\n        \"primary\": {\n         \"description\": \"The primary Region of the endpoint.\",\n         \"properties\": {\n          \"healthCheck\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"secondary\": {\n         \"description\": \"The secondary Region that processes events when failover is triggered or\\nreplication is enabled.\",\n         \"properties\": {\n          \"route\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"eventBuses\",\n    \"name\",\n    \"routingConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Endpoint\",\n \"type\": \"object\"\n}"
+ }

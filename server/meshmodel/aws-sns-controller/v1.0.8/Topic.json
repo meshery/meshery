@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Topic",
+  "apiVersion": "sns.services.k8s.aws/v1alpha1",
+  "displayName": "Topic",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sns-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-sns-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sns-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Topic is the Schema for the Topics API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TopicSpec defines the desired state of Topic.\\n\\n\\nA wrapper type for the topic's Amazon Resource Name (ARN). To retrieve a\\ntopic's attributes, use GetTopicAttributes.\",\n   \"properties\": {\n    \"contentBasedDeduplication\": {\n     \"type\": \"string\"\n    },\n    \"dataProtectionPolicy\": {\n     \"description\": \"The body of the policy document you want to use for this topic.\\n\\n\\nYou can only add one policy per topic.\\n\\n\\nThe policy must be in JSON string format.\\n\\n\\nLength Constraints: Maximum length of 30,720.\",\n     \"type\": \"string\"\n    },\n    \"deliveryPolicy\": {\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"type\": \"string\"\n    },\n    \"fifoTopic\": {\n     \"type\": \"string\"\n    },\n    \"kmsMasterKeyID\": {\n     \"type\": \"string\"\n    },\n    \"kmsMasterKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the topic you want to create.\\n\\n\\nConstraints: Topic names must be made up of only uppercase and lowercase\\nASCII letters, numbers, underscores, and hyphens, and must be between 1 and\\n256 characters long.\\n\\n\\nFor a FIFO (first-in-first-out) topic, the name must end with the .fifo suffix.\",\n     \"type\": \"string\"\n    },\n    \"policy\": {\n     \"type\": \"string\"\n    },\n    \"policyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"signatureVersion\": {\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The list of tags to add to a new topic.\\n\\n\\nTo be able to tag a topic on creation, you must have the sns:CreateTopic\\nand sns:TagResource permissions.\",\n     \"items\": {\n      \"description\": \"The list of tags to be added to the specified topic.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tracingConfig\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Topic\",\n \"type\": \"object\"\n}"
+ }

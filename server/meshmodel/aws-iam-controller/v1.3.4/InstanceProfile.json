@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "InstanceProfile",
+  "apiVersion": "iam.services.k8s.aws/v1alpha1",
+  "displayName": "Instance Profile",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-iam-controller",
+   "version": "v1.3.4",
+   "displayName": "aws-iam-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/iam-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"InstanceProfile is the Schema for the InstanceProfiles API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstanceProfileSpec defines the desired state of InstanceProfile.\\n\\n\\nContains information about an instance profile.\\n\\n\\nThis data type is used as a response element in the following operations:\\n\\n\\n  - CreateInstanceProfile\\n\\n\\n  - GetInstanceProfile\\n\\n\\n  - ListInstanceProfiles\\n\\n\\n  - ListInstanceProfilesForRole\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"The name of the instance profile to create.\\n\\n\\nThis parameter allows (through its regex pattern (http://wikipedia.org/wiki/regex))\\na string of characters consisting of upper and lowercase alphanumeric characters\\nwith no spaces. You can also include any of the following characters: _+=,.@-\",\n     \"type\": \"string\"\n    },\n    \"path\": {\n     \"description\": \"The path to the instance profile. For more information about paths, see IAM\\nIdentifiers (https://docs.aws.amazon.com/IAM/latest/UserGuide/Using_Identifiers.html)\\nin the IAM User Guide.\\n\\n\\nThis parameter is optional. If it is not included, it defaults to a slash\\n(/).\\n\\n\\nThis parameter allows (through its regex pattern (http://wikipedia.org/wiki/regex))\\na string of characters consisting of either a forward slash (/) by itself\\nor a string that must begin and end with forward slashes. In addition, it\\ncan contain any ASCII character from the ! (\\\\u0021) through the DEL character\\n(\\\\u007F), including most punctuation characters, digits, and upper and lowercased\\nletters.\",\n     \"type\": \"string\"\n    },\n    \"role\": {\n     \"type\": \"string\"\n    },\n    \"roleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags that you want to attach to the newly created IAM instance\\nprofile. Each tag consists of a key name and an associated value. For more\\ninformation about tagging, see Tagging IAM resources (https://docs.aws.amazon.com/IAM/latest/UserGuide/id_tags.html)\\nin the IAM User Guide.\\n\\n\\nIf any one of the tags is invalid or if you exceed the allowed maximum number\\nof tags, then the entire request fails and the resource is not created.\",\n     \"items\": {\n      \"description\": \"A structure that represents user-provided metadata that can be associated\\nwith an IAM resource. For more information about tagging, see Tagging IAM\\nresources (https://docs.aws.amazon.com/IAM/latest/UserGuide/id_tags.html)\\nin the IAM User Guide.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Instance Profile\",\n \"type\": \"object\"\n}"
+ }

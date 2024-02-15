@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SGPoolingConfig",
+  "apiVersion": "stackgres.io/v1",
+  "displayName": "SG Pooling Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "stackgres-operator",
+   "version": "1.8.0",
+   "displayName": "stackgres-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.8.0/helm/stackgres-operator.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"pgBouncer\": {\n     \"description\": \"Connection pooling configuration based on PgBouncer.\\n\",\n     \"properties\": {\n      \"pgbouncer.ini\": {\n       \"description\": \"The `pgbouncer.ini` parameters the configuration contains, represented as an object where the keys are valid names for the `pgbouncer.ini` configuration file parameters.\\n\\nCheck [pgbouncer configuration](https://www.pgbouncer.org/config.html#generic-settings) for more information about supported parameters.\\n\",\n       \"properties\": {\n        \"databases\": {\n         \"additionalProperties\": {\n          \"additionalProperties\": true,\n          \"type\": \"object\"\n         },\n         \"description\": \"The `pgbouncer.ini` (Section [databases]) parameters the configuration contains, represented as an object where the keys are valid names for the `pgbouncer.ini` configuration file parameters.\\n\\nCheck [pgbouncer configuration](https://www.pgbouncer.org/config.html#section-databases) for more information about supported parameters.\\n\",\n         \"type\": \"object\"\n        },\n        \"pgbouncer\": {\n         \"additionalProperties\": true,\n         \"description\": \"The `pgbouncer.ini` (Section [pgbouncer]) parameters the configuration contains, represented as an object where the keys are valid names for the `pgbouncer.ini` configuration file parameters.\\n\\nCheck [pgbouncer configuration](https://www.pgbouncer.org/config.html#generic-settings) for more information about supported parameters\\n\",\n         \"type\": \"object\"\n        },\n        \"users\": {\n         \"additionalProperties\": {\n          \"additionalProperties\": true,\n          \"type\": \"object\"\n         },\n         \"description\": \"The `pgbouncer.ini` (Section [users]) parameters the configuration contains, represented as an object where the keys are valid names for the `pgbouncer.ini` configuration file parameters.\\n\\nCheck [pgbouncer configuration](https://www.pgbouncer.org/config.html#section-users) for more information about supported parameters.\\n\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"SG Pooling Config\",\n \"type\": \"object\"\n}"
+ }

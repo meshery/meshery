@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ModelPackageGroup",
+  "apiVersion": "sagemaker.services.k8s.aws/v1alpha1",
+  "displayName": "Model Package Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sagemaker-controller",
+   "version": "v1.2.7",
+   "displayName": "aws-sagemaker-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ModelPackageGroup is the Schema for the ModelPackageGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ModelPackageGroupSpec defines the desired state of ModelPackageGroup.\\n\\n\\nA group of versioned models in the model registry.\",\n   \"properties\": {\n    \"modelPackageGroupDescription\": {\n     \"description\": \"A description for the model group.\",\n     \"type\": \"string\"\n    },\n    \"modelPackageGroupName\": {\n     \"description\": \"The name of the model group.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of key value pairs associated with the model group. For more information,\\nsee Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html)\\nin the Amazon Web Services General Reference Guide.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags.\\n\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"modelPackageGroupName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Model Package Group\",\n \"type\": \"object\"\n}"
+ }

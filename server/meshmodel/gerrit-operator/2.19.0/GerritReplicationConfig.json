@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GerritReplicationConfig",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Gerrit Replication Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gerrit-operator",
+   "version": "2.19.0",
+   "displayName": "gerrit-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/gerrit-operator-2.19.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GerritReplicationConfig is the Schema for the gerrit replication config API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritReplicationConfigSpec defines the desired state of GerritReplicationConfig.\",\n   \"properties\": {\n    \"owner_name\": {\n     \"type\": \"string\"\n    },\n    \"ssh_url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ssh_url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Replication Config\",\n \"type\": \"object\"\n}"
+ }

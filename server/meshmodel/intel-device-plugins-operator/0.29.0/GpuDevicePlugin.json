@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GpuDevicePlugin",
+  "apiVersion": "deviceplugin.intel.com/v1",
+  "displayName": "Gpu Device Plugin",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "intel-device-plugins-operator",
+   "version": "0.29.0",
+   "displayName": "intel-device-plugins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/intel-device-plugins-operator-0.29.0/intel-device-plugins-operator-0.29.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GpuDevicePlugin is the Schema for the gpudeviceplugins API. It represents the GPU device plugin responsible for advertising Intel GPU hardware resources to the kubelet.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GpuDevicePluginSpec defines the desired state of GpuDevicePlugin.\",\n   \"properties\": {\n    \"enableMonitoring\": {\n     \"description\": \"EnableMonitoring enables the monitoring resource ('i915_monitoring') which gives access to all GPU devices on given node. Typically used with Intel XPU-Manager.\",\n     \"type\": \"boolean\"\n    },\n    \"image\": {\n     \"description\": \"Image is a container image with GPU device plugin executable.\",\n     \"type\": \"string\"\n    },\n    \"initImage\": {\n     \"description\": \"InitImage is a container image with tools (e.g., GPU NFD source hook) installed on each node.\",\n     \"type\": \"string\"\n    },\n    \"logLevel\": {\n     \"description\": \"LogLevel sets the plugin's log level.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"NodeSelector provides a simple way to constrain device plugin pods to nodes with particular labels.\",\n     \"type\": \"object\"\n    },\n    \"preferredAllocationPolicy\": {\n     \"description\": \"PreferredAllocationPolicy sets the mode of allocating GPU devices on a node. See documentation for detailed description of the policies. Only valid when SharedDevNum \\u003e 1 is set. Not applicable with ResourceManager.\",\n     \"enum\": [\n      \"balanced\",\n      \"packed\",\n      \"none\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resourceManager\": {\n     \"description\": \"ResourceManager handles the fractional resource management for multi-GPU nodes. Enable only for clusters with GPU Aware Scheduling.\",\n     \"type\": \"boolean\"\n    },\n    \"sharedDevNum\": {\n     \"description\": \"SharedDevNum is a number of containers that can share the same GPU device.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gpu Device Plugin\",\n \"type\": \"object\"\n}"
+ }

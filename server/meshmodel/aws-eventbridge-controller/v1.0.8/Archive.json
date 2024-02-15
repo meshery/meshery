@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Archive",
+  "apiVersion": "eventbridge.services.k8s.aws/v1alpha1",
+  "displayName": "Archive",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-eventbridge-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-eventbridge-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/eventbridge-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Archive is the Schema for the Archives API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ArchiveSpec defines the desired state of Archive.\\n\\n\\nAn Archive object that contains details about an archive.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description for the archive.\",\n     \"type\": \"string\"\n    },\n    \"eventPattern\": {\n     \"description\": \"An event pattern to use to filter events sent to the archive.\",\n     \"type\": \"string\"\n    },\n    \"eventSourceARN\": {\n     \"description\": \"The ARN of the event bus that sends events to the archive.\",\n     \"type\": \"string\"\n    },\n    \"eventSourceRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name for the archive to create.\",\n     \"type\": \"string\"\n    },\n    \"retentionDays\": {\n     \"description\": \"The number of days to retain events for. Default value is 0. If set to 0,\\nevents are retained indefinitely\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Archive\",\n \"type\": \"object\"\n}"
+ }

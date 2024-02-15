@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PulsarNamespace",
+  "apiVersion": "resource.streamnative.io/v1alpha1",
+  "displayName": "Pulsar Namespace",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "pulsar-resources-operator",
+   "version": "0.4.7",
+   "displayName": "pulsar-resources-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.4.7/pulsar-resources-operator-v0.4.7.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PulsarNamespace is the Schema for the pulsarnamespaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarNamespaceSpec defines the desired state of PulsarNamespace\",\n   \"properties\": {\n    \"backlogQuotaLimitSize\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"backlogQuotaLimitTime\": {\n     \"description\": \"Backlog Should set at least one of them if setting backlog\",\n     \"type\": \"string\"\n    },\n    \"backlogQuotaRetentionPolicy\": {\n     \"type\": \"string\"\n    },\n    \"backlogQuotaType\": {\n     \"description\": \"BacklogQuotaType controls the backlog by setting the type to destination_storage or message_age destination_storage limits backlog by size (in bytes). message_age limits backlog by time, that is, message timestamp (broker or publish timestamp)\",\n     \"enum\": [\n      \"destination_storage\",\n      \"message_age\"\n     ],\n     \"type\": \"string\"\n    },\n    \"bundles\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"geoReplicationRefs\": {\n     \"description\": \"GeoReplicationRefs is the reference list to the PulsarGeoReplication resource\",\n     \"items\": {\n      \"description\": \"LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"PulsarResourceLifeCyclePolicy indicates whether it will keep or delete the resource in pulsar cluster after resource is deleted by controller KeepAfterDeletion or CleanUpAfterDeletion\",\n     \"enum\": [\n      \"CleanUpAfterDeletion\",\n      \"KeepAfterDeletion\"\n     ],\n     \"type\": \"string\"\n    },\n    \"maxConsumersPerSubscription\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"maxConsumersPerTopic\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"maxProducersPerTopic\": {\n     \"description\": \"Tenant Policy Setting\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"messageTTL\": {\n     \"description\": \"MessageTTL indicates the message ttl for the namespace\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the namespace name\",\n     \"type\": \"string\"\n    },\n    \"retentionSize\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"retentionTime\": {\n     \"description\": \"Retention Should set at least one of them if setting retention Retention Quota must exceed configured backlog quota for namespace\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Namespace\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Stream",
+  "apiVersion": "kinesis.services.k8s.aws/v1alpha1",
+  "displayName": "Stream",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-kinesis-controller",
+   "version": "v0.0.12",
+   "displayName": "aws-kinesis-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/kinesis-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Stream is the Schema for the Streams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StreamSpec defines the desired state of Stream.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"A name to identify the stream. The stream name is scoped to the Amazon Web\\nServices account used by the application that creates the stream. It is also\\nscoped by Amazon Web Services Region. That is, two streams in two different\\nAmazon Web Services accounts can have the same name. Two streams in the same\\nAmazon Web Services account but in two different Regions can also have the\\nsame name.\",\n     \"type\": \"string\"\n    },\n    \"shardCount\": {\n     \"description\": \"The number of shards that the stream will use. The throughput of the stream\\nis a function of the number of shards; more shards are required for greater\\nprovisioned throughput.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"streamModeDetails\": {\n     \"description\": \"Indicates the capacity mode of the data stream. Currently, in Kinesis Data\\nStreams, you can choose between an on-demand capacity mode and a provisioned\\ncapacity mode for your data streams.\",\n     \"properties\": {\n      \"streamMode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stream\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "APUserSig",
+  "apiVersion": "appprotect.f5.com/v1beta1",
+  "displayName": "AP User Sig",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-ingress",
+   "version": "1.1.2",
+   "displayName": "nginx-ingress",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"APUserSig is the Schema for the apusersigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APUserSigSpec defines the desired state of APUserSig\",\n   \"properties\": {\n    \"properties\": {\n     \"type\": \"string\"\n    },\n    \"signatures\": {\n     \"items\": {\n      \"properties\": {\n       \"accuracy\": {\n        \"enum\": [\n         \"high\",\n         \"medium\",\n         \"low\"\n        ],\n        \"type\": \"string\"\n       },\n       \"attackType\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"references\": {\n        \"properties\": {\n         \"type\": {\n          \"enum\": [\n           \"bugtraq\",\n           \"cve\",\n           \"nessus\",\n           \"url\"\n          ],\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"risk\": {\n        \"enum\": [\n         \"high\",\n         \"medium\",\n         \"low\"\n        ],\n        \"type\": \"string\"\n       },\n       \"rule\": {\n        \"type\": \"string\"\n       },\n       \"signatureType\": {\n        \"enum\": [\n         \"request\",\n         \"response\"\n        ],\n        \"type\": \"string\"\n       },\n       \"systems\": {\n        \"items\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tag\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP User Sig\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "StorageProvider",
+  "apiVersion": "shardingsphere.apache.org/v1alpha1",
+  "displayName": "Storage Provider",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "apache-shardingsphere-operator-charts",
+   "version": "0.3.0",
+   "displayName": "apache-shardingsphere-operator-charts",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/apache/shardingsphere-on-cloud/releases/download/0.3.0/apache-shardingsphere-operator-charts-0.3.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"StorageProvider is the Schema for the storageproviders API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StorageProviderSpec defines the desired state of StorageProvider\",\n   \"properties\": {\n    \"parameters\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"provisioner\": {\n     \"type\": \"string\"\n    },\n    \"reclaimPolicy\": {\n     \"default\": \"Retain\",\n     \"description\": \"StorageReclaimPolicy defines the reclaim policy for storage\",\n     \"enum\": [\n      \"DeleteWithFinalSnapshot\",\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parameters\",\n    \"provisioner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Storage Provider\",\n \"type\": \"object\"\n}"
+ }

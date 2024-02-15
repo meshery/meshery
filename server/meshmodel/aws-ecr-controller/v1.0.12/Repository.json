@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Repository",
+  "apiVersion": "ecr.services.k8s.aws/v1alpha1",
+  "displayName": "Repository",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ecr-controller",
+   "version": "v1.0.12",
+   "displayName": "aws-ecr-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ecr-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Repository is the Schema for the Repositories API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RepositorySpec defines the desired state of Repository.\\n\\n\\nAn object representing a repository.\",\n   \"properties\": {\n    \"encryptionConfiguration\": {\n     \"description\": \"The encryption configuration for the repository. This determines how the\\ncontents of your repository are encrypted at rest.\",\n     \"properties\": {\n      \"encryptionType\": {\n       \"type\": \"string\"\n      },\n      \"kmsKey\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"imageScanningConfiguration\": {\n     \"description\": \"The image scanning configuration for the repository. This determines whether\\nimages are scanned for known vulnerabilities after being pushed to the repository.\",\n     \"properties\": {\n      \"scanOnPush\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"imageTagMutability\": {\n     \"description\": \"The tag mutability setting for the repository. If this parameter is omitted,\\nthe default setting of MUTABLE will be used which will allow image tags to\\nbe overwritten. If IMMUTABLE is specified, all image tags within the repository\\nwill be immutable which will prevent them from being overwritten.\",\n     \"type\": \"string\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"The JSON repository policy text to apply to the repository.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name to use for the repository. The repository name may be specified\\non its own (such as nginx-web-app) or it can be prepended with a namespace\\nto group the repository into a category (such as project-a/nginx-web-app).\",\n     \"type\": \"string\"\n    },\n    \"policy\": {\n     \"description\": \"The JSON repository policy text to apply to the repository. For more information,\\nsee Amazon ECR repository policies (https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policy-examples.html)\\nin the Amazon Elastic Container Registry User Guide.\",\n     \"type\": \"string\"\n    },\n    \"registryID\": {\n     \"description\": \"The Amazon Web Services account ID associated with the registry to create\\nthe repository. If you do not specify a registry, the default registry is\\nassumed.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The metadata that you apply to the repository to help you categorize and\\norganize them. Each tag consists of a key and an optional value, both of\\nwhich you define. Tag keys can have a maximum character length of 128 characters,\\nand tag values can have a maximum length of 256 characters.\",\n     \"items\": {\n      \"description\": \"The metadata to apply to a resource to help you categorize and organize them.\\nEach tag consists of a key and a value, both of which you define. Tag keys\\ncan have a maximum character length of 128 characters, and tag values can\\nhave a maximum length of 256 characters.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Repository\",\n \"type\": \"object\"\n}"
+ }

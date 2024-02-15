@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PodIdentityAssociation",
+  "apiVersion": "eks.services.k8s.aws/v1alpha1",
+  "displayName": "Pod Identity Association",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-eks-controller",
+   "version": "v1.3.2",
+   "displayName": "aws-eks-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/eks-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PodIdentityAssociation is the Schema for the PodIdentityAssociations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PodIdentityAssociationSpec defines the desired state of PodIdentityAssociation.\\n\\n\\nAmazon EKS Pod Identity associations provide the ability to manage credentials\\nfor your applications, similar to the way that Amazon EC2 instance profiles\\nprovide credentials to Amazon EC2 instances.\",\n   \"properties\": {\n    \"clientRequestToken\": {\n     \"description\": \"A unique, case-sensitive identifier that you provide to ensure the idempotency\\nof the request.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"The name of the cluster to create the association in.\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"namespace\": {\n     \"description\": \"The name of the Kubernetes namespace inside the cluster to create the association\\nin. The service account and the pods that use the service account must be\\nin this namespace.\",\n     \"type\": \"string\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the IAM role to associate with the service\\naccount. The EKS Pod Identity agent manages credentials to assume this role\\nfor applications in the containers in the pods that use this service account.\",\n     \"type\": \"string\"\n    },\n    \"roleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serviceAccount\": {\n     \"description\": \"The name of the Kubernetes service account inside the cluster to associate\\nthe IAM credentials with.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Metadata that assists with categorization and organization. Each tag consists\\nof a key and an optional value. You define both. Tags don't propagate to\\nany other cluster or Amazon Web Services resources.\\n\\n\\nThe following basic restrictions apply to tags:\\n\\n\\n  - Maximum number of tags per resource – 50\\n\\n\\n  - For each resource, each tag key must be unique, and each tag key can\\n    have only one value.\\n\\n\\n  - Maximum key length – 128 Unicode characters in UTF-8\\n\\n\\n  - Maximum value length – 256 Unicode characters in UTF-8\\n\\n\\n  - If your tagging schema is used across multiple services and resources,\\n    remember that other services may have restrictions on allowed characters.\\n    Generally allowed characters are: letters, numbers, and spaces representable\\n    in UTF-8, and the following characters: + - = . _ : / @.\\n\\n\\n  - Tag keys and values are case-sensitive.\\n\\n\\n  - Do not use aws:, AWS:, or any upper or lowercase combination of such\\n    as a prefix for either keys or values as it is reserved for Amazon Web\\n    Services use. You cannot edit or delete tag keys or values with this prefix.\\n    Tags with this prefix do not count against your tags per resource limit.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"namespace\",\n    \"serviceAccount\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Identity Association\",\n \"type\": \"object\"\n}"
+ }

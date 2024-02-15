@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PulsarGeoReplication",
+  "apiVersion": "resource.streamnative.io/v1alpha1",
+  "displayName": "Pulsar Geo Replication",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "pulsar-resources-operator",
+   "version": "0.4.7",
+   "displayName": "pulsar-resources-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.4.7/pulsar-resources-operator-v0.4.7.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PulsarGeoReplication is the Schema for the pulsargeoreplications API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarGeoReplicationSpec defines the desired state of PulsarGeoReplication\",\n   \"properties\": {\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the source PulsarConnection\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"destinationConnectionRef\": {\n     \"description\": \"DestinationConnectionRef is the connection reference to the remote cluster\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"PulsarResourceLifeCyclePolicy indicates whether it will keep or delete the resource in pulsar cluster after resource is deleted by controller KeepAfterDeletion or CleanUpAfterDeletion\",\n     \"enum\": [\n      \"CleanUpAfterDeletion\",\n      \"KeepAfterDeletion\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\",\n    \"destinationConnectionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Geo Replication\",\n \"type\": \"object\"\n}"
+ }

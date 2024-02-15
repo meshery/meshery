@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CodeSigningConfig",
+  "apiVersion": "lambda.services.k8s.aws/v1alpha1",
+  "displayName": "Code Signing Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-lambda-controller",
+   "version": "v1.4.1",
+   "displayName": "aws-lambda-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CodeSigningConfig is the Schema for the CodeSigningConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CodeSigningConfigSpec defines the desired state of CodeSigningConfig.\\n\\n\\nDetails about a Code signing configuration (https://docs.aws.amazon.com/lambda/latest/dg/configuration-codesigning.html).\",\n   \"properties\": {\n    \"allowedPublishers\": {\n     \"description\": \"Signing profiles for this code signing configuration.\",\n     \"properties\": {\n      \"signingProfileVersionARNs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"codeSigningPolicies\": {\n     \"description\": \"The code signing policies define the actions to take if the validation checks\\nfail.\",\n     \"properties\": {\n      \"untrustedArtifactOnDeployment\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Descriptive name for this code signing configuration.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allowedPublishers\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Code Signing Config\",\n \"type\": \"object\"\n}"
+ }

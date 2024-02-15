@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "JenkinsJobBuildRun",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Jenkins Job Build Run",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "jenkins-operator",
+   "version": "2.15.3",
+   "displayName": "jenkins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/jenkins-operator-2.15.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"deleteAfterCompletionInterval\": {\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"jobpath\": {\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"params\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"retry\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"jobpath\",\n    \"retry\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Jenkins Job Build Run\",\n \"type\": \"object\"\n}"
+ }

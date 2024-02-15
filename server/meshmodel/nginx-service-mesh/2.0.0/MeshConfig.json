@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MeshConfig",
+  "apiVersion": "nsm.nginx.com/v1alpha2",
+  "displayName": "Mesh Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MeshConfig defines the top level CustomResource for holding the dynamic mesh configuration. This configuration can be updated by a user at runtime to change the global mesh settings.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired configuration for NGINX Service Mesh.\",\n   \"properties\": {\n    \"accessControlMode\": {\n     \"description\": \"AccessControlMode for service-to-service communication.\",\n     \"enum\": [\n      \"allow\",\n      \"deny\"\n     ],\n     \"type\": \"string\"\n    },\n    \"clientMaxBodySize\": {\n     \"description\": \"ClientMaxBodySize is NGINX client max body size.\",\n     \"pattern\": \"^\\\\d+[kKmMgG]?$\",\n     \"type\": \"string\"\n    },\n    \"meshConfigClassName\": {\n     \"description\": \"MeshConfigClassName used for this MeshConfig. This is the name of a MeshConfigClass resource.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"mtls\": {\n     \"description\": \"Mtls is the configuration for mutual TLS.\",\n     \"properties\": {\n      \"caKeyType\": {\n       \"description\": \"CaKeyType is the key type used for the SPIRE Server CA.\",\n       \"enum\": [\n        \"ec-p256\",\n        \"ec-p384\",\n        \"rsa-2048\",\n        \"rsa-4096\"\n       ],\n       \"type\": \"string\"\n      },\n      \"caTTL\": {\n       \"description\": \"CaTTL is the CA/signing key TTL in hours(h). Min value 24h. Max value 999999h.\",\n       \"pattern\": \"^1[0-9]{2,5}(h)|2[4-9](h)|2[0-9][0-9]{1,5}(h)|[3-9][0-9]{1,5}(h)$\",\n       \"type\": \"string\"\n      },\n      \"mode\": {\n       \"description\": \"Mode for pod-to-pod communication.\",\n       \"enum\": [\n        \"off\",\n        \"permissive\",\n        \"strict\"\n       ],\n       \"type\": \"string\"\n      },\n      \"svidTTL\": {\n       \"description\": \"SvidTTL is the TTL of certificates issued to workloads in hours(h) or minutes(m). Max value is 999999.\",\n       \"pattern\": \"^[1-9][0-9]{0,5}(h|m)$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nginxErrorLogLevel\": {\n     \"description\": \"NGINXErrorLogLevel is the NGINX error log level.\",\n     \"enum\": [\n      \"debug\",\n      \"info\",\n      \"notice\",\n      \"warn\",\n      \"error\",\n      \"crit\",\n      \"alert\",\n      \"emerg\"\n     ],\n     \"type\": \"string\"\n    },\n    \"nginxLBMethod\": {\n     \"description\": \"NGINXLBMethod is the NGINX load balancing method.\",\n     \"enum\": [\n      \"least_conn\",\n      \"least_time\",\n      \"least_time last_byte\",\n      \"least_time last_byte inflight\",\n      \"random\",\n      \"random two\",\n      \"random two least_conn\",\n      \"random two least_time\",\n      \"random two least_time=last_byte\",\n      \"round_robin\"\n     ],\n     \"type\": \"string\"\n    },\n    \"nginxLogFormat\": {\n     \"description\": \"NGINXLogFormat is the NGINX log format.\",\n     \"enum\": [\n      \"default\",\n      \"json\"\n     ],\n     \"type\": \"string\"\n    },\n    \"prometheusAddress\": {\n     \"description\": \"PrometheusAddress is the address of a Prometheus server deployed in your Kubernetes cluster.\",\n     \"type\": \"string\"\n    },\n    \"telemetry\": {\n     \"description\": \"Telemetry is the configuration for telemetry.\",\n     \"properties\": {\n      \"exporters\": {\n       \"description\": \"Exporters is the exporters configuration for telemetry.\",\n       \"properties\": {\n        \"otlp\": {\n         \"description\": \"Otlp is the configuration for an OTLP gRPC exporter.\",\n         \"properties\": {\n          \"host\": {\n           \"description\": \"Host of the OpenTelemetry gRPC exporter to connect to.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"description\": \"Port of the OpenTelemetry gRPC exporter to connect to.\",\n           \"format\": \"int32\",\n           \"maximum\": 65535,\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"otlp\"\n       ],\n       \"type\": \"object\"\n      },\n      \"samplerRatio\": {\n       \"description\": \"SamplerRatio is the percentage of traces that are processed and exported to the telemetry backend.\",\n       \"format\": \"float\",\n       \"maximum\": 1,\n       \"minimum\": 0,\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"meshConfigClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Mesh Config\",\n \"type\": \"object\"\n}"
+ }

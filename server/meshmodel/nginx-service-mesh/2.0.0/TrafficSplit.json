@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TrafficSplit",
+  "apiVersion": "split.smi-spec.io/v1alpha3",
+  "displayName": "Traffic Split",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TrafficSplit is the Schema for the trafficsplits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TrafficSplitSpec defines the desired state of TrafficSplit\",\n   \"properties\": {\n    \"backends\": {\n     \"description\": \"Backends defines a list of Kubernetes services used as the traffic split destination\",\n     \"items\": {\n      \"description\": \"TrafficSplitBackend defines a backend\",\n      \"properties\": {\n       \"service\": {\n        \"description\": \"Service is the name of a Kubernetes service\",\n        \"type\": \"string\"\n       },\n       \"weight\": {\n        \"description\": \"Weight defines the traffic split percentage\",\n        \"minimum\": 0,\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"service\",\n       \"weight\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"matches\": {\n     \"description\": \"Matches allows defining a list of HTTP route groups that this traffic split object should match\",\n     \"items\": {\n      \"description\": \"TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.\",\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the type of resource being referenced\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of resource being referenced\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"service\": {\n     \"description\": \"Service represents the apex service\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backends\",\n    \"service\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Traffic Split\",\n \"type\": \"object\"\n}"
+ }

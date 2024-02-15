@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "LayerVersion",
+  "apiVersion": "lambda.services.k8s.aws/v1alpha1",
+  "displayName": "Layer Version",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-lambda-controller",
+   "version": "v1.4.1",
+   "displayName": "aws-lambda-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"LayerVersion is the Schema for the LayerVersions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LayerVersionSpec defines the desired state of LayerVersion.\",\n   \"properties\": {\n    \"compatibleArchitectures\": {\n     \"description\": \"A list of compatible instruction set architectures (https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"compatibleRuntimes\": {\n     \"description\": \"A list of compatible function runtimes (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).\\nUsed for filtering with ListLayers and ListLayerVersions.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"content\": {\n     \"description\": \"The function layer archive.\",\n     \"properties\": {\n      \"s3Bucket\": {\n       \"type\": \"string\"\n      },\n      \"s3Key\": {\n       \"type\": \"string\"\n      },\n      \"s3ObjectVersion\": {\n       \"type\": \"string\"\n      },\n      \"zipFile\": {\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"The description of the version.\",\n     \"type\": \"string\"\n    },\n    \"layerName\": {\n     \"description\": \"The name or Amazon Resource Name (ARN) of the layer.\",\n     \"type\": \"string\"\n    },\n    \"licenseInfo\": {\n     \"description\": \"The layer's software license. It can be any of the following:\\n\\n\\n  - An SPDX license identifier (https://spdx.org/licenses/). For example,\\n    MIT.\\n\\n\\n  - The URL of a license hosted on the internet. For example, https://opensource.org/licenses/MIT.\\n\\n\\n  - The full text of the license.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"content\",\n    \"layerName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Layer Version\",\n \"type\": \"object\"\n}"
+ }

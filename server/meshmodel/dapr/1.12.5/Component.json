@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Component",
+  "apiVersion": "dapr.io/v1alpha1",
+  "displayName": "Component",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "dapr",
+   "version": "1.12.5",
+   "displayName": "dapr",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.wener.tech/dapr-1.12.5.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Component describes an Dapr component type.\",\n \"properties\": {\n  \"auth\": {\n   \"description\": \"Auth represents authentication details for the component.\",\n   \"properties\": {\n    \"secretStore\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"secretStore\"\n   ],\n   \"type\": \"object\"\n  },\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"description\": \"ComponentSpec is the spec for a component.\",\n   \"properties\": {\n    \"ignoreErrors\": {\n     \"type\": \"boolean\"\n    },\n    \"initTimeout\": {\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"items\": {\n      \"description\": \"NameValuePair is a name/value pair.\",\n      \"properties\": {\n       \"envRef\": {\n        \"description\": \"EnvRef is the name of an environmental variable to read the value from.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the property.\",\n        \"type\": \"string\"\n       },\n       \"secretKeyRef\": {\n        \"description\": \"SecretKeyRef is the reference of a value in a secret store component.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Field in the secret.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Secret name.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"value\": {\n        \"description\": \"Value of the property, in plaintext.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"metadata\",\n    \"type\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Component\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PlatformApplication",
+  "apiVersion": "sns.services.k8s.aws/v1alpha1",
+  "displayName": "Platform Application",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sns-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-sns-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sns-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PlatformApplication is the Schema for the PlatformApplications API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PlatformApplicationSpec defines the desired state of PlatformApplication.\\n\\n\\nPlatform application object.\",\n   \"properties\": {\n    \"eventDeliveryFailure\": {\n     \"type\": \"string\"\n    },\n    \"eventEndpointCreated\": {\n     \"type\": \"string\"\n    },\n    \"eventEndpointCreatedRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"eventEndpointDeleted\": {\n     \"type\": \"string\"\n    },\n    \"eventEndpointDeletedRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"eventEndpointUpdated\": {\n     \"type\": \"string\"\n    },\n    \"eventEndpointUpdatedRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"failureFeedbackRoleARN\": {\n     \"type\": \"string\"\n    },\n    \"failureFeedbackRoleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Application names must be made up of only uppercase and lowercase ASCII letters,\\nnumbers, underscores, hyphens, and periods, and must be between 1 and 256\\ncharacters long.\",\n     \"type\": \"string\"\n    },\n    \"platform\": {\n     \"description\": \"The following platforms are supported: ADM (Amazon Device Messaging), APNS\\n(Apple Push Notification Service), APNS_SANDBOX, and GCM (Firebase Cloud\\nMessaging).\",\n     \"type\": \"string\"\n    },\n    \"platformCredential\": {\n     \"type\": \"string\"\n    },\n    \"platformPrincipal\": {\n     \"type\": \"string\"\n    },\n    \"successFeedbackRoleARN\": {\n     \"type\": \"string\"\n    },\n    \"successFeedbackRoleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"successFeedbackSampleRate\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"platform\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Platform Application\",\n \"type\": \"object\"\n}"
+ }

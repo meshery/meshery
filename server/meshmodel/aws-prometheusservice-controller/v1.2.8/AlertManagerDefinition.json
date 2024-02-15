@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AlertManagerDefinition",
+  "apiVersion": "prometheusservice.services.k8s.aws/v1alpha1",
+  "displayName": "Alert Manager Definition",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-prometheusservice-controller",
+   "version": "v1.2.8",
+   "displayName": "aws-prometheusservice-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/prometheusservice-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AlertManagerDefinition is the Schema for the AlertManagerDefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AlertManagerDefinitionSpec defines the desired state of AlertManagerDefinition.\",\n   \"properties\": {\n    \"configuration\": {\n     \"type\": \"string\"\n    },\n    \"workspaceID\": {\n     \"description\": \"The ID of the workspace in which to create the alert manager definition.\",\n     \"type\": \"string\"\n    },\n    \"workspaceRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"configuration\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Alert Manager Definition\",\n \"type\": \"object\"\n}"
+ }

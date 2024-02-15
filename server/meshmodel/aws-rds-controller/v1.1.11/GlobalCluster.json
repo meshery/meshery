@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GlobalCluster",
+  "apiVersion": "rds.services.k8s.aws/v1alpha1",
+  "displayName": "Global Cluster",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-rds-controller",
+   "version": "v1.1.11",
+   "displayName": "aws-rds-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/rds-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GlobalCluster is the Schema for the GlobalClusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalClusterSpec defines the desired state of GlobalCluster.\\n\\n\\nA data type representing an Aurora global database.\",\n   \"properties\": {\n    \"databaseName\": {\n     \"description\": \"The name for your database of up to 64 alphanumeric characters. If you do\\nnot provide a name, Amazon Aurora will not create a database in the global\\ndatabase cluster you are creating.\",\n     \"type\": \"string\"\n    },\n    \"deletionProtection\": {\n     \"description\": \"The deletion protection setting for the new global database. The global database\\ncan't be deleted when deletion protection is enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"engine\": {\n     \"description\": \"The name of the database engine to be used for this DB cluster.\",\n     \"type\": \"string\"\n    },\n    \"engineVersion\": {\n     \"description\": \"The engine version of the Aurora global database.\",\n     \"type\": \"string\"\n    },\n    \"globalClusterIdentifier\": {\n     \"description\": \"The cluster identifier of the new global database cluster.\",\n     \"type\": \"string\"\n    },\n    \"sourceDBClusterIdentifier\": {\n     \"description\": \"The Amazon Resource Name (ARN) to use as the primary cluster of the global\\ndatabase. This parameter is optional.\",\n     \"type\": \"string\"\n    },\n    \"storageEncrypted\": {\n     \"description\": \"The storage encryption setting for the new global database cluster.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Cluster\",\n \"type\": \"object\"\n}"
+ }

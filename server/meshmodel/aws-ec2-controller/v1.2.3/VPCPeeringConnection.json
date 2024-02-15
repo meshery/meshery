@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VPCPeeringConnection",
+  "apiVersion": "ec2.services.k8s.aws/v1alpha1",
+  "displayName": "VPC Peering Connection",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ec2-controller",
+   "version": "v1.2.3",
+   "displayName": "aws-ec2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VPCPeeringConnection is the Schema for the VPCPeeringConnections API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpcPeeringConnectionSpec defines the desired state of VpcPeeringConnection.\\n\\n\\nDescribes a VPC peering connection.\",\n   \"properties\": {\n    \"acceptRequest\": {\n     \"type\": \"boolean\"\n    },\n    \"accepterPeeringConnectionOptions\": {\n     \"description\": \"The VPC peering connection options for the accepter VPC.\",\n     \"properties\": {\n      \"allowDNSResolutionFromRemoteVPC\": {\n       \"type\": \"boolean\"\n      },\n      \"allowEgressFromLocalClassicLinkToRemoteVPC\": {\n       \"type\": \"boolean\"\n      },\n      \"allowEgressFromLocalVPCToRemoteClassicLink\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"peerOwnerID\": {\n     \"description\": \"The Amazon Web Services account ID of the owner of the accepter VPC.\\n\\n\\nDefault: Your Amazon Web Services account ID\",\n     \"type\": \"string\"\n    },\n    \"peerRegion\": {\n     \"description\": \"The Region code for the accepter VPC, if the accepter VPC is located in a\\nRegion other than the Region in which you make the request.\\n\\n\\nDefault: The Region in which you make the request.\",\n     \"type\": \"string\"\n    },\n    \"peerVPCID\": {\n     \"description\": \"The ID of the VPC with which you are creating the VPC peering connection.\\nYou must specify this parameter in the request.\",\n     \"type\": \"string\"\n    },\n    \"peerVPCRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"requesterPeeringConnectionOptions\": {\n     \"description\": \"The VPC peering connection options for the requester VPC.\",\n     \"properties\": {\n      \"allowDNSResolutionFromRemoteVPC\": {\n       \"type\": \"boolean\"\n      },\n      \"allowEgressFromLocalClassicLinkToRemoteVPC\": {\n       \"type\": \"boolean\"\n      },\n      \"allowEgressFromLocalVPCToRemoteClassicLink\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcID\": {\n     \"description\": \"The ID of the requester VPC. You must specify this parameter in the request.\",\n     \"type\": \"string\"\n    },\n    \"vpcRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VPC Peering Connection\",\n \"type\": \"object\"\n}"
+ }

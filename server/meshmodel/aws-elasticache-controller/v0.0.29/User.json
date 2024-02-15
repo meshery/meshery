@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "User",
+  "apiVersion": "elasticache.services.k8s.aws/v1alpha1",
+  "displayName": "User",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-elasticache-controller",
+   "version": "v0.0.29",
+   "displayName": "aws-elasticache-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/elasticache-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"User is the Schema for the Users API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"accessString\": {\n     \"description\": \"Access permissions string used for this user.\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"The current supported value is Redis.\",\n     \"type\": \"string\"\n    },\n    \"noPasswordRequired\": {\n     \"description\": \"Indicates a password is not required for this user.\",\n     \"type\": \"boolean\"\n    },\n    \"passwords\": {\n     \"description\": \"Passwords used for this user. You can create up to two passwords for each user.\",\n     \"items\": {\n      \"description\": \"SecretKeyReference combines a k8s corev1.SecretReference with a specific key within the referred-to Secret\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key is the key within the secret\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"name is unique within a namespace to reference a secret resource.\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"namespace defines the space within which the secret name must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an ElastiCache cluster or replication group. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your ElastiCache resources, with the exception of global replication group. When you add or remove tags on replication groups, those actions will be replicated to all nodes in the replication group. A tag with a null Value is permitted.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"userID\": {\n     \"description\": \"The ID of the user.\",\n     \"type\": \"string\"\n    },\n    \"userName\": {\n     \"description\": \"The username of the user.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"accessString\",\n    \"engine\",\n    \"userID\",\n    \"userName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}"
+ }

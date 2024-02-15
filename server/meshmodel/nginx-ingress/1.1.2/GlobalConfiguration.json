@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GlobalConfiguration",
+  "apiVersion": "k8s.nginx.org/v1",
+  "displayName": "Global Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-ingress",
+   "version": "1.1.2",
+   "displayName": "nginx-ingress",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GlobalConfiguration defines the GlobalConfiguration resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalConfigurationSpec is the spec of the GlobalConfiguration resource.\",\n   \"properties\": {\n    \"listeners\": {\n     \"items\": {\n      \"description\": \"Listener defines a listener.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"ssl\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Configuration\",\n \"type\": \"object\"\n}"
+ }

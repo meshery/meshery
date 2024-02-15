@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Policy",
+  "apiVersion": "fluxninja.com/v1alpha1",
+  "displayName": "Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aperture-controller",
+   "version": "2.34.0",
+   "displayName": "aperture-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://fluxninja.github.io/aperture/aperture-controller-v2.34.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Policy is the Schema for the policies API.\",\n \"properties\": {\n  \"dynamicConfig\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Policy\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ExternalEntity",
+  "apiVersion": "crd.antrea.io/v1alpha2",
+  "displayName": "External Entity",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "antrea",
+   "version": "1.15.0",
+   "displayName": "antrea",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/antrea-io/antrea/releases/download/v1.15.0/antrea-chart.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"endpoints\": {\n     \"items\": {\n      \"properties\": {\n       \"ip\": {\n        \"oneOf\": [\n         {\n          \"format\": \"ipv4\"\n         },\n         {\n          \"format\": \"ipv6\"\n         }\n        ],\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"externalNode\": {\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"protocol\": {\n        \"enum\": [\n         \"TCP\",\n         \"UDP\",\n         \"SCTP\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"External Entity\",\n \"type\": \"object\"\n}"
+ }

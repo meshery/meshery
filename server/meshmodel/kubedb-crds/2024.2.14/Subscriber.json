@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Subscriber",
+  "apiVersion": "postgres.kubedb.com/v1alpha1",
+  "displayName": "Subscriber",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubedb-crds",
+   "version": "2024.2.14",
+   "displayName": "kubedb-crds",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-crds/kubedb-crds-v2024.2.14.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"databaseName\": {\n     \"type\": \"string\"\n    },\n    \"deletionPolicy\": {\n     \"default\": \"Delete\",\n     \"enum\": [\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    },\n    \"disable\": {\n     \"type\": \"boolean\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parameters\": {\n     \"properties\": {\n      \"binary\": {\n       \"type\": \"boolean\"\n      },\n      \"connect\": {\n       \"type\": \"boolean\"\n      },\n      \"copyData\": {\n       \"type\": \"boolean\"\n      },\n      \"createSlot\": {\n       \"type\": \"boolean\"\n      },\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"slotName\": {\n       \"type\": \"string\"\n      },\n      \"streaming\": {\n       \"type\": \"boolean\"\n      },\n      \"synchronousCommit\": {\n       \"type\": \"string\"\n      },\n      \"tableCreationPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"publisher\": {\n     \"properties\": {\n      \"external\": {\n       \"properties\": {\n        \"databaseName\": {\n         \"type\": \"string\"\n        },\n        \"publications\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"serverRef\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"databaseName\",\n        \"publications\",\n        \"serverRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"managed\": {\n       \"properties\": {\n        \"namespace\": {\n         \"type\": \"string\"\n        },\n        \"refs\": {\n         \"items\": {\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"refs\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serverRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"databaseName\",\n    \"name\",\n    \"publisher\",\n    \"serverRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subscriber\",\n \"type\": \"object\"\n}"
+ }

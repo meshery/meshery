@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CacheSubnetGroup",
+  "apiVersion": "elasticache.services.k8s.aws/v1alpha1",
+  "displayName": "Cache Subnet Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-elasticache-controller",
+   "version": "v0.0.29",
+   "displayName": "aws-elasticache-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/elasticache-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CacheSubnetGroup is the Schema for the CacheSubnetGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CacheSubnetGroupSpec defines the desired state of CacheSubnetGroup. \\n Represents the output of one of the following operations: \\n - CreateCacheSubnetGroup \\n - ModifyCacheSubnetGroup\",\n   \"properties\": {\n    \"cacheSubnetGroupDescription\": {\n     \"description\": \"A description for the cache subnet group.\",\n     \"type\": \"string\"\n    },\n    \"cacheSubnetGroupName\": {\n     \"description\": \"A name for the cache subnet group. This value is stored as a lowercase string. \\n Constraints: Must contain no more than 255 alphanumeric characters or hyphens. \\n Example: mysubnetgroup\",\n     \"type\": \"string\"\n    },\n    \"subnetIDs\": {\n     \"description\": \"A list of VPC subnet IDs for the cache subnet group.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference type to provide more user friendly syntax for references using 'from' field Ex: APIIDRef: \\n from: name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another k8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an ElastiCache cluster or replication group. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your ElastiCache resources, with the exception of global replication group. When you add or remove tags on replication groups, those actions will be replicated to all nodes in the replication group. A tag with a null Value is permitted.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"cacheSubnetGroupDescription\",\n    \"cacheSubnetGroupName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cache Subnet Group\",\n \"type\": \"object\"\n}"
+ }

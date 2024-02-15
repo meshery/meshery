@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "EventBus",
+  "apiVersion": "eventbridge.services.k8s.aws/v1alpha1",
+  "displayName": "Event Bus",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-eventbridge-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-eventbridge-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/eventbridge-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"EventBus is the Schema for the EventBuses API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EventBusSpec defines the desired state of EventBus.\\n\\n\\nAn event bus receives events from a source, uses rules to evaluate them,\\napplies any configured input transformation, and routes them to the appropriate\\ntarget(s). Your account's default event bus receives events from Amazon Web\\nServices services. A custom event bus can receive events from your custom\\napplications and services. A partner event bus receives events from an event\\nsource created by an SaaS partner. These events come from the partners services\\nor applications.\",\n   \"properties\": {\n    \"eventSourceName\": {\n     \"description\": \"If you are creating a partner event bus, this specifies the partner event\\nsource that the new event bus will be matched with.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name of the new event bus.\\n\\n\\nCustom event bus names can't contain the / character, but you can use the\\n/ character in partner event bus names. In addition, for partner event buses,\\nthe name must exactly match the name of the partner event source that this\\nevent bus is matched to.\\n\\n\\nYou can't use the name default for a custom event bus, as this name is already\\nused for your account's default event bus.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"Tags to associate with the event bus.\",\n     \"items\": {\n      \"description\": \"A key-value pair associated with an Amazon Web Services resource. In EventBridge,\\nrules and event buses support tagging.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Event Bus\",\n \"type\": \"object\"\n}"
+ }

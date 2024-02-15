@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Backup",
+  "apiVersion": "dynamodb.services.k8s.aws/v1alpha1",
+  "displayName": "Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-dynamodb-controller",
+   "version": "v1.2.8",
+   "displayName": "aws-dynamodb-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Backup is the Schema for the Backups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupSpec defines the desired state of Backup.\",\n   \"properties\": {\n    \"backupName\": {\n     \"description\": \"Specified name for the backup.\",\n     \"type\": \"string\"\n    },\n    \"tableName\": {\n     \"description\": \"The name of the table.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupName\",\n    \"tableName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup\",\n \"type\": \"object\"\n}"
+ }

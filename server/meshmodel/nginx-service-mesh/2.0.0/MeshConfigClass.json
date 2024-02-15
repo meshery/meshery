@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MeshConfigClass",
+  "apiVersion": "nsm.nginx.com/v1alpha2",
+  "displayName": "Mesh Config Class",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MeshConfigClass defines a class of MeshConfigs to the user for creating MeshConfig resources.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of MeshConfigClass.\",\n   \"properties\": {\n    \"controllerName\": {\n     \"description\": \"ControllerName is the name of the controller that is managing MeshConfigs of this class.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"controllerName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Mesh Config Class\",\n \"type\": \"object\"\n}"
+ }

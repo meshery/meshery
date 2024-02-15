@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AntreaControllerInfo",
+  "apiVersion": "crd.antrea.io/v1beta1",
+  "displayName": "Antrea Controller Info",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "antrea",
+   "version": "1.15.0",
+   "displayName": "antrea",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/antrea-io/antrea/releases/download/v1.15.0/antrea-chart.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"apiPort\": {\n   \"maximum\": 65535,\n   \"minimum\": 1,\n   \"type\": \"integer\"\n  },\n  \"connectedAgentNum\": {\n   \"format\": \"int32\",\n   \"type\": \"integer\"\n  },\n  \"controllerConditions\": {\n   \"items\": {\n    \"properties\": {\n     \"lastHeartbeatTime\": {\n      \"format\": \"date-time\",\n      \"type\": \"string\"\n     },\n     \"message\": {\n      \"type\": \"string\"\n     },\n     \"reason\": {\n      \"type\": \"string\"\n     },\n     \"status\": {\n      \"enum\": [\n       \"True\",\n       \"False\",\n       \"Unknown\"\n      ],\n      \"type\": \"string\"\n     },\n     \"type\": {\n      \"enum\": [\n       \"ControllerHealthy\"\n      ],\n      \"type\": \"string\"\n     }\n    },\n    \"required\": [\n     \"type\",\n     \"status\",\n     \"lastHeartbeatTime\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"networkPolicyControllerInfo\": {\n   \"properties\": {\n    \"addressGroupNum\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"appliedToGroupNum\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"networkPolicyNum\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"nodeRef\": {\n   \"properties\": {\n    \"apiVersion\": {\n     \"type\": \"string\"\n    },\n    \"fieldPath\": {\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"resourceVersion\": {\n     \"type\": \"string\"\n    },\n    \"uid\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"podRef\": {\n   \"properties\": {\n    \"apiVersion\": {\n     \"type\": \"string\"\n    },\n    \"fieldPath\": {\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"resourceVersion\": {\n     \"type\": \"string\"\n    },\n    \"uid\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"serviceRef\": {\n   \"properties\": {\n    \"apiVersion\": {\n     \"type\": \"string\"\n    },\n    \"fieldPath\": {\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"resourceVersion\": {\n     \"type\": \"string\"\n    },\n    \"uid\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"version\": {\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Antrea Controller Info\",\n \"type\": \"object\"\n}"
+ }

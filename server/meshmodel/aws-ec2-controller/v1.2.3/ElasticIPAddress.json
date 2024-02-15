@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ElasticIPAddress",
+  "apiVersion": "ec2.services.k8s.aws/v1alpha1",
+  "displayName": "Elastic IP Address",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ec2-controller",
+   "version": "v1.2.3",
+   "displayName": "aws-ec2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ElasticIPAddress is the Schema for the ElasticIPAddresses API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ElasticIPAddressSpec defines the desired state of ElasticIPAddress.\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"[EC2-VPC] The Elastic IP address to recover or an IPv4 address from an address\\npool.\",\n     \"type\": \"string\"\n    },\n    \"customerOwnedIPv4Pool\": {\n     \"description\": \"The ID of a customer-owned address pool. Use this parameter to let Amazon\\nEC2 select an address from the address pool. Alternatively, specify a specific\\naddress from the address pool.\",\n     \"type\": \"string\"\n    },\n    \"networkBorderGroup\": {\n     \"description\": \"A unique set of Availability Zones, Local Zones, or Wavelength Zones from\\nwhich Amazon Web Services advertises IP addresses. Use this parameter to\\nlimit the IP address to this location. IP addresses cannot move between network\\nborder groups.\\n\\n\\nUse DescribeAvailabilityZones (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAvailabilityZones.html)\\nto view the network border groups.\\n\\n\\nYou cannot use a network border group with EC2 Classic. If you attempt this\\noperation on EC2 Classic, you receive an InvalidParameterCombination error.\",\n     \"type\": \"string\"\n    },\n    \"publicIPv4Pool\": {\n     \"description\": \"The ID of an address pool that you own. Use this parameter to let Amazon\\nEC2 select an address from the address pool. To specify a specific address\\nfrom the address pool, use the Address parameter instead.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Elastic IP Address\",\n \"type\": \"object\"\n}"
+ }

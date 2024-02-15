@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "NotebookInstanceLifecycleConfig",
+  "apiVersion": "sagemaker.services.k8s.aws/v1alpha1",
+  "displayName": "Notebook Instance Lifecycle Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sagemaker-controller",
+   "version": "v1.2.7",
+   "displayName": "aws-sagemaker-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"NotebookInstanceLifecycleConfig is the Schema for the NotebookInstanceLifecycleConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NotebookInstanceLifecycleConfigSpec defines the desired state of NotebookInstanceLifecycleConfig.\",\n   \"properties\": {\n    \"notebookInstanceLifecycleConfigName\": {\n     \"description\": \"The name of the lifecycle configuration.\",\n     \"type\": \"string\"\n    },\n    \"onCreate\": {\n     \"description\": \"A shell script that runs only once, when you create a notebook instance.\\nThe shell script must be a base64-encoded string.\",\n     \"items\": {\n      \"description\": \"Contains the notebook instance lifecycle configuration script.\\n\\n\\nEach lifecycle configuration script has a limit of 16384 characters.\\n\\n\\nThe value of the $PATH environment variable that is available to both scripts\\nis /sbin:bin:/usr/sbin:/usr/bin.\\n\\n\\nView CloudWatch Logs for notebook instance lifecycle configurations in log\\ngroup /aws/sagemaker/NotebookInstances in log stream [notebook-instance-name]/[LifecycleConfigHook].\\n\\n\\nLifecycle configuration scripts cannot run for longer than 5 minutes. If\\na script runs for longer than 5 minutes, it fails and the notebook instance\\nis not created or started.\\n\\n\\nFor information about notebook instance lifestyle configurations, see Step\\n2.1: (Optional) Customize a Notebook Instance (https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).\",\n      \"properties\": {\n       \"content\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"onStart\": {\n     \"description\": \"A shell script that runs every time you start a notebook instance, including\\nwhen you create the notebook instance. The shell script must be a base64-encoded\\nstring.\",\n     \"items\": {\n      \"description\": \"Contains the notebook instance lifecycle configuration script.\\n\\n\\nEach lifecycle configuration script has a limit of 16384 characters.\\n\\n\\nThe value of the $PATH environment variable that is available to both scripts\\nis /sbin:bin:/usr/sbin:/usr/bin.\\n\\n\\nView CloudWatch Logs for notebook instance lifecycle configurations in log\\ngroup /aws/sagemaker/NotebookInstances in log stream [notebook-instance-name]/[LifecycleConfigHook].\\n\\n\\nLifecycle configuration scripts cannot run for longer than 5 minutes. If\\na script runs for longer than 5 minutes, it fails and the notebook instance\\nis not created or started.\\n\\n\\nFor information about notebook instance lifestyle configurations, see Step\\n2.1: (Optional) Customize a Notebook Instance (https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).\",\n      \"properties\": {\n       \"content\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"notebookInstanceLifecycleConfigName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Notebook Instance Lifecycle Config\",\n \"type\": \"object\"\n}"
+ }

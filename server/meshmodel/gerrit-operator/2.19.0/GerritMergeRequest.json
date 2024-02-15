@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GerritMergeRequest",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Gerrit Merge Request",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gerrit-operator",
+   "version": "2.19.0",
+   "displayName": "gerrit-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/gerrit-operator-2.19.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GerritMergeRequest is the Schema for the gerrit merge request API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritMergeRequestSpec defines the desired state of GerritMergeRequest.\",\n   \"properties\": {\n    \"additionalArguments\": {\n     \"description\": \"AdditionalArguments contains merge command additional command line arguments.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"authorEmail\": {\n     \"type\": \"string\"\n    },\n    \"authorName\": {\n     \"type\": \"string\"\n    },\n    \"changesConfigMap\": {\n     \"type\": \"string\"\n    },\n    \"commitMessage\": {\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"description\": \"OwnerName indicates which gerrit CR should be taken to initialize correct client.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"description\": \"ProjectName is gerrit project name.\",\n     \"type\": \"string\"\n    },\n    \"sourceBranch\": {\n     \"type\": \"string\"\n    },\n    \"targetBranch\": {\n     \"description\": \"TargetBranch default value is master.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authorEmail\",\n    \"authorName\",\n    \"ownerName\",\n    \"projectName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Merge Request\",\n \"type\": \"object\"\n}"
+ }

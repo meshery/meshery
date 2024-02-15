@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PipelineExecution",
+  "apiVersion": "sagemaker.services.k8s.aws/v1alpha1",
+  "displayName": "Pipeline Execution",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sagemaker-controller",
+   "version": "v1.2.7",
+   "displayName": "aws-sagemaker-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PipelineExecution is the Schema for the PipelineExecutions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PipelineExecutionSpec defines the desired state of PipelineExecution.\\n\\n\\nAn execution of a pipeline.\",\n   \"properties\": {\n    \"parallelismConfiguration\": {\n     \"description\": \"This configuration, if specified, overrides the parallelism configuration\\nof the parent pipeline for this specific run.\",\n     \"properties\": {\n      \"maxParallelExecutionSteps\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pipelineExecutionDescription\": {\n     \"description\": \"The description of the pipeline execution.\",\n     \"type\": \"string\"\n    },\n    \"pipelineExecutionDisplayName\": {\n     \"description\": \"The display name of the pipeline execution.\",\n     \"type\": \"string\"\n    },\n    \"pipelineName\": {\n     \"description\": \"The name of the pipeline.\",\n     \"type\": \"string\"\n    },\n    \"pipelineParameters\": {\n     \"description\": \"Contains a list of pipeline parameters. This list can be empty.\",\n     \"items\": {\n      \"description\": \"Assigns a value to a named Pipeline parameter.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"pipelineName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pipeline Execution\",\n \"type\": \"object\"\n}"
+ }

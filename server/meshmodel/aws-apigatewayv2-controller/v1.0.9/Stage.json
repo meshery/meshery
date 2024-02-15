@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Stage",
+  "apiVersion": "apigatewayv2.services.k8s.aws/v1alpha1",
+  "displayName": "Stage",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-apigatewayv2-controller",
+   "version": "v1.0.9",
+   "displayName": "aws-apigatewayv2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Stage is the Schema for the Stages API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StageSpec defines the desired state of Stage.\\n\\n\\nRepresents an API stage.\",\n   \"properties\": {\n    \"accessLogSettings\": {\n     \"description\": \"Settings for logging access in a stage.\",\n     \"properties\": {\n      \"destinationARN\": {\n       \"description\": \"Represents an Amazon Resource Name (ARN).\",\n       \"type\": \"string\"\n      },\n      \"format\": {\n       \"description\": \"A string with a length between [1-1024].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"apiID\": {\n     \"type\": \"string\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"autoDeploy\": {\n     \"type\": \"boolean\"\n    },\n    \"clientCertificateID\": {\n     \"type\": \"string\"\n    },\n    \"defaultRouteSettings\": {\n     \"description\": \"Represents a collection of route settings.\",\n     \"properties\": {\n      \"dataTraceEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"detailedMetricsEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"loggingLevel\": {\n       \"description\": \"The logging level.\",\n       \"type\": \"string\"\n      },\n      \"throttlingBurstLimit\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"throttlingRateLimit\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deploymentID\": {\n     \"type\": \"string\"\n    },\n    \"deploymentRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"routeSettings\": {\n     \"additionalProperties\": {\n      \"description\": \"Represents a collection of route settings.\",\n      \"properties\": {\n       \"dataTraceEnabled\": {\n        \"type\": \"boolean\"\n       },\n       \"detailedMetricsEnabled\": {\n        \"type\": \"boolean\"\n       },\n       \"loggingLevel\": {\n        \"description\": \"The logging level.\",\n        \"type\": \"string\"\n       },\n       \"throttlingBurstLimit\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"throttlingRateLimit\": {\n        \"type\": \"number\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    },\n    \"stageName\": {\n     \"type\": \"string\"\n    },\n    \"stageVariables\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"stageName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stage\",\n \"type\": \"object\"\n}"
+ }

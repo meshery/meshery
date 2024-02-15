@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TransitGateway",
+  "apiVersion": "ec2.services.k8s.aws/v1alpha1",
+  "displayName": "Transit Gateway",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ec2-controller",
+   "version": "v1.2.3",
+   "displayName": "aws-ec2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TransitGateway is the Schema for the TransitGateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TransitGatewaySpec defines the desired state of TransitGateway.\\n\\n\\nDescribes a transit gateway.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description of the transit gateway.\",\n     \"type\": \"string\"\n    },\n    \"options\": {\n     \"description\": \"The transit gateway options.\",\n     \"properties\": {\n      \"amazonSideASN\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"autoAcceptSharedAttachments\": {\n       \"type\": \"string\"\n      },\n      \"defaultRouteTableAssociation\": {\n       \"type\": \"string\"\n      },\n      \"defaultRouteTablePropagation\": {\n       \"type\": \"string\"\n      },\n      \"dnsSupport\": {\n       \"type\": \"string\"\n      },\n      \"multicastSupport\": {\n       \"type\": \"string\"\n      },\n      \"transitGatewayCIDRBlocks\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"vpnECMPSupport\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Transit Gateway\",\n \"type\": \"object\"\n}"
+ }

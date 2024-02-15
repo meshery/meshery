@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ProjectQuota",
+  "apiVersion": "management.k8s.appscode.com/v1alpha1",
+  "displayName": "Project Quota",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kube-ui-server",
+   "version": "2023.12.20",
+   "displayName": "kube-ui-server",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kube-ui-server/kube-ui-server-v2023.12.20.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"quotas\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"hard\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Hard is the set of enforced hard limits for each named resource. More info: https://kubernetes.io/docs/concepts/policy/resource-quotas/\",\n        \"type\": \"object\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"quotas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Project Quota\",\n \"type\": \"object\"\n}"
+ }

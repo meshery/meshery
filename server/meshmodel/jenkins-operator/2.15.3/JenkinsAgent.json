@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "JenkinsAgent",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Jenkins Agent",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "jenkins-operator",
+   "version": "2.15.3",
+   "displayName": "jenkins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/jenkins-operator-2.15.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Jenkins Agent\",\n \"type\": \"object\"\n}"
+ }

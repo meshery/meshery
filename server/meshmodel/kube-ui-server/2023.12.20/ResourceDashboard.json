@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ResourceDashboard",
+  "apiVersion": "ui.k8s.appscode.com/v1alpha1",
+  "displayName": "Resource Dashboard",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kube-ui-server",
+   "version": "2023.12.20",
+   "displayName": "kube-ui-server",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kube-ui-server/kube-ui-server-v2023.12.20.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dashboards\": {\n     \"items\": {\n      \"properties\": {\n       \"if\": {\n        \"properties\": {\n         \"condition\": {\n          \"type\": \"string\"\n         },\n         \"connected\": {\n          \"properties\": {\n           \"query\": {\n            \"properties\": {\n             \"byLabel\": {\n              \"description\": \"ENUM(authn,authz,auth_secret,backup_via,catalog,cert_issuer,config,connect_via,exposed_by,event,located_on,monitored_by,ocm_bind,offshoot,ops,placed_into,policy,recommended_for,restore_into,scaled_by,source,storage,view)\",\n              \"enum\": [\n               \"authn\",\n               \"authz\",\n               \"auth_secret\",\n               \"backup_via\",\n               \"catalog\",\n               \"cert_issuer\",\n               \"config\",\n               \"connect_via\",\n               \"exposed_by\",\n               \"event\",\n               \"located_on\",\n               \"monitored_by\",\n               \"ocm_bind\",\n               \"offshoot\",\n               \"ops\",\n               \"placed_into\",\n               \"policy\",\n               \"recommended_for\",\n               \"restore_into\",\n               \"scaled_by\",\n               \"source\",\n               \"storage\",\n               \"view\"\n              ],\n              \"type\": \"string\"\n             },\n             \"raw\": {\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"enum\": [\n               \"REST\",\n               \"GraphQL\"\n              ],\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"type\"\n            ],\n            \"type\": \"object\"\n           },\n           \"ref\": {\n            \"description\": \"GroupKind specifies a Group and a Kind, but does not force a version.  This is useful for identifying concepts during lookup stages without having partially valid types\",\n            \"properties\": {\n             \"group\": {\n              \"type\": \"string\"\n             },\n             \"kind\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"group\",\n             \"kind\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"required\": [\n           \"query\",\n           \"ref\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"panels\": {\n        \"items\": {\n         \"properties\": {\n          \"title\": {\n           \"type\": \"string\"\n          },\n          \"width\": {\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"title\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"title\": {\n        \"type\": \"string\"\n       },\n       \"vars\": {\n        \"items\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"default\": \"Source\",\n           \"enum\": [\n            \"Source\",\n            \"Target\"\n           ],\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"value\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"provider\": {\n     \"enum\": [\n      \"Grafana\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resource\": {\n     \"description\": \"ResourceID identifies a resource\",\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the serialized kind of the resource.  It is normally CamelCase and singular.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the plural name of the resource to serve.  It must match the name of the CustomResourceDefinition-registration too: plural.group and it must be all lowercase.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"ResourceScope is an enum defining the different scopes available to a custom resource\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"dashboards\",\n    \"resource\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Dashboard\",\n \"type\": \"object\"\n}"
+ }

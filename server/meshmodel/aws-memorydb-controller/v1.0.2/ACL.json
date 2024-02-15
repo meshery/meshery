@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ACL",
+  "apiVersion": "memorydb.services.k8s.aws/v1alpha1",
+  "displayName": "ACL",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-memorydb-controller",
+   "version": "v1.0.2",
+   "displayName": "aws-memorydb-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/memorydb-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ACL is the Schema for the ACLS API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ACLSpec defines the desired state of ACL. \\n An Access Control List. You can authenticate users with Access Contol Lists. ACLs enable you to control cluster access by grouping users. These Access control lists are designed as a way to organize access to clusters.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"The name of the Access Control List.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an MemoryDB resource. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your MemoryDB resources. When you add or remove tags on clusters, those actions will be replicated to all nodes in the cluster. A tag with a null Value is permitted. For more information, see Tagging your MemoryDB resources (https://docs.aws.amazon.com/MemoryDB/latest/devguide/tagging-resources.html)\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"userNames\": {\n     \"description\": \"The list of users that belong to the Access Control List.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"userRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference type to provide more user friendly syntax for references using 'from' field Ex: APIIDRef: \\n from: name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another k8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"ACL\",\n \"type\": \"object\"\n}"
+ }

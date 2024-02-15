@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ExternalNode",
+  "apiVersion": "crd.antrea.io/v1alpha1",
+  "displayName": "External Node",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "antrea",
+   "version": "1.15.0",
+   "displayName": "antrea",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/antrea-io/antrea/releases/download/v1.15.0/antrea-chart.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"interfaces\": {\n     \"items\": {\n      \"properties\": {\n       \"ips\": {\n        \"items\": {\n         \"oneOf\": [\n          {\n           \"format\": \"ipv4\"\n          },\n          {\n           \"format\": \"ipv6\"\n          }\n         ],\n         \"type\": \"string\"\n        },\n        \"minItems\": 1,\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"maxItems\": 1,\n     \"minItems\": 1,\n     \"required\": [\n      \"ips\"\n     ],\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"interfaces\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"External Node\",\n \"type\": \"object\"\n}"
+ }

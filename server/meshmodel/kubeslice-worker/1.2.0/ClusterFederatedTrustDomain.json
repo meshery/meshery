@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ClusterFederatedTrustDomain",
+  "apiVersion": "spire.spiffe.io/v1alpha1",
+  "displayName": "Cluster Federated Trust Domain",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubeslice-worker",
+   "version": "1.2.0",
+   "displayName": "kubeslice-worker",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/kubeslice/kubeslice/releases/download/kubeslice-worker-1.2.0/kubeslice-worker-1.2.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ClusterFederatedTrustDomain is the Schema for the clusterfederatedtrustdomains API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterFederatedTrustDomainSpec defines the desired state of ClusterFederatedTrustDomain\",\n   \"properties\": {\n    \"bundleEndpointProfile\": {\n     \"description\": \"BundleEndpointProfile is the profile for the bundle endpoint.\",\n     \"properties\": {\n      \"endpointSPIFFEID\": {\n       \"description\": \"EndpointSPIFFEID is the SPIFFE ID of the bundle endpoint. It is required for the \\\"https_spiffe\\\" profile.\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type is the type of the bundle endpoint profile.\",\n       \"enum\": [\n        \"https_spiffe\",\n        \"https_web\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"bundleEndpointURL\": {\n     \"description\": \"BundleEndpointURL is the URL of the bundle endpoint. It must be an HTTPS URL and cannot contain userinfo (i.e. username/password).\",\n     \"type\": \"string\"\n    },\n    \"trustDomain\": {\n     \"description\": \"TrustDomain is the name of the trust domain to federate with (e.g. example.org)\",\n     \"pattern\": \"[a-z0-9._-]{1,255}\",\n     \"type\": \"string\"\n    },\n    \"trustDomainBundle\": {\n     \"description\": \"TrustDomainBundle is the contents of the bundle for the referenced trust domain. This field is optional when the resource is created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"bundleEndpointProfile\",\n    \"bundleEndpointURL\",\n    \"trustDomain\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Federated Trust Domain\",\n \"type\": \"object\"\n}"
+ }

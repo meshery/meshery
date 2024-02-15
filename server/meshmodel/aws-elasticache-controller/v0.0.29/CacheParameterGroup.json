@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CacheParameterGroup",
+  "apiVersion": "elasticache.services.k8s.aws/v1alpha1",
+  "displayName": "Cache Parameter Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-elasticache-controller",
+   "version": "v0.0.29",
+   "displayName": "aws-elasticache-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/elasticache-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CacheParameterGroup is the Schema for the CacheParameterGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CacheParameterGroupSpec defines the desired state of CacheParameterGroup. \\n Represents the output of a CreateCacheParameterGroup operation.\",\n   \"properties\": {\n    \"cacheParameterGroupFamily\": {\n     \"description\": \"The name of the cache parameter group family that the cache parameter group can be used with. \\n Valid values are: memcached1.4 | memcached1.5 | memcached1.6 | redis2.6 | redis2.8 | redis3.2 | redis4.0 | redis5.0 | redis6.x\",\n     \"type\": \"string\"\n    },\n    \"cacheParameterGroupName\": {\n     \"description\": \"A user-specified name for the cache parameter group.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A user-specified description for the cache parameter group.\",\n     \"type\": \"string\"\n    },\n    \"parameterNameValues\": {\n     \"description\": \"An array of parameter names and values for the parameter update. You must supply at least one parameter name and value; subsequent arguments are optional. A maximum of 20 parameters may be modified per request.\",\n     \"items\": {\n      \"description\": \"Describes a name-value pair that is used to update the value of a parameter.\",\n      \"properties\": {\n       \"parameterName\": {\n        \"type\": \"string\"\n       },\n       \"parameterValue\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an ElastiCache cluster or replication group. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your ElastiCache resources, with the exception of global replication group. When you add or remove tags on replication groups, those actions will be replicated to all nodes in the replication group. A tag with a null Value is permitted.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"cacheParameterGroupFamily\",\n    \"cacheParameterGroupName\",\n    \"description\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cache Parameter Group\",\n \"type\": \"object\"\n}"
+ }

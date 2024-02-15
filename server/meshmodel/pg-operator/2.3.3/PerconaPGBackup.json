@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PerconaPGBackup",
+  "apiVersion": "pgv2.percona.com/v2",
+  "displayName": "Percona PG Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "pg-operator",
+   "version": "2.3.3",
+   "displayName": "pg-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/pg-operator-2.3.3/pg-operator-2.3.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PerconaPGBackup is the CRD that defines a Percona PostgreSQL Backup\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"options\": {\n     \"description\": \"Command line options to include when running the pgBackRest backup command. https://pgbackrest.org/command.html#command-backup\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"pgCluster\": {\n     \"type\": \"string\"\n    },\n    \"repoName\": {\n     \"description\": \"The name of the pgBackRest repo to run the backup command against.\",\n     \"pattern\": \"^repo[1-4]\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"pgCluster\",\n    \"repoName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Percona PG Backup\",\n \"type\": \"object\"\n}"
+ }

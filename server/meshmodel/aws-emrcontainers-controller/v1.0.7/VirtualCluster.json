@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VirtualCluster",
+  "apiVersion": "emrcontainers.services.k8s.aws/v1alpha1",
+  "displayName": "Virtual Cluster",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-emrcontainers-controller",
+   "version": "v1.0.7",
+   "displayName": "aws-emrcontainers-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/emrcontainers-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VirtualCluster is the Schema for the VirtualClusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VirtualClusterSpec defines the desired state of VirtualCluster.\\n\\n\\nThis entity describes a virtual cluster. A virtual cluster is a Kubernetes\\nnamespace that Amazon EMR is registered with. Amazon EMR uses virtual clusters\\nto run jobs and host endpoints. Multiple virtual clusters can be backed by\\nthe same physical cluster. However, each virtual cluster maps to one namespace\\non an EKS cluster. Virtual clusters do not create any active resources that\\ncontribute to your bill or that require lifecycle management outside the\\nservice.\",\n   \"properties\": {\n    \"containerProvider\": {\n     \"description\": \"The container provider of the virtual cluster.\",\n     \"properties\": {\n      \"id\": {\n       \"type\": \"string\"\n      },\n      \"info\": {\n       \"description\": \"The information about the container used for a job run or a managed endpoint.\",\n       \"properties\": {\n        \"eksInfo\": {\n         \"description\": \"The information about the EKS cluster.\",\n         \"properties\": {\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type_\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The specified name of the virtual cluster.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The tags assigned to the virtual cluster.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"containerProvider\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Virtual Cluster\",\n \"type\": \"object\"\n}"
+ }

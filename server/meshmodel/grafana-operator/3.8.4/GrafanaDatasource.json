@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GrafanaDatasource",
+  "apiVersion": "grafana.integreatly.org/v1beta1",
+  "displayName": "Grafana Datasource",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "grafana-operator",
+   "version": "3.8.4",
+   "displayName": "grafana-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/grafana-operator-3.8.4.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"datasource\": {\n     \"properties\": {\n      \"access\": {\n       \"type\": \"string\"\n      },\n      \"basicAuth\": {\n       \"type\": \"boolean\"\n      },\n      \"basicAuthUser\": {\n       \"type\": \"string\"\n      },\n      \"database\": {\n       \"type\": \"string\"\n      },\n      \"editable\": {\n       \"type\": \"boolean\"\n      },\n      \"isDefault\": {\n       \"type\": \"boolean\"\n      },\n      \"jsonData\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"orgId\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"secureJsonData\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      },\n      \"user\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"plugins\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"version\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resyncPeriod\": {\n     \"type\": \"string\"\n    },\n    \"valuesFrom\": {\n     \"items\": {\n      \"properties\": {\n       \"targetPath\": {\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"secretKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"targetPath\",\n       \"valueFrom\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"datasource\",\n    \"instanceSelector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Datasource\",\n \"type\": \"object\"\n}"
+ }

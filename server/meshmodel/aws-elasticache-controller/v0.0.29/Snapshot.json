@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Snapshot",
+  "apiVersion": "elasticache.services.k8s.aws/v1alpha1",
+  "displayName": "Snapshot",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-elasticache-controller",
+   "version": "v0.0.29",
+   "displayName": "aws-elasticache-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/elasticache-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Snapshot is the Schema for the Snapshots API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SnapshotSpec defines the desired state of Snapshot. \\n Represents a copy of an entire Redis cluster as of the time when the snapshot was taken.\",\n   \"properties\": {\n    \"cacheClusterID\": {\n     \"description\": \"The identifier of an existing cluster. The snapshot is created from this cluster.\",\n     \"type\": \"string\"\n    },\n    \"kmsKeyID\": {\n     \"description\": \"The ID of the KMS key used to encrypt the snapshot.\",\n     \"type\": \"string\"\n    },\n    \"replicationGroupID\": {\n     \"description\": \"The identifier of an existing replication group. The snapshot is created from this replication group.\",\n     \"type\": \"string\"\n    },\n    \"snapshotName\": {\n     \"description\": \"A name for the snapshot being created.\",\n     \"type\": \"string\"\n    },\n    \"sourceSnapshotName\": {\n     \"description\": \"The name of an existing snapshot from which to make a copy.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an ElastiCache cluster or replication group. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your ElastiCache resources, with the exception of global replication group. When you add or remove tags on replication groups, those actions will be replicated to all nodes in the replication group. A tag with a null Value is permitted.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"snapshotName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Snapshot\",\n \"type\": \"object\"\n}"
+ }

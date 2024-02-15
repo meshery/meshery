@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "APDosPolicy",
+  "apiVersion": "appprotectdos.f5.com/v1beta1",
+  "displayName": "AP Dos Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-ingress",
+   "version": "1.1.2",
+   "displayName": "nginx-ingress",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"APDosPolicy is the Schema for the APDosPolicy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APDosPolicySpec defines the desired state of APDosPolicy\",\n   \"properties\": {\n    \"automation_tools_detection\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"bad_actors\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"mitigation_mode\": {\n     \"default\": \"standard\",\n     \"enum\": [\n      \"standard\",\n      \"conservative\",\n      \"none\"\n     ],\n     \"type\": \"string\"\n    },\n    \"signatures\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"tls_fingerprint\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP Dos Policy\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Pipeline",
+  "apiVersion": "sagemaker.services.k8s.aws/v1alpha1",
+  "displayName": "Pipeline",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sagemaker-controller",
+   "version": "v1.2.7",
+   "displayName": "aws-sagemaker-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Pipeline is the Schema for the Pipelines API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PipelineSpec defines the desired state of Pipeline.\\n\\n\\nA SageMaker Model Building Pipeline instance.\",\n   \"properties\": {\n    \"parallelismConfiguration\": {\n     \"description\": \"This is the configuration that controls the parallelism of the pipeline.\\nIf specified, it applies to all runs of this pipeline by default.\",\n     \"properties\": {\n      \"maxParallelExecutionSteps\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pipelineDefinition\": {\n     \"description\": \"The JSON pipeline definition of the pipeline.\",\n     \"type\": \"string\"\n    },\n    \"pipelineDescription\": {\n     \"description\": \"A description of the pipeline.\",\n     \"type\": \"string\"\n    },\n    \"pipelineDisplayName\": {\n     \"description\": \"The display name of the pipeline.\",\n     \"type\": \"string\"\n    },\n    \"pipelineName\": {\n     \"description\": \"The name of the pipeline.\",\n     \"type\": \"string\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the role used by the pipeline to access\\nand create resources.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to apply to the created pipeline.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags.\\n\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"pipelineName\",\n    \"roleARN\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pipeline\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "API",
+  "apiVersion": "apigatewayv2.services.k8s.aws/v1alpha1",
+  "displayName": "API",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-apigatewayv2-controller",
+   "version": "v1.0.9",
+   "displayName": "aws-apigatewayv2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"API is the Schema for the APIS API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApiSpec defines the desired state of Api.\\n\\n\\nRepresents an API.\",\n   \"properties\": {\n    \"apiKeySelectionExpression\": {\n     \"type\": \"string\"\n    },\n    \"basepath\": {\n     \"type\": \"string\"\n    },\n    \"body\": {\n     \"type\": \"string\"\n    },\n    \"corsConfiguration\": {\n     \"description\": \"Represents a CORS configuration. Supported only for HTTP APIs. See Configuring\\nCORS (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-cors.html)\\nfor more information.\",\n     \"properties\": {\n      \"allowCredentials\": {\n       \"type\": \"boolean\"\n      },\n      \"allowHeaders\": {\n       \"description\": \"Represents a collection of allowed headers. Supported only for HTTP APIs.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowMethods\": {\n       \"description\": \"Represents a collection of methods. Supported only for HTTP APIs.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowOrigins\": {\n       \"description\": \"Represents a collection of origins. Supported only for HTTP APIs.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"exposeHeaders\": {\n       \"description\": \"Represents a collection of allowed headers. Supported only for HTTP APIs.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"maxAge\": {\n       \"description\": \"An integer with a value between -1 and 86400. Supported only for HTTP APIs.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"credentialsARN\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"disableExecuteAPIEndpoint\": {\n     \"type\": \"boolean\"\n    },\n    \"disableSchemaValidation\": {\n     \"type\": \"boolean\"\n    },\n    \"failOnWarnings\": {\n     \"type\": \"boolean\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"protocolType\": {\n     \"type\": \"string\"\n    },\n    \"routeKey\": {\n     \"type\": \"string\"\n    },\n    \"routeSelectionExpression\": {\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"target\": {\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"API\",\n \"type\": \"object\"\n}"
+ }

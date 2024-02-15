@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PlatformEndpoint",
+  "apiVersion": "sns.services.k8s.aws/v1alpha1",
+  "displayName": "Platform Endpoint",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sns-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-sns-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sns-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PlatformEndpoint is the Schema for the PlatformEndpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PlatformEndpointSpec defines the desired state of PlatformEndpoint.\",\n   \"properties\": {\n    \"customUserData\": {\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"type\": \"string\"\n    },\n    \"platformApplicationARN\": {\n     \"description\": \"PlatformApplicationArn returned from CreatePlatformApplication is used to\\ncreate a an endpoint.\",\n     \"type\": \"string\"\n    },\n    \"token\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"platformApplicationARN\",\n    \"token\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Platform Endpoint\",\n \"type\": \"object\"\n}"
+ }

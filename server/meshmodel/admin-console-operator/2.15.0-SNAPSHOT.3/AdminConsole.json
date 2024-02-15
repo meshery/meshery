@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AdminConsole",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "Admin Console",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "admin-console-operator",
+   "version": "2.15.0-SNAPSHOT.3",
+   "displayName": "admin-console-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/admin-console-operator-2.15.0-SNAPSHOT.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AdminConsole is the Schema for the adminconsoles API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AdminConsoleSpec defines the desired state of AdminConsole\",\n   \"properties\": {\n    \"basePath\": {\n     \"type\": \"string\"\n    },\n    \"dbSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"hostname\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"edpSpec\": {\n     \"properties\": {\n      \"dnsWildcard\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"testReportTools\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"dnsWildcard\",\n      \"testReportTools\"\n     ],\n     \"type\": \"object\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"edpSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Admin Console\",\n \"type\": \"object\"\n}"
+ }

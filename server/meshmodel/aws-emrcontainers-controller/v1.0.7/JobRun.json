@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "JobRun",
+  "apiVersion": "emrcontainers.services.k8s.aws/v1alpha1",
+  "displayName": "Job Run",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-emrcontainers-controller",
+   "version": "v1.0.7",
+   "displayName": "aws-emrcontainers-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/emrcontainers-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"JobRun is the Schema for the JobRuns API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"JobRunSpec defines the desired state of JobRun.\\n\\n\\nThis entity describes a job run. A job run is a unit of work, such as a Spark\\njar, PySpark script, or SparkSQL query, that you submit to Amazon EMR on\\nEKS.\",\n   \"properties\": {\n    \"configurationOverrides\": {\n     \"type\": \"string\"\n    },\n    \"executionRoleARN\": {\n     \"description\": \"The execution role ARN for the job run.\",\n     \"type\": \"string\"\n    },\n    \"jobDriver\": {\n     \"description\": \"The job driver for the job run.\",\n     \"properties\": {\n      \"sparkSubmitJobDriver\": {\n       \"description\": \"The information about job driver for Spark submit.\",\n       \"properties\": {\n        \"entryPoint\": {\n         \"type\": \"string\"\n        },\n        \"entryPointArguments\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"sparkSubmitParameters\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the job run.\",\n     \"type\": \"string\"\n    },\n    \"releaseLabel\": {\n     \"description\": \"The Amazon EMR release version to use for the job run.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The tags assigned to job runs.\",\n     \"type\": \"object\"\n    },\n    \"virtualClusterID\": {\n     \"description\": \"The virtual cluster ID for which the job run request is submitted.\",\n     \"type\": \"string\"\n    },\n    \"virtualClusterRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"executionRoleARN\",\n    \"jobDriver\",\n    \"releaseLabel\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Job Run\",\n \"type\": \"object\"\n}"
+ }

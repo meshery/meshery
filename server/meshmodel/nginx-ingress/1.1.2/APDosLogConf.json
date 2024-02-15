@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "APDosLogConf",
+  "apiVersion": "appprotectdos.f5.com/v1beta1",
+  "displayName": "AP Dos Log Conf",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-ingress",
+   "version": "1.1.2",
+   "displayName": "nginx-ingress",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"APDosLogConf is the Schema for the APDosLogConfs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APDosLogConfSpec defines the desired state of APDosLogConf\",\n   \"properties\": {\n    \"content\": {\n     \"properties\": {\n      \"format\": {\n       \"enum\": [\n        \"splunk\",\n        \"arcsight\",\n        \"user-defined\"\n       ],\n       \"type\": \"string\"\n      },\n      \"format_string\": {\n       \"type\": \"string\"\n      },\n      \"max_message_size\": {\n       \"pattern\": \"^([1-9]|[1-5][0-9]|6[0-4])k$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"filter\": {\n     \"properties\": {\n      \"attack-signatures\": {\n       \"default\": \"top 10\",\n       \"pattern\": \"^(none|all|top ([1-9]|[1-9][0-9]|[1-9][0-9]{2,4}|100000))$\",\n       \"type\": \"string\"\n      },\n      \"bad-actors\": {\n       \"default\": \"top 10\",\n       \"pattern\": \"^(none|all|top ([1-9]|[1-9][0-9]|[1-9][0-9]{2,4}|100000))$\",\n       \"type\": \"string\"\n      },\n      \"traffic-mitigation-stats\": {\n       \"default\": \"all\",\n       \"enum\": [\n        \"none\",\n        \"all\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP Dos Log Conf\",\n \"type\": \"object\"\n}"
+ }

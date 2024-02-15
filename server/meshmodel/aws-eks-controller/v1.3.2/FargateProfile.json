@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "FargateProfile",
+  "apiVersion": "eks.services.k8s.aws/v1alpha1",
+  "displayName": "Fargate Profile",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-eks-controller",
+   "version": "v1.3.2",
+   "displayName": "aws-eks-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/eks-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"FargateProfile is the Schema for the FargateProfiles API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FargateProfileSpec defines the desired state of FargateProfile.\\n\\n\\nAn object representing an Fargate profile.\",\n   \"properties\": {\n    \"clientRequestToken\": {\n     \"description\": \"A unique, case-sensitive identifier that you provide to ensure the idempotency\\nof the request.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"The name of your cluster.\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the Fargate profile.\",\n     \"type\": \"string\"\n    },\n    \"podExecutionRoleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the Pod execution role to use for a Pod\\nthat matches the selectors in the Fargate profile. The Pod execution role\\nallows Fargate infrastructure to register with your cluster as a node, and\\nit provides read access to Amazon ECR image repositories. For more information,\\nsee Pod execution role (https://docs.aws.amazon.com/eks/latest/userguide/pod-execution-role.html)\\nin the Amazon EKS User Guide.\",\n     \"type\": \"string\"\n    },\n    \"podExecutionRoleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selectors\": {\n     \"description\": \"The selectors to match for a Pod to use this Fargate profile. Each selector\\nmust have an associated Kubernetes namespace. Optionally, you can also specify\\nlabels for a namespace. You may specify up to five selectors in a Fargate\\nprofile.\",\n     \"items\": {\n      \"description\": \"An object representing an Fargate profile selector.\",\n      \"properties\": {\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"namespace\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnets\": {\n     \"description\": \"The IDs of subnets to launch a Pod into. A Pod running on Fargate isn't assigned\\na public IP address, so only private subnets (with no direct route to an\\nInternet Gateway) are accepted for this parameter.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Metadata that assists with categorization and organization. Each tag consists\\nof a key and an optional value. You define both. Tags don't propagate to\\nany other cluster or Amazon Web Services resources.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Fargate Profile\",\n \"type\": \"object\"\n}"
+ }

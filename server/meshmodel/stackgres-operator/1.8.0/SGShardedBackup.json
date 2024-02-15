@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SGShardedBackup",
+  "apiVersion": "stackgres.io/v1",
+  "displayName": "SG Sharded Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "stackgres-operator",
+   "version": "1.8.0",
+   "displayName": "stackgres-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.8.0/helm/stackgres-operator.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"A manual or automatically generated sharded backup of an SGCluster configured with an SGBackupConfig.\\n\\nWhen a SGBackup is created a Job will perform a full sharded backup of the database and update the status of the SGBackup\\n with the all the information required to restore it and some stats (or a failure message in case something unexpected\\n happened).\\nAfter an SGBackup is created the same Job performs a reconciliation of the sharded backups by applying the retention window\\n that has been configured in the SGBackupConfig and removing the sharded backups with managed lifecycle and the WAL files older\\n than the ones that fit in the retention window. The reconciliation also removes sharded backups (excluding WAL files) that do\\n not belongs to any SGBackup. If the target storage of the SGBackupConfig is changed deletion of an SGBackup sharded backups\\n with managed lifecycle and the WAL files older than the ones that fit in the retention window and of sharded backups that do\\n not belongs to any SGBackup will not be performed anymore on the previous storage, only on the new target storage.\\n\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"managedLifecycle\": {\n     \"description\": \"Indicate if this sharded backup is permanent and should not be removed by the automated\\n retention policy. Default is `false`.\\n\",\n     \"type\": \"boolean\"\n    },\n    \"sgShardedCluster\": {\n     \"description\": \"The name of the `SGShardedCluster` from which this sharded backup is/will be taken.\\n\\nIf this is a copy of an existing completed sharded backup in a different namespace\\n the value must be prefixed with the namespace of the source backup and a\\n dot `.` (e.g. `\\u003csharded cluster namespace\\u003e.\\u003csharded cluster name\\u003e`) or have the same value\\n if the source sharded backup is also a copy.\\n\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"SG Sharded Backup\",\n \"type\": \"object\"\n}"
+ }

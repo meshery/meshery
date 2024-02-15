@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Authorizer",
+  "apiVersion": "apigatewayv2.services.k8s.aws/v1alpha1",
+  "displayName": "Authorizer",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-apigatewayv2-controller",
+   "version": "v1.0.9",
+   "displayName": "aws-apigatewayv2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Authorizer is the Schema for the Authorizers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AuthorizerSpec defines the desired state of Authorizer.\\n\\n\\nRepresents an authorizer.\",\n   \"properties\": {\n    \"apiID\": {\n     \"type\": \"string\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"authorizerCredentialsARN\": {\n     \"type\": \"string\"\n    },\n    \"authorizerPayloadFormatVersion\": {\n     \"type\": \"string\"\n    },\n    \"authorizerResultTTLInSeconds\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"authorizerType\": {\n     \"type\": \"string\"\n    },\n    \"authorizerURI\": {\n     \"type\": \"string\"\n    },\n    \"enableSimpleResponses\": {\n     \"type\": \"boolean\"\n    },\n    \"identitySource\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"identityValidationExpression\": {\n     \"type\": \"string\"\n    },\n    \"jwtConfiguration\": {\n     \"description\": \"Represents the configuration of a JWT authorizer. Required for the JWT authorizer\\ntype. Supported only for HTTP APIs.\",\n     \"properties\": {\n      \"audience\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"issuer\": {\n       \"description\": \"A string representation of a URI with a length between [1-2048].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authorizerType\",\n    \"identitySource\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Authorizer\",\n \"type\": \"object\"\n}"
+ }

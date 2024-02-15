@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CAProviderClass",
+  "apiVersion": "cacerts.csi.cert-manager.io/v1alpha1",
+  "displayName": "CA Provider Class",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "cert-manager-csi-driver-cacerts",
+   "version": "2023.10.1",
+   "displayName": "cert-manager-csi-driver-cacerts",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/cert-manager-csi-driver-cacerts/cert-manager-csi-driver-cacerts-v2023.10.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CAProviderClassSpec defines the desired state of CAProviderClass\",\n   \"properties\": {\n    \"refs\": {\n     \"description\": \"Selects secrets, issuers, cluster issuers, certificates or external issuers\",\n     \"items\": {\n      \"description\": \"TypedObjectReference contains enough information to let you locate the typed referenced object.\",\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the type of resource being referenced\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of resource being referenced\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"CA Provider Class\",\n \"type\": \"object\"\n}"
+ }

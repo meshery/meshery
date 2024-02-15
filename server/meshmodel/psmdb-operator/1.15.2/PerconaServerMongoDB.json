@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PerconaServerMongoDB",
+  "apiVersion": "psmdb.percona.com/v1-2-0",
+  "displayName": "Percona Server Mongo DB",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "psmdb-operator",
+   "version": "1.15.2",
+   "displayName": "psmdb-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/psmdb-operator-1.15.2/psmdb-operator-1.15.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Percona Server Mongo DB\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PullThroughCacheRule",
+  "apiVersion": "ecr.services.k8s.aws/v1alpha1",
+  "displayName": "Pull Through Cache Rule",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ecr-controller",
+   "version": "v1.0.12",
+   "displayName": "aws-ecr-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ecr-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PullThroughCacheRule is the Schema for the PullThroughCacheRules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PullThroughCacheRuleSpec defines the desired state of PullThroughCacheRule.\\n\\n\\nThe details of a pull through cache rule.\",\n   \"properties\": {\n    \"ecrRepositoryPrefix\": {\n     \"description\": \"The repository name prefix to use when caching images from the source registry.\",\n     \"type\": \"string\"\n    },\n    \"registryID\": {\n     \"description\": \"The Amazon Web Services account ID associated with the registry to create\\nthe pull through cache rule for. If you do not specify a registry, the default\\nregistry is assumed.\",\n     \"type\": \"string\"\n    },\n    \"upstreamRegistryURL\": {\n     \"description\": \"The registry URL of the upstream public registry to use as the source for\\nthe pull through cache rule.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ecrRepositoryPrefix\",\n    \"upstreamRegistryURL\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pull Through Cache Rule\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SchemaReplication",
+  "apiVersion": "rabbitmq.com/v1beta1",
+  "displayName": "Schema Replication",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "rabbitmq-cluster-operator",
+   "version": "3.17.0",
+   "displayName": "rabbitmq-cluster-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/rabbitmq-cluster-operator-3.17.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"SchemaReplication is the Schema for the schemareplications API\\nThis feature requires Tanzu RabbitMQ with schema replication plugin.\\nFor more information, see: https://tanzu.vmware.com/rabbitmq and https://www.rabbitmq.com/definitions-standby.html.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SchemaReplicationSpec defines the desired state of SchemaReplication\",\n   \"properties\": {\n    \"endpoints\": {\n     \"description\": \"endpoints should be one or multiple endpoints separated by ','.\\nMust provide either spec.endpoints or endpoints in spec.upstreamSecret.\\nWhen endpoints are provided in both spec.endpoints and spec.upstreamSecret, spec.endpoints takes\\nprecedence.\",\n     \"type\": \"string\"\n    },\n    \"rabbitmqClusterReference\": {\n     \"description\": \"Reference to the RabbitmqCluster that schema replication would be set for. Must be an existing cluster.\",\n     \"properties\": {\n      \"connectionSecret\": {\n       \"description\": \"Secret contains the http management uri for the RabbitMQ cluster.\\nThe Secret must contain the key `uri`, `username` and `password` or operator will error.\\nHave to set either name or connectionSecret, but not both.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"name\": {\n       \"description\": \"The name of the RabbitMQ cluster to reference.\\nHave to set either name or connectionSecret, but not both.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of the RabbitMQ cluster to reference.\\nDefaults to the namespace of the requested resource if omitted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"secretBackend\": {\n     \"description\": \"Set to fetch user credentials from K8s external secret stores to be used for schema replication.\",\n     \"properties\": {\n      \"vault\": {\n       \"properties\": {\n        \"secretPath\": {\n         \"description\": \"Path in Vault to access a KV (Key-Value) secret with the fields username and password to be used for replication.\\nFor example \\\"secret/data/rabbitmq/config\\\".\\nOptional; if not provided, username and password will come from upstreamSecret instead.\\nHave to set either secretBackend.vault.secretPath or upstreamSecret, but not both.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"upstreamSecret\": {\n     \"description\": \"Defines a Secret which contains credentials to be used for schema replication.\\nThe Secret must contain the keys `username` and `password` in its Data field, or operator will error.\\nHave to set either secretBackend.vault.secretPath or spec.upstreamSecret, but not both.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"rabbitmqClusterReference\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Schema Replication\",\n \"type\": \"object\"\n}"
+ }

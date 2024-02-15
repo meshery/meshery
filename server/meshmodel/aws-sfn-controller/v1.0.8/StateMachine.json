@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "StateMachine",
+  "apiVersion": "sfn.services.k8s.aws/v1alpha1",
+  "displayName": "State Machine",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sfn-controller",
+   "version": "v1.0.8",
+   "displayName": "aws-sfn-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/sfn-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"StateMachine is the Schema for the StateMachines API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StateMachineSpec defines the desired state of StateMachine.\",\n   \"properties\": {\n    \"definition\": {\n     \"description\": \"The Amazon States Language definition of the state machine. See Amazon States\\nLanguage (https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html).\",\n     \"type\": \"string\"\n    },\n    \"loggingConfiguration\": {\n     \"description\": \"Defines what execution history events are logged and where they are logged.\\n\\n\\nBy default, the level is set to OFF. For more information see Log Levels\\n(https://docs.aws.amazon.com/step-functions/latest/dg/cloudwatch-log-level.html)\\nin the AWS Step Functions User Guide.\",\n     \"properties\": {\n      \"destinations\": {\n       \"items\": {\n        \"properties\": {\n         \"cloudWatchLogsLogGroup\": {\n          \"properties\": {\n           \"logGroupARN\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"includeExecutionData\": {\n       \"type\": \"boolean\"\n      },\n      \"level\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the state machine.\\n\\n\\nA name must not contain:\\n\\n\\n  - white space\\n\\n\\n  - brackets \\u003c \\u003e { } [ ]\\n\\n\\n  - wildcard characters ? *\\n\\n\\n  - special characters \\\" # % \\\\ ^ | ~ ` $ \\u0026 , ; : /\\n\\n\\n  - control characters (U+0000-001F, U+007F-009F)\\n\\n\\nTo enable logging with CloudWatch Logs, the name should only contain 0-9,\\nA-Z, a-z, - and _.\",\n     \"type\": \"string\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the IAM role to use for this state machine.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"Tags to be added when creating a state machine.\\n\\n\\nAn array of key-value pairs. For more information, see Using Cost Allocation\\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)\\nin the AWS Billing and Cost Management User Guide, and Controlling Access\\nUsing IAM Tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).\\n\\n\\nTags may only contain Unicode letters, digits, white space, or these symbols:\\n_ . : / = + - @.\",\n     \"items\": {\n      \"description\": \"Tags are key-value pairs that can be associated with Step Functions state\\nmachines and activities.\\n\\n\\nAn array of key-value pairs. For more information, see Using Cost Allocation\\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)\\nin the AWS Billing and Cost Management User Guide, and Controlling Access\\nUsing IAM Tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).\\n\\n\\nTags may only contain Unicode letters, digits, white space, or these symbols:\\n_ . : / = + - @.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tracingConfiguration\": {\n     \"description\": \"Selects whether AWS X-Ray tracing is enabled.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type_\": {\n     \"description\": \"Determines whether a Standard or Express state machine is created. The default\\nis STANDARD. You cannot update the type of a state machine once it has been\\ncreated.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"definition\",\n    \"name\",\n    \"roleARN\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"State Machine\",\n \"type\": \"object\"\n}"
+ }

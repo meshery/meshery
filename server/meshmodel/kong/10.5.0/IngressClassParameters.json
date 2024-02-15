@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "IngressClassParameters",
+  "apiVersion": "configuration.konghq.com/v1alpha1",
+  "displayName": "Ingress Class Parameters",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong",
+   "version": "10.5.0",
+   "displayName": "kong",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/kong-10.5.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"IngressClassParameters is the Schema for the IngressClassParameters API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the IngressClassParameters specification.\",\n   \"properties\": {\n    \"enableLegacyRegexDetection\": {\n     \"default\": false,\n     \"description\": \"EnableLegacyRegexDetection automatically detects if ImplementationSpecific Ingress paths are regular expression paths using the legacy 2.x heuristic. The controller adds the \\\"~\\\" prefix to those paths if the Kong version is 3.0 or higher.\",\n     \"type\": \"boolean\"\n    },\n    \"serviceUpstream\": {\n     \"default\": false,\n     \"description\": \"Offload load-balancing to kube-proxy or sidecar.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress Class Parameters\",\n \"type\": \"object\"\n}"
+ }

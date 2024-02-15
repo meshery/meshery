@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Route",
+  "apiVersion": "apigatewayv2.services.k8s.aws/v1alpha1",
+  "displayName": "Route",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-apigatewayv2-controller",
+   "version": "v1.0.9",
+   "displayName": "aws-apigatewayv2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Route is the Schema for the Routes API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RouteSpec defines the desired state of Route.\\n\\n\\nRepresents a route.\",\n   \"properties\": {\n    \"apiID\": {\n     \"type\": \"string\"\n    },\n    \"apiKeyRequired\": {\n     \"type\": \"boolean\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"authorizationScopes\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"authorizationType\": {\n     \"type\": \"string\"\n    },\n    \"authorizerID\": {\n     \"type\": \"string\"\n    },\n    \"authorizerRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"modelSelectionExpression\": {\n     \"type\": \"string\"\n    },\n    \"operationName\": {\n     \"type\": \"string\"\n    },\n    \"requestModels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"requestParameters\": {\n     \"additionalProperties\": {\n      \"description\": \"Validation constraints imposed on parameters of a request (path, query string,\\nheaders).\",\n      \"properties\": {\n       \"required\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    },\n    \"routeKey\": {\n     \"type\": \"string\"\n    },\n    \"routeResponseSelectionExpression\": {\n     \"type\": \"string\"\n    },\n    \"target\": {\n     \"type\": \"string\"\n    },\n    \"targetRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"routeKey\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Route\",\n \"type\": \"object\"\n}"
+ }

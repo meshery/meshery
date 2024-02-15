@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TrafficTarget",
+  "apiVersion": "access.smi-spec.io/v1alpha2",
+  "displayName": "Traffic Target",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TrafficTarget associates a set of traffic definitions (rules) with a service identity which is allocated to a group of pods. Access is controlled via referenced TrafficSpecs and by a list of source service identities. * If a pod which holds the referenced service identity makes a call to the destination on one of the defined routes then access   will be allowed * Any pod which attempts to connect and is not in the defined list of sources will be denied * Any pod which is in the defined list, but attempts to connect on a route which is not in the list of the   TrafficSpecs will be denied\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TrafficTargetSpec is the specification of a TrafficTarget\",\n   \"properties\": {\n    \"destination\": {\n     \"description\": \"Selector is the pod or group of pods to allow ingress traffic\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of Subject to allow ingress (ServiceAccount | Group)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the Subject, i.e. ServiceAccountName\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the Subject is deployed\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"Port defines a TCP port to apply the TrafficTarget to\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"rules\": {\n     \"description\": \"Rules are the traffic rules to allow (HTTPRoutes | TCPRoute)\",\n     \"items\": {\n      \"description\": \"TrafficTargetRule is the TrafficSpec to allow for a TrafficTarget\",\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind is the kind of TrafficSpec to allow\",\n        \"type\": \"string\"\n       },\n       \"matches\": {\n        \"description\": \"Matches is a list of TrafficSpec routes to allow traffic for\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the TrafficSpec to use\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sources\": {\n     \"description\": \"Sources are the pod or group of pods to allow ingress traffic\",\n     \"items\": {\n      \"description\": \"IdentityBindingSubject is a Kubernetes objects which should be allowed access to the TrafficTarget\",\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind is the type of Subject to allow ingress (ServiceAccount | Group)\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the Subject, i.e. ServiceAccountName\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace where the Subject is deployed\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"Port defines a TCP port to apply the TrafficTarget to\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"destination\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Traffic Target\",\n \"type\": \"object\"\n}"
+ }

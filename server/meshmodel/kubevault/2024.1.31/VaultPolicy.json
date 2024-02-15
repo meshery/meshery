@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VaultPolicy",
+  "apiVersion": "policy.kubevault.com/v1alpha1",
+  "displayName": "Vault Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubevault",
+   "version": "2024.1.31",
+   "displayName": "kubevault",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubevault/kubevault-v2024.1.31.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"More info: https://www.vaultproject.io/docs/concepts/policies.html\",\n   \"properties\": {\n    \"policy\": {\n     \"description\": \"Policy specifies a vault policy in json format.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\",\n     \"x-kubernetes-embedded-resource\": true\n    },\n    \"policyDocument\": {\n     \"description\": \"PolicyDocument specifies a vault policy in hcl format. For example: path \\\"secret/*\\\" { capabilities = [\\\"create\\\", \\\"read\\\", \\\"update\\\", \\\"delete\\\", \\\"list\\\"] }\",\n     \"type\": \"string\"\n    },\n    \"vaultPolicyName\": {\n     \"description\": \"VaultPolicyName is the policy name set inside Vault. This defaults to following format: k8s.${cluster}.${metadata.namespace}.${metadata.name}\",\n     \"type\": \"string\"\n    },\n    \"vaultRef\": {\n     \"description\": \"VaultRef is the name of a AppBinding referencing to a Vault Server\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"vaultRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Policy\",\n \"type\": \"object\"\n}"
+ }

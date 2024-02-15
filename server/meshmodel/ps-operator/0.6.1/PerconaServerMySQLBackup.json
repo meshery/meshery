@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PerconaServerMySQLBackup",
+  "apiVersion": "ps.percona.com/v1alpha1",
+  "displayName": "Percona Server My SQL Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "ps-operator",
+   "version": "0.6.1",
+   "displayName": "ps-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/ps-operator-0.6.1/ps-operator-0.6.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clusterName\": {\n     \"type\": \"string\"\n    },\n    \"storageName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterName\",\n    \"storageName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Percona Server My SQL Backup\",\n \"type\": \"object\"\n}"
+ }

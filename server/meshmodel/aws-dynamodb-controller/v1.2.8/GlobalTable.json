@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GlobalTable",
+  "apiVersion": "dynamodb.services.k8s.aws/v1alpha1",
+  "displayName": "Global Table",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-dynamodb-controller",
+   "version": "v1.2.8",
+   "displayName": "aws-dynamodb-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GlobalTable is the Schema for the GlobalTables API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalTableSpec defines the desired state of GlobalTable.\\n\\n\\nRepresents the properties of a global table.\",\n   \"properties\": {\n    \"globalTableName\": {\n     \"description\": \"The global table name.\",\n     \"type\": \"string\"\n    },\n    \"replicationGroup\": {\n     \"description\": \"The Regions where the global table needs to be created.\",\n     \"items\": {\n      \"description\": \"Represents the properties of a replica.\",\n      \"properties\": {\n       \"regionName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"globalTableName\",\n    \"replicationGroup\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Table\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "DBProxy",
+  "apiVersion": "rds.services.k8s.aws/v1alpha1",
+  "displayName": "DB Proxy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-rds-controller",
+   "version": "v1.1.11",
+   "displayName": "aws-rds-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/rds-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"DBProxy is the Schema for the DBProxies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DBProxySpec defines the desired state of DBProxy.\\n\\n\\nThe data structure representing a proxy managed by the RDS Proxy.\\n\\n\\nThis data type is used as a response element in the DescribeDBProxies action.\",\n   \"properties\": {\n    \"auth\": {\n     \"description\": \"The authorization mechanism that the proxy uses.\",\n     \"items\": {\n      \"description\": \"Specifies the details of authentication used by a proxy to log in as a specific\\ndatabase user.\",\n      \"properties\": {\n       \"authScheme\": {\n        \"type\": \"string\"\n       },\n       \"clientPasswordAuthType\": {\n        \"type\": \"string\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       },\n       \"iamAuth\": {\n        \"type\": \"string\"\n       },\n       \"secretARN\": {\n        \"type\": \"string\"\n       },\n       \"userName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"debugLogging\": {\n     \"description\": \"Whether the proxy includes detailed information about SQL statements in its\\nlogs. This information helps you to debug issues involving SQL behavior or\\nthe performance and scalability of the proxy connections. The debug information\\nincludes the text of SQL statements that you submit through the proxy. Thus,\\nonly enable this setting when needed for debugging, and only when you have\\nsecurity measures in place to safeguard any sensitive information that appears\\nin the logs.\",\n     \"type\": \"boolean\"\n    },\n    \"engineFamily\": {\n     \"description\": \"The kinds of databases that the proxy can connect to. This value determines\\nwhich database network protocol the proxy recognizes when it interprets network\\ntraffic to and from the database. For Aurora MySQL, RDS for MariaDB, and\\nRDS for MySQL databases, specify MYSQL. For Aurora PostgreSQL and RDS for\\nPostgreSQL databases, specify POSTGRESQL. For RDS for Microsoft SQL Server,\\nspecify SQLSERVER.\",\n     \"type\": \"string\"\n    },\n    \"idleClientTimeout\": {\n     \"description\": \"The number of seconds that a connection to the proxy can be inactive before\\nthe proxy disconnects it. You can set this value higher or lower than the\\nconnection timeout limit for the associated database.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"description\": \"The identifier for the proxy. This name must be unique for all proxies owned\\nby your Amazon Web Services account in the specified Amazon Web Services\\nRegion. An identifier must begin with a letter and must contain only ASCII\\nletters, digits, and hyphens; it can't end with a hyphen or contain two consecutive\\nhyphens.\",\n     \"type\": \"string\"\n    },\n    \"requireTLS\": {\n     \"description\": \"A Boolean parameter that specifies whether Transport Layer Security (TLS)\\nencryption is required for connections to the proxy. By enabling this setting,\\nyou can enforce encrypted TLS connections to the proxy.\",\n     \"type\": \"boolean\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the IAM role that the proxy uses to access\\nsecrets in Amazon Web Services Secrets Manager.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"An optional set of key-value pairs to associate arbitrary data of your choosing\\nwith the proxy.\",\n     \"items\": {\n      \"description\": \"Metadata assigned to an Amazon RDS resource consisting of a key-value pair.\\n\\n\\nFor more information, see Tagging Amazon RDS Resources (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Tagging.html)\\nin the Amazon RDS User Guide.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcSecurityGroupIDs\": {\n     \"description\": \"One or more VPC security group IDs to associate with the new proxy.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcSubnetIDs\": {\n     \"description\": \"One or more VPC subnet IDs to associate with the new proxy.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"auth\",\n    \"engineFamily\",\n    \"name\",\n    \"roleARN\",\n    \"vpcSubnetIDs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DB Proxy\",\n \"type\": \"object\"\n}"
+ }

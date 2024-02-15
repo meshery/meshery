@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MattermostRestoreDB",
+  "apiVersion": "mattermost.com/v1alpha1",
+  "displayName": "Mattermost Restore DB",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "mattermost-operator",
+   "version": "1.0.0",
+   "displayName": "mattermost-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/mattermost/mattermost-helm/releases/download/mattermost-operator-1.0.0/mattermost-operator-1.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MattermostRestoreDB is the Schema for the mattermostrestoredbs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MattermostRestoreDBSpec defines the desired state of MattermostRestoreDB\",\n   \"properties\": {\n    \"initBucketURL\": {\n     \"description\": \"InitBucketURL defines where the DB backup file is located.\",\n     \"type\": \"string\"\n    },\n    \"mattermostClusterName\": {\n     \"description\": \"MattermostClusterName defines the ClusterInstallation name.\",\n     \"type\": \"string\"\n    },\n    \"mattermostDBName\": {\n     \"description\": \"MattermostDBName defines the database name. Need to set if different from `mattermost`.\",\n     \"type\": \"string\"\n    },\n    \"mattermostDBPassword\": {\n     \"description\": \"MattermostDBPassword defines the user password to access the database. Need to set if the user is different from the one created by the operator.\",\n     \"type\": \"string\"\n    },\n    \"mattermostDBUser\": {\n     \"description\": \"MattermostDBUser defines the user to access the database. Need to set if the user is different from `mmuser`.\",\n     \"type\": \"string\"\n    },\n    \"restoreSecret\": {\n     \"description\": \"RestoreSecret defines the secret that holds the credentials to MySQL Operator be able to download the DB backup file\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mattermost Restore DB\",\n \"type\": \"object\"\n}"
+ }

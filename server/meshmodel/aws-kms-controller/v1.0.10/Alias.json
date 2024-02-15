@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Alias",
+  "apiVersion": "kms.services.k8s.aws/v1alpha1",
+  "displayName": "Alias",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-kms-controller",
+   "version": "v1.0.10",
+   "displayName": "aws-kms-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/kms-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Alias is the Schema for the Aliases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AliasSpec defines the desired state of Alias.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"Specifies the alias name. This value must begin with alias/ followed by a\\nname, such as alias/ExampleAlias.\\n\\n\\nThe AliasName value must be string of 1-256 characters. It can contain only\\nalphanumeric characters, forward slashes (/), underscores (_), and dashes\\n(-). The alias name cannot begin with alias/aws/. The alias/aws/ prefix is\\nreserved for Amazon Web Services managed keys (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-managed-cmk).\",\n     \"type\": \"string\"\n    },\n    \"targetKeyID\": {\n     \"description\": \"Associates the alias with the specified customer managed key (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#customer-cmk).\\nThe KMS key must be in the same Amazon Web Services Region.\\n\\n\\nA valid key ID is required. If you supply a null or empty string value, this\\noperation returns an error.\\n\\n\\nFor help finding the key ID and ARN, see Finding the Key ID and ARN (https://docs.aws.amazon.com/kms/latest/developerguide/viewing-keys.html#find-cmk-id-arn)\\nin the Key Management Service Developer Guide .\\n\\n\\nSpecify the key ID or key ARN of the KMS key.\\n\\n\\nFor example:\\n\\n\\n  - Key ID: 1234abcd-12ab-34cd-56ef-1234567890ab\\n\\n\\n  - Key ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab\\n\\n\\nTo get the key ID and key ARN for a KMS key, use ListKeys or DescribeKey.\",\n     \"type\": \"string\"\n    },\n    \"targetKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Alias\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "FpgaRegion",
+  "apiVersion": "fpga.intel.com/v2",
+  "displayName": "Fpga Region",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "intel-device-plugins-operator",
+   "version": "0.29.0",
+   "displayName": "intel-device-plugins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/intel-device-plugins-operator-0.29.0/intel-device-plugins-operator-0.29.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"FpgaRegion is a specification for a FPGA region resource which can be programmed with a bitstream.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FpgaRegionSpec contains actual specs for FpgaRegion.\",\n   \"properties\": {\n    \"interfaceId\": {\n     \"pattern\": \"^[0-9a-f]{8,32}$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"interfaceId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Fpga Region\",\n \"type\": \"object\"\n}"
+ }

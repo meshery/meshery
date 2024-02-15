@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CDStageJenkinsDeployment",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "CD Stage Jenkins Deployment",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "jenkins-operator",
+   "version": "2.15.3",
+   "displayName": "jenkins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/jenkins-operator-2.15.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CDStageJenkinsDeployment is the Schema for the cdstagejenkinsdeployments API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CDStageJenkinsDeploymentSpec defines the desired state of CDStageJenkinsDeployment.\",\n   \"properties\": {\n    \"job\": {\n     \"type\": \"string\"\n    },\n    \"tag\": {\n     \"properties\": {\n      \"codebase\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"codebase\",\n      \"tag\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"items\": {\n      \"properties\": {\n       \"codebase\": {\n        \"type\": \"string\"\n       },\n       \"tag\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"codebase\",\n       \"tag\"\n      ],\n      \"type\": \"object\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"CD Stage Jenkins Deployment\",\n \"type\": \"object\"\n}"
+ }

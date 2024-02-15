@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "UserGroup",
+  "apiVersion": "elasticache.services.k8s.aws/v1alpha1",
+  "displayName": "User Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-elasticache-controller",
+   "version": "v0.0.29",
+   "displayName": "aws-elasticache-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/elasticache-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"UserGroup is the Schema for the UserGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"engine\": {\n     \"description\": \"The current supported value is Redis.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an ElastiCache cluster or replication group. Tags are composed of a Key/Value pair. You can use tags to categorize and track all your ElastiCache resources, with the exception of global replication group. When you add or remove tags on replication groups, those actions will be replicated to all nodes in the replication group. A tag with a null Value is permitted.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"userGroupID\": {\n     \"description\": \"The ID of the user group.\",\n     \"type\": \"string\"\n    },\n    \"userIDs\": {\n     \"description\": \"The list of user IDs that belong to the user group.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"engine\",\n    \"userGroupID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User Group\",\n \"type\": \"object\"\n}"
+ }

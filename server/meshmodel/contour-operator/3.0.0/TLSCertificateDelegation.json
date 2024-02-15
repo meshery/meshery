@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TLSCertificateDelegation",
+  "apiVersion": "projectcontour.io/v1",
+  "displayName": "TLS Certificate Delegation",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "contour-operator",
+   "version": "3.0.0",
+   "displayName": "contour-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://marketplace.azurecr.io/helm/v1/repo/_blobs/contour-operator-3.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TLSCertificateDelegation is an TLS Certificate Delegation CRD specification. See design/tls-certificate-delegation.md for details.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSCertificateDelegationSpec defines the spec of the CRD\",\n   \"properties\": {\n    \"delegations\": {\n     \"items\": {\n      \"description\": \"CertificateDelegation maps the authority to reference a secret in the current namespace to a set of namespaces.\",\n      \"properties\": {\n       \"secretName\": {\n        \"description\": \"required, the name of a secret in the current namespace.\",\n        \"type\": \"string\"\n       },\n       \"targetNamespaces\": {\n        \"description\": \"required, the namespaces the authority to reference the the secret will be delegated to. If TargetNamespaces is nil or empty, the CertificateDelegation' is ignored. If the TargetNamespace list contains the character, \\\"*\\\" the secret will be delegated to all namespaces.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"secretName\",\n       \"targetNamespaces\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"delegations\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Certificate Delegation\",\n \"type\": \"object\"\n}"
+ }

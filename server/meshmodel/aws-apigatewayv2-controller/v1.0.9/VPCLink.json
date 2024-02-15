@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VPCLink",
+  "apiVersion": "apigatewayv2.services.k8s.aws/v1alpha1",
+  "displayName": "VPC Link",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-apigatewayv2-controller",
+   "version": "v1.0.9",
+   "displayName": "aws-apigatewayv2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VPCLink is the Schema for the VPCLinks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpcLinkSpec defines the desired state of VpcLink.\\n\\n\\nRepresents a VPC link.\",\n   \"properties\": {\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"securityGroupIDs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetIDs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"subnetIDs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VPC Link\",\n \"type\": \"object\"\n}"
+ }

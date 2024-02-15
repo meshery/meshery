@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Resiliency",
+  "apiVersion": "dapr.io/v1alpha1",
+  "displayName": "Resiliency",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "dapr",
+   "version": "1.12.5",
+   "displayName": "dapr",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.wener.tech/dapr-1.12.5.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"properties\": {\n    \"policies\": {\n     \"properties\": {\n      \"circuitBreakers\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"interval\": {\n          \"type\": \"string\"\n         },\n         \"maxRequests\": {\n          \"type\": \"integer\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         },\n         \"trip\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"retries\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"duration\": {\n          \"type\": \"string\"\n         },\n         \"maxInterval\": {\n          \"type\": \"string\"\n         },\n         \"maxRetries\": {\n          \"type\": \"integer\"\n         },\n         \"policy\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"timeouts\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targets\": {\n     \"properties\": {\n      \"actors\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"circuitBreaker\": {\n          \"type\": \"string\"\n         },\n         \"circuitBreakerCacheSize\": {\n          \"type\": \"integer\"\n         },\n         \"circuitBreakerScope\": {\n          \"type\": \"string\"\n         },\n         \"retry\": {\n          \"type\": \"string\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"apps\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"circuitBreaker\": {\n          \"type\": \"string\"\n         },\n         \"circuitBreakerCacheSize\": {\n          \"type\": \"integer\"\n         },\n         \"retry\": {\n          \"type\": \"string\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"components\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"inbound\": {\n          \"properties\": {\n           \"circuitBreaker\": {\n            \"type\": \"string\"\n           },\n           \"retry\": {\n            \"type\": \"string\"\n           },\n           \"timeout\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"outbound\": {\n          \"properties\": {\n           \"circuitBreaker\": {\n            \"type\": \"string\"\n           },\n           \"retry\": {\n            \"type\": \"string\"\n           },\n           \"timeout\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"policies\",\n    \"targets\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resiliency\",\n \"type\": \"object\"\n}"
+ }

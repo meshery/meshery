@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "LocalRateLimit",
+  "apiVersion": "ratelimit.zufardhiyaulhaq.com/v1alpha1",
+  "displayName": "Local Rate Limit",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "istio-ratelimit-operator",
+   "version": "2.11.1",
+   "displayName": "istio-ratelimit-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://zufardhiyaulhaq.com/istio-ratelimit-operator/charts/releases/istio-ratelimit-operator-2.11.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"LocalRateLimit is the Schema for the localratelimits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LocalRateLimitSpec defines the desired state of LocalRateLimit\",\n   \"properties\": {\n    \"config\": {\n     \"type\": \"string\"\n    },\n    \"limit\": {\n     \"properties\": {\n      \"requests_per_unit\": {\n       \"type\": \"integer\"\n      },\n      \"unit\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"route\": {\n       \"type\": \"string\"\n      },\n      \"vhost\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"vhost\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Local Rate Limit\",\n \"type\": \"object\"\n}"
+ }
