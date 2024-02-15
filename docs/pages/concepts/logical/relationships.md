@@ -20,12 +20,69 @@ Meshery supports a variety of relationships between components. Relationships ar
 
 Here is a list of the different types of relationships that Meshery supports:
 
-1. Edge - Network
-2. Edge - Mount
-3. Edge - Permission
-4. Edge - Firewall
-5. Heirarchical - Inventory
-6. Heirarchical - Parent
+1. Edge
+   1. Network
+   1. Firewall
+   1. Binding
+      1. Mount
+      1. Permission
+1. Heirarchical
+   1. Inventory
+   1. Parent
+
+<details open>
+<summary>Example Visual Representations</summary>
+    <details close><summary>Hierarchical</summary>
+    <figure><br><figcaption>Hierarchical - Parent</figcaption>
+    <img alt="Hierarchical - Parent: Namespace to other components" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
+    </figure>
+    </details>
+    <details close><summary>Sibling</summary>
+    <figure><br><figcaption>Hierarchical - Sibling: Matching Label Selectors</figcaption>
+    <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
+    </figure>
+    </details>
+    <details close><summary>Binding</summary>
+    <figure><br><figcaption>Hierarchical - Binding: Cluster Role with Cluster Role Binding to ConfigMap</figcaption>
+    <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
+    </figure>
+    </details>
+    <details close><summary>Edge</summary>
+    <figure><br><figcaption>Edge - Mount</figcaption>
+    <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Network: Ingress to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Pod</figcaption>
+    <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
+    <figure><figcaption>Edge - Network: Service to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Endpoint</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
+    <figure><figcaption>Edge - Network: Service to Deployment</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Permission</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
+    <figure><figcaption>Edge - Permission: Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
+    <figure><figcaption>Edge - Permission: Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Pod</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Network Policy</figcaption>
+    <img alt="Edge - Network Policy" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
+    </figure>
+    </details>
+</details>
 
 ## The Meaning of Relationships
 
@@ -35,13 +92,17 @@ Meshery supports a variety of relationships between components. These relationsh
 
 Semantic relationships are those that are meaningful in the context of the application or infrastructure. For example, a `Service` in Kubernetes is semantically related to a `Deployment` or a `Pod`. These relationships are meaningful and are managed by Meshery.
 
-_[TODO: a visual example is needed here]_
+<!-- @iArchitSharma, help, if you would please. 
+
+_[TODO: a visual example is needed here]_ -->
 
 ### Non-Semantic Relationships
 
 Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-sematic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
 
-_[TODO: a visual example is needed here]_
+<!-- @iArchitSharma, help, if you would please. 
+
+_[TODO: a visual example is needed here]_ -->
 
 #### Identifiying Non-Semantic Relationships
 
