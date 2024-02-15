@@ -103,7 +103,7 @@ This arrangement enhances flexibility and reusability in the definition and conf
  <b>Example Selector</b>
 </summary>
 
-```json
+<code>
 selector: [
   {
     "allow": {
@@ -211,7 +211,8 @@ selector: [
     }
   }
 ]
-```
+</code>
+
 The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely independent from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships. 
 
 The above relation shows `WASMFilter` and `EBPFFilter` defined inside `from` relates to each component defined inside `to` `(EnvoyFilter, WASMPlugin...)`. 
