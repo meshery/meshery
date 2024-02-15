@@ -14,7 +14,22 @@ Relationships define the nature of interaction between interconnected components
 
 {% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>Contributing to Meshery Relationships</a> guide." %}
 
-## Semantic and Non-Semantic Relationships
+## Types of Relationships
+
+Meshery supports a variety of relationships between components. Relationships are are categorized into different kinds and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+
+Here is a list of the different types of relationships that Meshery supports:
+
+1. Edge - Network
+2. Edge - Mount
+3. Edge - Permission
+4. Edge - Firewall
+5. Heirarchical - Inventory
+6. Heirarchical - Parent
+
+## The Meaning of Relationships
+
+Meshery supports a variety of relationships between components. These relationships are categorized into two types: Semantic and Non-Semantic. Relationships are categorized by whether they are meaningful in terms of how Meshery manages entities - a Semantic relationship - or are simply annotations to aid in the comprehension of you as the designer of the relationship - a Non-Semantic relationship.
 
 ### Semantic Relationships
 
@@ -119,16 +134,10 @@ Selectors can be applied to various components, enabling a wide range of relatio
 
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
 
+
+<!-- @RipulHandoo - Please add a snippet of the selector backing this relationship. -->
+
  <!-- add images -->
-
-### Types of Relationships
-
-1. **Inventory**
-2. **Parent**
-3. **Mount**
-4. **Firewall**
-5. **Permission**
-6. **Network**
 
 ## Relationship Evaluation
 
