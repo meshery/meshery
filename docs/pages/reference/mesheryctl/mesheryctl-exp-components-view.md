@@ -12,7 +12,7 @@ subcommand: components
 
 # mesheryctl exp components view
 
-view registered component
+view registered components
 
 ## Synopsis
 

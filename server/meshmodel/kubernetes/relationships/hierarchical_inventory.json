@@ -793,6 +793,290 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for Deployments."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for StatefulSet."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["apiVersion"], 
+                ["name"], 
+                ["type"]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for ReplicaSet."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "HorizontalPodAutoscaler",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "scaleTargetRef", "apiVersion"], 
+                ["settings", "spec", "scaleTargetRef", "name"], 
+                ["settings", "spec", "scaleTargetRef", "kind"]
+              ],
+              "description": "Horizontal Pod Autoscaler automatically scales the number of pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics). Horizontal Pod Autoscaling does not apply to objects that can't be scaled, for example, DaemonSets."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A Deployment "
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A StatefulSet "
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"],
+                ["kind"],
+                ["apiVersion"]
+              ],
+              "description": "A DaemonSet "
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Lease",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["ownerReferences", "_", "name"],
+                ["ownerReferences", "_", "kind"],
+                ["ownerReferences", "_", "apiVersion"]
+              ],
+              "description": "A Lease is a mechanism used for coordinating activities between multiple instances of a controller, ensuring that only one instance is actively performing certain tasks at any given time."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationController",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec"]
+              ],
+              "description": "In Kubernetes, Replication Controllers  are used to ensure that a specified number of pod replicas are running at any given time."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A Deployment manages a set of identical Pods, often referred to as a ReplicaSet. Replication Controller provides declarative updates to applications, managing the deployment and scaling of Pods."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "ReplicaSet use Replication Controllers internally to manage the desired number of replicas. Replication Controllers ensure that if a Pod fails or is deleted, a new Pod is created to maintain the desired number of replicas. "
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A StatefulSet manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods. StatefulSets are used for stateful applications, such as databases."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A DaemonSet ensures that all (or some) nodes run a copy of a Pod. It's typically used for running system daemons or agents on every node in a Kubernetes cluster."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    },
+    {
+      "allow": {
+        "from":[
+          {
+            "kind": "PodTemplate",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "template"]
+              ],
+              "description": "A Pod template is a blueprint defining the configuration for creating Kubernetes pods, encapsulating specifications for containers, volumes, and other settings"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "Deployments use pod templates to define the desired state of pods, enabling easy scaling, rolling updates, and self-healing of applications within Kubernetes clusters, ensuring consistency and reliability during deployment operations."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "StatefulSets utilize pod templates to maintain stateful applications' unique identities and ordered scaling behaviors, ensuring persistent storage and network identifiers, crucial for databases and distributed systems' reliable operation."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "DaemonSets utilize pod templates to ensure specific pods run on designated nodes within the cluster, facilitating the deployment of essential system services such as logging, monitoring, and networking across the Kubernetes infrastructure, enhancing cluster management and operational efficiency."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "ReplicaSets leverage pod templates to ensure the desired number of identical pod replicas are running, providing fault tolerance and high availability for applications by automatically managing pod lifecycle based on defined specifications."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template"]
+              ],
+              "description": "Jobs use pod templates to specify the container images, commands, and resources required for executing batch processing tasks reliably within Kubernetes clusters, ensuring consistency and repeatability in job execution."
+            }
+          }, 
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "jobTemplate", "spec", "template"]
+              ],
+              "description":"CronJobs employ pod templates to define periodic or scheduled tasks' configurations, automating the creation and execution of pods based on defined schedules, enabling efficient handling of repetitive tasks within Kubernetes clusters."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
     }
   ]
 }

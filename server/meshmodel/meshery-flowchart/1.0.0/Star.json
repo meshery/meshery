@@ -1,0 +1,46 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Star",
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "displayName": "Star",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "{\"designer\":{\"edit\":{\"config\":false, \"text\":true,\"lock\":true,\"shape\":{\"convert-shape\":true},\"style\":true},\"label\":{\"edit\":true,\"show\":true,\"sync-with-config-property\":\"label\"}}}",
+   "defaultData": "{\"label\":\"\"}",
+   "genealogy": "",
+   "isAnnotation": true,
+   "primaryColor": "#00B39F",
+   "published": true,
+   "secondaryColor": "#00D3A9",
+   "shape": "star",
+   "shapePolygonPoints": "",
+   "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1,\"data\":{\"label\":\"\"}}",
+   "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1}",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M20.4716 2.13574L27.1532 12.9296L38.5094 15.8442L30.5529 25.4771L31.6154 38L20.4716 34.0727L9.35152 38L10.1306 25.5759L2.45752 15.8442L14.0026 13.0531L20.4716 2.13574Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M20.4716 2.13574L27.1532 12.9296L38.5094 15.8442L30.5529 25.4771L31.6154 38L20.4716 34.0727L9.35152 38L10.1306 25.5759L2.45752 15.8442L14.0026 13.0531L20.4716 2.13574Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "meshery-flowchart",
+   "version": "1.0.0",
+   "displayName": "Meshery Flowchart",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": true,
+    "published": true,
+    "subCategory": "Flowchart",
+    "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7.84254 33.8066C8.22532 35.6658 9.86213 37 11.7604 37H29.2396C31.1379 37 32.7747 35.6658 33.1575 33.8066L38.5104 7.80661C39.0213 5.32524 37.126 3 34.5926 3H6.40742C3.87401 3 1.97873 5.32524 2.4896 7.80661L7.84254 33.8066Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7.84254 33.8066C8.22532 35.6658 9.86213 37 11.7604 37H29.2396C31.1379 37 32.7747 35.6658 33.1575 33.8066L38.5104 7.80661C39.0213 5.32524 37.126 3 34.5926 3H6.40742C3.87401 3 1.97873 5.32524 2.4896 7.80661L7.84254 33.8066Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"26\" height=\"26\" viewBox=\"0 0 26 26\" fill=\"none\"\u003e\n  \u003cpath d=\"M2.44855 16.676H10.018C9.4639 18.895 8.91232 21.1038 8.35821 23.3228H0.783691L2.44855 16.676Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M20.6002 15.4443L25.1522 19.9982L20.6002 24.5501L16.0464 19.9982L20.6002 15.4443Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M15.8486 1.94995H25.3502V8.6018H15.8486C15.8486 6.38283 15.8486 4.16892 15.8486 1.94995Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M3.97709 1.94995H6.82934C8.66961 1.94995 10.1515 3.4318 10.1515 5.27461C10.1515 7.11489 8.66961 8.6018 6.82934 8.6018H3.97709C2.13682 8.6018 0.649902 7.11489 0.649902 5.27461C0.649902 3.4318 2.13682 1.94995 3.97709 1.94995Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M10.2853 19.5232L10.0479 20.4731H15.1761L15.1811 19.5232H10.2853Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M20.128 9.55176L20.1255 14.5767L21.0779 14.5786V9.55176H20.128Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M4.92725 9.54932C4.92725 11.6074 4.92725 13.6656 4.92725 15.7237H5.87968V9.55185L4.92725 9.54932Z\" fill=\"#EAEFF1\"/\u003e\n  \u003cpath d=\"M14.8984 4.7998H11.0767C11.0938 4.95559 11.1039 5.11391 11.1039 5.27476C11.1039 5.43561 11.0938 5.59392 11.0767 5.74971H14.8984V4.7998Z\" fill=\"#EAEFF1\"/\u003e\n\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  }
+ }

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AWSChaos",
+  "apiVersion": "chaos-mesh.org/v1alpha1",
+  "displayName": "AWS Chaos",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "chaos-mesh",
+   "version": "2.6.3",
+   "displayName": "chaos-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.chaos-mesh.org/chaos-mesh-2.6.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AWSChaos is the Schema for the awschaos API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AWSChaosSpec is the content of the specification for an AWSChaos\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"Action defines the specific aws chaos action. Supported action: ec2-stop / ec2-restart / detach-volume Default action: ec2-stop\",\n     \"enum\": [\n      \"ec2-stop\",\n      \"ec2-restart\",\n      \"detach-volume\"\n     ],\n     \"type\": \"string\"\n    },\n    \"awsRegion\": {\n     \"description\": \"AWSRegion defines the region of aws.\",\n     \"type\": \"string\"\n    },\n    \"deviceName\": {\n     \"description\": \"DeviceName indicates the name of the device. Needed in detach-volume.\",\n     \"type\": \"string\"\n    },\n    \"duration\": {\n     \"description\": \"Duration represents the duration of the chaos action.\",\n     \"type\": \"string\"\n    },\n    \"ec2Instance\": {\n     \"description\": \"Ec2Instance indicates the ID of the ec2 instance.\",\n     \"type\": \"string\"\n    },\n    \"endpoint\": {\n     \"description\": \"Endpoint indicates the endpoint of the aws server. Just used it in test now.\",\n     \"type\": \"string\"\n    },\n    \"remoteCluster\": {\n     \"description\": \"RemoteCluster represents the remote cluster where the chaos will be deployed\",\n     \"type\": \"string\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName defines the name of kubernetes secret.\",\n     \"type\": \"string\"\n    },\n    \"volumeID\": {\n     \"description\": \"EbsVolume indicates the ID of the EBS volume. Needed in detach-volume.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"action\",\n    \"awsRegion\",\n    \"ec2Instance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"AWS Chaos\",\n \"type\": \"object\"\n}"
+ }
