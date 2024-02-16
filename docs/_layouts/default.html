@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-  {% include_cached head.html %} {% include_cached header.html %}
+  {% include_cached head.html
+    title=page.title
+    description=page.abstract
+ %} {% include_cached header.html %}
   <body class="td-section dark-mode">
     <script>
       if(localStorage.getItem("mode") == "light-mode")  {
@@ -37,7 +40,7 @@
       <main class="main-container" role="main">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb spb-1">
-            <li class="breadcrumb-item active" aria-current="page">{% include_cached breadcrumbs.html %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% include breadcrumbs.html %}</li>
           </ol>
         </nav>
         <div class="td-content">
@@ -64,7 +67,7 @@
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
       <div class="content-table-wrapper">
         <div class="content-table">
-          <div class="content-table__editable">{% include_cached editable.html %}</div>
+          <div class="content-table__editable">{% include_cached editable.html path=page.path %}</div>
           <nav id="TableOfContents">
             <strong>Contents</strong>
             <ul>

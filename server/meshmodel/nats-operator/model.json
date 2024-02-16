@@ -1,0 +1,21 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "nats-operator",
+  "version": "0.8.3",
+  "displayName": "NATS Operator",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "App Definition and Development",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": true,
+   "subCategory": "Streaming \u0026 Messaging",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.42 -0.33 280.40 289.90\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle\u003e.st3{fill:#375c93}.st4{fill:#8dc63f}\u003c/style\u003e\u003cpath fill=\"#34a574\" d=\"M142.8 5.3h134.7v109.2H142.8z\"/\u003e\u003cpath fill=\"#27aae1\" d=\"M8.1 5.3h134.7v109.2H8.1z\"/\u003e\u003cpath d=\"M142.8 114.6h134.7v109.2H142.8z\" class=\"st4\"/\u003e\u003cpath d=\"M8.1 114.6h134.7v109.2H8.1z\" class=\"st3\"/\u003e\u003cpath d=\"M123 223.2l65.9 61v-61z\" class=\"st4\"/\u003e\u003cpath d=\"M142.8 223.2l.7 19.2-21.1-19.7z\" class=\"st3\"/\u003e\u003cpath fill=\"#fff\" d=\"M198.6 146.5V56.1h32.2V173H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4z\"/\u003e\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.43 -0.32 280.39 289.64\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle/\u003e\u003cpath fill=\"#fff\" d=\"M142.8 5.3H8.1v218.4h115.4l19.9 18.6v-.3l45.4 42v-60.3h88.6V5.3H142.8zm88 167.8H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4V56.1h32.2v117z\"/\u003e\u003c/svg\u003e"
+  },
+  "components": null,
+  "relationships": null
+ }

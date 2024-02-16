@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ApisixTls",
+  "apiVersion": "apisix.apache.org/v2beta3",
+  "displayName": "Apisix Tls",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#F8423F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"185\" height=\"156\" viewBox=\"0 0 185 156\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 155.5L94 0L185 155.5H140L94 83L42.5 155.5H0Z\" fill=\"#F8423F\"/\u003e\n\u003cpath d=\"M94 82.5L42.5 155H0L76.5 57L94 82.5Z\" fill=\"url(#paint0_linear)\"/\u003e\n\u003cpath d=\"M140 155.5H185L94 0L140 155.5Z\" fill=\"url(#paint1_linear)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear\" x1=\"222.5\" y1=\"50\" x2=\"85\" y2=\"223.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0.536111\" stop-color=\"#FC0A04\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#CF0500\" stop-opacity=\"0.77\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear\" x1=\"139.5\" y1=\"1.50861e-06\" x2=\"226\" y2=\"136\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0.473466\" stop-color=\"#E2423E\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E2423E\" stop-opacity=\"0.77\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 185 156\" style=\"enable-background:new 0 0 185 156;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{opacity:0.8;fill:#FFFFFF;}\n\t.st1{fill:#FFFFFF;}\n\t.st2{opacity:0.6;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M0,155.5L94,0l91,155.5h-45L94,83l-51.5,72.5H0z\"/\u003e\n\u003cpath class=\"st1\" d=\"M94,82.5L42.5,155H0l76.5-98L94,82.5z\"/\u003e\n\u003cpath class=\"st2\" d=\"M140,155.5h45L94,0L140,155.5z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "apisix-ingress-controller",
+   "version": "0.14.0",
+   "displayName": "apisix-ingress-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/apache/apisix-helm-chart/releases/download/apisix-ingress-controller-0.14.0/apisix-ingress-controller-0.14.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ApisixTls defines SSL resource in APISIX.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApisixTlsSpec is the specification of ApisixSSL.\",\n   \"properties\": {\n    \"client\": {\n     \"description\": \"ApisixMutualTlsClientConfig describes the mutual TLS CA and verify depth\",\n     \"properties\": {\n      \"caSecret\": {\n       \"description\": \"ApisixSecret describes the Kubernetes Secret name and namespace.\",\n       \"properties\": {\n        \"name\": {\n         \"minLength\": 1,\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"minLength\": 1,\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"namespace\"\n       ],\n       \"type\": \"object\"\n      },\n      \"depth\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hosts\": {\n     \"items\": {\n      \"pattern\": \"^\\\\*?[0-9a-zA-Z-.]+$\",\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"secret\": {\n     \"description\": \"ApisixSecret describes the Kubernetes Secret name and namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"hosts\",\n    \"secret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Tls\",\n \"type\": \"object\"\n}"
+ }
