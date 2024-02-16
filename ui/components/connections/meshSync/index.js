@@ -105,7 +105,6 @@ export default function MeshSyncTable(props) {
     return item.kind === selectedFilters.kind;
   });
   const count = meshSyncData?.total_count || 0;
-  console.log('total_count', count);
 
   let colViews = [
     ['metadata.name', 'xs'],
