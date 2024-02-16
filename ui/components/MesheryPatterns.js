@@ -81,6 +81,7 @@ import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
+import { useAddPatternsMutation, useRemovePatternsMutation } from '@/rtk-query/design';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -765,29 +766,54 @@ function MesheryPatterns({
   };
 
   const handleUnpublishModal = (ev, pattern) => {
+    const [removePatterns] = useRemovePatternsMutation();
+
     if (canPublishPattern) {
       ev.stopPropagation();
+
       return async () => {
         let response = await modalRef.current.show({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
           options: ['Yes', 'No'],
         });
+
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/pattern/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
-            () => {
+
+          removePatterns({
+            patternPayload: JSON.stringify({ id: pattern?.id }),
+          })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `Design Unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch((err) => {
+              notify({
+                message: `${ACTION_TYPES.UNPUBLISH_CATALOG.error_msg}: ${err.error}`,
+                event_type: EVENT_TYPES.ERROR,
+                details: err.toString(),
+              });
+            });
         }
+
+        //Previous implementation
+        // dataFetch(
+        //   `/api/pattern/catalog/unpublish`,
+        //   { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
+        //   () => {
+        //     updateProgress({ showProgress: false });
+        //     notify({
+        //       message: `Design Unpublished`,
+        //       event_type: EVENT_TYPES.SUCCESS,
+        //     });
+        //   },
+        //   handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
+        // );
       };
     }
   };
@@ -876,6 +902,8 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
+    const [addPatterns] = useAddPatternsMutation();
+
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
         formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
@@ -891,10 +919,12 @@ function MesheryPatterns({
       },
     };
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
+
+    addPatterns({
+      patternPayload: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         if (user.role_names.includes('admin')) {
           notify({
@@ -908,9 +938,36 @@ function MesheryPatterns({
             event_type: EVENT_TYPES.SUCCESS,
           });
         }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    );
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.PUBLISH_CATALOG.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+
+    //Previous implementation:
+    // dataFetch(
+    //   `/api/pattern/catalog/publish`,
+    //   { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
+    //   () => {
+    //     updateProgress({ showProgress: false });
+    //     if (user.role_names.includes('admin')) {
+    //       notify({
+    //         message: `${publishModal.pattern?.name} Design Published`,
+    //         event_type: EVENT_TYPES.SUCCESS,
+    //       });
+    //     } else {
+    //       notify({
+    //         message:
+    //           'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
+    //         event_type: EVENT_TYPES.SUCCESS,
+    //       });
+    //     }
+    //   },
+    //   handleError(ACTION_TYPES.PUBLISH_CATALOG),
+    // );
   };
 
   function handleClone(patternID, name) {

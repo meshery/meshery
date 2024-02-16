@@ -27,17 +27,21 @@ const designs = api
       addPatterns: builder.mutation({
         query: (queryArg) => ({
           url: `pattern/catalog/publish`,
+          credentials: 'include',
           method: 'POST',
-          body: {},
+          body: queryArg.patternPayload,
         }),
+        //provides or invalidates any tags?
       }),
 
       removePatterns: builder.mutation({
         query: (queryArg) => ({
           url: `pattern/catalog/unpublish`,
+          credentials: 'include',
           method: 'DELETE',
-          body: {},
+          body: queryArg.patternPayload,
         }),
+        //provides or invalidates any tags?
       }),
     }),
   });
