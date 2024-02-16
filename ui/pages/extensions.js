@@ -105,49 +105,8 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   );
 };
 
-const ServiceMeshPerformanceCard = ({ classes, githubActionEnabled = false }) => {
-  const handleEnable = (e) => {
-    window.open(
-      'https://github.com/marketplace/actions/performance-testing-with-meshery',
-      '_blank',
-    );
-    e.stopPropagation();
-  };
-
-  return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
-          Service Mesh Performance
-        </Typography>
-
-        <Typography className={classes.frontSideDescription} variant="body">
-          <img className={classes.img} src="/static/img/meshmap.svg" />
-          This GitHub Action automatically tests your services performance by simulating user load.
-          It measures things like response time and tracks changes over time. By integrating it into
-          your CI/CD pipeline, you can catch performance issues before they impact users.
-        </Typography>
-        {
-          <div style={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={githubActionEnabled}
-              className={classes.button}
-              onClick={(e) => handleEnable(e)}
-            >
-              {githubActionEnabled ? 'Open' : 'Enable'}
-            </Button>
-          </div>
-        }
-      </div>
-    </Grid>
-  );
-};
-
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
-export const WrappedServiceMeshPerformanceCard = withStyles(styles)(ServiceMeshPerformanceCard);
 
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
@@ -216,7 +175,6 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
         <Grid container spacing={1}>
           <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
-          <WrappedServiceMeshPerformanceCard githubActionEnabled={false} />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
               <Typography className={classes.frontContent} variant="h5" component="div">
