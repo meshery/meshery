@@ -103,57 +103,57 @@ This arrangement enhances flexibility and reusability in the definition and conf
  <b>Example Selector</b>
 </summary>
 
-```json
+{% highlight yaml %}
 selector: [
   {
     "allow": {
       "from": [
-        {
-          "kind": "WASMFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "settings",
-                "config"
-              ],
-              [
-                "settings",
-                "wasm-filter"
-              ]
-            ],
-            "description": "WASM filter configuration to be applied to Envoy Filter."
-          }
-        },
-        {
-          "kind": "EBPFFilter",
-          .....
-        }
+	{
+	  "kind": "WASMFilter",
+	  "model": "istio-base",
+	  "patch": {
+	    "patchStrategy": "replace",
+	    "mutatorRef": [
+	      [
+		"settings",
+		"config"
+	      ],
+	      [
+		"settings",
+		"wasm-filter"
+	      ]
+	    ],
+	    "description": "WASM filter configuration to be applied to Envoy Filter."
+	  }
+	},
+	{
+	  "kind": "EBPFFilter",
+	  .....
+	}
       ],
       "to": [
-        {
-          "kind": "EnvoyFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "settings",
-                "configPatches",
-                "_",
-                "patch",
-                "value"
-              ]
-            ],
-            "description": "Receive the WASM filter configuration."
-          }
-        },
-        {
-          "kind" : "WASMPlugin",
-          ....
-        }
-        ...
+	{
+	  "kind": "EnvoyFilter",
+	  "model": "istio-base",
+	  "patch": {
+	    "patchStrategy": "replace",
+	    "mutatedRef": [
+	      [
+		"settings",
+		"configPatches",
+		"_",
+		"patch",
+		"value"
+	      ]
+	    ],
+	    "description": "Receive the WASM filter configuration."
+	  }
+	},
+	{
+	  "kind" : "WASMPlugin",
+	  ....
+	}
+	...
       ]
     },
     "deny": {
@@ -163,47 +163,47 @@ selector: [
   {
     "allow": {
       "from": [
-        {
-          "kind": "ConfigMap",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "name"
-              ]
-            ],
-            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-          }
-        }
+	{
+	  "kind": "ConfigMap",
+	  "model": "kubernetes",
+	  "patch": {
+	    "patchStrategy": "replace",
+	    "mutatorRef": [
+	      [
+		"name"
+	      ]
+	    ],
+	    "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+	  }
+	}
       ],
       "to": [
-        {
-          "kind": "Deployment",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "spec",
-                "containers",
-                "_",
-                "envFrom",
-                "configMapRef",
-                "name"
-              ]
-            ],
-            "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-          }
-        },
-        {
-          "kind": "StatefulSets",
-          "model": "kubernetes",
-          "patch": {
-            ....
-          }
-        }
-        ...
+	{
+	  "kind": "Deployment",
+	  "model": "kubernetes",
+	  "patch": {
+	    "patchStrategy": "replace",
+	    "mutatedRef": [
+	      [
+		"spec",
+		"containers",
+		"_",
+		"envFrom",
+		"configMapRef",
+		"name"
+	      ]
+	    ],
+	    "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
+	  }
+	},
+	{
+	  "kind": "StatefulSets",
+	  "model": "kubernetes",
+	  "patch": {
+	    ....
+	  }
+	}
+	...
       ]
     },
     "deny": {
@@ -211,7 +211,8 @@ selector: [
     }
   }
 ]
-```
+{% endhighlight %}
+
 The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely independent from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships. 
 
 The above relation shows `WASMFilter` and `EBPFFilter` defined inside `from` relates to each component defined inside `to` `(EnvoyFilter, WASMPlugin...)`. 
@@ -246,57 +247,70 @@ It is controlled via the `selectors` [Selectors](#structure-of-selectors) attrib
 7. Currently `mutatedRef` doesn’t supoort having an aaray
 
 
+Here is a list of the different types of relationships that Meshery supports:
+
+1. Edge
+   1. Network
+   1. Firewall
+   1. Binding
+      1. Mount
+      1. Permission
+1. Heirarchical
+   1. Inventory
+   1. Parent
+
 <details open>
-<summary>See all Visual Representations</summary>
+<summary>Example Visual Representations</summary>
     <details close><summary>Hierarchical</summary>
-    <figure><br><figcaption>Hierarchical Parent</figcaption>
-    <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
+    <figure><br><figcaption>Hierarchical - Parent</figcaption>
+    <img alt="Hierarchical - Parent: Namespace to other components" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
     </figure>
     </details>
-
     <details close><summary>Sibling</summary>
-    <figure><br><figcaption>Sibling</figcaption>
+    <figure><br><figcaption>Hierarchical - Sibling: Matching Label Selectors</figcaption>
     <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
     </figure>
     </details>
-
     <details close><summary>Binding</summary>
-    <figure><br><figcaption>Binding</figcaption>
+    <figure><br><figcaption>Hierarchical - Binding: Cluster Role with Cluster Role Binding to ConfigMap</figcaption>
     <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
     </figure>
     </details>
-
     <details close><summary>Edge</summary>
-    <figure><br><figcaption>Mount Edge</figcaption>
-    <img alt="Mount Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
+    <figure><br><figcaption>Edge - Mount</figcaption>
+    <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
     </figure>
-
     <br>
-    <figure><figcaption>Network Edge</figcaption>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
+    <figure><figcaption>Edge - Network: Ingress to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Pod</figcaption>
+    <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
+    <figure><figcaption>Edge - Network: Service to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Endpoint</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
+    <figure><figcaption>Edge - Network: Service to Deployment</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
     </figure>
-
     <br>
-    <figure><figcaption>Permission Edge</figcaption>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
+    <figure><figcaption>Edge - Permission</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
+    <figure><figcaption>Edge - Permission: Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
+    <figure><figcaption>Edge - Permission: Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Pod</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
     </figure>
-
     <br>
-    <figure><figcaption>Network Policy Edge</figcaption>
-    <img alt="Network Policy Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
+    <figure><figcaption>Edge - Network Policy</figcaption>
+    <img alt="Edge - Network Policy" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
     </figure>
-
     </details>
-
 </details>
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)

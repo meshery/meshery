@@ -1,7 +1,7 @@
 {
     "name": "meshery-ui",
     "version": "1.0.0",
-    "description": "the service mesh management plane",
+    "description": "collaborative management plane",
     "main": "index.js",
     "scripts": {
         "dev": "next lint --fix && node ui_dev_server.js",
@@ -25,7 +25,7 @@
         "clean": "rm -rf .next,out"
     },
     "keywords": [],
-    "author": "Layer5",
+    "author": "Meshery Authors",
     "repository": "https://github.com/meshery/meshery",
     "license": "Apache-2.0",
     "dependencies": {
