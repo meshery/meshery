@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent-components';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
 import { bindActionCreators } from 'redux';
-import { useLazyGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { styled } from '@mui/material/styles';
@@ -42,15 +42,20 @@ function exportToJsonFile(jsonData, filename) {
 }
 
 const User = (props) => {
-  const [user, setUser] = useState(null);
+  const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   // const anchorEl = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
 
-  const [triggerGetLoggedInUser] = useLazyGetLoggedInUserQuery();
-  const [triggerGetToken] = useLazyGetTokenQuery();
+  const {
+    data: userData,
+    isSuccess: isGetUserSuccess,
+    isError: isGetUserError,
+    error: getUserError,
+  } = useGetLoggedInUserQuery();
+  const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const { capabilitiesRegistry } = props;
 
@@ -75,32 +80,24 @@ const User = (props) => {
       .unwrap()
       .then((data) => {
         exportToJsonFile(data, 'auth.json');
-      })
-      .catch((error) => {
-        console.error('Error fetching token: ', error);
       });
   };
 
-  useEffect(() => {
-    triggerGetLoggedInUser()
-      .unwrap()
-      .then((userData) => {
-        setUser(userData);
-        props.updateUser({ user: userData });
-      })
-      .catch((error) => {
-        console.error('Error fetching user: ', error);
-      });
-  }, []);
+  if (!userLoaded && isGetUserSuccess) {
+    props.updateUser({ user: userData });
+    setUserLoaded(true);
+  } else if (isGetUserError) {
+    console.error('Error fetching user: ', getUserError?.data);
+  }
 
-  useEffect(() => {
-    if (!capabilitiesLoaded && capabilitiesRegistry) {
-      setCapabilitiesLoaded(true); // to prevent re-compute
-      setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
-      );
-    }
-  }, [capabilitiesRegistry, capabilitiesLoaded]);
+  if (isTokenError) {
+    console.error('Error fetching token: ', tokenError?.data);
+  }
+
+  if (!capabilitiesLoaded && capabilitiesRegistry) {
+    setCapabilitiesLoaded(true); // to prevent re-compute
+    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
+  }
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
@@ -151,10 +148,6 @@ const User = (props) => {
   }
 
   const { color, iconButtonClassName, avatarClassName, classes } = props;
-  let avatar_url;
-  if (user && user !== null) {
-    avatar_url = user.avatar_url;
-  }
 
   const open = Boolean(anchorEl);
 
@@ -172,7 +165,7 @@ const User = (props) => {
           >
             <Avatar
               className={avatarClassName}
-              src={avatar_url}
+              src={isGetUserSuccess ? userData?.avatar_url : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
           </IconButton>

@@ -17,4 +17,4 @@ const userApi = api.injectEndpoints({
   }),
 });
 
-export const { useLazyGetLoggedInUserQuery, useGetUserByIdQuery, useLazyGetTokenQuery } = userApi;
+export const { useGetLoggedInUserQuery, useGetUserByIdQuery, useLazyGetTokenQuery } = userApi;
