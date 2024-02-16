@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
@@ -10,7 +10,8 @@ lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
 white_image: /assets/img/service-meshes/nsm.svg
-permalink: service-meshes/adapters/nsm
+permalink: extensibility/adapters/nsm
+redirect_from: service-meshes/adapters/nsm
 language: en
 ---
 

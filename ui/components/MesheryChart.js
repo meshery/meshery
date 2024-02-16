@@ -64,7 +64,6 @@ const styles = (theme) => ({
 });
 
 function NonRecursiveConstructDisplayCells(data) {
-  console.log(data);
   return Object.keys(data).map((el) => {
     if (typeof data[el].display?.value === 'string' && !data[el].display?.hide) {
       return (
@@ -440,7 +439,6 @@ class MesheryChart extends React.Component {
                 if (this.props.data.length > 2) {
                   self.processMultiChartData(chartData);
                 } else {
-                  console.log(this.props.data.length);
                   self.processChartData(chartData);
                 }
               }}

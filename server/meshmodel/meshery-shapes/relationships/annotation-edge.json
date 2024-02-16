@@ -1,0 +1,77 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "A relationship that defines annotation edges between components",
+    "styles": {
+      "lineStyle": "solid",
+      "lineColor": "#00B39F",
+      "targetArrowShape": "triangle"
+    },
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "name": "meshery-shapes",
+    "version": "v1.0,0",
+    "displayName": "Meshery Shapes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Annotation",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "*",
+            "model": "meshery-shapes"
+          },
+          {
+            "kind": "*",
+            "model": "aws"
+          },
+          {
+            "kind": "*",
+            "model": "gcp"
+          },
+          {
+            "kind": "*",
+            "model": "meshery-flowchart"
+          }
+        ],
+        "to": [
+          {
+            "kind": "*",
+            "model": "meshery-shapes"
+          },
+          {
+            "kind": "*",
+            "model": "aws"
+          },
+          {
+            "kind": "*",
+            "model": "gcp"
+          },
+          {
+            "kind": "*",
+            "model": "meshery-flowchart"
+          }
+        ]
+      },
+      "deny": {
+        "from": []
+      }
+    }
+  ]
+}

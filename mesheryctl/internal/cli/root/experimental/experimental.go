@@ -17,6 +17,7 @@ package experimental
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -27,7 +28,7 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// ExpCmd represents the Performance Management CLI command
+// ExpCmd represents the Experimental commands
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
@@ -37,13 +38,13 @@ var ExpCmd = &cobra.Command{
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.ExpError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl exp --help' to display usage guide.'\n", args[0])))
+			return errors.New(utils.ExpError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp --help' to display usage guide.'\n", args[0])))
 		}
 		return nil
 	},
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, registry.RegistryCmd, system.ComponentsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

@@ -33,6 +33,10 @@ Optionally, Meshery Server supports customizing the callback URL for your remote
 {% capture code_content %}helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace{% endcapture %}
 {% include code.html code=code_content %}
 
+### Customizing Meshery's Installation with values.yaml
+
+Meshery's Helm chart supports a number of configuration options. Please refer to the [Meshery Helm chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery#readme) and [Meshery Operator Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#readme) for more information.
+
 ### Accessing Meshery UI for Clusters
 
 To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.

@@ -42,6 +42,7 @@ import {
   selectAreAllEventsChecked,
   selectCheckedEvents,
   selectEvents,
+  selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
 } from '../../store/slices/events';
@@ -73,7 +74,6 @@ const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
   const eventsSubscription = useCallback(
     () =>
       subscribeEvents((result) => {
-        console.log('event received', result);
         if (!result.event) {
           console.error('Invalid event received', result);
           return;
@@ -202,8 +202,9 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
 });
 
 const NotificationCountChip = withErrorBoundary(
-  ({ classes, notificationStyle, count, type, handleClick }) => {
+  ({ classes, notificationStyle, count, type, handleClick, severity }) => {
     const theme = useTheme();
+    const selectedSeverity = useSelector(selectSeverity);
     const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
       fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
@@ -213,7 +214,16 @@ const NotificationCountChip = withErrorBoundary(
     count = Number(count).toLocaleString('en', { useGrouping: true });
     return (
       <Tooltip title={type} placement="bottom">
-        <Button style={{ backgroundColor: alpha(chipStyles.fill, 0.2) }} onClick={handleClick}>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
           <div className={classes.severityChip}>
             {<notificationStyle.icon {...chipStyles} />}
             <span>{count}</span>
@@ -258,6 +268,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
         {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
             key={severity}
+            severity={severity}
             classes={classes}
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
@@ -270,6 +281,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
+          severity={STATUS.READ}
           count={unreadCount}
         />
       </div>

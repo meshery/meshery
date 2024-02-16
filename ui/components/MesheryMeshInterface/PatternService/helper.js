@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { Colors } from '@/themes/app';
 
 function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title: '' };
@@ -20,7 +21,8 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema;
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema);
-    refinedSchema.properties = sortProperties(refinedSchema.properties); // temporarily commented÷
+    refinedSchema.properties =
+      refinedSchema?.properties && sortProperties(refinedSchema.properties); // temporarily commented
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e);
@@ -151,16 +153,29 @@ const sortProperties = (properties) => {
 };
 
 /**
- * Provides us the hyper link text.
+ * Provides us the hyperlink text.
  * @param {*} description
+ * @param {*} linkText
  * @returns
  */
+
 const getHyperLinkWithDescription = (description) => {
+  const markdownLinkRegex = /\[([^\]]+)]\((https?:\/\/[^\s]+)\)/g;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return description?.replace(
-    urlRegex,
-    (url) => `<a href="${url}" style="color: #00B39F;" target="_blank" rel="noreferrer">${url}</a>`,
-  );
+
+  let processedDescription = description?.replace(markdownLinkRegex, (match, text, url) => {
+    return `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${text}</a>`;
+  });
+
+  if (!markdownLinkRegex.test(description)) {
+    processedDescription = processedDescription?.replace(
+      urlRegex,
+      (url) =>
+        `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${url}</a>`,
+    );
+  }
+
+  return processedDescription;
 };
 
 export const getHyperLinkDiv = (text) => (

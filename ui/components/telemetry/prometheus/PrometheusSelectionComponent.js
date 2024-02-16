@@ -116,7 +116,7 @@ class PrometheusSelectionComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      '/api/telemetry/metrics/board_import',
+      `/api/telemetry/metrics/board_import/${self.props.connectionID}`,
       {
         method: 'POST',
         credentials: 'include',
@@ -127,7 +127,8 @@ class PrometheusSelectionComponent extends Component {
         this.props.updateProgress({ showProgress: false });
         var panels = result.panels.filter(
           (panel) =>
-            panel.targets !== undefined && panel.datasource.type.toLowerCase() === 'prometheus',
+            panel.targets !== undefined &&
+            panel.targets.some((target) => target.datasource.type.toLowerCase() === 'prometheus'),
         );
         if (typeof result !== 'undefined') {
           this.setState({
@@ -166,9 +167,9 @@ class PrometheusSelectionComponent extends Component {
 
   queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/query?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}`;
+      let queryURL = `/api/telemetry/metrics/query/${
+        this.props?.connectionID
+      }?query=${encodeURIComponent(templateVars[ind].query)}`;
       for (let i = ind; i > 0; i--) {
         queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
       }
@@ -322,7 +323,6 @@ class PrometheusSelectionComponent extends Component {
                       clearTimeout(self.boardTimeout);
                     }
                     self.boardTimeout = setTimeout(() => {
-                      console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
                       if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
                         self.setState({ grafanaBoardError: false });
                       } else {

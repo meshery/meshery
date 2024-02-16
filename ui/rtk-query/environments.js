@@ -60,6 +60,7 @@ const connectionsApi = api
             page: queryArg.page || 0,
             per_page: queryArg.per_page,
             pagesize: queryArg.pagesize || 'all',
+            filter: queryArg.filter,
           },
           method: 'GET',
         }),

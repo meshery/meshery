@@ -353,11 +353,7 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 	}
 	return
 }
-func MergeMaps(mergeInto, toMerge map[string]interface{}) {
-	if mergeInto == nil {
-		mergeInto = make(map[string]interface{})
-	}
-	for k, v := range toMerge {
-		mergeInto[k] = v
-	}
+
+func ReplaceSpacesAndConvertToLowercase(s string) string {
+	return strings.ToLower(strings.ReplaceAll(s, " ", ""))
 }

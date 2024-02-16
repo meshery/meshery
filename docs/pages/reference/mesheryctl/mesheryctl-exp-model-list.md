@@ -12,12 +12,11 @@ subcommand: model
 
 # mesheryctl exp model list
 
-list models
+list registered models
 
 ## Synopsis
 
 list name of all registered models
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model list [flags]
@@ -43,10 +42,18 @@ mesheryctl exp model list --page 2
 </div>
 </pre> 
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+    
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -c, --count      (optional) Get the number of models in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 

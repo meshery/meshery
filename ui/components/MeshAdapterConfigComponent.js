@@ -14,6 +14,8 @@ import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -183,10 +185,6 @@ const MeshAdapterConfigComponent = (props) => {
   //   }));
   // };
   const handleMeshLocURLChange = (newValue) => {
-    // console.log(newValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-
     if (typeof newValue !== 'undefined') {
       setMeshLocationURL(newValue);
       setMeshLocationURLError(false);
@@ -194,7 +192,6 @@ const MeshAdapterConfigComponent = (props) => {
   };
   const handleDeployPortChange = (newValue) => {
     if (typeof newValue !== 'undefined') {
-      console.log('port change to ' + newValue.value);
       setMeshDeployURL(newValue.value);
       setMeshDeployURLError(false);
     }
@@ -310,7 +307,6 @@ const MeshAdapterConfigComponent = (props) => {
     }));
 
     if (!meshDeployURL || meshDeployURL === '') {
-      console.log(meshDeployURL);
       setMeshDeployURLError(true);
       return;
     }
@@ -493,6 +489,9 @@ const MeshAdapterConfigComponent = (props) => {
                 size="large"
                 onClick={handleAdapterUndeploy}
                 className={classes.button}
+                disabled={
+                  !CAN(keys.UNDEPLOY_SERVICE_MESH.action, keys.UNDEPLOY_SERVICE_MESH.subject)
+                }
               >
                 Undeploy
               </Button>
@@ -504,6 +503,7 @@ const MeshAdapterConfigComponent = (props) => {
                 onClick={handleSubmit}
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
+                disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
               >
                 Connect
               </Button>
@@ -541,6 +541,7 @@ const MeshAdapterConfigComponent = (props) => {
                   size="large"
                   onClick={handleAdapterDeploy}
                   className={classes.button}
+                  disabled={!CAN(keys.DEPLOY_SERVICE_MESH.action, keys.DEPLOY_SERVICE_MESH.subject)}
                 >
                   Deploy
                 </Button>

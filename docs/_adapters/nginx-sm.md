@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
@@ -9,7 +9,8 @@ project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 white_image: /assets/img/service-meshes/nginx-sm-white.svg
-permalink: service-meshes/adapters/nginx-sm
+permalink: extensibility/adapters/nginx-sm
+redirect_from: service-meshes/adapters/nginx-sm
 language: en
 ---
 

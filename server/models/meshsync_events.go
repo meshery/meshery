@@ -1,7 +1,7 @@
 package models
 
 import (
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -18,16 +18,26 @@ const (
 
 // TODO: Create proper error codes for the functionalities this struct implements
 type MeshsyncDataHandler struct {
-	broker    broker.Handler
-	dbHandler database.Handler
-	log       logger.Handler
+	broker       broker.Handler
+	dbHandler    database.Handler
+	log          logger.Handler
+	Provider     Provider
+	UserID       uuid.UUID
+	ConnectionID uuid.UUID
+	InstanceID   uuid.UUID
+	Token        string
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
-		broker:    broker,
-		dbHandler: dbHandler,
-		log:       log,
+		broker:       broker,
+		dbHandler:    dbHandler,
+		log:          log,
+		Provider:     provider,
+		UserID:       userID,
+		ConnectionID: connID,
+		InstanceID:   instanceID,
+		Token:        token,
 	}
 }
 
@@ -41,7 +51,7 @@ func (mh *MeshsyncDataHandler) Run() error {
 	if <-storeSubscriptionStatusChan {
 		// err := mh.removeStaleObjects()
 		// if err != nil {
-		// 	return err
+		//  return err
 		// }
 		err := mh.requestMeshsyncStore()
 		if err != nil {
@@ -141,22 +151,24 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		return err
 	}
 
+	regQueue := GetMeshSyncRegistrationQueue()
 	switch event.EventType {
 	case broker.Add:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
+		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true }).Updates(&obj)
+			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 			if result.Error != nil {
 				return ErrDBPut(result.Error)
 			}
 		}
 	case broker.Update:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
-		
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
+
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 		if result.Error != nil {
 			return ErrDBPut(result.Error)
@@ -178,8 +190,12 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	mutils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
 	result := mh.dbHandler.Create(object)
+	regQueue := GetMeshSyncRegistrationQueue()
+
+	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
+
 	if result.Error != nil {
 		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
 		if result.Error != nil {

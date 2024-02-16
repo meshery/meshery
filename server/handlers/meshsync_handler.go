@@ -89,8 +89,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds).
-		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id")
+		Preload("KubernetesResourceMeta").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
 	if kind != "" {
 		result = result.Where(&model.KubernetesResource{Kind: kind})
@@ -116,7 +116,10 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	if search != "" {
-		result = result.Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
+
+		result = result.
+			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+			Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
 	}
 
 	result.Count(&totalCount)
@@ -129,6 +132,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		result = result.Offset(offset)
 	}
 
+	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
 		if sort == "desc" {
 			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})

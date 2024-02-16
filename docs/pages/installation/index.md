@@ -7,9 +7,9 @@ permalink: installation
 redirect_from: 
 - platforms
 - platforms/
-- installation/
 - installation/platforms
 - installation/platforms/
+- installation/
 language: en
 list: exclude
 ---

@@ -21,7 +21,7 @@ const styles = makeStyles((theme) => ({
     ['@media (max-width: 455px)']: {
       width: '100%',
     },
-    zIndex: 5,
+    zIndex: 1201,
   },
   grid: {
     width: '100%',
@@ -57,6 +57,7 @@ const styles = makeStyles((theme) => ({
   headerWrapper: {
     marginBottom: 12,
     display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 
@@ -166,8 +167,8 @@ export function MeshMapEarlyAccessCard({
       </div>
       <Typography className={classes.caption} variant="subtitle1">
         <i>
-          Friends dont let friends GitOps alone. Visually design and collaborate in real-time with
-          other MeshMap users.
+          Friends don&apos;t let friends GitOps alone. Visually design and collaborate in real-time
+          with other MeshMap users.
         </i>
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

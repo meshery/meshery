@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  {% include_cached head.html  title=page.title description=page.abstract %} {% include_cached header.html %}
+  <body class="td-section dark-mode">
+    <script>
+      if(localStorage.getItem("mode") == "light-mode")  {
+      document.body.classList.remove("dark-mode");
+      const allLogos = document.querySelectorAll("#logo-dark-light");
+      allLogos.forEach(e => e.src = e.dataset.logoForLight);
+  }
+    </script>
+    <!-- Google Tag Manager -->
+    {% include_cached scripts/google-tagmanager-body.html %}
+    <!-- End Google Tag Manager -->
+    <div class="flex-container">
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container">{% include sidebar.html %}</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <?xml version="1.0" encoding="utf-8"?>
+              <svg version="1.1" id="document-nav-toggle-btn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" viewBox="0 0 10.7 18.7" style="enable-background:new 0 0 10.7 18.7;" xml:space="preserve">
+              <style type="text/css">
+                .st0{stroke:#000000;stroke-width:1.5;stroke-miterlimit:10;}
+              </style>
+              <path class="st0" d="M8.1,9.4L1,1.9C0.7,1.7,0.7,1.2,1,1c0.3-0.3,0.7-0.3,1,0c0,0,0,0,0,0l7.8,7.9c0.3,0.3,0.3,0.7,0,1l-7.8,7.9
+                c-0.3,0.3-0.7,0.3-1,0c0,0,0,0,0,0c-0.3-0.3-0.3-0.7,0-1L8.1,9.4z"/>
+              </svg>
+          </button>
+        </div>
+      </div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page">{% include breadcrumbs.html %}</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          {% if page.display-title != "false" and layout.display-title != "false" %}
+          <h1>{{page.title}}</h1>
+          {% endif %} {{ content }} {% if section.links %}
+          <div class="section-index">
+            <hr class="panel-line" />
+            {% for child in section.links %}
+            <div class="entry">
+              <h5>
+                <a
+                  href="{% if child.url %}{{ site.baseurl }}{{ child.url }}{% else %}{{ child.external_url }}{% endif %}"
+                  >{{ child.title }}</a
+                >
+              </h5>
+              <p>{{ child.description }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}  
+          {% if page.suggested-reading != false %}
+            {% include_cached suggested-reading.html language="en" %} 
+          {% endif %}  
+          {% include_cached feedback.html %}
+        </div>
+      </main>
+      {% if page.display-toc != "false" and layout.display-toc != "false" %}
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable">{% include_cached editable.html path=page.path %}</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% include_cached footer.html %} {% include_cached scripts.html %} {% include_cached google-analytics.html %}
+  </body>
+</html>
+{% include_cached toc.html %}
+

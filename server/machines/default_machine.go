@@ -2,57 +2,66 @@ package machines
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
 )
 
-func Discovered() machines.State {
-	state := &machines.State{}
+func Discovered() State {
+	state := &State{}
 	return *state.
-		RegisterEvent(machines.Register, machines.REGISTERED).
-		RegisterEvent(machines.Ignore, machines.IGNORED)
-	// RegisterAction(machines.DiscoverAction)
+		RegisterEvent(Register, REGISTERED).
+		RegisterEvent(Ignore, IGNORED)
+	// RegisterAction(DiscoverAction)
 }
 
-func Registered() machines.State {
-	state := &machines.State{}
+func Registered() State {
+	state := &State{}
 	return *state.
-		RegisterEvent(machines.Connect, machines.CONNECTED).
-		RegisterEvent(machines.Ignore, machines.IGNORED)
+		RegisterEvent(Connect, CONNECTED).
+		RegisterEvent(Ignore, IGNORED)
 }
 
-func Connected() machines.State {
-	state := &machines.State{}
+func Connected() State {
+	state := &State{}
 	return *state.
-		RegisterEvent(machines.Disconnect, machines.DISCONNECTED)
+		RegisterEvent(Disconnect, DISCONNECTED).
+		RegisterEvent(Delete, DELETED)
 }
 
-func Initial() machines.State {
-	state := &machines.State{}
+func Disconnected() State {
+	state := &State{}
 	return *state.
-		RegisterEvent(machines.Discovery, machines.DISCOVERED).
-		RegisterEvent(machines.Register, machines.REGISTERED).
-		RegisterEvent(machines.Connect, machines.CONNECTED)
+		RegisterEvent(Connect, CONNECTED).
+		RegisterEvent(Delete, DELETED)
 }
 
-func New(initialState machines.StateType, ID string, log logger.Handler, mtype string) (*machines.StateMachine, error) {
+func Initial() State {
+	state := &State{}
+	return *state.
+		RegisterEvent(Discovery, DISCOVERED).
+		RegisterEvent(Register, REGISTERED).
+		RegisterEvent(Connect, CONNECTED)
+}
+
+func New(initialState StateType, ID string, userID uuid.UUID, log logger.Handler, mtype string) (*StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	if err != nil {
-		return nil, machines.ErrInititalizeK8sMachine(err)
+		return nil, ErrInititalizeK8sMachine(err)
 	}
 
-	return &machines.StateMachine{
+	return &StateMachine{
 		ID:            connectionID,
+		UserID:        userID,
 		Name:          mtype,
-		PreviousState: machines.DefaultState,
+		PreviousState: DefaultState,
 		InitialState:  initialState,
 		CurrentState:  initialState,
 		Log:           log,
-		States: machines.States{
-			machines.DISCOVERED:   Discovered(),
-			machines.REGISTERED:   Registered(),
-			machines.CONNECTED:    Connected(),
-			machines.InitialState: Initial(),
+		States: States{
+			DISCOVERED:   Discovered(),
+			REGISTERED:   Registered(),
+			CONNECTED:    Connected(),
+			DISCONNECTED: Disconnected(),
+			InitialState: Initial(),
 		},
 	}, nil
 }

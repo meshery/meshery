@@ -20,9 +20,9 @@ type EnvironmentData struct {
 
 type EnvironmentPage struct {
 	Environments []EnvironmentData `json:"environments"`
-	TotalCount   int           `json:"total_count"`
-	Page         int           `json:"page"`
-	PageSize     int           `json:"page_size"`
+	TotalCount   int               `json:"total_count"`
+	Page         int               `json:"page"`
+	PageSize     int               `json:"page_size"`
 }
 
 type EnvironmentPayload struct {
@@ -30,4 +30,3 @@ type EnvironmentPayload struct {
 	Description string `json:"description,omitempty"`
 	OrgID       string `json:"organization_id,omitempty"`
 }
-

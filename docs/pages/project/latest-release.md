@@ -7,7 +7,7 @@ abstract: Return only the latest release of Meshery version information
 language: en
 type: project
 category: none
-list: include
+list: exclude
 ---
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
 {%- for release in sorted_release limit:1 offset:0 -%}

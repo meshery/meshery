@@ -1,1 +1,47 @@
-{"kind":"WebhookAuthenticator","apiVersion":"authentication.concierge.pinniped.dev/v1alpha1","displayName":"Webhook Authenticator","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":false,"logoURL":"","model":"pinniped","modelDisplayName":"pinniped","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Key Management","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"pinniped","version":"1.0.8","displayName":"pinniped","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Security \u0026 Compliance","metadata":null},"metadata":{"source_uri":"https://charts.bitnami.com/bitnami/pinniped-1.4.5.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"WebhookAuthenticator describes the configuration of a webhook authenticator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the authenticator.\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Webhook server endpoint URL.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"endpoint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Webhook Authenticator\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "WebhookAuthenticator",
+  "apiVersion": "authentication.concierge.pinniped.dev/v1alpha1",
+  "displayName": "Webhook Authenticator",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "pinniped",
+   "modelDisplayName": "pinniped",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "pinniped",
+   "version": "1.0.8",
+   "displayName": "pinniped",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Security \u0026 Compliance",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/pinniped-1.4.6.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"WebhookAuthenticator describes the configuration of a webhook authenticator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the authenticator.\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Webhook server endpoint URL.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"endpoint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Webhook Authenticator\",\n \"type\": \"object\"\n}"
+ }

@@ -11,7 +11,7 @@ const styles = (theme) => ({
   },
   muiRow: {
     '& .MuiTableCell-root': {
-      textTransform: 'capitalize',
+      // textTransform: 'capitalize',
     },
   },
   statusSelect: {
@@ -57,7 +57,7 @@ const styles = (theme) => ({
     marginBottom: '3rem',
   },
   capitalize: {
-    textTransform: 'capitalize',
+    // textTransform: 'capitalize',
   },
   lowecase: {
     textTransform: 'lowecase',
@@ -173,6 +173,15 @@ const styles = (theme) => ({
     },
   },
   registered: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.primary,
+    },
+    background: `${theme.palette.secondary.primary}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.primary} !important`,
+    },
+  },
+  register: {
     '& .MuiChip-label': {
       color: theme.palette.secondary.primary,
     },

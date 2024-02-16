@@ -17,7 +17,6 @@ search models
 ## Synopsis
 
 search a models by search string
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model search [flags]

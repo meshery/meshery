@@ -15,8 +15,8 @@
     "metadata": {}
   },
   "subType": "MatchLabels",
-  "rego_query": "sibling_matchlabels_relationship",
-  "selectors": {
+  "evaluationQuery": "sibling_matchlabels_relationship",
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -35,5 +35,5 @@
       "from": [],
       "to": []
     }
-  }
+  }]
 }

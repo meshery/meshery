@@ -1,0 +1,39 @@
+name: Import Keys
+on: 
+  workflow_dispatch:
+    inputs:
+      spreadsheet_uri:
+        description: Link of the spreadsheet containing keys.
+        type: string
+        default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
+jobs:
+  fetch-keys:
+    name: Fetch Keys
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
+        fetch-depth: 1
+    - name: Set spreadsheet_uri as environment variable
+      run: echo "spreadsheet_uri=${{inputs.spreadsheet_uri}}" >> $GITHUB_ENV
+      if: inputs.spreadsheet_uri != ''
+      
+    - name: Dump keys from the spreadsheet
+      run: |
+        curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";      
+    - name: Create permissions folder
+      run: |
+          [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
+          mv keys.csv server/permissions/keys.csv;
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: Added permissions keys.
+        branch: master
+        commit_options: '--signoff'
+        commit_user_name: l5io
+        commit_user_email: ci@layer5.io
+        commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>author of the commit that triggered the run

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
@@ -10,7 +10,8 @@ lab: linkerd-meshery-adapter
 github_link: https://github.com/meshery/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 white_image: /assets/img/service-meshes/linkerd-white.svg
-permalink: service-meshes/adapters/linkerd
+permalink: extensibility/adapters/linkerd
+redirect_from: service-meshes/adapters/linkerd
 language: en
 ---
 
@@ -33,7 +34,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-{% include adapter-labs.html %}
+<!-- {% include adapter-labs.html %} -->
 
 ### Features
 

@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Tooltip, Typography } from '@material-ui/core';
+import React from 'react';
+import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
-import { getConnectionStatusSummary } from '../../../api/connections';
 import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import InfoIcon from '@material-ui/icons/Info';
+import {
+  CustomTextTooltip,
+  RenderTooltipContent,
+} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
+import { InfoOutlined } from '@material-ui/icons';
 
 export default function ConnectionStatsChart({ classes }) {
-  const [chartData, setChartData] = useState([]);
+  const { data: statusData } = useGetAllConnectionStatusQuery();
 
-  useEffect(() => {
-    getConnectionStatusSummary().then((json) => {
-      setChartData(
-        json.connections_status
-          .filter((data) => isValidColumnName(data.status))
-          .map((data) => [data.status, data.count]),
-      );
-    });
-  }, []);
+  const chartData =
+    statusData?.connections_status
+      ?.filter((data) => isValidColumnName(data.status))
+      .map((data) => [data.status, data.count]) || [];
 
   const chartOptions = {
     data: {
@@ -52,7 +51,7 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/connections`;
+  const url = `https://docs.meshery.io/concepts/logical/connections`;
 
   return (
     <Link href="/management/connections">
@@ -61,16 +60,32 @@ export default function ConnectionStatsChart({ classes }) {
           <Typography variant="h6" gutterBottom className={classes.link}>
             Connections
           </Typography>
-          <Tooltip title="Learn more about Connections" placement="right">
-            <InfoIcon
-              color={theme.palette.secondary.iconMain}
-              style={{ ...iconSmall, marginLeft: '0.5rem' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-              }}
-            />
-          </Tooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              interactive={true}
+              title={RenderTooltipContent({
+                showPriortext:
+                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
+                link: url,
+                showAftertext: 'to know more about Meshery Connections',
+              })}
+              placement="left"
+            >
+              <IconButton
+                disableRipple={true}
+                disableFocusRipple={true}
+                disableTouchRipple={true}
+                sx={{ padding: '0px' }}
+              >
+                <InfoOutlined
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
         </div>
         <Box
           sx={{

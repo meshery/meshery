@@ -66,9 +66,9 @@ jobs:
           echo "value=${USER_INPUT:-"meshery"}" >> $GITHUB_OUTPUT
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.7.2
+        uses: manusa/actions-setup-minikube@v2.10.0
         with:
-          minikube version: "v1.28.0"
+          minikube version: "v1.32.0"
           kubernetes version: "${{ matrix.k8s_version }}"
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
@@ -256,7 +256,7 @@ jobs:
               status="partial"
           fi
           echo $(jq '."overall-status" |=  "'$status'"' data.json) > data.json;     
-          MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep "/releases/tag/" | head -1 | awk -F '"' '{print $4}' | awk -F '/' '{print $NF}' )    
+          MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep -oP 'releases/tag/\K[^"]+' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)    
           echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
           echo "exitstatus=$exitstatus" >> $GITHUB_ENV
       - name: UploadResults

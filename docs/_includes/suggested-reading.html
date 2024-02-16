@@ -1,5 +1,5 @@
 {% if include.section-title != "false" %}
-## Suggested Reading
+<h2>Suggested Reading</h2>
 {% endif %}
 
 {% assign sorted_reading = site.pages | sort: page.title %}
@@ -8,6 +8,9 @@
   {% for item in sorted_reading %}
     {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url and item.language == include.language %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract %}
+      - {{ item.abstract }}
+      {% endif %}
     </li>
     {% endif %}
   {% endfor %}

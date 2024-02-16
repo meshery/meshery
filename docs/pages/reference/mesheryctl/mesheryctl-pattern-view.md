@@ -17,7 +17,6 @@ Display pattern(s)
 ## Synopsis
 
 Displays the contents of a specific pattern based on name or id
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern view pattern name [flags]

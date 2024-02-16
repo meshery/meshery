@@ -73,12 +73,37 @@ export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 
+// Remove this fetch all connections initially
+export const CONNECTION_KINDS_DEF = ['MESHERY', 'KUBERNETES', 'PROMETHEUS', 'GRAFANA', 'GITHUB'];
+
 export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
   KUBERNETES: 'kubernetes',
+  PROMETHEUS: 'prometheus',
+  GRAFANA: 'grafana',
+  GITHUB: 'github',
 };
 
-export const TRANSFER_COMPONET = {
+export const MESHSYNC_STATES = {
+  DISCOVERED: 'discovered',
+  REGISTER: 'register',
+};
+
+export const TRANSFER_COMPONENT = {
   CHIP: 'chip',
   OTHER: 'other',
 };
+
+export const CONNECTION_STATE_TO_TRANSITION_MAP = {
+  [CONNECTION_STATES.IGNORED]: 'Ignore',
+  [CONNECTION_STATES.CONNECTED]: 'Connect',
+  [CONNECTION_STATES.REGISTERED]: 'Register',
+  [CONNECTION_STATES.DISCOVERED]: 'Discover',
+  [CONNECTION_STATES.DELETED]: 'Delete',
+  [CONNECTION_STATES.MAINTENANCE]: 'Maintenance',
+  [CONNECTION_STATES.DISCONNECTED]: 'Disconnect',
+  [CONNECTION_STATES.NOTFOUND]: 'Not Found',
+};
+
+export const FILTER = 'filter';
+export const PATTERN = 'pattern';
