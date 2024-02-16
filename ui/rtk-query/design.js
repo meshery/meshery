@@ -31,7 +31,15 @@ const designs = api
           body: {},
         }),
       }),
+
+      removePatterns: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/unpublish`,
+          method: 'DELETE',
+          body: {},
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery, useAddPatternsMutation } = designs;
+export const { useGetPatternsQuery, useAddPatternsMutation, useRemovePatternsMutation } = designs;
