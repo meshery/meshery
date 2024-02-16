@@ -1077,6 +1077,73 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef":[
+                ["settings", "spec"]
+              ],
+              "description": "A Pod is the basic execution unit of a Kubernetes application, representing a single instance of a running process in a cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec"]
+              ],
+              "description": "Deployments use pods to define the desired state of applications. Whenever a Pod is dragged near to the deployment, the pod spcifecation becomes part of the deployment."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec"]
+              ],
+              "description": "StatefulSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the StatefulSet, the pod spcifecation becomes part of the StatefulSet."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec"]
+              ],
+              "description": "DaemonSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the DaemonSet, the pod spcifecation becomes part of the DaemonSet."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec"]
+              ],
+              "description": "ReplicaSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the ReplicaSet, the pod spcifecation becomes part of the ReplicaSet."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
