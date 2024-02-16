@@ -65,7 +65,9 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 
 For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
-{% include suggested-reading.html %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 ### Configuring Log levels at Runtime
 The server log levels can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`runtime_logs_config.env`](https://github.com/meshery/meshery/blob/fbc59a8ba9ca91c2714ac38fd80ae6f82f6de43b/server/cmd/runtime_logs_config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
