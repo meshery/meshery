@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Cilium Service Mesh
 name: Meshery Adapter for Cilium Service Mesh
 mesh_name: Cilium

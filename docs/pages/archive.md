@@ -4,6 +4,7 @@ title: Articles
 permalink: /archive/
 excluded_in_search: true
 language: en
+list: exclude
 ---
 # News Archive
 
