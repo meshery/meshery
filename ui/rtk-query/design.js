@@ -23,7 +23,15 @@ const designs = api
         }),
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
+
+      addPatterns: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/publish`,
+          method: 'POST',
+          body: {},
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery } = designs;
+export const { useGetPatternsQuery, useAddPatternsMutation } = designs;
