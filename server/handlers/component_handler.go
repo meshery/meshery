@@ -1351,7 +1351,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// swagger:route POST /api/meshmodel/update/status MeshModelUpdateIgnoreStatus idPostMeshModelUpdateIgnoreStatus
+// swagger:route POST /api/meshmodel/update/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
 // Handle POST request for updating the ignore status of a model.
 //
 // Update the ignore status of a model based on the provided parameters.
@@ -1361,14 +1361,13 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 // request body should be json
 // request body should be of struct containing ID and Status fields
-func (h *Handler) UpdateIgnoreStatus(rw http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request) {
     dec := json.NewDecoder(r.Body)
+	entityType := mux.Vars(r)["entityType"]
     var updateData struct {
         ID         string      `json:"id"`
-        Status     bool        `json:"status"`
-        EntityType string      `json:"entity_type"`
+        Status     string       `json:"status"`
     }
-
     err := dec.Decode(&updateData)
     if err != nil {
         http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -1376,7 +1375,7 @@ func (h *Handler) UpdateIgnoreStatus(rw http.ResponseWriter, r *http.Request) {
     }
 
     // Update the ignore status of the model using the RegistryManager
-    err = h.registryManager.UpdateEntityIgnoreStatus(updateData.ID, updateData.Status, updateData.EntityType)
+    err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
     if err != nil {
         http.Error(rw, err.Error(), http.StatusInternalServerError)
         return

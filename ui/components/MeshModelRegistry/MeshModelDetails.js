@@ -2,6 +2,13 @@ import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
+import { FormControl, Select, MenuItem, Chip } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import styles from '../connections/styles';
+import { CONNECTION_STATES, CONNECTION_STATE_TO_TRANSITION_MAP } from '../../utils/Enum';
+import classNames from 'classnames';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
@@ -325,6 +332,69 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
   </div>
 );
 
+const StatusChip = withStyles(styles)(({ classes, entityData }) => {
+  const nextStatus = ['registered', 'ignored'];
+  const handleStatusChange = (e) => {
+    console.log('status changed', e);
+  };
+  const icons = {
+    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+  };
+
+  return (
+    <FormControl
+      className={classes.chipFormControl}
+      style={{ minWidth: '0%', flexDirection: 'inherit' }}
+    >
+      <Select
+        labelId="entity-status-select-label"
+        id="entity-status-select"
+        // disabled={disabled}
+        value={entityData?.status}
+        defaultValue={entityData?.status}
+        onClick={(e) => e.stopPropagation()}
+        onChange={(e) => handleStatusChange(e)}
+        className={classes.statusSelect}
+        disableUnderline
+        MenuProps={{
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+          transformOrigin: {
+            vertical: 'top',
+            horizontal: 'left',
+          },
+          getContentAnchorEl: null,
+          MenuListProps: { disablePadding: true },
+          PaperProps: { square: true },
+        }}
+      >
+        {nextStatus &&
+          nextStatus.map((status) => (
+            <MenuItem
+              disabled={status === entityData?.status ? true : false}
+              style={{ padding: '0', display: status === entityData?.status ? 'none' : 'flex' }}
+              value={status}
+              key={status}
+            >
+              <Chip
+                className={classNames(classes.statusChip, classes[status])}
+                avatar={icons[status] ? icons[status]() : ''}
+                label={
+                  status == entityData?.status
+                    ? status
+                    : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                }
+              />
+            </MenuItem>
+          ))}
+      </Select>
+    </FormControl>
+  );
+});
+
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const StyleClass = useStyles();
   const isEmptyDetails =
@@ -337,10 +407,13 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
       {isEmptyDetails && <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>}
       {showDetailsData.type === MODELS && (
         <div>
-          <TitleWithImg
-            displayName={showDetailsData.data.displayName}
-            iconSrc={showDetailsData.data.metadata?.svgColor}
-          />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TitleWithImg
+              displayName={showDetailsData.data.displayName}
+              iconSrc={showDetailsData.data.metadata?.svgColor}
+            />
+            <StatusChip entityData={showDetailsData.data} />
+          </div>
           <ModelContents model={showDetailsData.data} />
         </div>
       )}

@@ -120,7 +120,7 @@ type HandlerInterface interface {
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
-	UpdateIgnoreStatus(rw http.ResponseWriter, r *http.Request)
+	UpdateEntityStatus(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
 
