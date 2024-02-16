@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   TableCell,
   Tooltip,
@@ -57,7 +57,6 @@ export default function MeshSyncTable(props) {
   const [search, setSearch] = useState('');
   const [setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
@@ -104,7 +103,6 @@ export default function MeshSyncTable(props) {
     }
     return item.kind === selectedFilters.kind;
   });
-  const count = meshSyncData?.total_count || 0;
 
   let colViews = [
     ['metadata.name', 'xs'],
@@ -374,124 +372,121 @@ export default function MeshSyncTable(props) {
     },
   ];
 
-  const options = useMemo(
-    () => ({
-      filter: false,
-      viewColumns: false,
-      search: false,
-      responsive: 'standard',
-      // resizableColumns: true,
-      serverSide: true,
-      selectableRows: false,
-      count: count,
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 25, 30],
-      fixedHeader: true,
-      page,
-      print: false,
-      download: false,
-      textLabels: {
-        selectedRows: {
-          text: 'connection(s) selected',
-        },
+  const options = {
+    filter: false,
+    viewColumns: false,
+    search: false,
+    responsive: 'standard',
+    // resizableColumns: true,
+    serverSide: true,
+    selectableRows: false,
+    count: meshSyncData?.total_count,
+    rowsPerPage: pageSize,
+    rowsPerPageOptions: [25, 50, 100],
+    fixedHeader: true,
+    page,
+    print: false,
+    download: false,
+    textLabels: {
+      selectedRows: {
+        text: 'connection(s) selected',
       },
-      // customToolbarSelect: (selected) => (
-      //   <Button
-      //     variant="contained"
-      //     color="primary"
-      //     size="large"
-      //     // @ts-ignore
-      //     // onClick={() => handleDeleteConnections(selected)}
-      //     style={{ background: '#8F1F00', marginRight: '10px' }}
-      //   >
-      //     <DeleteForeverIcon style={iconMedium} />
-      //     Delete
-      //   </Button>
-      // ),
-      enableNestedDataAccess: '.',
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        let order = '';
-        const columnName = camelcaseToSnakecase(columns[tableState.activeColumn]?.name);
-        if (tableState.activeColumn) {
-          order = `${columnName} desc`;
-        }
-        switch (action) {
-          case 'changePage':
-            setPage(tableState.page.toString());
-            break;
-          case 'changeRowsPerPage':
-            setPageSize(tableState.rowsPerPage.toString());
-            break;
-          case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${columnName} asc`;
-              } else {
-                order = `${columnName} desc`;
-              }
+    },
+    // customToolbarSelect: (selected) => (
+    //   <Button
+    //     variant="contained"
+    //     color="primary"
+    //     size="large"
+    //     // @ts-ignore
+    //     // onClick={() => handleDeleteConnections(selected)}
+    //     style={{ background: '#8F1F00', marginRight: '10px' }}
+    //   >
+    //     <DeleteForeverIcon style={iconMedium} />
+    //     Delete
+    //   </Button>
+    // ),
+    enableNestedDataAccess: '.',
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+      let order = '';
+      const columnName = camelcaseToSnakecase(columns[tableState.activeColumn]?.name);
+      if (tableState.activeColumn) {
+        order = `${columnName} desc`;
+      }
+      switch (action) {
+        case 'changePage':
+          setPage(tableState.page.toString());
+          break;
+        case 'changeRowsPerPage':
+          setPageSize(tableState.rowsPerPage.toString());
+          break;
+        case 'sort':
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === 'ascending') {
+              order = `${columnName} asc`;
+            } else {
+              order = `${columnName} desc`;
             }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
-            break;
-        }
-      },
-      expandableRows: true,
-      expandableRowsHeader: false,
-      expandableRowsOnClick: true,
-      rowsExpanded: rowsExpanded,
-      isRowExpandable: () => {
-        return true;
-      },
-      onRowExpansionChange: (_, allRowsExpanded) => {
-        setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-        setShowMore(false);
-      },
-      renderExpandableRow: (rowData) => {
-        const colSpan = rowData.length;
-        const columnName = 'metadata'; // Name of the column containing the metadata
-        const columnIndex = columns.findIndex((column) => column.name === columnName);
+          }
+          if (order !== sortOrder) {
+            setSortOrder(order);
+          }
+          break;
+      }
+    },
+    expandableRows: true,
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    rowsExpanded: rowsExpanded,
+    isRowExpandable: () => {
+      return true;
+    },
+    onRowExpansionChange: (_, allRowsExpanded) => {
+      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      // setShowMore(false);
+    },
+    renderExpandableRow: (rowData) => {
+      const colSpan = rowData.length;
+      const columnName = 'metadata'; // Name of the column containing the metadata
+      const columnIndex = columns.findIndex((column) => column.name === columnName);
 
-        // Access the metadata value using the column index
-        const metadata = rowData[columnIndex];
+      // Access the metadata value using the column index
+      const metadata = rowData[columnIndex];
 
-        return (
-          <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-            <TableContainer className={classes.innerTableContainer}>
-              <Table>
-                <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                      <Grid item xs={12} md={12} className={classes.contentContainer}>
-                        <Grid container spacing={1}>
-                          <Grid
-                            item
-                            xs={12}
-                            md={12}
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              padding: '0 20px',
-                              gap: 30,
-                            }}
-                            className={classes.contentContainer}
-                          >
-                            <MeshSyncDataFormatter metadata={metadata} />
-                          </Grid>
+      return (
+        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
+          <TableContainer className={classes.innerTableContainer}>
+            <Table>
+              <TableRow className={classes.noGutter}>
+                <TableCell style={{ padding: '20px 0' }}>
+                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                    <Grid item xs={12} md={12} className={classes.contentContainer}>
+                      <Grid container spacing={1}>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            padding: '0 20px',
+                            gap: 30,
+                          }}
+                          className={classes.contentContainer}
+                        >
+                          <MeshSyncDataFormatter metadata={metadata} />
                         </Grid>
                       </Grid>
                     </Grid>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </TableContainer>
-          </TableCell>
-        );
-      },
-    }),
-    [rowsExpanded, showMore, page, pageSize],
-  );
+                  </Grid>
+                </TableCell>
+              </TableRow>
+            </Table>
+          </TableContainer>
+        </TableCell>
+      );
+    },
+  };
 
   const [selectedKind, setSelectedKind] = useState('');
 
