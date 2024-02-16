@@ -7,7 +7,7 @@ const TAGS = {
 
 const defaultOptions = {
   trim: false,
-  annotations: false,
+  // annotations: false,
   search: '',
   page: 1,
   pagesize: 'all',
@@ -69,6 +69,20 @@ const meshModelApi = api
         }),
         invalidatesTags: [TAGS.MESH_MODELS],
       }),
+      getModelCategories: builder.query({
+        query: () => ({
+          url: `meshmodels/categories`,
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getModelFromCategory: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/categories/${queryArgs.category}/models`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
@@ -80,4 +94,6 @@ export const {
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
   useUpdateEntityIgnoreStatusMutation,
+  useGetModelCategoriesQuery,
+  useLazyGetModelFromCategoryQuery,
 } = meshModelApi;

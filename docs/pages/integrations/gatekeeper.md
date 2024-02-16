@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: assign
   colorIcon: assets/img/integrations/gatekeeper/components/assign/icons/color/assign-color.svg

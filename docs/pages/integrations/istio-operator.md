@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: istio-control-plane
   colorIcon: assets/img/integrations/istio-operator/components/istio-control-plane/icons/color/istio-control-plane-color.svg

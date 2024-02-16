@@ -67,6 +67,9 @@ permalink: /:year/:title/
 markdown: kramdown
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile, v0.6, v0.5, v0.4]
 
+plugins:
+  - jekyll-include-cache
+
 sass:
     sass_dir: _sass
     style: compact

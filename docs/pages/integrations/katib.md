@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/katib
 description: 
 integrations-category: Machine Learning
 integrations-subcategory: Machine Learning
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: experiment
   colorIcon: assets/img/integrations/katib/components/experiment/icons/color/experiment-color.svg

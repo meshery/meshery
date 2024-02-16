@@ -542,16 +542,12 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 
 // ClearLine clears the last line from output
 func ClearLine() {
+	clearCmd := exec.Command("clear") // for UNIX-like systems
 	if runtime.GOOS == "windows" {
-		fmt.Print("\r")
-	} else {
-		clearLineUnix()
+		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
 	}
-}
-
-func clearLineUnix() {
-	fmt.Print("\033[1A") // Move cursor one line up
-	fmt.Print("\033[K")  // Clear the line
+	clearCmd.Stdout = os.Stdout
+	_ = clearCmd.Run()
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
@@ -1127,4 +1123,13 @@ func CheckFileExists(name string) (bool, error) {
 		return false, fmt.Errorf("%s does not exist", name)
 	}
 	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
+}
+
+func Contains(key string, col []string) int {
+	for i, n := range col {
+		if n == key {
+			return i
+		}
+	}
+	return -1
 }

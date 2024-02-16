@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "IaaDevicePlugin",
+  "apiVersion": "deviceplugin.intel.com/v1",
+  "displayName": "Iaa Device Plugin",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#0068b5",
+   "secondaryColor": "#00D3A9",
+   "shape": "rhomboid",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 544.47 211.22\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#0068b5;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"rect4\" class=\"cls-1\" y=\"2.95\" width=\"39.41\" height=\"39.41\"/\u003e\u003cg id=\"g10\"\u003e\u003cpath id=\"path6\" d=\"M116.2,452.67V310.73H78.89V452.67Zm248,1.4V419.29a86.84,86.84,0,0,1-13.47-.85,15.23,15.23,0,0,1-8.83-3.92c-2-2-3.23-4.77-3.93-8.42a90.81,90.81,0,0,1-.84-13.74V342.71h27.07v-32H337.1v-55.4H299.65V392.64c0,11.64,1,21.46,2.94,29.31s5.33,14,10,18.79,10.8,8.14,18.24,10.24,17.11,3.09,28.47,3.09Zm214.3-1.4V244.39H541V452.67ZM263.6,324.61c-10.38-11.22-25-16.83-43.48-16.83a54.9,54.9,0,0,0-24.54,5.47,52.6,52.6,0,0,0-18.51,15.15L175,331.07V310.73H138.08V452.67h37.16V379.73c.42-13.32,3.65-23.14,9.82-29.45a32.16,32.16,0,0,1,23.7-10.1c10.8,0,19.08,3.37,24.55,9.82s8.13,15.57,8.13,27.21h0v.28h0v75h37.73V372C279.31,351.82,274,335.83,263.6,324.61Zm258.07,56.81a78.15,78.15,0,0,0-5.33-28.76,76.91,76.91,0,0,0-15-23.42,68.38,68.38,0,0,0-23.14-15.71,76,76,0,0,0-29.73-5.61,73.86,73.86,0,0,0-28.89,5.75,75.69,75.69,0,0,0-23.43,15.71,73,73,0,0,0-15.7,23.43,71.27,71.27,0,0,0-5.76,28.89,76.32,76.32,0,0,0,5.47,28.89A72.09,72.09,0,0,0,395.44,434a70.09,70.09,0,0,0,23.71,15.71,77.36,77.36,0,0,0,30.43,5.89c31.7,0,51.33-14.44,63.11-27.91l-26.92-20.48c-5.61,6.74-19.08,15.85-35.91,15.85-10.52,0-19.21-2.38-25.81-7.29A36,36,0,0,1,410.59,396l-.42-1.26h111.5ZM410.45,368.37c0-10.38,11.92-28.47,37.59-28.61s37.73,18.09,37.73,28.47Z\" transform=\"translate(-77.77 -244.39)\"/\u003e\u003cpath id=\"path8\" d=\"M621.11,434.15a13.82,13.82,0,0,0-7.29-7.29,14,14,0,0,0-5.33-1.12,13.41,13.41,0,0,0-5.33,1.12,13.82,13.82,0,0,0-7.29,7.29,13.85,13.85,0,0,0-1.13,5.33,13.87,13.87,0,0,0,8.42,12.62,13.77,13.77,0,0,0,5.33,1.13,13.87,13.87,0,0,0,12.62-8.42,13.24,13.24,0,0,0,0-10.66ZM618.87,444a11.12,11.12,0,0,1-2.39,3.65,11,11,0,0,1-3.64,2.38,11.69,11.69,0,0,1-4.49.84,12.14,12.14,0,0,1-4.49-.84,10.57,10.57,0,0,1-6-6,11.62,11.62,0,0,1-.84-4.49,12.22,12.22,0,0,1,.84-4.49,10.65,10.65,0,0,1,6-6,11.62,11.62,0,0,1,4.49-.84,12.22,12.22,0,0,1,4.49.84,10.73,10.73,0,0,1,6,6,11.69,11.69,0,0,1,.84,4.49A9.51,9.51,0,0,1,618.87,444ZM611,440.6a4.36,4.36,0,0,0,2.67-1.26,4.13,4.13,0,0,0,1.12-3.08,4.26,4.26,0,0,0-1.4-3.51,6.05,6.05,0,0,0-4.21-1.26H603v15.85H606v-6.46h2.11l3.92,6.46h3.09Zm-1.54-2.24H606v-4.49h3.51a4.09,4.09,0,0,1,1.26.28,1.43,1.43,0,0,1,.84.7,3,3,0,0,1,0,2.53,3.71,3.71,0,0,1-.84.7,4.09,4.09,0,0,1-1.26.28Z\" transform=\"translate(-77.77 -244.39)\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-55 -25 598.917 232.342\"\u003e\n    \u003cdefs\u003e\n        \u003cstyle\u003e\n            .cls-1 {\n                fill: #0068b5;\n            }\n\n            #path8 {\n                fill: white;\n            }\n\n            #path6 {\n                fill: white;\n            }\n        \u003c/style\u003e\n    \u003c/defs\u003e\n    \u003crect id=\"rect4\" class=\"cls-1\" y=\"2.95\" width=\"39.41\" height=\"39.41\" /\u003e\n    \u003cg id=\"g10\"\u003e\n        \u003cpath id=\"path6\"\n            d=\"M116.2,452.67V310.73H78.89V452.67Zm248,1.4V419.29a86.84,86.84,0,0,1-13.47-.85,15.23,15.23,0,0,1-8.83-3.92c-2-2-3.23-4.77-3.93-8.42a90.81,90.81,0,0,1-.84-13.74V342.71h27.07v-32H337.1v-55.4H299.65V392.64c0,11.64,1,21.46,2.94,29.31s5.33,14,10,18.79,10.8,8.14,18.24,10.24,17.11,3.09,28.47,3.09Zm214.3-1.4V244.39H541V452.67ZM263.6,324.61c-10.38-11.22-25-16.83-43.48-16.83a54.9,54.9,0,0,0-24.54,5.47,52.6,52.6,0,0,0-18.51,15.15L175,331.07V310.73H138.08V452.67h37.16V379.73c.42-13.32,3.65-23.14,9.82-29.45a32.16,32.16,0,0,1,23.7-10.1c10.8,0,19.08,3.37,24.55,9.82s8.13,15.57,8.13,27.21h0v.28h0v75h37.73V372C279.31,351.82,274,335.83,263.6,324.61Zm258.07,56.81a78.15,78.15,0,0,0-5.33-28.76,76.91,76.91,0,0,0-15-23.42,68.38,68.38,0,0,0-23.14-15.71,76,76,0,0,0-29.73-5.61,73.86,73.86,0,0,0-28.89,5.75,75.69,75.69,0,0,0-23.43,15.71,73,73,0,0,0-15.7,23.43,71.27,71.27,0,0,0-5.76,28.89,76.32,76.32,0,0,0,5.47,28.89A72.09,72.09,0,0,0,395.44,434a70.09,70.09,0,0,0,23.71,15.71,77.36,77.36,0,0,0,30.43,5.89c31.7,0,51.33-14.44,63.11-27.91l-26.92-20.48c-5.61,6.74-19.08,15.85-35.91,15.85-10.52,0-19.21-2.38-25.81-7.29A36,36,0,0,1,410.59,396l-.42-1.26h111.5ZM410.45,368.37c0-10.38,11.92-28.47,37.59-28.61s37.73,18.09,37.73,28.47Z\"\n            transform=\"translate(-77.77 -244.39)\" /\u003e\n\n    \u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "intel-device-plugins-operator",
+   "version": "0.29.0",
+   "displayName": "intel-device-plugins-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/intel-device-plugins-operator-0.29.0/intel-device-plugins-operator-0.29.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"IaaDevicePlugin is the Schema for the iaadeviceplugins API. It represents the IAA device plugin responsible for advertising Intel IAA hardware resources to the kubelet.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IaaDevicePluginSpec defines the desired state of IaaDevicePlugin.\",\n   \"properties\": {\n    \"image\": {\n     \"description\": \"Image is a container image with IAA device plugin executable.\",\n     \"type\": \"string\"\n    },\n    \"initImage\": {\n     \"description\": \"InitImage is an initcontainer image to configure and enable IAA devices and workqueues with accel-config utility\",\n     \"type\": \"string\"\n    },\n    \"logLevel\": {\n     \"description\": \"LogLevel sets the plugin's log level.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"NodeSelector provides a simple way to constrain device plugin pods to nodes with particular labels.\",\n     \"type\": \"object\"\n    },\n    \"provisioningConfig\": {\n     \"description\": \"ProvisioningConfig is a ConfigMap used to pass the IAA configuration into idxd initcontainer.\",\n     \"type\": \"string\"\n    },\n    \"sharedDevNum\": {\n     \"description\": \"SharedDevNum is a number of containers that can share the same IAA device.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Iaa Device Plugin\",\n \"type\": \"object\"\n}"
+ }
