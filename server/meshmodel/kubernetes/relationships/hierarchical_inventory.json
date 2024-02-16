@@ -284,7 +284,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A Pod "
+              "description": "A Pod establishes an inventory relationship with Events. Pod specifications are patched with Event specifications to enable monitoring of Pod-related events, providing insights into their lifecycle and behavior within the cluster."
             }
           },
           {
@@ -306,7 +306,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "A Deployment is used to provide seamless application scaling and management. Monitor deployment events for efficient tracking of updates, rollouts, and scaling operations, ensuring your applications are always available and performant."
+              "description": "A Deployment establishes an inventory relationship with Events. Deployment specifications are patched with Event specifications so that the Deployment can be monitored for events."
             }
           },
           {
@@ -328,7 +328,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "Maximize reliability for your stateful applications with Kubernetes StatefulSets. Track stateful pod events to maintain data integrity and ensure consistent, ordered deployments, empowering your critical workloads with resilience and stability."
+              "description": "A StatefulSet forms an inventory relationship with Events. StatefulSet configurations are integrated with Event specifications, facilitating the monitoring of StatefulSet events such as scaling, updates, and state transitions for effective management of stateful applications."
             }
           },
           {
@@ -350,7 +350,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "Ensure high availability and fault tolerance for your Kubernetes workloads with ReplicaSets. Monitor replica set events to manage pod replicas dynamically, scale resources as needed, and maintain optimal performance for your applications."
+              "description": "A ReplicaSet establishes an inventory relationship with Events. ReplicaSet configurations are synchronized with Event specifications, allowing the monitoring of ReplicaSet events such as pod creation, deletion, and scaling activities to maintain desired pod replicas."
             }
           },
           {
@@ -372,7 +372,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "Facilitate seamless communication between microservices with Kubernetes Services. Monitor service events to ensure consistent connectivity, load balancing, and service discovery, empowering you to build robust and resilient distributed applications."
+              "description": "A Service maintains an inventory relationship with Events. Service definitions are aligned with Event specifications, enabling the monitoring of Service-related events such as service creation, endpoint updates, and load balancing activities to ensure seamless communication within the cluster."
             }
           },
           {
@@ -394,7 +394,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "Centralize configuration management for your Kubernetes applications with ConfigMaps. Monitor config map events to dynamically update configuration data, ensuring agility, consistency, and reliability across your deployment pipeline."
+              "description": "A ConfigMap forms an inventory relationship with Events. ConfigMap specifications are patched with Event specifications, allowing the monitoring of ConfigMap events such as creation, updates, and usage, enabling dynamic configuration management within the cluster."
             }
           },
           {
@@ -416,7 +416,7 @@
                   "apiVersion"
                 ]
               ],
-              "description": "Safeguard sensitive information and credentials in your Kubernetes cluster with Secrets. Monitor secret events to manage encryption, access control, and lifecycle management, ensuring the security and integrity of your application data."
+              "description": "A Secret establishes an inventory relationship with Events. Secret configurations are synchronized with Event specifications, facilitating the monitoring of Secret events such as creation, updates, and usage, ensuring secure handling of sensitive information within the cluster."
             }
           }
         ],
