@@ -141,6 +141,7 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                 ? versionedModel.version
                 : `v${versionedModel.version}`
             }
+            check={true}
             onClick={() => {
               setShowDetailsData({
                 type: MODELS,
@@ -169,7 +170,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.1.${component.id}`}
-                    check
                     labelText={component.displayName}
                     onClick={() => {
                       setShowDetailsData({
@@ -201,7 +201,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.2.${relationship.id}`}
-                    check
                     labelText={relationship.subType}
                     onClick={() => {
                       setShowDetailsData({
@@ -262,6 +261,7 @@ const MesheryTreeViewRegistrants = ({
   selected,
   setShowDetailsData,
 }) => {
+  console.log('data regis', data);
   return (
     <TreeView
       aria-label="controlled"
@@ -299,7 +299,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.summary?.models})`}
+              labelText={`Models (${registrant?.models.length})`}
             >
               {registrant?.models.map((model, index) => (
                 <MesheryTreeViewItem
@@ -476,6 +476,8 @@ const MesheryTreeView = ({
   const disabledExpand = () => {
     return view === COMPONENTS;
   };
+
+  console.log('new data-->', data);
 
   const renderHeader = (type) => (
     <div
