@@ -61,10 +61,10 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
-      updateEntityIgnoreStatus: builder.mutation({
+      updateEntityStatus: builder.mutation({
         query: (queryArgs) => ({
-          url: `meshmodel/update/status`,
-          method: 'PUT',
+          url: `meshmodels/${queryArgs.entityType}/status`,
+          method: 'POST',
           body: queryArgs.body,
         }),
         invalidatesTags: [TAGS.MESH_MODELS],
@@ -83,6 +83,13 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getModelByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/models/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
@@ -93,7 +100,8 @@ export const {
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
-  useUpdateEntityIgnoreStatusMutation,
+  useUpdateEntityStatusMutation,
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
+  useGetModelByNameQuery,
 } = meshModelApi;
