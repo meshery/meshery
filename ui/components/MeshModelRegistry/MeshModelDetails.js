@@ -2,13 +2,15 @@ import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import { FormControl, Select, MenuItem, Chip } from '@material-ui/core';
+import { FormControl, Select, MenuItem, Chip, CircularProgress, useTheme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import styles from '../connections/styles';
 import { CONNECTION_STATES, CONNECTION_STATE_TO_TRANSITION_MAP } from '../../utils/Enum';
 import classNames from 'classnames';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import { useUpdateEntityStatusMutation, useGetModelByNameQuery } from '@/rtk-query/meshModel';
+import _ from 'lodash';
 
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
@@ -51,8 +53,41 @@ const Title = ({ title }) => (
   </p>
 );
 
-const ModelContents = ({ model }) => {
+const RenderContents = ({
+  metaDataLeft,
+  metaDataRight,
+  PropertyFormattersLeft,
+  PropertyFormattersRight,
+  orderLeft,
+  orderRight,
+}) => {
   const StyleClass = useStyles();
+
+  return (
+    <div className={StyleClass.segment}>
+      <div
+        className={StyleClass.fullWidth}
+        style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
+      >
+        <FormatStructuredData
+          data={reorderObjectProperties(metaDataLeft, orderLeft)}
+          propertyFormatters={PropertyFormattersLeft}
+          order={orderLeft}
+        />
+      </div>
+
+      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+        <FormatStructuredData
+          data={reorderObjectProperties(metaDataRight, orderRight)}
+          propertyFormatters={PropertyFormattersRight}
+          order={orderRight}
+        />
+      </div>
+    </div>
+  );
+};
+
+const ModelContents = ({ model }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -106,35 +141,18 @@ const ModelContents = ({ model }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
-      </div>
-
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
-    </div>
+    <RenderContents
+      metaDataLeft={metaDataLeft}
+      metaDataRight={metaDataRight}
+      PropertyFormattersLeft={PropertyFormattersLeft}
+      PropertyFormattersRight={PropertyFormattersRight}
+      orderLeft={orderdMetadataLeft}
+      orderRight={orderdMetadataRight}
+    />
   );
 };
 
 const ComponentContents = ({ component }) => {
-  const StyleClass = useStyles();
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -168,30 +186,14 @@ const ComponentContents = ({ component }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
-      </div>
-
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
-    </div>
+    <RenderContents
+      metaDataLeft={metaDataLeft}
+      metaDataRight={metaDataRight}
+      PropertyFormattersLeft={PropertyFormattersLeft}
+      PropertyFormattersRight={PropertyFormattersRight}
+      orderLeft={orderdMetadataLeft}
+      orderRight={orderdMetadataRight}
+    />
   );
 };
 
@@ -224,38 +226,14 @@ const RelationshipContents = ({ relationship }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <>
-      <div
-        style={{
-          display: 'flex',
-          marginTop: '12px',
-          flexDirection: 'row',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '50%',
-            paddingRight: '1rem',
-          }}
-        >
-          <FormatStructuredData
-            data={orderdMetadataLeft}
-            propertyFormatters={PropertyFormattersLeft}
-            order={orderLeft}
-          />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-          <FormatStructuredData
-            data={orderdMetadataRight}
-            propertyFormatters={PropertyFormattersRight}
-            order={orderRight}
-          />
-        </div>
-      </div>
-    </>
+    <RenderContents
+      metaDataLeft={metaDataLeft}
+      metaDataRight={metaDataRight}
+      PropertyFormattersLeft={PropertyFormattersLeft}
+      PropertyFormattersRight={PropertyFormattersRight}
+      orderLeft={orderdMetadataLeft}
+      orderRight={orderdMetadataRight}
+    />
   );
 };
 
@@ -286,35 +264,14 @@ const RegistrantContent = ({ registrant }) => {
   const orderRight = ['relationships', 'policies'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
-    <div
-      style={{
-        display: 'flex',
-        marginTop: '12px',
-        flexDirection: 'row',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '50%',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
-    </div>
+    <RenderContents
+      metaDataLeft={metaDataLeft}
+      metaDataRight={metaDataRight}
+      PropertyFormattersLeft={PropertyFormattersLeft}
+      PropertyFormattersRight={PropertyFormattersRight}
+      orderLeft={orderdMetadataLeft}
+      orderRight={orderdMetadataRight}
+    />
   );
 };
 
@@ -332,11 +289,28 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
   </div>
 );
 
-const StatusChip = withStyles(styles)(({ classes, entityData }) => {
+const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
   const nextStatus = ['registered', 'ignored'];
+  const [updateEntityStatus] = useUpdateEntityStatusMutation();
+  const { data: modelData, isSuccess } = useGetModelByNameQuery({
+    name: entityData.name,
+    params: {
+      version: entityData.version,
+    },
+  });
+
+  const data = modelData?.models?.find((model) => model.id === entityData.id);
+
   const handleStatusChange = (e) => {
-    console.log('status changed', e);
+    updateEntityStatus({
+      entityType: _.toLower(entityType),
+      body: {
+        id: data.id,
+        status: e.target.value,
+      },
+    });
   };
+
   const icons = {
     [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
     [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
@@ -347,35 +321,36 @@ const StatusChip = withStyles(styles)(({ classes, entityData }) => {
       className={classes.chipFormControl}
       style={{ minWidth: '0%', flexDirection: 'inherit' }}
     >
-      <Select
-        labelId="entity-status-select-label"
-        id="entity-status-select"
-        // disabled={disabled}
-        value={entityData?.status}
-        defaultValue={entityData?.status}
-        onClick={(e) => e.stopPropagation()}
-        onChange={(e) => handleStatusChange(e)}
-        className={classes.statusSelect}
-        disableUnderline
-        MenuProps={{
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-          transformOrigin: {
-            vertical: 'top',
-            horizontal: 'left',
-          },
-          getContentAnchorEl: null,
-          MenuListProps: { disablePadding: true },
-          PaperProps: { square: true },
-        }}
-      >
-        {nextStatus &&
-          nextStatus.map((status) => (
+      {isSuccess ? (
+        <Select
+          labelId="entity-status-select-label"
+          id={data?.id}
+          key={data?.id}
+          value={data?.status}
+          defaultValue={data?.status}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => handleStatusChange(e)}
+          className={classes.statusSelect}
+          disableUnderline
+          disabled={!isSuccess} // Disable the select when isSuccess is false
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            getContentAnchorEl: null,
+            MenuListProps: { disablePadding: true },
+            PaperProps: { square: true },
+          }}
+        >
+          {nextStatus.map((status) => (
             <MenuItem
-              disabled={status === entityData?.status ? true : false}
-              style={{ padding: '0', display: status === entityData?.status ? 'none' : 'flex' }}
+              disabled={status === data?.status}
+              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
               value={status}
               key={status}
             >
@@ -383,65 +358,110 @@ const StatusChip = withStyles(styles)(({ classes, entityData }) => {
                 className={classNames(classes.statusChip, classes[status])}
                 avatar={icons[status] ? icons[status]() : ''}
                 label={
-                  status == entityData?.status
+                  status === data?.status
                     ? status
                     : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
                 }
               />
             </MenuItem>
           ))}
-      </Select>
+        </Select>
+      ) : (
+        <CircularProgress size={24} />
+      )}
     </FormControl>
   );
 });
 
+const DetailsContent = ({ title, content, additionalContent, showStatusChip, showDetailsData }) => (
+  <div>
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <TitleWithImg displayName={title.displayName} iconSrc={title.metadata?.svgColor} />
+      {showStatusChip && (
+        <StatusChip entityData={showDetailsData.data} entityType={showDetailsData.type} />
+      )}
+    </div>
+    {additionalContent && additionalContent}
+    {content}
+  </div>
+);
+
 const MeshModelDetails = ({ view, showDetailsData }) => {
+  const theme = useTheme();
   const StyleClass = useStyles();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
+
+  const renderEmptyDetails = () => (
+    <p style={{ color: theme.palette.secondary.menuItemBorder, margin: 'auto' }}>
+      No {view} selected
+    </p>
+  );
+
+  const showStatusChip = () => {
+    switch (showDetailsData.type) {
+      case MODELS:
+        // if version is array it represent parent model which will contain versioned models, in that case don't show status selector, otherwise show
+        return !Array.isArray(showDetailsData.data.version);
+      case COMPONENTS:
+        return false;
+      case RELATIONSHIPS:
+        return false;
+      case REGISTRANTS:
+        return false;
+      default:
+        return null;
+    }
+  };
+
+  const renderDetailsContent = () => (
+    <DetailsContent
+      title={showDetailsData.data}
+      content={getContent(showDetailsData.type)}
+      additionalContent={getAdditionalContent(showDetailsData.type)}
+      view={view}
+      showStatusChip={showStatusChip()}
+      showDetailsData={showDetailsData}
+    />
+  );
+
+  const getContent = (type) => {
+    switch (type) {
+      case MODELS:
+        return <ModelContents model={showDetailsData.data} />;
+      case RELATIONSHIPS:
+        return <RelationshipContents relationship={showDetailsData.data} />;
+      case COMPONENTS:
+        return <ComponentContents component={showDetailsData.data} />;
+      case REGISTRANTS:
+        return <RegistrantContent registrant={showDetailsData.data} />;
+      default:
+        return null;
+    }
+  };
+
+  const getAdditionalContent = (type) => {
+    switch (type) {
+      case MODELS:
+      case COMPONENTS:
+        return (
+          <>
+            {showDetailsData.data.schema && (
+              <Description description={JSON.parse(showDetailsData.data.schema)?.description} />
+            )}
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <div
       className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
     >
-      {isEmptyDetails && <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>}
-      {showDetailsData.type === MODELS && (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <TitleWithImg
-              displayName={showDetailsData.data.displayName}
-              iconSrc={showDetailsData.data.metadata?.svgColor}
-            />
-            <StatusChip entityData={showDetailsData.data} />
-          </div>
-          <ModelContents model={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === RELATIONSHIPS && (
-        <div>
-          <Title title={showDetailsData.data.kind} />
-          <Description description={showDetailsData.data.metadata?.description} />
-          <RelationshipContents relationship={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === COMPONENTS && (
-        <div>
-          <TitleWithImg
-            displayName={showDetailsData.data.displayName}
-            iconSrc={showDetailsData.data.metadata?.svgColor}
-          />
-          {showDetailsData.data.schema && (
-            <Description description={JSON.parse(showDetailsData.data.schema)?.description} />
-          )}
-          <ComponentContents component={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === REGISTRANTS && (
-        <div>
-          <Title title={showDetailsData.data.hostname} />
-          <RegistrantContent registrant={showDetailsData.data} />
-        </div>
-      )}
+      {isEmptyDetails ? renderEmptyDetails() : renderDetailsContent()}
     </div>
   );
 };
