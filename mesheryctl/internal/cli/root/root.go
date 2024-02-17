@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
@@ -114,6 +115,7 @@ func init() {
 		experimental.ExpCmd,
 		filter.FilterCmd,
 		registry.RegistryCmd,
+		components.ComponentsCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
