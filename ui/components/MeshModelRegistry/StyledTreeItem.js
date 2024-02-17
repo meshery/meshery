@@ -4,6 +4,7 @@ import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';
 import { useWindowDimensions } from '@/utils/dimension';
+import { Colors } from '@/themes/app';
 
 /**
  * Customized item component in mui-x-tree
@@ -56,10 +57,10 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               checked={checked}
               style={{
                 visibility: hover || checked ? 'visible' : 'hidden',
-                color: '#00B39F',
+                color: Colors.keppelGreen,
                 padding: '0',
                 '&.Mui-checked': {
-                  color: '#00B39F',
+                  color: Colors.keppelGreen,
                 },
               }}
             />
