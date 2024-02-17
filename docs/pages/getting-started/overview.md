@@ -1,6 +1,7 @@
 ---
 layout: enhanced
 title: Overview
+abstract: An overview of Meshery concepts and their functionality.
 permalink: /getting-started/overview
 language: en
 redirect_to: /project/overview
