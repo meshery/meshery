@@ -14,10 +14,10 @@ Meshery's internal object model is designed to provide a consistent and extensib
 
 Models often represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery.
 
-_See the Meshery [Registry]({{site.baseurl}}/concepts/logical/registry}}) to learn more._
+_See the Meshery [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more._
 
-[![Model Contruct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
-_Figure: Model Contruct Classification_
+[![Model Construct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
+_Figure: Model Construct Classification_
 
 ## Meshery Constructs and their Lifecycle
 
