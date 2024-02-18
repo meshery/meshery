@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -46,8 +45,6 @@ var listComponentCmd = &cobra.Command{
 mesheryctl exp components list
 // View list of components with specified page number (25 components per page)
 mesheryctl exp components list --page 2
-// View Total number of components
-mesheryctl exp components list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites for the command here
@@ -114,23 +111,19 @@ mesheryctl exp components list --count
 			return err
 		}
 
-		header := []string{"Model", "kind", "Version"}
+		header := []string{"Component", "Model", "kind", "Version"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
+				rows = append(rows, []string{component.DisplayName, component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no component is found
-			fmt.Println("No components(s) found")
-			return nil
-		}
-
-		if cmd.Flag("count").Value.String() == "true" {
-			fmt.Println("Total components: ", componentsResponse.Count)
+			// fmt.Println("No components(s) found")
+			whiteBoardPrinter.Println("No components(s) found")
 			return nil
 		}
 
@@ -140,7 +133,6 @@ mesheryctl exp components list --count
 			maxRowsPerPage := 25
 			startIndex := 0
 			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			whiteBoardPrinter := color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 			for {
 				// Clear the entire terminal screen
 				utils.ClearLine()
@@ -152,6 +144,9 @@ mesheryctl exp components list --count
 				fmt.Println()
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
+
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+
 				keysEvents, err := keyboard.GetKeys(10)
 				if err != nil {
 					return err
@@ -179,8 +174,6 @@ mesheryctl exp components list --count
 				if startIndex >= len(rows) {
 					break
 				}
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
 			}
 		}
 		return nil
@@ -262,6 +255,22 @@ mesheryctl exp components view [component-name]
 		if err != nil {
 			utils.Log.Error(err)
 			return err
+		}
+
+		// if no output format is specified(i.e -o is not present in the command), print the output in table format
+
+		if outFormatFlag == "" {
+			header := []string{"Component", "Model", "Kind", "Version"}
+			rows := [][]string{}
+
+			for _, component := range componentResponse.Components {
+				if len(component.DisplayName) > 0 {
+					rows = append(rows, []string{component.DisplayName, component.Model.Name, component.Kind, component.APIVersion})
+				}
+			}
+
+			utils.PrintToTable(header, rows)
+			return nil
 		}
 
 		var selectedComponent v1alpha1.ComponentDefinition
@@ -370,18 +379,19 @@ mesheryctl exp components search [query-text]
 			return err
 		}
 
-		header := []string{"Model", "kind", "Version"}
+		header := []string{"Component", "Model", "kind", "Version"}
 		rows := [][]string{}
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
+				rows = append(rows, []string{component.DisplayName, component.Model.Name, component.Kind, component.APIVersion})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no component is found
-			fmt.Println("No components(s) found")
+			// fmt.Println("No components(s) found")
+			whiteBoardPrinter.Println("No components(s) found")
 			return nil
 		} else {
 			utils.PrintToTable(header, rows)
@@ -401,18 +411,57 @@ var ComponentsCmd = &cobra.Command{
 mesheryctl exp components list
 // To view a specific component
 mesheryctl exp components view [component-name]
+// To view the number of models
+// mesheryctl exp component --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err, "error processing config")
+		}
+
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
+
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		componentRespone := &models.MeshmodelComponentsAPIResponse{}
+		err = json.Unmarshal(data, componentRespone)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		if cmd.Flag("count").Value.String() == "true" {
+			whiteBoardPrinter.Println("Total number of models: ", componentRespone.Count)
+			return nil
+		}
+
 		if len(args) == 0 {
 			_ = cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp component --help' to display usage guide.\n", args[0]), "component"))
 		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
+
 		err = viewProviderCmd.RunE(cmd, args)
 		if err != nil {
 			return err
@@ -483,8 +532,8 @@ func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
 func init() {
 	// Add the new exp components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of components in total")
-	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	ComponentsCmd.Flags().Bool("count", false, "Get the number of components")
 	availableSubcommands := []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 	ComponentsCmd.AddCommand(availableSubcommands...)
 }
