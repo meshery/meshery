@@ -444,7 +444,6 @@ const MesheryTreeView = ({
         );
         setSelected([selectedItemUUID]);
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-        console.log('data we get', showData);
         setShowDetailsData(showData);
       }
     } else {
