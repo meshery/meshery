@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright 2024 Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ var (
 
 	pageNumberFlag int
 	outFormatFlag  string
+	saveFlag       bool
 )
 
 // ComponentsCmd represents the mesheryctl exp components command
@@ -120,6 +121,7 @@ func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
 	return enc.Encode(component)
 }
 
+// Common function to get the min of two integers
 func min(a, b int) int {
 	if a < b {
 		return a

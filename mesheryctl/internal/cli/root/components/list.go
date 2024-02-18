@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright 2024 Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,6 +145,8 @@ mesheryctl exp components list --count
 				fmt.Println()
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
+				whiteBoardPrinter.Print("Total pages: ", len(rows)/maxRowsPerPage+1)
+				fmt.Println()
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
 				keysEvents, err := keyboard.GetKeys(10)
@@ -166,8 +168,17 @@ mesheryctl exp components list --count
 					break
 				}
 
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+				// Navigate through the list of components
+				if event.Key == keyboard.KeyArrowRight || event.Key == keyboard.KeyArrowDown {
 					startIndex += maxRowsPerPage
+					endIndex = min(len(rows), startIndex+maxRowsPerPage)
+				}
+
+				if event.Key == keyboard.KeyArrowUp || event.Key == keyboard.KeyArrowLeft {
+					startIndex -= maxRowsPerPage
+					if startIndex < 0 {
+						startIndex = 0
+					}
 					endIndex = min(len(rows), startIndex+maxRowsPerPage)
 				}
 
@@ -175,7 +186,7 @@ mesheryctl exp components list --count
 					break
 				}
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+				whiteBoardPrinter.Println("Press ↑/← or ↓/→ to navigate, Esc or Ctrl+C to exit")
 			}
 		}
 		return nil

@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright 2024 Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -80,7 +81,7 @@ mesheryctl exp components view [component-name]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		component := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/components/%s?pagesize=all", baseUrl, component)
+		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, component)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -112,7 +113,7 @@ mesheryctl exp components view [component-name]
 		var selectedComponent v1alpha1.ComponentDefinition
 
 		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found for the given name ", component)
+			fmt.Println("No component(s) found for the given name: ", component)
 			return nil
 		} else if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
@@ -129,8 +130,30 @@ mesheryctl exp components view [component-name]
 			if output, err = yaml.Marshal(selectedComponent); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
-			fmt.Print(string(output))
+			if saveFlag {
+				fmt.Println("Saving output as YAML file")
+				err = os.WriteFile("./output.yaml", output, 0666)
+				if err != nil {
+					return errors.Wrap(err, "failed to save output as YAML file")
+				}
+				fmt.Println("Output saved as YAML file")
+			} else {
+				fmt.Print(string(output))
+			}
 		} else if outFormatFlag == "json" {
+			if saveFlag {
+				fmt.Println("Saving output as JSON file")
+				output, err = json.MarshalIndent(selectedComponent, "", "  ")
+				if err != nil {
+					return errors.Wrap(err, "failed to format output in JSON")
+				}
+				err = os.WriteFile("./output.json", output, 0666)
+				if err != nil {
+					return errors.Wrap(err, "failed to save output as JSON file")
+				}
+				fmt.Println("Output saved as JSON file")
+				return nil
+			}
 			return outputComponentJson(selectedComponent)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
@@ -143,4 +166,5 @@ mesheryctl exp components view [component-name]
 func init() {
 	// Add the new exp components commands to the ComponentsCmd
 	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewComponentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }

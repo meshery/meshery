@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright 2024 Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ var searchComponentsCmd = &cobra.Command{
 mesheryctl exp components search [query-text]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
+		//Check prerequisites
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -61,7 +60,7 @@ mesheryctl exp components search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("search term is missing\n\n%v", errMsg)
+			return fmt.Errorf("search term is missing. Please enter component name to search\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -114,15 +113,13 @@ mesheryctl exp components search [query-text]
 
 		if len(rows) == 0 {
 			// if no component is found
-			fmt.Println("No components(s) found")
+			fmt.Println("No component(s) found with the search term")
 			return nil
 		} else {
+			// Print the result in tabular format
 			utils.PrintToTable(header, rows)
 		}
 
 		return nil
 	},
-}
-
-func init() {
 }
