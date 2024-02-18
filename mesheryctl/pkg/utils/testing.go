@@ -253,7 +253,7 @@ func Populate(src, dst string) error {
 }
 
 func StartMockMesheryServer(t *testing.T) error {
-	serverAddr, _ := strings.CutPrefix(MesheryEndpoint, "http://")
+	serverAddr := strings.TrimPrefix(MesheryEndpoint, "http://")
 	l, err := net.Listen("tcp", serverAddr)
 	if err != nil {
 		return err
