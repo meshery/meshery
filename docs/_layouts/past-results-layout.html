@@ -92,5 +92,6 @@ title: Meshery Compatibility Matrix
   </div>
 </div>
 
-{% include compatibility/past-results.html %}
+{% assign service-mesh = page.subheading %}
+{% include_cached compatibility/past-results.html service-mesh=service-mesh%}
 
