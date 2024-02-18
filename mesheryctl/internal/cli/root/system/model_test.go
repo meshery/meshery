@@ -39,10 +39,10 @@ func TestListModelCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view list of models",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.model.output.golden",
 			Fixture:          "list.model.api.response.golden",
-			URL:              testContext.BaseURL + "/api/meshmodels/models?pagesize=all",
+			URL:              testContext.BaseURL + "/api/meshmodels/models?page=1",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -99,7 +99,8 @@ func TestListModelCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			utils.Equals(t, expectedResponse, actualResponse)
+			// utils.Equals(t, expectedResponse, actualResponse)
+			utils.EqualsString(t, expectedResponse, actualResponse)
 		})
 
 		// we're done with testing stop mock server
@@ -108,7 +109,7 @@ func TestListModelCmd(t *testing.T) {
 }
 
 func TestModelViewCmd(t *testing.T) {
-	SetupContextEnv(t)
+	SetupContextEnv(t) 
 	// initialize mock meshery backend
 	go utils.StartMockMesheryServer(t) // nolint
 
@@ -132,19 +133,19 @@ func TestModelViewCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view a requested model in yaml format",
-			Args:             []string{"view", "spire"},
+			Args:             []string{"view", "ambassador", "-o", "yaml"},
 			ExpectedResponse: "view.model.yaml.output.golden",
 			Fixture:          "view.model.api.response.golden",
-			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
+			URL:              testContext.BaseURL + "/api/meshmodels/models/ambassador?pagesize=all",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
 		{
 			Name:             "view a requested model in json format",
-			Args:             []string{"view", "spire", "-o", "json"},
+			Args:             []string{"view", "ambassador", "-o", "json"},
 			ExpectedResponse: "view.model.json.output.golden",
 			Fixture:          "view.model.api.response.golden",
-			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
+			URL:              testContext.BaseURL + "/api/meshmodels/models/ambassador?pagesize=all",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},

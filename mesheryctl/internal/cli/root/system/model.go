@@ -136,15 +136,7 @@ mesheryctl exp model list --page 2
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
-			// fmt.Println("No model(s) found")
 			whiteBoardPrinter.Println("No model(s) found")
-			return nil
-		}
-
-		if cmd.Flag("count").Value.String() == "true" {
-			// fmt.Println("Total number of models: ", len(rows))
-			whiteBoardPrinter.Println("Total number of models: ", len(rows))
 			return nil
 		}
 
@@ -163,9 +155,8 @@ mesheryctl exp model list --page 2
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
 				utils.PrintToTable(header, rows[startIndex:endIndex])
+				whiteBoardPrinter.Print("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
 				keysEvents, err := keyboard.GetKeys(10)
 				if err != nil {
 					return err
@@ -198,14 +189,6 @@ mesheryctl exp model list --page 2
 
 		return nil
 	},
-}
-
-// min returns the smaller of x or y.
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
 }
 
 // represents the mesheryctl exp model view [model-name] subcommand.
@@ -285,6 +268,21 @@ mesheryctl exp model view [model-name]
 			return err
 		}
 
+		// if no output format is specified(i.e -o is not present in the command), print the output in table format
+		if outFormatFlag == "" {
+			header := []string{"Model", "Category", "Version"}
+			rows := [][]string{}
+
+			for _, model := range modelsResponse.Models {
+				if len(model.DisplayName) > 0 {
+					rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+				}
+			}
+
+			utils.PrintToTable(header, rows)
+			return nil
+		}
+
 		var selectedModel v1alpha1.Model
 
 		if modelsResponse.Count == 0 {
@@ -349,7 +347,7 @@ mesheryctl exp model search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+			return fmt.Errorf("search term is missing\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -402,7 +400,6 @@ mesheryctl exp model search [query-text]
 
 		if len(rows) == 0 {
 			// if no model is found
-			// fmt.Println("No model(s) found")
 			whiteBoardPrinter.Println("No model(s) found")
 			return nil
 		} else {
@@ -419,6 +416,9 @@ var ModelCmd = &cobra.Command{
 	Short: "View list of models and detail of models",
 	Long:  "View list of models and detailed information of a specific model",
 	Example: `
+// To view the number of models
+// mesheryctl exp model --count
+
 // To view list of components
 mesheryctl exp model list
 
@@ -447,16 +447,53 @@ mesheryctl exp model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err, "error processing config")
+		}
+
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		url := fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
+
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		modelsResponse := &models.MeshmodelsAPIResponse{}
+		err = json.Unmarshal(data, modelsResponse)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		if cmd.Flag("count").Value.String() == "true" {
+			whiteBoardPrinter.Println("Total number of models: ", modelsResponse.Count)
+			return nil
+		}
+
 		if len(args) == 0 {
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))
 		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
+
 		err = viewProviderCmd.RunE(cmd, args)
 		if err != nil {
 			return err
@@ -471,8 +508,8 @@ mesheryctl exp model view [model-name]
 
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
-	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	ModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
+	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
@@ -530,4 +567,12 @@ func prettifyJson(model v1alpha1.Model) error {
 
 	// Any errors during the encoding process will be returned as an error.
 	return enc.Encode(model)
+}
+
+// min returns the smaller of x or y.
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }
