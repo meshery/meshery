@@ -167,7 +167,7 @@ const ExportModal = (props) => {
         style={{
           display: 'inline-table',
           maxWidth: '58.5rem',
-          padding: '5rem',
+          padding: '2rem',
           margin: '0 auto',
         }}
       >
