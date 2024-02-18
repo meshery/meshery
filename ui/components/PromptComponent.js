@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import {
-  withStyles,
   Typography,
   Button,
   Dialog,
@@ -12,6 +11,7 @@ import {
   Checkbox,
   styled,
   IconButton,
+  withStyles,
 } from '@material-ui/core';
 import theme from '../themes/app';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
@@ -87,146 +87,124 @@ const IconButtonWrapper = styled(IconButton)(({ theme }) => ({
   color: theme.palette.secondary.focused,
 }));
 
-export const PROMPT_VARIANTS = {
-  WARNING: 'warning',
-  DANGER: 'danger',
-  SUCCESS: 'success',
-  CONFIRMATION: 'confirmation',
-};
+const PromptComponent = forwardRef(({ classes }, ref) => {
+  const [show, setShow] = useState(false);
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [options, setOptions] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
+  const [showCheckbox, setShowCheckbox] = useState(false);
+  const [showInfoIcon, setShowInfoIcon] = useState(null);
+  const [variant, setVariant] = useState(null);
+  // const modalRef = useRef();
+  console.log('1');
+  const handleCheckboxChange = () => {
+    setIsChecked((prevState) => !prevState);
+  };
 
-class PromptComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false,
-      title: '',
-      subtitle: '',
-      options: [],
-      isChecked: false,
-      showCheckbox: false,
-      showInfoIcon: null,
-    };
-    this.promiseInfo = {};
-    this.variant = this.props.variant;
-  }
+  const hide = () => {
+    setShow(false);
+  };
 
-  show = async (passed) => {
-    return new Promise((resolve, reject) => {
-      this.promiseInfo = { resolve, reject };
-      this.variant = passed.variant;
-      this.setState({
-        title: passed.title,
-        subtitle: passed.subtitle,
-        options: passed.options,
-        showCheckbox: !!passed.showCheckbox,
-        show: true,
-        showInfoIcon: passed.showInfoIcon || null,
+  const resolveFn = useRef(null);
+  useImperativeHandle(ref, () => ({
+    show: async (passed) => {
+      return new Promise((resolve) => {
+        setVariant(passed.variant);
+        setTitle(passed.title);
+        setSubtitle(passed.subtitle);
+        setOptions(passed.options);
+        setShowCheckbox(!!passed.showCheckbox);
+        setShow(true);
+        setShowInfoIcon(passed.showInfoIcon || null);
+        resolveFn.current = resolve;
       });
-    });
-  };
+    },
+  }));
 
-  hide = () => {
-    this.setState({ show: false });
-  };
-
-  handleCheckboxChange = () => {
-    this.setState((prevState) => ({
-      isChecked: !prevState.isChecked,
-    }));
-  };
-
-  getCheckboxState = () => {
-    return this.state.isChecked;
-  };
-
-  render() {
-    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = this.state;
-    const { classes } = this.props;
-    const { resolve } = this.promiseInfo;
-    return (
-      <div className={classes.root}>
-        <Dialog
-          open={show}
-          onClose={this.hide}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          className={classes.dialogBox}
-        >
-          {title !== '' && (
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-              <b>{title}</b>
-            </DialogTitle>
-          )}
-          {subtitle !== '' && (
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="body1">{subtitle}</Typography>
-              </DialogContentText>
-              {showCheckbox && (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={this.handleCheckboxChange}
-                      className={classes.checkbox}
-                      color="primary"
-                    />
-                  }
-                  label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
-                />
-              )}
-            </DialogContent>
-          )}
-          <DialogActions className={classes.actions}>
-            {options.length > 1 && (
-              <Button
-                onClick={() => {
-                  this.hide();
-                  resolve(options[1]);
-                }}
-                key={options[1]}
-                className={classes.button1}
-              >
-                <Typography variant body2>
-                  {' '}
-                  {options[1]}{' '}
-                </Typography>
-              </Button>
+  return (
+    <div className={classes.root}>
+      <Dialog
+        open={show}
+        onClose={hide}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        className={classes.dialogBox}
+      >
+        {title !== '' && (
+          <DialogTitle id="alert-dialog-title" className={classes.title}>
+            <b>{title}</b>
+          </DialogTitle>
+        )}
+        {subtitle !== '' && (
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+              <Typography variant="body1">{subtitle}</Typography>
+            </DialogContentText>
+            {showCheckbox && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                    className={classes.checkbox}
+                    color="primary"
+                  />
+                }
+                label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
+              />
             )}
-            <PromptActionButton
-              color="primary"
+          </DialogContent>
+        )}
+        <DialogActions className={classes.actions}>
+          {options.length > 1 && (
+            <Button
               onClick={() => {
-                this.hide();
-                resolve(options[0]);
+                hide();
+                resolveFn.current && resolveFn.current(options[1]);
               }}
-              key={options[0]}
-              promptVariant={this.variant}
-              style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
-              type="submit"
-              variant="contained"
+              key={options[1]}
+              className={classes.button1}
             >
               <Typography variant body2>
-                {options[0]}{' '}
+                {' '}
+                {options[1]}{' '}
               </Typography>
-            </PromptActionButton>
-            {showInfoIcon && (
-              <CustomTextTooltip
-                backgroundColor="#3C494F"
-                placement="top"
-                interactive={true}
-                style={{ whiteSpace: 'pre-line' }}
-                title={getHyperLinkDiv(showInfoIcon)}
-              >
-                <IconButtonWrapper color="primary">
-                  <InfoOutlinedIcon />
-                </IconButtonWrapper>
-              </CustomTextTooltip>
-            )}
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-  }
-}
-
+            </Button>
+          )}
+          <PromptActionButton
+            color="primary"
+            onClick={() => {
+              hide();
+              resolveFn.current && resolveFn.current(options[0]);
+            }}
+            key={options[0]}
+            promptVariant={variant}
+            style={variant && { backgroundColor: theme.palette.secondary[variant] }}
+            type="submit"
+            variant="contained"
+          >
+            <Typography variant body2>
+              {options[0]}{' '}
+            </Typography>
+          </PromptActionButton>
+          {showInfoIcon && (
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="top"
+              interactive={true}
+              style={{ whiteSpace: 'pre-line' }}
+              title={getHyperLinkDiv(showInfoIcon)}
+            >
+              <IconButtonWrapper color="primary">
+                <InfoOutlinedIcon />
+              </IconButtonWrapper>
+            </CustomTextTooltip>
+          )}
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+});
+PromptComponent.displayName = 'PromptComponent';
 export default withStyles(styles)(PromptComponent);
