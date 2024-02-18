@@ -8,7 +8,7 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
+   "genealogy": "parent",
    "isAnnotation": false,
    "isCustomResource": false,
    "isModelAnnotation": "FALSE",
