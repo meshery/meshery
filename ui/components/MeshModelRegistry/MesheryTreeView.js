@@ -44,7 +44,6 @@ const ComponentTree = ({
           key={index}
           nodeId={`${component.id}`}
           data-id={`${component.id}`}
-          check
           labelText={component.displayName}
           onClick={() => {
             setShowDetailsData({
@@ -84,7 +83,6 @@ const RelationshipTree = ({
           key={index}
           nodeId={`${relationshipByKind.relationships[0].id}`}
           data-id={`${relationshipByKind.relationships[0].id}`}
-          check
           labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
           onClick={() => {
             setShowDetailsData({
@@ -100,7 +98,6 @@ const RelationshipTree = ({
               key={index}
               nodeId={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
               data-id={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
-              check
               labelText={relationship.subType}
               onClick={() => {
                 setShowDetailsData({
@@ -261,7 +258,6 @@ const MesheryTreeViewRegistrants = ({
   selected,
   setShowDetailsData,
 }) => {
-  console.log('data regis', data);
   return (
     <TreeView
       aria-label="controlled"
@@ -476,8 +472,6 @@ const MesheryTreeView = ({
   const disabledExpand = () => {
     return view === COMPONENTS;
   };
-
-  console.log('new data-->', data);
 
   const renderHeader = (type) => (
     <div

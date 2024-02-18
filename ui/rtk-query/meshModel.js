@@ -90,6 +90,13 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getComponentByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/components/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
@@ -104,4 +111,5 @@ export const {
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useGetComponentByNameQuery,
 } = meshModelApi;
