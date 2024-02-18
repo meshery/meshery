@@ -222,6 +222,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
+		Status:        queryParams.Get("status"),
 	}
 	if queryParams.Get("search") != "" {
 		filter.DisplayName = queryParams.Get("search")
@@ -1362,26 +1363,25 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // request body should be json
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request) {
-    dec := json.NewDecoder(r.Body)
+	dec := json.NewDecoder(r.Body)
 	entityType := mux.Vars(r)["entityType"]
-    var updateData struct {
-        ID         string      `json:"id"`
-        Status     string       `json:"status"`
-    }
-    err := dec.Decode(&updateData)
-    if err != nil {
-        http.Error(rw, err.Error(), http.StatusBadRequest)
-        return
-    }
+	var updateData struct {
+		ID     string `json:"id"`
+		Status string `json:"status"`
+	}
+	err := dec.Decode(&updateData)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-    // Update the ignore status of the model using the RegistryManager
-    err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
-    if err != nil {
-        http.Error(rw, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Update the ignore status of the model using the RegistryManager
+	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    // Respond with success status
-    rw.WriteHeader(http.StatusNoContent)
+	// Respond with success status
+	rw.WriteHeader(http.StatusNoContent)
 }
-
