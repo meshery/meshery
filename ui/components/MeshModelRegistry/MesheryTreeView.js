@@ -133,6 +133,7 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
           <StyledTreeItem
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
             labelText={
               versionedModel.version[0] == 'v'
                 ? versionedModel.version
@@ -443,6 +444,7 @@ const MesheryTreeView = ({
         );
         setSelected([selectedItemUUID]);
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
+        console.log('data we get', showData);
         setShowDetailsData(showData);
       }
     } else {
@@ -465,7 +467,7 @@ const MesheryTreeView = ({
             selectedNode.scrollIntoView({ behavior: 'smooth' });
           }
         });
-      }, 100);
+      }, 1000);
     }
   }, [view]);
 
