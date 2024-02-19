@@ -198,7 +198,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
   };
 
   const metaDataRight = {
-    registrant: componentData?.displayhostname,
+    registrant: component?.hostname,
     duplicates: componentData?.duplicates?.toString(),
     category: componentData?.model?.category?.name,
   };
