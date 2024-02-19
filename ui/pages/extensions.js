@@ -123,8 +123,8 @@ const ServiceMeshPerformanceCard = ({ classes, githubActionEnabled = false }) =>
 
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
-          This GitHub Action automatically tests your services performance by simulating user load. 
-          It measures things like response time and tracks changes over time.By integrating it into
+          This GitHub Action automatically tests your services performance by simulating user load.
+          It measures things like response time and tracks changes over time. By integrating it into
           your CI/CD pipeline, you can catch performance issues before they impact users.
         </Typography>
         {
