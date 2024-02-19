@@ -286,5 +286,7 @@ To grab console logs - `fmt.Println()` (check [mesheryctl/internal/cli/root/perf
 
 To grab Logrus logs - `logrus.Info()` (check [mesheryctl/internal/cli/root/perf/apply_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/apply_test.go) )
 
-{% include suggested-reading.html %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
