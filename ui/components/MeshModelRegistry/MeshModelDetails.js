@@ -310,7 +310,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Title title={registrant.displayName} />
+        <Title title={registrant.hostname} />
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
