@@ -570,7 +570,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["settings", "spec", "selector", "matchLabels"]
+                ["settings", "spec", "selector", "labels"]
               ], 
               "description": " Deployments manage ReplicaSets and provide features such as rolling updates and rollback functionality. PDBs can be associated with Deployments to maintain availability during updates and ensure a minimum number of pods are available during the transition."
             }
@@ -581,7 +581,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["settings", "spec", "selector", "matchLabels"]
+                ["settings", "spec", "selector", "labels"]
               ],
               "description": "ReplicaSets ensure a specified number of pod replicas are running at any given time. PDBs can be applied to ReplicaSets to enforce constraints on how many pods can be disrupted at once during scaling operations or node maintenance."
             }
@@ -592,7 +592,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["settings", "spec", "selector", "matchLabels"]
+                ["settings", "spec", "selector", "labels"]
               ],
               "description": "StatefulSets are used for stateful applications that require stable, unique network identifiers and persistent storage. PDBs can be used with StatefulSets to control pod disruptions and ensure data integrity during maintenance or scaling."
             }
@@ -603,7 +603,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["settings", "spec", "selector", "matchLabels"]
+                ["settings", "spec", "selector", "labels"]
               ],
               "description": "DaemonSets ensure that a copy of a pod runs on each node in the cluster. PDBs can be used to prevent too many pods from being disrupted simultaneously during node maintenance or upgrades, ensuring that essential services provided by DaemonSets remain available."
             }
