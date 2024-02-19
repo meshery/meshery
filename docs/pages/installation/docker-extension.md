@@ -171,6 +171,8 @@ If you want to remove Meshery as a Docker extension from your system, follow the
 
 <script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>
 
-{% include suggested-reading.html language="en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="meshery" %}

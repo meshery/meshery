@@ -459,7 +459,9 @@ The assign tag is used to create a new variable. It is written in the following 
 {% capture code_content %}{{ "{% assign variable1 = true " }}%}{% endcapture %}
 {% include code.html code=code_content %}
 
-{% include suggested-reading.html %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 Two helpful resources:
 

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VPCEndpointServiceConfiguration",
+  "apiVersion": "ec2.services.k8s.aws/v1alpha1",
+  "displayName": "VPC Endpoint Service Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-ec2-controller",
+   "version": "v1.2.3",
+   "displayName": "aws-ec2-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VPCEndpointServiceConfiguration is the Schema for the VPCEndpointServiceConfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpcEndpointServiceConfigurationSpec defines the desired state of VpcEndpointServiceConfiguration.\",\n   \"properties\": {\n    \"acceptanceRequired\": {\n     \"description\": \"Indicates whether requests from service consumers to create an endpoint to\\nyour service must be accepted manually.\",\n     \"type\": \"boolean\"\n    },\n    \"allowedPrincipals\": {\n     \"description\": \"The Amazon Resource Names (ARN) of one or more principals. Permissions are\\ngranted to the principals in this list. To grant permissions to all principals,\\nspecify an asterisk (*).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"gatewayLoadBalancerARNs\": {\n     \"description\": \"The Amazon Resource Names (ARNs) of one or more Gateway Load Balancers.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"networkLoadBalancerARNs\": {\n     \"description\": \"The Amazon Resource Names (ARNs) of one or more Network Load Balancers for\\nyour service.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"privateDNSName\": {\n     \"description\": \"(Interface endpoint configuration) The private DNS name to assign to the\\nVPC endpoint service.\",\n     \"type\": \"string\"\n    },\n    \"supportedIPAddressTypes\": {\n     \"description\": \"The supported IP address types. The possible values are ipv4 and ipv6.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VPC Endpoint Service Configuration\",\n \"type\": \"object\"\n}"
+ }
