@@ -166,8 +166,8 @@ const ExportModal = (props) => {
       <DialogContent
         style={{
           display: 'inline-table',
-          maxWidth: '58.5rem',
-          padding: '2rem',
+          maxWidth: '50rem',
+          padding: '3rem',
           margin: '0 auto',
         }}
       >
