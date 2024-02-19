@@ -1,4 +1,4 @@
-{% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
+{% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{include.service-mesh}} %}
 
 <table id="test-table" class="tablesorter">
   <thead>
