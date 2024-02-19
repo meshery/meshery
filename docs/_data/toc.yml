@@ -81,6 +81,8 @@
             url: concepts/logical/connections
           - title: "Credentials"
             url: concepts/logical/credentials
+        - title: "Registry"
+          url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management

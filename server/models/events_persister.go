@@ -68,10 +68,11 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
+	sortOn := SanitizeOrderInput(eventsFilter.SortOn, []string{"created_at", "updated_at", "name"})
 	if eventsFilter.Order == "asc" {
-		finder = finder.Order(eventsFilter.SortOn)
+		finder = finder.Order(sortOn)
 	} else {
-		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
+		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: sortOn}, Desc: true})
 	}
 
 	var count int64
