@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -1362,8 +1365,9 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 // request body should be json
 // request body should be of struct containing ID and Status fields
-func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
+	userID := uuid.FromStringOrNil(user.ID)
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID     string `json:"id"`
@@ -1371,16 +1375,23 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request) {
 	}
 	err := dec.Decode(&updateData)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 	// Update the ignore status of the model using the RegistryManager
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	description := fmt.Sprintf("Status of %s updated to %s %s.", connection.Name)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
