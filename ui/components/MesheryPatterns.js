@@ -56,7 +56,7 @@ import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import Modal from './Modal';
 import downloadContent from '../utils/fileDownloader';
-import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
+// import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import ReusableTooltip from './reusable-tooltip';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
@@ -634,30 +634,30 @@ function MesheryPatterns({
       },
     );
     catalogVisibilityRef.current = catalogVisibility;
-    const fetchCatalogPatterns = fetchCatalogPattern({
-      selector: {
-        search: '',
-        order: '',
-        page: 0,
-        pagesize: 0,
-      },
-    }).subscribe({
-      next: (result) => {
-        catalogContentRef.current = result?.catalogPatterns;
-        initPatternsSubscription();
-      },
-      error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
-    });
+    // const fetchCatalogPatterns = fetchCatalogPattern({
+    //   selector: {
+    //     search: '',
+    //     order: '',
+    //     page: 0,
+    //     pagesize: 0,
+    //   },
+    // }).subscribe({
+    //   next: (result) => {
+    //     catalogContentRef.current = result?.catalogPatterns;
+    //     initPatternsSubscription();
+    //   },
+    //   error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
+    // });
 
-    return () => {
-      fetchCatalogPatterns.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
-    };
+    // return () => {
+    //   fetchCatalogPatterns.unsubscribe();
+    //   disposeConfSubscriptionRef.current?.dispose();
+    // };
   }, []);
 
-  useEffect(() => {
-    handleSetPatterns(patterns);
-  }, [catalogVisibility]);
+  // useEffect(() => {
+  //   handleSetPatterns(patterns);
+  // }, [catalogVisibility]);
 
   const handleSetPatterns = (patterns) => {
     console.log('Patterns', patterns);
@@ -964,7 +964,7 @@ function MesheryPatterns({
           setCount(result.total_count || 0);
           handleSetPatterns(filteredPatterns);
           setVisibilityFilter(visibilityFilter);
-          // setPatterns(result.patterns || []);
+          setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS),
