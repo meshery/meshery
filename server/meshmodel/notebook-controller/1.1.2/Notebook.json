@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "Notebook",
-  "apiVersion": "kubeflow.org/v1alpha1",
+  "apiVersion": "kubeflow.org/v1beta1",
   "displayName": "Notebook",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "notebook-controller",
-   "modelDisplayName": "Notebook Controller",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "notebook-controller",
+    "modelDisplayName": "Notebook Controller",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "notebook-controller",
-   "version": "1.1.2",
-   "displayName": "Notebook Controller",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://github.com/cowboysysop/charts/releases/download/notebook-controller-1.1.2/notebook-controller-1.1.2.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "notebook-controller",
+    "version": "1.1.2",
+    "displayName": "Notebook Controller",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/cowboysysop/charts/releases/download/notebook-controller-1.1.2/notebook-controller-1.1.2.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"template\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"format\": \"textarea\",\n     \"properties\": {\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Notebook\",\n \"type\": \"object\"\n}"
- }
+}

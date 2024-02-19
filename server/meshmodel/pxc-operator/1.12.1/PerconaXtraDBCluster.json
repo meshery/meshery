@@ -6,42 +6,42 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "pxc-operator",
-   "modelDisplayName": "Pxc Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "pxc-operator",
+    "modelDisplayName": "Pxc Operator",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "pxc-operator",
-   "version": "1.12.1",
-   "displayName": "Pxc Operator",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/pxc-operator-1.13.3/pxc-operator-1.13.3.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "pxc-operator",
+    "version": "1.12.1",
+    "displayName": "Pxc Operator",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/pxc-operator-1.13.3/pxc-operator-1.13.3.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Percona Xtra DB Cluster\",\n \"type\": \"object\"\n}"
- }
+}

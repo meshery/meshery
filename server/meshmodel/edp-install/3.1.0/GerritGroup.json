@@ -6,43 +6,43 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "edp-install",
-   "modelDisplayName": "EDP Install",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "edp-install",
+    "modelDisplayName": "EDP Install",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "edp-install",
-   "version": "3.1.0",
-   "displayName": "EDP Install",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "isAnnotation": false,
-    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "edp-install",
+    "version": "3.1.0",
+    "displayName": "EDP Install",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"GerritGroup is the Schema for the gerrit group API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritGroupSpec defines the desired state of GerritGroup.\",\n   \"properties\": {\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"gerritOwner\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"visibleToAll\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Group\",\n \"type\": \"object\"\n}"
- }
+}

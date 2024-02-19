@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "DaskCluster",
-  "apiVersion": "gateway.dask.org/v1alpha1",
+  "apiVersion": "gateway.dask.org/v1beta1",
   "displayName": "Dask Cluster",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "daskhub",
-   "modelDisplayName": "Daskhub",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "daskhub",
+    "modelDisplayName": "Daskhub",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "daskhub",
-   "version": "2023.1.0",
-   "displayName": "Daskhub",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://helm.dask.org/daskhub-2024.1.0.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "daskhub",
+    "version": "2023.1.0",
+    "displayName": "Daskhub",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://helm.dask.org/daskhub-2024.1.0.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"title\": \"Dask Cluster\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
- }
+}

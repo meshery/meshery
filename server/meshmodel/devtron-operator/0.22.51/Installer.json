@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "Installer",
-  "apiVersion": "installer.devtron.ai/v1alpha1",
+  "apiVersion": "installer.devtron.ai/v1beta1",
   "displayName": "Installer",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "devtron-operator",
-   "modelDisplayName": "Devtron Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "devtron-operator",
+    "modelDisplayName": "Devtron Operator",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "devtron-operator",
-   "version": "0.22.51",
-   "displayName": "Devtron Operator",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://github.com/devtron-labs/charts/releases/download/devtron-operator-0.22.68/devtron-operator-0.22.68.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "devtron-operator",
+    "version": "0.22.51",
+    "displayName": "Devtron Operator",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/devtron-labs/charts/releases/download/devtron-operator-0.22.68/devtron-operator-0.22.68.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"Installer is the Schema for the installers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstallerSpec defines the desired state of Installer\",\n   \"properties\": {\n    \"reSync\": {\n     \"description\": \"Rerun the installation script\",\n     \"type\": \"boolean\"\n    },\n    \"url\": {\n     \"description\": \"URL of the BOM version to be installed\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Installer\",\n \"type\": \"object\"\n}"
- }
+}

@@ -6,42 +6,42 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "cloudbees-previews",
-   "modelDisplayName": "Cloudbees Previews",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "cloudbees-previews",
+    "modelDisplayName": "Cloudbees Previews",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "cloudbees-previews",
-   "version": "1.1.0",
-   "displayName": "Cloudbees Previews",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "App Definition and Development",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://public-charts.artifacts.cloudbees.com/repository/public/cloudbees-previews-0.30.3.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "cloudbees-previews",
+    "version": "1.1.0",
+    "displayName": "Cloudbees Previews",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://public-charts.artifacts.cloudbees.com/repository/public/cloudbees-previews-0.30.3.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"Hierarchy is the Schema for the hierarchies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HierarchySpec defines the desired state of Hierarchy\",\n   \"properties\": {\n    \"allowCascadingDeletion\": {\n     \"description\": \"AllowCascadingDeletion indicates if the subnamespaces of this namespace are allowed to cascading delete.\",\n     \"type\": \"boolean\"\n    },\n    \"parent\": {\n     \"description\": \"Parent indicates the parent of this namespace, if any.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Hierarchy Configuration\",\n \"type\": \"object\"\n}"
- }
+}

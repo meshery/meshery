@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "SqlDatabase",
-  "apiVersion": "stenic.io/v1alpha1",
+  "apiVersion": "stenic.io/v1beta1",
   "displayName": "Sql Database",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "sql-operator",
-   "modelDisplayName": "SQL Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "sql-operator",
+    "modelDisplayName": "SQL Operator",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "sql-operator",
-   "version": "0.11.2",
-   "displayName": "SQL Operator",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "App Definition and Development",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://github.com/stenic/sql-operator/releases/download/sql-operator-0.11.2/sql-operator-0.11.2.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "sql-operator",
+    "version": "0.11.2",
+    "displayName": "SQL Operator",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/stenic/sql-operator/releases/download/sql-operator-0.11.2/sql-operator-0.11.2.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"SqlDatabase is the Schema for the sqldatabases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlDatabaseSpec defines the desired state of SqlDatabase\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseName\": {\n     \"description\": \"Name of the external database\",\n     \"type\": \"string\"\n    },\n    \"hostRef\": {\n     \"description\": \"Reference to the SqlHost\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseName\",\n    \"hostRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Database\",\n \"type\": \"object\"\n}"
- }
+}

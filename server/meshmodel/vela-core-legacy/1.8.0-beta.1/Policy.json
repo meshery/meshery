@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "Policy",
-  "apiVersion": "core.oam.dev/v1alpha1",
+  "apiVersion": "core.oam.dev/v1beta1",
   "displayName": "Policy",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "vela-core-legacy",
-   "modelDisplayName": "Vela Core Legacy",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "vela-core-legacy",
+    "modelDisplayName": "Vela Core Legacy",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "vela-core-legacy",
-   "version": "1.8.0-beta.1",
-   "displayName": "Vela Core Legacy",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "App Definition and Development",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "vela-core-legacy",
+    "version": "1.8.0-beta.1",
+    "displayName": "Vela Core Legacy",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"Policy is the Schema for the policy API\",\n \"properties\": {\n  \"properties\": {\n   \"type\": \"object\"\n  },\n  \"type\": {\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"type\"\n ],\n \"title\": \"Policy\",\n \"type\": \"object\"\n}"
- }
+}

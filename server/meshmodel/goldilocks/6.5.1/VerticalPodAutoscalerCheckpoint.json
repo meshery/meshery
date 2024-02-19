@@ -6,42 +6,42 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "goldilocks",
-   "modelDisplayName": "Goldilocks",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "goldilocks",
+    "modelDisplayName": "Goldilocks",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "goldilocks",
-   "version": "6.5.1",
-   "displayName": "Goldilocks",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Security \u0026 Compliance",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://charts.fairwinds.com/stable/goldilocks-8.0.0.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "goldilocks",
+    "version": "6.5.1",
+    "displayName": "Goldilocks",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Security & Compliance",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://charts.fairwinds.com/stable/goldilocks-8.0.0.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}"
- }
+}

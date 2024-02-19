@@ -6,42 +6,42 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "cloudbees-previews",
-   "modelDisplayName": "Cloudbees Previews",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "cloudbees-previews",
+    "modelDisplayName": "Cloudbees Previews",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "cloudbees-previews",
-   "version": "1.1.0",
-   "displayName": "Cloudbees Previews",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "App Definition and Development",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://public-charts.artifacts.cloudbees.com/repository/public/cloudbees-previews-0.30.3.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "cloudbees-previews",
+    "version": "1.1.0",
+    "displayName": "Cloudbees Previews",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://public-charts.artifacts.cloudbees.com/repository/public/cloudbees-previews-0.30.3.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"SubnamespaceAnchor is the Schema for the subnamespace API. See details at http://bit.ly/hnc-self-serve-ux.\",\n \"properties\": {},\n \"title\": \"Subnamespace Anchor\",\n \"type\": \"object\"\n}"
- }
+}

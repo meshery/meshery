@@ -1,47 +1,47 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "SiteMeta",
-  "apiVersion": "k8s.netris.ai/v1alpha1",
+  "apiVersion": "k8s.netris.ai/v1beta1",
   "displayName": "Site Meta",
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "netris-operator",
-   "modelDisplayName": "Netris Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "netris-operator",
+    "modelDisplayName": "Netris Operator",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "netris-operator",
-   "version": "1.1.0",
-   "displayName": "Netris Operator",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "netris-operator",
+    "version": "1.1.0",
+    "displayName": "Netris Operator",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"SiteMeta is the Schema for the sitemeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteMetaSpec defines the desired state of SiteMeta\",\n   \"properties\": {\n    \"aclDefaultPolicy\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"publicAsn\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"rohAsn\": {\n     \"type\": \"integer\"\n    },\n    \"rohRoutingProfile\": {\n     \"type\": \"integer\"\n    },\n    \"siteGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"siteMesh\": {\n     \"type\": \"string\"\n    },\n    \"siteName\": {\n     \"type\": \"string\"\n    },\n    \"vmAsn\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"aclDefaultPolicy\",\n    \"id\",\n    \"imported\",\n    \"publicAsn\",\n    \"reclaimPolicy\",\n    \"rohAsn\",\n    \"rohRoutingProfile\",\n    \"siteGeneration\",\n    \"siteMesh\",\n    \"siteName\",\n    \"vmAsn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Meta\",\n \"type\": \"object\"\n}"
- }
+}

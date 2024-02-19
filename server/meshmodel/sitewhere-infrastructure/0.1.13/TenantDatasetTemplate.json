@@ -6,42 +6,42 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": false,
-   "logoURL": "",
-   "model": "sitewhere-infrastructure",
-   "modelDisplayName": "Sitewhere Infrastructure",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": false,
+    "logoURL": "",
+    "model": "sitewhere-infrastructure",
+    "modelDisplayName": "Sitewhere Infrastructure",
+    "primaryColor": "#00B39F",
+    "published": false,
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "name": "sitewhere-infrastructure",
-   "version": "0.1.13",
-   "displayName": "Sitewhere Infrastructure",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "metadata": {
-    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
-   },
-   "components": null,
-   "relationships": null
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "sitewhere-infrastructure",
+    "version": "0.1.13",
+    "displayName": "Sitewhere Infrastructure",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
+    },
+    "components": null,
+    "relationships": null
   },
   "schema": "{\n \"description\": \"TenantDatasetTemplate is the Schema for the tenantdatasets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantDatasetTemplateSpec defines the desired state of TenantDatasetTemplate\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description is the description of the tenant dataset template\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"TODO: check if metadata.name can be used Name is the name of the dataset\",\n     \"type\": \"string\"\n    },\n    \"tenantEngineTemplates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TenantEngineTemplates is map of tenant engines\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Dataset Template\",\n \"type\": \"object\"\n}"
- }
+}
