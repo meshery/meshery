@@ -189,29 +189,31 @@ function MesherySettingsNew({
   const handleFlushMeshSync = (index) => {
     return async () => {
       handleMenuClose(index);
-      let response = await meshSyncResetRef.current.show({
-        title: `Flush MeshSync data for ${data[index].context} ?`,
-        subtitle: `Are you sure to Flush MeshSync data for “${data[index].context}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        options: ['PROCEED', 'CANCEL'],
-      });
-      if (response === 'PROCEED') {
-        updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'false',
-          },
-          k8scontextID: contexts[index].id,
-        }).subscribe({
-          next: (res) => {
-            updateProgress({ showProgress: false });
-            if (res.resetStatus === 'PROCESSING') {
-              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
+      if (meshSyncResetRef.current) {
+        let response = await meshSyncResetRef.current.show({
+          title: `Flush MeshSync data for ${data[index].context} ?`,
+          subtitle: `Are you sure to Flush MeshSync data for “${data[index].context}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+          options: ['PROCEED', 'CANCEL'],
         });
+        if (response === 'PROCEED') {
+          updateProgress({ showProgress: true });
+          resetDatabase({
+            selector: {
+              clearDB: 'true',
+              ReSync: 'true',
+              hardReset: 'false',
+            },
+            k8scontextID: contexts[index].id,
+          }).subscribe({
+            next: (res) => {
+              updateProgress({ showProgress: false });
+              if (res.resetStatus === 'PROCESSING') {
+                notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+              }
+            },
+            error: handleError('Database is not reachable, try restarting server.'),
+          });
+        }
       }
     };
   };
@@ -327,28 +329,30 @@ function MesherySettingsNew({
 
   const handleConfigDelete = (id, name, index) => {
     return async () => {
-      let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-        title: `Delete ${name} context ?`,
-        subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
-        options: ['CONFIRM', 'CANCEL'],
-      });
-      if (responseOfDeleteK8sCtx === 'CONFIRM') {
-        updateProgress({ showProgress: true });
-        dataFetch(
-          '/api/system/kubernetes/contexts/' + id,
-          {
-            credentials: 'same-origin',
-            method: 'DELETE',
-          },
-          () => {
-            updateProgress({ showProgress: false });
-            if (index != undefined) {
-              let newData = data.filter((dt, idx) => index != idx);
-              setData(newData);
-            }
-          },
-          handleError('failed to delete kubernetes context'),
-        );
+      if (deleteCtxtRef.current) {
+        let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+          title: `Delete ${name} context ?`,
+          subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
+          options: ['CONFIRM', 'CANCEL'],
+        });
+        if (responseOfDeleteK8sCtx === 'CONFIRM') {
+          updateProgress({ showProgress: true });
+          dataFetch(
+            '/api/system/kubernetes/contexts/' + id,
+            {
+              credentials: 'same-origin',
+              method: 'DELETE',
+            },
+            () => {
+              updateProgress({ showProgress: false });
+              if (index != undefined) {
+                let newData = data.filter((dt, idx) => index != idx);
+                setData(newData);
+              }
+            },
+            handleError('failed to delete kubernetes context'),
+          );
+        }
       }
     };
   };

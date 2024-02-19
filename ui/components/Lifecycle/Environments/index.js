@@ -288,17 +288,19 @@ const Environments = ({ organization, classes }) => {
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
-    let response = await modalRef.current.show({
-      title: `Delete "${environment.name}" environment?`,
-      subtitle: deleteEnvironmentModalContent(environment.name),
-      options: ['DELETE', 'CANCEL'],
-      showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. 
+    if (modalRef.current) {
+      let response = await modalRef.current.show({
+        title: `Delete "${environment.name}" environment?`,
+        subtitle: deleteEnvironmentModalContent(environment.name),
+        options: ['DELETE', 'CANCEL'],
+        showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. 
       
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.DANGER,
-    });
-    if (response === 'DELETE') {
-      handleDeleteEnvironment(environment.id);
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'DELETE') {
+        handleDeleteEnvironment(environment.id);
+      }
     }
   };
 
@@ -335,14 +337,16 @@ const Environments = ({ organization, classes }) => {
 
   const handleBulkDeleteEnvironmentConfirm = async (e) => {
     e.stopPropagation();
-    let response = await modalRef.current.show({
-      title: `Delete Environment(s) ?`,
-      subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
-      options: ['DELETE', 'CANCEL'],
-      variant: PROMPT_VARIANTS.DANGER,
-    });
-    if (response === 'DELETE') {
-      handleBulkDeleteEnv();
+    if (modalRef.current) {
+      let response = await modalRef.current.show({
+        title: `Delete Environment(s) ?`,
+        subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
+        options: ['DELETE', 'CANCEL'],
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'DELETE') {
+        handleBulkDeleteEnv();
+      }
     }
   };
 
