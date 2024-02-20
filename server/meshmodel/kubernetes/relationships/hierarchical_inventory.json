@@ -1077,6 +1077,40 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "StorageClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef":[
+                ["name"]
+              ],
+              "description": "Storage class in Kubernetes defines the type and properties of storage that can be dynamically provisioned for persistent volumes."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PersistentVolumeClaim",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "storageClassName"]
+              ],
+              "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
+            }
+          } 
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
