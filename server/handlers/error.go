@@ -596,7 +596,3 @@ func ErrConvertingHelmChartToDesign(err error) error {
 func ErrInvalidUUID(err error) error {
 	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
 }
-
-func ErrUnableToUpdateStatus(err error, entityType string) error {
-	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"Failed to update status"}, []string{err.Error()}, []string{"Unable to update status, I might not been updated since last change", fmt.Sprintf("%s might not exist or deleted", entityType)}, []string{"Refresh UI to get updated changes and try again", "Open Meshery in new tab or delete cache"})
-}

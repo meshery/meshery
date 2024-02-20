@@ -1370,24 +1370,31 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	userID := uuid.FromStringOrNil(user.ID)
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
-		ID     string `json:"id"`
-		Status string `json:"status"`
+		ID          string `json:"id"`
+		Status      string `json:"status"`
+		DisplayName string `json:"displayname"`
 	}
 	err := dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
-	// Update the ignore status of the model using the RegistryManager
+
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update '%s' status to %s", updateData.DisplayName, updateData.Status)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	description := fmt.Sprintf("Status of %s updated to %s %s.", connection.Name)
+	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
