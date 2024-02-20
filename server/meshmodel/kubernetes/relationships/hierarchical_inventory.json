@@ -1089,7 +1089,7 @@
               "mutatorRef":[
                 ["name"]
               ],
-              "description": ""
+              "description": "Storage class in Kubernetes defines the type and properties of storage that can be dynamically provisioned for persistent volumes."
             }
           }
         ],
@@ -1102,7 +1102,7 @@
               "mutatedRef": [
                 ["settings", "spec", "storageClassName"]
               ],
-              "description": "Deployments use pods to define the desired state of applications. Whenever a Pod is dragged near to the deployment, the pod spcifecation becomes part of the deployment."
+              "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
             }
           } 
         ]
