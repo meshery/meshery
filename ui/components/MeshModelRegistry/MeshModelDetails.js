@@ -341,7 +341,6 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 // TODO: remove with styles and use either makestyle or styled component
 const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
-    console.log('data', entityData);
     const nextStatus = ['registered', 'ignored'];
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
     const { data: modelData, isSuccess } = useGetModelByNameQuery({
