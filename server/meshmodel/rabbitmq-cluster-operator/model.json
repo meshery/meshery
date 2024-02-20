@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "rabbitmq-cluster-operator",
-  "version": "3.17.0",
+  "version": "3.17.1",
   "displayName": "RabbitMQ Cluster Operator",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "category": {
