@@ -1078,4 +1078,39 @@
         }
       }
     },
-    
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "StorageClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef":[
+                ["name"]
+              ],
+              "description": ""
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PersistentVolumeClaim",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "storageClassName"]
+              ],
+              "description": "Deployments use pods to define the desired state of applications. Whenever a Pod is dragged near to the deployment, the pod spcifecation becomes part of the deployment."
+            }
+          } 
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
