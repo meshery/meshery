@@ -28,7 +28,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { updateProgress } from '../../lib/store';
-import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
@@ -84,7 +83,7 @@ import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
-import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
@@ -186,7 +185,6 @@ function Connections(props) {
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
@@ -195,13 +193,23 @@ function Connections(props) {
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [statusFilter, setStatusFilter] = useState(null);
-  const [kindFilter, setKindFilter] = useState(null);
+  const [statusFilter, setStatusFilter] = useState();
+  const [kindFilter, setKindFilter] = useState();
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
 
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const { data: connectionData } = useGetConnectionsQuery({
+    page: page,
+    pageSize: pageSize,
+    search: search,
+    sortOrder: sortOrder,
+    status: statusFilter ? JSON.stringify([statusFilter]) : '',
+    kind: kindFilter ? JSON.stringify([kindFilter]) : '',
+  });
 
   const {
     data: environmentsResponse,
@@ -225,7 +233,7 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -249,7 +257,7 @@ function Connections(props) {
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -279,7 +287,7 @@ function Connections(props) {
         });
         environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -895,6 +903,39 @@ function Connections(props) {
     [rowsExpanded, showMore, page, pageSize],
   );
 
+  useEffect(() => {
+    if (connectionData) {
+      const modifiedConnections = connectionData.connections.map((connection) => {
+        return {
+          ...connection,
+          nextStatus:
+            connection.nextStatus === undefined &&
+            connectionMetadataState[connection.kind]?.transitions,
+          kindLogo:
+            connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon,
+        };
+      });
+
+      const filteredConnections = modifiedConnections.filter((connection) => {
+        if (selectedFilters.status === 'All' && selectedFilters.kind === 'All') {
+          return true;
+        }
+        return (
+          (statusFilter === null || connection.status === statusFilter) &&
+          (kindFilter === null || connection.kind === kindFilter)
+        );
+      });
+
+      setConnections(filteredConnections);
+      setCount(connectionData?.total_count);
+      setPageSize(connectionData?.page_size);
+      setPage(connectionData?.page);
+      // setStatusFilter(statusFilter);
+      // setKindFilter(kindFilter);
+      setFilter(filter);
+    }
+  }, [connectionData, connectionMetadataState]);
+
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -912,10 +953,10 @@ function Connections(props) {
    */
   useEffect(() => {
     updateCols(columns);
-    if (!loading && connectionMetadataState) {
-      getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
-    }
-  }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
+    // if (!loading && connectionMetadataState) {
+    //   getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+    // }
+  }, [isEnvironmentsSuccess]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
@@ -926,53 +967,6 @@ function Connections(props) {
       });
     }
   }, [environmentsError]);
-
-  const getConnections = (page, pageSize, search, sortOrder, statusFilter, kindFilter) => {
-    setLoading(true);
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    dataFetch(
-      `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-        (statusFilter ? `&status=${encodeURIComponent(JSON.stringify([statusFilter]))}` : '') +
-        (kindFilter ? `&kind=${encodeURIComponent(JSON.stringify([kindFilter]))}` : ''),
-
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        res?.connections.forEach((connection) => {
-          (connection.nextStatus =
-            connection.nextStatus === undefined &&
-            connectionMetadataState[connection.kind]?.transitions),
-            (connection.kindLogo =
-              connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
-        });
-
-        const filteredConnections = res?.connections.filter((connection) => {
-          if (
-            (statusFilter === null || connection.status === statusFilter) &&
-            (kindFilter === null || connection.kind === kindFilter)
-          ) {
-            return true;
-          }
-          return false;
-        });
-
-        setConnections(filteredConnections);
-        setCount(res?.total_count);
-        setLoading(false);
-        setPageSize(res?.page_size);
-        setPage(res?.page);
-        setStatusFilter(statusFilter);
-        setKindFilter(kindFilter);
-        setFilter(filter);
-      },
-      handleError(ACTION_TYPES.FETCH_CONNECTIONS),
-    );
-  };
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -990,7 +984,7 @@ function Connections(props) {
     })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -1188,13 +1182,13 @@ function Connections(props) {
     },
   };
 
-  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
-
   const handleApplyFilter = () => {
     const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
     const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
 
-    getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+    setKindFilter(kindFilter);
+    setStatusFilter(statusFilter);
+    // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
   };
 
   return (

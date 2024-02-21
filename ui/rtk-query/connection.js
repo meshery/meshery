@@ -14,6 +14,8 @@ const connectionsApi = api.injectEndpoints({
           pagesize: queryArg.pagesize,
           search: queryArg.search,
           order: queryArg.order,
+          status: queryArg.status,
+          kind: queryArg.kind,
         },
         method: 'GET',
       }),
