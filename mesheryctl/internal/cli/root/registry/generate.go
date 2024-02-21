@@ -58,14 +58,11 @@ var generateCmd = &cobra.Command{
 	Short: "Generate Models",
 	Long:  "Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories",
 	Example: `
-    Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
-
-	Usage:
-	
-    mesheryctl registry generate --spreadsheet-url <url> --spreadsheet-cred <base64 encoded spreadsheet credential>
+// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+mesheryctl registry generate --spreadsheet-url <url> --spreadsheet-cred <base64 encoded spreadsheet credential>
     
-    // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-    mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
+// Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
+mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := os.MkdirAll(logDirPath, 0755)
