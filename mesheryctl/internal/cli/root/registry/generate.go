@@ -56,7 +56,7 @@ var (
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
-	Long:  "Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories",
+	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
 mesheryctl registry generate --spreadsheet-url <url> --spreadsheet-cred <base64 encoded spreadsheet credential>
