@@ -178,7 +178,7 @@ function Connections(props) {
   } = props;
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -198,9 +198,14 @@ function Connections(props) {
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
-  const { data: connectionData, refetch: getConnections } = useGetConnectionsQuery({
+  const {
+    data: connectionData,
+    isError: isConnectionError,
+    error: connectionError,
+    refetch: getConnections,
+  } = useGetConnectionsQuery({
     page: page,
-    pageSize: pageSize,
+    pagesize: pageSize,
     search: search,
     sortOrder: sortOrder,
     status: statusFilter ? JSON.stringify([statusFilter]) : '',
@@ -928,14 +933,8 @@ function Connections(props) {
     return initialVisibility;
   });
 
-  /**
-   * fetch connections when the page loads
-   */
   useEffect(() => {
     updateCols(columns);
-  }, [isEnvironmentsSuccess]);
-
-  useEffect(() => {
     if (isEnvironmentsError) {
       notify({
         message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
@@ -943,7 +942,15 @@ function Connections(props) {
         details: environmentsError.toString(),
       });
     }
-  }, [environmentsError]);
+
+    if (isConnectionError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: connectionError.toString(),
+      });
+    }
+  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
