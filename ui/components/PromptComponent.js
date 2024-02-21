@@ -191,7 +191,11 @@ class PromptComponent extends React.Component {
                   <div className="titleItems">
                     <CustomTextTooltip title={helpText}>
                       <IconButton>
-                        <HelpOutlineIcon height={'2rem'} width={'2rem'} />
+                        <HelpOutlineIcon
+                          height={'2rem'}
+                          width={'2rem'}
+                          fill={theme.palette.secondary.primaryModalText}
+                        />
                       </IconButton>
                     </CustomTextTooltip>
                   </div>
