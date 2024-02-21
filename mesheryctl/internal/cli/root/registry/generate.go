@@ -65,6 +65,10 @@ mesheryctl registry generate --spreadsheet-url <url> --spreadsheet-cred <base64 
 mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
+		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		//
+
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
