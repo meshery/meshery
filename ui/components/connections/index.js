@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   NoSsr,
   TableCell,
@@ -178,18 +178,14 @@ function Connections(props) {
   } = props;
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
-  const [connections, setConnections] = useState([]);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
-  const [filter, setFilter] = useState('');
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -224,6 +220,26 @@ function Connections(props) {
   );
   let environments = environmentsResponse?.environments || [];
 
+  const modifiedConnections = connectionData?.connections.map((connection) => {
+    return {
+      ...connection,
+      nextStatus:
+        connection.nextStatus === undefined &&
+        connectionMetadataState[connection.kind]?.transitions,
+      kindLogo: connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon,
+    };
+  });
+
+  const connections = modifiedConnections?.filter((connection) => {
+    if (selectedFilters.status === 'All' && selectedFilters.kind === 'All') {
+      return true;
+    }
+    return (
+      (statusFilter === null || connection.status === statusFilter) &&
+      (kindFilter === null || connection.kind === kindFilter)
+    );
+  });
+
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -233,7 +249,6 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -480,8 +495,8 @@ function Connections(props) {
                     <MultiSelectWrapper
                       onChange={(selected, unselected) =>
                         handleEnvironmentSelect(
-                          connections[tableMeta.rowIndex].id,
-                          connections[tableMeta.rowIndex].name,
+                          getColumnValue(tableMeta.rowData, 'id', columns),
+                          getColumnValue(tableMeta.rowData, 'name', columns),
                           cleanedEnvs,
                           selected,
                           unselected,
@@ -798,143 +813,107 @@ function Connections(props) {
     },
   ];
 
-  const options = useMemo(
-    () => ({
-      filter: false,
-      viewColumns: false,
-      search: false,
-      responsive: 'standard',
-      resizableColumns: true,
-      serverSide: true,
-      count,
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 30],
-      fixedHeader: true,
-      page,
-      print: false,
-      download: false,
-      textLabels: {
-        selectedRows: {
-          text: 'connection(s) selected',
-        },
+  const options = {
+    filter: false,
+    viewColumns: false,
+    search: false,
+    responsive: 'standard',
+    resizableColumns: true,
+    serverSide: true,
+    count: connectionData?.total_count,
+    rowsPerPage: pageSize,
+    rowsPerPageOptions: [10, 20, 30],
+    fixedHeader: true,
+    page,
+    print: false,
+    download: false,
+    textLabels: {
+      selectedRows: {
+        text: 'connection(s) selected',
       },
-      customToolbarSelect: (selected) => (
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          // @ts-ignore
-          onClick={() => handleDeleteConnections(selected)}
-          style={{ background: '#8F1F00', marginRight: '10px' }}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
-        >
-          <DeleteForeverIcon style={iconMedium} />
-          Delete
-        </Button>
-      ),
-      enableNestedDataAccess: '.',
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        let order = '';
-        if (tableState.activeColumn) {
-          order = `${columns[tableState.activeColumn].name} desc`;
-        }
-        switch (action) {
-          case 'changePage':
-            setPage(tableState.page.toString());
-            break;
-          case 'changeRowsPerPage':
-            setPageSize(tableState.rowsPerPage.toString());
-            break;
-          case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${columns[tableState.activeColumn].name} asc`;
-              } else {
-                order = `${columns[tableState.activeColumn].name} desc`;
-              }
+    },
+    customToolbarSelect: (selected) => (
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        // @ts-ignore
+        onClick={() => handleDeleteConnections(selected)}
+        style={{ background: '#8F1F00', marginRight: '10px' }}
+        disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+      >
+        <DeleteForeverIcon style={iconMedium} />
+        Delete
+      </Button>
+    ),
+    enableNestedDataAccess: '.',
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+      let order = '';
+      if (tableState.activeColumn) {
+        order = `${columns[tableState.activeColumn].name} desc`;
+      }
+      switch (action) {
+        case 'changePage':
+          setPage(tableState.page.toString());
+          break;
+        case 'changeRowsPerPage':
+          setPageSize(tableState.rowsPerPage.toString());
+          break;
+        case 'sort':
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === 'ascending') {
+              order = `${columns[tableState.activeColumn].name} asc`;
+            } else {
+              order = `${columns[tableState.activeColumn].name} desc`;
             }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
-            break;
-        }
-      },
-      expandableRows: true,
-      expandableRowsHeader: false,
-      expandableRowsOnClick: true,
-      rowsExpanded: rowsExpanded,
-      isRowExpandable: () => {
-        return true;
-      },
-      onRowExpansionChange: (_, allRowsExpanded) => {
-        setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-        setShowMore(false);
-      },
-      renderExpandableRow: (rowData, tableMeta) => {
-        const colSpan = rowData.length;
-        const connection = connections && connections[tableMeta.rowIndex];
-        return (
-          <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-            <TableContainer className={classes.innerTableContainer}>
-              <Table>
-                <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                      <Grid item xs={12} md={12} className={classes.contentContainer}>
-                        <Grid container spacing={1}>
-                          <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <FormatConnectionMetadata
-                              connection={connection}
-                              meshsyncControllerState={meshsyncControllerState}
-                            />
-                          </Grid>
+          }
+          if (order !== sortOrder) {
+            setSortOrder(order);
+          }
+          break;
+      }
+    },
+    expandableRows: true,
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    rowsExpanded: rowsExpanded,
+    isRowExpandable: () => {
+      return true;
+    },
+    onRowExpansionChange: (_, allRowsExpanded) => {
+      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      // setShowMore(false);
+    },
+    renderExpandableRow: (rowData, tableMeta) => {
+      const colSpan = rowData.length;
+      const connection = connections && connections[tableMeta.rowIndex];
+      return (
+        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
+          <TableContainer className={classes.innerTableContainer}>
+            <Table>
+              <TableRow className={classes.noGutter}>
+                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
+                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                    <Grid item xs={12} md={12} className={classes.contentContainer}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12} md={12} className={classes.contentContainer}>
+                          <FormatConnectionMetadata
+                            connection={connection}
+                            meshsyncControllerState={meshsyncControllerState}
+                          />
                         </Grid>
                       </Grid>
                     </Grid>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </TableContainer>
-          </TableCell>
-        );
-      },
-    }),
-    [rowsExpanded, showMore, page, pageSize],
-  );
-
-  useEffect(() => {
-    if (connectionData) {
-      const modifiedConnections = connectionData.connections.map((connection) => {
-        return {
-          ...connection,
-          nextStatus:
-            connection.nextStatus === undefined &&
-            connectionMetadataState[connection.kind]?.transitions,
-          kindLogo:
-            connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon,
-        };
-      });
-
-      const filteredConnections = modifiedConnections.filter((connection) => {
-        if (selectedFilters.status === 'All' && selectedFilters.kind === 'All') {
-          return true;
-        }
-        return (
-          (statusFilter === null || connection.status === statusFilter) &&
-          (kindFilter === null || connection.kind === kindFilter)
-        );
-      });
-
-      setConnections(filteredConnections);
-      setCount(connectionData?.total_count);
-      setPageSize(connectionData?.page_size);
-      setPage(connectionData?.page);
-      // setStatusFilter(statusFilter);
-      // setKindFilter(kindFilter);
-      setFilter(filter);
-    }
-  }, [connectionData, connectionMetadataState]);
+                  </Grid>
+                </TableCell>
+              </TableRow>
+            </Table>
+          </TableContainer>
+        </TableCell>
+      );
+    },
+  };
 
   const [tableCols, updateCols] = useState(columns);
 
@@ -953,9 +932,6 @@ function Connections(props) {
    */
   useEffect(() => {
     updateCols(columns);
-    // if (!loading && connectionMetadataState) {
-    //   getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
-    // }
   }, [isEnvironmentsSuccess]);
 
   useEffect(() => {
@@ -1100,8 +1076,8 @@ function Connections(props) {
     };
   };
 
-  function getOperatorStatus(index) {
-    const ctxId = connections[index]?.metadata?.id;
+  function getOperatorStatus() {
+    const ctxId = connections?.metadata?.id;
     const operator = meshsyncControllerState?.find(
       (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
     );
@@ -1188,7 +1164,6 @@ function Connections(props) {
 
     setKindFilter(kindFilter);
     setStatusFilter(statusFilter);
-    // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
   };
 
   return (
