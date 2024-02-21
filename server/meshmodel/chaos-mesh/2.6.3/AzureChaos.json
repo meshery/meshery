@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AzureChaos",
+  "apiVersion": "chaos-mesh.org/v1alpha1",
+  "displayName": "Azure Chaos",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "chaos-mesh",
+   "version": "2.6.3",
+   "displayName": "chaos-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.chaos-mesh.org/chaos-mesh-2.6.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AzureChaos is the Schema for the azurechaos API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AzureChaosSpec is the content of the specification for an AzureChaos\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"Action defines the specific azure chaos action. Supported action: vm-stop / vm-restart / disk-detach Default action: vm-stop\",\n     \"enum\": [\n      \"vm-stop\",\n      \"vm-restart\",\n      \"disk-detach\"\n     ],\n     \"type\": \"string\"\n    },\n    \"diskName\": {\n     \"description\": \"DiskName indicates the name of the disk. Needed in disk-detach.\",\n     \"type\": \"string\"\n    },\n    \"duration\": {\n     \"description\": \"Duration represents the duration of the chaos action.\",\n     \"type\": \"string\"\n    },\n    \"lun\": {\n     \"description\": \"LUN indicates the Logical Unit Number of the data disk. Needed in disk-detach.\",\n     \"type\": \"integer\"\n    },\n    \"remoteCluster\": {\n     \"description\": \"RemoteCluster represents the remote cluster where the chaos will be deployed\",\n     \"type\": \"string\"\n    },\n    \"resourceGroupName\": {\n     \"description\": \"ResourceGroupName defines the name of ResourceGroup\",\n     \"type\": \"string\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName defines the name of kubernetes secret. It is used for Azure credentials.\",\n     \"type\": \"string\"\n    },\n    \"subscriptionID\": {\n     \"description\": \"SubscriptionID defines the id of Azure subscription.\",\n     \"type\": \"string\"\n    },\n    \"vmName\": {\n     \"description\": \"VMName defines the name of Virtual Machine\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"action\",\n    \"resourceGroupName\",\n    \"subscriptionID\",\n    \"vmName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Azure Chaos\",\n \"type\": \"object\"\n}"
+ }

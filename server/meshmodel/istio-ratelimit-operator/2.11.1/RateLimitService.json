@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "RateLimitService",
+  "apiVersion": "ratelimit.zufardhiyaulhaq.com/v1alpha1",
+  "displayName": "Rate Limit Service",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#466BB0",
+   "secondaryColor": "#93b0e9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "istio-ratelimit-operator",
+   "version": "2.11.1",
+   "displayName": "istio-ratelimit-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://zufardhiyaulhaq.com/istio-ratelimit-operator/charts/releases/istio-ratelimit-operator-2.11.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"RateLimitService is the Schema for the ratelimitservices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RateLimitServiceSpec defines the desired state of RateLimitService\",\n   \"properties\": {\n    \"backend\": {\n     \"properties\": {\n      \"redis\": {\n       \"properties\": {\n        \"auth\": {\n         \"type\": \"string\"\n        },\n        \"config\": {\n         \"properties\": {\n          \"pipeline_limit\": {\n           \"type\": \"integer\"\n          },\n          \"pipeline_window\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"environment\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetes\": {\n     \"properties\": {\n      \"auto_scaling\": {\n       \"properties\": {\n        \"max_replicas\": {\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"min_replicas\": {\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"extra_labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"replica_count\": {\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"resources\": {\n       \"description\": \"ResourceRequirements describes the compute resource requirements.\",\n       \"properties\": {\n        \"claims\": {\n         \"description\": \"Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container. \\n This is an alpha field and requires enabling the DynamicResourceAllocation feature gate. \\n This field is immutable.\",\n         \"items\": {\n          \"description\": \"ResourceClaim references one entry in PodSpec.ResourceClaims.\",\n          \"properties\": {\n           \"name\": {\n            \"description\": \"Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-map-keys\": [\n          \"name\"\n         ],\n         \"x-kubernetes-list-type\": \"map\"\n        },\n        \"limits\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"description\": \"Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\",\n         \"type\": \"object\"\n        },\n        \"requests\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"description\": \"Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"monitoring\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"statsd\": {\n       \"description\": \"This API is deprecated\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"spec\": {\n         \"properties\": {\n          \"host\": {\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit Service\",\n \"type\": \"object\"\n}"
+ }

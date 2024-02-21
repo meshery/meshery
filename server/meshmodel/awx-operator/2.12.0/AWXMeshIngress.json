@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AWXMeshIngress",
+  "apiVersion": "awx.ansible.com/v1alpha1",
+  "displayName": "AWX Mesh Ingress",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "awx-operator",
+   "version": "2.12.0",
+   "displayName": "awx-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/ansible/awx-operator/releases/download/2.12.0/awx-operator-2.12.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AWXMeshIngress is the Schema for the awxmeshingresses API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of AWXMeshIngress\",\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"deployment_name\": {\n     \"description\": \"Name of the AWX deployment to create the Mesh Ingress for.\",\n     \"type\": \"string\"\n    },\n    \"external_hostname\": {\n     \"description\": \"External hostname to use for the Mesh Ingress.\",\n     \"type\": \"string\"\n    },\n    \"external_ipaddress\": {\n     \"description\": \"External IP address to use for the Mesh Ingress.\",\n     \"type\": \"string\"\n    },\n    \"ingress_annotations\": {\n     \"description\": \"Annotations to add to the Ingress Controller\",\n     \"type\": \"string\"\n    },\n    \"ingress_api_version\": {\n     \"description\": \"The Ingress API version to use\",\n     \"type\": \"string\"\n    },\n    \"ingress_class_name\": {\n     \"description\": \"The name of ingress class to use instead of the cluster default.\",\n     \"type\": \"string\"\n    },\n    \"ingress_controller\": {\n     \"description\": \"Special configuration for specific Ingress Controllers\",\n     \"type\": \"string\"\n    },\n    \"ingress_type\": {\n     \"description\": \"The ingress type to use to reach the deployed instance\",\n     \"enum\": [\n      \"none\",\n      \"Ingress\",\n      \"ingress\",\n      \"IngressRouteTCP\",\n      \"ingressroutetcp\",\n      \"Route\",\n      \"route\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"deployment_name\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"title\": \"AWX Mesh Ingress\",\n \"type\": \"object\"\n}"
+ }

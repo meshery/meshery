@@ -166,8 +166,8 @@ const ExportModal = (props) => {
       <DialogContent
         style={{
           display: 'inline-table',
-          maxWidth: '688px',
-          padding: '5rem',
+          maxWidth: '50rem',
+          padding: '3rem',
           margin: '0 auto',
         }}
       >
@@ -178,13 +178,15 @@ const ExportModal = (props) => {
             width: 'auto',
             textAlign: 'center',
             alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
           }}
         >
           {downloadModal?.content?.type?.String && (
             <div>
               <Typography
                 component={'h4'}
-                style={{ paddingBottom: '1.5rem' }}
+                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
                 className={classes.text}
               >
                 Original ({downloadModal?.content?.type?.String})

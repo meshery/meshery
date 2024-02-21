@@ -2,11 +2,11 @@
 <h2>Suggested Reading</h2>
 {% endif %}
 
-{% assign sorted_reading = site.pages | sort: page.title %}
+{% assign sorted_reading = site.pages | sort: include.title %}
 
 <ul>
   {% for item in sorted_reading %}
-    {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url and item.language == include.language %}
+    {% if item.type==include.type and item.category==include.category and item.list!="exclude" and include.url!=item.url and item.language == include.language %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract %}
       - {{ item.abstract }}

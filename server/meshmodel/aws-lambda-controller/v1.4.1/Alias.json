@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Alias",
+  "apiVersion": "lambda.services.k8s.aws/v1alpha1",
+  "displayName": "Alias",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-lambda-controller",
+   "version": "v1.4.1",
+   "displayName": "aws-lambda-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Alias is the Schema for the Aliases API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description of the alias.\",\n     \"type\": \"string\"\n    },\n    \"functionEventInvokeConfig\": {\n     \"description\": \"Configures options for asynchronous invocation on an alias.\\n\\n\\n- DestinationConfig\\nA destination for events after they have been sent to a function for processing.\\n\\n\\nTypes of Destinations:\\nFunction - The Amazon Resource Name (ARN) of a Lambda function.\\nQueue - The ARN of a standard SQS queue.\\nTopic - The ARN of a standard SNS topic.\\nEvent Bus - The ARN of an Amazon EventBridge event bus.\\n\\n\\n- MaximumEventAgeInSeconds\\nThe maximum age of a request that Lambda sends to a function for processing.\\n\\n\\n- MaximumRetryAttempts\\nThe maximum number of times to retry when the function returns an error.\",\n     \"properties\": {\n      \"destinationConfig\": {\n       \"description\": \"A configuration object that specifies the destination of an event after Lambda\\nprocesses it.\",\n       \"properties\": {\n        \"onFailure\": {\n         \"description\": \"A destination for events that failed processing.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"onSuccess\": {\n         \"description\": \"A destination for events that were processed successfully.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"functionName\": {\n       \"type\": \"string\"\n      },\n      \"maximumEventAgeInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maximumRetryAttempts\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"qualifier\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionName\": {\n     \"description\": \"The name of the Lambda function.\\n\\n\\nName formats\\n\\n\\n  - Function name - MyFunction.\\n\\n\\n  - Function ARN - arn:aws:lambda:us-west-2:123456789012:function:MyFunction.\\n\\n\\n  - Partial ARN - 123456789012:function:MyFunction.\\n\\n\\nThe length constraint applies only to the full ARN. If you specify only the\\nfunction name, it is limited to 64 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"functionRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionVersion\": {\n     \"description\": \"The function version that the alias invokes.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name of the alias.\",\n     \"type\": \"string\"\n    },\n    \"provisionedConcurrencyConfig\": {\n     \"description\": \"Configures provisioned concurrency to a function's alias\\n\\n\\n- ProvisionedConcurrentExecutions\\nThe amount of provisioned concurrency to allocate for the version or alias.\\nMinimum value of 1 is required\",\n     \"properties\": {\n      \"functionName\": {\n       \"type\": \"string\"\n      },\n      \"provisionedConcurrentExecutions\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"qualifier\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"routingConfig\": {\n     \"description\": \"The routing configuration (https://docs.aws.amazon.com/lambda/latest/dg/configuration-aliases.html#configuring-alias-routing)\\nof the alias.\",\n     \"properties\": {\n      \"additionalVersionWeights\": {\n       \"additionalProperties\": {\n        \"type\": \"number\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"functionVersion\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Alias\",\n \"type\": \"object\"\n}"
+ }

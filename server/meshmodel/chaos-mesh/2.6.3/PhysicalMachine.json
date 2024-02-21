@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PhysicalMachine",
+  "apiVersion": "chaos-mesh.org/v1alpha1",
+  "displayName": "Physical Machine",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "chaos-mesh",
+   "version": "2.6.3",
+   "displayName": "chaos-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.chaos-mesh.org/chaos-mesh-2.6.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PhysicalMachine is the Schema for the physical machine API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the behavior of a physical machine\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"Address represents the address of the physical machine\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"address\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Physical Machine\",\n \"type\": \"object\"\n}"
+ }

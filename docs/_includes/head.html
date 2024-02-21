@@ -18,24 +18,24 @@
   <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="144x144" />
   <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-192x192.png" sizes="192x192" />
 
-  <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %} | Meshery</title>
-  <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+  <title>{% if include.title %}{{ include.title }}{% else %}{{ include.title }}{% endif %} | Meshery</title>
+  <meta property="og:title" content="{% if include.title %}{{ include.title }}{% else %}{{ site.title }}{% endif %}" />
   <meta property="og:description"
-    content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}" />
+    content="{% if include.description %}{{ include.description }}{% else %}{{ site.description }}{% endif %}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ site.url }}" />
   <meta property="og:site_name" content="{{ site.url }}" />
   <meta property="og:image"
     content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
 
-  <meta itemprop="name" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+  <meta itemprop="name" content="{% if include.title %}{{ include.title }}{% else %}{{ site.title }}{% endif %}" />
   <meta itemprop="description"
-    content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
+    content="{% if include.description %}{{ include.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+  <meta name="twitter:title" content="{% if include.title %}{{ include.title }}{% else %}{{ site.title }}{% endif %}" />
   <meta name="twitter:description"
-    content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
+    content="{% if include.description %}{{ include.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
   <meta name="twitter:image"
     content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
   

@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Version",
+  "apiVersion": "lambda.services.k8s.aws/v1alpha1",
+  "displayName": "Version",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-lambda-controller",
+   "version": "v1.4.1",
+   "displayName": "aws-lambda-controller",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Version is the Schema for the Versions API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"codeSHA256\": {\n     \"description\": \"Only publish a version if the hash value matches the value that's specified.\\nUse this option to avoid publishing a version if the function code has changed\\nsince you last updated it. You can get the hash for the version that you\\nuploaded from the output of UpdateFunctionCode.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A description for the version to override the description in the function\\nconfiguration.\",\n     \"type\": \"string\"\n    },\n    \"functionEventInvokeConfig\": {\n     \"properties\": {\n      \"destinationConfig\": {\n       \"description\": \"A configuration object that specifies the destination of an event after Lambda\\nprocesses it.\",\n       \"properties\": {\n        \"onFailure\": {\n         \"description\": \"A destination for events that failed processing.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"onSuccess\": {\n         \"description\": \"A destination for events that were processed successfully.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"functionName\": {\n       \"type\": \"string\"\n      },\n      \"maximumEventAgeInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maximumRetryAttempts\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"qualifier\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionName\": {\n     \"description\": \"The name of the Lambda function.\\n\\n\\nName formats\\n\\n\\n  - Function name - MyFunction.\\n\\n\\n  - Function ARN - arn:aws:lambda:us-west-2:123456789012:function:MyFunction.\\n\\n\\n  - Partial ARN - 123456789012:function:MyFunction.\\n\\n\\nThe length constraint applies only to the full ARN. If you specify only the\\nfunction name, it is limited to 64 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"functionRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"provisionedConcurrencyConfig\": {\n     \"properties\": {\n      \"functionName\": {\n       \"type\": \"string\"\n      },\n      \"provisionedConcurrentExecutions\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"qualifier\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"revisionID\": {\n     \"description\": \"Only update the function if the revision ID matches the ID that's specified.\\nUse this option to avoid publishing a version if the function configuration\\nhas changed since you last updated it.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Version\",\n \"type\": \"object\"\n}"
+ }

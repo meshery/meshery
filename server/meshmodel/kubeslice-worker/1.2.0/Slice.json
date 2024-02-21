@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Slice",
+  "apiVersion": "networking.kubeslice.io/v1beta1",
+  "displayName": "Slice",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00105f",
+   "secondaryColor": "#2bbafe",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubeslice-worker",
+   "version": "1.2.0",
+   "displayName": "kubeslice-worker",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/kubeslice/kubeslice/releases/download/kubeslice-worker-1.2.0/kubeslice-worker-1.2.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Slice is the Schema for the slices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceSpec defines the desired state of Slice\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice\",\n \"type\": \"object\"\n}"
+ }

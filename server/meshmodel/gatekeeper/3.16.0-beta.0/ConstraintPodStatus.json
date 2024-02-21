@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ConstraintPodStatus",
+  "apiVersion": "status.gatekeeper.sh/v1beta1",
+  "displayName": "Constraint Pod Status",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gatekeeper",
+   "version": "3.16.0-beta.0",
+   "displayName": "gatekeeper",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://open-policy-agent.github.io/gatekeeper/charts/gatekeeper-3.16.0-beta.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ConstraintPodStatus is the Schema for the constraintpodstatuses API.\",\n \"properties\": {},\n \"title\": \"Constraint Pod Status\",\n \"type\": \"object\"\n}"
+ }

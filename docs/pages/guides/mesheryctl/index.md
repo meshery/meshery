@@ -24,7 +24,9 @@ From the Command Line: Guides to using Meshery's various features and components
     <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
 
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

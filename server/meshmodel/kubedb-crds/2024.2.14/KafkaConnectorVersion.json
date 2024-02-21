@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "KafkaConnectorVersion",
+  "apiVersion": "catalog.kubedb.com/v1alpha1",
+  "displayName": "Kafka Connector Version",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubedb-crds",
+   "version": "2024.2.14",
+   "displayName": "kubedb-crds",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-crds/kubedb-crds-v2024.2.14.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"connectorPlugin\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deprecated\": {\n     \"type\": \"boolean\"\n    },\n    \"securityContext\": {\n     \"properties\": {\n      \"runAsUser\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectorPlugin\",\n    \"type\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Connector Version\",\n \"type\": \"object\"\n}"
+ }

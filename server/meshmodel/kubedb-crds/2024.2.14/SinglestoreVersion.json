@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SinglestoreVersion",
+  "apiVersion": "catalog.kubedb.com/v1alpha1",
+  "displayName": "Singlestore Version",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubedb-crds",
+   "version": "2024.2.14",
+   "displayName": "kubedb-crds",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-crds/kubedb-crds-v2024.2.14.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"coordinator\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"db\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deprecated\": {\n     \"type\": \"boolean\"\n    },\n    \"initContainer\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"securityContext\": {\n     \"properties\": {\n      \"runAsGroup\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"runAsUser\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"standalone\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"stash\": {\n     \"properties\": {\n      \"addon\": {\n       \"properties\": {\n        \"backupTask\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"items\": {\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"restoreTask\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"items\": {\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"backupTask\",\n        \"restoreTask\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"updateConstraints\": {\n     \"properties\": {\n      \"allowlist\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"denylist\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"db\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Singlestore Version\",\n \"type\": \"object\"\n}"
+ }

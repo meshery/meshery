@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ZoneEgressInsight",
+  "apiVersion": "kuma.io/v1alpha1",
+  "displayName": "Zone Egress Insight",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong-mesh",
+   "version": "2.6.0",
+   "displayName": "kong-mesh",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.6.0/kong-mesh-2.6.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"mesh\": {\n   \"description\": \"Mesh is the name of the Kuma mesh this resource belongs to.\\nIt may be omitted for cluster-scoped resources.\",\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma ZoneEgressInsight resource.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Zone Egress Insight\",\n \"type\": \"object\"\n}"
+ }

@@ -392,7 +392,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       {
         id: SERVICE_MESH,
         href: '/management/service-mesh',
-        title: 'Service Mesh',
+        title: 'Adapters',
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,

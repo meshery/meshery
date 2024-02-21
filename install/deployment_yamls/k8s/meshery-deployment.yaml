@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose convert -f ../docker-compose.yaml
-    kompose.version: 1.17.0 ()
+    kompose.version: 1.32.0 ()
   creationTimestamp: null
   labels:
     io.kompose.service: meshery
@@ -22,18 +22,18 @@ spec:
     spec:
       serviceAccountName: meshery-server
       containers:
-        - env:
-            - name: EVENT
-              value: mesheryLocal
-            - name: PROVIDER_BASE_URLS
-              value: https://meshery.layer5.io
-            - name: ADAPTER_URLS
-              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-nginx-sm:10010
-          image: layer5/meshery:stable-latest
-          imagePullPolicy: Always
-          name: meshery
-          ports:
-            - containerPort: 8080
-          resources: {}
+      - env:
+        - name: EVENT
+          value: mesheryLocal
+        - name: PROVIDER_BASE_URLS
+          value: https://meshery.layer5.io
+        - name: ADAPTER_URLS
+          value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-nginx-sm:10010
+        image: layer5/meshery:stable-latest
+        imagePullPolicy: Always
+        name: meshery
+        ports:
+        - containerPort: 8080
+        resources: {}
       restartPolicy: Always
 status: {}

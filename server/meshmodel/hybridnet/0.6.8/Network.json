@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Network",
+  "apiVersion": "networking.alibaba.com/v1",
+  "displayName": "Network",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#FF6A00",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FF6A00;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n\th17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n\tc0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n        h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n        c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hybridnet",
+   "version": "0.6.8",
+   "displayName": "hybridnet",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/alibaba/hybridnet/releases/download/helm-chart-0.6.8/hybridnet-0.6.8.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Network is the Schema for the networks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkSpec defines the desired state of Network\",\n   \"properties\": {\n    \"config\": {\n     \"properties\": {\n      \"bgpPeers\": {\n       \"items\": {\n        \"properties\": {\n         \"address\": {\n          \"type\": \"string\"\n         },\n         \"allowNotEstablished\": {\n          \"type\": \"boolean\"\n         },\n         \"asn\": {\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"doesNotRouteTraffic\": {\n          \"type\": \"boolean\"\n         },\n         \"gracefulRestartSeconds\": {\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"password\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"address\",\n         \"asn\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"mode\": {\n     \"type\": \"string\"\n    },\n    \"netID\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network\",\n \"type\": \"object\"\n}"
+ }
