@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 1
           
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
 
@@ -27,10 +27,10 @@ jobs:
       - name: Generate Models and Components
         run: |
           cd mesheryctl;
-          ./mesheryctl registry import --spreadsheet_id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet_cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+          ./mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: generate-logs
           path: ~/.meshery/logs/
@@ -67,13 +67,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
           
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
       - name: Pull changes from remote
@@ -84,7 +84,7 @@ jobs:
       - name: Run Model Updater
         run: |
           cd mesheryctl;
-          ./mesheryctl registry update -i ../server/meshmodel --spreadsheet_id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet_cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+          ./mesheryctl registry update -i ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet_cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
