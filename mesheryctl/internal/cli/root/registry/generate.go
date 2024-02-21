@@ -41,8 +41,8 @@ var (
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
-	// Tracks the indexed mapping between component spreadsheet columns.
-	// Used when generating component definition from spreadsheet itself, for eg: Compnent of Meshery core model.
+	// Maps the relationship between the Models sheet and Components sheet of the Meshery Integration spreadsheet columns.
+	// Used when generating Component definition from spreadsheet itself, for eg: Component of Meshery core model.
 	// The GoogleSpreadsheetAPI doesn't return column names, hence when invoking generation columns names are retrived by dumoing the sheet in CSV format then extrcting the columns (ComponentCSVHelper)
 	componentSpreadsheetCols []string
 
@@ -58,11 +58,14 @@ var generateCmd = &cobra.Command{
 	Short: "Generate Models",
 	Long:  "Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories",
 	Example: `
-    // Generate models from Meshery Integration Spreadsheet
-    mesheryctl registry generate --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
+    Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+
+	Usage:
+	
+    mesheryctl registry generate --spreadsheet-url <url> --spreadsheet-cred <base64 encoded spreadsheet credential>
     
     // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-    mesheryctl registry generate --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
+    mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := os.MkdirAll(logDirPath, 0755)
@@ -335,17 +338,17 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 func init() {
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
-	generateCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
+	generateCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet-cred")
 
-	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
-	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant-def", "", "path pointing to the registrant connection definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credetial definition")
 
-	generateCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
+	generateCmd.MarkFlagsRequiredTogether("registrant-def", "registrant-cred")
 
-	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
-	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant-def")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }
