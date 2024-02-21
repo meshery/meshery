@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "argo-cd",
-  "version": "6.2.1",
+  "version": "6.2.3",
   "displayName": "Argo CD Applications",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "category": {
