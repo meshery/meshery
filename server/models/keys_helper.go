@@ -11,7 +11,7 @@ import (
 var (
 	rowIndex = 1
 	// The column in the spreadsheet which tracks whether the key should be registerd with Local Provider or not.
-	shouldRegister = "Local Provider"
+	shouldRegister         = "Local Provider"
 	shouldRegisterColIndex = -1
 )
 
@@ -21,18 +21,22 @@ type KeysRegistrationHelper struct {
 	keyPersister *KeyPersister
 }
 
-func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) *KeysRegistrationHelper {
-	return &KeysRegistrationHelper{
+func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) (*KeysRegistrationHelper, error) {
+	krh := &KeysRegistrationHelper{
 		log:      log,
 		keysChan: make(chan Key, 1),
 		keyPersister: &KeyPersister{
 			DB: dbHandler,
 		},
 	}
+	err := krh.keyPersister.DB.AutoMigrate(
+		Key{},
+	)
+	return krh, err
 }
 
 // returns the spreadsheet column index that captures whether the key should be registered.
-func(kh *KeysRegistrationHelper) GetIndexForRegisterCol(cols[] string) int {
+func (kh *KeysRegistrationHelper) GetIndexForRegisterCol(cols []string) int {
 	if shouldRegisterColIndex != -1 {
 		return shouldRegisterColIndex
 	}
@@ -78,8 +82,8 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 			if err != nil {
 				kh.log.Error(err)
 			}
-		case err := <- errorChan:
-				kh.log.Error(err)
+		case err := <-errorChan:
+			kh.log.Error(err)
 
 		case <-csvReader.Context.Done():
 			return

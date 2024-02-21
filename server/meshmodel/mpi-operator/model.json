@@ -1,0 +1,21 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "mpi-operator",
+  "version": "1.2.2",
+  "displayName": "Kubeflow MPI Operator",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Machine Learning",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": true,
+   "subCategory": "Machine Learning",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183\" xml:space=\"preserve\"\u003e\u003cpath d=\"m51.4 62.1 4.1 102.1 73.8-94.1c1.1-1.4 2.8-2.3 4.6-2.6 1.8-.2 3.6.3 5 1.4l46 36.9-15-65.6L51.4 62.1z\" style=\"fill:#4279f4\"/\u003e\u003cpath style=\"fill:#0028aa\" d=\"M58.1 183h65.4l-40.2-32.2z\"/\u003e\u003cpath style=\"fill:#014bd1\" d=\"m135.7 83.9-44 56.2 46.9 37.6 44.5-55.8z\"/\u003e\u003cpath style=\"fill:#bedcff\" d=\"M39.1 52.3 77.8 3.8l-62.4 30L0 101.3z\"/\u003e\u003cpath style=\"fill:#6ca1ff\" d=\"m.9 122 41.4 52-3.9-99z\"/\u003e\u003cpath style=\"fill:#a1c3ff\" d=\"M157.8 28.7 98.2 0 61.1 46.6z\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" x=\"0\" y=\"0\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183\" xml:space=\"preserve\"\u003e\u003cstyle\u003e.st0{fill:#fff}\u003c/style\u003e\u003cpath class=\"st0\" d=\"m51.4 62.1 4.1 102.1 73.8-94.1c1.1-1.4 2.8-2.3 4.6-2.6 1.8-.2 3.6.3 5 1.4l46 36.9-15-65.6L51.4 62.1z\"/\u003e\u003cpath class=\"st0\" d=\"M58.1 183h65.4l-40.2-32.2zm77.6-99.1-44 56.2 46.9 37.6 44.5-55.8zM39.1 52.3 77.8 3.8l-62.4 30L0 101.3zM.9 122l41.4 52-3.9-99zm156.9-93.3L98.2 0 61.1 46.6z\"/\u003e\u003c/svg\u003e"
+  },
+  "components": null,
+  "relationships": null
+ }

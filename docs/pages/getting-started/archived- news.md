@@ -1,9 +1,12 @@
 ---
 title: News
+abstract: Subscribe with RSS to keep up with the latest news.
 permalink: /news/
 excluded_in_search: true
 language: en
 display-title: "false"
+suggested-reading: false
+list: exclude
 ---
 
 # News

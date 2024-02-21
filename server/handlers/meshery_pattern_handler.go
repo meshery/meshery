@@ -8,13 +8,16 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
+	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
@@ -22,6 +25,7 @@ import (
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -31,13 +35,38 @@ import (
 
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
-type MesheryPatternRequestBody struct {
+type MesheryPatternPOSTRequestBody struct {
+	Name          string                 `json:"name,omitempty"`
+	URL           string                 `json:"url,omitempty"`
+	Path          string                 `json:"path,omitempty"`
+	Save          bool                   `json:"save,omitempty"`
+	PatternData   *mesheryPatternPayload `json:"pattern_data,omitempty"`
+	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
+}
+
+type MesheryPatternUPDATERequestBody struct {
 	Name          string                 `json:"name,omitempty"`
 	URL           string                 `json:"url,omitempty"`
 	Path          string                 `json:"path,omitempty"`
 	Save          bool                   `json:"save,omitempty"`
 	PatternData   *models.MesheryPattern `json:"pattern_data,omitempty"`
 	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
+}
+
+type mesheryPatternPayload struct {
+	ID *uuid.UUID `json:"id,omitempty"`
+
+	Name        string `json:"name,omitempty"`
+	PatternFile []byte `json:"pattern_file"`
+	// Meshery doesn't have the user id fields
+	// but the remote provider is allowed to provide one
+	UserID *string `json:"user_id"`
+
+	Location      isql.Map       `json:"location"`
+	Visibility    string         `json:"visibility"`
+	CatalogData   isql.Map       `json:"catalog_data,omitempty"`
+	Type          sql.NullString `json:"type"`
+	SourceContent []byte         `json:"source_content"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
@@ -82,20 +111,14 @@ func (h *Handler) handlePatternPOST(
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
-	res := meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "Design",
-		OperationId:   uuid.Nil.String(), // to be removed
-		EventType:     meshes.EventType_INFO,
-	}
 	sourcetype := mux.Vars(r)["sourcetype"]
-	var parsedBody *MesheryPatternRequestBody
+	parsedBody := &MesheryPatternPOSTRequestBody{}
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrRequestBody(err),
-		}).WithDescription("Unable to parse uploaded pattern.").Build()
+		}).WithDescription("Unable to parse uploaded design.").Build()
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -124,7 +147,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	format := r.URL.Query().Get("output")
-	var mesheryPattern *models.MesheryPattern
+	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
 
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
@@ -198,7 +221,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
@@ -211,17 +234,16 @@ func (h *Handler) handlePatternPOST(
 		if err != nil {
 			h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrEncodePattern(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
 
 		return
 	}
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
+		mesheryPattern.Name = parsedBody.PatternData.Name
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
@@ -232,28 +254,23 @@ func (h *Handler) handlePatternPOST(
 			}
 		}
 
-		mesheryPattern = parsedBody.PatternData
-		bytPattern := []byte(mesheryPattern.PatternFile)
+		bytPattern := parsedBody.PatternData.PatternFile
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
 			if sourcetype == string(models.DockerCompose) {
 				k8sres, err = kompose.Convert(bytPattern) // convert the docker compose file into kubernetes manifest
 				if err != nil {
-					obj := "convert"
-					conversionErr := ErrApplicationFailure(err, obj)
-					h.log.Error(conversionErr)
-
+					h.log.Error(ErrConvertingDockerComposeToDesign(err))
 					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-						"error": conversionErr,
-					}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s", mesheryPattern.Name)).Build()
+						"error": ErrConvertingDockerComposeToDesign(err),
+					}).WithDescription(fmt.Sprintf("Failed to convert Docker Compose application \"%s\"", mesheryPattern.Name)).Build()
 
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
 
-					http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-					go h.EventsBuffer.Publish(&res)
+					http.Error(rw, ErrConvertingDockerComposeToDesign(err).Error(), http.StatusInternalServerError)
+
 					return
 				}
 				mesheryPattern.Type = sql.NullString{
@@ -269,56 +286,83 @@ func (h *Handler) handlePatternPOST(
 			}
 			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
-				obj := "convert"
-				conversionErr := ErrApplicationFailure(err, obj)
-				h.log.Error(conversionErr)
-
+				h.log.Error(ErrConvertingK8sManifestToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": conversionErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryPattern.Name)).Build()
+					"error": ErrConvertingK8sManifestToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting %s \"%s\" to design file format.", sourcetype, mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, err) //this error is already a meshkit error so no further wrapping required
-				go h.EventsBuffer.Publish(&res)
+				http.Error(rw, ErrConvertingK8sManifestToDesign(err).Error(), http.StatusInternalServerError)
+
 				return
 			}
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
-				obj := "convert"
-				conversionErr := ErrApplicationFailure(err, obj)
-				h.log.Error(conversionErr)
-
+				h.log.Error(ErrMarshallingDesignIntoYAML(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": conversionErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryPattern.Name)).Build()
+					"error": ErrMarshallingDesignIntoYAML(err),
+				}).WithDescription(fmt.Sprintf("Failed converting %s \"%s\" to YAML format.", sourcetype, mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
+				http.Error(rw, ErrMarshallingDesignIntoYAML(err).Error(), http.StatusInternalServerError)
+
 				return
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
-			parsedBody.PatternData.Type = sql.NullString{
+
+			mesheryPattern.PatternFile = string(bytPattern)
+			mesheryPattern.CatalogData = parsedBody.PatternData.CatalogData
+
+			if parsedBody.PatternData.ID != nil {
+				mesheryPattern.ID = parsedBody.PatternData.ID
+			}
+
+			// assume the design is in OCI Artifact format
+			uncompressedDesign, err := unCompressOCIArtifactIntoDesign(parsedBody.PatternData.PatternFile)
+			// if errors occurs in decompressing OCI Artifact into design file
+			// then fall back to importing design as yaml file
+			if err != nil {
+				h.log.Warn(ErrUnCompressOCIArtifact(err))
+				h.log.Info("Falling back to importing design as yaml file")
+
+				// commenting for now as every save event would other wise send following event
+				// event := eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
+				// 	"error": ErrUnCompressOCIArtifact(err),
+				// }).WithDescription(fmt.Sprintf("Failed uncompressing OCI Artifact %s into Design YAML. Falling back to importing design as YAML.", mesheryPattern.Name)).Build()
+				// _ = provider.PersistEvent(event)
+				// go h.config.EventBroadcaster.Publish(userID, event)
+				//
+			} else {
+				h.log.Info("OCI Artifact decompressed successfully")
+				event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact decompressed into %s design file", mesheryPattern.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				mesheryPattern = uncompressedDesign
+			}
+			mesheryPattern.Type = sql.NullString{
 				String: string(models.Design),
 				Valid:  true,
 			}
 			// Check if the pattern is valid
-			err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
+			err = pCore.IsValidPattern(mesheryPattern.PatternFile)
 			if err != nil {
 				h.log.Error(ErrInvalidPattern(err))
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": ErrInvalidPattern(err),
+				}).WithDescription(fmt.Sprintf("Design Validation for %s design file failed.", mesheryPattern.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
-				addMeshkitErr(&res, ErrInvalidPattern(err))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
+
 			// Assign a name if no name is provided
 			if parsedBody.PatternData.Name == "" {
-				patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+				patternName, err := models.GetPatternName(mesheryPattern.PatternFile)
 				if err != nil {
 					h.log.Error(ErrSavePattern(err))
 					http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
@@ -330,10 +374,8 @@ func (h *Handler) handlePatternPOST(
 					go h.config.EventBroadcaster.Publish(userID, event)
 					return
 				}
-				parsedBody.PatternData.Name = patternName
+				mesheryPattern.Name = patternName
 			}
-
-			mesheryPattern := parsedBody.PatternData
 
 			if parsedBody.Save {
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
@@ -350,7 +392,7 @@ func (h *Handler) handlePatternPOST(
 					return
 				}
 
-				h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+				h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -362,12 +404,11 @@ func (h *Handler) handlePatternPOST(
 			if err != nil {
 				h.log.Error(ErrEncodePattern(err))
 				http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrSavePattern(err))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
 
-			h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -393,8 +434,7 @@ func (h *Handler) handlePatternPOST(
 
 				go h.config.EventBroadcaster.Publish(userID, event)
 				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
 			sourceContent, err := io.ReadAll(helmSourceResp.Body)
@@ -406,8 +446,7 @@ func (h *Handler) handlePatternPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error reading body")))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
 
@@ -415,60 +454,49 @@ func (h *Handler) handlePatternPOST(
 				URL: parsedBody.URL,
 			})
 			if err != nil {
-				obj := "import"
-				importErr := ErrApplicationFailure(err, obj)
-				h.log.Error(importErr)
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": importErr,
-				}).WithDescription(fmt.Sprintf("error converting helm chart %s to Kubernetes manifest, URL might be malformed or not reachable.", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 
-				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+
 				return
 			}
 
 			result := string(resp)
 			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
-				obj := "convert"
-				convertErr := ErrApplicationFailure(err, obj)
-				h.log.Error(convertErr)
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": convertErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, err)
-				go h.EventsBuffer.Publish(&res)
+
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+
 				return
 			}
 
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
-				obj := "convert"
-				convertErr := ErrApplicationFailure(err, obj)
-				h.log.Error(convertErr)
-				http.Error(rw, convertErr.Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
-
+				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": convertErr,
-				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
-
+					"error": ErrConvertingHelmChartToDesign(err),
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to K8s Manifest.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
+
+				http.Error(rw, ErrConvertingHelmChartToDesign(err).Error(), http.StatusInternalServerError)
+
 				return
 			}
 
-			url := strings.Split(parsedBody.URL, "/")
 			mesheryPattern = &models.MesheryPattern{
-				Name:        strings.TrimSuffix(url[len(url)-1], ".tgz"),
+				Name:        parsedBody.PatternData.Name,
 				PatternFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HelmChart),
@@ -490,8 +518,7 @@ func (h *Handler) handlePatternPOST(
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": err,
 				}).WithDescription(fmt.Sprintf("Invalid URL provided %s", parsedBody.URL)).Build()
-				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error parsing URL")))
-				go h.EventsBuffer.Publish(&res)
+
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				return
@@ -529,8 +556,7 @@ func (h *Handler) handlePatternPOST(
 
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
-					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
-					go h.EventsBuffer.Publish(&res)
+
 					return
 				}
 
@@ -547,13 +573,16 @@ func (h *Handler) handlePatternPOST(
 					}).WithDescription(fmt.Sprintf("Failed to retrieve remote design at %s", parsedBody.URL)).Build()
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
-					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
-					go h.EventsBuffer.Publish(&res)
+
 					return
 				}
 				mesheryPattern = &pfs[0]
 			}
 		} else {
+
+			if parsedBody.PatternData == nil {
+				parsedBody.PatternData = &mesheryPatternPayload{}
+			}
 			parsedBody.PatternData.Type = sql.NullString{
 				String: string(models.Design),
 				Valid:  true,
@@ -572,7 +601,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -598,17 +627,16 @@ func (h *Handler) handlePatternPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 
 			eventBuilder.WithSeverity(events.Informational)
 			event := eventBuilder.Build()
-			go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 
 			var mesheryPatternContent []models.MesheryPattern
 			err = json.Unmarshal(resp, &mesheryPatternContent)
@@ -634,13 +662,13 @@ func (h *Handler) handlePatternPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrApplicationSourceContent(err, obj))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
-			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			eb := eventBuilder
-			_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Design %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
+			go h.config.PatternChannel.Publish(userID, struct{}{})
+			event = eventBuilder.WithDescription(fmt.Sprintf("Design %s source content uploaded", mesheryPatternContent[0].Name)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 			return
 		}
 
@@ -653,13 +681,56 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
-
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
+}
+
+func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
+
+	// Assume design is in OCI Tarball Format
+	tmpDir, err := oci.CreateTempOCIContentDir()
+	if err != nil {
+		return nil, ErrCreateDir(err, "OCI")
+	}
+	defer os.RemoveAll(tmpDir)
+
+	tmpInputDesignFile := filepath.Join(tmpDir, "design.tar")
+	file, err := os.Create(tmpInputDesignFile)
+	if err != nil {
+		return nil, ErrCreateFile(err, tmpInputDesignFile)
+	}
+	defer file.Close()
+
+	reader := bytes.NewReader(artifact)
+	if _, err := io.Copy(file, reader); err != nil {
+		return nil, ErrWritingIntoFile(err, tmpInputDesignFile)
+	}
+
+	tmpOutputDesignFile := filepath.Join(tmpDir, "output")
+	// Extract the tarball
+	if err := oci.UnCompressOCIArtifact(tmpInputDesignFile, tmpOutputDesignFile); err != nil {
+		return nil, ErrUnCompressOCIArtifact(err)
+	}
+
+	files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
+	if err != nil {
+		return nil, ErrWaklingLocalDirectory(err)
+	}
+
+	// TODO: Add support to merge multiple designs into one
+	// Currently, assumes to save only the first design
+	design := files[0]
+
+	mesheryPattern := &models.MesheryPattern{
+		PatternFile: design.Content,
+		Name:        design.Name,
+	}
+
+	return mesheryPattern, nil
 }
 
 func githubRepoDesignScan(
@@ -937,8 +1008,10 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
+// swagger:route GET /api/pattern/download/{id} PatternsAPI idGetMesheryPattern
 // Handle GET request for Meshery Pattern with the given id
+//
+// ?oci={true|false} - If true, returns the pattern in OCI Artifact format
 //
 // Get the pattern with the given id
 // responses:
@@ -950,24 +1023,204 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
+
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
+
 	patternID := mux.Vars(r)["id"]
+	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
+
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrGetPattern(err),
+		}).WithDescription(fmt.Sprintf("Failed to fetch design file for ID: %s.", patternID)).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
 		return
 	}
-
 	pattern := &models.MesheryPattern{}
-
 	err = json.Unmarshal(resp, &pattern)
 	if err != nil {
 		obj := "download pattern"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		http.Error(rw, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": models.ErrUnmarshal(err, obj),
+		}).WithDescription(fmt.Sprintf("Failed to unmarshal design file for ID: %s.", patternID)).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		return
+	}
+
+	if ociFormat {
+		tmpDir, err := oci.CreateTempOCIContentDir()
+		if err != nil {
+			h.log.Error(ErrCreateDir(err, "OCI"))
+			http.Error(rw, ErrCreateDir(err, "OCI").Error(), http.StatusInternalServerError)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrCreateDir(err, "OCI"),
+			}).WithDescription("Error creating tmp directory under ~/.meshery/content/").Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		tmpDesignFile := filepath.Join(tmpDir, pattern.Name+".yaml")
+		file, err := os.Create(tmpDesignFile)
+		if err != nil {
+			h.log.Error(ErrCreateFile(err, tmpDesignFile))
+			http.Error(rw, ErrCreateFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrCreateFile(err, tmpDesignFile),
+			}).WithDescription(fmt.Sprintf("Error creating tmp file %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+		defer file.Close()
+
+		patternReader := strings.NewReader(pattern.PatternFile)
+		ymlDesign, err := io.ReadAll(patternReader)
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrIOReader(err),
+			}).WithDescription(fmt.Sprintf("Error reading retrieved design file %s", pattern.Name)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		if _, err := file.Write(ymlDesign); err != nil {
+			h.log.Error(ErrWritingIntoFile(err, tmpDesignFile))
+			http.Error(rw, ErrWritingIntoFile(err, tmpDesignFile).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrWritingIntoFile(err, tmpDesignFile),
+			}).WithDescription(fmt.Sprintf("Error writing into tmp design file %s at %s", pattern.Name, tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		ociImg, err := oci.BuildImage(tmpDir)
+		if err != nil {
+			h.log.Error(ErrBuildOCIImg(err))
+			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error building OCI Image from contents at %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		digest, err := ociImg.Digest()
+		if err != nil {
+			h.log.Error(ErrBuildOCIImg(err))
+			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error getting image digest for %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		size, err := ociImg.Size()
+		if err != nil {
+			h.log.Error(ErrBuildOCIImg(err))
+			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrBuildOCIImg(err),
+			}).WithDescription(fmt.Sprintf("Error getting calculating image size for %s", tmpDesignFile)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
+
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
+		event := eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(event)
+
+		pretifiedName := strings.ToLower(strings.Replace(pattern.Name, " ", "", -1)) // ensures that tag validation passes
+		tmpOCITarFilePath := filepath.Join(tmpDir, pretifiedName+".tar")
+		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pretifiedName)
+		if err != nil {
+			h.log.Error(ErrSaveOCIArtifact(err))
+			http.Error(rw, ErrSaveOCIArtifact(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrSaveOCIArtifact(err),
+			}).WithDescription(fmt.Sprintf("Failed to save OCI Artifact %s temporarily", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
+		if err != nil {
+			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
+			http.Error(rw, ErrOpenFile(tmpOCITarFilePath).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrOpenFile(tmpOCITarFilePath),
+			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+		content, err := io.ReadAll(file)
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrIOReader(err),
+			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		h.log.Info("OCI Artifact successfully saved at: ", tmpOCITarFilePath)
+
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact temporarily saved at: %s", tmpOCITarFilePath))
+		event = eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(event)
+
+		reader := bytes.NewReader(content)
+		if _, err := io.Copy(rw, reader); err != nil {
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrIOReader(err),
+			}).WithDescription("Failed to save contents of OCI Artifact at requested path").Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
 		return
 	}
 
@@ -1228,13 +1481,11 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format, sourcetype string, eventBuilder *events.EventBuilder, URL string) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
 		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, ErrDecodePattern(err))
-		go h.EventsBuffer.Publish(res)
 		return
 	}
 
@@ -1263,8 +1514,6 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
 				http.Error(rw, ErrConvertPattern(err).Error(), http.StatusInternalServerError)
-				addMeshkitErr(res, ErrConvertPattern(err))
-				go h.EventsBuffer.Publish(res)
 				return
 			}
 
@@ -1280,16 +1529,19 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	if err != nil {
 		obj := "pattern file"
 		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, models.ErrMarshal(err, obj))
-
-		go h.EventsBuffer.Publish(res)
 		return
 	}
-	eventBuilder.WithDescription(fmt.Sprintf("Design %s saved", strings.Join(names, ",")))
+	var response string
+	if URL == "" {
+		response = fmt.Sprintf("%s \"%s\" uploaded.", sourcetype, strings.Join(names, ","))
+	} else {
+		response = fmt.Sprintf("%s \"%s\" imported from URL %s", sourcetype, strings.Join(names, ","), URL)
+	}
+	eventBuilder.WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-	res.Details = "\"" + strings.Join(names, ",") + "\" design saved"
-	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
+	// res.Details = "Design \"" + strings.Join(names, ",") + "\" imported from " + URL + " ."
+	// res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
 	// go h.EventsBuffer.Publish(res)
 }
 
@@ -1355,7 +1607,6 @@ func (h *Handler) handlePatternUpdate(
 	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
-		addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("missing route \"source-type\"")))
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
@@ -1367,7 +1618,7 @@ func (h *Handler) handlePatternUpdate(
 		return
 	}
 
-	var parsedBody *MesheryPatternRequestBody
+	var parsedBody *MesheryPatternUPDATERequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
 		return
@@ -1406,8 +1657,7 @@ func (h *Handler) handlePatternUpdate(
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			addMeshkitErr(&res, ErrSavePattern(err))
-			go h.EventsBuffer.Publish(&res)
+
 			return
 		}
 
@@ -1415,8 +1665,7 @@ func (h *Handler) handlePatternUpdate(
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "%s", err)
-			addMeshkitErr(&res, ErrSavePattern(err))
-			go h.EventsBuffer.Publish(&res)
+
 			return
 		}
 
@@ -1424,8 +1673,7 @@ func (h *Handler) handlePatternUpdate(
 		if err != nil {
 			h.log.Error(ErrGetPattern(err))
 			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
-			addMeshkitErr(&res, ErrGetPattern(err))
-			go h.EventsBuffer.Publish(&res)
+
 			return
 		}
 
@@ -1460,15 +1708,14 @@ func (h *Handler) handlePatternUpdate(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSavePattern(err))
-				go h.EventsBuffer.Publish(&res)
+
 				return
 			}
 
 			eventBuilder.WithSeverity(events.Informational)
 
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 			event := eventBuilder.Build()
 			// go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
@@ -1483,7 +1730,7 @@ func (h *Handler) handlePatternUpdate(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
 		return
 	}
 	mesheryPattern := parsedBody.PatternData
@@ -1493,7 +1740,6 @@ func (h *Handler) handlePatternUpdate(
 	}
 	resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 	if err != nil {
-		obj := "save"
 		errAppSave := ErrSaveApplication(err)
 		h.log.Error(errAppSave)
 
@@ -1506,14 +1752,13 @@ func (h *Handler) handlePatternUpdate(
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-		go h.EventsBuffer.Publish(&res)
+
 		return
 	}
-	go h.config.ApplicationChannel.Publish(userID, struct{}{})
+	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
-	h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+	h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
@@ -1599,11 +1844,13 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	var mimeType string
 	sourcetype := mux.Vars(r)["sourcetype"]
 
-	if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
+	switch models.DesignType(sourcetype) {
+	case models.HelmChart:
 		mimeType = "application/x-tar"
-	} else { // serve the content in yaml file
+	default: // docker-compose, k8smanifest
 		mimeType = "application/x-yaml"
 	}
+
 	reader := bytes.NewReader(resp)
 	rw.Header().Set("Content-Type", mimeType)
 	_, err = io.Copy(rw, reader)

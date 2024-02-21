@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/layer5io/meshkit/logger"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -29,7 +28,7 @@ func SetupLogrusFormatter() {
 func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if debugLevel {
-		logLevel = int(logrus.DebugLevel)
+		logLevel = int(log.DebugLevel)
 	}
 
 	logger, err := logger.New("mesheryctl", logger.Options{

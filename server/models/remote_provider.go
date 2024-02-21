@@ -374,7 +374,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		logrus.Infof("user profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf(fmt.Sprintf("error retrieving user with id: %s", userID)), "User Profile", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
@@ -3779,8 +3779,8 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID,
 		}
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
 	}
-	
-	defer func(){
+
+	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)

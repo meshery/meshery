@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Cilium Service Mesh
 name: Meshery Adapter for Cilium Service Mesh
 mesh_name: Cilium
@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-cilium
 image: /assets/img/service-meshes/cilium.svg
 white_image: /assets/img/service-meshes/cilium-white.svg
 permalink: extensibility/adapters/cilium
+redirect_from: service-meshes/adapters/cilium
 language: en
 ---
 

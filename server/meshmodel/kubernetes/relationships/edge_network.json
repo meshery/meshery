@@ -2,8 +2,16 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
-    "description": "A relationship that defines network edges between components"
-  },
+    "description": "A relationship that defines network edges between components",
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": true,
+          "label": false
+        }
+      }
+    }},
   "model": {
     "name": "kubernetes",
     "version": "v1.25.2",
@@ -16,7 +24,7 @@
   },
   "subType": "Network",
   "evaluationQuery": "edge_network_relationship",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -69,5 +77,5 @@
         }
       ]
     }
-  }
+  }]
 }

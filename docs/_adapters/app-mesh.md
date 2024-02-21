@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
@@ -10,6 +10,7 @@ github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 white_image: /assets/img/service-meshes/app-mesh-white.svg
 permalink: extensibility/adapters/app-mesh
+redirect_from: service-meshes/adapters/app-mesh
 language: en
 ---
 

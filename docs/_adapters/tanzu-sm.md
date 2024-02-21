@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 mesh_name: Tanzu Service Mesh
@@ -10,6 +10,7 @@ github_link: https://github.com/meshery/meshery-tanzu-sm
 image: /assets/img/service-meshes/tanzu.svg
 white_image: /assets/img/service-meshes/tanzu.svg
 permalink: extensibility/adapters/tanzu-sm
+redirect_from: service-meshes/adapters/tanzu-sm
 language: en
 ---
 

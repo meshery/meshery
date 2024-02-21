@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TLSStore",
+  "apiVersion": "traefik.containo.us/v1alpha1",
+  "displayName": "TLS Store",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gitlab",
+   "version": "7.9.0",
+   "displayName": "gitlab",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-7.9.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TLSStore is a specification for a TLSStore resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSStoreSpec configures a TLSStore resource.\",\n   \"properties\": {\n    \"defaultCertificate\": {\n     \"description\": \"DefaultCertificate holds a secret name for the TLSOption resource.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"defaultCertificate\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Store\",\n \"type\": \"object\"\n}"
+ }

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
 mesh_name: Istio
@@ -11,6 +11,7 @@ github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 white_image: /assets/img/service-meshes/istio-white.svg
 permalink: extensibility/adapters/istio
+redirect_from: service-meshes/adapters/istio
 language: en
 ---
 

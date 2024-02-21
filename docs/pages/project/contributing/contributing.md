@@ -3,8 +3,8 @@ layout: page
 title: Contributing
 permalink: project/contributing
 abstract: How to contribute to the Meshery project.
-redirect_from:
- - project/contributing/
+# redirect_from:
+#  - project/contributing/
 display-title: "false"
 language: en
 type: project
@@ -17,7 +17,9 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 # Contributing Guides
 
-{% include suggested-reading.html diffName ="true" language = "en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 ## Not sure where to start?
 

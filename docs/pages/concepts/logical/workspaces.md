@@ -3,9 +3,11 @@ layout: enhanced
 title: Workspaces
 permalink: concepts/logical/workspaces
 type: concepts
-abstract: "Meshery Workspaces act as central collaboration points for teams"
+abstract: "Meshery Workspaces act as central collaboration point for teams."
 language: en
 list: include
+redirect_from:
+- concepts/workspaces
 ---
 
 Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.

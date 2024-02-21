@@ -17,7 +17,6 @@ const styles = {
 
 function NewFilters(props) {
   useEffect(() => {
-    console.log(`path: ${getPath()}`);
     props.updatepagepath({ path: getPath() });
   }, []);
 
