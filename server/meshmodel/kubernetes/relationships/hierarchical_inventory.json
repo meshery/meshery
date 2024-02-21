@@ -1089,7 +1089,7 @@
               "mutatorRef": [
                 ["name"]
               ],
-              "description": "IngressClass is a resource to provide default class for Ingress. It is used to configure the class of the Ingress controller."
+              "description": "IngressClass establishes an inventory relationship with Ingress. IngressClass is a resource to provide default class for Ingress. When a IngressClass is dropped on Ingress specification of Ingress will be updated and configure the class of the Ingress controller."
             }
           }
         ],
