@@ -198,7 +198,7 @@ function Connections(props) {
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
-  const { data: connectionData } = useGetConnectionsQuery({
+  const { data: connectionData, refetch: getConnections } = useGetConnectionsQuery({
     page: page,
     pageSize: pageSize,
     search: search,
@@ -249,6 +249,7 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
+        getConnections();
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
