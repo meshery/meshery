@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-  {% include_cached head.html %} {% include_cached header.html %}
+  {% include_cached head.html  title=page.title description=page.abstract %} {% include_cached header.html %}
   <body class="td-section dark-mode">
     <script>
       if(localStorage.getItem("mode") == "light-mode")  {
@@ -58,16 +58,16 @@
             {% endfor %}
           </div>
           {% endif %}  
-          {% if page.suggested-reading != false %}
-            {% include_cached suggested-reading.html language="en" %} 
-          {% endif %}  
+          {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+            {% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %} 
+          {% endif %} 
           {% include_cached feedback.html %}
         </div>
       </main>
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
       <div class="content-table-wrapper">
         <div class="content-table">
-          <div class="content-table__editable">{% include_cached editable.html %}</div>
+          <div class="content-table__editable">{% include_cached editable.html path=page.path %}</div>
           <nav id="TableOfContents">
             <strong>Contents</strong>
             <ul>

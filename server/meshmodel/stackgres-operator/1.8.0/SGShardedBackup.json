@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SGShardedBackup",
+  "apiVersion": "stackgres.io/v1",
+  "displayName": "SG Sharded Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#426d88",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg id=\"Capa_2\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\"\u003e\u003cstyle\u003e.st0{fill:#42a8c8}.st1{fill:#426d88}.st2{fill:#428bb4}.st3{fill:#16657c}.st4{fill:#39b54a}.st5{fill:#009245}.st6{fill:#f2c63f}.st7{fill:#f2b136}.st8{fill:#f2a130}.st9{fill:#ff7124}.st10{fill:#d93d1b}\u003c/style\u003e\u003cswitch\u003e\u003cg\u003e\u003cpath class=\"st0\" d=\"M5.2 273.7l110.7 126.8h268.2l110.7-126.8-110.7-126.8H115.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st1\" d=\"M115.9 400.5h268.4v56.4H115.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st2\" d=\"M115.9 456.8L5.2 330v-56.3l110.7 126.8z\"\u003e\u003c/path\u003e\u003cpath class=\"st3\" d=\"M384.1 456.8L494.8 330v-56.3L384.1 400.5z\"\u003e\u003c/path\u003e\u003cpath class=\"st4\" d=\"M465.7 253.4c0-47-96.6-85.2-215.7-85.2S34.4 206.3 34.4 253.4s96.5 85.2 215.6 85.2 215.7-38.2 215.7-85.2z\"\u003e\u003c/path\u003e\u003cpath class=\"st5\" d=\"M465.7 253.4c0 47-96.6 85.2-215.7 85.2S34.4 300.4 34.4 253.4v46.9c14.9 41.3 106.5 85.2 215.6 85.2s200.8-43.9 215.7-85.2v-46.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st6\" d=\"M16.3 178.6L250 314.1l233.8-135.5L250 43.2z\"\u003e\u003c/path\u003e\u003cpath class=\"st7\" d=\"M16.3 178.6v52.8L250 366.9v-52.8z\"\u003e\u003c/path\u003e\u003cpath class=\"st8\" d=\"M483.8 178.6L250 314.1v52.8l233.8-135.5z\"\u003e\u003c/path\u003e\u003cpath class=\"st9\" d=\"M68 212.4l364.1-53-92.4-106z\"\u003e\u003c/path\u003e\u003cpath class=\"st10\" d=\"M68 212.4l364.1-53v47.8L68 260.1z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/switch\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Capa_2\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 500 500\" style=\"enable-background:new 0 0 500 500;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n        .st1{opacity:0.8;fill:#FFFFFF;}\n        .st2{opacity:0.9;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg\u003e\n        \u003cpath class=\"st0\" d=\"M5.2,273.7l110.7,126.8h268.2l110.7-126.8L384.1,146.9H115.9L5.2,273.7z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M115.9,400.5h268.4v56.4H115.9V400.5z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M115.9,456.8L5.2,330v-56.3l110.7,126.8L115.9,456.8z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M384.1,456.8L494.8,330v-56.3L384.1,400.5V456.8z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M465.7,253.4c0-47-96.6-85.2-215.7-85.2S34.4,206.3,34.4,253.4s96.5,85.2,215.6,85.2S465.7,300.4,465.7,253.4\n                L465.7,253.4z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M465.7,253.4c0,47-96.6,85.2-215.7,85.2S34.4,300.4,34.4,253.4v46.9c14.9,41.3,106.5,85.2,215.6,85.2\n                s200.8-43.9,215.7-85.2V253.4z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M16.3,178.6L250,314.1l233.8-135.5L250,43.2L16.3,178.6z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M16.3,178.6v52.8L250,366.9v-52.8L16.3,178.6z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M483.8,178.6L250,314.1v52.8l233.8-135.5V178.6z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M68,212.4l364.1-53l-92.4-106L68,212.4z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M68,212.4l364.1-53v47.8L68,260.1V212.4z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "stackgres-operator",
+   "version": "1.8.0",
+   "displayName": "stackgres-operator",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.8.0/helm/stackgres-operator.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"A manual or automatically generated sharded backup of an SGCluster configured with an SGBackupConfig.\\n\\nWhen a SGBackup is created a Job will perform a full sharded backup of the database and update the status of the SGBackup\\n with the all the information required to restore it and some stats (or a failure message in case something unexpected\\n happened).\\nAfter an SGBackup is created the same Job performs a reconciliation of the sharded backups by applying the retention window\\n that has been configured in the SGBackupConfig and removing the sharded backups with managed lifecycle and the WAL files older\\n than the ones that fit in the retention window. The reconciliation also removes sharded backups (excluding WAL files) that do\\n not belongs to any SGBackup. If the target storage of the SGBackupConfig is changed deletion of an SGBackup sharded backups\\n with managed lifecycle and the WAL files older than the ones that fit in the retention window and of sharded backups that do\\n not belongs to any SGBackup will not be performed anymore on the previous storage, only on the new target storage.\\n\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"managedLifecycle\": {\n     \"description\": \"Indicate if this sharded backup is permanent and should not be removed by the automated\\n retention policy. Default is `false`.\\n\",\n     \"type\": \"boolean\"\n    },\n    \"sgShardedCluster\": {\n     \"description\": \"The name of the `SGShardedCluster` from which this sharded backup is/will be taken.\\n\\nIf this is a copy of an existing completed sharded backup in a different namespace\\n the value must be prefixed with the namespace of the source backup and a\\n dot `.` (e.g. `\\u003csharded cluster namespace\\u003e.\\u003csharded cluster name\\u003e`) or have the same value\\n if the source sharded backup is also a copy.\\n\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"SG Sharded Backup\",\n \"type\": \"object\"\n}"
+ }

@@ -23,9 +23,11 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 ## Creating a Meshery Design
 
+You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
+
 You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
- 
-Use Meshery UI or mesheryctl to manage [designs](/tasks/pattern-management).
+
+Use Meshery UI or mesheryctl to manage [designs]({{ site.baseurl }}/tasks/patterns).
 
 ## Pattern Management Through Meshery UI
 
@@ -116,6 +118,7 @@ You can also bring in your own applications by uploading it from filesystem or i
 <img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications.png" width="50%" />
 
 The application files can be described in following formats:
+
 - Kubernetes manifest
 - Meshery Design
 - Helm charts
@@ -136,3 +139,4 @@ mesheryctl app onboard imagehub.yaml
 ```
 mesheryctl app offboard imagehub.yaml
 ```
+
