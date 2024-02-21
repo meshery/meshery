@@ -1,3 +1,17 @@
+// # Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package registry
 
 import (
@@ -39,16 +53,16 @@ var (
 	totalAggregateModel int
 )
 
-var importCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import Models",
-	Long:  "Import models from spreadsheet, GitHub or ArtifactHub repositories",
+var generateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "Generate Models",
+	Long:  "Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories",
 	Example: `
-    // Import models from Meshery Integration Spreadsheet
-    mesheryctl registry import --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
+    // Generate models from Meshery Integration Spreadsheet
+    mesheryctl registry generate --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
     
-    // Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-    mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
+    // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
+    mesheryctl registry generate --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := os.MkdirAll(logDirPath, 0755)
@@ -70,7 +84,7 @@ var importCmd = &cobra.Command{
 		registryLocation = filepath.Join(cwd, outputLocation)
 
 		if pathToRegistrantConnDefinition != "" {
-			utils.Log.Info("Model Generation from registrant definitions not yet supproted.")
+			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
 			return nil
 		}
 		var err error
@@ -88,7 +102,9 @@ var importCmd = &cobra.Command{
 			return err
 		}
 
+		// Collect list of Models by name from spreadsheet
 		sheetGID = GetSheetIDFromTitle(resp, "Models")
+		// Collect list of corresponding Components by name from spreadsheet
 		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 
 		err = InvokeGenerationFromSheet()
@@ -116,9 +132,9 @@ func InvokeGenerationFromSheet() error {
 	defer func() {
 		_ = logFile.Close()
 		utils.Log.UpdateLogOutput(os.Stdout)
-		utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+		utils.Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
 
-		utils.Log.Info("refer ", logDirPath, " for detailed registry generate logs")
+		utils.Log.Info("See ", logDirPath, " for detailed logs.")
 
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
@@ -318,18 +334,18 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 }
 
 func init() {
-	importCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
 
-	importCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
+	generateCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
 
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
 
-	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
+	generateCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
 
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
 
-	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }
