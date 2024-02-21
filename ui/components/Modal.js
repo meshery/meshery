@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   submitButton: {
     backgroundColor: theme.palette.secondary.focused,
     color: '#fff',
+    textTransform: 'uppercase',
   },
   iconPatt: {
     display: 'flex',
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   btnText: {
-    textTransform: 'none',
+    textTransform: 'uppercase',
   },
   toolTip: {
     textDecoration: 'underline',

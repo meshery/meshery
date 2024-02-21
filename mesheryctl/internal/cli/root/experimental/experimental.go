@@ -17,6 +17,7 @@ package experimental
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -27,7 +28,7 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// ExpCmd represents the Performance Management CLI command
+// ExpCmd represents the Experimental commands
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
@@ -44,6 +45,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, registry.RegistryCmd, system.ComponentsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

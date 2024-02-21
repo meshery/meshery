@@ -876,9 +876,19 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
     const payload = {
       id: publishModal.pattern?.id,
-      catalog_data: formData,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
     };
     updateProgress({ showProgress: true });
     dataFetch(
@@ -1083,7 +1093,7 @@ function MesheryPatterns({
   let colViews = [
     ['name', 'xs'],
     ['created_at', 'm'],
-    ['updated_at', 'l'],
+    ['updated_at', 'm'],
     ['visibility', 's'],
     ['Actions', 'xs'],
   ];
@@ -1794,7 +1804,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <>
@@ -1805,7 +1815,7 @@ const PublishModal = React.memo((props) => {
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
-        handleSubmit={handlePublish}
+        handleSubmit={handleSubmit}
         showInfoIcon={{
           text: 'Upon submitting your catalog item, an approval flow will be initiated.',
           link: 'https://docs.meshery.io/concepts/catalog',

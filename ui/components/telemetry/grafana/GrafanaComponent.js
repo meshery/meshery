@@ -93,7 +93,6 @@ export const submitGrafanaConfigure = (self, cb) => {
   const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join('&');
-  // console.log(`data to be submitted for load test: ${params}`);
   self.props.updateProgress({ showProgress: true });
   dataFetch(
     '/api/telemetry/metrics/grafana/config',

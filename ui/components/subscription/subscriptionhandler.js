@@ -29,7 +29,6 @@ export class GQLSubscription {
   };
 
   doCallback = (data) => {
-    console.log('CONTROLLER DATA RECEIVED: ', data);
     // assuming the data is in stream and contextId being the key to the data
     data = data[fnMapping[this.type].eventName];
     if (fnMapping[this.type]?.comparatorFn(this.state, data)) {

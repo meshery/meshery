@@ -81,7 +81,6 @@ const styles = makeStyles((theme) => ({
     maxWidth: 'max-content !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
-    textTransform: 'capitalize',
     borderRadius: '3px !important',
     padding: '6px 8px',
     '& .MuiChip-label': {
@@ -199,7 +198,6 @@ const DiscoveredStateChip = ({ value }) => {
 
 const RegisteredStateChip = ({ value }) => {
   const classes = styles();
-  console.log('tetsppppp', value);
   return (
     <MenuItem value={value}>
       <Chip
@@ -334,8 +332,6 @@ const Default = ({ value }) => {
 };
 
 function getStatusChip(status) {
-  console.log('inside func: ', status);
-
   switch (status) {
     case 'ignored':
       return <IgnoredStateChip value={status} />;

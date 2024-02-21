@@ -15,7 +15,7 @@
     "metadata": {}
   },
   "subType": "Parent",
-  "selectors": {
+  "selectors": [{
     "allow": {
       "from": [
         {
@@ -33,5 +33,5 @@
       "from": [],
       "to": []
     }
-  }
+  }]
 }

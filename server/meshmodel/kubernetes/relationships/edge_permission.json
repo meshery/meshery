@@ -2,7 +2,16 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
-    "description": "A relationship that represents a set of permissions"
+    "description": "A relationship that represents a set of bindings.",
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": false
+        }
+      }
+    }
   },
   "model": {
     "name": "kubernetes",
@@ -16,7 +25,7 @@
   },
   "subType": "Permission",
   "evaluationQuery": "edge_binding_relationship",
-  "selectors": {
+  "selectors": [{
     "deny": {
       "from": [
         {
@@ -151,5 +160,5 @@
         }
       ]
     }
-  }
+  }]
 }

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
 import { Button, Typography, withStyles } from '@material-ui/core';
-import dataFetch from '../lib/data-fetch';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
@@ -13,6 +12,8 @@ import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import useStyles from '../assets/styles/general/tool.styles';
 import { PROMPT_VARIANTS } from './PromptComponent';
+import { store } from '../store';
+import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 
 const styles = (theme) => ({
   textCenter: {
@@ -42,12 +43,6 @@ const styles = (theme) => ({
 
 const DatabaseSummary = (props) => {
   const { classes } = props;
-  const [databaseSummary, setDatabaseSummary] = useState({
-    tables: [],
-    totalRecords: 0,
-    totalTables: 0,
-  });
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
@@ -64,34 +59,11 @@ const DatabaseSummary = (props) => {
     });
   };
 
-  const getDatabaseSummary = (page, rowsPerPage, searchText) => {
-    dataFetch(
-      '/api/system/database?' +
-        new URLSearchParams({
-          page: page + 1,
-          pagesize: rowsPerPage,
-          search: searchText,
-        }).toString(),
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setDatabaseSummary({
-            tables: result?.tables,
-            totalRecords: result?.record_count,
-            totalTables: result?.total_tables,
-          });
-        }
-      },
-      handleError('Unable to fetch database summary.'),
-    );
-  };
-
-  useEffect(() => {
-    getDatabaseSummary(page, rowsPerPage, searchText);
-  }, [page, rowsPerPage, searchText]);
+  const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
+    page: page + 1,
+    pagesize: rowsPerPage,
+    search: searchText,
+  });
 
   const handleResetDatabase = () => {
     return async () => {
@@ -115,7 +87,7 @@ const DatabaseSummary = (props) => {
             props.updateProgress({ showProgress: false });
             if (res.resetStatus === 'PROCESSING') {
               notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
-              getDatabaseSummary();
+              refetch();
             }
           },
           error: handleError('Database is not reachable, try restarting server.'),
@@ -136,7 +108,7 @@ const DatabaseSummary = (props) => {
     fixedHeader: true,
     serverSide: true,
     rowsPerPage: rowsPerPage,
-    count: databaseSummary?.totalTables,
+    count: databaseSummary?.total_tables,
     page: page,
     onChangePage: debounce((p) => setPage(p), 200),
     onChangeRowsPerPage: debounce((p) => setRowsPerPage(p), 200),
@@ -225,6 +197,14 @@ DatabaseSummary.propTypes = {
   promptRef: PropTypes.object.isRequired,
 };
 
+const DatabaseSummaryTable = (props) => {
+  return (
+    <Provider store={store}>
+      <DatabaseSummary {...props} />
+    </Provider>
+  );
+};
+
 export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummary),
+  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable),
 );

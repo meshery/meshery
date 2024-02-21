@@ -65,11 +65,12 @@ fixedNav: 'true' # true or false
 
 permalink: /:year/:title/
 markdown: kramdown
-exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
+exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile, v0.4, v0.5, v0.6]
 
 plugins:
   - jekyll-redirect-from
-
+  - jekyll-include-cache
+  
 sass:
     sass_dir: _sass
     style: compact

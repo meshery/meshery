@@ -22,6 +22,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -39,12 +41,18 @@ var (
 	pageNumberFlag int
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
+
+	// Maximum number of rows to be displayed in a page
+	maxRowsPerPage = 25
+
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
-// represents the `mesheryctl exp model list` subcommand.
+// represents the mesheryctl exp model list subcommand.
 var listModelCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list models",
+	Short: "list registered models",
 	Long:  "list name of all registered models",
 	Example: `
 // View list of models
@@ -52,7 +60,7 @@ mesheryctl exp model list
 
 // View list of models with specified page number (25 models per page)
 mesheryctl exp model list --page 2
-	`,
+    `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 
@@ -118,27 +126,89 @@ mesheryctl exp model list --page 2
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no model is found
-			utils.Log.Info("No model(s) found")
-		} else {
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
+			return nil
+		}
+
+		if cmd.Flag("count").Value.String() == "true" {
+			// fmt.Println("Total number of models: ", len(rows))
+			whiteBoardPrinter.Println("Total number of models: ", len(rows))
+			return nil
+		}
+
+		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
+		} else {
+			startIndex := 0
+			endIndex := min(len(rows), startIndex+maxRowsPerPage)
+			for {
+				// Clear the entire terminal screen
+				utils.ClearLine()
+
+				// Print number of models and current page number
+				whiteBoardPrinter.Print("Total number of models: ", len(rows))
+				fmt.Println()
+				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
+				fmt.Println()
+
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+
+				utils.PrintToTable(header, rows[startIndex:endIndex])
+				keysEvents, err := keyboard.GetKeys(10)
+				if err != nil {
+					return err
+				}
+
+				defer func() {
+					_ = keyboard.Close()
+				}()
+
+				event := <-keysEvents
+				if event.Err != nil {
+					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
+					break
+				}
+
+				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+					break
+				}
+
+				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+					startIndex += maxRowsPerPage
+					endIndex = min(len(rows), startIndex+maxRowsPerPage)
+				}
+
+				if startIndex >= len(rows) {
+					break
+				}
+			}
 		}
 
 		return nil
 	},
 }
 
-// represents the `mesheryctl exp model view [model-name]` subcommand.
+// min returns the smaller of x or y.
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+// represents the mesheryctl exp model view [model-name] subcommand.
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view model",
@@ -218,7 +288,7 @@ mesheryctl exp model view [model-name]
 		var selectedModel v1alpha1.Model
 
 		if modelsResponse.Count == 0 {
-			utils.Log.Info("No model(s) found for the given name ", model)
+			fmt.Println("No model(s) found for the given name ", model)
 			return nil
 		} else if modelsResponse.Count == 1 {
 			selectedModel = modelsResponse.Models[0]
@@ -246,7 +316,7 @@ mesheryctl exp model view [model-name]
 	},
 }
 
-// represents the `mesheryctl exp model search [query-text]` subcommand.
+// represents the mesheryctl exp model search [query-text] subcommand.
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search models",
@@ -321,18 +391,20 @@ mesheryctl exp model search [query-text]
 			return err
 		}
 
-		header := []string{"Category", "Model", "Version"}
+		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no model is found
-			utils.Log.Info("No model(s) found")
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
+			return nil
 		} else {
 			utils.PrintToTable(header, rows)
 		}
@@ -341,11 +413,11 @@ mesheryctl exp model search [query-text]
 	},
 }
 
-// ModelCmd represents the `mesheryctl exp model` command
+// ModelCmd represents the mesheryctl exp model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "View list of models and detail of models",
-	Long:  `View list of models and detailed information of a specific model`,
+	Long:  "View list of models and detailed information of a specific model",
 	Example: `
 // To view list of components
 mesheryctl exp model list
@@ -399,12 +471,13 @@ mesheryctl exp model view [model-name]
 
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
-// `selectModelPrompt` lets user to select a model if models are more than one
+// selectModelPrompt lets user to select a model if models are more than one
 func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
 	modelArray := []v1alpha1.Model{}
 	modelNames := []string{}

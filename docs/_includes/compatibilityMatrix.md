@@ -272,9 +272,7 @@
 <script>
   function showCompatability () {
       let percentContainer = document.querySelectorAll(".compatibility")
-      console.log(percentContainer);
       for(let i = 0 ; i<percentContainer.length;i++){
-        console.log(parseFloat(percentContainer[i].innerHTML));
         let percentage = parseFloat(percentContainer[i].innerHTML);
         if (percentage >= 90.00){
           percentContainer[i].innerHTML = `
@@ -305,7 +303,6 @@
       }
     }
   function clickIcon(serviceMesh){
-    console.log("clicked",serviceMesh);
     location.href = `{{site.baseurl}}/installation/compatibility-matrix/${serviceMesh}-past-results`
   }
 
