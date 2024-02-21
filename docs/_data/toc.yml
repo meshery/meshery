@@ -81,6 +81,8 @@
             url: concepts/logical/connections
           - title: "Credentials"
             url: concepts/logical/credentials
+        - title: "Registry"
+          url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management
@@ -105,7 +107,7 @@
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/configuration-management/creating-a-meshery-design
+        url: guides/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
       - title: Importing Applications

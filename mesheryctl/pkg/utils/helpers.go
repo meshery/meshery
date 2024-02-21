@@ -547,7 +547,10 @@ func ClearLine() {
 		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
 	}
 	clearCmd.Stdout = os.Stdout
-	_ = clearCmd.Run()
+	err := clearCmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
