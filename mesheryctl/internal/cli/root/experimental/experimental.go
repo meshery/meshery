@@ -45,6 +45,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd, system.ComponentsCmd, components.ComponentsCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, components.ComponentsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }
