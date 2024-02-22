@@ -271,15 +271,7 @@ func (m ComponentCSVHelper) Cleanup() error {
 }
 
 func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1alpha1.ComponentDefinition) *ComponentCSV {
-	compCSV := ComponentCSV{
-		Registrant:       modelcsv.Registrant,
-		Model:            modelcsv.Model,
-		Component:        compDef.Kind,
-		ModelDisplayName: modelcsv.ModelDisplayName,
-		Category:         modelcsv.Category,
-		SubCategory:      modelcsv.SubCategory,
-	}
-	compCSV, _ = utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
+	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
 	compCSV.Registrant = modelcsv.Registrant
 	compCSV.Model = modelcsv.Model
 	compCSV.Component = compDef.Kind
