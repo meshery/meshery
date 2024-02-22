@@ -21,11 +21,11 @@ Artifacts produced in the build processes are published and persisted in differe
 
 | Location   | Project                                         | Repository                                                                                                           |
 | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Docker Hub | Meshery                                         | [https://hub.docker.com/r/layer5/meshery](https://hub.docker.com/r/layer5/meshery)                                   |
-| GitHub     | mesheryctl                                      | [https://github.com/layer5io/meshery/releases](https://github.com/layer5io/meshery/releases)                         |
-| Docker Hub | Meshery Adapter for \<service-mesh\>            | https://hub.docker.com/r/layer5/meshery-\<service-mesh\>                                                             |
+| Docker Hub | Meshery                                         | [https://hub.docker.com/r/meshery/meshery](https://hub.docker.com/r/meshery/meshery)                                   |
+| GitHub     | mesheryctl                                      | [https://github.com/meshery/meshery/releases](https://github.com/meshery/meshery/releases)                         |
+| Docker Hub | Meshery Adapter for \<adapter-name\>            | https://hub.docker.com/r/meshery/meshery-\<adapter-name>\>                                                             |
 | Docs       | Meshery Documentation                           | [https://docs.meshery.io](https://docs.meshery.io)                                                                   |
-| GitHub     | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance)         |
+| GitHub     | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/service-mesh-performance/service-mesh-performance)         |
 | Github     | Helm charts                                     | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
@@ -34,7 +34,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of July 21st 2021 it is 1.16
+- `GO_VERSION`: As of March, 2024 is 1.21
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
@@ -96,14 +96,14 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
 1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.
 2. Starts a minikube cluster
 3. Builds a docker image of the adapter and sets minikube to use docker's registry.
-4. Starts the adapter and meshery server (The url to deployment and service yaml of adapter are configurable).
-   NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
+4. Starts the adapter and Meshery Server (The url to deployment and service yaml of adapter are configurable).
+   NOTE: The adapter name has to passed in:
 
 ---
 
       ...
       with:
-         adapter_name: < NAME OF THE SERVICE MESH >
+         adapter_name: < NAME OF THE ADAPTER >
 
 5. The uploaded patternfile is deployed.
 6. Workflow sleeps for some time.
