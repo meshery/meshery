@@ -18,9 +18,9 @@ var (
 )
 
 type ModelCSV struct {
+	Registrant         string `json:"registrant" csv:"registrant"`
 	ModelDisplayName   string `json:"modelDisplayName" csv:"modelDisplayName"`
 	Model              string `json:"model" csv:"model"`
-	Registrant         string `json:"registrant" csv:"registrant"`
 	Category           string `json:"category" csv:"category"`
 	SubCategory        string `json:"subCategory" csv:"subCategory"`
 	Description        string `json:"description" csv:"description"`
@@ -39,20 +39,20 @@ type ModelCSV struct {
 	SVGColor           string `json:"svgColor" csv:"svgColor"`
 	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
 	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
-	PublishToRegistry  string `json:"publishToRegistry" csv:"publishToRegistry"`
 	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
-	AboutProject       string `json:"aboutProject" csv:"aboutProject"`
-	PageSubtTitle      string `json:"pageSubtitle" csv:"pageSubtitle"`
-	DocsURL            string `json:"docsURL" csv:"docsURL"`
-	StandardBlurb      string `json:"standardBlurb" csv:"standardBlurb"`
-	Feature1           string `json:"feature1" csv:"feature1"`
-	Feature2           string `json:"feature2" csv:"feature2"`
-	Feature3           string `json:"feature3" csv:"feature3"`
-	HowItWorks         string `json:"howItWorks" csv:"howItWorks"`
-	HowItWorksDetails  string `json:"howItWorksDetails" csv:"howItWorksDetails"`
-	Screenshots        string `json:"screenshots" csv:"screenshots"`
-	FullPage           string `json:"fullPage" csv:"fullPage"`
-	PublishToSites     string `json:"publishToSites" csv:"publishToSites"`
+	PublishToRegistry  string `json:"publishToRegistry" csv:"publishToRegistry"`
+	AboutProject       string `json:"aboutProject" csv:"-"`
+	PageSubtTitle      string `json:"pageSubtitle" csv:"-"`
+	DocsURL            string `json:"docsURL" csv:"-"`
+	StandardBlurb      string `json:"standardBlurb" csv:"-"`
+	Feature1           string `json:"feature1" csv:"-"`
+	Feature2           string `json:"feature2" csv:"-"`
+	Feature3           string `json:"feature3" csv:"-"`
+	HowItWorks         string `json:"howItWorks" csv:"-"`
+	HowItWorksDetails  string `json:"howItWorksDetails" csv:"-"`
+	Screenshots        string `json:"screenshots" csv:"-"`
+	FullPage           string `json:"fullPage" csv:"-"`
+	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
 func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
@@ -144,7 +144,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
-			fmt.Printf("Reading Modal: %s from Registrant: %s\n", data.Model, data.Registrant)
+			fmt.Printf("Reading Model: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:
 			return ErrFileRead(err)
 

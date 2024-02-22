@@ -78,7 +78,6 @@ var importCmd = &cobra.Command{
 
 		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
@@ -201,7 +200,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "for model: %s", model.ModelDisplayName)
+			utils.Log.Info("Extracted ", len(comps), "components for model: %s", model.ModelDisplayName)
 
 			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
 			if err != nil {
@@ -215,8 +214,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 					utils.Log.Info(err)
 				}
 			}
-			fmt.Println("TEST > ", model.Model)
-			fmt.Println("INSIDE GO ROUTINE SENDING DATA : ", model.Model)
+			
 			spreadsheeetChan <- utils.SpreadsheetData{
 				Model:      &model,
 				Components: comps,
