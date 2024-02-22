@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/backstage
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Restore order to your microservices and infrastructure and enables your product teams to ship high-quality code quickly — without compromising autonomy.",

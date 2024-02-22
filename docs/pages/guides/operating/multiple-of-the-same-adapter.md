@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: guides

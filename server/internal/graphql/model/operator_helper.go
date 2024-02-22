@@ -125,7 +125,7 @@ func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.I
 
 	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
 	log.Debug("broker monitor endpoint", monitorEndpoint, err)
-	
+
 	if meshsyncStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)

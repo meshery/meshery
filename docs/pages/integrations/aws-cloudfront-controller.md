@@ -8,20 +8,8 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-contro
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Networking Content Delivery
-registrant: aws
+registrant: Github
 components: 
-- name: field-export
-  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/field-export/icons/white/field-export-white.svg
-  description: 
-- name: cached-policy
-  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/cached-policy/icons/color/cached-policy-color.svg
-  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/cached-policy/icons/white/cached-policy-white.svg
-  description: 
-- name: adopted-resource
-  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
-  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

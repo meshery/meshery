@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/postgres-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: operator-configuration
   colorIcon: assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg

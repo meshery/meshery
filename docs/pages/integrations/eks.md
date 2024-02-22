@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/kubernetes/eks
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Save and share AKS configuration templates",

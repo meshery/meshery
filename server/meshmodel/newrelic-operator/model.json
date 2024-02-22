@@ -1,0 +1,21 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "newrelic-operator",
+  "version": "0.3.4+f2ca803",
+  "displayName": "New Relic Operator",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Observability and Analysis",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": true,
+   "subCategory": "Observability and Analysis",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 27.7 32\" style=\"enable-background:new 0 0 27.7 32;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#00AC69;}\n\t.st1{fill:#1CE783;}\n\t.st2{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M22.4,11.1v9.8l-8.5,4.9V32l13.9-8V8L22.4,11.1z\"/\u003e\n\u003cpath class=\"st1\" d=\"M13.9,6.2l8.5,4.9L27.7,8L13.9,0L0,8l5.3,3.1L13.9,6.2z\"/\u003e\n\u003cpath class=\"st2\" d=\"M8.5,19.1v9.8l5.3,3.1V16L0,8v6.2L8.5,19.1z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 27.7 32\" style=\"enable-background:new 0 0 27.7 32;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{opacity:0.6;fill:#FFFFFF;}\n\t.st1{opacity:0.8;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M22.4,11.1v9.8l-8.5,4.9V32l13.9-8V8L22.4,11.1z\"/\u003e\n\u003cpath class=\"st1\" d=\"M13.9,6.2l8.5,4.9L27.7,8L13.9,0L0,8l5.3,3.1L13.9,6.2z\"/\u003e\n\u003cpath class=\"st1\" d=\"M8.5,19.1v9.8l5.3,3.1V16L0,8v6.2L8.5,19.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "components": null,
+  "relationships": null
+ }

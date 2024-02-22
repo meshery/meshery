@@ -5,6 +5,7 @@ permalink: /
 display-title: "false"
 display-toc: "false"
 language: en
+list: exclude
 ---
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}

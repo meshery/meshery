@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Container Registry
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: instance-chart-repository
   colorIcon: assets/img/integrations/harbor-operator/components/instance-chart-repository/icons/color/instance-chart-repository-color.svg
