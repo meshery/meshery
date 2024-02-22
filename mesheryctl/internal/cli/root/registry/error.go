@@ -19,7 +19,7 @@ func ErrUpdateRegistry(err error, path string) error {
 }
 
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{err.Error()}, []string{"Registrant used for the model is not supported", "Verify the source url", "Failed to create model directory"}, []string{"Ensure one of the supported registrant is used for model generation", "Ensure correct source url is provided and in correct format", "Ensure sufficient permissions to allow creation of model directory"})
+	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{err.Error()}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
 
 func ErrGenerateComponent(err error, modelName, compName string) error {
