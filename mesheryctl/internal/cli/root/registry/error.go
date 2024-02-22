@@ -15,7 +15,7 @@ var (
 )
 
 func ErrUpdateRegistry(err error, path string) error {
-	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credentials are incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credentials are provided"})
+	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
 }
 
 func ErrGenerateModel(err error, modelName string) error {

@@ -493,13 +493,13 @@ func ErrMarshalStructToCSV(err error) error {
 		[]string{"Failed to marshal struct to csv"},
 		[]string{err.Error()},
 		[]string{"Error occurred converting struct to [][]string", "The struct might have in-appropriate csv tags"},
-		[]string{"Verify the struct is non-empty", "Verify the struct has appropriate csv tags"})
+		[]string{"Verify the value to be converted is compatbile with the columns in the spreadsheet", "Ensure the column names in the spreadsheet and struct are same"})
 }
 
 func ErrAppendToSheet(err error, id string) error {
 	return errors.New(ErrAppendToSheetCode, errors.Alert,
 		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
 		[]string{err.Error()},
-		[]string{"Error occurred while appending to the spreadsheet", "The credentials might be incorrect/expired"},
-		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credentials are used"})
+		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
+		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
 }
