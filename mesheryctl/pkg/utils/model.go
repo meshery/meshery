@@ -144,7 +144,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
-			Log.Info("Reading Model: %s from Registrant: %s\n", data.Model, data.Registrant)
+			Log.Info(fmt.Sprintf("Reading Model [ %s ] from Registrant [ %s ] \n", data.Model, data.Registrant))
 		case err := <-errorChan:
 			return ErrFileRead(err)
 
