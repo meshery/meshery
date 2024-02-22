@@ -170,7 +170,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
 	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
 
-
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
 		totalAvailableModels++
