@@ -422,6 +422,9 @@ function MesheryPatterns({
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
+  const [addPatterns] = useAddPatternsMutation();
+  const [removePatterns] = useRemovePatternsMutation();
+
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
       name: 'FETCH_PATTERNS',
@@ -773,8 +776,6 @@ function MesheryPatterns({
   };
 
   const handleUnpublishModal = (ev, pattern) => {
-    const [removePatterns] = useRemovePatternsMutation();
-
     if (canPublishPattern) {
       ev.stopPropagation();
 
@@ -909,8 +910,6 @@ function MesheryPatterns({
     );
   };
   const handlePublish = (formData) => {
-    const [addPatterns] = useAddPatternsMutation();
-
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
         formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
