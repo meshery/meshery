@@ -101,7 +101,7 @@ func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64
 	csvPath := filepath.Join(dirPath, "components.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrReadingRemoteFile(err)
 	}
 
 	return &ComponentCSVHelper{
@@ -271,13 +271,21 @@ func (m ComponentCSVHelper) Cleanup() error {
 }
 
 func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1alpha1.ComponentDefinition) *ComponentCSV {
-	return &ComponentCSV{
+	compCSV := ComponentCSV{
 		Registrant:       modelcsv.Registrant,
 		Model:            modelcsv.Model,
 		Component:        compDef.Kind,
-		IsAnnotation:     "false",
 		ModelDisplayName: modelcsv.ModelDisplayName,
 		Category:         modelcsv.Category,
 		SubCategory:      modelcsv.SubCategory,
 	}
+	compCSV, _ = utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
+	compCSV.Registrant = modelcsv.Registrant
+	compCSV.Model = modelcsv.Model
+	compCSV.Component = compDef.Kind
+	compCSV.ModelDisplayName = modelcsv.ModelDisplayName
+	compCSV.Category = modelcsv.Category
+	compCSV.SubCategory = modelcsv.SubCategory
+
+	return &compCSV
 }
