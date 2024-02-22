@@ -8,36 +8,37 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 type ComponentCSV struct {
-	Registrant         string `json:"registrant"`
-	Model              string `json:"model"`
-	Component          string `json:"component"`
-	Shape              string `json:"shape"`
-	PrimaryColor       string `json:"primaryColor"`
-	SecondaryColor     string `json:"secondaryColor"`
-	SVGColor           string `json:"svgColor"`
-	SVGWhite           string `json:"svgWhite"`
-	SVGComplete        string `json:"svgComplete"`
-	HasSchema          string `json:"hasSchema"`
-	Description        string `json:"description"`
-	Docs               string `json:"docs"`
-	StyleOverrides     string `json:"styleOverrides"`
-	Styles             string `json:"styles"`
-	ShapePolygonPoints string `json:"shapePolygonPoints"`
-	DefaultData        string `json:"defaultData"`
-	Capabilities       string `json:"capabilities"`
-	LogoURL            string `json:"logoURL"`
-	Genealogy          string `json:"genealogy"`
-	IsAnnotation       string `json:"isAnnotation"`
+	Registrant         string `json:"registrant" csv:"registrant"`
+	Model              string `json:"model" csv:"model"`
+	Component          string `json:"component" csv:"component"`
+	Shape              string `json:"shape" csv:"shape"`
+	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
+	SVGColor           string `json:"svgColor" csv:"svgColor"`
+	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
+	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
+	HasSchema          string `json:"hasSchema" csv:"hasSchema"`
+	Description        string `json:"description" csv:"description"`
+	Docs               string `json:"docs" csv:"docs"`
+	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
+	Styles             string `json:"styles" csv:"styles"`
+	ShapePolygonPoints string `json:"shapePolygonPoints" csv:"shapePolygonPoints"`
+	DefaultData        string `json:"defaultData" csv:"defaultData"`
+	Capabilities       string `json:"capabilities" csv:"capabilities"`
+	LogoURL            string `json:"logoURL" csv:"logoURL"`
+	Genealogy          string `json:"genealogy" csv:"genealogy"`
+	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
 
-	ModelDisplayName string `json:"modelDisplayName"`
-	Category         string `json:"category"`
-	SubCategory      string `json:"subCategory"`
+	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
+	Category         string `json:"category" csv:"-"`
+	SubCategory      string `json:"subCategory" csv:"-"`
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
@@ -267,4 +268,16 @@ func (m ComponentCSVHelper) Cleanup() error {
 		return err
 	}
 	return nil
+}
+
+func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1alpha1.ComponentDefinition) *ComponentCSV {
+	return &ComponentCSV{
+		Registrant:       modelcsv.Registrant,
+		Model:            modelcsv.Model,
+		Component:        compDef.Kind,
+		IsAnnotation:     "false",
+		ModelDisplayName: modelcsv.ModelDisplayName,
+		Category:         modelcsv.Category,
+		SubCategory:      modelcsv.SubCategory,
+	}
 }
