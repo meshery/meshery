@@ -110,7 +110,6 @@ type compGenerateTracker struct {
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
-	utils.Log.UpdateLogOutput(logFile)
 
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
@@ -139,6 +138,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		return err
 	}
 
+	utils.Log.UpdateLogOutput(logFile)
+
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 	go func() {
@@ -147,6 +148,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}()
 
 	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
+
 
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -214,7 +216,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 					utils.Log.Info(err)
 				}
 			}
-			
+
 			spreadsheeetChan <- utils.SpreadsheetData{
 				Model:      &model,
 				Components: comps,

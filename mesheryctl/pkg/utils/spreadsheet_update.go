@@ -51,24 +51,31 @@ func ProcessModelToComponentsMap(existingComponents map[string]map[string][]Comp
 }
 
 func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1alpha1.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
-	if RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model] == nil {
-		RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model] = make(map[string]bool)
+	registrant := modelEntry.Registrant
+	model := modelEntry.Model
+
+	if RegistrantToModelsToComponentsMap[registrant][model] == nil {
+		RegistrantToModelsToComponentsMap[registrant][model] = make(map[string]bool)
 	}
 
 	for _, comp := range compEntries {
-		RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model][comp.Kind] = true
-		compList = append(compList, ConvertCompDefToCompCSV(modelEntry, comp))
+		if !RegistrantToModelsToComponentsMap[registrant][model][comp.Kind] {
+			RegistrantToModelsToComponentsMap[registrant][model][comp.Kind] = true
+			compList = append(compList, ConvertCompDefToCompCSV(modelEntry, comp))
+			compBatchSize--
+		}
 	}
-	compBatchSize -= len(compEntries)
 
 	return compList
 }
 
 func addEntriesInModelUpdateList(modelEntry *ModelCSV, modelList []*ModelCSV) []*ModelCSV {
-	if RegistrantToModelsMap[modelEntry.Registrant] == nil {
-		RegistrantToModelsMap[modelEntry.Registrant] = make(map[string]bool)
+	registrant := modelEntry.Registrant
+
+	if RegistrantToModelsMap[registrant] == nil {
+		RegistrantToModelsMap[registrant] = make(map[string]bool)
 	}
-	RegistrantToModelsMap[modelEntry.Registrant][modelEntry.Model] = true
+	RegistrantToModelsMap[registrant][modelEntry.Model] = true
 	modelBatchSize--
 
 	return modelList
