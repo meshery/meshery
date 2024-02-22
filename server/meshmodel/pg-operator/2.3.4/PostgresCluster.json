@@ -13,6 +13,7 @@
    "name": "pg-operator",
    "version": "2.3.4",
    "displayName": "pg-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

@@ -32,6 +32,7 @@
    "name": "aws-ecr-controller",
    "version": "1.0.9",
    "displayName": "AWS Elastic Container Registry",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

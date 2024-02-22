@@ -27,6 +27,7 @@
    "name": "aws-kinesis-controller",
    "version": "v0.0.12",
    "displayName": "aws-kinesis-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

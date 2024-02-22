@@ -27,6 +27,7 @@
    "name": "grafana-operator",
    "version": "3.10.1",
    "displayName": "grafana-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

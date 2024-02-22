@@ -27,6 +27,7 @@
    "name": "vald-helm-operator",
    "version": "1.7.12",
    "displayName": "vald-helm-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

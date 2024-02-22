@@ -32,6 +32,7 @@
    "name": "bytebuilders-crds",
    "version": "2022.4.14",
    "displayName": "Bytebuilders Crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

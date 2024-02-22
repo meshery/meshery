@@ -27,6 +27,7 @@
    "name": "github-actions-runners",
    "version": "0.1.2",
    "displayName": "github-actions-runners",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

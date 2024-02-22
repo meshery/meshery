@@ -27,6 +27,7 @@
    "name": "kong",
    "version": "10.6.0",
    "displayName": "kong",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

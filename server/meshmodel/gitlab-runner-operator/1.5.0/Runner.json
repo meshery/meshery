@@ -27,6 +27,7 @@
    "name": "gitlab-runner-operator",
    "version": "1.5.0",
    "displayName": "gitlab-runner-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

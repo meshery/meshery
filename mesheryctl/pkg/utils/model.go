@@ -65,14 +65,24 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
 		isAnnotation = true
 	}
 
+	svgColor, err := utils.UpdateSVGString(mcv.SVGColor, SVG_WIDTH, SVG_HEIGHT)
+	if err != nil {
+		svgColor = mcv.SVGColor
+	}
+
+	svgWhite, err := utils.UpdateSVGString(mcv.SVGWhite, SVG_WIDTH, SVG_HEIGHT)
+	if err != nil {
+		svgColor = mcv.SVGWhite
+	}
+
 	model := v1alpha1.Model{
 		Name:        mcv.Model,
 		Version:     version,
 		DisplayName: mcv.ModelDisplayName,
 		Metadata: map[string]interface{}{
 			"isAnnotation": isAnnotation,
-			"svgColor":     mcv.SVGColor,
-			"svgWhite":     mcv.SVGWhite,
+			"svgColor":     svgColor,
+			"svgWhite":     svgWhite,
 			"svgComplete":  mcv.SVGComplete,
 			"subCategory":  mcv.SubCategory, // move as first class attribute
 			"published":    isModelPublished,
