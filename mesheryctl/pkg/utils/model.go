@@ -93,7 +93,7 @@ type ModelCSVHelper struct {
 
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	fmt.Println("Downloading CSV from:", sheetURL)
+	Log.Info("Downloading CSV from:", sheetURL)
 	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
 	_ = os.MkdirAll(dirPath, 0755)
 	csvPath := filepath.Join(dirPath, "models.csv")
@@ -144,7 +144,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
-			fmt.Printf("Reading Model: %s from Registrant: %s\n", data.Model, data.Registrant)
+			Log.Info("Reading Model: %s from Registrant: %s\n", data.Model, data.Registrant)
 		case err := <-errorChan:
 			return ErrFileRead(err)
 
@@ -322,7 +322,7 @@ display-title: "false"
 
 func (m ModelCSVHelper) Cleanup() error {
 	// remove csv file
-	fmt.Println("Removing CSV file:", m.CSVPath)
+	Log.Info("Removing CSV file:", m.CSVPath)
 	err := os.Remove(m.CSVPath)
 	if err != nil {
 		return err

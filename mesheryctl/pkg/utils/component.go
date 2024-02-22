@@ -95,7 +95,7 @@ type ComponentCSVHelper struct {
 
 func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	fmt.Println("Downloading CSV from:", sheetURL)
+	Log.Info("Downloading CSV from:", sheetURL)
 	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
 	_ = os.MkdirAll(dirPath, 0755)
 	csvPath := filepath.Join(dirPath, "components.csv")
@@ -153,9 +153,9 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 				mch.Components[data.Registrant][data.Model] = make([]ComponentCSV, 0)
 			}
 			mch.Components[data.Registrant][data.Model] = append(mch.Components[data.Registrant][data.Model], data)
-			fmt.Printf("Reading Component: %s for Model: %s from Registrant: %s\n", data.Component, data.Model, data.Registrant)
+			Log.Info(fmt.Sprintf("Reading Component: %s for Model: %s from Registrant: %s\n", data.Component, data.Model, data.Registrant))
 		case err := <-errorChan:
-			fmt.Println(err)
+			Log.Error(err)
 
 		case <-csvReader.Context.Done():
 			return nil
@@ -262,7 +262,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 
 func (m ComponentCSVHelper) Cleanup() error {
 	// remove csv file
-	fmt.Println("Removing CSV file:", m.CSVPath)
+	Log.Info("Removing CSV file:", m.CSVPath)
 	err := os.Remove(m.CSVPath)
 	if err != nil {
 		return err
