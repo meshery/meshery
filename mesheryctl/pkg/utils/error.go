@@ -36,6 +36,8 @@ var (
 	ErrParseGithubFileCode    = "1185"
 	ErrReadTokenCode          = "1186"
 	ErrRequestResponseCode    = "1187"
+	ErrMarshalStructToCSVCode = "replace_me"
+	ErrAppendToSheetCode      = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -484,4 +486,20 @@ func ErrRequestResponse(err error) error {
 		[]string{"Unable to create a response from request" + err.Error()},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrMarshalStructToCSV(err error) error {
+	return errors.New(ErrMarshalStructToCSVCode, errors.Alert,
+		[]string{"Failed to marshal struct to csv"},
+		[]string{err.Error()},
+		[]string{"Error occured converting struct to [][]string", "The struct might have in-appropriate csv tags"},
+		[]string{"Verify the struct is non-empty", "Verify the struct has appropriate csv tags"})
+}
+
+func ErrAppendToSheet(err error, id string) error {
+	return errors.New(ErrAppendToSheetCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
+		[]string{err.Error()},
+		[]string{"Error occured while appending to the spreadsheet", "The credentials might be incorrect/expired"},
+		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credentials are used"})
 }

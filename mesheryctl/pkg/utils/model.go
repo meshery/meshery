@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
@@ -19,41 +18,41 @@ var (
 )
 
 type ModelCSV struct {
-	ModelDisplayName   string `json:"modelDisplayName"`
-	Model              string `json:"model"`
-	Registrant         string `json:"registrant"`
-	Category           string `json:"category"`
-	SubCategory        string `json:"subCategory"`
-	Description        string `json:"description"`
-	SourceURL          string `json:"sourceURL"`
-	Website            string `json:"website"`
-	Docs               string `json:"docs"`
-	Shape              string `json:"shape"`
-	PrimaryColor       string `json:"primaryColor"`
-	SecondaryColor     string `json:"secondaryColor"`
-	StyleOverrides     string `json:"styleOverrides"`
-	Styles             string `json:"styles"`
-	ShapePolygonPoints string `json:"shapePolygonPoints"`
-	DefaultData        string `json:"defaultData"`
-	Capabilities       string `json:"capabilities"`
-	LogoURL            string `json:"logoURL"`
-	SVGColor           string `json:"svgColor"`
-	SVGWhite           string `json:"svgWhite"`
-	SVGComplete        string `json:"svgComplete"`
-	PublishToRegistry  string `json:"publishToRegistry"`
-	IsAnnotation       string `json:"isAnnotation"`
-	AboutProject       string `json:"aboutProject"`
-	PageSubtTitle      string `json:"pageSubtitle"`
-	DocsURL            string `json:"docsURL"`
-	StandardBlurb      string `json:"standardBlurb"`
-	Feature1           string `json:"feature1"`
-	Feature2           string `json:"feature2"`
-	Feature3           string `json:"feature3"`
-	HowItWorks         string `json:"howItWorks"`
-	HowItWorksDetails  string `json:"howItWorksDetails"`
-	Screenshots        string `json:"screenshots"`
-	FullPage           string `json:"fullPage"`
-	PublishToSites     string `json:"publishToSites"`
+	ModelDisplayName   string `json:"modelDisplayName" csv:"modelDisplayName"`
+	Model              string `json:"model" csv:"model"`
+	Registrant         string `json:"registrant" csv:"registrant"`
+	Category           string `json:"category" csv:"category"`
+	SubCategory        string `json:"subCategory" csv:"subCategory"`
+	Description        string `json:"description" csv:"description"`
+	SourceURL          string `json:"sourceURL" csv:"sourceURL"`
+	Website            string `json:"website" csv:"website"`
+	Docs               string `json:"docs" csv:"docs"`
+	Shape              string `json:"shape" csv:"shape"`
+	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
+	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
+	Styles             string `json:"styles" csv:"styles"`
+	ShapePolygonPoints string `json:"shapePolygonPoints" csv:"shapePolygonPoints"`
+	DefaultData        string `json:"defaultData" csv:"defaultData"`
+	Capabilities       string `json:"capabilities" csv:"capabilities"`
+	LogoURL            string `json:"logoURL" csv:"logoURL"`
+	SVGColor           string `json:"svgColor" csv:"svgColor"`
+	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
+	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
+	PublishToRegistry  string `json:"publishToRegistry" csv:"publishToRegistry"`
+	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
+	AboutProject       string `json:"aboutProject" csv:"aboutProject"`
+	PageSubtTitle      string `json:"pageSubtitle" csv:"pageSubtitle"`
+	DocsURL            string `json:"docsURL" csv:"docsURL"`
+	StandardBlurb      string `json:"standardBlurb" csv:"standardBlurb"`
+	Feature1           string `json:"feature1" csv:"feature1"`
+	Feature2           string `json:"feature2" csv:"feature2"`
+	Feature3           string `json:"feature3" csv:"feature3"`
+	HowItWorks         string `json:"howItWorks" csv:"howItWorks"`
+	HowItWorksDetails  string `json:"howItWorksDetails" csv:"howItWorksDetails"`
+	Screenshots        string `json:"screenshots" csv:"screenshots"`
+	FullPage           string `json:"fullPage" csv:"fullPage"`
+	PublishToSites     string `json:"publishToSites" csv:"publishToSites"`
 }
 
 func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
@@ -100,7 +99,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	csvPath := filepath.Join(dirPath, "models.csv")
 	err := utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrReadingRemoteFile(err)
 	}
 
 	return &ModelCSVHelper{
@@ -144,7 +143,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		select {
 
 		case data := <-ch:
-			data.Registrant = mutils.ReplaceSpacesAndConvertToLowercase(data.Registrant)
 			mch.Models = append(mch.Models, data)
 			fmt.Printf("Reading Model [ %s ] from Registrant [ %s ] \n", data.Model, data.Registrant)
 		case err := <-errorChan:
