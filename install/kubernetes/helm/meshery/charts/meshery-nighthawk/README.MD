@@ -1,6 +1,6 @@
 # meshery-nighthawk
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: edge-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for Network Service Mesh.
 
@@ -20,7 +20,7 @@ Meshery Adapter for Network Service Mesh.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"layer5/meshery-nighthawk:stable-latest"` |  |
+| image.repository | string | `"meshery/meshery-nighthawk:edge-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
