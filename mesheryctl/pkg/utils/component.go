@@ -262,7 +262,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 
 func (m ComponentCSVHelper) Cleanup() error {
 	// remove csv file
-	Log.Info("Removing CSV file:", m.CSVPath)
+	Log.Info("Removing CSV file: ", m.CSVPath)
 	err := os.Remove(m.CSVPath)
 	if err != nil {
 		return err
