@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"sync"
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
@@ -20,47 +19,59 @@ type SpreadsheetData struct {
 var (
 	compBatchSize  = 100
 	modelBatchSize = 100
+
 	// refers to all cells in the fourth row (explain how is table clulte in ghsset and henc this rang is valid and will not reuire udpate or when it hould require update)
-	appendRange                = "A4"
-	ComponentsSheetAppendRange = fmt.Sprintf("Components!%s", appendRange)
-	ModelsSheetAppendRange     = fmt.Sprintf("Models!%s", appendRange)
+	ComponentsSheetAppendRange = "Components!A4"
+	ModelsSheetAppendRange     = "Models!A4"
 )
 
 // registrant:model:component:[true/false]
-var modelToComponentsMap = make(map[string]map[string]map[string]bool)
+// Tracks if component sheet requires update
+var RegistrantToModelsToComponentsMap = make(map[string]map[string]map[string]bool)
+
+// registrant:model:[true/false]
+// Tracks if component sheet requires update
+var RegistrantToModelsMap = make(map[string]map[string]bool)
 
 func ProcessModelToComponentsMap(existingComponents map[string]map[string][]ComponentCSV) {
-	modelToComponentsMap = make(map[string]map[string]map[string]bool, len(existingComponents))
+	RegistrantToModelsToComponentsMap = make(map[string]map[string]map[string]bool, len(existingComponents))
 	for registrant, models := range existingComponents {
 		for model, comps := range models {
-			if modelToComponentsMap[registrant] == nil {
-				modelToComponentsMap[registrant] = make(map[string]map[string]bool)
+			if RegistrantToModelsToComponentsMap[registrant] == nil {
+				RegistrantToModelsToComponentsMap[registrant] = make(map[string]map[string]bool)
 			}
-			fmt.Println("TEST ", model)
 			for _, comp := range comps {
-				if modelToComponentsMap[registrant][model] == nil {
-					modelToComponentsMap[registrant][model] = make(map[string]bool)
+				if RegistrantToModelsToComponentsMap[registrant][model] == nil {
+					RegistrantToModelsToComponentsMap[registrant][model] = make(map[string]bool)
 				}
-				modelToComponentsMap[registrant][model][comp.Component] = true
+				RegistrantToModelsToComponentsMap[registrant][model][comp.Component] = true
 			}
 		}
 	}
 }
 
-func addEntriesInModelAndCompUpdateList(modelEntry *ModelCSV, compEntries []v1alpha1.ComponentDefinition, modelList []*ModelCSV, compList []*ComponentCSV) ([]*ModelCSV, []*ComponentCSV) {
-	modelList = append(modelList, modelEntry)
-	modelBatchSize--
-	modelToComponentsMap[modelEntry.Registrant][modelEntry.Model] = make(map[string]bool)
+func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1alpha1.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
+	if RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model] == nil {
+		RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model] = make(map[string]bool)
+	}
+
 	for _, comp := range compEntries {
-		if modelToComponentsMap[modelEntry.Registrant][modelEntry.Model] == nil {
-			modelToComponentsMap[modelEntry.Registrant][modelEntry.Model] = make(map[string]bool)
-		}
-		modelToComponentsMap[modelEntry.Registrant][modelEntry.Model][comp.Kind] = true
+		RegistrantToModelsToComponentsMap[modelEntry.Registrant][modelEntry.Model][comp.Kind] = true
 		compList = append(compList, ConvertCompDefToCompCSV(modelEntry, comp))
 	}
 	compBatchSize -= len(compEntries)
 
-	return modelList, compList
+	return compList
+}
+
+func addEntriesInModelUpdateList(modelEntry *ModelCSV, modelList []*ModelCSV) []*ModelCSV {
+	if RegistrantToModelsMap[modelEntry.Registrant] == nil {
+		RegistrantToModelsMap[modelEntry.Registrant] = make(map[string]bool)
+	}
+	RegistrantToModelsMap[modelEntry.Registrant][modelEntry.Model] = true
+	modelBatchSize--
+
+	return modelList
 }
 
 // Verifies if the component entry already exist in the spreadsheet, otherwise updates the spreadshhet to include new component entry.
@@ -71,26 +82,32 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 	entriesToBeAddedInModelSheet := []*ModelCSV{}
 
 	for data := range spreadsheetUpdateChan {
+		_, ok := RegistrantToModelsMap[data.Model.Registrant]
+		if !ok {
+			entriesToBeAddedInModelSheet = addEntriesInModelUpdateList(data.Model, entriesToBeAddedInModelSheet)
+		}
+
 		for _, comp := range data.Components {
-			existingModels, ok := modelToComponentsMap[data.Model.Registrant] // replace with registrantr
+			existingModels, ok := RegistrantToModelsToComponentsMap[data.Model.Registrant] // replace with registrantr
 			if ok {
-				fmt.Println("existing models : ", existingModels)
+
 				existingComps, ok := existingModels[data.Model.Model]
-				fmt.Println("existing comps: ", existingComps)
+
 				if ok {
 					entryExist := existingComps[comp.Kind]
-					fmt.Println("test 57 : ", entryExist)
+
 					if !entryExist {
 						entriesToBeAddedInCompSheet = append(entriesToBeAddedInCompSheet, ConvertCompDefToCompCSV(data.Model, comp))
 						compBatchSize--
-						modelToComponentsMap[data.Model.Registrant][data.Model.Model][comp.Kind] = true
+						RegistrantToModelsToComponentsMap[data.Model.Registrant][data.Model.Model][comp.Kind] = true
 					}
 				} else {
-					entriesToBeAddedInModelSheet, entriesToBeAddedInCompSheet = addEntriesInModelAndCompUpdateList(data.Model, data.Components, entriesToBeAddedInModelSheet, entriesToBeAddedInCompSheet)
+					entriesToBeAddedInCompSheet = addEntriesInCompUpdateList(data.Model, data.Components, entriesToBeAddedInCompSheet)
 				}
 			} else {
-				fmt.Println("No registrant exist : ", data.Model.Registrant)
-				entriesToBeAddedInModelSheet, entriesToBeAddedInCompSheet = addEntriesInModelAndCompUpdateList(data.Model, data.Components, entriesToBeAddedInModelSheet, entriesToBeAddedInCompSheet)
+
+				RegistrantToModelsToComponentsMap[data.Model.Registrant] = make(map[string]map[string]bool)
+				entriesToBeAddedInCompSheet = addEntriesInCompUpdateList(data.Model, data.Components, entriesToBeAddedInCompSheet)
 			}
 		}
 
@@ -100,7 +117,7 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 			// Reset the list
 			entriesToBeAddedInModelSheet = []*ModelCSV{}
 			if err != nil {
-				fmt.Println(err)
+				Log.Error(err)
 			}
 		}
 
@@ -111,23 +128,22 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 			entriesToBeAddedInCompSheet = []*ComponentCSV{}
 			entriesToBeAddedInModelSheet = []*ModelCSV{}
 			if err != nil {
-				fmt.Println(err)
+				Log.Error(err)
 			}
 		}
 	}
 
-	fmt.Println("EXITING AFTER APPLYING PENDING UPDATES")
 	if len(entriesToBeAddedInModelSheet) > 0 {
 		err := updateModelsSheet(srv, cred, sheetId, entriesToBeAddedInModelSheet)
 		if err != nil {
-			fmt.Println(err)
+			Log.Error(err)
 		}
 	}
 
-	if len(entriesToBeAddedInModelSheet) > 0 {
+	if len(entriesToBeAddedInCompSheet) > 0 {
 		err := updateComponentsSheet(srv, cred, sheetId, entriesToBeAddedInCompSheet)
 		if err != nil {
-			fmt.Println(err)
+			Log.Error(err)
 		}
 		return
 	}
@@ -138,24 +154,28 @@ func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*Mode
 	if err != nil {
 		return err
 	}
+	Log.Info("Appending", len(marshalledValues), "in the models sheet")
 	err = appendSheet(srv, cred, sheetId, ModelsSheetAppendRange, marshalledValues)
-	fmt.Println("appending models", err)
+
 	return err
 }
 
 func updateComponentsSheet(srv *sheets.Service, cred, sheetId string, values []*ComponentCSV) error {
 	marshalledValues, err := marshalStructToCSValues[ComponentCSV](values)
+	Log.Info("Appending", len(marshalledValues), "in the components sheet")
 	if err != nil {
 		return err
 	}
 	err = appendSheet(srv, cred, sheetId, ComponentsSheetAppendRange, marshalledValues)
-	fmt.Println("appending compoennts", err, len(marshalledValues))
+
 	return err
 }
 
 func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values [][]interface{}) error {
-	fmt.Println("LINE 97 : ")
 
+	if len(values) == 0 {
+		return nil
+	}
 	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, &sheets.BatchUpdateValuesRequest{
 		ValueInputOption: "USER_ENTERED",
 		Data: []*sheets.ValueRange{
@@ -166,9 +186,6 @@ func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values 
 			},
 		},
 	}).Context(context.Background()).Do()
-	if len(values) == 0 {
-		return nil
-	}
 
 	if err != nil {
 		return ErrAppendToSheet(err, sheetId)
