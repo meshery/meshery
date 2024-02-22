@@ -32,6 +32,7 @@
    "name": "k8s-aws-iam-controller",
    "version": "0.1.6",
    "displayName": "K8s AWS IAM Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

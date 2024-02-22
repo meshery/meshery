@@ -27,6 +27,7 @@
    "name": "apisix",
    "version": "2.7.0",
    "displayName": "apisix",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",
