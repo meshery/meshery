@@ -48,8 +48,6 @@ type MesheryControllersHelper struct {
 	// meshsync data handler for a particular context
 	ctxMeshsyncDataHandler *MeshsyncDataHandler
 
-	mu sync.Mutex
-
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
@@ -88,8 +86,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID uuid.UUID, provider Provider) *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
 	// go func(mch *MesheryControllersHelper) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
+	
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
 		controllerHandlers := mch.ctxControllerHandlers
@@ -138,8 +135,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
+	
 	mch.ctxMeshsyncDataHandler = nil
 }
 
@@ -148,9 +144,7 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-
+	
 	// resetting this value as a specific controller handler instance does not have any significance opposed to
 	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 
@@ -172,8 +166,6 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 }
 
 func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Context, contextID string) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
 	mch.ctxControllerHandlers = nil
 }
 
@@ -182,9 +174,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-
+	
 	if ot.IsUndeployed(mch.contextID) {
 		mch.ctxOperatorStatus = controllers.Undeployed
 	} else {
@@ -218,8 +208,6 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
-	ot.mx.Lock()
-	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 	}
@@ -230,8 +218,6 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
-	ot.mx.Lock()
-	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 		return false
@@ -246,9 +232,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		return mch
 	}
 	// go func(mch *MesheryControllersHelper) {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-
+	
 	if mch.ctxOperatorStatus == controllers.NotDeployed {
 		if mch.ctxControllerHandlers != nil {
 			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
@@ -270,8 +254,6 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
 
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
 	oprStatus := mch.ctxOperatorStatus
 
 	if oprStatus != controllers.Undeployed {
