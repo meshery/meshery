@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
-	"github.com/vmihailenco/taskq/v3"
 )
 
 // HandlerInterface defines the methods a Handler should define
@@ -237,8 +236,6 @@ type HandlerConfig struct {
 
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface
-
-	Queue taskq.Queue
 
 	KubeConfigFolder string
 

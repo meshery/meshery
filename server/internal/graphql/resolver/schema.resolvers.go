@@ -180,7 +180,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 
 	for _, connectionID := range connectionIDs {
 		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-		if !ok || inst == nil {
+		if ok && inst != nil {
 			machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
 			if err != nil {
 				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
@@ -224,7 +224,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 		for {
 			for _, connectionID := range connectionIDs {
 				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-				if !ok || inst == nil {
+				if ok && inst != nil {
 					machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
 					if err != nil {
 						r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
@@ -280,7 +280,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 
 	for _, connectionID := range connectionIDs {
 		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-		if !ok || inst == nil {
+		if ok && inst == nil {
 			machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
 			if err != nil {
 				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
@@ -295,7 +295,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 				r.Log.Info("skipping meshsync events subscription for connection Id: %s", connectionID)
 				continue
 			}
-			go func(ctxID string, brokerEventsChan chan *broker.Message) {
+			go func(connectionID string, brokerEventsChan chan *broker.Message) {
 				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
 				for event := range brokerEventsChan {
 					if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic

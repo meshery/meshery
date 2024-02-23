@@ -333,6 +333,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			}
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+		if err != nil {
+			h.log.Error(err)
+			continue
+		}
 		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
 		if mdh != nil {
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{

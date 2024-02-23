@@ -74,7 +74,7 @@ func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) Op
 	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
 	log.Debug("broker monitor endpoint", monitorEndpoint, err)
 
-	if brokerStatus == controllers.Connected.String(){
+	if brokerStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		brokerStatus = fmt.Sprintf("%s %s", brokerStatus, brokerEndpoint)
 	}

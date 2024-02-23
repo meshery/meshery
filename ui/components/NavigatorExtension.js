@@ -14,7 +14,6 @@ import PatternServiceForm from './MesheryMeshInterface/PatternServiceForm';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironment';
-import subscribeMeshSyncStatusEvents from '../components/graphql/subscriptions/MeshSyncStatusSubscription';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
 import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
@@ -103,7 +102,6 @@ function NavigatorExtension({
           query: {},
           mutation: {},
           subscription: {
-            subscribeMeshSyncStatusEvents,
             ConfigurationSubscription,
           },
         },

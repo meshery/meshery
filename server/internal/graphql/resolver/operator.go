@@ -194,7 +194,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	unknowStatus := &model.OperatorControllerStatus{
 		ConnectionID: connectionID,
 		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
-		Name:   model.GetInternalController(models.Meshsync).String(),
+		Name:         model.GetInternalController(models.Meshsync).String(),
 	}
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
@@ -227,7 +227,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	unknowStatus := &model.OperatorControllerStatus{
 		ConnectionID: connectionID,
 		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
-		Name:   model.GetInternalController(models.MesheryBroker).String(),
+		Name:         model.GetInternalController(models.MesheryBroker).String(),
 	}
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
