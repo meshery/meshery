@@ -595,7 +595,7 @@ type Query {
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
-        k8scontextID: String!
+        connectionID: String!
   ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery

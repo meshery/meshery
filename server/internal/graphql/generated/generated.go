@@ -392,7 +392,7 @@ type ComplexityRoot struct {
 		GetMeshModelSummary        func(childComplexity int, selector model.MeshModelSummarySelector) int
 		GetMeshsyncStatus          func(childComplexity int, connectionID string) int
 		GetNatsStatus              func(childComplexity int, connectionID string) int
-		GetOperatorStatus          func(childComplexity int, k8scontextID string) int
+		GetOperatorStatus          func(childComplexity int, connectionID string) int
 		GetPerfResult              func(childComplexity int, id string) int
 		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
 		ResyncCluster              func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
@@ -431,7 +431,7 @@ type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error)
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
-	GetOperatorStatus(ctx context.Context, k8scontextID string) (*model.MesheryControllersStatusListItem, error)
+	GetOperatorStatus(ctx context.Context, connectionID string) (*model.MesheryControllersStatusListItem, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error)
 	GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
 	GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
@@ -2116,7 +2116,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetOperatorStatus(childComplexity, args["k8scontextID"].(string)), true
+		return e.complexity.Query.GetOperatorStatus(childComplexity, args["connectionID"].(string)), true
 
 	case "Query.getPerfResult":
 		if e.complexity.Query.GetPerfResult == nil {
@@ -3031,7 +3031,7 @@ type Query {
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
-        k8scontextID: String!
+        connectionID: String!
   ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery
@@ -3459,14 +3459,14 @@ func (ec *executionContext) field_Query_getOperatorStatus_args(ctx context.Conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
+	if tmp, ok := rawArgs["connectionID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectionID"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["k8scontextID"] = arg0
+	args["connectionID"] = arg0
 	return args, nil
 }
 
@@ -13251,7 +13251,7 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetOperatorStatus(rctx, fc.Args["k8scontextID"].(string))
+			return ec.resolvers.Query().GetOperatorStatus(rctx, fc.Args["connectionID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.KubernetesMiddleware == nil {
