@@ -61,10 +61,10 @@ export function useMesheryOperator() {
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
-  const ping = (contextID) => {
+  const ping = (connectionID) => {
     dispatch(updateProgress({ showProgress: true }));
     pingMesheryOperator(
-      contextID,
+      connectionID,
       () => handleSuccess(`Meshery Operator  pinged`),
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
@@ -120,7 +120,7 @@ export function useMeshsSyncController() {
   return { ping };
 }
 
-export const useGetOperatorInfoQuery = ({ contextID }) => {
+export const useGetOperatorInfoQuery = ({ connectionID }) => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
 
@@ -133,7 +133,7 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     setIsLoading(true);
     dispatch(updateProgress({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
-    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextID }).subscribe({
+    const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe({
       next: () => {
         setIsLoading(false);
 

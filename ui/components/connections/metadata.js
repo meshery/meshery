@@ -135,7 +135,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   };
 
   const handleOperatorClick = () => {
-    pingMesheryOperator(contextID);
+    pingMesheryOperator({ connectionID: connection.id });
   };
 
   const handleMeshSyncClick = () => {
@@ -216,7 +216,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     title={'Operator'}
                     disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
                     status={operatorState}
-                    handlePing={() => handleOperatorClick(connection.id)}
+                    handlePing={handleOperatorClick}
                     iconSrc="/static/img/meshery-operator.svg"
                   />
                 </ListItem>

@@ -1122,6 +1122,7 @@ function Connections(props) {
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = connections[index].metadata?.id;
+    const connectionID = connections[index]?.id;
     const variables = {
       status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
@@ -1140,13 +1141,15 @@ function Connections(props) {
         event_type: EVENT_TYPES.SUCCESS,
       });
 
-      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
-        next: (res) => {
-          _setOperatorState(updateCtxInfo(contextId, res));
-          tempSubscription.unsubscribe();
+      const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe(
+        {
+          next: (res) => {
+            _setOperatorState(updateCtxInfo(contextId, res));
+            tempSubscription.unsubscribe();
+          },
+          error: (err) => console.log('error at operator scan: ' + err),
         },
-        error: (err) => console.log('error at operator scan: ' + err),
-      });
+      );
     }, variables);
   };
 
