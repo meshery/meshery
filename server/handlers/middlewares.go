@@ -332,7 +332,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
-		kubernesMachineCtx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 		if err != nil {
 			h.log.Error(err)
 			continue

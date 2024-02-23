@@ -73,7 +73,10 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		log:                    log,
 		oprDepConfig:           operatorDepConfig,
 		ctxOperatorStatus:      controllers.Unknown,
-		ctxMeshsyncDataHandler: new(MeshsyncDataHandler),
+		// The nil check is performed for the ctxMeshsyncDataHandler and if it is nil, then a new dataHandler for the context is assigned.
+		// The presence of a handler for a context in a map indicate that the meshsync data for that context is properly being handled.
+		// Resetting this value results in again subscribing to the Broker.
+		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
 	}
 }

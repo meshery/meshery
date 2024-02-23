@@ -181,7 +181,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	for _, connectionID := range connectionIDs {
 		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 		if ok && inst != nil {
-			machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+			machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 			if err != nil {
 				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 				continue
@@ -225,7 +225,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 			for _, connectionID := range connectionIDs {
 				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 				if ok && inst != nil {
-					machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+					machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 					if err != nil {
 						r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 						continue
@@ -280,14 +280,19 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 
 	for _, connectionID := range connectionIDs {
 		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-		if ok && inst == nil {
-			machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+		if ok && inst != nil {
+			machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 			if err != nil {
 				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 				continue
 			}
 
 			dataHandler := machinectx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+			if dataHandler == nil {
+				r.Log.Info("skipping meshsync events subscription for connection Id: %s", connectionID)
+				r.Log.Info("connection to broker and datahandler is not yet initialised")
+				continue
+			}
 			brokerEventsChan := make(chan *broker.Message)
 			err = dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
 			if err != nil {

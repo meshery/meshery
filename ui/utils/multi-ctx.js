@@ -165,9 +165,17 @@ export function getClusterNameFromCtxId(ctxId, k8sConfig) {
 
 /**
  *
- * @param {Array<Object>} contexts Kubernetes contexts
+ * @param {Array<Object>} contextIDs Kubernetes context ids
+ * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {Array<string>} array of connection ID for given kubernetes contexts
  */
-export function getConnectionIDsFromContexts(contexts) {
-  return [...contexts.map((context) => context.connection_id)];
+export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
+  const filteredK8sConnfigs = k8sConfig.filter((config) => {
+    const context = contexts.find((context) => context == config.id);
+    if (!!context) {
+      return true;
+    }
+    return false;
+  });
+  return filteredK8sConnfigs.map((config) => config.connection_id);
 }

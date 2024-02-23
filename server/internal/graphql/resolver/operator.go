@@ -172,7 +172,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 		return unknowStatus, nil
 	}
 
-	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 		return unknowStatus, nil
@@ -208,7 +208,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return unknowStatus, nil
 	}
 
-	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 		return unknowStatus, nil
@@ -224,6 +224,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 }
 
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
+
 	unknowStatus := &model.OperatorControllerStatus{
 		ConnectionID: connectionID,
 		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
@@ -241,7 +242,8 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 		return unknowStatus, nil
 	}
 
-	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 		return unknowStatus, nil
