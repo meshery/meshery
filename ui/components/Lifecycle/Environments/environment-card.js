@@ -83,7 +83,6 @@ const EnvironmentCard = ({
             <Typography
               className={classes.name}
               variant="body2"
-              style={{ fontWeight: 'bold !important' }}
               onClick={(e) => e.stopPropagation()}
             >
               {environmentDetails?.name}
