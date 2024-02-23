@@ -3,10 +3,13 @@ package resolver
 import (
 	"context"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/controllers"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
@@ -151,79 +154,104 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.MesheryControllersStatusListItem, error) {
-	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, connectionID string) (*model.MesheryControllersStatusListItem, error) {
 	unknowStatus := &model.MesheryControllersStatusListItem{
-		ContextID:  ctxID,
-		Status:     model.MesheryControllerStatusUnkown,
-		Controller: model.GetInternalController(models.MesheryOperator),
+		ConnectionID: connectionID,
+		Status:       model.MesheryControllerStatusUnkown,
+		Controller:   model.GetInternalController(models.MesheryOperator),
 	}
+
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	if !ok {
 		return unknowStatus, nil
 	}
 
-	controllerHandlersPerContext := handler.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+	// If machine instance is not present or points to nil, return unknown status
+	if !ok || inst == nil {
 		return unknowStatus, nil
 	}
 
-	controllerhandler, ok := controllerHandlersPerContext[ctxID]
+	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	if err != nil {
+		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
+		return unknowStatus, nil
+	}
+
+	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 	if !ok {
 		return unknowStatus, nil
 	}
 	status := controllerhandler[models.MesheryOperator].GetStatus()
 	return &model.MesheryControllersStatusListItem{
-		ContextID:  ctxID,
-		Status:     model.GetInternalControllerStatus(status),
-		Controller: model.GetInternalController(models.MesheryOperator),
+		ConnectionID: connectionID,
+		Status:       model.GetInternalControllerStatus(status),
+		Controller:   model.GetInternalController(models.MesheryOperator),
 	}, nil
 }
 
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
-	var kubeclient *mesherykube.Client
-
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
-
-	if connectionID != "" {
-		k8scontext, err := provider.GetK8sContext(tokenString, connectionID)
-		if err != nil {
-			return nil, model.ErrMesheryClientNil
-		}
-		kubeclient, err = k8scontext.GenerateKubeHandler()
-		if err != nil {
-			return nil, model.ErrMesheryClient(err)
-		}
+	unknowStatus := &model.OperatorControllerStatus{
+		ConnectionID: connectionID,
+		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
+		Name:   model.GetInternalController(models.Meshsync).String(),
 	}
 
-	if kubeclient == nil {
-		return nil, model.ErrMesheryClientNil
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	if !ok {
+		return unknowStatus, nil
 	}
 
-	status := model.GetMeshSyncInfo(kubeclient, nil, r.Log)
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+	// If machine instance is not present or points to nil, return unknown status
+	if !ok || inst == nil {
+		return unknowStatus, nil
+	}
+
+	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	if err != nil {
+		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
+		return unknowStatus, nil
+	}
+
+	status := model.GetMeshSyncInfo(
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.Meshsync],
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.MesheryBroker],
+		r.Log,
+	)
+	status.ConnectionID = connectionID
 	return &status, nil
 }
 
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
-	var kubeclient *mesherykube.Client
-
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
-
-	if connectionID != "" {
-		k8scontext, err := provider.GetK8sContext(tokenString, connectionID)
-		if err != nil {
-			return nil, model.ErrMesheryClientNil
-		}
-		kubeclient, err = k8scontext.GenerateKubeHandler()
-		if err != nil {
-			return nil, model.ErrMesheryClient(err)
-		}
+	unknowStatus := &model.OperatorControllerStatus{
+		ConnectionID: connectionID,
+		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
+		Name:   model.GetInternalController(models.MesheryBroker).String(),
 	}
 
-	if kubeclient == nil {
-		return nil, model.ErrMesheryClientNil
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	if !ok {
+		return unknowStatus, nil
 	}
 
-	status := model.GetBrokerInfo(kubeclient, r.Log)
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+	// If machine instance is not present or points to nil, return unknown status
+	if !ok || inst == nil {
+		return unknowStatus, nil
+	}
+
+	machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+	if err != nil {
+		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
+		return unknowStatus, nil
+	}
+
+	status := model.GetBrokerInfo(
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.MesheryBroker],
+		r.Log,
+	)
+	status.ConnectionID = connectionID
 	return &status, nil
 }
 
