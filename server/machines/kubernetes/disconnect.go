@@ -29,13 +29,17 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	k8sContexts := []models.K8sContext{machinectx.K8sContext}
-	machinectx.MesheryCtrlsHelper.UndeployDeployedOperators(machinectx.OperatorTracker)
+	contextID := machinectx.K8sContext.ID
+	machinectx.MesheryCtrlsHelper.
+		UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+		UndeployDeployedOperators(machinectx.OperatorTracker).
+		RemoveCtxControllerHandler(ctx, contextID)
+	machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
 	defer cancel()
 	context.AfterFunc(_ctx, func() {
-		machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts)
+		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
 
 	return machines.NoOp, nil, nil

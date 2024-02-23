@@ -12,6 +12,7 @@ import (
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -293,7 +294,6 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	userUUID := uuid.FromStringOrNil(user.ID)
-	ctxToDataHandlerMap := h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
@@ -332,10 +332,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
-		mdh, ok := ctxToDataHandlerMap[k8sContext.ID]
-		if ok {
+		kubernesMachineCtx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+		if mdh != nil {
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
-				mdh:       mdh,
+				mdh:       *mdh,
 				clusterID: k8sContext.KubernetesServerID.String(),
 			})
 			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())

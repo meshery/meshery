@@ -160,6 +160,7 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
+	AssignControllerHandlers(machinectx)
 	machinectx.log = log
 	return machinectx, nil, nil
 }

@@ -30,10 +30,11 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	k8sContexts := []models.K8sContext{machinectx.K8sContext}
-	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
-		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
-	ctrlHelper.UpdateMeshsynDataHandlers(ctx, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), userUUID, *sysID, provider)
+	ctrlHelper := machinectx.MesheryCtrlsHelper.
+		AddCtxControllerHandlers(machinectx.K8sContext).
+		UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+		DeployUndeployedOperators(machinectx.OperatorTracker)
+	ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 	return machines.NoOp, nil, nil
 }

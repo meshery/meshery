@@ -74,3 +74,7 @@ func GetNewDBInstance() *database.Handler {
 	setNewDBInstance()
 	return &dbHandler
 }
+
+func GetDBInstance() *database.Handler {
+	return &dbHandler
+}
