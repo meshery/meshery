@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<df91191dd49a559f7e6e4d8e3bc44adc>>
+ * @generated SignedSource<<72371de5e888cd09251acd22c1310b50>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,7 +49,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "contextId",
+        "name": "connectionID",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "29fa4a0ce4b1961decf629f90ebf0604",
+    "cacheID": "1edf459162cb7e0a916856a8bb8649e2",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusQuery",
     "operationKind": "query",
-    "text": "query OperatorStatusQuery(\n  $connectionID: String!\n) {\n  operator: getOperatorStatus(connectionID: $connectionID) {\n    status\n    controller\n    contextId\n  }\n}\n"
+    "text": "query OperatorStatusQuery(\n  $connectionID: String!\n) {\n  operator: getOperatorStatus(connectionID: $connectionID) {\n    status\n    controller\n    connectionID\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "68141e509e00cc3bb45906a0f0aae24b";
+node.hash = "519b77a47c22930c9d148d1e4f4011cb";
 
 module.exports = node;

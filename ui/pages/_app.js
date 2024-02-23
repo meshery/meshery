@@ -38,7 +38,7 @@ import {
   setConnectionMetadata,
 } from '../lib/store';
 import theme, { styles } from '../themes';
-import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
+import { getConnectionIDsFromContexts, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import { bindActionCreators } from 'redux';
@@ -207,7 +207,7 @@ class MesheryApp extends App {
         }
       },
       {
-        k8scontextIDs: contexts,
+        connectionIDs: getConnectionIDsFromContexts(contexts),
         eventTypes: ['ADDED', 'DELETED'],
       },
     );
@@ -327,7 +327,7 @@ class MesheryApp extends App {
   initSubscriptions = (contexts) => {
     const mesheryControllerSubscription = new GQLSubscription({
       type: MESHERY_CONTROLLER_SUBSCRIPTION,
-      contextIds: contexts,
+      connectionIDs: getConnectionIDsFromContexts(contexts),
       callbackFunction: (data) => {
         this.props.store.dispatch({
           type: actionTypes.SET_CONTROLLER_STATE,

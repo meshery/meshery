@@ -10,7 +10,7 @@ export default function fetchMesheryOperatorStatus(variables) {
       operator: getOperatorStatus(connectionID: $connectionID) {
         status
         controller
-        contextId
+        connectionID
       }
     }
   `;

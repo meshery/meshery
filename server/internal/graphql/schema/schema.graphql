@@ -75,7 +75,7 @@ enum MesheryControllerStatus {
   }
 
 type MesheryControllersStatusListItem {
-    contextId: String!
+    connectionID: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
     version: String!
@@ -84,7 +84,7 @@ type MesheryControllersStatusListItem {
 type MeshSyncEvent {
     type: String!
     object: Any!
-    contextId: String!
+    connectionID: String!
   }
 
 
@@ -690,13 +690,13 @@ type Subscription {
 
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
-    k8scontextIDs: [String!]
+    connectionIDs: [String!]
   ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
-    k8scontextIDs: [String!]
+    connectionIDs: [String!]
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 

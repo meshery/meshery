@@ -162,3 +162,12 @@ export function getClusterNameFromCtxId(ctxId, k8sConfig) {
   }
   return cluster.name;
 }
+
+/**
+ *
+ * @param {Array<Object>} contexts Kubernetes contexts
+ * @returns {Array<string>} array of connection ID for given kubernetes contexts
+ */
+export function getConnectionIDsFromContexts(contexts) {
+  return [...contexts.map((context) => context.connection_id)];
+}
