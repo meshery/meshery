@@ -27,6 +27,7 @@
    "name": "github-actions-runner-operator",
    "version": "2.8.1",
    "displayName": "github-actions-runner-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

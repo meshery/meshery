@@ -27,6 +27,7 @@
    "name": "mpi-operator",
    "version": "1.2.2",
    "displayName": "mpi-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

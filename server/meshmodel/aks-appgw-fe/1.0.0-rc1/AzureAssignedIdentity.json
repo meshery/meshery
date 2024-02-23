@@ -27,6 +27,7 @@
    "name": "aks-appgw-fe",
    "version": "1.0.0-rc1",
    "displayName": "aks-appgw-fe",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

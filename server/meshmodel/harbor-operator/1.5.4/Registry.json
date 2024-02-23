@@ -27,6 +27,7 @@
    "name": "harbor-operator",
    "version": "1.5.4",
    "displayName": "harbor-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

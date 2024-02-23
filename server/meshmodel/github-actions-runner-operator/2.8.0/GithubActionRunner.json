@@ -32,6 +32,7 @@
    "name": "github-actions-runner-operator",
    "version": "2.8.0",
    "displayName": "Github Actions Runner Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",
