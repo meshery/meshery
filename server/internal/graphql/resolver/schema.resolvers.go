@@ -360,23 +360,12 @@ type subscriptionResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToMeshSyncEvents(ctx, provider)
-	return nil, nil
-}
+
 func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
 }
-func (r *queryResolver) DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.deployMeshsync(ctx, provider, k8scontextID)
-}
-func (r *queryResolver) ConnectToNats(ctx context.Context, k8scontextID string) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.connectToNats(ctx, provider, k8scontextID)
-}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
@@ -401,9 +390,7 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 
 	return nil, ErrInvalidRequest
 }
-func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
-	return r.subscribeBrokerConnection(ctx)
-}
+
 func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
 	type syncedProcessMap struct {
@@ -470,7 +457,4 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 			}()
 		}
 	}
-}
-func (r *subscriptionResolver) SubscribePerfResult(ctx context.Context, id string) (<-chan *model.MesheryResult, error) {
-	panic(fmt.Errorf("not implemented"))
 }
