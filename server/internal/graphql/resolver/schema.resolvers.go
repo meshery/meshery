@@ -181,6 +181,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 		r.Log.Error(er)
 		return nil, er
 	}
+
 	statusMapPerCtx := make(map[string]map[models.MesheryController]models.MesheryControllerStatusAndVersion)
 	// initialize the map
 
@@ -277,43 +278,53 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	isSubscriptionFlushed := false
 	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
-	handler, _ := ctx.Value(models.HandlerKey).(*handlers.Handler)
-	meshSyncDataHandlers := handler.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
-	if len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	if !ok {
 		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("meshsync data handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
 		return nil, er
 	}
-	for ctxID, dataHandler := range meshSyncDataHandlers {
-		brokerEventsChan := make(chan *broker.Message)
-		err := dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
-		if err != nil {
-			r.Log.Warn(err)
-			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxID)
-			continue
-		}
-		go func(ctxID string, brokerEventsChan chan *broker.Message) {
-			publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
-			for event := range brokerEventsChan {
-				if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
-					// TODO: Handle errors accordingly
-					continue
-				}
 
-				// skip event that UI doesn't want to listen to
-				if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
-					continue
-				}
-
-				// handle the events
-				res := &model.MeshSyncEvent{
-					ContextID: ctxID,
-					Type:      string(event.EventType),
-					Object:    event.Object,
-				}
-				publishHandlerWithProcessing(res)
+	for _, ctxID := range k8scontextIDs {
+		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(ctxID))
+		if ok {
+			machinectx, err := utils.Cast[kubernetes.MachineCtx](inst.Context)
+			if err != nil {
+				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
+				continue
 			}
-		}(ctxID, brokerEventsChan)
+
+			dataHandler := machinectx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+			brokerEventsChan := make(chan *broker.Message)
+			err = dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
+			if err != nil {
+				r.Log.Warn(err)
+				r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxID)
+				continue
+			}
+			go func(ctxID string, brokerEventsChan chan *broker.Message) {
+				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
+				for event := range brokerEventsChan {
+					if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
+						// TODO: Handle errors accordingly
+						continue
+					}
+
+					// skip event that UI doesn't want to listen to
+					if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
+						continue
+					}
+
+					// handle the events
+					res := &model.MeshSyncEvent{
+						ContextID: ctxID,
+						Type:      string(event.EventType),
+						Object:    event.Object,
+					}
+					publishHandlerWithProcessing(res)
+				}
+			}(ctxID, brokerEventsChan)
+		}
 	}
 
 	// handle subscription dispose
