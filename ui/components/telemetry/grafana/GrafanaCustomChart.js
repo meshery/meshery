@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
 import WarningIcon from '@material-ui/icons/Warning';
@@ -890,6 +889,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(grafanaStyles)(
-  connect(null, mapDispatchToProps)(withSnackbar(GrafanaCustomChart)),
-);
+export default withStyles(grafanaStyles)(connect(null, mapDispatchToProps)(GrafanaCustomChart));

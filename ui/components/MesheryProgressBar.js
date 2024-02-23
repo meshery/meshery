@@ -17,7 +17,7 @@ const MesheryProgressBar = ({ showProgress }) => {
     } else {
       closeSnackbar(keyRef.current);
     }
-  }, [showProgress, enqueueSnackbar, closeSnackbar]);
+  }, [showProgress]);
 
   return null;
 };

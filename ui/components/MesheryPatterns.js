@@ -22,7 +22,6 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
-import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
@@ -1839,6 +1838,4 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));

@@ -1,5 +1,4 @@
 import { withStyles } from '@material-ui/core';
-import { withSnackbar } from 'notistack';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -446,4 +445,4 @@ const MeshModelComponent = (props) => {
   );
 };
 
-export default withStyles(meshmodelStyles)(withSnackbar(MeshModelComponent));
+export default withStyles(meshmodelStyles)(MeshModelComponent);
