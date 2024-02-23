@@ -81,8 +81,9 @@ const EnvironmentCard = ({
         >
           <Grid style={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
             <Typography
-              className={classes.listItem}
+              className={classes.name}
               variant="body2"
+              style={{ fontWeight: 'bold !important' }}
               onClick={(e) => e.stopPropagation()}
             >
               {environmentDetails?.name}
