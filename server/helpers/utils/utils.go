@@ -353,12 +353,3 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 	}
 	return
 }
-func MergeMaps(mergeInto, toMerge map[string]interface{}) map[string]interface{} {
-	if mergeInto == nil {
-		mergeInto = make(map[string]interface{})
-	}
-	for k, v := range toMerge {
-		mergeInto[k] = v
-	}
-	return mergeInto
-}

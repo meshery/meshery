@@ -17,20 +17,28 @@ package registry
 import (
 	"fmt"
 
+	"errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var (
-	availableSubcommands = []*cobra.Command{}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd}
+
+	spreadsheeetID   string
+	spreadsheeetCred string
 )
 
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Meshery Registry Management",
-	Long:  `Manage the state and configuration of Meshery Registry.`,
+	Long:  `Manage the state and contents of Meshery's internal registry of capabilities.`,
+	Example: `
+	mesheryctl registry [subcommand]
+	`,
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -43,6 +51,6 @@ var RegistryCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, publishCmd)
 	RegistryCmd.AddCommand(availableSubcommands...)
+
 }

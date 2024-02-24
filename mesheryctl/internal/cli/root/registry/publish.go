@@ -33,7 +33,6 @@ var (
 	sheetID               string
 	modelsOutputPath      string
 	imgsOutputPath        string
-	GoogleSpreadSheetURL  = meshkitUtils.GoogleSpreadSheetURL
 	models                = []utils.ModelCSV{}
 	components            = map[string]map[string][]utils.ComponentCSV{}
 	outputFormat          string
@@ -116,7 +115,7 @@ mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRV
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet()
+				err := modelCSVHelper.ParseModelsSheet(true)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -234,7 +233,10 @@ func init() {
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
-	publishCmd.MarkFlagRequired("output-format")
+	err := publishCmd.MarkFlagRequired("output-format")
+	if err != nil {
+		utils.Log.Error(err)
+	}
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")

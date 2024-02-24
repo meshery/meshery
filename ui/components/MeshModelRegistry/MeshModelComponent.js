@@ -32,7 +32,7 @@ import {
   useLazyGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
-import { removeDuplicateVersions } from './helper';
+import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -102,15 +102,11 @@ const MeshModelComponent_ = ({
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
-  const [show, setShow] = useState({
-    model: {},
-    components: [],
-    relationships: [],
+  const [showDetailsData, setShowDetailsData] = useState({
+    type: '', // Type of selected data eg. (models, components)
+    data: {},
   });
-  const [comp, setComp] = useState({});
-  const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
-  const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(false);
   // const [loading, setLoading] = useState(false);
 
@@ -134,7 +130,6 @@ const MeshModelComponent_ = ({
                 pagesize: searchText || checked ? 'all' : rowsPerPage,
                 components: true,
                 relationships: true,
-                paginated: true,
                 search: searchText || '',
               },
             },
@@ -149,6 +144,7 @@ const MeshModelComponent_ = ({
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: false,
+                annotations: false,
               },
             },
             true,
@@ -159,8 +155,8 @@ const MeshModelComponent_ = ({
           response = await getRelationshipsData(
             {
               params: {
-                page: searchText ? 1 : page.Relationships + 1,
-                pagesize: searchText ? 'all' : rowsPerPage,
+                page: 1,
+                pagesize: 'all',
                 paginated: true,
                 search: searchText || '',
               },
@@ -178,7 +174,7 @@ const MeshModelComponent_ = ({
 
       if (response.data) {
         const newData =
-          searchText || checked
+          searchText || checked || view === RELATIONSHIPS
             ? [...response.data[view.toLowerCase()]]
             : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         setResourcesDetail(newData);
@@ -252,19 +248,21 @@ const MeshModelComponent_ = ({
   };
 
   const handleTabClick = (selectedView) => {
+    handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
       setSearchText(null);
       setResourcesDetail([]);
     }
-    setView(() => {
-      handleChangeSelectedTab(selectedView);
-      return selectedView;
-    });
     setPage({
       Models: 0,
       Components: 0,
       Relationships: 0,
       Registrants: 0,
+    });
+    setView(selectedView);
+    setShowDetailsData({
+      type: '',
+      data: {},
     });
     if (!animate) {
       setAnimate(true);
@@ -277,6 +275,8 @@ const MeshModelComponent_ = ({
       return removeDuplicateVersions(
         checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
       );
+    } else if (view === RELATIONSHIPS) {
+      return groupRelationshipsByKind(resourcesDetail);
     } else {
       return resourcesDetail;
     }
@@ -338,9 +338,13 @@ const MeshModelComponent_ = ({
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
             <div
-              className={StyleClass.treeContainer}
+              className={StyleClass.detailsContainer}
               style={{
+                display: 'flex',
                 alignItems: resourcesDetail.length === 0 ? 'center' : '',
+                justifyContent: resourcesDetail.length === 0 ? 'center' : '',
+                padding: '0.6rem 0.6rem 0rem 0.6rem',
+                overflow: 'hidden',
               }}
             >
               {resourcesDetail.length === 0 ? (
@@ -349,23 +353,21 @@ const MeshModelComponent_ = ({
                 <MesheryTreeView
                   data={modifyData()}
                   view={view}
-                  show={show}
-                  setShow={setShow}
-                  comp={comp}
-                  setComp={setComp}
-                  rela={rela}
-                  setRela={setRela}
-                  regi={regi}
-                  setRegi={setRegi}
                   setSearchText={setSearchText}
                   setPage={setPage}
                   checked={checked}
                   setChecked={setChecked}
                   searchText={searchText}
+                  setShowDetailsData={setShowDetailsData}
+                  showDetailsData={showDetailsData}
                 />
               )}
             </div>
-            <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} />
+            <MeshModelDetails
+              view={view}
+              setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
+            />
           </div>
         )}
       </div>

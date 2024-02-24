@@ -1,8 +1,8 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
-mesh_name: Istio
+component: Istio
 earliest_version: v1.6.0
 port: 10000/gRPC
 project_status: stable
@@ -38,7 +38,7 @@ language: en
 
 ## Features
 
-1. {{page.mesh_name}} Lifecycle Management
+1. {{page.component}} Lifecycle Management
 1. Workload Lifecycle Management
   1. Service Mesh Performance (SMP)
      1. Prometheus and Grafana connections
@@ -47,17 +47,17 @@ language: en
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
 
-### Install {{ page.mesh_name }}
+### Install {{ page.component }}
 
-In Meshery's UI, choose the Meshery Adapter for {{ page.mesh_name }}.
+In Meshery's UI, choose the Meshery Adapter for {{ page.component }}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />

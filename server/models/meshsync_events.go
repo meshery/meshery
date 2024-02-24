@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -156,7 +155,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	switch event.EventType {
 	case broker.Add:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
@@ -168,7 +167,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 	case broker.Update:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 		if result.Error != nil {
@@ -191,7 +190,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = mutils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
 	result := mh.dbHandler.Create(object)
 	regQueue := GetMeshSyncRegistrationQueue()
 

@@ -14,7 +14,7 @@ The logical concepts included in Meshery establish a set of constructs with clea
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
 2. Extensible (see [Extension Points](/extensibility)
 3. Composable (see Patterns)
-4. Portable (see Export/Import)
+4. Portable (v0.8.0 Export/Import)
 5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
 6. Configurable (see [Lifecycle Management](/tasks/lifecycle-management))
 7. Documented (_you are here_)

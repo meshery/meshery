@@ -6,11 +6,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { withStyles } from '@material-ui/core/styles';
-import ColumnIcon from '../assets/icons/coulmn';
 // import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
 import { Card } from '@material-ui/core';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { ColumnIcon } from '@layer5/sistent-svg';
 
 const styles = (theme) => ({
   epaper: {
@@ -26,7 +26,7 @@ const styles = (theme) => ({
     }`,
   },
   icon: {
-    color: theme.palette.secondary.iconMain,
+    fill: theme.palette.secondary.iconMain,
   },
 });
 
@@ -59,7 +59,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes, id 
             },
           }}
         >
-          <ColumnIcon />
+          <ColumnIcon className={classes.icon} />
         </IconButton>
       </Tooltip>
 

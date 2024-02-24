@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Function",
+  "apiVersion": "cloudfront.services.k8s.aws/v1alpha1",
+  "displayName": "Function",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-cloudfront-controller",
+   "version": "v0.0.7",
+   "displayName": "aws-cloudfront-controller",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudfront-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Function is the Schema for the Functions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FunctionSpec defines the desired state of Function.\",\n   \"properties\": {\n    \"functionCode\": {\n     \"description\": \"The function code. For more information about writing a CloudFront function,\\nsee Writing function code for CloudFront Functions (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/writing-function-code.html)\\nin the Amazon CloudFront Developer Guide.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"functionConfig\": {\n     \"description\": \"Configuration information about the function, including an optional comment\\nand the function's runtime.\",\n     \"properties\": {\n      \"comment\": {\n       \"type\": \"string\"\n      },\n      \"runtime\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"A name to identify the function.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"functionCode\",\n    \"functionConfig\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Function\",\n \"type\": \"object\"\n}"
+ }

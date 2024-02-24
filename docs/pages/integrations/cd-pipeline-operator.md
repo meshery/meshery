@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: cd-pipeline
   colorIcon: assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg

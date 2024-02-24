@@ -5,6 +5,7 @@ permalink: /search/
 not_editable: true
 excluded_in_search: true
 display-title : "false"
+list: exclude
 ---
 
 <h3><span id="search-process">Loading</span> results <span id="search-query-container" style="display: none;">for "<strong id="search-query"></strong>"</span></h3>

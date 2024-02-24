@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GrafanaDashboard",
+  "apiVersion": "openviz.dev/v1alpha1",
+  "displayName": "Grafana Dashboard",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubedb-opscenter",
+   "version": "2024.2.14",
+   "displayName": "kubedb-opscenter",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-opscenter/kubedb-opscenter-v2024.2.14.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"folderID\": {\n     \"description\": \"FolderID defines the Grafana folderID\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"grafanaRef\": {\n     \"description\": \"GrafanaRef defines the grafana app binding name for the GrafanaDashboard\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"description\": \"Overwrite defines the existing grafanadashboard with the same name(if any) should be overwritten or not\",\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"description\": \"Templatize defines the fields which supports templating in GrafanaDashboard Model json\",\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}"
+ }
