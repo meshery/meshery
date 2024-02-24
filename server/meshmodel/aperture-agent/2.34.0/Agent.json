@@ -27,6 +27,7 @@
    "name": "aperture-agent",
    "version": "2.34.0",
    "displayName": "aperture-agent",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

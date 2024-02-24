@@ -32,6 +32,7 @@
    "name": "rustrial-aws-eks-iam-auth-controller",
    "version": "0.1.7",
    "displayName": "Rustrial Aws Eks Iam Auth Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

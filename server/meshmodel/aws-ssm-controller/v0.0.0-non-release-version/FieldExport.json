@@ -32,6 +32,7 @@
    "name": "aws-ssm-controller",
    "version": "v0.0.0-non-release-version",
    "displayName": "AWS Systems Manager",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

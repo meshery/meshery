@@ -32,6 +32,7 @@
    "name": "ambassador",
    "version": "6.9.5",
    "displayName": "Ambassador",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

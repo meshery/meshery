@@ -6,13 +6,28 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "isNamespaced": true
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
    "name": "aws-ec2-controller",
    "version": "v1.2.3",
    "displayName": "aws-ec2-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",
