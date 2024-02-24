@@ -11,6 +11,8 @@ list: include
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.
 
+{% include alert.html type="info" title="Meshery Test Plan" content="The <a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'>Meshery Test Plan</a> is a comprehensive document that outlines the testing strategy for Meshery and specific integration test cases. It includes a list of GitHub workflows and their purpose." %}
+
 ## Artifacts
 
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
@@ -366,6 +368,4 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
-
-These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed.
 

@@ -83,6 +83,7 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var wg sync.WaitGroup
 
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
@@ -95,7 +96,6 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 
 		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
@@ -111,7 +111,7 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 		// Collect list of corresponding Components by name from spreadsheet
 		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 
-		err = InvokeGenerationFromSheet()
+		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
 			// meshkit
 			utils.Log.Error(err)
@@ -129,43 +129,46 @@ type compGenerateTracker struct {
 
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
-func InvokeGenerationFromSheet() error {
-	utils.Log.UpdateLogOutput(logFile)
+func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
+	weightedSem := semaphore.NewWeighted(20)
+	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
+	spreadsheeetChan := make(chan utils.SpreadsheetData)
+
 	defer func() {
-		_ = logFile.Close()
+		logModelGenerationSummary(modelToCompGenerateTracker)
+
 		utils.Log.UpdateLogOutput(os.Stdout)
 		utils.Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
 
 		utils.Log.Info("See ", logDirPath, " for detailed logs.")
 
+		_ = logFile.Close()
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
 
-	url := GoogleSpreadSheetURL + spreadsheeetID
-
-	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
+	modelCSVHelper, err := parseModelSheet(url)
 	if err != nil {
 		return err
 	}
 
-	err = modelCSVHelper.ParseModelsSheet(false)
-	if err != nil {
-		return ErrGenerateModel(err, "all")
-	}
-
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	componentCSVHelper, err := parseComponentSheet(url)
 	if err != nil {
 		return err
 	}
+
+	utils.Log.UpdateLogOutput(logFile)
+
+	var wgForSpreadsheetUpdate sync.WaitGroup
+	wgForSpreadsheetUpdate.Add(1)
+	go func() {
+		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
+		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
+	}()
 
 	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
-
-	weightedSem := semaphore.NewWeighted(20)
-
-	var wg sync.WaitGroup
 
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -219,7 +222,7 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "for model: %s", model.ModelDisplayName)
+			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
 
 			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
 			if err != nil {
@@ -233,6 +236,12 @@ func InvokeGenerationFromSheet() error {
 					utils.Log.Info(err)
 				}
 			}
+
+			spreadsheeetChan <- utils.SpreadsheetData{
+				Model:      &model,
+				Components: comps,
+			}
+
 			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 				totalComps: len(comps),
 				version:    version,
@@ -241,8 +250,8 @@ func InvokeGenerationFromSheet() error {
 
 	}
 	wg.Wait()
-	logModelGenerationSummary(modelToCompGenerateTracker)
-
+	close(spreadsheeetChan)
+	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
 
@@ -307,6 +316,31 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	}
 
 	return nil
+}
+
+func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
+	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = modelCSVHelper.ParseModelsSheet(false)
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return modelCSVHelper, nil
+}
+
+func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
+	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	if err != nil {
+		return nil, err
+	}
+	err = compCSVHelper.ParseComponentsSheet()
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return compCSVHelper, nil
 }
 
 func createVersionDirectoryForModel(modelDefPath, version string) (string, error) {
