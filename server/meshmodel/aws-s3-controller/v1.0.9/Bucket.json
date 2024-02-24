@@ -27,6 +27,7 @@
    "name": "aws-s3-controller",
    "version": "v1.0.9",
    "displayName": "aws-s3-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

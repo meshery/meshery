@@ -27,6 +27,7 @@
    "name": "aws-elasticache-controller",
    "version": "v0.0.29",
    "displayName": "aws-elasticache-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

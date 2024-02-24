@@ -32,6 +32,7 @@
    "name": "nginx-ingress",
    "version": "0.16.2",
    "displayName": "NGINX Ingress Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

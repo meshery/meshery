@@ -27,6 +27,7 @@
    "name": "thanos-operator",
    "version": "0.3.7",
    "displayName": "thanos-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

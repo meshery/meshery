@@ -32,6 +32,7 @@
    "name": "kube-prometheus-stack",
    "version": "45.7.1",
    "displayName": "Kube Prometheus Stack",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

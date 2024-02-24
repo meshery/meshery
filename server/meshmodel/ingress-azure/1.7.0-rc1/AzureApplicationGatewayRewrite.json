@@ -32,6 +32,7 @@
    "name": "ingress-azure",
    "version": "1.7.0-rc1",
    "displayName": "Ingress Azure",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

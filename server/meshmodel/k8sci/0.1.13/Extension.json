@@ -32,6 +32,7 @@
    "name": "k8sci",
    "version": "0.1.13",
    "displayName": "K8Sci",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

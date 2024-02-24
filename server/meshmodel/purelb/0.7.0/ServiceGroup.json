@@ -32,6 +32,7 @@
    "name": "purelb",
    "version": "0.7.0",
    "displayName": "Purelb",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

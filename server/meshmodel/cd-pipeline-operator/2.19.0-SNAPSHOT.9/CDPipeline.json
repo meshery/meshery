@@ -27,6 +27,7 @@
    "name": "cd-pipeline-operator",
    "version": "2.19.0-SNAPSHOT.9",
    "displayName": "cd-pipeline-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",
