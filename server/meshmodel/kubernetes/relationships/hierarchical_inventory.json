@@ -1293,6 +1293,40 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from":[
+          {
+            "kind": "StorageClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "StorageClass is used in conjunction with PVC that allow Pods to dynamically request a new storage."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PersistentVolumeClaim",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "storageClassName"]
+              ],
+              "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
     }
   ]
 }
