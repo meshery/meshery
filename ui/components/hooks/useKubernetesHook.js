@@ -219,7 +219,7 @@ export const useNatsController = () => {
 };
 
 export const useControllerStatus = (controllerState) => {
-  const getContextStatus = (ctxId) => {
+  const getContextStatus = (connectionID) => {
     const defaultState = {
       operatorState: CONTROLLER_STATES.DISABLED,
       operatorVersion: 'Not Available',
@@ -229,7 +229,7 @@ export const useControllerStatus = (controllerState) => {
       natsVersion: 'Not Available',
     };
 
-    const controller = controllerState?.filter((op) => op.contextId === ctxId);
+    const controller = controllerState?.filter((op) => op.connectionID === connectionID);
     if (!controller) {
       return defaultState;
     }
@@ -259,9 +259,9 @@ export const useControllerStatus = (controllerState) => {
       }
     }
 
-    function getOperatorStatus(ctxId) {
+    function getOperatorStatus(connectionID) {
       const operator = controllerState?.find(
-        (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+        (op) => op.connectionID === connectionID && op.controller === CONTROLLERS.OPERATOR,
       );
       if (!operator) {
         return defaultState;
@@ -274,7 +274,7 @@ export const useControllerStatus = (controllerState) => {
     }
 
     const actualOperatorState = {
-      ...getOperatorStatus(ctxId),
+      ...getOperatorStatus(connectionID),
       ...getMeshSyncStats(),
       ...getBrokerStats(),
     };
@@ -283,6 +283,6 @@ export const useControllerStatus = (controllerState) => {
   };
 
   return {
-    getControllerStatesByContexID: getContextStatus,
+    getControllerStatesByConnectionID: getContextStatus,
   };
 };
