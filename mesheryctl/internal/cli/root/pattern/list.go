@@ -30,6 +30,8 @@ import (
 
 var (
 	verbose bool
+	source  string
+	page int
 )
 
 var linkDocPatternList = map[string]string{
@@ -45,8 +47,34 @@ var listCmd = &cobra.Command{
 	Example: `
 // list all available patterns
 mesheryctl pattern list
+mesheryctl pattern list -p 2
+
+// list particular design types
+mesheryctl pattern list -s [Design | "Kubernetes Manifest" | "Docker Compose" | "Helm Chart"]
+mesheryctl pattern list -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocPatternList,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check prerequisites for the command here
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -54,8 +82,9 @@ mesheryctl pattern list
 			return nil
 		}
 
+		url := fmt.Sprintf(mctlCfg.GetBaseMesheryURL()+"/api/pattern?page=%d",page-1)
 		var response models.PatternsAPIResponse
-		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/pattern", nil)
+		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -85,19 +114,130 @@ mesheryctl pattern list
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
 
-		if verbose {
-			if provider == "None" {
+		sTerm, _ := cmd.Flags().GetString("source-type")
+
+		if sTerm != "" {
+			
+			if strings.EqualFold(source,string(models.HelmChart)){
 				for _, v := range response.Patterns {
-					PatternID := v.ID.String()
+					if v.Type.String == string(models.HelmChart) {
+						PatternID := utils.TruncateID(v.ID.String())
+						var UserID string
+						if v.UserID != nil {
+							UserID = utils.TruncateID(*v.UserID)
+						} else {
+							UserID = "null"
+						}
+						PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+						CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+						UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+						data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
+					}
+				}
+				utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{})
+
+			} else if strings.EqualFold(source,string(models.Design)){
+				for _, v := range response.Patterns {
+					if v.Type.String == string(models.Design) {
+						PatternID := utils.TruncateID(v.ID.String())
+						var UserID string
+						if v.UserID != nil {
+							UserID = utils.TruncateID(*v.UserID)
+						} else {
+							UserID = "null"
+						}
+						PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+						CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+						UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+						data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
+					}
+				}
+				utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{})
+
+			} else if strings.EqualFold(source,string(models.K8sManifest)) {
+				for _, v := range response.Patterns {
+					if v.Type.String == string(models.K8sManifest) {
+						PatternID := utils.TruncateID(v.ID.String())
+						var UserID string
+						if v.UserID != nil {
+							UserID = utils.TruncateID(*v.UserID)
+						} else {
+							UserID = "null"
+						}
+						PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+						CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+						UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+						data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
+					}
+				}
+				utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{})
+		
+			} else if strings.EqualFold(source,string(models.DockerCompose)) {
+				for _, v := range response.Patterns {
+					if v.Type.String == string(models.DockerCompose) {
+						PatternID := utils.TruncateID(v.ID.String())
+						var UserID string
+						if v.UserID != nil {
+							UserID = utils.TruncateID(*v.UserID)
+						} else {
+							UserID = "null"
+						}
+						PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+						CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+						UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+						data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
+					}
+				}
+				utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{})
+			} else {
+				fmt.Println("Invalid pattern source type due to wrong type/passing.\nAllowed source types are: [Design | Kubernetes Manifest | Docker Compose | Helm Chart]")
+			}
+
+		} else {
+
+			if verbose {
+				if provider == "None" {
+					for _, v := range response.Patterns {
+						PatternID := v.ID.String()
+						PatterName := v.Name
+						CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
+						UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+						data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
+					}
+					utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+					return nil
+				}
+
+				for _, v := range response.Patterns {
+					PatternID := utils.TruncateID(v.ID.String())
+					var UserID string
+					if v.UserID != nil {
+						UserID = utils.TruncateID(*v.UserID)
+					} else {
+						UserID = "null"
+					}
 					PatterName := v.Name
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+					data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
+				}
+				utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+
+				return nil
+			}
+
+			// Check if meshery provider is set
+			if provider == "None" {
+				for _, v := range response.Patterns {
+					PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+					PatternID := utils.TruncateID(v.ID.String())
+					CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+					UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 					data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
 				}
 				utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 				return nil
 			}
-
 			for _, v := range response.Patterns {
 				PatternID := utils.TruncateID(v.ID.String())
 				var UserID string
@@ -107,47 +247,18 @@ mesheryctl pattern list
 					UserID = "null"
 				}
 				PatterName := v.Name
-				CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
 			}
 			utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-
-			return nil
 		}
-
-		// Check if messhery provider is set
-		if provider == "None" {
-			for _, v := range response.Patterns {
-				PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
-				PatternID := utils.TruncateID(v.ID.String())
-				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
-			}
-			utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-			return nil
-		}
-		for _, v := range response.Patterns {
-			PatternID := utils.TruncateID(v.ID.String())
-			var UserID string
-			if v.UserID != nil {
-				UserID = utils.TruncateID(*v.UserID)
-			} else {
-				UserID = "null"
-			}
-			PatterName := v.Name
-			CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-			data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
-		}
-		utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-
 		return nil
-
 	},
 }
 
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and pattern file identifiers")
+	listCmd.Flags().StringVarP(&source, "source-type", "s", "", "Display patterns based on the source type")
+	listCmd.Flags().IntVarP(&page,"page","p",1,"(optional) List next set of patterns with --page (default = 1)")
 }

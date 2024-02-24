@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -66,22 +67,22 @@ mesheryctl pattern view [pattern-name | ID]
 				return nil
 			}
 		}
-		url := mctlCfg.GetBaseMesheryURL()
+		urls := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				url += "/api/pattern?pagesize=10000"
+				urls += "/api/pattern?pagesize=10000"
 			} else {
 				return errors.New(utils.PatternViewError("Pattern name or ID is not specified. Use `-a` to view all patterns"))
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
-			url += "/api/pattern/" + pattern
+			urls += "/api/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			url += "/api/pattern?search=" + pattern
+			urls += "/api/pattern?search=" + url.QueryEscape(pattern)
 		}
 
-		req, err := utils.NewRequest("GET", url, nil)
+		req, err := utils.NewRequest("GET", urls, nil)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
