@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package doc
 
 import (
 	"bytes"
@@ -91,8 +91,8 @@ func linkHandler(name string) string {
 	return strings.ToLower(words[1])
 }
 
-// doc is a function to generate the markdown docs for mesheryctl
-func doc() {
+// docs is a function to generate the markdown docs for mesheryctl
+func docs() {
 	markDownPath := "../../docs/pages/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
@@ -375,5 +375,5 @@ func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
 }
 
 func main() {
-	doc()
+	docs()
 }
