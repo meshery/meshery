@@ -59,7 +59,7 @@ func main() {
 
 	viper.AutomaticEnv()
 
-	viper.SetConfigFile("./runtime_logs_config.env")
+	viper.SetConfigFile("./server-config.env")
 	viper.WatchConfig()
 
 	err := viper.ReadInConfig()
