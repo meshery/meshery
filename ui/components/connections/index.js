@@ -278,7 +278,6 @@ function Connections(props) {
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -308,7 +307,6 @@ function Connections(props) {
         });
         environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -889,7 +887,6 @@ function Connections(props) {
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
       setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-      // setShowMore(false);
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
@@ -968,7 +965,10 @@ function Connections(props) {
     })
       .unwrap()
       .then(() => {
-        // getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        notify({
+          message: `Connection status updated successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       })
       .catch((err) => {
         notify({
