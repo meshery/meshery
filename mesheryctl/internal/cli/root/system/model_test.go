@@ -9,6 +9,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 // This is an Integration test
@@ -109,7 +110,7 @@ func TestListModelCmd(t *testing.T) {
 }
 
 func TestModelViewCmd(t *testing.T) {
-	SetupContextEnv(t) 
+	SetupContextEnv(t)
 	// initialize mock meshery backend
 	go utils.StartMockMesheryServer(t) // nolint
 
@@ -206,6 +207,7 @@ func TestModelViewCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
 	}
 }
