@@ -1174,6 +1174,40 @@
           }
         ]
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "IngressClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "IngressClass is a resource to specify class for Ingress to be used by the IngressController."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "ingressClassName"]
+              ],
+              "description": "Ingress is a collection of rules that allow inbound connections to reach the services. IngressClass configures the class of Ingress resource which is then used by the Ingress Controller."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
