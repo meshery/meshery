@@ -1305,7 +1305,7 @@
               "mutatorRef": [
                 ["name"]
               ],
-              "description": "A StorageClass in Kubernetes defines the type and properties of storage that can be dynamically provisioned for persistent volumes."
+              "description": "A StorageClass in Kubernetes defines the type and properties of storage that can be dynamically provisioned for persistent volumes and its name is mentioned in a PersistentVolumeClaim template."
             }
           }
         ],
