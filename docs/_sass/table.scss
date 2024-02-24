@@ -499,3 +499,8 @@ table.tablesorter th.headerSortUp {
 td.details, .hidden-details > td {
   background-color: var(--color-primary-dark) !important;
 }
+
+tr.test-details td:not(:first-child):hover{
+  background-color: var(--test-detail-data-color) !important;
+  cursor: pointer;
+}
