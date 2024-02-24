@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/solr-operator
 description: 
 integrations-category: Analytics
 integrations-subcategory: Query
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: solr-backup
   colorIcon: assets/img/integrations/solr-operator/components/solr-backup/icons/color/solr-backup-color.svg

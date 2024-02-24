@@ -6,9 +6,9 @@ image: /assets/img/integrations/postgres-with-operator/icons/color/postgres-with
 permalink: extensibility/integrations/postgres-with-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-with-operator
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 - name: kubegres
   colorIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg

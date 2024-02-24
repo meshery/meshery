@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "KongConsumerGroup",
+  "apiVersion": "configuration.konghq.com/v1beta1",
+  "displayName": "Kong Consumer Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong",
+   "version": "10.5.0",
+   "displayName": "kong",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/kong-10.5.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}"
+ }

@@ -14,6 +14,11 @@ import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
+import { DialogActions } from '@layer5/sistent-components';
+import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
+import { Colors } from '@/themes/app';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -74,6 +79,26 @@ const styles = (theme) => ({
       },
     },
   },
+  infoIconButton: {
+    color: theme.palette.secondary.focused,
+  },
+  infoIcon: {
+    color: theme.palette.secondary.focused,
+    fill: 'currentColor',
+    '&:hover': {
+      color: Colors.keppelGreen,
+    },
+  },
+  toolTip: {
+    textDecoration: 'underline',
+    color: theme.palette.secondary.link2,
+  },
+  dialogAction: {
+    padding: '0.5rem 1rem',
+    '&.MuiDialogActions-root': {
+      padding: '0.5rem 1rem',
+    },
+  },
 });
 
 const ExportModal = (props) => {
@@ -84,6 +109,11 @@ const ExportModal = (props) => {
     classes,
     ExtensibleButton,
   } = props;
+  const renderTooltipContent = () => {
+    return getHyperLinkDiv(
+      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)',
+    );
+  };
 
   const [closed, setClosed] = React.useState(false);
 
@@ -136,8 +166,8 @@ const ExportModal = (props) => {
       <DialogContent
         style={{
           display: 'inline-table',
-          maxWidth: '688px',
-          padding: '5rem',
+          maxWidth: '50rem',
+          padding: '3rem',
           margin: '0 auto',
         }}
       >
@@ -148,13 +178,15 @@ const ExportModal = (props) => {
             width: 'auto',
             textAlign: 'center',
             alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
           }}
         >
           {downloadModal?.content?.type?.String && (
             <div>
               <Typography
                 component={'h4'}
-                style={{ paddingBottom: '1.5rem' }}
+                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
                 className={classes.text}
               >
                 Original ({downloadModal?.content?.type?.String})
@@ -218,6 +250,18 @@ const ExportModal = (props) => {
           {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
         </Box>
       </DialogContent>
+      <DialogActions className={classes.dialogAction}>
+        <CustomTextTooltip
+          backgroundColor={Colors.charcoal}
+          placement="top"
+          interactive={true}
+          title={renderTooltipContent()}
+        >
+          <IconButton className={classes.infoIconButton} color="primary">
+            <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />
+          </IconButton>
+        </CustomTextTooltip>
+      </DialogActions>
     </Dialog>
   );
 };

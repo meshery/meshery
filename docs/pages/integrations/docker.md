@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/docker
 description: 
 integrations-category: Runtime
 integrations-subcategory: Container Runtime
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.",

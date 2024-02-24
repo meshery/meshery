@@ -1,1 +1,49 @@
-{"kind":"IngressRouteUDP","apiVersion":"traefik.containo.us/v1alpha1","displayName":"Ingress Route UDP","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"https://layer5.io/company/brand","model":"spaceengineers","modelDisplayName":"spaceengineers","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"spaceengineers","version":"2.0.10","displayName":"spaceengineers","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"isAnnotation":false,"source_uri":"https://github.com/truecharts/helm-staging/releases/download/spaceengineers-2.0.10/spaceengineers-2.0.10.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"IngressRouteUDP is a CRD implementation of a Traefik UDP Router.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteUDPSpec defines the desired state of a IngressRouteUDP.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"description\": \"EntryPoints defines the list of entry point names to bind to. Entry points have to be configured in the static configuration. More info: https://doc.traefik.io/traefik/v2.9/routing/entrypoints/ Default: all.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"description\": \"Routes defines the list of routes.\",\n     \"items\": {\n      \"description\": \"RouteUDP holds the UDP route configuration.\",\n      \"properties\": {\n       \"services\": {\n        \"description\": \"Services defines the list of UDP services.\",\n        \"items\": {\n         \"description\": \"ServiceUDP defines an upstream UDP service to proxy traffic to.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name defines the name of the referenced Kubernetes Service.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service.\",\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"weight\": {\n           \"description\": \"Weight defines the weight used when balancing requests between multiple Kubernetes Service.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route UDP\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "IngressRouteUDP",
+  "apiVersion": "traefik.containo.us/v1alpha1",
+  "displayName": "Ingress Route UDP",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "https://layer5.io/company/brand",
+   "model": "spaceengineers",
+   "modelDisplayName": "spaceengineers",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "spaceengineers",
+   "version": "2.0.10",
+   "displayName": "spaceengineers",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/spaceengineers-2.0.10/spaceengineers-2.0.10.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"IngressRouteUDP is a CRD implementation of a Traefik UDP Router.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteUDPSpec defines the desired state of a IngressRouteUDP.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"description\": \"EntryPoints defines the list of entry point names to bind to. Entry points have to be configured in the static configuration. More info: https://doc.traefik.io/traefik/v2.9/routing/entrypoints/ Default: all.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"description\": \"Routes defines the list of routes.\",\n     \"items\": {\n      \"description\": \"RouteUDP holds the UDP route configuration.\",\n      \"properties\": {\n       \"services\": {\n        \"description\": \"Services defines the list of UDP services.\",\n        \"items\": {\n         \"description\": \"ServiceUDP defines an upstream UDP service to proxy traffic to.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name defines the name of the referenced Kubernetes Service.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service.\",\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"weight\": {\n           \"description\": \"Weight defines the weight used when balancing requests between multiple Kubernetes Service.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route UDP\",\n \"type\": \"object\"\n}"
+ }

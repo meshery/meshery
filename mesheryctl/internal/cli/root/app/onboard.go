@@ -135,9 +135,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			appFile = app.PatternFile
 		}
 
-		var payload = struct {
-			PatternFile string `json:"pattern_file"`
-		}{
+		payload := models.MesheryPatternFileDeployPayload{
 			PatternFile: appFile,
 		}
 

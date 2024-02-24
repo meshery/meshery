@@ -12,3 +12,25 @@ export function isEmptyAtAllDepths(input) {
     return _.isEmpty(input);
   }
 }
+
+/**
+ * Finds the first nested object in a tree-like structure that satisfies a given condition.
+ *
+ * @param {Object} object - The root object to start the search.
+ * @param {Function} condition - A function that takes an object as an argument and returns a boolean indicating if the condition is met.
+ * @returns {Object|null} - The first object that satisfies the condition, or null if no matching object is found.
+ */
+export const findNestedObject = (object, condition) => {
+  const stack = [object];
+  while (stack.length) {
+    const currentObject = stack.pop();
+    if (condition(currentObject)) {
+      return currentObject;
+    }
+    if (_.isObject(currentObject)) {
+      // Push each property of the currentObject onto the stack for further exploration
+      stack.push(..._.values(currentObject));
+    }
+  }
+  return null;
+};

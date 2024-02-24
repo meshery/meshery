@@ -8,7 +8,7 @@ docURL: https://layer5.io/resources/cloud-native/what-is-gitops
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Pipeline your cloud native infrastructure as code changes with GitOps",

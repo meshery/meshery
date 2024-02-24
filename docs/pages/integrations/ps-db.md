@@ -6,9 +6,9 @@ image: /assets/img/integrations/ps-db/icons/color/ps-db-color.svg
 permalink: extensibility/integrations/ps-db
 docURL: https://docs.meshery.io/extensibility/integrations/ps-db
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 - name: percona-server-my-sql-backup
   colorIcon: assets/img/integrations/ps-db/components/percona-server-my-sql-backup/icons/color/percona-server-my-sql-backup-color.svg

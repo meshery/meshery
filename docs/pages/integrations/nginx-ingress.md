@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/nginx-ingress
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: ap-log-conf
   colorIcon: assets/img/integrations/nginx-ingress/components/ap-log-conf/icons/color/ap-log-conf-color.svg
