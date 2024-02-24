@@ -32,6 +32,7 @@
    "name": "capsule-proxy",
    "version": "0.4.3",
    "displayName": "Capsule Proxy",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

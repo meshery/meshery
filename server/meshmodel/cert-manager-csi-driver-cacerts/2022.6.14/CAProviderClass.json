@@ -32,6 +32,7 @@
    "name": "cert-manager-csi-driver-cacerts",
    "version": "2022.6.14",
    "displayName": "Cert Manager Csi Driver Cacerts",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

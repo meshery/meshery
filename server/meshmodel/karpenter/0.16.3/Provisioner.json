@@ -32,6 +32,7 @@
    "name": "karpenter",
    "version": "0.16.3",
    "displayName": "Karpenter",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

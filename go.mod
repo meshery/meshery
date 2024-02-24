@@ -27,6 +27,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.26.2
 	github.com/go-openapi/strfmt v0.21.8
+	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.5.0
@@ -38,7 +39,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.7.0
-	github.com/layer5io/meshkit v0.7.13
+	github.com/layer5io/meshkit v0.7.14
 	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1

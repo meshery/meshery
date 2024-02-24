@@ -32,6 +32,7 @@
    "name": "camel-k",
    "version": "0.13.0",
    "displayName": "Camel K",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

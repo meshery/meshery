@@ -32,6 +32,7 @@
    "name": "pure-pso",
    "version": "6.2.3",
    "displayName": "Pure Pso",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

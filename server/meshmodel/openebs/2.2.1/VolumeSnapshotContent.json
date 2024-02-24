@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VolumeSnapshotContent",
+  "apiVersion": "snapshot.storage.k8s.io/v1",
+  "displayName": "Volume Snapshot Content",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "2.2.1",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-2.2.1/openebs-2.2.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VolumeSnapshotContent represents the actual \\\"on-disk\\\" snapshot object in the underlying storage system\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines properties of a VolumeSnapshotContent created by the underlying storage system. Required.\",\n   \"properties\": {\n    \"deletionPolicy\": {\n     \"description\": \"deletionPolicy determines whether this VolumeSnapshotContent and its physical snapshot on the underlying storage system should be deleted when its bound VolumeSnapshot is deleted. Supported values are \\\"Retain\\\" and \\\"Delete\\\". \\\"Retain\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are kept. \\\"Delete\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are deleted. For dynamically provisioned snapshots, this field will automatically be filled in by the CSI snapshotter sidecar with the \\\"DeletionPolicy\\\" field defined in the corresponding VolumeSnapshotClass. For pre-existing snapshots, users MUST specify this field when creating the VolumeSnapshotContent object. Required.\",\n     \"enum\": [\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    },\n    \"driver\": {\n     \"description\": \"driver is the name of the CSI driver used to create the physical snapshot on the underlying storage system. This MUST be the same as the name returned by the CSI GetPluginName() call for that driver. Required.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies whether the snapshot is (or should be) dynamically provisioned or already exists, and just requires a Kubernetes object representation. This field is immutable after creation. Required.\",\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"snapshotHandle\"\n       ]\n      },\n      {\n       \"required\": [\n        \"volumeHandle\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"snapshotHandle\": {\n       \"description\": \"snapshotHandle specifies the CSI \\\"snapshot_id\\\" of a pre-existing snapshot on the underlying storage system for which a Kubernetes object representation was (or should be) created. This field is immutable.\",\n       \"type\": \"string\"\n      },\n      \"volumeHandle\": {\n       \"description\": \"volumeHandle specifies the CSI \\\"volume_id\\\" of the volume from which a snapshot should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sourceVolumeMode\": {\n     \"description\": \"SourceVolumeMode is the mode of the volume whose snapshot is taken. Can be either “Filesystem” or “Block”. If not specified, it indicates the source volume's mode is unknown. This field is immutable. This field is an alpha field.\",\n     \"type\": \"string\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the VolumeSnapshotClass from which this snapshot was (or will be) created. Note that after provisioning, the VolumeSnapshotClass may be deleted or recreated with different set of values, and as such, should not be referenced post-snapshot creation.\",\n     \"type\": \"string\"\n    },\n    \"volumeSnapshotRef\": {\n     \"description\": \"volumeSnapshotRef specifies the VolumeSnapshot object to which this VolumeSnapshotContent object is bound. VolumeSnapshot.Spec.VolumeSnapshotContentName field must reference to this VolumeSnapshotContent's name for the bidirectional binding to be valid. For a pre-existing VolumeSnapshotContent object, name and namespace of the VolumeSnapshot object MUST be provided for binding to happen. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"deletionPolicy\",\n    \"driver\",\n    \"source\",\n    \"volumeSnapshotRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Snapshot Content\",\n \"type\": \"object\"\n}"
+ }

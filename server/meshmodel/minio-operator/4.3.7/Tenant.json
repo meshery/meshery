@@ -32,6 +32,7 @@
    "name": "minio-operator",
    "version": "4.3.7",
    "displayName": "MinIO Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

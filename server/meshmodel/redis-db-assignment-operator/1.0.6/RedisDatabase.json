@@ -32,6 +32,7 @@
    "name": "redis-db-assignment-operator",
    "version": "1.0.6",
    "displayName": "Redis Db Assignment Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

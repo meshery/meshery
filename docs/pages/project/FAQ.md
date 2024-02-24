@@ -30,7 +30,7 @@ type: project
     <h6>Question: What does Meshery do?</h6>
 </summary>
 
-<p><strong>Answer:</strong> Infrastructure as design. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</p>
+<p><strong>Answer:</strong>Collaborative infrastructure management. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</p>
 </details>
 
 <!-- - _offers a catalog of operational best practices._
@@ -51,6 +51,7 @@ type: project
 </summary>
 <p><strong>Answer:</strong> Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different <a href="{{site.baseurl}}/extensibility/#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
 </details>
+
 
 ## User FAQs
 

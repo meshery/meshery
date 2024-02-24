@@ -27,6 +27,7 @@
    "name": "kong-mesh",
    "version": "2.6.1",
    "displayName": "kong-mesh",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",
