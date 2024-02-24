@@ -87,6 +87,7 @@ import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
+import { DeleteIcon } from '@layer5/sistent';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -841,12 +842,11 @@ function Connections(props) {
         variant="contained"
         color="primary"
         size="large"
-        // @ts-ignore
         onClick={() => handleDeleteConnections(selected)}
-        style={{ background: '#8F1F00', marginRight: '10px' }}
+        style={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
       >
-        <DeleteForeverIcon style={iconMedium} />
+        <DeleteIcon fill={theme.palette.secondary.whiteIcon} style={iconMedium} />
         Delete
       </Button>
     ),
