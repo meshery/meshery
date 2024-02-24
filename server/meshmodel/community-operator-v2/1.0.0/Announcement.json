@@ -1,1 +1,48 @@
-{"kind":"Announcement","apiVersion":"community.zufardhiyaulhaq.com/v1alpha1","displayName":"Announcement","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"","model":"community-operator-v2","modelDisplayName":"Community Operator V2","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"community-operator-v2","version":"1.0.0","displayName":"Community Operator V2","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"source_uri":"https://zufardhiyaulhaq.com/community-operator-v2/charts/releases/community-operator-v2-1.0.0.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"Announcement is the Schema for the announcements API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AnnouncementSpec defines the desired state of Announcement\",\n   \"properties\": {\n    \"community\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"spec\": {\n     \"properties\": {\n      \"body\": {\n       \"type\": \"string\"\n      },\n      \"imageUrl\": {\n       \"type\": \"string\"\n      },\n      \"subject\": {\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"body\",\n      \"imageUrl\",\n      \"subject\",\n      \"tags\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"community\",\n    \"spec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Announcement\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Announcement",
+  "apiVersion": "community.zufardhiyaulhaq.com/v1alpha1",
+  "displayName": "Announcement",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "community-operator-v2",
+   "modelDisplayName": "Community Operator V2",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "community-operator-v2",
+   "version": "1.0.0",
+   "displayName": "Community Operator V2",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://zufardhiyaulhaq.com/community-operator-v2/charts/releases/community-operator-v2-1.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Announcement is the Schema for the announcements API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AnnouncementSpec defines the desired state of Announcement\",\n   \"properties\": {\n    \"community\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"spec\": {\n     \"properties\": {\n      \"body\": {\n       \"type\": \"string\"\n      },\n      \"imageUrl\": {\n       \"type\": \"string\"\n      },\n      \"subject\": {\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"body\",\n      \"imageUrl\",\n      \"subject\",\n      \"tags\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"community\",\n    \"spec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Announcement\",\n \"type\": \"object\"\n}"
+ }

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul

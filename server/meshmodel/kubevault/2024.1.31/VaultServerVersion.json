@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VaultServerVersion",
+  "apiVersion": "catalog.kubevault.com/v1alpha1",
+  "displayName": "Vault Server Version",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubevault",
+   "version": "2024.1.31",
+   "displayName": "kubevault",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubevault/kubevault-v2024.1.31.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultServerVersionSpec is the spec for postgres version\",\n   \"properties\": {\n    \"deprecated\": {\n     \"description\": \"Deprecated versions usable but regarded as obsolete and best avoided, typically due to having been superseded.\",\n     \"type\": \"boolean\"\n    },\n    \"exporter\": {\n     \"description\": \"Exporter Image\",\n     \"properties\": {\n      \"image\": {\n       \"description\": \"Image is the Docker image name\",\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"description\": \"ImagePullPolicy one of Always, Never, IfNotPresent. It defaults to Always if :latest is used, or IfNotPresent otherwise.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"stash\": {\n     \"description\": \"Stash defines backup and restore task definitions.\",\n     \"properties\": {\n      \"addon\": {\n       \"description\": \"StashTaskSpec is the spec for app\",\n       \"properties\": {\n        \"backupTask\": {\n         \"description\": \"Backup task definition\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"description\": \"Params specifies a list of parameter to pass to the Task. Stash will use this parameters to resolve the task.\",\n           \"items\": {\n            \"description\": \"Param declares a value to use for the Param called Name.\",\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"restoreTask\": {\n         \"description\": \"Restore task definition\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"description\": \"Params specifies a list of parameter to pass to the Task. Stash will use this parameters to resolve the task.\",\n           \"items\": {\n            \"description\": \"Param declares a value to use for the Param called Name.\",\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"backupTask\",\n        \"restoreTask\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"unsealer\": {\n     \"description\": \"Unsealer Image\",\n     \"properties\": {\n      \"image\": {\n       \"description\": \"Image is the Docker image name\",\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"description\": \"ImagePullPolicy one of Always, Never, IfNotPresent. It defaults to Always if :latest is used, or IfNotPresent otherwise.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"vault\": {\n     \"description\": \"Vault Image\",\n     \"properties\": {\n      \"image\": {\n       \"description\": \"Image is the Docker image name\",\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"description\": \"ImagePullPolicy one of Always, Never, IfNotPresent. It defaults to Always if :latest is used, or IfNotPresent otherwise.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"description\": \"Version\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"unsealer\",\n    \"vault\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Server Version\",\n \"type\": \"object\"\n}"
+ }

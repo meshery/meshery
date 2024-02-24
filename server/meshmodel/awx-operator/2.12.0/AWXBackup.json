@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AWXBackup",
+  "apiVersion": "awx.ansible.com/v1beta1",
+  "displayName": "AWX Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#e00000",
+   "secondaryColor": "#F4BC79",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 255.1 255.1\" style=\"enable-background:new 0 0 255.1 255.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#1A1918;}\n        .st1{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M255.1,127.6c0,70.5-57.1,127.6-127.6,127.6C57.1,255.1,0,198,0,127.6C0,57.1,57.1,0,127.6,0\n        C198,0,255.1,57.1,255.1,127.6\"/\u003e\n\u003cpath class=\"st1\" d=\"M129.7,77.9l33,81.5l-49.9-39.3L129.7,77.9L129.7,77.9z M188.4,178.2L137.6,56c-1.4-3.5-4.3-5.4-7.9-5.4\n        c-3.5,0-6.6,1.9-8.1,5.4L65.9,190H85l22.1-55.3l65.8,53.2c2.6,2.1,4.6,3.1,7,3.1c5,0,9.3-3.7,9.3-9.1\n        C189.2,181.1,188.9,179.7,188.4,178.2L188.4,178.2z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 255.1 255.1\" style=\"enable-background:new 0 0 255.1 255.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M255.1,127.6c0,70.5-57.1,127.6-127.6,127.6C57.1,255.1,0,198,0,127.6C0,57.1,57.1,0,127.6,0\n\tC198,0,255.1,57.1,255.1,127.6\"/\u003e\n\u003cpath d=\"M129.7,77.9l33,81.5l-49.9-39.3L129.7,77.9L129.7,77.9z M188.4,178.2L137.6,56c-1.4-3.5-4.3-5.4-7.9-5.4\n\tc-3.5,0-6.6,1.9-8.1,5.4L65.9,190H85l22.1-55.3l65.8,53.2c2.6,2.1,4.6,3.1,7,3.1c5,0,9.3-3.7,9.3-9.1\n\tC189.2,181.1,188.9,179.7,188.4,178.2L188.4,178.2z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "awx-operator",
+   "version": "2.12.0",
+   "displayName": "awx-operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/ansible/awx-operator/releases/download/2.12.0/awx-operator-2.12.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Schema validation for the AWXBackup CRD\",\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"additional_labels\": {\n     \"description\": \"Additional labels defined on the resource, which should be propagated to child resources\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"backup_pvc\": {\n     \"description\": \"Name of the backup PVC\",\n     \"type\": \"string\"\n    },\n    \"backup_pvc_namespace\": {\n     \"description\": \"(Deprecated) Namespace the PVC is in\",\n     \"type\": \"string\"\n    },\n    \"backup_resource_requirements\": {\n     \"description\": \"Resource requirements for the management pod used to create a backup\",\n     \"properties\": {\n      \"limits\": {\n       \"properties\": {\n        \"cpu\": {\n         \"type\": \"string\"\n        },\n        \"memory\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"requests\": {\n       \"properties\": {\n        \"cpu\": {\n         \"type\": \"string\"\n        },\n        \"memory\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"backup_storage_class\": {\n     \"description\": \"Storage class to use when creating PVC for backup\",\n     \"type\": \"string\"\n    },\n    \"backup_storage_requirements\": {\n     \"description\": \"Storage requirements for backup PVC (may be similar to existing postgres PVC backing up from)\",\n     \"type\": \"string\"\n    },\n    \"clean_backup_on_delete\": {\n     \"description\": \"Flag to indicate if backup should be deleted on PVC if AWXBackup object is deleted\",\n     \"type\": \"boolean\"\n    },\n    \"db_management_pod_node_selector\": {\n     \"description\": \"nodeSelector for the Postgres pods to backup\",\n     \"type\": \"string\"\n    },\n    \"deployment_name\": {\n     \"description\": \"Name of the deployment to be backed up\",\n     \"type\": \"string\"\n    },\n    \"image_pull_policy\": {\n     \"default\": \"IfNotPresent\",\n     \"description\": \"The image pull policy\",\n     \"enum\": [\n      \"Always\",\n      \"always\",\n      \"Never\",\n      \"never\",\n      \"IfNotPresent\",\n      \"ifnotpresent\"\n     ],\n     \"type\": \"string\"\n    },\n    \"no_log\": {\n     \"default\": true,\n     \"description\": \"Configure no_log for no_log tasks\",\n     \"type\": \"boolean\"\n    },\n    \"pg_dump_suffix\": {\n     \"description\": \"Additional parameters for the pg_dump command\",\n     \"type\": \"string\"\n    },\n    \"postgres_image\": {\n     \"description\": \"Registry path to the PostgreSQL container to use\",\n     \"type\": \"string\"\n    },\n    \"postgres_image_version\": {\n     \"description\": \"PostgreSQL container image version to use\",\n     \"type\": \"string\"\n    },\n    \"postgres_label_selector\": {\n     \"description\": \"Label selector used to identify postgres pod for backing up data\",\n     \"type\": \"string\"\n    },\n    \"precreate_partition_hours\": {\n     \"description\": \"Number of hours worth of events table partitions to precreate before backup to avoid pg_dump locks.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"set_self_labels\": {\n     \"default\": true,\n     \"description\": \"Maintain some of the recommended `app.kubernetes.io/*` labels on the resource (self)\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"deployment_name\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"title\": \"AWX Backup\",\n \"type\": \"object\"\n}"
+ }
