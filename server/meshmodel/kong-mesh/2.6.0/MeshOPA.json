@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MeshOPA",
+  "apiVersion": "kuma.io/v1alpha1",
+  "displayName": "Mesh OPA",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#003459",
+   "secondaryColor": "",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong-mesh",
+   "version": "2.6.0",
+   "displayName": "kong-mesh",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.6.0/kong-mesh-2.6.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshOPA resource.\",\n   \"properties\": {\n    \"default\": {\n     \"properties\": {\n      \"agentConfig\": {\n       \"description\": \"AgentConfig defines bootstrap OPA agent configuration.\",\n       \"properties\": {\n        \"inline\": {\n         \"description\": \"Data source is inline bytes.\",\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"inlineString\": {\n         \"description\": \"Data source is inline string`\",\n         \"type\": \"string\"\n        },\n        \"secret\": {\n         \"description\": \"Data source is a secret with given Secret key.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"appendPolicies\": {\n       \"description\": \"Policies define OPA policies that will be applied on OPA Agent.\",\n       \"items\": {\n        \"properties\": {\n         \"ignoreDecision\": {\n          \"description\": \"If true, then policy won't be taken into account when making a decision.\",\n          \"type\": \"boolean\"\n         },\n         \"rego\": {\n          \"description\": \"OPA Policy written in Rego. Available values: secret, inline, inlineString.\",\n          \"properties\": {\n           \"inline\": {\n            \"description\": \"Data source is inline bytes.\",\n            \"format\": \"byte\",\n            \"type\": \"string\"\n           },\n           \"inlineString\": {\n            \"description\": \"Data source is inline string`\",\n            \"type\": \"string\"\n           },\n           \"secret\": {\n            \"description\": \"Data source is a secret with given Secret key.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"rego\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"authConfig\": {\n       \"description\": \"AuthConfig are configurations specific to the filter.\",\n       \"properties\": {\n        \"onAgentFailure\": {\n         \"description\": \"OnAgentFailure either 'allow' or 'deny' (default to deny) whether\\nto allow requests when the authorization agent failed.\",\n         \"enum\": [\n          \"Allow\",\n          \"Deny\"\n         ],\n         \"type\": \"string\"\n        },\n        \"requestBody\": {\n         \"description\": \"RequestBody configuration to apply on the request body sent to the\\nauthorization agent (if absent, the body is not sent).\",\n         \"properties\": {\n          \"maxSize\": {\n           \"description\": \"MaxSize defines the maximum payload size sent to authorization agent. If the payload\\nis larger it will be truncated and there will be a header\\n`x-envoy-auth-partial-body: true`. If it is set to 0 no body will be\\nsent to the agent.\",\n           \"format\": \"int32\",\n           \"type\": \"integer\"\n          },\n          \"sendRawBody\": {\n           \"description\": \"SendRawBody enable sending raw body instead of the body encoded into UTF-8\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"statusOnError\": {\n         \"description\": \"StatusOnError is the http status to return when there's a connection\\nfailure between the dataplane and the authorization agent\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"timeout\": {\n         \"description\": \"Timeout for the single gRPC request from Envoy to OPA Agent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on.\\nThe resource could be either a real store object or virtual resource\\ndefined inplace.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"proxyTypes\": {\n       \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n       \"items\": {\n        \"enum\": [\n         \"Sidecar\",\n         \"Gateway\"\n        ],\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh OPA\",\n \"type\": \"object\"\n}"
+ }

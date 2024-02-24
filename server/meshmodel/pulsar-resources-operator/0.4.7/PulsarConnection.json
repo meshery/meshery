@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PulsarConnection",
+  "apiVersion": "resource.streamnative.io/v1alpha1",
+  "displayName": "Pulsar Connection",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#448FF7",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#448FF7;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "pulsar-resources-operator",
+   "version": "0.4.7",
+   "displayName": "pulsar-resources-operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.4.7/pulsar-resources-operator-v0.4.7.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PulsarConnection is the Schema for the pulsarconnections API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarConnectionSpec defines the desired state of PulsarConnection\",\n   \"properties\": {\n    \"adminServiceSecureURL\": {\n     \"description\": \"AdminServiceSecureURL is the admin service url for secure connection.\",\n     \"pattern\": \"^https://.+$\",\n     \"type\": \"string\"\n    },\n    \"adminServiceURL\": {\n     \"description\": \"AdminServiceURL is the admin service url of the pulsar cluster\",\n     \"pattern\": \"^https?://.+$\",\n     \"type\": \"string\"\n    },\n    \"authentication\": {\n     \"description\": \"Authentication defines authentication configurations\",\n     \"properties\": {\n      \"oauth2\": {\n       \"description\": \"PulsarAuthenticationOAuth2 indicates the parameters which are need by pulsar OAuth2\",\n       \"properties\": {\n        \"audience\": {\n         \"type\": \"string\"\n        },\n        \"clientID\": {\n         \"type\": \"string\"\n        },\n        \"issuerEndpoint\": {\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"description\": \"ValueOrSecretRef is a string or a secret reference of the authentication\",\n         \"properties\": {\n          \"secretRef\": {\n           \"description\": \"SecretKeyRef indicates a secret name and key\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"scope\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"audience\",\n        \"clientID\",\n        \"issuerEndpoint\",\n        \"key\"\n       ],\n       \"type\": \"object\"\n      },\n      \"token\": {\n       \"description\": \"ValueOrSecretRef is a string or a secret reference of the authentication\",\n       \"properties\": {\n        \"secretRef\": {\n         \"description\": \"SecretKeyRef indicates a secret name and key\",\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"brokerClientTrustCertsFilePath\": {\n     \"description\": \"BrokerClientTrustCertsFilePath Path for the trusted TLS certificate file for outgoing connection to a server (broker)\",\n     \"type\": \"string\"\n    },\n    \"brokerServiceSecureURL\": {\n     \"description\": \"BrokerServiceSecureURL is the broker service url for secure connection.\",\n     \"pattern\": \"^pulsar\\\\+ssl://.+$\",\n     \"type\": \"string\"\n    },\n    \"brokerServiceURL\": {\n     \"description\": \"BrokerServiceURL is the broker service url of the pulsar cluster\",\n     \"pattern\": \"^pulsar?://.+$\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClusterName indicates the local cluster name of the pulsar cluster. It should set when enabling the Geo Replication\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Connection\",\n \"type\": \"object\"\n}"
+ }

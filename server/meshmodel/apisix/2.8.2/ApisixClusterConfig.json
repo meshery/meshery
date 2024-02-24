@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ApisixClusterConfig",
+  "apiVersion": "apisix.apache.org/v2",
+  "displayName": "Apisix Cluster Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "apisix",
+   "version": "2.8.2",
+   "displayName": "apisix",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/apisix-2.8.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"admin\": {\n     \"properties\": {\n      \"adminKey\": {\n       \"type\": \"string\"\n      },\n      \"baseURL\": {\n       \"pattern\": \"https?://[^:]+:(\\\\d+)\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"baseURL\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ingressClassName\": {\n     \"type\": \"string\"\n    },\n    \"monitoring\": {\n     \"properties\": {\n      \"prometheus\": {\n       \"properties\": {\n        \"enable\": {\n         \"type\": \"boolean\"\n        },\n        \"prefer_name\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"skywalking\": {\n       \"properties\": {\n        \"enable\": {\n         \"type\": \"boolean\"\n        },\n        \"sampleRatio\": {\n         \"maximum\": 1,\n         \"minimum\": 0.00001,\n         \"type\": \"number\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Cluster Config\",\n \"type\": \"object\"\n}"
+ }

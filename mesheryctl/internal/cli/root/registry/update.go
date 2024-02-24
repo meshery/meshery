@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	"github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
@@ -42,10 +43,10 @@ var updateCmd = &cobra.Command{
 	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
 	Example: `
 	// Update models from Meshery Integration Spreadsheet
-	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
+	mesheryctl registry update --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
 
 	// Updating models in the meshery/meshery repo
-	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
+	mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -53,6 +54,7 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "registry-update")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
@@ -226,9 +228,9 @@ func init() {
 	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "../server/meshmodel", "relative or absolute input path to the models directory")
 	_ = updateCmd.MarkPersistentFlagRequired("path")
 
-	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
-	updateCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
+	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
 }

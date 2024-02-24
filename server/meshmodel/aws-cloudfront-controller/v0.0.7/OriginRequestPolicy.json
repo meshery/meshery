@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "OriginRequestPolicy",
+  "apiVersion": "cloudfront.services.k8s.aws/v1alpha1",
+  "displayName": "Origin Request Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-cloudfront-controller",
+   "version": "v0.0.7",
+   "displayName": "aws-cloudfront-controller",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudfront-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"OriginRequestPolicy is the Schema for the OriginRequestPolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OriginRequestPolicySpec defines the desired state of OriginRequestPolicy.\\n\\n\\nAn origin request policy.\\n\\n\\nWhen it's attached to a cache behavior, the origin request policy determines\\nthe values that CloudFront includes in requests that it sends to the origin.\\nEach request that CloudFront sends to the origin includes the following:\\n\\n\\n  - The request body and the URL path (without the domain name) from the\\n    viewer request.\\n\\n\\n  - The headers that CloudFront automatically includes in every origin request,\\n    including Host, User-Agent, and X-Amz-Cf-Id.\\n\\n\\n  - All HTTP headers, cookies, and URL query strings that are specified\\n    in the cache policy or the origin request policy. These can include items\\n    from the viewer request and, in the case of headers, additional ones that\\n    are added by CloudFront.\\n\\n\\nCloudFront sends a request when it can't find an object in its cache that\\nmatches the request. If you want to send values to the origin and also include\\nthem in the cache key, use CachePolicy.\",\n   \"properties\": {\n    \"originRequestPolicyConfig\": {\n     \"description\": \"An origin request policy configuration.\",\n     \"properties\": {\n      \"comment\": {\n       \"type\": \"string\"\n      },\n      \"cookiesConfig\": {\n       \"description\": \"An object that determines whether any cookies in viewer requests (and if\\nso, which cookies) are included in requests that CloudFront sends to the\\norigin.\",\n       \"properties\": {\n        \"cookieBehavior\": {\n         \"type\": \"string\"\n        },\n        \"cookies\": {\n         \"description\": \"Contains a list of cookie names.\",\n         \"properties\": {\n          \"items\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"headersConfig\": {\n       \"description\": \"An object that determines whether any HTTP headers (and if so, which headers)\\nare included in requests that CloudFront sends to the origin.\",\n       \"properties\": {\n        \"headerBehavior\": {\n         \"type\": \"string\"\n        },\n        \"headers\": {\n         \"description\": \"Contains a list of HTTP header names.\",\n         \"properties\": {\n          \"items\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"queryStringsConfig\": {\n       \"description\": \"An object that determines whether any URL query strings in viewer requests\\n(and if so, which query strings) are included in requests that CloudFront\\nsends to the origin.\",\n       \"properties\": {\n        \"queryStringBehavior\": {\n         \"type\": \"string\"\n        },\n        \"queryStrings\": {\n         \"description\": \"Contains a list of query string names.\",\n         \"properties\": {\n          \"items\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"originRequestPolicyConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Origin Request Policy\",\n \"type\": \"object\"\n}"
+ }

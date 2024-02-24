@@ -40,8 +40,15 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. [Onboarding](managing-applications-through-meshery-cli) an application. `mesheryctl app onboard -f [file-path]`
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl exp filter apply --file [GitHub Link]`
 
+### FAQ
+<details>
+    <summary>
+<h6>Question: Why are images invisible for some designs in the Meshery Catalog?</h6>
+</summary>
+<p><strong>Answer:</strong> In certain instances, the images of published designs in <a href="https://meshery.io/catalog">Meshery Catalog</a> may not be visible due to bandwidth issues. This can occur when there are network constraints affecting the retrieval of image data. However, rest assured that the design information and other relevant details are still accessible.</p>
+</details>
 
 {% include alert.html
     type="info"
     title="Help with Meshery Catalog"
-    content="If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](http://discuss.meshery.io/)." %}
+    content="If you have any questions or need assistance, reach out on the <a href='http://discuss.meshery.io/'>discussion forum</a>." %}

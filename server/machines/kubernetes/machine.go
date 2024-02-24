@@ -44,6 +44,7 @@ func Connected() machines.State {
 			machines.Disconnect: machines.DISCONNECTED,
 			machines.Delete:     machines.DELETED,
 			machines.NotFound:   machines.NOTFOUND,
+			machines.Ignore:     machines.IGNORED,
 		},
 		Action: &ConnectAction{},
 	}
