@@ -20,7 +20,7 @@
    "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpolyline id=\"Stroke-1\" stroke=\"#4285F4\" stroke-width=\"2\" points=\"20 4 4 13 4 6.71740939\"\u003e\u003c/polyline\u003e\n        \u003cpolyline id=\"Stroke-3\" stroke=\"#4285F4\" stroke-width=\"2\" points=\"4 21 20 12 20 18.2825906\"\u003e\u003c/polyline\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
    "svgComplete": "",
-   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20 4L4 13V6.71741\" stroke=\"white\" stroke-width=\"2\"/\u003e\n\u003cpath d=\"M4 21L20 12V18.2826\" stroke=\"white\" stroke-width=\"2\"/\u003e\n\u003c/svg\u003e\n"
+   "svgWhite": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20 4L4 13V6.71741\" stroke=\"white\" stroke-width=\"2\"/\u003e\n\u003cpath d=\"M4 21L20 12V18.2826\" stroke=\"white\" stroke-width=\"2\"/\u003e\n\u003c/svg\u003e\n"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",

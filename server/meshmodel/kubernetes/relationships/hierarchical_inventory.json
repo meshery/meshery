@@ -427,26 +427,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "settings",
-                  "metadata",
-                  "name"
-                ],
-                [
-                  "settings",
-                  "metadata",
-                  "namespace"
-                ],
-                [
-                  "settings",
-                  "metadata",
-                  "kind"
-                ],
-                [
-                  "settings",
-                  "metadata",
-                  "apiVersion"
-                ]
+                ["settings", "regarding", "name"],
+                ["settings", "regarding", "namespace"],
+                ["settings", "regarding", "kind"],
+                ["settings", "regarding", "apiVersion"]
               ],
               "description": "In Kubernetes, Events serve as a crucial mechanism for observing and tracking the state changes and activities within the cluster. They offer valuable information about resource creation, updates, errors, and other significant occurrences, aiding administrators and developers in troubleshooting, monitoring, and maintaining the health and performance of their applications."
             }
@@ -1089,6 +1073,191 @@
           "from": [],
           "to": []
         }
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ControllerRevision",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "settings", "revision"
+                ]
+              ],
+              "description": "ControllerRevisions are used to store the historical state of a ReplicaSet, Deployment, StatefulSet or Pod. They are used to rollback to a previous version of the resource.\n\nControllerRevisions are created when a ReplicaSet, Deployment, or StatefulSet is updated. They store the historical state of the resource, including the Pod template and the revision number."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "Deployments can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the Deployment.\n\nThe revisionHistoryLimit field in the Deployment specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "StatefulSets can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the StatefulSet.\n\nThe revisionHistoryLimit field in the StatefulSet specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "ReplicaSets can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the ReplicaSet.\n\nThe revisionHistoryLimit field in the ReplicaSet specification is used to configure the number of ControllerRevisions to store."
+            }
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "metadata",
+                  "ownerReferences",
+                  "_",
+                  "controller",
+                  "revisionHistoryLimit"
+                ]
+              ],
+              "description": "Pods can be configured to store a certain number of ControllerRevisions. This is useful for rolling back to a previous version of the Pod.\n\nThe revisionHistoryLimit field in the Pod specification is used to configure the number of ControllerRevisions to store."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "IngressClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "IngressClass is a resource to specify class for Ingress to be used by the IngressController."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "ingressClassName"]
+              ],
+              "description": "Ingress is a collection of rules that allow inbound connections to reach the services. IngressClass configures the class of Ingress resource which is then used by the Ingress Controller."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec", "selector", "labels"]
+              ], 
+              "description": " Deployments manage ReplicaSets and provide features such as rolling updates and rollback functionality. PDBs can be associated with Deployments to maintain availability during updates and ensure a minimum number of pods are available during the transition."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec", "selector", "labels"]
+              ],
+              "description": "ReplicaSets ensure a specified number of pod replicas are running at any given time. PDBs can be applied to ReplicaSets to enforce constraints on how many pods can be disrupted at once during scaling operations or node maintenance."
+            }
+          }, 
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec", "selector", "labels"]
+              ],
+              "description": "StatefulSets are used for stateful applications that require stable, unique network identifiers and persistent storage. PDBs can be used with StatefulSets to control pod disruptions and ensure data integrity during maintenance or scaling."
+            }
+          }, 
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec", "selector", "labels"]
+              ],
+              "description": "DaemonSets ensure that a copy of a pod runs on each node in the cluster. PDBs can be used to prevent too many pods from being disrupted simultaneously during node maintenance or upgrades, ensuring that essential services provided by DaemonSets remain available."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PodDisruptionBudget",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "selector", "matchLabels"]
+              ]
+            },
+            "description": "In Kubernetes, Pod Distribution Budgets (PDBs) are used to ensure that a certain number or percentage of pods are running on particular nodes or within particular zones."
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     },
     {

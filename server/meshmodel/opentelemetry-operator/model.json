@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "opentelemetry-operator",
-  "version": "0.47.0",
+  "version": "0.47.1",
   "displayName": "OpenTelemetry Operator",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

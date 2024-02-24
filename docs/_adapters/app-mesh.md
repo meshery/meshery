@@ -2,7 +2,7 @@
 layout: enhanced
 title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
-mesh_name: App Mesh
+component: App Mesh
 earliest_version: v1.4.1
 port: 10005/gRPC
 project_status: beta
@@ -35,11 +35,11 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Features
 
-1. Lifecycle management of {{page.mesh_name}}
+1. Lifecycle management of {{page.component}}
 1. Lifecycle management of sample applications
 1. Performance testing
 
@@ -59,7 +59,7 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
 
   - Httpbin is a simple HTTP request and response service.
 
-Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
+Identify overhead involved in running {{page.component}}, various {{page.component}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 
 1. Prometheus integration
 1. Grafana integration
