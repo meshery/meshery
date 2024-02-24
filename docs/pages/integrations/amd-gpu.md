@@ -5,24 +5,25 @@ subtitle: Collaborative and visual infrastructure as code for AMD GPU
 image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg
 permalink: extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
-description: 
+description:
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
-components: 
-- name: node-feature
-  colorIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
-  whiteIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
-  description: 
-- name: node-feature-rule
-  colorIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
-  whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
-  description: 
-featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
-]
+components:
+  - name: node-feature
+    colorIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
+    whiteIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
+    description:
+  - name: node-feature-rule
+    colorIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
+    whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
+    description:
+featureList:
+  [
+    "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
+    "Invite anyone to review and make changes to your private designs.",
+    "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.",
+  ]
 howItWorks: "Collaborative Infrastructure as Code"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
@@ -31,7 +32,8 @@ type: extensibility
 category: integrations
 display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 70px; height: 35px;" /></h1>
 
 <p>
 
@@ -42,3 +44,4 @@ display-title: "false"
 <p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
 </p>
+
