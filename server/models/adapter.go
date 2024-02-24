@@ -20,7 +20,7 @@ var (
 	Nighthawk = Adapter{Name: "meshery-nighthawk", Location: "10013"}
 )
 
-var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, AppMesh, Cilium, Traefik}
+var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, AppMesh, Cilium, Traefik, Nighthawk}
 
 // Adapter represents an adapter in Meshery
 type Adapter struct {
