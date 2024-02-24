@@ -32,6 +32,7 @@
    "name": "aws-route53resolver-controller",
    "version": "0.0.2",
    "displayName": "AWS Route 53 Resolver",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

@@ -27,6 +27,7 @@
    "name": "aws-api-gateway-operator",
    "version": "0.1.2",
    "displayName": "aws-api-gateway-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

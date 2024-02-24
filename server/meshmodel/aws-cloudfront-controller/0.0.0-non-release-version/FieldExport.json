@@ -32,6 +32,7 @@
    "name": "aws-cloudfront-controller",
    "version": "0.0.0-non-release-version",
    "displayName": "AWS CloudFront",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

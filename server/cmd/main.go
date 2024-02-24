@@ -59,6 +59,7 @@ func main() {
 
 	viper.AutomaticEnv()
 
+	// Meshery Server configuration
 	viper.SetConfigFile("./server-config.env")
 	viper.WatchConfig()
 
