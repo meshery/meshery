@@ -126,17 +126,21 @@ mesheryctl exp components view [component-name]
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
+		// Get the home directory of the user to save the output file
+		homeDir, _ := os.UserHomeDir()
+		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")
+
 		if outFormatFlag == "yaml" {
 			if output, err = yaml.Marshal(selectedComponent); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
 			if saveFlag {
 				fmt.Println("Saving output as YAML file")
-				err = os.WriteFile("./output.yaml", output, 0666)
+				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
 				if err != nil {
 					return errors.Wrap(err, "failed to save output as YAML file")
 				}
-				fmt.Println("Output saved as YAML file")
+				fmt.Println("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
 			} else {
 				fmt.Print(string(output))
 			}
@@ -147,11 +151,11 @@ mesheryctl exp components view [component-name]
 				if err != nil {
 					return errors.Wrap(err, "failed to format output in JSON")
 				}
-				err = os.WriteFile("./output.json", output, 0666)
+				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".json", output, 0666)
 				if err != nil {
 					return errors.Wrap(err, "failed to save output as JSON file")
 				}
-				fmt.Println("Output saved as JSON file")
+				fmt.Println("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
 			return outputComponentJson(selectedComponent)
