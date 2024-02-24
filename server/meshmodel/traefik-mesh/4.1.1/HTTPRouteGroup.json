@@ -32,6 +32,7 @@
    "name": "traefik-mesh",
    "version": "4.1.1",
    "displayName": "Traefik Mesh",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

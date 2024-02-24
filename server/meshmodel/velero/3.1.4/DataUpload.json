@@ -32,6 +32,7 @@
    "name": "velero",
    "version": "3.1.4",
    "displayName": "Velero",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Runtime",

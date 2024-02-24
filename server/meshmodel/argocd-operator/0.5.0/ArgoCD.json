@@ -27,6 +27,7 @@
    "name": "argocd-operator",
    "version": "0.5.0",
    "displayName": "argocd-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

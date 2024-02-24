@@ -32,6 +32,7 @@
    "name": "aws-kms-controller",
    "version": "1.0.7",
    "displayName": "AWS Key Management Service ",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

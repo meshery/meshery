@@ -32,6 +32,7 @@
    "name": "ndb-operator",
    "version": "1.0.1",
    "displayName": "Ndb Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

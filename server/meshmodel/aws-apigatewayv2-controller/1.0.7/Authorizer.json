@@ -32,6 +32,7 @@
    "name": "aws-apigatewayv2-controller",
    "version": "1.0.7",
    "displayName": "AWS API Gateway v2",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

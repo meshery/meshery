@@ -32,6 +32,7 @@
    "name": "aws-load-balancer-controller",
    "version": "1.4.8",
    "displayName": "AWS Load Balancer",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

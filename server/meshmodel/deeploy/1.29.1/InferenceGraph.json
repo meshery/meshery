@@ -32,6 +32,7 @@
    "name": "deeploy",
    "version": "1.29.1",
    "displayName": "Deeploy",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

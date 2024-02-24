@@ -1,6 +1,7 @@
 ---
 layout: enhanced
 title: Extensions
+abstract: Extensions are additional plugins or add-ons that provide extra functionalities beyond the core features of the Meshery.
 permalink: extensions/
 redirect_from: extensibility/extensions
 language: en

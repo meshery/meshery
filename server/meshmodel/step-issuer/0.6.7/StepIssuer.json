@@ -32,6 +32,7 @@
    "name": "step-issuer",
    "version": "0.6.7",
    "displayName": "Step Issuer",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -16,7 +16,7 @@ Meshery Registry Management
 
 ## Synopsis
 
-Manage the state and configuration of Meshery Registry.
+Manage the state and contents of Meshery's internal registry of capabilities.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry [flags]

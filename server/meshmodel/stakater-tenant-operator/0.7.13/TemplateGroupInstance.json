@@ -32,6 +32,7 @@
    "name": "stakater-tenant-operator",
    "version": "0.7.13",
    "displayName": "stakater-tenant-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

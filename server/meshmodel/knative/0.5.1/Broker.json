@@ -32,6 +32,7 @@
    "name": "knative",
    "version": "0.5.1",
    "displayName": "Knative",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Serverless",

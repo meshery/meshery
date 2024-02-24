@@ -32,6 +32,7 @@
    "name": "opentelemetry-operator",
    "version": "0.24.5",
    "displayName": "OpenTelemetry Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

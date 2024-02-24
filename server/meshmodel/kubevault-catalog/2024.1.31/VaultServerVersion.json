@@ -27,6 +27,7 @@
    "name": "kubevault-catalog",
    "version": "2024.1.31",
    "displayName": "kubevault-catalog",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

@@ -516,7 +516,7 @@ const MeshAdapterConfigComponent = (props) => {
                 options={availableAdapters}
                 value={selectedAvailableAdapter}
                 // placeholder={'Mesh Adapter URL'}
-                label="Available Mesh Adapter"
+                label="Available Adapters"
                 error={selectedAvailableAdapterError}
               />
             </Grid>

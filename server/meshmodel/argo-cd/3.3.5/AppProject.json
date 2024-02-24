@@ -32,6 +32,7 @@
    "name": "argo-cd",
    "version": "3.3.5",
    "displayName": "Argo CD Applications",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

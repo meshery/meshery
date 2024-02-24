@@ -32,6 +32,7 @@
    "name": "gloo",
    "version": "1.14.0-beta9",
    "displayName": "gloo",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

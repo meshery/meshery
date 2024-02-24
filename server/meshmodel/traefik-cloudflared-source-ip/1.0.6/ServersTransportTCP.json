@@ -32,6 +32,7 @@
    "name": "traefik-cloudflared-source-ip",
    "version": "1.0.6",
    "displayName": "Traefik Cloudflared Source Ip",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

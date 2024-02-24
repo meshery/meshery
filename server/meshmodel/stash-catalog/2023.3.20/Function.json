@@ -32,6 +32,7 @@
    "name": "stash-catalog",
    "version": "2023.3.20",
    "displayName": "Stash Catalog",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

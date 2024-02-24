@@ -27,6 +27,7 @@
    "name": "aws-rds-controller",
    "version": "v1.1.11",
    "displayName": "aws-rds-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

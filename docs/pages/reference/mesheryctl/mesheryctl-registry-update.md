@@ -35,7 +35,7 @@ mesheryctl registry update [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
+	mesheryctl registry update --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl registry update [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
+	mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
 
 </div>
 </pre> 
@@ -60,8 +60,8 @@ mesheryctl registry update [flags]
 <div class='codeblock'>
   -h, --help                      help for update
   -i, --input string              relative or absolute input path to the models directory (default "../server/meshmodel")
-      --spreadsheet_cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet_id string     spreadsheet it for the integration spreadsheet
+      --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
+      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
 
 </div>
 </pre>

@@ -27,6 +27,7 @@
    "name": "gatekeeper",
    "version": "3.16.0-beta.0",
    "displayName": "gatekeeper",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

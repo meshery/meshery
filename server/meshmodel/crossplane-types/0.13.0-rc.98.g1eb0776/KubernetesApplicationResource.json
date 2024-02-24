@@ -32,6 +32,7 @@
    "name": "crossplane-types",
    "version": "0.13.0-rc.98.g1eb0776",
    "displayName": "Crossplane",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

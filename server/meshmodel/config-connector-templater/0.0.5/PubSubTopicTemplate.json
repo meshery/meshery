@@ -32,6 +32,7 @@
    "name": "config-connector-templater",
    "version": "0.0.5",
    "displayName": "Config Connector Templater",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

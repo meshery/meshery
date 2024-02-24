@@ -27,6 +27,7 @@
    "name": "chaos-mesh",
    "version": "2.6.3",
    "displayName": "chaos-mesh",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

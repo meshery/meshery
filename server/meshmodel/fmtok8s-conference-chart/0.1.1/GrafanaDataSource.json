@@ -32,6 +32,7 @@
    "name": "fmtok8s-conference-chart",
    "version": "0.1.1",
    "displayName": "Fmtok8S Conference Chart",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

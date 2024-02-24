@@ -32,6 +32,7 @@
    "name": "meshery-flowchart",
    "version": "1.0.0",
    "displayName": "Meshery Flowchart",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

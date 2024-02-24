@@ -32,6 +32,7 @@
    "name": "pinniped",
    "version": "1.0.8",
    "displayName": "Pinniped",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

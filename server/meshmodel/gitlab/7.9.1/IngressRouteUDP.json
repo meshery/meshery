@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "IngressRouteUDP",
+  "apiVersion": "traefik.containo.us/v1alpha1",
+  "displayName": "Ingress Route UDP",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gitlab",
+   "version": "7.9.1",
+   "displayName": "gitlab",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-7.9.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"IngressRouteUDP is an Ingress CRD specification.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteUDPSpec is a specification for a IngressRouteUDPSpec resource.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"items\": {\n      \"description\": \"RouteUDP contains the set of routes.\",\n      \"properties\": {\n       \"services\": {\n        \"items\": {\n         \"description\": \"ServiceUDP defines an upstream to proxy traffic.\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"weight\": {\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route UDP\",\n \"type\": \"object\"\n}"
+ }

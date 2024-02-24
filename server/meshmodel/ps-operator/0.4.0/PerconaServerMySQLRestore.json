@@ -32,6 +32,7 @@
    "name": "ps-operator",
    "version": "0.4.0",
    "displayName": "Percona Operator for MySQL",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

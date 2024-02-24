@@ -17,7 +17,6 @@ package experimental
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -32,7 +31,7 @@ var (
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
-	Long:  `List of experimental commands for testing and evaluation purpose.`,
+	Long:  `Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -45,6 +44,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd, registry.RegistryCmd, system.ComponentsCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, system.ComponentsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

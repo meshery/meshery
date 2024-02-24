@@ -32,6 +32,7 @@
    "name": "spire",
    "version": "0.12.2",
    "displayName": "SPIRE",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

@@ -32,6 +32,7 @@
    "name": "keycloak-operator",
    "version": "0.1.0",
    "displayName": "Keycloak Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

@@ -32,6 +32,7 @@
    "name": "kubeflow",
    "version": "1.6.1",
    "displayName": "Kubeflow",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Machine Learning",

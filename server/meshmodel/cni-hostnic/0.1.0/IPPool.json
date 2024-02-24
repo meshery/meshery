@@ -32,6 +32,7 @@
    "name": "cni-hostnic",
    "version": "0.1.0",
    "displayName": "CNI Host NIC",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

@@ -32,6 +32,7 @@
    "name": "bitwarden-crd-operator",
    "version": "0.5.3",
    "displayName": "Bitwarden Crd Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

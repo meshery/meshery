@@ -27,6 +27,7 @@
    "name": "kubeform-provider-aws",
    "version": "2023.11.1",
    "displayName": "kubeform-provider-aws",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

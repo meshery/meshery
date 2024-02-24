@@ -27,6 +27,7 @@
    "name": "vault-config-operator",
    "version": "0.8.25",
    "displayName": "vault-config-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

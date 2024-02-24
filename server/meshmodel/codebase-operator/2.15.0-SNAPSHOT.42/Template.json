@@ -32,6 +32,7 @@
    "name": "codebase-operator",
    "version": "2.15.0-SNAPSHOT.42",
    "displayName": "Codebase Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -32,6 +32,7 @@
    "name": "perf-operator",
    "version": "2.13.0-SNAPSHOT.9",
    "displayName": "Perf Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

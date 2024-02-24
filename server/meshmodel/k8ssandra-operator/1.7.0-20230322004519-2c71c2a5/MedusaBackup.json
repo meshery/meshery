@@ -32,6 +32,7 @@
    "name": "k8ssandra-operator",
    "version": "1.7.0-20230322004519-2c71c2a5",
    "displayName": "K8ssandra Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

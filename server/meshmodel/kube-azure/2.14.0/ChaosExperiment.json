@@ -32,6 +32,7 @@
    "name": "kube-azure",
    "version": "2.14.0",
    "displayName": "Kube Azure",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -32,6 +32,7 @@
    "name": "pxc-operator",
    "version": "1.12.1",
    "displayName": "Pxc Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

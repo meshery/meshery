@@ -32,6 +32,7 @@
    "name": "aws-cloudwatch-controller",
    "version": "0.0.3",
    "displayName": "AWS CloudWatch",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

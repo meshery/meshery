@@ -13,6 +13,7 @@
    "name": "kubevault-operator",
    "version": "0.17.0",
    "displayName": "kubevault-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "HealthCheck",
+  "apiVersion": "kuma.io/v1alpha1",
+  "displayName": "Health Check",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong-mesh",
+   "version": "2.6.1",
+   "displayName": "kong-mesh",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.6.1/kong-mesh-2.6.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"mesh\": {\n   \"description\": \"Mesh is the name of the Kuma mesh this resource belongs to.\\nIt may be omitted for cluster-scoped resources.\",\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma HealthCheck resource.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Health Check\",\n \"type\": \"object\"\n}"
+ }

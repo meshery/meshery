@@ -32,6 +32,7 @@
    "name": "lightrun-k8s-operator",
    "version": "0.1.4",
    "displayName": "Lightrun K8S Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

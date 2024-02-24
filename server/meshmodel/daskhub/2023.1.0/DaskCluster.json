@@ -32,6 +32,7 @@
    "name": "daskhub",
    "version": "2023.1.0",
    "displayName": "Daskhub",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

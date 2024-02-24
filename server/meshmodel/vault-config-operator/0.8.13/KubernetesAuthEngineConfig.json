@@ -32,6 +32,7 @@
    "name": "vault-config-operator",
    "version": "0.8.13",
    "displayName": "Vault Config Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

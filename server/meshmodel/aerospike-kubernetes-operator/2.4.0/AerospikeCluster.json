@@ -32,6 +32,7 @@
    "name": "aerospike-kubernetes-operator",
    "version": "2.4.0",
    "displayName": "Aerospike Kubernetes Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

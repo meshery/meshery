@@ -13,6 +13,7 @@
    "name": "aws-eks-controller",
    "version": "v1.3.2",
    "displayName": "aws-eks-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

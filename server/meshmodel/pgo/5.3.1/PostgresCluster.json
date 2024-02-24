@@ -32,6 +32,7 @@
    "name": "pgo",
    "version": "5.3.1",
    "displayName": "PGO (CrunchyData)",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

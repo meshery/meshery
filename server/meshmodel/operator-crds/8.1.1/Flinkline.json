@@ -32,6 +32,7 @@
    "name": "operator-crds",
    "version": "8.1.1",
    "displayName": "operator-crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

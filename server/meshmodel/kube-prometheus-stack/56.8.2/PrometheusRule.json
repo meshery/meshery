@@ -1,0 +1,28 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PrometheusRule",
+  "apiVersion": "monitoring.coreos.com/v1",
+  "displayName": "Prometheus Rule",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kube-prometheus-stack",
+   "version": "56.8.2",
+   "displayName": "kube-prometheus-stack",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/prometheus-community/helm-charts/releases/download/kube-prometheus-stack-56.8.2/kube-prometheus-stack-56.8.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PrometheusRule defines recording and alerting rules for a Prometheus instance\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of desired alerting rule definitions for Prometheus.\",\n   \"properties\": {\n    \"groups\": {\n     \"description\": \"Content of Prometheus rule file\",\n     \"items\": {\n      \"description\": \"RuleGroup is a list of sequentially evaluated recording and alerting rules.\",\n      \"properties\": {\n       \"interval\": {\n        \"description\": \"Interval determines how often rules in the group are evaluated.\",\n        \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n        \"type\": \"string\"\n       },\n       \"limit\": {\n        \"description\": \"Limit the number of alerts an alerting rule and series a recording rule can produce. Limit is supported starting with Prometheus \\u003e= 2.31 and Thanos Ruler \\u003e= 0.24.\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of the rule group.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"partial_response_strategy\": {\n        \"description\": \"PartialResponseStrategy is only used by ThanosRuler and will be ignored by Prometheus instances. More info: https://github.com/thanos-io/thanos/blob/main/docs/components/rule.md#partial-response\",\n        \"pattern\": \"^(?i)(abort|warn)?$\",\n        \"type\": \"string\"\n       },\n       \"rules\": {\n        \"description\": \"List of alerting and recording rules.\",\n        \"items\": {\n         \"description\": \"Rule describes an alerting or recording rule See Prometheus documentation: [alerting](https://www.prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) or [recording](https://www.prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules) rule\",\n         \"properties\": {\n          \"alert\": {\n           \"description\": \"Name of the alert. Must be a valid label value. Only one of `record` and `alert` must be set.\",\n           \"type\": \"string\"\n          },\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Annotations to add to each alert. Only valid for alerting rules.\",\n           \"type\": \"object\"\n          },\n          \"expr\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"description\": \"PromQL expression to evaluate.\",\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"for\": {\n           \"description\": \"Alerts are considered firing once they have been returned for this long.\",\n           \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n           \"type\": \"string\"\n          },\n          \"keep_firing_for\": {\n           \"description\": \"KeepFiringFor defines how long an alert will continue firing after the condition that triggered it has cleared.\",\n           \"minLength\": 1,\n           \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n           \"type\": \"string\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Labels to add or overwrite.\",\n           \"type\": \"object\"\n          },\n          \"record\": {\n           \"description\": \"Name of the time series to output to. Must be a valid metric name. Only one of `record` and `alert` must be set.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"expr\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"name\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Prometheus Rule\",\n \"type\": \"object\"\n}"
+ }

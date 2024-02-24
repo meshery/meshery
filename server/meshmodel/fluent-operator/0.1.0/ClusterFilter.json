@@ -27,6 +27,7 @@
    "name": "fluent-operator",
    "version": "0.1.0",
    "displayName": "fluent-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

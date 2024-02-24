@@ -32,6 +32,7 @@
    "name": "ks-installer",
    "version": "0.3.1",
    "displayName": "Ks Installer",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

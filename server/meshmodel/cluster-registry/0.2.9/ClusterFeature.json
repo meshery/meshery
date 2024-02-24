@@ -32,6 +32,7 @@
    "name": "cluster-registry",
    "version": "0.2.9",
    "displayName": "Cluster Registry",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

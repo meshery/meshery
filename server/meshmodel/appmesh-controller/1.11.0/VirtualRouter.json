@@ -32,6 +32,7 @@
    "name": "appmesh-controller",
    "version": "1.11.0",
    "displayName": "AWS App Mesh",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

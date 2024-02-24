@@ -27,6 +27,7 @@
    "name": "kubedb-crds",
    "version": "2024.2.14",
    "displayName": "kubedb-crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

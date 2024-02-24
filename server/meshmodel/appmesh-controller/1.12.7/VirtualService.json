@@ -27,6 +27,7 @@
    "name": "appmesh-controller",
    "version": "1.12.7",
    "displayName": "appmesh-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

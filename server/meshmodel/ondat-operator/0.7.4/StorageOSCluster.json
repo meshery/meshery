@@ -32,6 +32,7 @@
    "name": "ondat-operator",
    "version": "0.7.4",
    "displayName": "Ondat Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Storage",

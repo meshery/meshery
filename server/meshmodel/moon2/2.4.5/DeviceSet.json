@@ -32,6 +32,7 @@
    "name": "moon2",
    "version": "2.4.5",
    "displayName": "Moon2",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

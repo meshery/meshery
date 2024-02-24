@@ -27,6 +27,7 @@
    "name": "admin-console-operator",
    "version": "2.15.0-SNAPSHOT.3",
    "displayName": "admin-console-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

@@ -32,6 +32,7 @@
    "name": "aws-emrcontainers-controller",
    "version": "1.0.4",
    "displayName": "AWS EMR Containers",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Analytics",

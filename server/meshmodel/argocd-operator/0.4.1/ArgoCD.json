@@ -32,6 +32,7 @@
    "name": "argocd-operator",
    "version": "0.4.1",
    "displayName": "Argo CD Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

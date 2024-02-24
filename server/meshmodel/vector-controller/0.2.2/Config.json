@@ -32,6 +32,7 @@
    "name": "vector-controller",
    "version": "0.2.2",
    "displayName": "vector-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

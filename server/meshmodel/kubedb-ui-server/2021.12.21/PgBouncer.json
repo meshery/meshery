@@ -27,6 +27,7 @@
    "name": "kubedb-ui-server",
    "version": "2021.12.21",
    "displayName": "kubedb-ui-server",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

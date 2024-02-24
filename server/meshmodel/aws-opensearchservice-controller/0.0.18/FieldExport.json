@@ -32,6 +32,7 @@
    "name": "aws-opensearchservice-controller",
    "version": "0.0.18",
    "displayName": "AWS OpenSearch Service",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

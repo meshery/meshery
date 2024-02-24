@@ -27,6 +27,7 @@
    "name": "nats-operator",
    "version": "0.8.3",
    "displayName": "nats-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

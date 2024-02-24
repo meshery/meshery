@@ -32,6 +32,7 @@
    "name": "sshpiper",
    "version": "0.2.1",
    "displayName": "Sshpiper",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

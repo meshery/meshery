@@ -27,6 +27,7 @@
    "name": "kyverno-operator",
    "version": "0.1.9",
    "displayName": "kyverno-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

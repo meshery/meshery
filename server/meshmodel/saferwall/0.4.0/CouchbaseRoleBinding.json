@@ -32,6 +32,7 @@
    "name": "saferwall",
    "version": "0.4.0",
    "displayName": "Saferwall",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

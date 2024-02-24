@@ -2,7 +2,7 @@
 layout: page
 title: Meshery Adapter for Kuma
 name: Meshery Adapter for Kuma
-mesh_name: Kuma
+component: Kuma
 earliest_version: v1.2.2
 port: 10007/gRPC
 project_status: stable
@@ -37,17 +37,17 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
-### Install {{ page.mesh_name }}
+### Install {{ page.component }}
 
-Choose the Meshery Adapter for {{ page.mesh_name }}.
+Choose the Meshery Adapter for {{ page.component }}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png" />

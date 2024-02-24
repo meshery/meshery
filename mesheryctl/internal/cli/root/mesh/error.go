@@ -115,7 +115,7 @@ func ErrCreatingValidateRequest(err error) error {
 	return errors.New(ErrCreatingValidateRequestCode, errors.Fatal,
 		[]string{"Error sending Validate request"},
 		[]string{err.Error()},
-		[]string{"An HTTP error occured due to network connection"},
+		[]string{"An HTTP error occurred due to network connection"},
 		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 

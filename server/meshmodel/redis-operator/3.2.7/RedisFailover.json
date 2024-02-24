@@ -32,6 +32,7 @@
    "name": "redis-operator",
    "version": "3.2.7",
    "displayName": "Redis Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

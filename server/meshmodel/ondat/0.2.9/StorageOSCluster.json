@@ -32,6 +32,7 @@
    "name": "ondat",
    "version": "0.2.9",
    "displayName": "ondat",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

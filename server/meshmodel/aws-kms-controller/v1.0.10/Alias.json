@@ -27,6 +27,7 @@
    "name": "aws-kms-controller",
    "version": "v1.0.10",
    "displayName": "aws-kms-controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

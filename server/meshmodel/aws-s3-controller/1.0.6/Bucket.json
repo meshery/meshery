@@ -32,6 +32,7 @@
    "name": "aws-s3-controller",
    "version": "1.0.6",
    "displayName": "AWS Simple Storage Service (S3)",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Storage",

@@ -32,6 +32,7 @@
    "name": "odpi-egeria-lab",
    "version": "4.0.0-prerelease.9",
    "displayName": "Odpi Egeria Lab",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

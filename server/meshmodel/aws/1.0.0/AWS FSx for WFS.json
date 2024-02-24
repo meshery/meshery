@@ -32,6 +32,7 @@
    "name": "aws",
    "version": "1.0.0",
    "displayName": "Amazon Web Services",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Storage",

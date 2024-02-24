@@ -32,6 +32,7 @@
    "name": "kubernetes-ingress",
    "version": "1.29.2",
    "displayName": "HAProxy Kubernetes Ingress",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

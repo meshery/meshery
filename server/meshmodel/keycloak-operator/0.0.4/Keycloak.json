@@ -27,6 +27,7 @@
    "name": "keycloak-operator",
    "version": "0.0.4",
    "displayName": "keycloak-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

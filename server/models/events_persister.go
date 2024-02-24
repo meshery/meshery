@@ -1,10 +1,11 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/events"
-	"gorm.io/gorm/clause"
 )
 
 // EventsPersister assists with persisting events in local SQLite DB
@@ -68,11 +69,8 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
-	if eventsFilter.Order == "asc" {
-		finder = finder.Order(eventsFilter.SortOn)
-	} else {
-		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
-	}
+	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})
+	finder = finder.Order(sortOn)
 
 	var count int64
 	finder.Count(&count)

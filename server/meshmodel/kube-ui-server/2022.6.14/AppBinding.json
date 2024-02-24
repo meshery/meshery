@@ -32,6 +32,7 @@
    "name": "kube-ui-server",
    "version": "2022.6.14",
    "displayName": "Kubernetes UI Server",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

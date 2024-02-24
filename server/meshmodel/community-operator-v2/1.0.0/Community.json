@@ -32,6 +32,7 @@
    "name": "community-operator-v2",
    "version": "1.0.0",
    "displayName": "Community Operator V2",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

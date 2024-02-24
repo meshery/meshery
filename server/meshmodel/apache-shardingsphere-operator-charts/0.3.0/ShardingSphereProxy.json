@@ -27,6 +27,7 @@
    "name": "apache-shardingsphere-operator-charts",
    "version": "0.3.0",
    "displayName": "apache-shardingsphere-operator-charts",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

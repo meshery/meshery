@@ -32,6 +32,7 @@
    "name": "cd-pipeline-operator",
    "version": "2.14.0-SNAPSHOT.32",
    "displayName": "CD Pipeline Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

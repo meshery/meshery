@@ -32,6 +32,7 @@
    "name": "kubegems-local",
    "version": "1.23.6",
    "displayName": "Kubegems Local",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

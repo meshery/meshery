@@ -32,6 +32,7 @@
    "name": "canary-operator",
    "version": "0.1.16",
    "displayName": "Canary Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

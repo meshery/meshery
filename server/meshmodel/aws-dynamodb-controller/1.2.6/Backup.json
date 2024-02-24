@@ -32,6 +32,7 @@
    "name": "aws-dynamodb-controller",
    "version": "1.2.6",
    "displayName": "AWS DynamoDB",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

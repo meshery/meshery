@@ -32,6 +32,7 @@
    "name": "nexus-operator",
    "version": "2.14.0-SNAPSHOT.26",
    "displayName": "Nexus Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

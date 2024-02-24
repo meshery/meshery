@@ -27,6 +27,7 @@
    "name": "kubernetes-secret-generator",
    "version": "3.4.0",
    "displayName": "kubernetes-secret-generator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

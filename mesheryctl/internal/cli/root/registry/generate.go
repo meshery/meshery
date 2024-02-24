@@ -1,3 +1,17 @@
+// # Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package registry
 
 import (
@@ -27,8 +41,8 @@ var (
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
-	// Tracks the indexed mapping between component spreadsheet columns.
-	// Used when generating component definition from spreadsheet itself, for eg: Compnent of Meshery core model.
+	// Maps the relationship between the Models sheet and Components sheet of the Meshery Integration spreadsheet columns.
+	// Used when generating Component definition from spreadsheet itself, for eg: Component of Meshery core model.
 	// The GoogleSpreadsheetAPI doesn't return column names, hence when invoking generation columns names are retrived by dumoing the sheet in CSV format then extrcting the columns (ComponentCSVHelper)
 	componentSpreadsheetCols []string
 
@@ -39,18 +53,22 @@ var (
 	totalAggregateModel int
 )
 
-var importCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import Models",
-	Long:  "Import models from spreadsheet, GitHub or ArtifactHub repositories",
+var generateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "Generate Models",
+	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
-    // Import models from Meshery Integration Spreadsheet
-    mesheryctl registry import --spreadsheet_url <url> --spreadsheet_cred <base64 encoded spreadsheet credential>
-    
-    // Directly import models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-    mesheryctl registry import --registrant_def <path to connection definition> --registrant_cred <path to credential definition>
+// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+mesheryctl registry generate --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential>
+# Example: mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+// Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
+mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
+		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		//
+
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
@@ -65,19 +83,19 @@ var importCmd = &cobra.Command{
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var wg sync.WaitGroup
 
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
 
 		if pathToRegistrantConnDefinition != "" {
-			utils.Log.Info("Model Generation from registrant definitions not yet supproted.")
+			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
 			return nil
 		}
 		var err error
 
 		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			fmt.Println(err, utils.Log.GetLevel(), ErrUpdateRegistry(err, modelLocation), ErrUpdateRegistry(err, modelLocation).Error())
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
@@ -88,10 +106,12 @@ var importCmd = &cobra.Command{
 			return err
 		}
 
+		// Collect list of Models by name from spreadsheet
 		sheetGID = GetSheetIDFromTitle(resp, "Models")
+		// Collect list of corresponding Components by name from spreadsheet
 		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 
-		err = InvokeGenerationFromSheet()
+		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
 			// meshkit
 			utils.Log.Error(err)
@@ -109,43 +129,46 @@ type compGenerateTracker struct {
 
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
-func InvokeGenerationFromSheet() error {
-	utils.Log.UpdateLogOutput(logFile)
+func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
+	weightedSem := semaphore.NewWeighted(20)
+	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
+	spreadsheeetChan := make(chan utils.SpreadsheetData)
+
 	defer func() {
-		_ = logFile.Close()
+		logModelGenerationSummary(modelToCompGenerateTracker)
+
 		utils.Log.UpdateLogOutput(os.Stdout)
-		utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+		utils.Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
 
-		utils.Log.Info("refer ", logDirPath, " for detailed registry generate logs")
+		utils.Log.Info("See ", logDirPath, " for detailed logs.")
 
+		_ = logFile.Close()
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
 
-	url := GoogleSpreadSheetURL + spreadsheeetID
-
-	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
+	modelCSVHelper, err := parseModelSheet(url)
 	if err != nil {
 		return err
 	}
 
-	err = modelCSVHelper.ParseModelsSheet(false)
-	if err != nil {
-		return ErrGenerateModel(err, "all")
-	}
-
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	componentCSVHelper, err := parseComponentSheet(url)
 	if err != nil {
 		return err
 	}
+
+	utils.Log.UpdateLogOutput(logFile)
+
+	var wgForSpreadsheetUpdate sync.WaitGroup
+	wgForSpreadsheetUpdate.Add(1)
+	go func() {
+		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
+		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
+	}()
 
 	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
-
-	weightedSem := semaphore.NewWeighted(20)
-
-	var wg sync.WaitGroup
 
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -199,7 +222,7 @@ func InvokeGenerationFromSheet() error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "for model: %s", model.ModelDisplayName)
+			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
 
 			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
 			if err != nil {
@@ -213,6 +236,12 @@ func InvokeGenerationFromSheet() error {
 					utils.Log.Info(err)
 				}
 			}
+
+			spreadsheeetChan <- utils.SpreadsheetData{
+				Model:      &model,
+				Components: comps,
+			}
+
 			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 				totalComps: len(comps),
 				version:    version,
@@ -221,8 +250,8 @@ func InvokeGenerationFromSheet() error {
 
 	}
 	wg.Wait()
-	logModelGenerationSummary(modelToCompGenerateTracker)
-
+	close(spreadsheeetChan)
+	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
 
@@ -289,6 +318,31 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	return nil
 }
 
+func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
+	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = modelCSVHelper.ParseModelsSheet(false)
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return modelCSVHelper, nil
+}
+
+func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
+	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	if err != nil {
+		return nil, err
+	}
+	err = compCSVHelper.ParseComponentsSheet()
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return compCSVHelper, nil
+}
+
 func createVersionDirectoryForModel(modelDefPath, version string) (string, error) {
 	versionDirPath := filepath.Join(modelDefPath, version)
 	err := mutils.CreateDirectory(versionDirPath)
@@ -318,18 +372,18 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 }
 
 func init() {
-	importCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet_id", "", "spreadsheet it for the integration spreadsheet")
-	importCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet_cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
-	importCmd.MarkFlagsRequiredTogether("spreadsheet_id", "spreadsheet_cred")
+	generateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant_def", "", "path pointing to the registrant connection definition")
-	importCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant_cred", "", "path pointing to the registrant credetial definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant-def", "", "path pointing to the registrant connection definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credetial definition")
 
-	importCmd.MarkFlagsRequiredTogether("registrant_def", "registrant_cred")
+	generateCmd.MarkFlagsRequiredTogether("registrant-def", "registrant-cred")
 
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_id", "registrant_def")
-	importCmd.MarkFlagsMutuallyExclusive("spreadsheet_cred", "registrant_cred")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 
-	importCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }

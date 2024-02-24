@@ -32,6 +32,7 @@
    "name": "heist",
    "version": "1.1.84",
    "displayName": "Heist",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

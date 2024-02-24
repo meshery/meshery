@@ -32,6 +32,7 @@
    "name": "loki-simple-scalable",
    "version": "1.8.11",
    "displayName": "Loki Simple Scalable",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

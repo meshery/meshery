@@ -27,6 +27,7 @@
    "name": "istio-base",
    "version": "1.16.0",
    "displayName": "istio-base",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

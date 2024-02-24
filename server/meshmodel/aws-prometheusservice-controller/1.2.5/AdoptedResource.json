@@ -32,6 +32,7 @@
    "name": "aws-prometheusservice-controller",
    "version": "1.2.5",
    "displayName": "AWS Managed Service for Prometheus",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

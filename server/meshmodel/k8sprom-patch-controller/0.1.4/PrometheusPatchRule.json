@@ -32,6 +32,7 @@
    "name": "k8sprom-patch-controller",
    "version": "0.1.4",
    "displayName": "K8s Prom Patch Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

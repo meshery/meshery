@@ -32,6 +32,7 @@
    "name": "frinx-machine",
    "version": "0.4.54",
    "displayName": "Frinx Machine",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",
