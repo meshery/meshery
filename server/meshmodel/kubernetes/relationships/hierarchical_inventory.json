@@ -1259,6 +1259,40 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from":[
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec"]
+              ],
+              "description": "A Job in Kubernetes is a resource used to run pods to completion. A job can be scheduled to run at a specific time/interval using CronJob."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "jobTemplate", "spec"]
+              ],
+              "description": "A CronJob in Kubernetes schedules and manages the execution of Jobs based on a time or schedule specification."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
     }
   ]
 }
