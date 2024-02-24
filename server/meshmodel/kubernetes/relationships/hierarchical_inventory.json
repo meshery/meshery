@@ -1102,7 +1102,7 @@
               "mutatorRef": [
                 ["settings", "spec"]
               ],
-              "description": "A Job in Kubernetes is a resource used to run pods to completion"
+              "description": "A Job in Kubernetes is a resource used to run pods to completion. A job can be scheduled to run at a specific time/interval using CronJob."
             }
           }
         ],
