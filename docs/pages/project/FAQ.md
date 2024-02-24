@@ -30,7 +30,7 @@ type: project
     <h6>Question: What does Meshery do?</h6>
 </summary>
 
-<p><strong>Answer:</strong> Infrastructure as design. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</p>
+<p><strong>Answer:</strong>Collaborative infrastructure management. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</p>
 </details>
 
 <!-- - _offers a catalog of operational best practices._

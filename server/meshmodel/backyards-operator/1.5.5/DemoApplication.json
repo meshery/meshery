@@ -32,6 +32,7 @@
    "name": "backyards-operator",
    "version": "1.5.5",
    "displayName": "Backyards Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

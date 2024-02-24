@@ -27,6 +27,7 @@
    "name": "aws-node-termination-handler-2",
    "version": "0.2.0",
    "displayName": "aws-node-termination-handler-2",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

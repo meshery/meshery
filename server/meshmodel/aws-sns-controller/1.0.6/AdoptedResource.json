@@ -32,6 +32,7 @@
    "name": "aws-sns-controller",
    "version": "1.0.6",
    "displayName": "AWS Simple Notification Service",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

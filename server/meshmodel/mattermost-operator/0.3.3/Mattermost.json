@@ -32,6 +32,7 @@
    "name": "mattermost-operator",
    "version": "0.3.3",
    "displayName": "Mattermost Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Tools",

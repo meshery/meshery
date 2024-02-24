@@ -32,6 +32,7 @@
    "name": "aws-cloudtrail-controller",
    "version": "1.0.5",
    "displayName": "AWS CloudTrail",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

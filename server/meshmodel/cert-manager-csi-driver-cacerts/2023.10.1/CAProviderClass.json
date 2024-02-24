@@ -27,6 +27,7 @@
    "name": "cert-manager-csi-driver-cacerts",
    "version": "2023.10.1",
    "displayName": "cert-manager-csi-driver-cacerts",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

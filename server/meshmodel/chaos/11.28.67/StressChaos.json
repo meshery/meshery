@@ -32,6 +32,7 @@
    "name": "chaos",
    "version": "11.28.67",
    "displayName": "Chaos",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

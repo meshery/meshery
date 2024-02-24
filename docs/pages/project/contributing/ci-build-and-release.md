@@ -11,6 +11,8 @@ list: include
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.
 
+{% include alert.html type="info" title="Meshery Test Plan" content="The <a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'>Meshery Test Plan</a> is a comprehensive document that outlines the testing strategy for Meshery and specific integration test cases. It includes a list of GitHub workflows and their purpose." %}
+
 ## Artifacts
 
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
@@ -21,11 +23,11 @@ Artifacts produced in the build processes are published and persisted in differe
 
 | Location   | Project                                         | Repository                                                                                                           |
 | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Docker Hub | Meshery                                         | [https://hub.docker.com/r/layer5/meshery](https://hub.docker.com/r/layer5/meshery)                                   |
-| GitHub     | mesheryctl                                      | [https://github.com/layer5io/meshery/releases](https://github.com/layer5io/meshery/releases)                         |
-| Docker Hub | Meshery Adapter for \<service-mesh\>            | https://hub.docker.com/r/layer5/meshery-\<service-mesh\>                                                             |
+| Docker Hub | Meshery                                         | [https://hub.docker.com/r/meshery/meshery](https://hub.docker.com/r/meshery/meshery)                                   |
+| GitHub     | mesheryctl                                      | [https://github.com/meshery/meshery/releases](https://github.com/meshery/meshery/releases)                         |
+| Docker Hub | Meshery Adapter for \<adapter-name\>            | https://hub.docker.com/r/meshery/meshery-\<adapter-name>\>                                                             |
 | Docs       | Meshery Documentation                           | [https://docs.meshery.io](https://docs.meshery.io)                                                                   |
-| GitHub     | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance)         |
+| GitHub     | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/service-mesh-performance/service-mesh-performance)         |
 | Github     | Helm charts                                     | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
@@ -34,7 +36,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of July 21st 2021 it is 1.16
+- `GO_VERSION`: As of March, 2024 is 1.21
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
@@ -96,14 +98,14 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
 1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.
 2. Starts a minikube cluster
 3. Builds a docker image of the adapter and sets minikube to use docker's registry.
-4. Starts the adapter and meshery server (The url to deployment and service yaml of adapter are configurable).
-   NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
+4. Starts the adapter and Meshery Server (The url to deployment and service yaml of adapter are configurable).
+   NOTE: The adapter name has to passed in:
 
 ---
 
       ...
       with:
-         adapter_name: < NAME OF THE SERVICE MESH >
+         adapter_name: < NAME OF THE ADAPTER >
 
 5. The uploaded patternfile is deployed.
 6. Workflow sleeps for some time.
@@ -366,6 +368,4 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
-
-These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed.
 
