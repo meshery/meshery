@@ -36,8 +36,8 @@ var (
 	ErrParseGithubFileCode    = "1185"
 	ErrReadTokenCode          = "1186"
 	ErrRequestResponseCode    = "1187"
-	ErrMarshalStructToCSVCode = "mesheryctl-1711"
-	ErrAppendToSheetCode      = "mesheryctl-1712"
+	ErrMarshalStructToCSVCode = "mesheryctl-1713"
+	ErrAppendToSheetCode      = "mesheryctl-1714"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
