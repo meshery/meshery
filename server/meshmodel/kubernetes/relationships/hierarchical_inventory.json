@@ -1199,7 +1199,7 @@
               "mutatedRef": [
                 ["settings", "spec", "ingressClassName"]
               ],
-              "description": "Ingress is a collection of rules that allow inbound connections to reach the services. It is used to configure the class of the Ingress controller."
+              "description": "Ingress is a collection of rules that allow inbound connections to reach the services. When a IngressClass is droped over Ingress specification of Ingress will be updated and configure the class of the Ingress controller"
             }
           }
         ]
