@@ -1262,29 +1262,113 @@
     },
     {
       "allow": {
-        "from": [
+        "from":[
           {
-            "kind": "Pod",
+            "kind": "Job",
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef":[
+              "mutatorRef": [
                 ["settings", "spec"]
               ],
-              "description": "A Pod is the basic execution unit of a Kubernetes application, representing a single instance of a running process in a cluster."
+              "description": "A Job in Kubernetes is a resource used to run pods to completion. A job can be scheduled to run at a specific time/interval using CronJob."
             }
           }
         ],
         "to": [
           {
-            "kind": "Deployment",
+            "kind": "CronJob",
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["settings", "spec", "template", "spec"]
+                ["settings", "spec", "jobTemplate", "spec"]
               ],
-              "description": "Deployments use pods to define the desired state of applications. Whenever a Pod is dragged near to the deployment, the pod spcifecation becomes part of the deployment."
+              "description": "A CronJob in Kubernetes schedules and manages the execution of Jobs based on a time or schedule specification."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    },
+    {
+      "allow": {
+        "from":[
+          {
+            "kind": "StorageClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "StorageClass is used in conjunction with PVC that allow Pods to dynamically request a new storage."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PersistentVolumeClaim",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "storageClassName"]
+              ],
+              "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "LimitRange",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "limits", "_", "default", "memory"],
+                ["spec", "limits", "_", "default", "cpu"],
+                ["spec", "limits", "defaultRequest", "memory"],
+                ["spec", "limits", "defaultRequest", "cpu"]
+              ],
+              "description": "Define default memory and CPU limits (including defaultRequest) in LimitRange."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "containers", 0 ,"resources", "resources", "limits", "memory"],
+                ["settings", "spec", "containers", 0, "resources", "limits", "cpu"],
+                ["settings", "spec", "containers", 0, "resources", "requests", "memory"],
+                ["settings", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Pod containers."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+                ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+                ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+                ["settings", "spec", "template", "spec", "containers", 0,  "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Deployment containers."
             }
           },
           {
@@ -1292,10 +1376,11 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                ["settings", "spec", "template", "spec"]
-              ],
-              "description": "StatefulSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the StatefulSet, the pod spcifecation becomes part of the StatefulSet."
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to StatefulSet containers."
             }
           },
           {
@@ -1303,10 +1388,11 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                ["settings", "spec", "template", "spec"]
-              ],
-              "description": "DaemonSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the DaemonSet, the pod spcifecation becomes part of the DaemonSet."
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to DaemonSet containers."
             }
           },
           {
@@ -1314,10 +1400,35 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                ["settings", "spec", "template", "spec"]
-              ],
-              "description": "ReplicaSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the ReplicaSet, the pod spcifecation becomes part of the ReplicaSet."
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to ReplicaSet containers."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to Job containers."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "limits", "cpu"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "memory"],
+              ["settings", "spec", "template", "spec", "containers", 0, "resources", "requests", "cpu"]],
+              "description": "Apply the default and defaultRequest memory and CPU limits from LimitRange to CronJob containers."
             }
           }
         ]
