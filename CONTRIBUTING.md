@@ -136,6 +136,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/meshery/meshery.
 
+**Note:** Alternatively , this command can be used `bundle exec jekyll serve --drafts --livereload --incremental --config _config_dev.yml` where  it live reloads the webpage and since it builds the website first  and then runs it being on Jekyll, it may take a little time.
+
+
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
