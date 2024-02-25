@@ -28,9 +28,9 @@ jobs:
         with:
           go-version: "1.21"
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.52.0
+          version: v1.54
           working-directory: mesheryctl
           args: --timeout 10m --verbose
           skip-cache: true

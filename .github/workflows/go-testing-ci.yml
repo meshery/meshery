@@ -30,9 +30,9 @@ jobs:
       - uses: actions/setup-go@master
         with:
           go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
           version: v1.54
           args: --config=.golangci.yml --timeout=10m
