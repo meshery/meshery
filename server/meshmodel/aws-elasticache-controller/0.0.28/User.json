@@ -32,6 +32,7 @@
    "name": "aws-elasticache-controller",
    "version": "0.0.28",
    "displayName": "AWS ElastiCache",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

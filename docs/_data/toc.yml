@@ -194,6 +194,8 @@
           url: extensibility/adapters/nsm
         - title: NGINX Service Mesh
           url: extensibility/adapters/nginx-sm
+        - title: Nighthawk
+          url: extensibility/adapters/nighthawk
         - title: Tanzu
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh

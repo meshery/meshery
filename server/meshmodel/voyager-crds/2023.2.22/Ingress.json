@@ -32,6 +32,7 @@
    "name": "voyager-crds",
    "version": "2023.2.22",
    "displayName": "Voyager Crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

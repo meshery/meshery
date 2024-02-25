@@ -27,6 +27,7 @@
    "name": "litmus-core",
    "version": "2.14.1",
    "displayName": "litmus-core",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

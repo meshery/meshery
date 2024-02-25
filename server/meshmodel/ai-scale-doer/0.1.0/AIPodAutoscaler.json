@@ -32,6 +32,7 @@
    "name": "ai-scale-doer",
    "version": "0.1.0",
    "displayName": "Ai Scale Doer",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

@@ -32,6 +32,7 @@
    "name": "intel-device-plugins-operator",
    "version": "0.26.0",
    "displayName": "Intel Device Plugins Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Runtime",

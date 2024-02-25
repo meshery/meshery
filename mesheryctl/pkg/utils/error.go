@@ -36,6 +36,8 @@ var (
 	ErrParseGithubFileCode    = "1185"
 	ErrReadTokenCode          = "1186"
 	ErrRequestResponseCode    = "1187"
+	ErrMarshalStructToCSVCode = "mesheryctl-1825"
+	ErrAppendToSheetCode      = "mesheryctl-1826"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -484,4 +486,20 @@ func ErrRequestResponse(err error) error {
 		[]string{"Unable to create a response from request" + err.Error()},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrMarshalStructToCSV(err error) error {
+	return errors.New(ErrMarshalStructToCSVCode, errors.Alert,
+		[]string{"Failed to marshal struct to csv"},
+		[]string{err.Error()},
+		[]string{"The column names in your spreadsheet do not match the names in the struct.", " For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."},
+		[]string{"The column names in the spreadsheet do not match the names in the struct. Please make sure they are spelled exactly the same and use the same case (uppercase/lowercase).", "The value you are trying to convert is not of the expected type for the column. Please ensure it is a [number, string, date, etc.].", "The column names in your spreadsheet do not match the names in the struct. For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."})
+}
+
+func ErrAppendToSheet(err error, id string) error {
+	return errors.New(ErrAppendToSheetCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
+		[]string{err.Error()},
+		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
+		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
 }

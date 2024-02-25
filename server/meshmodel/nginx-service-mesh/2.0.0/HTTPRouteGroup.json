@@ -27,6 +27,7 @@
    "name": "nginx-service-mesh",
    "version": "2.0.0",
    "displayName": "nginx-service-mesh",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",
