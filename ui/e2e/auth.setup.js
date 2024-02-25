@@ -2,7 +2,7 @@ import { test as setup, expect } from '@playwright/test';
 
 export const authFile = 'playwright/.auth/user.json';
 
-setup.skip('authenticate', async ({ page }) => {
+setup('authenticate', async ({ page }) => {
   // Perform authentication steps.
 
   await page.goto('/');
