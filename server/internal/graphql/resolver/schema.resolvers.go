@@ -250,9 +250,11 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 							resChan <- ctrlsStatusList
 						}
 						// update the status list with newStatus
-						statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
-							Status:  newStatus,
-							Version: version,
+						if _, ok := statusMapPerConnection[connectionID][controller]; ok {
+							statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
+								Status:  newStatus,
+								Version: version,
+							}
 						}
 						ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
 					}
