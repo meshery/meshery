@@ -26,7 +26,7 @@ Each Meshery release includes a predefined set of [models](./models) that are re
 
 The process of registering an entity in the Meshery Registry is a multi-step process. The process begins with the sourcing of the entity from the Registrant's source. The entity is then registered in the Meshery Registry. The entity is then available for use within the Meshery ecosystem.
 
-Meshery [Adapters](../architectural/adapters.md) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+Meshery [Adapters]({{site.baseurl}}/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
 
 #### Using Meshery CLI to Register a Model
 
