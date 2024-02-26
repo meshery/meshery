@@ -41,6 +41,10 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 	}
 }
 
+func(mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {	
+	return mh.broker
+}
+
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
