@@ -36,7 +36,7 @@
     })();
   </script>
 
-  {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
+  {% assign sorted_pages = include.pages | sort: "name" | alphabetical %}
   <nav class="sidebar-nav" id="td-section-nav">
     <ul class="sidebar-nav__section">
 
