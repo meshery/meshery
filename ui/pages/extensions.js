@@ -125,7 +125,7 @@ const ServiceMeshPerformanceCard = ({ classes, githubActionEnabled = false }) =>
           <MeshMapSnapShotLogo />
           Integrate Meshery performance analysis GitHub Action into your CI/CD pipeline to benchmark
           service performance using load generators and statistical analysis, catching regressions
-          early by monitoring percentile trends like P99.
+          early by monitoring percentile trends like P99
         </Typography>
         {
           <div style={{ textAlign: 'right' }}>
