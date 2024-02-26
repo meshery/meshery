@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "RateLimit",
+  "apiVersion": "specs.smi.nginx.com/v1alpha1",
+  "displayName": "Rate Limit",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#009639",
+   "secondaryColor": "#42C473",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" id=\"Layer_1\" x=\"0\" y=\"0\" version=\"1.1\" viewBox=\"0 0 318 361\" xml:space=\"preserve\" style=\"enable-background:new 0 0 318 361\"\u003e\u003cstyle type=\"text/css\"\u003e.st0{fill:#009639}.st1{fill:none;stroke:#fff;stroke-width:6.0241;stroke-miterlimit:10}.st2{fill:#fff}.st3{fill:#989898}\u003c/style\u003e\u003cg\u003e\u003cg\u003e\u003cpath d=\"M3.1127,270.0055c1.6271,2.8325,3.9871,5.1744,6.832,6.7797l139.7648,80.6932l0.0044-0.0044 c5.7342,3.368,12.8423,3.368,18.5765,0l139.7691-80.6932c5.7819-3.2802,9.3345-9.4337,9.2839-16.0811V99.3134l-0.0044-0.0044 c0.05-6.6494-3.5043-12.8047-9.2883-16.0854L168.2817,2.5304V2.526c-5.7295-3.3681-12.834-3.3681-18.5635,0v0.0044L9.9535,83.2236 c-5.7869,3.2783-9.3434,9.4346-9.2926,16.0854l-0.0044,0.0044v161.3864c-0.0314,3.2656,0.8154,6.4796,2.4519,9.3057\" class=\"st0\"/\u003e\u003cg\u003e\u003cpolyline points=\"160.009 181.571 73.852 229.643 160.009 281.123\" class=\"st1\"/\u003e\u003cpolyline points=\"71.834 130.357 160.009 78.877 160.009 181.571 246.166 130.357 246.166 229.643 160.009 181.571\" class=\"st1\"/\u003e\u003ccircle cx=\"71.834\" cy=\"130.357\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"246.166\" cy=\"130.357\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"160.009\" cy=\"78.877\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"160.009\" cy=\"181.571\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"73.852\" cy=\"229.643\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"160.009\" cy=\"281.123\" r=\"23.657\" class=\"st2\"/\u003e\u003ccircle cx=\"246.166\" cy=\"229.643\" r=\"23.657\" class=\"st2\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath d=\"M300.4747,326.5712h2.2967v-5.1155h1.8168c1.201,0,2.0626,0.1171,2.5518,0.4261 c0.803,0.4706,1.2128,1.4796,1.2128,2.9756v1.0489l0.0515,0.391c0.0281,0.0866,0.0281,0.1217,0.0352,0.1639 c0.0117,0.0632,0.0164,0.0819,0.0515,0.11h2.1281l-0.0773-0.1452c-0.0632-0.0983-0.0983-0.3207-0.103-0.6649 c-0.0305-0.3676-0.0305-0.6813-0.0305-0.9716v-0.9692c0-0.6508-0.2434-1.3157-0.7117-2.0275 c-0.4823-0.6859-1.2408-1.0933-2.2663-1.2736c0.8101-0.1358,1.4469-0.3512,1.8893-0.6134 c0.8686-0.5478,1.2689-1.4375,1.2689-2.5753c0-1.6365-0.6461-2.7556-2.0087-3.3034c-0.7515-0.3091-1.9291-0.4659-3.5609-0.4659 h-4.5442L300.4747,326.5712L300.4747,326.5712z M307.0066,319.5571c-0.4612,0.199-1.194,0.2903-2.1843,0.2903h-2.0508v-4.7362 h1.9572c1.2689,0,2.189,0.1803,2.7603,0.508c0.5829,0.3254,0.8639,0.9552,0.8639,1.8987 C308.3528,318.5246,307.9149,319.1848,307.0066,319.5571 M313.6766,311.7375c-2.3365-2.3061-5.1319-3.4485-8.4353-3.4485 c-3.2332,0-6.0543,1.1425-8.3369,3.4485c-2.3365,2.3131-3.4673,5.1108-3.4673,8.3954c0,3.28,1.1191,6.0894,3.4251,8.3908 c2.2896,2.3365,5.1154,3.4954,8.3791,3.4954c3.3034,0,6.0988-1.1589,8.4353-3.4954c2.2897-2.3131,3.4719-5.1342,3.4719-8.3908 C317.1485,316.8249,315.9663,314.0506,313.6766,311.7375 M312.4709,312.9152c1.9993,1.9525,2.9779,4.3874,2.9779,7.2178 c0,2.8024-0.9786,5.2559-2.9779,7.253c-1.969,1.9876-4.3874,3.0084-7.2296,3.0084c-2.8211,0-5.2255-1.0208-7.2202-3.0084 c-1.9572-1.997-2.9639-4.4506-2.9639-7.253c0-2.8305,1.0067-5.2653,2.9639-7.2178c2.0228-2.0321,4.4178-3.0295,7.2202-3.0295 C308.0718,309.8857,310.4785,310.883,312.4709,312.9152\" class=\"st3\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 26.3 27.4\" style=\"enable-background:new 0 0 26.3 27.4;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M18.9,11.1L15,13c0.1,0.2,0.1,0.5,0.1,0.7c0,0.2-0.1,0.5-0.2,0.7l3.7,2c0.3-0.4,0.8-0.6,1.4-0.7l0.2-4\n        c0,0-0.1,0-0.1,0C19.6,11.7,19.2,11.4,18.9,11.1L18.9,11.1z\"/\u003e\n\u003cpath class=\"st0\" d=\"M25.5,6.3L13.9,0.2c-0.5-0.3-1.1-0.3-1.5,0L0.8,6.3C0.3,6.6,0,7,0,7.6v12.3c0,0.3,0.1,0.5,0.2,0.7\n        c0.1,0.2,0.3,0.4,0.6,0.5l11.6,6.1c0.5,0.3,1.1,0.3,1.5,0l11.6-6.1c0.5-0.3,0.8-0.7,0.8-1.2V7.6C26.3,7.1,26,6.6,25.5,6.3L25.5,6.3z\n         M20.7,15.7c1.1,0.2,1.8,1.1,1.6,2.1c-0.2,1-1.2,1.6-2.3,1.5s-1.8-1.1-1.6-2.1c0-0.1,0.1-0.3,0.1-0.4l-3.7-1.9\n        c-0.4,0.5-1,0.7-1.6,0.7c-0.6,0-1.2-0.3-1.6-0.7l-3.7,1.9c0.2,0.4,0.2,1,0,1.4l3.8,2.1c0.4-0.4,0.9-0.7,1.5-0.7c1.1,0,2,0.8,2,1.8\n        c0,1-0.9,1.8-2,1.8s-2-0.8-2-1.8c0-0.3,0.1-0.5,0.2-0.7l-3.8-2.1c-0.4,0.4-1,0.7-1.5,0.7c-1.1,0-2-0.8-2-1.8c0-1,0.9-1.8,2-1.8\n        c0.6,0,1.2,0.3,1.6,0.7l3.7-1.9c-0.1-0.2-0.1-0.4-0.1-0.7c0-0.9,0.7-1.7,1.7-1.8V7.8c-0.5-0.1-1-0.3-1.3-0.7L7.7,9.2\n        c0.1,0.2,0.2,0.5,0.2,0.7c0,1-0.9,1.8-2,1.8s-2-0.8-2-1.8c0-1,0.9-1.8,2-1.8c0.6,0,1.2,0.3,1.6,0.7l3.9-2.1\n        c-0.1-0.2-0.2-0.5-0.2-0.7c0-1,0.9-1.8,2-1.8c1.1,0,2,0.8,2,1.8c0,0.9-0.7,1.7-1.7,1.8V12c0.5,0.1,1,0.3,1.3,0.7l3.8-2.1\n        c-0.2-0.3-0.2-0.7-0.1-1.1c0.2-1,1.2-1.6,2.3-1.4c1.1,0.2,1.8,1.1,1.6,2.1c-0.2,0.8-0.9,1.4-1.7,1.4L20.7,15.7\n        C20.6,15.7,20.6,15.7,20.7,15.7z\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "nginx-service-mesh",
+   "version": "2.0.0",
+   "displayName": "nginx-service-mesh",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"burst\": {\n     \"description\": \"The number of requests to allow beyond the given rate.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"delay\": {\n     \"description\": \"The number of requests after which to delay requests.\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"destination\": {\n     \"description\": \"The destination of this rate limit.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the destination.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the destination.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the destination.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of this rate limit spec.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"rate\": {\n     \"description\": \"The allowed rate of traffic.\",\n     \"pattern\": \"^[0-9]+r/[s,m]$\",\n     \"type\": \"string\"\n    },\n    \"sources\": {\n     \"description\": \"Sources of this rate limit.\",\n     \"items\": {\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind of this source.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of this source.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of this source.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"destination\",\n    \"rate\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit\",\n \"type\": \"object\"\n}"
+ }

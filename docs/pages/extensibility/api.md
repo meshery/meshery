@@ -87,4 +87,6 @@ Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints be
 
 While Meshery only requires a valid token in order to allow clients to invoke its APIs, Remote Providers can optionally enforce key-based permissions.
 
-{% include suggested-reading.html language="en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}

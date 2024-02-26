@@ -150,6 +150,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/limit-range/icons/color/limit-range-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/limit-range/icons/white/limit-range-white.svg
   description: 
+- name: lease
+  colorIcon: assets/img/integrations/kubernetes/components/lease/icons/color/lease-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/lease/icons/white/lease-white.svg
+  description: 
 - name: local-subject-access-review
   colorIcon: assets/img/integrations/kubernetes/components/local-subject-access-review/icons/color/local-subject-access-review-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/local-subject-access-review/icons/white/local-subject-access-review-white.svg

@@ -97,6 +97,8 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
 
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
-{% include suggested-reading.html language="en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="meshery" %}
