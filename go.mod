@@ -39,7 +39,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.7.0
-	github.com/layer5io/meshkit v0.7.14
+	github.com/layer5io/meshkit v0.7.15
 	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
@@ -47,8 +47,6 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/ginkgo/v2 v2.15.0
-	github.com/onsi/gomega v1.30.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.18.0
@@ -181,7 +179,6 @@ require (
 	github.com/go-openapi/validate v0.22.3 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
-	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
@@ -256,6 +253,7 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/novln/docker-parser v1.0.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
+	github.com/onsi/ginkgo/v2 v2.15.0 // indirect
 	github.com/open-policy-agent/opa v0.57.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect

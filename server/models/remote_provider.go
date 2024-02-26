@@ -26,6 +26,7 @@ import (
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
@@ -3278,23 +3279,32 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(tokenName)
 	// gets the session cookie from remote provider
-	sessionCookie := r.URL.Query().Get("session_cookie")
+	sessionString := r.URL.Query().Get("session_cookie")
 
-	ck := &http.Cookie{
+	callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+	urlDomain := utils.ExtractDomainFromURL(callbackURL)
+	tokenCookie := &http.Cookie{
 		Name:     tokenName,
 		Value:    string(tokenString),
 		Path:     "/",
 		Expires:  time.Now().Add(24 * time.Hour),
 		HttpOnly: true,
 	}
-	http.SetCookie(w, ck)
-	// sets the session cookie for Meshery Session
-	http.SetCookie(w, &http.Cookie{
+	sessionCookie := &http.Cookie{
 		Name:     "session_cookie",
-		Value:    sessionCookie,
+		Value:    sessionString,
 		Path:     "/",
 		HttpOnly: true,
-	})
+	}
+	// if domain is empty, the cookie is set on the same domain as that of meshery server is running, which can be either domain/sub-domain.
+	if urlDomain != "" {
+		tokenCookie.Domain = urlDomain
+		sessionCookie.Domain = urlDomain
+	}
+
+	http.SetCookie(w, tokenCookie)
+	// sets the session cookie for Meshery Session
+	http.SetCookie(w, sessionCookie)
 
 	// Get new capabilities
 	// Doing this here is important so that
@@ -3354,12 +3364,19 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 	newts := l.TokenStore[tokenString]
 	if newts != "" {
 		logrus.Debugf("set updated token: %v", newts)
-		http.SetCookie(w, &http.Cookie{
+		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+		urlDomain := utils.ExtractDomainFromURL(callbackURL)
+		tokenCookie := &http.Cookie{
 			Name:     tokenName,
 			Value:    newts,
 			Path:     "/",
 			HttpOnly: true,
-		})
+		}
+		// if domain is empty, the cookie is set on the same domain as that of meshery server is running, which can be either domain/sub-domain.
+		if urlDomain != "" {
+			tokenCookie.Domain = urlDomain
+		}
+		http.SetCookie(w, tokenCookie)
 		return newts
 	}
 
