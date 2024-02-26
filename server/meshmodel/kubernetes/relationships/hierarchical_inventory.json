@@ -1339,7 +1339,7 @@
               "mutatorRef": [
                 ["name"]
               ],
-              "description": "PriorityClass in Kubernetes defines scheduling priority for Pods."
+              "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other k8s components"
             }
           }
         ],
@@ -1352,7 +1352,7 @@
               "mutatedRef": [
                 ["settings", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "Pods inherit the name of PriorityClass, dictating their importance in scheduling."
             }
           },
           {
@@ -1363,7 +1363,7 @@
               "mutatedRef": [
                 ["settings", "spec", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "PodTemplate specifies the name of priorityClass, guiding Kubernetes controller to assign priority to Pods created from it, influencing scheduling behavior accordingly."
             }
           },
           {
@@ -1374,7 +1374,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "Deployments can specify a PriorityClass, ensuring Pods created by them inherit priority levels for scheduling."
             }
           },
           {
@@ -1385,7 +1385,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "StatefulSets manage stateful applications. PriorityClass can be applied to StatefulSets' Pods to prioritize them during scheduling."
             }
           },
           {
@@ -1396,7 +1396,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "DaemonSets ensure all nodes run a copy of a Pod. PriorityClass assigns importance, impacting scheduling decisions for DaemonSet-managed Pods."
             }
           },
           {
@@ -1407,7 +1407,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "ReplicaSets inherit PriorityClass from Pod templates, ensuring consistent priority levels for all Pods managed by the ReplicaSet."
             }
           },
           {
@@ -1418,7 +1418,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "PriorityClass in Kubernetes influences Job scheduling, ensuring high-priority Jobs execute first, critical for resource allocation and workload management."
             }
           },
           {
@@ -1429,7 +1429,7 @@
               "mutatedRef": [
                 ["settings", "spec", "jobTemplate", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": ""
+              "description": "CronJobs can use PriorityClass to prioritize scheduled job execution, ensuring critical tasks are handled with precedence in Kubernetes."
             }
           }
         ],
