@@ -20,15 +20,16 @@ Meshery supports a variety of relationships between components. Relationships ar
 
 Here is a list of the different types of relationships that Meshery supports:
 
-1. Edge
-   1. Network
-   1. Firewall
-   1. Binding
-      1. Mount
-      1. Permission
-1. Heirarchical
-   1. Inventory
-   1. Parent
+1. `Edge` : Edge relationships indicate the possibility of traffic flow between two components. Edge relationship can be divided into 3 sub types. 
+   1. [Network]({{site.baseurl}}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png) : This deals with IP addresses and DNS names and provides stable endpoints for commmunication. 
+   1. [Firewall]({{site.baseurl}}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png) : This subtype acts as intermediary for communications which include standard networking protocols like TCP and UDP. 
+   1. `Binding` : This subtype binds two component with each other. Biniding can be used in 2 ways given below.
+      1. [Mount]({{site.baseurl}}/assets/img/meshmodel/relationships/mount_edge_relationship.png) : This subtype addresses the storage and access possibility between involved components. 
+      1. [Permission]({{site.baseurl}}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png) : This defines the permission for components if they can hace a possible relationship with other components.
+1. `Heirarchical` : Hierarchical relationships involve either an ancestral connection of the components
+   1. `Inventory` : It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
+   1. [Parent]({{site.baseurl}}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png) : A parent-child relationship implies the requirement of the parent component before the child component can be created.
+
 
 <details open>
 <summary>Example Visual Representations</summary>
