@@ -1,0 +1,50 @@
+{
+    "apiVersion": "",
+    "kind": "Edge",
+    "metadata": {
+      "description": "A relationship that acts as intermediary for communications which include standard networking protocols like TCP and UDP",
+      "capabilities":{
+        "designer": {
+          "edit": {
+            "style": true,
+            "config": false,
+            "label": false
+          }
+        }
+      }
+    },
+    "model": {
+      "name": "",
+      "version": "",
+      "displayName": "",
+      "category": {
+        "name": "",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Firewall",
+    "evaluationQuery": "edge_binding_relationship",
+    "selectors": [{
+      "allow": {
+        "from": [
+          {
+            "kind": "",
+            "model": "",
+            "match": {
+              
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "",
+            "model": "",
+            "match": {
+              
+            }
+          }
+        ]
+      }
+    }]
+  }

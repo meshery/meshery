@@ -1,0 +1,50 @@
+{
+    "apiVersion": "",
+    "kind": "Edge",
+    "metadata": {
+      "description": "A relationship that addresses the storage and access possibility between involved components.",
+      "capabilities":{
+        "designer": {
+          "edit": {
+            "style": true,
+            "config": false,
+            "label": false
+          }
+        }
+      }},
+    "model": {
+      "name": "",
+      "version": "",
+      "displayName": "",
+      "category": {
+        "name": "",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Mount",
+    "evaluationQuery": "edge_binding_relationship",
+    "selectors": [{
+      "deny": {
+        "from": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ],
+        "to": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ]
+      },
+      "allow": {
+        "from": [
+        ],
+        "to": [
+          
+        ]
+      }
+    }]
+  }

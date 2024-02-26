@@ -1,0 +1,57 @@
+{
+    "apiVersion": "",
+    "kind": "Edge",
+    "metadata": {
+      "description": "A relationship that deals with IP addresses and DNS names and provides stable endpoints for communication.",
+      "capabilities":{
+        "designer": {
+          "edit": {
+            "style": true,
+            "config": true,
+            "label": false
+          }
+        }
+      }},
+    "model": {
+      "name": "",
+      "version": "",
+      "displayName": "",
+      "category": {
+        "name": "",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Network",
+    "evaluationQuery": "edge_network_relationship",
+    "selectors": [{
+      "allow": {
+        "from": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ],
+        "to": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ]
+      },
+      "deny": {
+        "from": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ],
+        "to": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ]
+      }
+    }]
+  }
