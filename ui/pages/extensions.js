@@ -118,12 +118,14 @@ const ServiceMeshPerformanceCard = ({ classes, githubActionEnabled = false }) =>
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
         <Typography className={classes.frontContent} variant="h5" component="div">
-          Meshery Performance Analysis GitHub Action
+          GitHub Action: Performance Analysis
         </Typography>
 
         <Typography className={classes.frontSideDescription} variant="body">
-          <img className={classes.img} src="/static/img/meshmap.svg" />
-          A GitHub Action to characterize the performance of a service or microservice using a load generator and statistical analysis. Use Meshery's performance analysis GitHub Action to establish a performance benchmark and visually compare percentiles (e.g. P99) over time. Integrate performance characterization within your CI/CD pipeline and catch regressions before they happen.
+          <MeshMapSnapShotLogo />
+          Integrate Meshery performance analysis GitHub Action into your CI/CD pipeline to benchmark
+          service performance using load generators and statistical analysis, catching regressions
+          early by monitoring percentile trends like P99.
         </Typography>
         {
           <div style={{ textAlign: 'right' }}>
