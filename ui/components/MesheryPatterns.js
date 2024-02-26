@@ -639,7 +639,7 @@ function MesheryPatterns({
      Below is a graphql query that fetches the catalog patterns that is published so
      when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
      which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-     And our rest api already fetch published so for we not rquired this.
+     Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
     */
     // const fetchCatalogPatterns = fetchCatalogPattern({
     //   selector: {
