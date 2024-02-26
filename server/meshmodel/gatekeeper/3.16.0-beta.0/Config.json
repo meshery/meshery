@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Config",
+  "apiVersion": "config.gatekeeper.sh/v1alpha1",
+  "displayName": "Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gatekeeper",
+   "version": "3.16.0-beta.0",
+   "displayName": "gatekeeper",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://open-policy-agent.github.io/gatekeeper/charts/gatekeeper-3.16.0-beta.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Config is the Schema for the configs API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ConfigSpec defines the desired state of Config.\",\n   \"properties\": {\n    \"match\": {\n     \"description\": \"Configuration for namespace exclusion\",\n     \"items\": {\n      \"properties\": {\n       \"excludedNamespaces\": {\n        \"items\": {\n         \"description\": \"A string that supports globbing at its front or end. Ex: \\\"kube-*\\\" will match \\\"kube-system\\\" or \\\"kube-public\\\", \\\"*-system\\\" will match \\\"kube-system\\\" or \\\"gatekeeper-system\\\".  The asterisk is required for wildcard matching.\",\n         \"pattern\": \"^(\\\\*|\\\\*-)?[a-z0-9]([-:a-z0-9]*[a-z0-9])?(\\\\*|-\\\\*)?$\",\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"processes\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"readiness\": {\n     \"description\": \"Configuration for readiness tracker\",\n     \"properties\": {\n      \"statsEnabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sync\": {\n     \"description\": \"Configuration for syncing k8s objects\",\n     \"properties\": {\n      \"syncOnly\": {\n       \"description\": \"If non-empty, only entries on this list will be replicated into OPA\",\n       \"items\": {\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"validation\": {\n     \"description\": \"Configuration for validation\",\n     \"properties\": {\n      \"traces\": {\n       \"description\": \"List of requests to trace. Both \\\"user\\\" and \\\"kinds\\\" must be specified\",\n       \"items\": {\n        \"properties\": {\n         \"dump\": {\n          \"description\": \"Also dump the state of OPA with the trace. Set to `All` to dump everything.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Only trace requests of the following GroupVersionKind\",\n          \"properties\": {\n           \"group\": {\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"type\": \"string\"\n           },\n           \"version\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"user\": {\n          \"description\": \"Only trace requests from the specified user\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Config\",\n \"type\": \"object\"\n}"
+ }

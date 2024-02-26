@@ -1,1 +1,49 @@
-{"kind":"Domain","apiVersion":"multiclusterdns.kubefed.io/v1alpha1","displayName":"Domain","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"","model":"kubefed","modelDisplayName":"Kubefed","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"kubefed","version":"0.3.1-banzai.1","displayName":"Kubefed","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"isAnnotation":false,"source_uri":"https://kubernetes-charts.banzaicloud.com/charts/kubefed-0.3.1-banzai.1.tgz"},"components":null,"relationships":null},"schema":"{\n \"properties\": {\n  \"domain\": {\n   \"description\": \"Domain is the DNS zone associated with the KubeFed control plane\",\n   \"type\": \"string\"\n  },\n  \"nameServer\": {\n   \"description\": \"NameServer is the authoritative DNS name server for the KubeFed domain\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"domain\"\n ],\n \"title\": \"Domain\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Domain",
+  "apiVersion": "multiclusterdns.kubefed.io/v1alpha1",
+  "displayName": "Domain",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "kubefed",
+   "modelDisplayName": "Kubefed",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubefed",
+   "version": "0.3.1-banzai.1",
+   "displayName": "Kubefed",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/kubefed-0.3.1-banzai.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"domain\": {\n   \"description\": \"Domain is the DNS zone associated with the KubeFed control plane\",\n   \"type\": \"string\"\n  },\n  \"nameServer\": {\n   \"description\": \"NameServer is the authoritative DNS name server for the KubeFed domain\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"domain\"\n ],\n \"title\": \"Domain\",\n \"type\": \"object\"\n}"
+ }

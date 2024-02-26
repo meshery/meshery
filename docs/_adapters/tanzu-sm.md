@@ -1,8 +1,8 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
-mesh_name: Tanzu Service Mesh
+component: Tanzu Service Mesh
 earliest_version: pre-GA
 port: 10011/gRPC
 project_status: alpha
@@ -34,7 +34,7 @@ language: en
 {% include compatibility/adapter-status.html %}
 ## Features
 
-1. {{page.mesh_name}} Lifecycle Management
+1. {{page.component}} Lifecycle Management
 1. Workload Lifecycle Management
    1. Using Service Mesh Standards
       1. Service Mesh Performance (SMP)
@@ -45,7 +45,7 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications for {{page.component}} can also be installed using Meshery.
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 

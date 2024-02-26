@@ -1,8 +1,8 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
-mesh_name: Consul
+component: Consul
 earliest_version: v1.8.4
 port: 10002/gRPC
 project_status: stable
@@ -38,31 +38,31 @@ redirect_from: service-meshes/adapters/consul
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}} service mesh.
 
-### Install {{ page.mesh_name }}
+### Install {{ page.component }}
 
-##### Choose the Meshery Adapter for {{page.mesh_name}}
+##### Choose the Meshery Adapter for {{page.component}}
 
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
-##### Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />
 </a>
 
-A number of [sample applications](#sample-applications) for {{page.mesh_name}} can also be installed using Meshery.
+A number of [sample applications](#sample-applications) for {{page.component}} can also be installed using Meshery.
 
 ### Features
 
-1. Lifecycle management of {{page.mesh_name}}
+1. Lifecycle management of {{page.component}}
 1. Lifecycle management of sample applications
-1. Performance management of {{page.mesh_name}} and it workloads
+1. Performance management of {{page.component}} and it workloads
    - Prometheus and Grafana integration
-1. Configuration management and best practices of {{page.mesh_name}}
+1. Configuration management and best practices of {{page.component}}
 1. Custom service mesh configuration
 
 ### Sample Applications
