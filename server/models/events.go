@@ -5,6 +5,10 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 )
 
+const (
+	Create = "create"
+	Update = "update"
+)
 type MesheryEvents interface {
 	GetAllEvents(eventFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error)
 	GetEventTypes(userID uuid.UUID) (map[string]interface{}, error)
