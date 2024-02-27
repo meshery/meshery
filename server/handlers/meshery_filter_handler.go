@@ -9,9 +9,8 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/meshes"
+
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -92,12 +91,6 @@ func (h *Handler) handleFilterPOST(
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	res := meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "Filters",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-	}
 	var parsedBody *models.MesheryFilterRequestBody
 
 	actedUpon := &userID
@@ -113,8 +106,6 @@ func (h *Handler) handleFilterPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
-		addMeshkitErr(&res, ErrGetFilter(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -133,8 +124,6 @@ func (h *Handler) handleFilterPOST(
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, ErrRetrieveUserToken(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -187,13 +176,11 @@ func (h *Handler) handleFilterPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSaveFilter(err))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
 			go h.config.FilterChannel.Publish(userID, struct{}{})
-			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+			h.formatFilterOutput(rw, resp, format, eventBuilder)
 
 			eventBuilder.WithSeverity(events.Informational).Build()
 			return
@@ -206,7 +193,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
+		h.formatFilterOutput(rw, byt, format, eventBuilder)
 		_ = provider.PersistEvent(eventBuilder.Build())
 		return
 	}
@@ -220,7 +207,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+		h.formatFilterOutput(rw, resp, format, eventBuilder)
 		_ = provider.PersistEvent(eventBuilder.Build())
 		return
 	}
@@ -564,7 +551,7 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, eventBuilder *events.EventBuilder) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
@@ -591,9 +578,6 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 			eventBuilder.ActedUpon(*filter.ID)
 		}
 	}
-	res.Details = "filters saved"
-	res.Summary = "following filters were saved: " + strings.Join(names, ",")
-	go h.EventsBuffer.Publish(res)
 	eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", strings.Join(names, ",")))
 }
 
