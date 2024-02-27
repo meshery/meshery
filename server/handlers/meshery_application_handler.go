@@ -13,9 +13,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
@@ -111,38 +109,29 @@ func (h *Handler) handleApplicationPOST(
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	res := meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "Application",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-	}
+
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("create").ActedUpon(userID)
 
 	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
-		addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\"")))
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
 		}).WithDescription("Please provide application source-type").Build()
 
 		_ = provider.PersistEvent(event)
-		go h.EventsBuffer.Publish(&res)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		addMeshkitErr(&res, ErrRetrieveData(err))
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse uploaded application.").Build()
 
 		_ = provider.PersistEvent(event)
-		go h.EventsBuffer.Publish(&res)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -161,8 +150,6 @@ func (h *Handler) handleApplicationPOST(
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, ErrRetrieveData(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -202,8 +189,6 @@ func (h *Handler) handleApplicationPOST(
 					go h.config.EventBroadcaster.Publish(userID, event)
 
 					http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-					go h.EventsBuffer.Publish(&res)
 					return
 				}
 				mesheryApplication.Type = sql.NullString{
@@ -230,8 +215,6 @@ func (h *Handler) handleApplicationPOST(
 				go h.config.EventBroadcaster.Publish(userID, event)
 
 				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, err) //this error is already a meshkit error so no further wrapping required
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 			response, err := yaml.Marshal(pattern)
@@ -247,8 +230,6 @@ func (h *Handler) handleApplicationPOST(
 				go h.config.EventBroadcaster.Publish(userID, event)
 
 				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
@@ -264,8 +245,6 @@ func (h *Handler) handleApplicationPOST(
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 	}
@@ -288,8 +267,6 @@ func (h *Handler) handleApplicationPOST(
 
 				go h.config.EventBroadcaster.Publish(userID, event)
 				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 			sourceContent, err := io.ReadAll(helmSourceResp.Body)
@@ -301,8 +278,6 @@ func (h *Handler) handleApplicationPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error reading body")))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
@@ -321,8 +296,6 @@ func (h *Handler) handleApplicationPOST(
 				go h.config.EventBroadcaster.Publish(userID, event)
 
 				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
@@ -338,8 +311,6 @@ func (h *Handler) handleApplicationPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, err)
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
@@ -356,8 +327,6 @@ func (h *Handler) handleApplicationPOST(
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
@@ -385,8 +354,6 @@ func (h *Handler) handleApplicationPOST(
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": err,
 				}).WithDescription(fmt.Sprintf("Invalid URL provided %s", parsedBody.URL)).Build()
-				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error parsing URL")))
-				go h.EventsBuffer.Publish(&res)
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				return
@@ -424,8 +391,6 @@ func (h *Handler) handleApplicationPOST(
 
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
-					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
-					go h.EventsBuffer.Publish(&res)
 					return
 				}
 
@@ -442,8 +407,6 @@ func (h *Handler) handleApplicationPOST(
 					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
-					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
-					go h.EventsBuffer.Publish(&res)
 					return
 				}
 				mesheryApplication = &pfs[0]
@@ -460,8 +423,6 @@ func (h *Handler) handleApplicationPOST(
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrApplicationFailure(fmt.Errorf("error parsing URL"), obj))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 	}
@@ -483,12 +444,10 @@ func (h *Handler) handleApplicationPOST(
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
-		h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+		h.formatApplicationOutput(rw, resp, format, eventBuilder)
 
 		eventBuilder.WithSeverity(events.Informational)
 		event := eventBuilder.Build()
@@ -519,8 +478,6 @@ func (h *Handler) handleApplicationPOST(
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			addMeshkitErr(&res, ErrApplicationSourceContent(err, obj))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		go h.config.ApplicationChannel.Publish(userID, struct{}{})
@@ -538,7 +495,7 @@ func (h *Handler) handleApplicationPOST(
 		return
 	}
 
-	h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
+	h.formatApplicationOutput(rw, byt, format, eventBuilder)
 
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
@@ -556,17 +513,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("update").ActedUpon(userID)
 
-	res := meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "Design",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-	}
-
 	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
-		addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("missing route \"source-type\"")))
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
@@ -574,7 +523,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -617,8 +565,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			addMeshkitErr(&res, ErrSavePattern(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -626,8 +572,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "%s", err)
-			addMeshkitErr(&res, ErrSavePattern(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -635,8 +579,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		if err != nil {
 			h.log.Error(ErrGetPattern(err))
 			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
-			addMeshkitErr(&res, ErrGetPattern(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
@@ -671,15 +613,13 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-				addMeshkitErr(&res, ErrSavePattern(err))
-				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
 			eventBuilder.WithSeverity(events.Informational)
 
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+			h.formatApplicationOutput(rw, resp, format, eventBuilder)
 			event := eventBuilder.Build()
 			// go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
@@ -694,7 +634,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			return
 		}
 
-		h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
+		h.formatApplicationOutput(rw, byt, format, eventBuilder)
 		return
 	}
 	mesheryApplication := parsedBody.ApplicationData
@@ -704,7 +644,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	}
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
-		obj := "save"
 		errAppSave := ErrSaveApplication(err)
 		h.log.Error(errAppSave)
 
@@ -717,14 +656,12 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		addMeshkitErr(&res, ErrApplicationFailure(err, obj))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 	go h.config.ApplicationChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
-	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+	h.formatApplicationOutput(rw, resp, format, eventBuilder)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
@@ -953,7 +890,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	}
 }
 
-func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, eventBuilder *events.EventBuilder) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 	names := []string{}
 
@@ -980,8 +917,6 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 		}
 	}
 	eventBuilder.WithDescription(fmt.Sprintf("Application %s saved", strings.Join(names, ",")))
-	res.Details = "\"" + strings.Join(names, ",") + "\" application saved"
-	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" application have been saved."
 }
 
 // Note: This function is guaranteed to return meshkit errors

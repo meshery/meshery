@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strconv"
+
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -35,4 +39,9 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 		sortOnCol = "updated_at"
 	}
 	return
+}
+
+func GetValueFromReqContext(ctx context.Context, key models.ContextKey) string {
+	val, _ := utils.Cast[string](ctx.Value(key))
+	return val
 }
