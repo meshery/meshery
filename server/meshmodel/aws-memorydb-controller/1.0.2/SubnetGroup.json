@@ -18,7 +18,7 @@
    "primaryColor": "#C925D1",
    "published": true,
    "secondaryColor": "",
-   "shape": "",
+   "shape": "cylinder",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",

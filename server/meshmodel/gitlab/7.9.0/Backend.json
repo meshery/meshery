@@ -13,7 +13,7 @@
    "isNamespaced": true,
    "primaryColor": "#1988d9",
    "secondaryColor": "#54aef0",
-   "shape": "",
+   "shape": "rectangle",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",

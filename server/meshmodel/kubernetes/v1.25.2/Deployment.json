@@ -19,7 +19,7 @@
    "primaryColor": "#326CE5",
    "published": true,
    "secondaryColor": "#7aa1f0",
-   "shape": "",
+   "shape": "round-pentagon",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"border-width\":2,\"background-opacity\":0.1}",
    "styles": "{\"border-width\":2,\"background-opacity\":0.1}",
