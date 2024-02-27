@@ -73,6 +73,9 @@ const performanceProfile = api
         }),
         providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
+      getSmpMeshes: builder.query({
+        query: () => `mesh`,
+      }),
     }),
   });
 
@@ -83,4 +86,5 @@ export const {
   useGetPerformanceProfileByIdQuery,
   useDeletePerformanceProfileMutation,
   useGetProfileResultsByIdQuery,
+  useGetSmpMeshesQuery,
 } = performanceProfile;

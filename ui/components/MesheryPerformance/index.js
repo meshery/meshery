@@ -51,6 +51,7 @@ import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
+import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -275,6 +276,7 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+  const [profileUpload] = useSavePerformanceProfileMutation();
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -468,34 +470,34 @@ const MesheryPerformanceComponent = (props) => {
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/user/performance/profiles',
-      { method: 'POST', credentials: 'include', body: JSON.stringify(body) },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          props.updateProgress({ showProgress: false });
-          setPerformanceProfileID(result.id);
-          if (cb) cb(result);
-          if (generateNotif) {
-            const notify = props.notify;
-            notify({
-              message: 'Performance Profile Created!',
-              event_type: EVENT_TYPES.SUCCESS,
-            });
+    profileUpload({ body: body })
+      .unwrap()
+      .then(
+        (result) => {
+          if (typeof result !== 'undefined') {
+            props.updateProgress({ showProgress: false });
+            setPerformanceProfileID(result.id);
+            if (cb) cb(result);
+            if (generateNotif) {
+              const notify = props.notify;
+              notify({
+                message: 'Performance Profile Created!',
+                event_type: EVENT_TYPES.SUCCESS,
+              });
+            }
           }
-        }
-      },
-      (err) => {
-        console.error(err);
-        props.updateProgress({ showProgress: false });
-        const notify = props.notify;
-        notify({
-          message: 'Failed to create performance profile',
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-      },
-    );
+        },
+        (err) => {
+          console.error(err);
+          props.updateProgress({ showProgress: false });
+          const notify = props.notify;
+          notify({
+            message: 'Failed to create performance profile',
+            event_type: EVENT_TYPES.ERROR,
+            details: err.toString(),
+          });
+        },
+      );
   };
 
   const submitLoadTest = (id) => {
