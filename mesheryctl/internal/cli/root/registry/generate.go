@@ -211,7 +211,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 			version := pkg.GetVersion()
 
-			modelDefPath, _, err := writeModelDefToFileSystem(&model, version)
+			modelDefPath, modelDef, err := writeModelDefToFileSystem(&model, version)
 			if err != nil {
 				utils.Log.Error(err)
 				return
@@ -229,8 +229,15 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+			isModelPublished, _ := modelDef.Metadata["published"].(bool)
 
 			for _, comp := range comps {
+				if comp.Metadata == nil {
+					comp.Metadata = make(map[string]interface{})
+				}
+				// If model is published mark the comps as published.
+				// The published attribute controls whether the comp will be registered inside registry or not.
+				comp.Metadata["published"] = isModelPublished
 				err := comp.WriteComponentDefinition(compDirName)
 				if err != nil {
 					utils.Log.Info(err)
