@@ -136,7 +136,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/meshery/meshery.
 
-**Note:** Alternatively , this command can be used `bundle exec jekyll serve --drafts --livereload --incremental --config _config_dev.yml` where  it live reloads the webpage and since it builds the website first  and then runs it being on Jekyll, it may take a little time.
+_Alternatively, LiveReload is available as an option during development: with jekyll serve --livereload no more manual page refresh. 
+
+`bundle exec jekyll serve --drafts --livereload --incremental --config _config_dev.yml`
 
 
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
