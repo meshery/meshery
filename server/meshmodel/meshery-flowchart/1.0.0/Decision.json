@@ -18,14 +18,14 @@
    "primaryColor": "#00B39F",
    "published": true,
    "secondaryColor": "#00D3A9",
-   "shape": "polygon",
+   "shape": "",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"border-width\":0,\"border-style\":\"solid\",\"background-opacity\":0,\"data\":{\"label\":\"\"}}",
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"border-width\":0,\"border-style\":\"solid\",\"background-opacity\":0}",
    "subCategory": "",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 42.27 20.72\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#00b39f;fill-opacity:0.1;stroke:#00b39f;stroke-miterlimit:10;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1\"\u003e\u003cpolygon id=\"Decision\" class=\"cls-1\" points=\"21.34 0.56 1.14 10.36 21.18 20.16 41.14 10.34 21.34 0.56\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 42.27 20.72\" width='' height='20.72'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#00b39f;fill-opacity:0.1;stroke:#00b39f;stroke-miterlimit:10;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1\"\u003e\u003cpolygon id=\"Decision\" class=\"cls-1\" points=\"21.34 0.56 1.14 10.36 21.18 20.16 41.14 10.34 21.34 0.56\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
    "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M12.5137 36.6823C3.30027 32.2711 -0.593255 21.2252 3.81749 12.0105C5.93563 7.58552 9.7246 4.18328 14.3509 2.55224C18.9772 0.921197 24.0618 1.19497 28.4863 3.31331C37.6998 7.72454 41.5932 18.7705 37.1825 27.9851C32.7718 37.1997 21.7272 41.0935 12.5137 36.6823Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
-   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 42.27 20.72\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;fill-opacity:0.1;stroke:#fff;stroke-miterlimit:10;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1\"\u003e\u003cpolygon id=\"Decision\" class=\"cls-1\" points=\"21.34 0.56 1.14 10.36 21.18 20.16 41.14 10.34 21.34 0.56\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 42.27 20.72\" width='42.27' height='20.72'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;fill-opacity:0.1;stroke:#fff;stroke-miterlimit:10;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1\"\u003e\u003cpolygon id=\"Decision\" class=\"cls-1\" points=\"21.34 0.56 1.14 10.36 21.18 20.16 41.14 10.34 21.34 0.56\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",

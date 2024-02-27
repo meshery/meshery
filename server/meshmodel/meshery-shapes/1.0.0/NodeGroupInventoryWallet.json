@@ -13,7 +13,7 @@
    "primaryColor": "#00B39F",
    "published": true,
    "secondaryColor": "#00D3A9",
-   "shape": "round-rectangle",
+   "shape": "",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0.1,\"data\":{\"label\":\"\"}}",
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0.1}",

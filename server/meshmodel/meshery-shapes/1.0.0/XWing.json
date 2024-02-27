@@ -18,7 +18,7 @@
    "primaryColor": "#00B39F",
    "published": true,
    "secondaryColor": "#00D3A9",
-   "shape": "polygon",
+   "shape": "",
    "shapePolygonPoints": "-1, -1,   1, -0.5,   1, 1,   -1, 0.5",
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1,\"shape-polygon-points\":\"-1, -1,   1, -0.5,   1, 1,   -1, 0.5\",\"data\":{\"label\":\"\"}}",
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1}",
