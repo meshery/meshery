@@ -1327,6 +1327,89 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"], ["name"]
+              ],
+              "description": "ConfigMaps are used to store configuration data in key-value pairs, which can be consumed by pods or other resources in the cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "volumes", "_", "configMap", "name"],
+                ["settings", "spec", "containers" ,"_", "volumeMounts", "_", "name"]
+              ],
+              "description": "ConfigMaps can be mounted as volumes in a Pod, allowing the Pod to consume the configuration data stored in the ConfigMap."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "volumes", "_", "configMap", "name"],
+                ["settings", "spec", "template", "spec", "containers" ,"_", "volumeMounts", "_", "name"]
+              ],
+              "description": "ConfigMaps can be mounted as volumes in a Deployment, allowing the Pods managed by the Deployment to consume the configuration data stored in the ConfigMap."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "volumes", "_", "configMap", "name"],
+                ["settings", "spec", "template", "spec", "containers" ,"_", "volumeMounts", "_", "name"]
+              ],
+              "description": "ConfigMaps can be mounted as volumes in a StatefulSet, allowing the Pods managed by the StatefulSet to consume the configuration data stored in the ConfigMap."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "volumes", "_", "configMap", "name"],
+                ["settings", "spec", "template", "spec", "containers" ,"_", "volumeMounts", "_", "name"]
+              ],
+              "description": "ConfigMaps can be mounted as volumes in a DaemonSet, allowing the Pods managed by the DaemonSet to consume the configuration data stored in the ConfigMap."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "volumes", "_", "configMap", "name"],
+                ["settings", "spec", "template", "spec", "containers" ,"_", "volumeMounts", "_", "name"]
+              ],
+              "description": "ConfigMaps can be mounted as volumes in a ReplicaSet, allowing the Pods managed by the ReplicaSet to consume the configuration data stored in the ConfigMap."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
