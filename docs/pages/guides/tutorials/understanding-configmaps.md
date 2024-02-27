@@ -156,5 +156,3 @@ kubectl delete pod mypod mypod-secret
 
 ### Conclusion
 Congratulations! You've successfully completed the lab on Understanding Kubernetes ConfigMaps and Secrets using Meshery Playground. This hands-on experience has equipped you with practical knowledge on managing configuration data and sensitive information in Kubernetes. Continue exploring more scenarios in the Meshery Playground to enhance your skills in cloud-native technologies.
-
-{% include suggested-reading.html language="en" %}
