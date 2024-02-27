@@ -58,7 +58,7 @@
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-linkerd">meshery-linkerd</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-kuma">meshery-kuma</a></th>
-  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-osm">meshery-osm</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/adapters/nighthawk/nighthawk.svg" /><a href="{{ site.repo }}-nighthawk">meshery-nighthawk</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-nginx-sm">meshery-nginx-sm</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-cilium">meshery-cilium</a></th>
@@ -70,7 +70,7 @@
     {% assign successfull_istio = 0 %}
     {% assign successfull_linkerd = 0 %}
     {% assign successfull_cilium = 0 %}
-    {% assign successfull_osm = 0 %}
+    {% assign successfull_nighthawk = 0 %}
     {% assign successfull_kuma = 0 %}
     {% assign successfull_traefik_mesh = 0 %}
     {% assign successfull_nginx_sm = 0 %}
@@ -119,20 +119,20 @@
             {% endif %}
           {% endfor %}
 
-        {% elsif k8s_item.name == "meshery-osm" %}
+        {% elsif k8s_item.name == "meshery-nighthawk" %}
           {%if k8s.name == "v1.20.1" or k8s.name == "v1.21.5" or k8s.name == "v1.20.11" or k8s.name == "v1.22.2" %}
-            {% assign osm_size = 0 | times:1.0 %}
+            {% assign nighthawk_size = 0 | times:1.0 %}
           {%else%}
-            {% assign osm_size = k8s_item.size | times:1.0 %}
-            {% assign osm_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
+            {% assign nighthawk_size = k8s_item.size | times:1.0 %}
+            {% assign nighthawk_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
           {%endif%}
-          {% for single in osm_items limit: 1 %}
+          {% for single in nighthawk_items limit: 1 %}
              {% if single.overall-status == "passing" %}
-              {% assign successfull_osm = 1 %}
+              {% assign successfull_nighthawk = 1 %}
             {% elsif single.overall-status == "failing" %}
-              {% assign successfull_osm = 0 %}
+              {% assign successfull_nighthawk = 0 %}
             {% else %}
-              {% assign successfull_osm = 0.5%}
+              {% assign successfull_nighthawk = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -214,12 +214,12 @@
         <td style="text-align:center" onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}%</td>
       {%endif%}
 
-      {%if osm_size and osm_size !=0%}
-        {% assign osm_percentage = successfull_osm | divided_by: 1 | times:100 | round:2 %}
-        <td style="text-align:center" onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
+      {%if nighthawk_size and nighthawk_size !=0%}
+        {% assign nighthawk_percentage = successfull_nighthawk | divided_by: 1 | times:100 | round:2 %}
+        <td style="text-align:center" onclick = "clickIcon(`meshery-nighthawk`)" class = "compatibility">{{nighthawk_percentage}}%</td>
       {%else%}
-        {% assign osm_percentage = -100.0 %}
-        <td style="text-align:center" onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
+        {% assign nighthawk_percentage = -100.0 %}
+        <td style="text-align:center" onclick = "clickIcon(`meshery-nighthawk`)" class = "compatibility">{{nighthawk_percentage}}%</td>
       {%endif%}
 
       {%if nginx_size and nginx_size !=0%}
@@ -261,7 +261,7 @@
       {%assign linkerd_size = 0 %}
       {%assign istio_size = 0 %}
       {%assign kuma_size = 0 %}
-      {%assign osm_size = 0 %}
+      {%assign nighthawk_size = 0 %}
     {%endif%}
 
   </tr>
@@ -272,9 +272,7 @@
 <script>
   function showCompatability () {
       let percentContainer = document.querySelectorAll(".compatibility")
-      console.log(percentContainer);
       for(let i = 0 ; i<percentContainer.length;i++){
-        console.log(parseFloat(percentContainer[i].innerHTML));
         let percentage = parseFloat(percentContainer[i].innerHTML);
         if (percentage >= 90.00){
           percentContainer[i].innerHTML = `
@@ -305,7 +303,6 @@
       }
     }
   function clickIcon(serviceMesh){
-    console.log("clicked",serviceMesh);
     location.href = `{{site.baseurl}}/installation/compatibility-matrix/${serviceMesh}-past-results`
   }
 

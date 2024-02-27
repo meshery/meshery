@@ -17,7 +17,6 @@ export function mergeMesheryController(currentState, newData) {
   if (!currentState) {
     return newData;
   }
-  console.log('CONTROLLER BEFORE MERGE: ', currentState, newData);
   const merged = [
     ...currentState.filter((data) => {
       for (let newControllerData of newData) {
@@ -36,6 +35,5 @@ export function mergeMesheryController(currentState, newData) {
     }),
     ...newData,
   ];
-  console.log('CONTROLLER MERGED FUNCTION EXIT: ', merged);
   return merged;
 }

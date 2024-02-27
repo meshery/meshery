@@ -1,8 +1,8 @@
 ---
-layout: default
+layout: enhanced
 title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
-mesh_name: Network Service Mesh
+component: Network Service Mesh
 earliest_version: v0.2.1
 port: 10004/gRPC
 project_status: stable
@@ -38,17 +38,17 @@ language: en
 
 ## Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
-### Install {{ page.mesh_name }}
+### Install {{ page.component }}
 
-##### Choose the Meshery Adapter for {{ page.mesh_name }}
+##### Choose the Meshery Adapter for {{ page.component }}
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png">
   <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
   <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
@@ -56,7 +56,7 @@ Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} 
 
 ## Sample Applications
 
-The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by {{page.mesh_name}}. Use Meshery to deploy any of these sample applications:
+The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by {{page.component}}. Use Meshery to deploy any of these sample applications:
 
 ### 1. Hello NSM Application
 
@@ -70,7 +70,7 @@ See on YouTube: [Adopting Network Service Mesh with Meshery](https://www.youtube
 
 _A simple example that connects a vpp based Pod to a Network Service using memif._
 
-The simplest possible case for {{page.mesh_name}} is to have is connecting a Client via a vWire to another Pod that is providing a Network Service.
+The simplest possible case for {{page.component}} is to have is connecting a Client via a vWire to another Pod that is providing a Network Service.
 Network Service Mesh allows flexibility in the choice of mechanisms used to provide that vWire to a workload.
 
 The icmp responder example does this with kernel interfaces. The vpp-icmp-responder provides and consumes the same 'icmp-responder' Network Service, but has Client's and Endpoint's that use a [memif](https://www.youtube.com/watch?v=6aVr32WgY0Q) high speed memory interfaces to achieve performance unavailable via kernel interfaces.

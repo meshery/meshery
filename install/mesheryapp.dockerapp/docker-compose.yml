@@ -6,7 +6,7 @@ services:
       - ${labels.watchtower}
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004"
       - "EVENT=mesheryLocal"
     ports:
       - "${meshery.port}:8080"
@@ -30,14 +30,7 @@ services:
       - ${labels.watchtower}
     ports:
       - "${consul.port}:10002"
-    x-enabled: ${consul.enabled}
-  meshery-octarine:
-    image: layer5/meshery-octarine:stable-latest
-    labels:
-      - ${labels.watchtower}
-    ports:
-      - "${octarine.port}:10003"
-    x-enabled: ${octarine.enabled}     
+    x-enabled: ${consul.enabled}  
   meshery-nsm:
     image: layer5/meshery-nsm:stable-latest
     labels:
@@ -45,13 +38,6 @@ services:
     ports:
       - "${nsm.port}:10004"
     x-enabled: ${nsm.enabled}
-  meshery-cpx:
-    image: layer5/meshery-cpx:stable-latest
-    labels:
-      - ${labels.watchtower}
-    ports:
-      - "${cpx.port}:10000"
-    x-enabled: ${cpx.enabled}
   watchtower:
     image: containrrr/watchtower
     labels:

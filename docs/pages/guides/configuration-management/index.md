@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: enhanced
 title: Configuration Management Guides
 permalink: guides/configuration-management/
+category: configuration
 language: en
 list: exclude
 abstract: Guides for understanding Meshery's ability to configure infrastructure and applications

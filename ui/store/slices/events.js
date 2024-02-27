@@ -4,7 +4,7 @@ import { SEVERITY, STATUS, validateEvents } from '../../components/NotificationC
 const initialState = {
   current_view: {
     page: 1,
-    page_size: 10,
+    pagesize: 10,
     filters: {
       initial: true,
     },
@@ -81,7 +81,6 @@ export const eventsSlice = createSlice({
           checked: payload,
         },
       }));
-      console.log('updates', updates);
       eventsEntityAdapter.updateMany(state, updates);
     },
 
@@ -220,4 +219,8 @@ export const selectIsEventVisible = (state, id) => {
     : true;
   const isDeleted = event.is_deleted || false;
   return !isDeleted && shouldBeInCurrentFilteredView;
+};
+export const selectSeverity = (state) => {
+  const currentSeverityList = state.events?.current_view?.filters?.severity;
+  return currentSeverityList ? currentSeverityList[0] : undefined;
 };

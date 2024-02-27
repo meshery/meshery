@@ -10,9 +10,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
 
@@ -191,13 +194,31 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			&models.SmiResultWithID{},
 			&models.K8sContext{},
 		)
+
 		if err != nil {
 			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
 			return
 		}
 
+		rm, err := registry.NewRegistryManager(dbHandler)
+		if err != nil {
+			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			return
+		}
+		h.registryManager = rm
+
+		krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
+		if err != nil {
+			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			return
+		}
+		ch := meshmodel.NewEntityRegistrationHelper(h.config, h.registryManager, h.log)
+
+		go func() {
+			ch.SeedComponents()
+			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		}()
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, "Database reset successful")
-
 	}
 }

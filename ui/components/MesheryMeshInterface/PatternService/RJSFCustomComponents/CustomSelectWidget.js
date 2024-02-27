@@ -84,8 +84,9 @@ export default function CustomSelectWidget({
         onBlur={_onBlur}
         onFocus={_onFocus}
         InputProps={{
+          style: { paddingRight: '0px' },
           endAdornment: (
-            <InputAdornment position="start">
+            <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
                   backgroundColor={ERROR_COLOR}

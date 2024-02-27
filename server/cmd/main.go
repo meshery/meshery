@@ -59,7 +59,8 @@ func main() {
 
 	viper.AutomaticEnv()
 
-	viper.SetConfigFile("./runtime_logs_config.env")
+	// Meshery Server configuration
+	viper.SetConfigFile("./server-config.env")
 	viper.WatchConfig()
 
 	err := viper.ReadInConfig()
@@ -252,7 +253,11 @@ func main() {
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
-	krh := models.NewKeysRegistrationHelper(dbHandler, log)
+	krh, err := models.NewKeysRegistrationHelper(dbHandler, log)
+	if err != nil {
+		log.Error(ErrInitializingKeysRegistration(err))
+		os.Exit(1)
+	}
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	go func() {

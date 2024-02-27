@@ -41,6 +41,8 @@ Meshery's Helm chart supports a number of configuration options. Please refer to
 
 To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.
 
-{% include suggested-reading.html language="en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="meshery" %}

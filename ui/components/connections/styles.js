@@ -11,7 +11,7 @@ const styles = (theme) => ({
   },
   muiRow: {
     '& .MuiTableCell-root': {
-      textTransform: 'capitalize',
+      // textTransform: 'capitalize',
     },
   },
   statusSelect: {
@@ -57,7 +57,7 @@ const styles = (theme) => ({
     marginBottom: '3rem',
   },
   capitalize: {
-    textTransform: 'capitalize',
+    // textTransform: 'capitalize',
   },
   lowecase: {
     textTransform: 'lowecase',
