@@ -34,13 +34,13 @@ var (
 	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
-		Short: "Deploy a service mesh to the Kubernetes cluster",
-		Long:  `Deploy a service mesh to the connected Kubernetes cluster`,
+		Short: "Deploy infrastructure to the Kubernetes cluster",
+		Long:  `Deploy infrastructure to the connected Kubernetes cluster`,
 		Example: `
-// Deploy a service mesh from an interactive on the default namespace
+// Deploy a infrastructure from an interactive on the default namespace
 mesheryctl mesh deploy
 
-// Deploy a service mesh
+// Deploy infrastructure
 mesheryctl mesh deploy linkerd
 
 // Deploy Linkerd mesh on a specific namespace
@@ -71,7 +71,7 @@ mesheryctl mesh deploy linkerd --watch
 				utils.Log.Error(err)
 				return nil
 			}
-			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s service mesh deployed successfully", meshName))
+			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed successfully", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {

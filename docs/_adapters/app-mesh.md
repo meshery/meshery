@@ -35,7 +35,7 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}}. A number of sample applications can be installed using the {{page.name}}.
 
 ### Features
 
@@ -64,4 +64,4 @@ Identify overhead involved in running {{page.component}}, various {{page.compone
 1. Prometheus integration
 1. Grafana integration
 
-The [{{page.name}}]({{ page.github_link }}) will connect to APP MESH Service Mesh's Prometheus and Grafana instances running in the control plane.
+The [{{page.name}}]({{ page.github_link }}) will connect to {{page.component}}'s Prometheus and Grafana instances running in the control plane.

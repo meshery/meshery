@@ -38,7 +38,7 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}} service mesh. Sample applications for {{page.component}} can also be installed using Meshery. Using the {{page.name}}, you may also run the complete suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}}. Sample applications for {{page.component}} can also be installed using Meshery. Using the {{page.name}}, you may also run the complete suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
 
 ### Install {{ page.component }}
 
@@ -48,7 +48,7 @@ Choose the Meshery Adapter for {{ page.component }}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-adapter.png" />
 </a>
 
-Click on (+) and choose the `{{page.earliest_version}}` of the {{page.component}} service mesh.
+Click on (+) and choose the `{{page.earliest_version}}` of the {{page.component}}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png" />

@@ -12,11 +12,11 @@ subcommand: deploy
 
 # mesheryctl mesh deploy
 
-Deploy a service mesh to the Kubernetes cluster
+Deploy infrastructure to the Kubernetes cluster
 
 ## Synopsis
 
-Deploy a service mesh to the connected Kubernetes cluster
+Deploy a infrastructure to the connected Kubernetes cluster
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy [flags]
@@ -26,7 +26,7 @@ mesheryctl mesh deploy [flags]
 
 ## Examples
 
-Deploy a service mesh from an interactive on the default namespace
+Deploy a infrastructure from an interactive on the default namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy
@@ -34,7 +34,7 @@ mesheryctl mesh deploy
 </div>
 </pre> 
 
-Deploy a service mesh
+Deploy a infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy linkerd

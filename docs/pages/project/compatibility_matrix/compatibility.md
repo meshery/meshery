@@ -166,8 +166,8 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         <th style="text-align: center;" ><span class="sort-by"> Meshery Component  </span> </th>
         <th style="text-align: center;" ><span class="sort-by"> Meshery Component Version </span> </th>
         <th style="text-align: center;" ><span class="sort-by"> Meshery Server Version </span> </th>
-        <th style="text-align: center;" > <span class="sort-by"> Service Mesh </span> </th>
-        <th style="text-align: center;" ><span class="sort-by"> Service Mesh Version </span></th>
+        <th style="text-align: center;" > <span class="sort-by"> Infrastructure </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Infrastructure Version </span></th>
   </thead>
   <tbody>
     {% for group in sorted_tests_group %}

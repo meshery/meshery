@@ -145,7 +145,7 @@ func getApplicationPatternConfiguration(compName string, oamConfig v1alpha1.Conf
 	return config, nil
 }
 
-// detectServiceMesh will detect available service mesh in the k8s cluster
+// detectServiceMesh will detect available entities in the k8s cluster
 func detectServiceMesh(_ *meshkube.Client) serviceMesh {
 	return ""
 }

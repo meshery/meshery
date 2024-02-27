@@ -34,20 +34,9 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-### Features
-
-1. {{page.component}} Lifecycle Management
-1. Workload Lifecycle Management
-   1. Using Service Mesh Standards
-      1. Service Mesh Performance (SMP)
-         1. Prometheus and Grafana connections
-      1. Service Mesh Interface (SMI)
-1. Configuration Analysis, Patterns, and Best Practices
-   1. Custom Service Mesh Configuration
-
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}}. A number of sample applications can be installed using the {{page.name}}.
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 
@@ -61,7 +50,7 @@ Want to contribute? Check our [progress]({{page.github_link}}).
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-adapter.png" />
 </a>
 
-##### Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.component}}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />

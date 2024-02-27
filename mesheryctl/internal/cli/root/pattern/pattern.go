@@ -31,7 +31,7 @@ var (
 var PatternCmd = &cobra.Command{
 	Use:   "pattern",
 	Short: "Cloud Native Patterns Management",
-	Long: `Manage service meshes using predefined patterns.
+	Long: `Manage cloud and cloud native infrastructure using predefined patterns.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Apply pattern file:

@@ -91,7 +91,7 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --q
 </div>
 </pre> 
 
-Execute a Performance test with specified service mesh
+Execute a Performance test with specified infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
@@ -151,7 +151,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
   -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification
   -h, --help                         help for apply
       --load-generator string        (optional) Load-Generator to be used (fortio/wrk2/nighthawk)
-      --mesh string                  (optional) Name of the Service Mesh
+      --mesh string                  (optional) Name of the Infrastructure
       --name string                  (optional) Name of the Test
       --options string               (optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json
       --qps string                   (optional) Queries per second
