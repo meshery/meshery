@@ -24,7 +24,6 @@ To build and run Meshery server from source:
 make ui-build{% endcapture %}
 {% include code.html code=code_content %}
 
-
 2. Build & run the server code by running
 
 {% capture code_content %}make server{% endcapture %}
@@ -40,15 +39,16 @@ After running Meshery server, you will need to select your **Cloud Provider** by
   <img style= "max-width: 450px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
 </a>
 
-Potential Solution: 
+Potential Solution:
 
--  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute: 
+- Go to your meshery folder in your local-system where you’ve cloned it.
+  Execute:
 
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
 - Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+
 #### Building Docker image
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
@@ -65,12 +65,15 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 
 For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
-{% include suggested-reading.html %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 ### Configuring Log levels at Runtime
-The server log levels can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`runtime_logs_config.env`](https://github.com/meshery/meshery/blob/fbc59a8ba9ca91c2714ac38fd80ae6f82f6de43b/server/cmd/runtime_logs_config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
 
-___Should there be any alterations to the location or name of the environment file, it will result in the inability to configure log levels during runtime. In the event of such modifications, it is essential to update the server to preserve proper functionality.___
+The server log levels can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`server-config.env`](https://github.com/meshery/meshery/blob/master/server/cmd/server-config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
+
+**_Should there be any alterations to the location or name of the environment file, it will result in the inability to configure log levels during runtime. In the event of such modifications, it is essential to update the server to preserve proper functionality._**
 
 ```Available Meshery Server log levels are:
  - Panic - 0
@@ -80,5 +83,6 @@ ___Should there be any alterations to the location or name of the environment fi
  - Info  - 4
  - Debug - 5
  - Trace level - 6
- ```
-The default setting for the `LOG_LEVEL` is  `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug). 
+```
+
+The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).

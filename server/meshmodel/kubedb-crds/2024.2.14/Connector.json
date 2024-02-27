@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Connector",
+  "apiVersion": "kafka.kubedb.com/v1alpha1",
+  "displayName": "Connector",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubedb-crds",
+   "version": "2024.2.14",
+   "displayName": "kubedb-crds",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-crds/kubedb-crds-v2024.2.14.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"configSecret\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"connectClusterRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"terminationPolicy\": {\n     \"enum\": [\n      \"Halt\",\n      \"Delete\",\n      \"WipeOut\",\n      \"DoNotTerminate\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"configSecret\",\n    \"connectClusterRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Connector\",\n \"type\": \"object\"\n}"
+ }

@@ -1,1 +1,48 @@
-{"kind":"TenantNetworkPolicy","apiVersion":"gems.kubegems.io/v1beta1","displayName":"Tenant Network Policy","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":false,"logoURL":"","model":"kubegems-local","modelDisplayName":"Kubegems Local","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"kubegems-local","version":"1.23.6","displayName":"Kubegems Local","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"source_uri":"https://charts.kubegems.io/kubegems/charts/kubegems-local-1.24.2.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"TenantNetworkPolicy is the Schema for the tenantnetworkpolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantNetworkPolicySpec defines the desired state of TenantNetworkPolicy\",\n   \"properties\": {\n    \"environmentNetworkPolicies\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"project\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectNetworkPolicies\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tenant\": {\n     \"type\": \"string\"\n    },\n    \"tenantIsolated\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Network Policy\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TenantNetworkPolicy",
+  "apiVersion": "gems.kubegems.io/v1beta1",
+  "displayName": "Tenant Network Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "kubegems-local",
+   "modelDisplayName": "Kubegems Local",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubegems-local",
+   "version": "1.23.6",
+   "displayName": "Kubegems Local",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-local-1.24.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"TenantNetworkPolicy is the Schema for the tenantnetworkpolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantNetworkPolicySpec defines the desired state of TenantNetworkPolicy\",\n   \"properties\": {\n    \"environmentNetworkPolicies\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"project\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectNetworkPolicies\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tenant\": {\n     \"type\": \"string\"\n    },\n    \"tenantIsolated\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Network Policy\",\n \"type\": \"object\"\n}"
+ }

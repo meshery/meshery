@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GlobalNetworkSet",
+  "apiVersion": "crd.projectcalico.org/v1",
+  "displayName": "Global Network Set",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hybridnet",
+   "version": "0.6.8",
+   "displayName": "hybridnet",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/alibaba/hybridnet/releases/download/helm-chart-0.6.8/hybridnet-0.6.8.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GlobalNetworkSet contains a set of arbitrary IP sub-networks/CIDRs that share labels to allow rules to refer to them via selectors.  The labels of GlobalNetworkSet are not namespaced.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalNetworkSetSpec contains the specification for a NetworkSet resource.\",\n   \"properties\": {\n    \"nets\": {\n     \"description\": \"The list of IP networks that belong to this set.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Network Set\",\n \"type\": \"object\"\n}"
+ }

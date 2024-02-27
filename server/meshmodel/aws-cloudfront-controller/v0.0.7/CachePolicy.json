@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CachePolicy",
+  "apiVersion": "cloudfront.services.k8s.aws/v1alpha1",
+  "displayName": "Cache Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-cloudfront-controller",
+   "version": "v0.0.7",
+   "displayName": "aws-cloudfront-controller",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudfront-controller/main/helm"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CachePolicy is the Schema for the CachePolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CachePolicySpec defines the desired state of CachePolicy.\\n\\n\\nA cache policy.\\n\\n\\nWhen it's attached to a cache behavior, the cache policy determines the following:\\n\\n\\n  - The values that CloudFront includes in the cache key. These values can\\n    include HTTP headers, cookies, and URL query strings. CloudFront uses\\n    the cache key to find an object in its cache that it can return to the\\n    viewer.\\n\\n\\n  - The default, minimum, and maximum time to live (TTL) values that you\\n    want objects to stay in the CloudFront cache.\\n\\n\\nThe headers, cookies, and query strings that are included in the cache key\\nare also included in requests that CloudFront sends to the origin. CloudFront\\nsends a request when it can't find a valid object in its cache that matches\\nthe request's cache key. If you want to send values to the origin but not\\ninclude them in the cache key, use OriginRequestPolicy.\",\n   \"properties\": {\n    \"cachePolicyConfig\": {\n     \"description\": \"A cache policy configuration.\",\n     \"properties\": {\n      \"comment\": {\n       \"type\": \"string\"\n      },\n      \"defaultTTL\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maxTTL\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"minTTL\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"parametersInCacheKeyAndForwardedToOrigin\": {\n       \"description\": \"This object determines the values that CloudFront includes in the cache key.\\nThese values can include HTTP headers, cookies, and URL query strings. CloudFront\\nuses the cache key to find an object in its cache that it can return to the\\nviewer.\\n\\n\\nThe headers, cookies, and query strings that are included in the cache key\\nare also included in requests that CloudFront sends to the origin. CloudFront\\nsends a request when it can't find an object in its cache that matches the\\nrequest's cache key. If you want to send values to the origin but not include\\nthem in the cache key, use OriginRequestPolicy.\",\n       \"properties\": {\n        \"cookiesConfig\": {\n         \"description\": \"An object that determines whether any cookies in viewer requests (and if\\nso, which cookies) are included in the cache key and in requests that CloudFront\\nsends to the origin.\",\n         \"properties\": {\n          \"cookieBehavior\": {\n           \"type\": \"string\"\n          },\n          \"cookies\": {\n           \"description\": \"Contains a list of cookie names.\",\n           \"properties\": {\n            \"items\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"enableAcceptEncodingBrotli\": {\n         \"type\": \"boolean\"\n        },\n        \"enableAcceptEncodingGzip\": {\n         \"type\": \"boolean\"\n        },\n        \"headersConfig\": {\n         \"description\": \"An object that determines whether any HTTP headers (and if so, which headers)\\nare included in the cache key and in requests that CloudFront sends to the\\norigin.\",\n         \"properties\": {\n          \"headerBehavior\": {\n           \"type\": \"string\"\n          },\n          \"headers\": {\n           \"description\": \"Contains a list of HTTP header names.\",\n           \"properties\": {\n            \"items\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"queryStringsConfig\": {\n         \"description\": \"An object that determines whether any URL query strings in viewer requests\\n(and if so, which query strings) are included in the cache key and in requests\\nthat CloudFront sends to the origin.\",\n         \"properties\": {\n          \"queryStringBehavior\": {\n           \"type\": \"string\"\n          },\n          \"queryStrings\": {\n           \"description\": \"Contains a list of query string names.\",\n           \"properties\": {\n            \"items\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"cachePolicyConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cache Policy\",\n \"type\": \"object\"\n}"
+ }

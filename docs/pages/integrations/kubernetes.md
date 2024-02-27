@@ -66,6 +66,18 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/broker/icons/white/broker-white.svg
   description: 
+- name: container
+  colorIcon: assets/img/integrations/kubernetes/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/container/icons/white/container-white.svg
+  description: 
+- name: custom-resource-definition
+  colorIcon: assets/img/integrations/kubernetes/components/custom-resource-definition/icons/color/custom-resource-definition-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/custom-resource-definition/icons/white/custom-resource-definition-white.svg
+  description: 
+- name: cluster-trust-bundle
+  colorIcon: assets/img/integrations/kubernetes/components/cluster-trust-bundle/icons/color/cluster-trust-bundle-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/cluster-trust-bundle/icons/white/cluster-trust-bundle-white.svg
+  description: 
 - name: csi-driver
   colorIcon: assets/img/integrations/kubernetes/components/csi-driver/icons/color/csi-driver-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/csi-driver/icons/white/csi-driver-white.svg
@@ -118,6 +130,18 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/ingress/icons/color/ingress-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/ingress/icons/white/ingress-white.svg
   description: 
+- name: ingress-class
+  colorIcon: assets/img/integrations/kubernetes/components/ingress-class/icons/color/ingress-class-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/ingress-class/icons/white/ingress-class-white.svg
+  description: 
+- name: ip-address
+  colorIcon: assets/img/integrations/kubernetes/components/ip-address/icons/color/ip-address-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/ip-address/icons/white/ip-address-white.svg
+  description: 
+- name: job
+  colorIcon: assets/img/integrations/kubernetes/components/job/icons/color/job-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/job/icons/white/job-white.svg
+  description: 
 - name: kubernetes-connection
   colorIcon: assets/img/integrations/kubernetes/components/kubernetes-connection/icons/color/kubernetes-connection-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/kubernetes-connection/icons/white/kubernetes-connection-white.svg
@@ -125,6 +149,14 @@ components:
 - name: limit-range
   colorIcon: assets/img/integrations/kubernetes/components/limit-range/icons/color/limit-range-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/limit-range/icons/white/limit-range-white.svg
+  description: 
+- name: lease
+  colorIcon: assets/img/integrations/kubernetes/components/lease/icons/color/lease-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/lease/icons/white/lease-white.svg
+  description: 
+- name: local-subject-access-review
+  colorIcon: assets/img/integrations/kubernetes/components/local-subject-access-review/icons/color/local-subject-access-review-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/local-subject-access-review/icons/white/local-subject-access-review-white.svg
   description: 
 - name: mutating-webhook-configuration
   colorIcon: assets/img/integrations/kubernetes/components/mutating-webhook-configuration/icons/color/mutating-webhook-configuration-color.svg
@@ -154,6 +186,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/pod-metrics/icons/color/pod-metrics-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/pod-metrics/icons/white/pod-metrics-white.svg
   description: 
+- name: pod-scheduling-context
+  colorIcon: assets/img/integrations/kubernetes/components/pod-scheduling-context/icons/color/pod-scheduling-context-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/pod-scheduling-context/icons/white/pod-scheduling-context-white.svg
+  description: 
 - name: pod-template
   colorIcon: assets/img/integrations/kubernetes/components/pod-template/icons/color/pod-template-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/pod-template/icons/white/pod-template-white.svg
@@ -174,6 +210,18 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/replication-controller/icons/color/replication-controller-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/replication-controller/icons/white/replication-controller-white.svg
   description: 
+- name: resource-class
+  colorIcon: assets/img/integrations/kubernetes/components/resource-class/icons/color/resource-class-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/resource-class/icons/white/resource-class-white.svg
+  description: 
+- name: resource-claim
+  colorIcon: assets/img/integrations/kubernetes/components/resource-claim/icons/color/resource-claim-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/resource-claim/icons/white/resource-claim-white.svg
+  description: 
+- name: resource-claim-template
+  colorIcon: assets/img/integrations/kubernetes/components/resource-claim-template/icons/color/resource-claim-template-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/resource-claim-template/icons/white/resource-claim-template-white.svg
+  description: 
 - name: resource-quota
   colorIcon: assets/img/integrations/kubernetes/components/resource-quota/icons/color/resource-quota-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/resource-quota/icons/white/resource-quota-white.svg
@@ -190,6 +238,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/runtime-class/icons/color/runtime-class-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/runtime-class/icons/white/runtime-class-white.svg
   description: 
+- name: subject-access-review
+  colorIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/color/subject-access-review-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/white/subject-access-review-white.svg
+  description: 
 - name: self-subject-access-review
   colorIcon: assets/img/integrations/kubernetes/components/self-subject-access-review/icons/color/self-subject-access-review-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/self-subject-access-review/icons/white/self-subject-access-review-white.svg
@@ -198,9 +250,21 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/self-subject-rules-review/icons/color/self-subject-rules-review-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/self-subject-rules-review/icons/white/self-subject-rules-review-white.svg
   description: 
+- name: self-subject-review
+  colorIcon: assets/img/integrations/kubernetes/components/self-subject-review/icons/color/self-subject-review-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/self-subject-review/icons/white/self-subject-review-white.svg
+  description: 
 - name: service-account
   colorIcon: assets/img/integrations/kubernetes/components/service-account/icons/color/service-account-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/service-account/icons/white/service-account-white.svg
+  description: 
+- name: service-cidr
+  colorIcon: assets/img/integrations/kubernetes/components/service-cidr/icons/color/service-cidr-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/service-cidr/icons/white/service-cidr-white.svg
+  description: 
+- name: service-api
+  colorIcon: assets/img/integrations/kubernetes/components/service-api/icons/color/service-api-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/service-api/icons/white/service-api-white.svg
   description: 
 - name: stateful-set
   colorIcon: assets/img/integrations/kubernetes/components/stateful-set/icons/color/stateful-set-color.svg
@@ -210,6 +274,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/storage-class/icons/color/storage-class-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/storage-class/icons/white/storage-class-white.svg
   description: 
+- name: storage-version
+  colorIcon: assets/img/integrations/kubernetes/components/storage-version/icons/color/storage-version-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/storage-version/icons/white/storage-version-white.svg
+  description: 
 - name: subject-access-review
   colorIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/color/subject-access-review-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/white/subject-access-review-white.svg
@@ -218,13 +286,33 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/token-review/icons/color/token-review-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/token-review/icons/white/token-review-white.svg
   description: 
+- name: token-request
+  colorIcon: assets/img/integrations/kubernetes/components/token-request/icons/color/token-request-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/token-request/icons/white/token-request-white.svg
+  description: 
+- name: validating-admission-policy
+  colorIcon: assets/img/integrations/kubernetes/components/validating-admission-policy/icons/color/validating-admission-policy-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/validating-admission-policy/icons/white/validating-admission-policy-white.svg
+  description: 
+- name: validating-admission-policy-binding
+  colorIcon: assets/img/integrations/kubernetes/components/validating-admission-policy-binding/icons/color/validating-admission-policy-binding-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/validating-admission-policy-binding/icons/white/validating-admission-policy-binding-white.svg
+  description: 
 - name: validating-webhook-configuration
   colorIcon: assets/img/integrations/kubernetes/components/validating-webhook-configuration/icons/color/validating-webhook-configuration-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/validating-webhook-configuration/icons/white/validating-webhook-configuration-white.svg
   description: 
+- name: volume
+  colorIcon: assets/img/integrations/kubernetes/components/volume/icons/color/volume-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/volume/icons/white/volume-white.svg
+  description: 
 - name: volume-attachment
   colorIcon: assets/img/integrations/kubernetes/components/volume-attachment/icons/color/volume-attachment-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/volume-attachment/icons/white/volume-attachment-white.svg
+  description: 
+- name: volume-attribute-class
+  colorIcon: assets/img/integrations/kubernetes/components/volume-attribute-class/icons/color/volume-attribute-class-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/volume-attribute-class/icons/white/volume-attribute-class-white.svg
   description: 
 featureList: [
   "Visualize your Kubernetes clusters",
