@@ -117,14 +117,17 @@ spec:
 10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button. You'll receive a confirmation message indicating that your app has been successfully deployed.
 [![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy.png)
 
-Apply the CronJob configuration:
-
-\```bash
-mesheryctl pattern apply -f backup-cronjob.yaml
-\```
-
 #### 4. **Verifying CronJob Execution:**
    - Monitor the execution of the CronJob and verify that backups are created at the specified intervals.
+
+To view the resources created for the CronJob, we will utilize the Visualize tab of the MeshMap. A view will be created with necessary filters to display the relevant resources.
+
+   1. Ensure that you are on the Visualize tab, located at the top center of the canvas.
+   2. Give the view a name.
+   3. Click on the filter icon.
+   4. Choose appropriate filters; for this lab, select the label that was set earlier during the CronJob creation, i.e., 'CronJob'.
+   5. Click the filter icon again to close. This action should display a filtered view with only your resources, similar to the screenshot below:
+   [![Verify CronJob]({{site.baseurl}}/assets/img/meshmap/verify.png)]({{site.baseurl}}/assets/img/meshmap/verify.png)
 
 
 <!-- 
@@ -137,24 +140,66 @@ Show user how to use Views and filters in MeshMap Visualizer.
 #### 5. **Scaling and Updating CronJobs:**
    - Explore how to scale the CronJob or update its schedule by modifying the CronJob configuration.
 
+   1. Return to the  Designer tab
+   
 
+   2. Select the CronJob Design:
+        Choose the design that contains the CronJob you want to scale from the list of existing designs.
+
+   3. Locate the CronJob Component:
+        Within the design canvas, identify the representation of the CronJob you wish to scale. It should be labeled as "CronJob" or have a specific icon associated with CronJobs.
+
+   4.  Select the CronJob Component:
+        Click on the CronJob component to select it..
+
+   5. Access CronJob Scaling Settings:
+        Click to access the settings panel or properties inspector where CronJob-specific settings are displayed. You should find options for scaling the CronJob.
+
+   6. Adjust the Number of Replicas or Parallelism:
+        Within the settings panel, locate the field related to the number of replicas or parallelism for the CronJob. Adjust this value to scale the CronJob up or down according to your requirements.
+
+   7. Apply Changes:
+        Once you've adjusted the scaling settings, apply the changes within the settings panel to update the CronJob configuration.
+
+    Preview Changes:
+        Observe how the modifications affect the representation of the CronJob within the MeshMap Designer canvas. Ensure that the changes align with your intentions visually.
+
+   8.    Save Changes:
+        After verifying the adjustments, save the changes made to the CronJob settings within the MeshMap Designer interface to ensure they are retained for future reference.
 <!-- 
 
 Show user how to use Designs and components in MeshMap Designer.
 
 -->
 
-
-\```bash
-kubectl edit cronjob backup-cronjob
-\```
-
 Use Meshery Playground to visualize the changes and observe the impact on the scheduled backups.
 
 #### 6. **Clean-Up:**
    - Delete the CronJob and application resources after completing the lab.
 
+1. Identify the CronJob Component:
 
+    Within the design canvas, find the representation of the CronJob you wish to delete. It should be labeled as "CronJob" or have a specific icon associated with CronJobs.
+
+2. Select the CronJob Component:
+
+    Click on the CronJob component to select it. This action will enable access to settings and options specific to the selected CronJob.
+
+3. Delete the CronJob:
+
+    Look for an option or button within the settings panel or properties inspector to delete the CronJob. Confirm the deletion when prompted.
+
+4. Delete Associated Application Resources:
+
+    Additionally, delete any associated application resources such as Pods, Services, or ConfigMaps that were created alongside the CronJob. You can do this by selecting each resource and deleting them individually.
+
+5. Confirm Deletion:
+
+    Ensure to confirm the deletion of each resource when prompted. This action will remove the resources from the Kubernetes cluster.
+
+6. Save Changes:
+
+    After deleting the CronJob and associated application resources, save the changes made within the MeshMap Designer interface to reflect the cleanup.
 <!-- 
 
 Show user how to use Designs and components in MeshMap Designer.
@@ -164,16 +209,32 @@ Show user how to use Designs and components in MeshMap Designer.
 
 
 #### 7. **Saving and Sharing**
-   - Save your scenario in Meshery Playground for future reference.
-   - Invite friends to collaborate in your design.
+  Share your scenario with other Meshery users or the community for collaborative learning.
+
+  
+1. Save Your Scenario:
+   - Click the save option in MeshMap Designer and give your scenario a descriptive name.
+
+2. Make Design Public:
+   - Toggle the visibility of your design to "Public" to allow others to view it.
+
+3. Share Your Design:
+   - Copy the shareable link or invite collaborators directly from MeshMap Designer.
+
+4. Invite Friends to Collaborate:
+   - Share the link with friends or collaborators to enable collaboration on your design.
+
+5. Confirm Sharing Settings:
+   - Ensure sharing settings align with your preferences, such as viewing, editing, or commenting permissions.
+
+6. Save Changes:
+   - Save any changes made to the sharing settings to apply them.
 
 <!-- 
 
 Show user how to make Design public and share with other users in MeshMap Designer.
 
 -->
-
-Share your scenario with other Meshery users or the community for collaborative learning.
 
 ### Conclusion
 Congratulations! You've successfully completed the lab on exploring Kubernetes CronJobs using Meshery Playground. This hands-on experience has provided valuable insights into scheduling and automating tasks in Kubernetes using CronJobs. Explore more scenarios in the Meshery Playground to enhance your skills in cloud-native technologies.
