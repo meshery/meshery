@@ -1339,7 +1339,7 @@
               "mutatorRef": [
                 ["name"]
               ],
-              "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other k8s components"
+              "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other Kubernetes components for scheduling preference"
             }
           }
         ],
@@ -1352,7 +1352,7 @@
               "mutatedRef": [
                 ["settings", "spec", "priorityClassName"]
               ],
-              "description": "Pods inherit the name of PriorityClass, dictating their importance in scheduling."
+              "description": "Pods inherit the name of PriorityClass, dictating a Pod's priority in scheduling."
             }
           },
           {
@@ -1363,7 +1363,7 @@
               "mutatedRef": [
                 ["settings", "spec", "spec", "priorityClassName"]
               ],
-              "description": "PodTemplate specifies the name of priorityClass, guiding Kubernetes controller to assign priority to Pods created from it, influencing scheduling behavior accordingly."
+              "description": "PodTemplate specifies the name of priorityClass, guiding Kubernetes controllers to assign priority to Pods created from the PodTemplate, influencing scheduling behavior of the Pod accordingly."
             }
           },
           {
@@ -1374,7 +1374,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "Deployments can specify a PriorityClass, ensuring Pods created by them inherit priority levels for scheduling."
+              "description": "Deployments can specify a PriorityClass, ensuring Pods created by the Deployment inherit priority levels for scheduling."
             }
           },
           {
@@ -1385,7 +1385,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "StatefulSets manage stateful applications. PriorityClass can be applied to StatefulSets' Pods to prioritize them during scheduling."
+              "description": "StatefulSets manage stateful applications. PriorityClass can be applied to StatefulSets' Pods to prioritize the scheduling of the Pods created by the StatefulSet."
             }
           },
           {
@@ -1396,7 +1396,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "DaemonSets ensure all nodes run a copy of a Pod. PriorityClass assigns importance, impacting scheduling decisions for DaemonSet-managed Pods."
+              "description": "DaemonSets ensure all nodes run a copy of a Pod. PriorityClass can be applied to prioritize the scheduling of the DaemonSet-managed Pods ."
             }
           },
           {
@@ -1418,7 +1418,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "PriorityClass in Kubernetes influences Job scheduling, ensuring high-priority Jobs execute first, critical for resource allocation and workload management."
+              "description": "A Job in Kubernetes inherits the name of the PriorityClass. PriorityClass in Kubernetes influences Job scheduling, ensuring high-priority Jobs execute first."
             }
           },
           {
@@ -1429,7 +1429,7 @@
               "mutatedRef": [
                 ["settings", "spec", "jobTemplate", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "CronJobs can use PriorityClass to prioritize scheduled job execution, ensuring critical tasks are handled with precedence in Kubernetes."
+              "description": "CronJobs can use PriorityClass to prioritize the scheduled job execution, ensuring CronJobs are scheduled for execution in accordance with the precedence specified in the associated PriorityClass."
             }
           }
         ],
