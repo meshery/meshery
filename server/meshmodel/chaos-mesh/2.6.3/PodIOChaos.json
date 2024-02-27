@@ -6,7 +6,8 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "isNamespaced": true
+   "isNamespaced": true,
+   "published": true
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
