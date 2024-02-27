@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "LVMSnapshot",
+  "apiVersion": "local.openebs.io/v1alpha1",
+  "displayName": "LVM Snapshot",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "3.1.3",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-3.1.3/openebs-3.1.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"LVMSnapshot represents an LVM Snapshot of the lvm volume\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LVMSnapshotSpec defines LVMSnapshot spec\",\n   \"properties\": {\n    \"ownerNodeID\": {\n     \"description\": \"OwnerNodeID is the Node ID where the volume group is present which is where the snapshot has been provisioned. OwnerNodeID can not be edited after the snapshot has been provisioned.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"snapSize\": {\n     \"description\": \"SnapSize specifies the space reserved for the snapshot\",\n     \"type\": \"string\"\n    },\n    \"volGroup\": {\n     \"description\": \"VolGroup specifies the name of the volume group where the snapshot has been created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ownerNodeID\",\n    \"volGroup\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\",\n  \"status\"\n ],\n \"title\": \"LVM Snapshot\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MigrationTask",
+  "apiVersion": "openebs.io/v1alpha1",
+  "displayName": "Migration Task",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "3.1.3",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-3.1.3/openebs-3.1.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MigrationTask represents an migration task\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec i.e. specifications of the MigrationTask\",\n   \"properties\": {\n    \"cstorPool\": {\n     \"description\": \"MigrateCStorPool contains the details of the cstor pool to be migrated\",\n     \"properties\": {\n      \"rename\": {\n       \"description\": \"If a CSPC with the same name as SPC already exists then we can rename SPC during migration using Rename\",\n       \"type\": \"string\"\n      },\n      \"spcName\": {\n       \"description\": \"SPCName contains the name of the storage pool claim to be migrated\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cstorVolume\": {\n     \"description\": \"MigrateCStorVolume contains the details of the cstor volume to be migrated\",\n     \"properties\": {\n      \"pvName\": {\n       \"description\": \"PVName contains the name of the pv associated with the cstor volume to be migrated\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Migration Task\",\n \"type\": \"object\"\n}"
+ }

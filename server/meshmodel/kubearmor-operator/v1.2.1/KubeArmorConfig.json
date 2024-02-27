@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "KubeArmorConfig",
+  "apiVersion": "operator.kubearmor.com/v1",
+  "displayName": "Kube Armor Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kubearmor-operator",
+   "version": "v1.2.1",
+   "displayName": "kubearmor-operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "git://github.com/kubearmor/KubeArmor/main/deployments/helm/KubeArmorOperator"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"KubeArmorConfig is the Schema for the KubeArmorConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeArmorConfigSpec defines the desired state of KubeArmorConfig\",\n   \"properties\": {\n    \"defaultCapabilitiesPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultFilePosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultNetworkPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultVisibility\": {\n     \"type\": \"string\"\n    },\n    \"enableStdOutAlerts\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutLogs\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutMsgs\": {\n     \"type\": \"boolean\"\n    },\n    \"kubeRbacProxyImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorControllerImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorInitImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorRelayImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Armor Config\",\n \"type\": \"object\"\n}"
+ }

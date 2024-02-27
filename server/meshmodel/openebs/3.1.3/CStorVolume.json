@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CStorVolume",
+  "apiVersion": "cstor.openebs.io/v1",
+  "displayName": "C Stor Volume",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "3.1.3",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-3.1.3/openebs-3.1.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CStorVolume describes a cstor volume resource created as custom resource\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CStorVolumeSpec is the spec for a CStorVolume resource\",\n   \"properties\": {\n    \"capacity\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"Capacity represents the desired size of the underlying volume.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"consistencyFactor\": {\n     \"description\": \"ConsistencyFactor is minimum number of volume replicas i.e. `RF/2 + 1` has to be connected to the target for write operations. Basically more then 50% of replica has to be connected to target.\",\n     \"type\": \"integer\"\n    },\n    \"desiredReplicationFactor\": {\n     \"description\": \"DesiredReplicationFactor represents maximum number of replicas that are allowed to connect to the target. Required for scale operations\",\n     \"type\": \"integer\"\n    },\n    \"iqn\": {\n     \"description\": \"Target iSCSI Qualified Name.combination of nodeBase\",\n     \"type\": \"string\"\n    },\n    \"replicaDetails\": {\n     \"description\": \"ReplicaDetails refers to the trusty replica information\",\n     \"properties\": {\n      \"knownReplicas\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"KnownReplicas represents the replicas that target can trust to read data\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"replicationFactor\": {\n     \"description\": \"ReplicationFactor represents number of volume replica created during volume provisioning connect to the target\",\n     \"type\": \"integer\"\n    },\n    \"targetIP\": {\n     \"description\": \"TargetIP IP of the iSCSI target service\",\n     \"type\": \"string\"\n    },\n    \"targetPort\": {\n     \"description\": \"iSCSI Target Port typically TCP ports 3260\",\n     \"type\": \"string\"\n    },\n    \"targetPortal\": {\n     \"description\": \"iSCSI Target Portal. The Portal is combination of IP:port (typically TCP ports 3260)\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"versionDetails\": {\n   \"description\": \"VersionDetails provides the details for upgrade\",\n   \"properties\": {\n    \"autoUpgrade\": {\n     \"description\": \"If AutoUpgrade is set to true then the resource is upgraded automatically without any manual steps\",\n     \"type\": \"boolean\"\n    },\n    \"desired\": {\n     \"description\": \"Desired is the version that we want to upgrade or the control plane version\",\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"description\": \"Status gives the status of reconciliation triggered when the desired and current version are not same\",\n     \"properties\": {\n      \"current\": {\n       \"description\": \"Current is the version of resource\",\n       \"type\": \"string\"\n      },\n      \"dependentsUpgraded\": {\n       \"description\": \"DependentsUpgraded gives the details whether all children of a resource are upgraded to desired version or not\",\n       \"type\": \"boolean\"\n      },\n      \"lastUpdateTime\": {\n       \"description\": \"LastUpdateTime is the time the status was last  updated\",\n       \"format\": \"date-time\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"message\": {\n       \"description\": \"Message is a human readable message if some error occurs\",\n       \"type\": \"string\"\n      },\n      \"reason\": {\n       \"description\": \"Reason is the actual reason for the error state\",\n       \"type\": \"string\"\n      },\n      \"state\": {\n       \"description\": \"State is the state of reconciliation\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"C Stor Volume\",\n \"type\": \"object\"\n}"
+ }

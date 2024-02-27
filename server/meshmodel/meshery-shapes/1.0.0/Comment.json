@@ -13,7 +13,7 @@
    "primaryColor": "#FFDE00",
    "published": true,
    "secondaryColor": "#FFDE00",
-   "shape": "tag",
+   "shape": "",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"3.5px\",\"y\":\"7.5px\"}",
    "styles": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"3.5px\",\"y\":\"7.5px\"}",

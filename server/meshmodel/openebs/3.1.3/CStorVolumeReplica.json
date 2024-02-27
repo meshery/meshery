@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CStorVolumeReplica",
+  "apiVersion": "cstor.openebs.io/v1",
+  "displayName": "C Stor Volume Replica",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "3.1.3",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-3.1.3/openebs-3.1.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CStorVolumeReplica describes a cstor volume resource created as custom resource\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CStorVolumeReplicaSpec is the spec for a CStorVolumeReplica resource\",\n   \"properties\": {\n    \"blockSize\": {\n     \"description\": \"BlockSize is the logical block size in multiple of 512 bytes BlockSize specifies the block size of the volume. The blocksize cannot be changed once the volume has been written, so it should be set at volume creation time. The default blocksize for volumes is 4 Kbytes. Any power of 2 from 512 bytes to 128 Kbytes is valid.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"capacity\": {\n     \"description\": \"Represents the actual capacity of the underlying volume\",\n     \"type\": \"string\"\n    },\n    \"compression\": {\n     \"description\": \"Controls the compression algorithm used for this volumes examples: on|off|gzip|gzip-N|lz4|lzjb|zle\",\n     \"type\": \"string\"\n    },\n    \"replicaid\": {\n     \"description\": \"ReplicaID is unique number to identify the replica\",\n     \"type\": \"string\"\n    },\n    \"targetIP\": {\n     \"description\": \"TargetIP represents iscsi target IP through which replica cummunicates IO workloads and other volume operations like snapshot and resize requests\",\n     \"type\": \"string\"\n    },\n    \"zvolWorkers\": {\n     \"description\": \"ZvolWorkers represents number of threads that executes client IOs\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"versionDetails\": {\n   \"description\": \"VersionDetails provides the details for upgrade\",\n   \"properties\": {\n    \"autoUpgrade\": {\n     \"description\": \"If AutoUpgrade is set to true then the resource is upgraded automatically without any manual steps\",\n     \"type\": \"boolean\"\n    },\n    \"desired\": {\n     \"description\": \"Desired is the version that we want to upgrade or the control plane version\",\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"description\": \"Status gives the status of reconciliation triggered when the desired and current version are not same\",\n     \"properties\": {\n      \"current\": {\n       \"description\": \"Current is the version of resource\",\n       \"type\": \"string\"\n      },\n      \"dependentsUpgraded\": {\n       \"description\": \"DependentsUpgraded gives the details whether all children of a resource are upgraded to desired version or not\",\n       \"type\": \"boolean\"\n      },\n      \"lastUpdateTime\": {\n       \"description\": \"LastUpdateTime is the time the status was last  updated\",\n       \"format\": \"date-time\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"message\": {\n       \"description\": \"Message is a human readable message if some error occurs\",\n       \"type\": \"string\"\n      },\n      \"reason\": {\n       \"description\": \"Reason is the actual reason for the error state\",\n       \"type\": \"string\"\n      },\n      \"state\": {\n       \"description\": \"State is the state of reconciliation\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"C Stor Volume Replica\",\n \"type\": \"object\"\n}"
+ }

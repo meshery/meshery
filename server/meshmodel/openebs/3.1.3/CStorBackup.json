@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CStorBackup",
+  "apiVersion": "cstor.openebs.io/v1",
+  "displayName": "C Stor Backup",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "openebs",
+   "version": "3.1.3",
+   "displayName": "openebs",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-3.1.3/openebs-3.1.3.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CStorBackup describes a cstor backup resource created as a custom resource\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CStorBackupSpec is the spec for a CStorBackup resource\",\n   \"properties\": {\n    \"backupDest\": {\n     \"description\": \"BackupDest is the remote address for backup transfer\",\n     \"type\": \"string\"\n    },\n    \"backupName\": {\n     \"description\": \"BackupName is the name of the backup or scheduled backup\",\n     \"type\": \"string\"\n    },\n    \"localSnap\": {\n     \"description\": \"LocalSnap is the flag to enable local snapshot only\",\n     \"type\": \"boolean\"\n    },\n    \"prevSnapName\": {\n     \"description\": \"PrevSnapName is the last completed-backup's snapshot name\",\n     \"type\": \"string\"\n    },\n    \"snapName\": {\n     \"description\": \"SnapName is the name of the current backup snapshot\",\n     \"type\": \"string\"\n    },\n    \"volumeName\": {\n     \"description\": \"VolumeName is the name of the volume for which this backup is destined\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupName\",\n    \"snapName\",\n    \"volumeName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"C Stor Backup\",\n \"type\": \"object\"\n}"
+ }
