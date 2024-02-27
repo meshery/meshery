@@ -1339,7 +1339,7 @@
               "mutatorRef": [
                 ["name"]
               ],
-              "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other Kubernetes components for scheduling preference"
+              "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other Kubernetes components for scheduling preference."
             }
           }
         ],
@@ -1363,7 +1363,7 @@
               "mutatedRef": [
                 ["settings", "spec", "spec", "priorityClassName"]
               ],
-              "description": "PodTemplate specifies the name of priorityClass, guiding Kubernetes controllers to assign priority to Pods created from the PodTemplate, influencing scheduling behavior of the Pod accordingly."
+              "description": "PodTemplate specifies the name of PriorityClass, guiding Kubernetes controllers to assign priority to Pods created from the PodTemplate, influencing scheduling behavior of the Pod accordingly."
             }
           },
           {
@@ -1385,7 +1385,7 @@
               "mutatedRef": [
                 ["settings", "spec", "template", "spec", "priorityClassName"]
               ],
-              "description": "StatefulSets manage stateful applications. PriorityClass can be applied to StatefulSets' Pods to prioritize the scheduling of the Pods created by the StatefulSet."
+              "description": "StatefulSets manage stateful applications. PriorityClass can be applied to StatefulSets to prioritize the scheduling of the StatefulSet-managed Pods."
             }
           },
           {
