@@ -19,7 +19,7 @@
    "primaryColor": "#326CE5",
    "published": true,
    "secondaryColor": "#7aa1f0",
-   "shape": "cylinder",
+   "shape": "",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"30\",\"width\":\"30\",\"x\":\"12\",\"y\":\"20\",\"background-opacity\":\"0\"}",
    "styles": "{\"height\":\"30\",\"width\":\"30\",\"x\":\"12\",\"y\":\"20\",\"background-opacity\":\"0\"}",
