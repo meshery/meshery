@@ -18,6 +18,7 @@
 - [Metabit Trading](https://www.metabit-trading.com/)
 - [PITS Global Data Recovery Services](https://www.pitsdatarecovery.net/)
 - [AYA Innovation Labs](https://ayapay.com/)
+- [Citi](https://www.citi.com/)
 ---
 
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!
