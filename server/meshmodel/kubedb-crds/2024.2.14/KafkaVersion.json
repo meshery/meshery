@@ -12,6 +12,7 @@
    "isAnnotation": false,
    "isNamespaced": false,
    "primaryColor": "#4949a3",
+   "published": true,
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "shapePolygonPoints": "",
@@ -27,6 +28,7 @@
    "name": "kubedb-crds",
    "version": "2024.2.14",
    "displayName": "kubedb-crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

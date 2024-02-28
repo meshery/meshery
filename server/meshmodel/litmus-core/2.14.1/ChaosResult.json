@@ -12,6 +12,7 @@
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#878ede",
+   "published": true,
    "secondaryColor": "#CCD3FF",
    "shape": "circle",
    "shapePolygonPoints": "",
@@ -27,6 +28,7 @@
    "name": "litmus-core",
    "version": "2.14.1",
    "displayName": "litmus-core",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

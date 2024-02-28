@@ -6,13 +6,15 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "isNamespaced": true
+   "isNamespaced": true,
+   "published": true
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
    "name": "kube-ui-server",
    "version": "2023.12.20",
    "displayName": "kube-ui-server",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

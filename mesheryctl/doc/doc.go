@@ -91,7 +91,7 @@ func linkHandler(name string) string {
 	return strings.ToLower(words[1])
 }
 
-// doc is a function to generate the markdown docs for mesheryctl
+// docs is a function to generate the markdown docs for mesheryctl
 func doc() {
 	markDownPath := "../../docs/pages/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"

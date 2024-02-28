@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ApisixPluginConfig",
+  "apiVersion": "apisix.apache.org/v2",
+  "displayName": "Apisix Plugin Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "apisix",
+   "version": "2.8.2",
+   "displayName": "apisix",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/apisix-2.8.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ingressClassName\": {\n     \"type\": \"string\"\n    },\n    \"plugins\": {\n     \"items\": {\n      \"properties\": {\n       \"config\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"enable\": {\n        \"type\": \"boolean\"\n       },\n       \"name\": {\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"secretRef\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"required\": [\n      \"name\",\n      \"enable\"\n     ],\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"plugins\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Plugin Config\",\n \"type\": \"object\"\n}"
+ }

@@ -32,6 +32,7 @@
    "name": "kubefed",
    "version": "0.10.0",
    "displayName": "Kubefed",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

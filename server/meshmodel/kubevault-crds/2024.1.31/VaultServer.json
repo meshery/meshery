@@ -6,13 +6,15 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "isNamespaced": true
+   "isNamespaced": true,
+   "published": true
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
    "name": "kubevault-crds",
    "version": "2024.1.31",
    "displayName": "kubevault-crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

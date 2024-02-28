@@ -11,31 +11,33 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode        = "1163"
-	ErrInvalidTokenCode       = "1164"
-	ErrFailReqStatusCode      = "1165"
-	ErrAttachAuthTokenCode    = "1166"
-	ErrUnmarshalCode          = "1167"
-	ErrFileReadCode           = "1168"
-	ErrCreatingRequestCode    = "1169"
-	ErrMarshalCode            = "1170"
-	ErrReadResponseBodyCode   = "1171"
-	ErrParsingUrlCode         = "1172"
-	ErrNotFoundCode           = "1173"
-	ErrUnauthenticatedCode    = "1174"
-	ErrInvalidFileCode        = "1175"
-	ErrInvalidNameOrIDCode    = "1176"
-	ErrInvalidAPIResponseCode = "1177"
-	ErrReadConfigFileCode     = "1178"
-	ErrMarshalIndentCode      = "1179"
-	ErrLoadConfigCode         = "1180"
-	ErrResponseStatusBodyCode = "1181"
-	ErrResponseStatusCode     = "1182"
-	ErrJSONToYAMLCode         = "1183"
-	ErrOutFormatFlagCode      = "1184"
-	ErrParseGithubFileCode    = "1185"
-	ErrReadTokenCode          = "1186"
-	ErrRequestResponseCode    = "1187"
+	ErrFailRequestCode        = "mesheryctl-1090"
+	ErrInvalidTokenCode       = "mesheryctl-1091"
+	ErrFailReqStatusCode      = "mesheryctl-1092"
+	ErrAttachAuthTokenCode    = "mesheryctl-1093"
+	ErrUnmarshalCode          = "mesheryctl-1094"
+	ErrFileReadCode           = "mesheryctl-1095"
+	ErrCreatingRequestCode    = "mesheryctl-1096"
+	ErrMarshalCode            = "mesheryctl-1097"
+	ErrReadResponseBodyCode   = "mesheryctl-1098"
+	ErrParsingUrlCode         = "mesheryctl-1099"
+	ErrNotFoundCode           = "mesheryctl-1100"
+	ErrUnauthenticatedCode    = "mesheryctl-1101"
+	ErrInvalidFileCode        = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode    = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode = "mesheryctl-1104"
+	ErrReadConfigFileCode     = "mesheryctl-1105"
+	ErrMarshalIndentCode      = "mesheryctl-1106"
+	ErrLoadConfigCode         = "mesheryctl-1107"
+	ErrResponseStatusBodyCode = "mesheryctl-1108"
+	ErrResponseStatusCode     = "mesheryctl-1109"
+	ErrJSONToYAMLCode         = "mesheryctl-1110"
+	ErrOutFormatFlagCode      = "mesheryctl-1111"
+	ErrParseGithubFileCode    = "mesheryctl-1112"
+	ErrReadTokenCode          = "mesheryctl-1113"
+	ErrRequestResponseCode    = "mesheryctl-1114"
+	ErrMarshalStructToCSVCode = "mesheryctl-1115"
+	ErrAppendToSheetCode      = "mesheryctl-1116"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -484,4 +486,20 @@ func ErrRequestResponse(err error) error {
 		[]string{"Unable to create a response from request" + err.Error()},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrMarshalStructToCSV(err error) error {
+	return errors.New(ErrMarshalStructToCSVCode, errors.Alert,
+		[]string{"Failed to marshal struct to csv"},
+		[]string{err.Error()},
+		[]string{"The column names in your spreadsheet do not match the names in the struct.", " For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."},
+		[]string{"The column names in the spreadsheet do not match the names in the struct. Please make sure they are spelled exactly the same and use the same case (uppercase/lowercase).", "The value you are trying to convert is not of the expected type for the column. Please ensure it is a [number, string, date, etc.].", "The column names in your spreadsheet do not match the names in the struct. For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."})
+}
+
+func ErrAppendToSheet(err error, id string) error {
+	return errors.New(ErrAppendToSheetCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
+		[]string{err.Error()},
+		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
+		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
 }
