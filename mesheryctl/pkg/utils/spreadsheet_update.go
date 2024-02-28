@@ -183,16 +183,11 @@ func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values 
 	if len(values) == 0 {
 		return nil
 	}
-	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, &sheets.BatchUpdateValuesRequest{
-		ValueInputOption: "USER_ENTERED",
-		Data: []*sheets.ValueRange{
-			{
-				MajorDimension: "ROWS",
-				Range:          appendRange,
-				Values:         values,
-			},
-		},
-	}).Context(context.Background()).Do()
+	_, err := srv.Spreadsheets.Values.Append(sheetId, appendRange, &sheets.ValueRange{
+		MajorDimension: "ROWS",
+		Range:          appendRange,
+		Values:         values,
+	}).InsertDataOption("INSERT_ROWS").ValueInputOption("USER_ENTERED").Context(context.Background()).Do()
 
 	if err != nil {
 		return ErrAppendToSheet(err, sheetId)
