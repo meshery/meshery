@@ -809,7 +809,7 @@ function MesheryPatterns({
             });
         }
 
-        //Previous implementation
+        //TODO: CR-delete Previous implementation
         // dataFetch(
         //   `/api/pattern/catalog/unpublish`,
         //   { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
@@ -953,7 +953,7 @@ function MesheryPatterns({
         });
       });
 
-    //Previous implementation:
+    //TODO: CR - Delete previous implementation:
     // dataFetch(
     //   `/api/pattern/catalog/publish`,
     //   { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
