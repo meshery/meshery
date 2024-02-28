@@ -92,25 +92,6 @@ Show user how to do this using MeshMap Designer to drag and drop components and 
 Alternate: Command line instructions
 </summary>
 
-\```yaml
-# backup-cronjob.yaml
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: backup-cronjob
-spec:
-  schedule: "0 * * * *"  # Run every hour
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: backup-container
-            image: backup-image:latest  # Replace with your backup script image
-            # Add volume mounts and commands as needed for backup
-          restartPolicy: OnFailure
-\```
-
 </details>
 
 9. Click on the deploy icon located in the top right corner.
