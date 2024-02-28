@@ -413,7 +413,7 @@
         "code": "1053",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error getting operations for the mesh\nError getting registrant's name",
+        "short_description": "Error getting operations for the mesh\nError getting component name",
         "probable_cause": "unable to retrieve the requested data",
         "suggested_remediation": "Make sure adapter is reachable and running"
       },
