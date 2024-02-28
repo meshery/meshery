@@ -19,8 +19,6 @@ import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
 import { DisableButton } from './MeshModel.style';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Colors } from '../../themes/app';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
@@ -96,10 +94,6 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  // const [sortOrder] = useState({
-  //   sort: SORT.ASCENDING,
-  //   order: '',
-  // });
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
@@ -109,7 +103,6 @@ const MeshModelComponent_ = ({
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
-  // const [loading, setLoading] = useState(false);
 
   /**
    * RTK Lazy Queries
@@ -178,10 +171,13 @@ const MeshModelComponent_ = ({
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
         // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        const newData =
-          searchText || checked || view === RELATIONSHIPS
-            ? [...response.data[view.toLowerCase()]]
-            : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        let newData = [];
+        if (response.data[view.toLowerCase()]) {
+          newData =
+            searchText || checked || view === RELATIONSHIPS
+              ? [...response.data[view.toLowerCase()]]
+              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        }
 
         // Set unique data
         setResourcesDetail(_.uniqWith(newData, _.isEqual));
@@ -300,6 +296,17 @@ const MeshModelComponent_ = ({
   }, [selectedTab]);
 
   useEffect(() => {
+    if (searchText !== null && page[view] > 0) {
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
+    }
+  }, [searchText]);
+
+  useEffect(() => {
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText]);
 
@@ -357,21 +364,18 @@ const MeshModelComponent_ = ({
                 overflow: 'hidden',
               }}
             >
-              {resourcesDetail.length === 0 ? (
-                <CircularProgress sx={{ color: Colors.keppelGreen }} />
-              ) : (
-                <MesheryTreeView
-                  data={modifyData()}
-                  view={view}
-                  setSearchText={setSearchText}
-                  setPage={setPage}
-                  checked={checked}
-                  setChecked={setChecked}
-                  searchText={searchText}
-                  setShowDetailsData={setShowDetailsData}
-                  showDetailsData={showDetailsData}
-                />
-              )}
+              <MesheryTreeView
+                data={modifyData()}
+                view={view}
+                setSearchText={setSearchText}
+                setPage={setPage}
+                checked={checked}
+                setChecked={setChecked}
+                searchText={searchText}
+                setShowDetailsData={setShowDetailsData}
+                showDetailsData={showDetailsData}
+                setResourcesDetail={setResourcesDetail}
+              />
             </div>
             <MeshModelDetails
               view={view}
