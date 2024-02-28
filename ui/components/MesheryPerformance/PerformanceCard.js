@@ -1,5 +1,5 @@
 //@ts-check
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Button,
@@ -77,16 +77,9 @@ function PerformanceCard({
 }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [userAvatar, setUserAvatar] = useState(null);
 
   const { data: user } = useGetUserByIdQuery(profile.user_id);
-
-  console.log('user', user);
-  useEffect(() => {
-    if (user && user.avatar_url) {
-      setUserAvatar(user.avatar_url);
-    }
-  }, [user]);
+  const userAvatar = user?.avatar_url;
 
   const {
     id,
