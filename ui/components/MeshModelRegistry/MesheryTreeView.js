@@ -44,7 +44,6 @@ const ComponentTree = ({
           key={index}
           nodeId={`${component.id}`}
           data-id={`${component.id}`}
-          check
           labelText={component.displayName}
           onClick={() => {
             setShowDetailsData({
@@ -84,7 +83,6 @@ const RelationshipTree = ({
           key={index}
           nodeId={`${relationshipByKind.relationships[0].id}`}
           data-id={`${relationshipByKind.relationships[0].id}`}
-          check
           labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
           onClick={() => {
             setShowDetailsData({
@@ -100,7 +98,6 @@ const RelationshipTree = ({
               key={index}
               nodeId={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
               data-id={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
-              check
               labelText={relationship.subType}
               onClick={() => {
                 setShowDetailsData({
@@ -136,11 +133,13 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
           <StyledTreeItem
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
             labelText={
               versionedModel.version[0] == 'v'
                 ? versionedModel.version
                 : `v${versionedModel.version}`
             }
+            check={true}
             onClick={() => {
               setShowDetailsData({
                 type: MODELS,
@@ -169,7 +168,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.1.${component.id}`}
-                    check
                     labelText={component.displayName}
                     onClick={() => {
                       setShowDetailsData({
@@ -201,7 +199,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.2.${relationship.id}`}
-                    check
                     labelText={relationship.subType}
                     onClick={() => {
                       setShowDetailsData({
@@ -299,7 +296,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.summary?.models})`}
+              labelText={`Models (${registrant?.models.length})`}
             >
               {registrant?.models.map((model, index) => (
                 <MesheryTreeViewItem
@@ -469,7 +466,7 @@ const MesheryTreeView = ({
             selectedNode.scrollIntoView({ behavior: 'smooth' });
           }
         });
-      }, 100);
+      }, 1000);
     }
   }, [view]);
 

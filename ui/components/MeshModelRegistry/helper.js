@@ -26,7 +26,7 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
       return MODELS;
     } else if (isPropertyIncluded('evaluationQuery')) {
       return RELATIONSHIPS;
-    } else if (isPropertyIncluded('schema')) {
+    } else if (isPropertyIncluded('schema') || isPropertyIncluded('apiVersion')) {
       return COMPONENTS;
     }
   };
