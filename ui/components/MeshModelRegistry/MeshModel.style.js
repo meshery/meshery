@@ -11,6 +11,15 @@ export const DisableButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+export const JustifyAndAlignCenter = styled(`div`)(({ style }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  height: '100%',
+  ...style,
+}));
+
 export const StyledTreeItemRoot = styled(TreeItem)(({ theme, root, lineColor }) => ({
   position: 'relative',
   '&:before': {

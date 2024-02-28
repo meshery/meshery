@@ -31,6 +31,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
+import { FormatStructuredData } from './DataFormatter';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -120,6 +121,7 @@ function NavigatorExtension({
         CapabilitiesRegistryClass: CapabilitiesRegistry,
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
+        StructuredDataFormatter: FormatStructuredData,
       }}
     />
   );
