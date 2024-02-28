@@ -57,7 +57,7 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 
 	output, err := runFunction(&extensions.ExtensionInput{
 		DBHandler:       provider.GetGenericPersister(),
-		MeshSyncChannel: h.meshsyncChannel,
+		MeshSyncChannel: h.MeshsyncChannel,
 		BrokerConn:      h.brokerConn,
 		Logger:          h.log,
 		K8sConnectionTracker: h.ConnectionToStateMachineInstanceTracker,

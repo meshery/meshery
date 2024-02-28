@@ -19,8 +19,7 @@ import (
 type Handler struct {
 	config *models.HandlerConfig
 	task   *taskq.Task
-	// to be removed
-	meshsyncChannel chan struct{}
+	MeshsyncChannel chan struct{}
 	log             logger.Handler
 	// to be removed
 	brokerConn                              broker.Handler
@@ -53,7 +52,7 @@ func NewHandlerInstance(
 
 	h := &Handler{
 		config:                                  handlerConfig,
-		meshsyncChannel:                         meshSyncCh,
+		MeshsyncChannel:                         meshSyncCh,
 		log:                                     logger,
 		brokerConn:                              brokerConn,
 		K8sCompRegHelper:                        compRegHelper,
