@@ -6,9 +6,9 @@ image: /assets/img/integrations/piraeus-datastore/icons/color/piraeus-datastore-
 permalink: extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
-integrations-category: App Definition and Development
+integrations-category: Cloud Native Storage
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

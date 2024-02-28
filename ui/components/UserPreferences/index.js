@@ -10,7 +10,7 @@ import dataFetch from '../../lib/data-fetch';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { Paper, Tooltip } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -26,6 +26,8 @@ import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import SpacesPreferences from './spaces-preferences';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CHARCOAL } from '@layer5/sistent-components';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -292,29 +294,37 @@ const UserPreference = (props) => {
           textColor="primary"
           className={props.classes.tabs}
         >
-          <Tooltip title="General preferences" placement="top">
+          <CustomTextTooltip backgroundColor={CHARCOAL} title="General preferences" placement="top">
             <Tab
               className={props.classes.tab}
               icon={<SettingsCellIcon style={iconMedium} />}
               label={<span className={props.classes.tabLabel}>General</span>}
             />
-          </Tooltip>
-          <Tooltip title="Choose Performance Test Defaults" placement="top">
+          </CustomTextTooltip>
+          <CustomTextTooltip
+            backgroundColor={CHARCOAL}
+            title="Choose Performance Test Defaults"
+            placement="top"
+          >
             <Tab
               className={props.classes.tab}
               icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
               label={<span className={props.classes.tabLabel}>Performance</span>}
             />
-          </Tooltip>
+          </CustomTextTooltip>
           {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
           {userPrefs && providerType != 'local' && (
-            <Tooltip title="Remote Provider preferences" placement="top">
+            <CustomTextTooltip
+              backgroundColor={CHARCOAL}
+              title="Remote Provider preferences"
+              placement="top"
+            >
               <Tab
                 className={props.classes.tab}
                 icon={<SettingsRemoteIcon style={iconMedium} />}
                 label={<span className={props.classes.tabLabel}>Remote Provider</span>}
               />
-            </Tooltip>
+            </CustomTextTooltip>
           )}
         </Tabs>
       </Paper>

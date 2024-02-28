@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Running system checks using Meshery CLI
 permalink: guides/mesheryctl/running-system-checks-using-mesheryctl
 language: en
@@ -148,7 +148,9 @@ Guides to using Meshery's various features and components.
 
 {% endcapture %}
 
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

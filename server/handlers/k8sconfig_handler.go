@@ -359,11 +359,12 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		h.log.Debug(conn)
-
-		cc.ConnectionID = conn.ID.String()
-		contexts = append(contexts, cc)
-		metadata["context"] = models.RedactCredentialsForContext(cc)
-		eventMetadata["in-cluster"] = metadata
+		if conn.ShouldConnectionBeManaged() {
+			cc.ConnectionID = conn.ID.String()
+			contexts = append(contexts, cc)
+			metadata["context"] = models.RedactCredentialsForContext(cc)
+			eventMetadata["in-cluster"] = metadata
+		}
 		return contexts, nil
 	}
 
@@ -391,8 +392,9 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
-
-		contexts = append(contexts, ctx)
+		if conn.ShouldConnectionBeManaged() {
+			contexts = append(contexts, ctx)
+		}
 	}
 	return contexts, nil
 }

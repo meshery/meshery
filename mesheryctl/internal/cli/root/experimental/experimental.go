@@ -27,11 +27,11 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// ExpCmd represents the Performance Management CLI command
+// ExpCmd represents the Experimental commands
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
-	Long:  `List of experimental commands for testing and evaluation purpose.`,
+	Long:  `Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -44,6 +44,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, system.ComponentsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

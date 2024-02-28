@@ -20,7 +20,7 @@ export const common = {
           color: '#00b39f !important',
         },
         '&$checked + $track': {
-          backgroundColor: 'rgba(0,179,159,0.5)',
+          backgroundColor: 'rgba(0,179,159,0.5) !important',
         },
       },
     },
@@ -47,6 +47,7 @@ export var darkTheme = createTheme({
   palette: {
     type: 'dark',
     primary: blueGrey,
+    colors: Colors,
     secondary: {
       main: '#EE5351',
       primeColor: '#303030',
@@ -121,6 +122,7 @@ export var darkTheme = createTheme({
       white: '#202020',
       whiteIcon: '#ffffff',
       btnDisabled: '#b0bec5',
+      interactiveArea: '#00B39F',
     },
     tables: {
       head: {
@@ -329,6 +331,7 @@ let theme = createTheme({
     //   dark: '#455a64',
     // },
     primary: blueGrey,
+    colors: Colors,
     secondary: {
       main: '#EE5351',
       primeColor: '#ebeff1',
@@ -396,7 +399,7 @@ let theme = createTheme({
       innertableBg2: '#ECECED',
       tabContainer: '#51636B',
       card: '#51636B',
-      detailsContainer: '#d9dadb80',
+      detailsContainer: 'rgb(100, 120, 129, 5%)',
       tabCard: '#677a84',
       disableButtonBg: '#e0e0e0',
       disableButton: '#9d9d9d',
@@ -404,6 +407,7 @@ let theme = createTheme({
       white: '#ffffff',
       whiteIcon: '#ffffff',
       btnDisabled: '#b0bec5',
+      interactiveArea: '#00B39F',
     },
     tables: {
       head: {

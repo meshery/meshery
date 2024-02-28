@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aperture-controller
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: controller
   colorIcon: assets/img/integrations/aperture-controller/components/controller/icons/color/controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Importing Applications
 abstract: Learn how to import your existing application definitions and your existing infrastructure configurations into Meshery as you to manage, operate, and observe your cloud native infrastructure more effectively.
 permalink: guides/configuration-management/importing-apps

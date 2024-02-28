@@ -6,9 +6,9 @@ image: /assets/img/integrations/postgres-controller/icons/color/postgres-control
 permalink: extensibility/integrations/postgres-controller
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-controller
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 - name: postgres-database
   colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg

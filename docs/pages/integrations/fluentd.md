@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fluentd
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.",

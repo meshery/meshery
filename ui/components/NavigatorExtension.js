@@ -32,6 +32,7 @@ import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { Fallback } from '@layer5/sistent-components';
+import { FormatStructuredData } from './DataFormatter';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -107,6 +108,7 @@ function NavigatorExtension({
         CapabilitiesRegistryClass: CapabilitiesRegistry,
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
+        StructuredDataFormatter: FormatStructuredData,
       }}
     />
   );

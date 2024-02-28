@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -40,148 +41,174 @@ var (
 	pageNumberFlag int
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
+
+	// Maximum number of rows to be displayed in a page
+	maxRowsPerPage = 25
+
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
-// represents the `mesheryctl exp model list` subcommand.
+
+// represents the mesheryctl exp model list subcommand.
 var listModelCmd = &cobra.Command{
-    Use:   "list",
-    Short: "list models",
-    Long:  "list name of all registered models",
-    Example: `
+	Use:   "list",
+	Short: "list registered models",
+	Long:  "list name of all registered models",
+	Example: `
 // View list of models
 mesheryctl exp model list
 
 // View list of models with specified page number (25 models per page)
 mesheryctl exp model list --page 2
     `,
-    PreRunE: func(cmd *cobra.Command, args []string) error {
-        //Check prerequisite
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
 
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
+		}
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err, "error processing config")
+		}
 
-        mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-        if err != nil {
-            return err
-        }
-        err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-        if err != nil {
-            return err
-        }
-        ctx, err := mctlCfg.GetCurrentContext()
-        if err != nil {
-            return err
-        }
-        err = ctx.ValidateVersion()
-        if err != nil {
-            return err
-        }
-        return nil
-    },
-    RunE: func(cmd *cobra.Command, args []string) error {
-        if len(args) != 0 {
-            return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
-        }
-        mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-        if err != nil {
-            log.Fatalln(err, "error processing config")
-        }
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		var url string
+		if cmd.Flags().Changed("page") {
+			url = fmt.Sprintf("%s/api/meshmodels/models?page=%d", baseUrl, pageNumberFlag)
+		} else {
+			url = fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
+		}
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 
-        baseUrl := mctlCfg.GetBaseMesheryURL()
-        var url string
-        if cmd.Flags().Changed("page") {
-            url = fmt.Sprintf("%s/api/meshmodels/models?page=%d", baseUrl, pageNumberFlag)
-        } else {
-            url = fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
-        }
-        req, err := utils.NewRequest(http.MethodGet, url, nil)
-        if err != nil {
-            utils.Log.Error(err)
-            return err
-        }
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
 
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 
-        resp, err := utils.MakeRequest(req)
-        if err != nil {
-            utils.Log.Error(err)
-            return err
-        }
+		modelsResponse := &models.MeshmodelsAPIResponse{}
+		err = json.Unmarshal(data, modelsResponse)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 
+		header := []string{"Model", "Category", "Version"}
+		rows := [][]string{}
 
-        // defers the closing of the response body after its use, ensuring that the resources are properly released.
-        defer resp.Body.Close()
+		for _, model := range modelsResponse.Models {
+			if len(model.DisplayName) > 0 {
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+			}
+		}
 
+		if len(rows) == 0 {
+			// if no model is found
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
+			return nil
+		}
 
-        data, err := io.ReadAll(resp.Body)
-        if err != nil {
-            utils.Log.Error(err)
-            return err
-        }
+		if cmd.Flag("count").Value.String() == "true" {
+			// fmt.Println("Total number of models: ", len(rows))
+			whiteBoardPrinter.Println("Total number of models: ", len(rows))
+			return nil
+		}
 
+		if cmd.Flags().Changed("page") {
+			utils.PrintToTable(header, rows)
+		} else {
+			startIndex := 0
+			endIndex := min(len(rows), startIndex+maxRowsPerPage)
+			for {
+				// Clear the entire terminal screen
+				utils.ClearLine()
 
-        modelsResponse := &models.MeshmodelsAPIResponse{}
-        err = json.Unmarshal(data, modelsResponse)
-        if err != nil {
-            utils.Log.Error(err)
-            return err
-        }
+				// Print number of models and current page number
+				whiteBoardPrinter.Print("Total number of models: ", len(rows))
+				fmt.Println()
+				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
+				fmt.Println()
 
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
 
-        header := []string{"Model" ,"Category", "Version"}
-        rows := [][]string{}
+				utils.PrintToTable(header, rows[startIndex:endIndex])
+				keysEvents, err := keyboard.GetKeys(10)
+				if err != nil {
+					return err
+				}
 
+				defer func() {
+					_ = keyboard.Close()
+				}()
 
-        for _, model := range modelsResponse.Models {
-            if len(model.DisplayName) > 0 {
-                rows = append(rows, []string{model.Name ,model.Category.Name, model.Version})
-            }
-        }
+				event := <-keysEvents
+				if event.Err != nil {
+					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
+					break
+				}
 
+				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+					break
+				}
 
-        if len(rows) == 0 {
-            // if no model is found
-            utils.Log.Info("No model(s) found")
-            return nil
-        }
+				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+					startIndex += maxRowsPerPage
+					endIndex = min(len(rows), startIndex+maxRowsPerPage)
+				}
 
+				if startIndex >= len(rows) {
+					break
+				}
+			}
+		}
 
-        if cmd.Flags().Changed("page") {
-            utils.PrintToTable(header, rows)
-        } else {
-            paginator := utils.NewPaginator(header, rows)
-            paginator.Render()
-            keysEvents, err := keyboard.GetKeys(10)
-            if err != nil {
-				return err
-            }
-            defer func() {
-                _ = keyboard.Close()
-            }()
-
-
-            for {
-                event := <-keysEvents
-                if event.Err != nil {
-                    utils.Log.Error(fmt.Errorf("Unable to capture keyboard events"))
-                    break
-                }
-                if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-                    break
-                }
-                if event.Key == keyboard.KeyArrowDown || event.Key == keyboard.KeyEnter {
-                    isLastLine := paginator.AddLine()
-                    if isLastLine {
-                        break
-                    }
-                }
-            }
-            utils.ClearLine()
-        }
-
-
-        return nil
-    },
+		return nil
+	},
 }
 
-// represents the `mesheryctl exp model view [model-name]` subcommand.
+// min returns the smaller of x or y.
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+// represents the mesheryctl exp model view [model-name] subcommand.
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view model",
@@ -261,7 +288,7 @@ mesheryctl exp model view [model-name]
 		var selectedModel v1alpha1.Model
 
 		if modelsResponse.Count == 0 {
-			utils.Log.Info("No model(s) found for the given name ", model)
+			fmt.Println("No model(s) found for the given name ", model)
 			return nil
 		} else if modelsResponse.Count == 1 {
 			selectedModel = modelsResponse.Models[0]
@@ -289,7 +316,7 @@ mesheryctl exp model view [model-name]
 	},
 }
 
-// represents the `mesheryctl exp model search [query-text]` subcommand.
+// represents the mesheryctl exp model search [query-text] subcommand.
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search models",
@@ -364,18 +391,20 @@ mesheryctl exp model search [query-text]
 			return err
 		}
 
-		header := []string{"Model" ,"Category", "Version"}
+		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name ,model.Category.Name, model.Version})
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no model is found
-			utils.Log.Info("No model(s) found")
+			// fmt.Println("No model(s) found")
+			whiteBoardPrinter.Println("No model(s) found")
+			return nil
 		} else {
 			utils.PrintToTable(header, rows)
 		}
@@ -384,11 +413,11 @@ mesheryctl exp model search [query-text]
 	},
 }
 
-// ModelCmd represents the `mesheryctl exp model` command
+// ModelCmd represents the mesheryctl exp model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "View list of models and detail of models",
-	Long:  `View list of models and detailed information of a specific model`,
+	Long:  "View list of models and detailed information of a specific model",
 	Example: `
 // To view list of components
 mesheryctl exp model list
@@ -442,12 +471,13 @@ mesheryctl exp model view [model-name]
 
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
-// `selectModelPrompt` lets user to select a model if models are more than one
+// selectModelPrompt lets user to select a model if models are more than one
 func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
 	modelArray := []v1alpha1.Model{}
 	modelNames := []string{}

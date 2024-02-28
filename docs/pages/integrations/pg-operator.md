@@ -6,9 +6,9 @@ image: /assets/img/integrations/pg-operator/icons/color/pg-operator-color.svg
 permalink: extensibility/integrations/pg-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Database
-registrant: artifacthub
+integrations-category: Database
+integrations-subcategory: App Definition and Development
+registrant: Artifact Hub
 components: 
 - name: percona-pg-backup
   colorIcon: assets/img/integrations/pg-operator/components/percona-pg-backup/icons/color/percona-pg-backup-color.svg

@@ -44,41 +44,6 @@
         grandchildren: 
           - title: "Scoop"
             url: installation/windows/scoop 
-- title: 🧑‍💻 Contributing & Community
-  url: project
-  links:
-    - title: Community
-      url: project/community
-    - title: Contributing ↆ
-      url: project/contributing
-      children:
-        - title: "Build & Release (CI) ↆ"
-          url: project/contributing/build-and-release
-          grandchildren:
-          - title: "End-to-End Testing"
-            url: project/contributing/contributing-cypress
-        - title: Adapters
-          url: project/contributing/contributing-adapters
-        - title: CLI ↆ
-          url: project/contributing/contributing-cli
-          grandchildren:
-          - title: "Design Principles"
-            url: project/contributing/contributing-cli-guide
-        - title: Docs
-          url: project/contributing/contributing-docs
-        - title: Server ↆ
-          url: project/contributing/contributing-server
-          grandchildren:
-          - title: "Server Events"
-            url: project/contributing/contributing-server-events
-          - title: "Server Errors"
-            url: project/contributing/contributing-error
-        - title: UI
-          url: project/contributing/contributing-ui
-        - title: Docker Extension
-          url: project/contributing/contributing-docker-extension
-        - title: Models
-          url: project/contributing/contributing-models
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -116,6 +81,8 @@
             url: concepts/logical/connections
           - title: "Credentials"
             url: concepts/logical/credentials
+        - title: "Registry"
+          url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
 #    - title: Meshery and SMI Management
@@ -140,7 +107,7 @@
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/configuration-management/creating-a-meshery-design
+        url: guides/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
       - title: Importing Applications
@@ -213,8 +180,6 @@
           url: installation/compatibility-matrix
         - title: App Mesh
           url: extensibility/adapters/app-mesh
-        - title: Citrix Service Mesh
-          url: extensibility/adapters/cpx
         - title: Cilium Service Mesh
           url: extensibility/adapters/cilium
         - title: Consul
@@ -229,8 +194,8 @@
           url: extensibility/adapters/nsm
         - title: NGINX Service Mesh
           url: extensibility/adapters/nginx-sm
-        - title: Open Service Mesh
-          url: extensibility/adapters/osm
+        - title: Nighthawk
+          url: extensibility/adapters/nighthawk
         - title: Tanzu
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
@@ -258,7 +223,41 @@
       # children:
       # - title: Building a Remote Provider
       #   url: extensibility/providers/building-a-remote-provider
-
+- title: 🧑‍💻 Contributing & Community
+  url: project
+  links:
+    - title: Community
+      url: project/community
+    - title: Contributing ↆ
+      url: project/contributing
+      children:
+        - title: "Build & Release (CI) ↆ"
+          url: project/contributing/build-and-release
+          grandchildren:
+          - title: "End-to-End Testing"
+            url: project/contributing/contributing-cypress
+        - title: Adapters
+          url: project/contributing/contributing-adapters
+        - title: CLI ↆ
+          url: project/contributing/contributing-cli
+          grandchildren:
+          - title: "Design Principles"
+            url: project/contributing/contributing-cli-guide
+        - title: Docs
+          url: project/contributing/contributing-docs
+        - title: Server ↆ
+          url: project/contributing/contributing-server
+          grandchildren:
+          - title: "Server Events"
+            url: project/contributing/contributing-server-events
+          - title: "Server Errors"
+            url: project/contributing/contributing-error
+        - title: UI
+          url: project/contributing/contributing-ui
+        - title: Docker Extension
+          url: project/contributing/contributing-docker-extension
+        - title: Models
+          url: project/contributing/contributing-models
 - title: 📖 Reference
   url: reference
   links:

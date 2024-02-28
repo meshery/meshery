@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   NoSsr,
   TableCell,
@@ -28,7 +28,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { updateProgress } from '../../lib/store';
-import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
@@ -63,8 +62,7 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
-import InfoIcon from '@material-ui/icons/Info';
-import { SortableTableCell } from './common';
+import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
@@ -85,8 +83,11 @@ import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
-import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
+import { DeleteIcon } from '@layer5/sistent';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -178,29 +179,39 @@ function Connections(props) {
   } = props;
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [connections, setConnections] = useState([]);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
-  const [filter, setFilter] = useState('');
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [statusFilter, setStatusFilter] = useState(null);
-  const [kindFilter, setKindFilter] = useState(null);
+  const [statusFilter, setStatusFilter] = useState();
+  const [kindFilter, setKindFilter] = useState();
+  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
 
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  const {
+    data: connectionData,
+    isError: isConnectionError,
+    error: connectionError,
+    refetch: getConnections,
+  } = useGetConnectionsQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    sortOrder: sortOrder,
+    status: statusFilter ? JSON.stringify([statusFilter]) : '',
+    kind: kindFilter ? JSON.stringify([kindFilter]) : '',
+  });
 
   const {
     data: environmentsResponse,
@@ -215,6 +226,26 @@ function Connections(props) {
   );
   let environments = environmentsResponse?.environments || [];
 
+  const modifiedConnections = connectionData?.connections.map((connection) => {
+    return {
+      ...connection,
+      nextStatus:
+        connection.nextStatus === undefined &&
+        connectionMetadataState[connection.kind]?.transitions,
+      kindLogo: connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon,
+    };
+  });
+
+  const connections = modifiedConnections?.filter((connection) => {
+    if (selectedFilters.status === 'All' && selectedFilters.kind === 'All') {
+      return true;
+    }
+    return (
+      (statusFilter === null || connection.status === statusFilter) &&
+      (kindFilter === null || connection.kind === kindFilter)
+    );
+  });
+
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -224,7 +255,7 @@ function Connections(props) {
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        getConnections();
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -248,7 +279,6 @@ function Connections(props) {
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
         notify({
           message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -278,7 +308,6 @@ function Connections(props) {
         });
         environments = [...environments, resp];
         addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
       })
       .catch((err) => {
         notify({
@@ -295,7 +324,8 @@ function Connections(props) {
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
-  const url = `https://docs.meshery.io/concepts/connections`;
+  const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
+  const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
   const icons = {
     [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
@@ -429,13 +459,31 @@ function Connections(props) {
       options: {
         sort: false,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead({ ...column }) {
           return (
-            <SortableTableCell
-              index={index}
+            <DefaultTableCell
               columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
+              icon={
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
+                    style={{
+                      cursor: 'pointer',
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
+              }
+              tooltip={RenderTooltipContent({
+                showPriortext:
+                  'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
+                link: envUrl,
+                showAftertext: 'to learn more about Environments',
+              })}
             />
           );
         },
@@ -452,8 +500,8 @@ function Connections(props) {
                     <MultiSelectWrapper
                       onChange={(selected, unselected) =>
                         handleEnvironmentSelect(
-                          connections[tableMeta.rowIndex].id,
-                          connections[tableMeta.rowIndex].name,
+                          getColumnValue(tableMeta.rowData, 'id', columns),
+                          getColumnValue(tableMeta.rowData, 'name', columns),
                           cleanedEnvs,
                           selected,
                           unselected,
@@ -616,20 +664,26 @@ function Connections(props) {
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
               icon={
-                <InfoIcon
-                  color={theme.palette.secondary.iconMain}
-                  style={{
-                    cursor: 'pointer',
-                    height: 20,
-                    width: 20,
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(url, '_blank');
-                  }}
-                />
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlinedIcon
+                    fill={theme.palette.secondary.iconMain}
+                    style={{
+                      cursor: 'pointer',
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
               }
-              tooltip="Click to learn about connection and status"
+              tooltip={RenderTooltipContent({
+                showPriortext:
+                  'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
+                link: url,
+                showAftertext: 'to learn more about Connection States',
+              })}
             />
           );
         },
@@ -764,110 +818,105 @@ function Connections(props) {
     },
   ];
 
-  const options = useMemo(
-    () => ({
-      filter: false,
-      viewColumns: false,
-      search: false,
-      responsive: 'standard',
-      resizableColumns: true,
-      serverSide: true,
-      count,
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 30],
-      fixedHeader: true,
-      page,
-      print: false,
-      download: false,
-      textLabels: {
-        selectedRows: {
-          text: 'connection(s) selected',
-        },
+  const options = {
+    filter: false,
+    viewColumns: false,
+    search: false,
+    responsive: 'standard',
+    resizableColumns: true,
+    serverSide: true,
+    count: connectionData?.total_count,
+    rowsPerPage: pageSize,
+    rowsPerPageOptions: [10, 20, 30],
+    fixedHeader: true,
+    page,
+    print: false,
+    download: false,
+    textLabels: {
+      selectedRows: {
+        text: 'connection(s) selected',
       },
-      customToolbarSelect: (selected) => (
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          // @ts-ignore
-          onClick={() => handleDeleteConnections(selected)}
-          style={{ background: '#8F1F00', marginRight: '10px' }}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
-        >
-          <DeleteForeverIcon style={iconMedium} />
-          Delete
-        </Button>
-      ),
-      enableNestedDataAccess: '.',
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        let order = '';
-        if (tableState.activeColumn) {
-          order = `${columns[tableState.activeColumn].name} desc`;
-        }
-        switch (action) {
-          case 'changePage':
-            setPage(tableState.page.toString());
-            break;
-          case 'changeRowsPerPage':
-            setPageSize(tableState.rowsPerPage.toString());
-            break;
-          case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${columns[tableState.activeColumn].name} asc`;
-              } else {
-                order = `${columns[tableState.activeColumn].name} desc`;
-              }
+    },
+    customToolbarSelect: (selected) => (
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={() => handleDeleteConnections(selected)}
+        style={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
+        disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+      >
+        <DeleteIcon fill={theme.palette.secondary.whiteIcon} style={iconMedium} />
+        Delete
+      </Button>
+    ),
+    enableNestedDataAccess: '.',
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+      let order = '';
+      if (tableState.activeColumn) {
+        order = `${columns[tableState.activeColumn].name} desc`;
+      }
+      switch (action) {
+        case 'changePage':
+          setPage(tableState.page.toString());
+          break;
+        case 'changeRowsPerPage':
+          setPageSize(tableState.rowsPerPage.toString());
+          break;
+        case 'sort':
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === 'ascending') {
+              order = `${columns[tableState.activeColumn].name} asc`;
+            } else {
+              order = `${columns[tableState.activeColumn].name} desc`;
             }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
-            break;
-        }
-      },
-      expandableRows: true,
-      expandableRowsHeader: false,
-      expandableRowsOnClick: true,
-      rowsExpanded: rowsExpanded,
-      isRowExpandable: () => {
-        return true;
-      },
-      onRowExpansionChange: (_, allRowsExpanded) => {
-        setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-        setShowMore(false);
-      },
-      renderExpandableRow: (rowData, tableMeta) => {
-        const colSpan = rowData.length;
-        const connection = connections && connections[tableMeta.rowIndex];
-        return (
-          <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-            <TableContainer className={classes.innerTableContainer}>
-              <Table>
-                <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                      <Grid item xs={12} md={12} className={classes.contentContainer}>
-                        <Grid container spacing={1}>
-                          <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <FormatConnectionMetadata
-                              connection={connection}
-                              meshsyncControllerState={meshsyncControllerState}
-                            />
-                          </Grid>
+          }
+          if (order !== sortOrder) {
+            setSortOrder(order);
+          }
+          break;
+      }
+    },
+    expandableRows: true,
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    rowsExpanded: rowsExpanded,
+    isRowExpandable: () => {
+      return true;
+    },
+    onRowExpansionChange: (_, allRowsExpanded) => {
+      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+    },
+    renderExpandableRow: (rowData, tableMeta) => {
+      const colSpan = rowData.length;
+      const connection = connections && connections[tableMeta.rowIndex];
+      return (
+        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
+          <TableContainer className={classes.innerTableContainer}>
+            <Table>
+              <TableRow className={classes.noGutter}>
+                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
+                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                    <Grid item xs={12} md={12} className={classes.contentContainer}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12} md={12} className={classes.contentContainer}>
+                          <FormatConnectionMetadata
+                            connection={connection}
+                            meshsyncControllerState={meshsyncControllerState}
+                          />
                         </Grid>
                       </Grid>
                     </Grid>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </TableContainer>
-          </TableCell>
-        );
-      },
-    }),
-    [rowsExpanded, showMore, page, pageSize],
-  );
+                  </Grid>
+                </TableCell>
+              </TableRow>
+            </Table>
+          </TableContainer>
+        </TableCell>
+      );
+    },
+  };
 
   const [tableCols, updateCols] = useState(columns);
 
@@ -881,17 +930,8 @@ function Connections(props) {
     return initialVisibility;
   });
 
-  /**
-   * fetch connections when the page loads
-   */
   useEffect(() => {
     updateCols(columns);
-    if (!loading && connectionMetadataState) {
-      getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
-    }
-  }, [page, pageSize, search, sortOrder, connectionMetadataState, isEnvironmentsSuccess]);
-
-  useEffect(() => {
     if (isEnvironmentsError) {
       notify({
         message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
@@ -899,54 +939,15 @@ function Connections(props) {
         details: environmentsError.toString(),
       });
     }
-  }, [environmentsError]);
 
-  const getConnections = (page, pageSize, search, sortOrder, statusFilter, kindFilter) => {
-    setLoading(true);
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    dataFetch(
-      `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-        (statusFilter ? `&status=${encodeURIComponent(JSON.stringify([statusFilter]))}` : '') +
-        (kindFilter ? `&kind=${encodeURIComponent(JSON.stringify([kindFilter]))}` : ''),
-
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        res?.connections.forEach((connection) => {
-          (connection.nextStatus =
-            connection.nextStatus === undefined &&
-            connectionMetadataState[connection.kind]?.transitions),
-            (connection.kindLogo =
-              connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
-        });
-
-        const filteredConnections = res?.connections.filter((connection) => {
-          if (
-            (statusFilter === null || connection.status === statusFilter) &&
-            (kindFilter === null || connection.kind === kindFilter)
-          ) {
-            return true;
-          }
-          return false;
-        });
-
-        setConnections(filteredConnections);
-        setCount(res?.total_count);
-        setLoading(false);
-        setPageSize(res?.page_size);
-        setPage(res?.page);
-        setStatusFilter(statusFilter);
-        setKindFilter(kindFilter);
-        setFilter(filter);
-      },
-      handleError(ACTION_TYPES.FETCH_CONNECTIONS),
-    );
-  };
+    if (isConnectionError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: connectionError.toString(),
+      });
+    }
+  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -957,14 +958,17 @@ function Connections(props) {
     });
   };
 
-  const updateConnectionStatus = (connectionKind, requestBody) => {
+  const UpdateConnectionStatus = (connectionKind, requestBody) => {
     useUpdateConnectionMutator({
       connectionKind: connectionKind,
       connectionPayload: requestBody,
     })
       .unwrap()
       .then(() => {
-        getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+        notify({
+          message: `Connection status updated successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       })
       .catch((err) => {
         notify({
@@ -978,16 +982,17 @@ function Connections(props) {
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
     let response = await modalRef.current.show({
-      title: `Connection status transition`,
+      title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       options: ['Confirm', 'No'],
+      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.CONFIRMATION,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
         [connectionId]: e.target.value,
       });
-      updateConnectionStatus(connectionKind, requestBody);
+      UpdateConnectionStatus(connectionKind, requestBody);
     }
   };
 
@@ -997,13 +1002,14 @@ function Connections(props) {
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
         options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
-        updateConnectionStatus(connectionKind, requestBody);
+        UpdateConnectionStatus(connectionKind, requestBody);
       }
     }
   };
@@ -1014,6 +1020,7 @@ function Connections(props) {
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
         options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
@@ -1030,7 +1037,7 @@ function Connections(props) {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
           });
-          updateConnectionStatus(connections[index].kind, requestBody);
+          UpdateConnectionStatus(connections[index].kind, requestBody);
         });
       }
     }
@@ -1077,8 +1084,8 @@ function Connections(props) {
     };
   };
 
-  function getOperatorStatus(index) {
-    const ctxId = connections[index]?.metadata?.id;
+  function getOperatorStatus() {
+    const ctxId = connections?.metadata?.id;
     const operator = meshsyncControllerState?.find(
       (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
     );
@@ -1159,13 +1166,12 @@ function Connections(props) {
     },
   };
 
-  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
-
   const handleApplyFilter = () => {
     const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
     const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
 
-    getConnections(page, pageSize, search, sortOrder, statusFilter, kindFilter);
+    setKindFilter(kindFilter);
+    setStatusFilter(statusFilter);
   };
 
   return (

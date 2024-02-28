@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kiali-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: kiali
   colorIcon: assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg

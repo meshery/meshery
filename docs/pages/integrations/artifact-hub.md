@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/artifact-hub
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Discover, install and publish packages and configurations.",

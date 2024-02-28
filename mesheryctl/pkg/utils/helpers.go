@@ -14,9 +14,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
-	"runtime"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -94,43 +94,45 @@ const (
 type cmdType string
 
 const (
-	cmdRoot           cmdType = "root"
-	cmdPerf           cmdType = "perf"
-	cmdMesh           cmdType = "mesh"
-	cmdSystem         cmdType = "system"
-	cmdSystemStop     cmdType = "system stop"
-	cmdSystemUpdate   cmdType = "system update"
-	cmdSystemReset    cmdType = "system reset"
-	cmdSystemStatus   cmdType = "system status"
-	cmdSystemRestart  cmdType = "system restart"
-	cmdExp            cmdType = "exp"
-	cmdFilter         cmdType = "filter"
-	cmdFilterImport   cmdType = "filter import"
-	cmdFilterDelete   cmdType = "filter delete"
-	cmdFilterList     cmdType = "filter list"
-	cmdFilterView     cmdType = "filter view"
-	cmdPattern        cmdType = "pattern"
-	cmdPatternView    cmdType = "pattern view"
-	cmdApp            cmdType = "app"
-	cmdAppView        cmdType = "app view"
-	cmdContext        cmdType = "context"
-	cmdContextDelete  cmdType = "delete"
-	cmdContextCreate  cmdType = "create"
-	cmdContextView    cmdType = "context view"
-	cmdChannel        cmdType = "channel"
-	cmdChannelSet     cmdType = "channel set"
-	cmdChannelSwitch  cmdType = "channel switch"
-	cmdChannelView    cmdType = "channel view"
-	cmdProvider       cmdType = "provider"
-	cmdProviderSet    cmdType = "provider set"
-	cmdProviderSwitch cmdType = "provider switch"
-	cmdProviderView   cmdType = "provider view"
-	cmdProviderList   cmdType = "provider list"
-	cmdProviderReset  cmdType = "provider reset"
-	cmdToken          cmdType = "token"
-	cmdModel          cmdType = "model"
-	cmdModelList      cmdType = "model list"
-	cmdModelView      cmdType = "model view"
+	cmdRoot            cmdType = "root"
+	cmdPerf            cmdType = "perf"
+	cmdMesh            cmdType = "mesh"
+	cmdSystem          cmdType = "system"
+	cmdSystemStop      cmdType = "system stop"
+	cmdSystemUpdate    cmdType = "system update"
+	cmdSystemReset     cmdType = "system reset"
+	cmdSystemStatus    cmdType = "system status"
+	cmdSystemRestart   cmdType = "system restart"
+	cmdExp             cmdType = "exp"
+	cmdFilter          cmdType = "filter"
+	cmdFilterImport    cmdType = "filter import"
+	cmdFilterDelete    cmdType = "filter delete"
+	cmdFilterList      cmdType = "filter list"
+	cmdFilterView      cmdType = "filter view"
+	cmdPattern         cmdType = "pattern"
+	cmdPatternView     cmdType = "pattern view"
+	cmdApp             cmdType = "app"
+	cmdAppView         cmdType = "app view"
+	cmdContext         cmdType = "context"
+	cmdContextDelete   cmdType = "delete"
+	cmdContextCreate   cmdType = "create"
+	cmdContextView     cmdType = "context view"
+	cmdChannel         cmdType = "channel"
+	cmdChannelSet      cmdType = "channel set"
+	cmdChannelSwitch   cmdType = "channel switch"
+	cmdChannelView     cmdType = "channel view"
+	cmdProvider        cmdType = "provider"
+	cmdProviderSet     cmdType = "provider set"
+	cmdProviderSwitch  cmdType = "provider switch"
+	cmdProviderView    cmdType = "provider view"
+	cmdProviderList    cmdType = "provider list"
+	cmdProviderReset   cmdType = "provider reset"
+	cmdToken           cmdType = "token"
+	cmdModel           cmdType = "model"
+	cmdModelList       cmdType = "model list"
+	cmdModelView       cmdType = "model view"
+	cmdRegistryPublish cmdType = "registry publish"
+	cmdRegistry        cmdType = "regisry"
 )
 
 const (
@@ -540,16 +542,15 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 
 // ClearLine clears the last line from output
 func ClearLine() {
-    if runtime.GOOS == "windows" {
-        fmt.Print("\r")
-    } else {
-        clearLineUnix()
-    }
-}
-
-func clearLineUnix() {
-    fmt.Print("\033[1A") // Move cursor one line up
-    fmt.Print("\033[K")  // Clear the line
+	clearCmd := exec.Command("clear") // for UNIX-like systems
+	if runtime.GOOS == "windows" {
+		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
+	}
+	clearCmd.Stdout = os.Stdout
+	err := clearCmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
@@ -1125,4 +1126,13 @@ func CheckFileExists(name string) (bool, error) {
 		return false, fmt.Errorf("%s does not exist", name)
 	}
 	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
+}
+
+func Contains(key string, col []string) int {
+	for i, n := range col {
+		if n == key {
+			return i
+		}
+	}
+	return -1
 }

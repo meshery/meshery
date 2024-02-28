@@ -7,7 +7,7 @@ const TAGS = {
 
 const defaultOptions = {
   trim: false,
-  annotations: false,
+  // annotations: false,
   search: '',
   page: 1,
   pagesize: 'all',
@@ -61,6 +61,42 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      updateEntityStatus: builder.mutation({
+        query: (queryArgs) => ({
+          url: `meshmodels/${queryArgs.entityType}/status`,
+          method: 'POST',
+          body: queryArgs.body,
+        }),
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
+      getModelCategories: builder.query({
+        query: () => ({
+          url: `meshmodels/categories`,
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getModelFromCategory: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/categories/${queryArgs.category}/models`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getModelByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/models/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getComponentByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/components/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
@@ -71,4 +107,9 @@ export const {
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
+  useUpdateEntityStatusMutation,
+  useGetModelCategoriesQuery,
+  useLazyGetModelFromCategoryQuery,
+  useGetModelByNameQuery,
+  useGetComponentByNameQuery,
 } = meshModelApi;

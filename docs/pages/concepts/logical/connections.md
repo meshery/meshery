@@ -6,6 +6,8 @@ type: concepts
 abstract: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments."
 language: en
 list: include
+redirect_from:
+- concepts/connections
 ---
 
 ![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)

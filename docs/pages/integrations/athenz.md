@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/athenz
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Identities for all workloads in your hybrid environment.",
