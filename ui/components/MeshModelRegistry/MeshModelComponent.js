@@ -33,6 +33,7 @@ import {
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
+import _ from 'lodash';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -133,7 +134,7 @@ const MeshModelComponent_ = ({
                 search: searchText || '',
               },
             },
-            true,
+            true, // arg to use cache as default
           );
           break;
         case COMPONENTS:
@@ -143,7 +144,7 @@ const MeshModelComponent_ = ({
                 page: searchText ? 1 : page.Components + 1,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
-                trim: false,
+                trim: true,
                 annotations: false,
               },
             },
@@ -173,12 +174,21 @@ const MeshModelComponent_ = ({
       }
 
       if (response.data) {
+        // When search or "show duplicates" functionality is active:
+        // Avoid appending data to the previous dataset.
+        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
+        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
         const newData =
           searchText || checked || view === RELATIONSHIPS
             ? [...response.data[view.toLowerCase()]]
             : [...resourcesDetail, ...response.data[view.toLowerCase()]];
-        setResourcesDetail(newData);
 
+        // Set unique data
+        setResourcesDetail(_.uniqWith(newData, _.isEqual));
+
+        // Deeplink may contain higher rowsPerPage val for first time fetch
+        // In such case set it to default as 14 after UI renders
+        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
         if (rowsPerPage !== 14) {
           setRowsPerPage(14);
         }
@@ -192,9 +202,9 @@ const MeshModelComponent_ = ({
     getRelationshipsData,
     getRegistrantsData,
     view,
-    searchText,
     page,
     rowsPerPage,
+    searchText,
     resourcesDetail,
     checked,
   ]);
@@ -291,7 +301,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, searchText, rowsPerPage, checked]);
+  }, [view, page, rowsPerPage, checked, searchText]);
 
   return (
     <div data-test="workloads">

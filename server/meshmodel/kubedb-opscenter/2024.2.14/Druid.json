@@ -6,13 +6,15 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "isNamespaced": true
+   "isNamespaced": true,
+   "published": true
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
    "name": "kubedb-opscenter",
    "version": "2024.2.14",
    "displayName": "kubedb-opscenter",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

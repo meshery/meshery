@@ -12,6 +12,7 @@
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#5c4ee5",
+   "published": true,
    "secondaryColor": "#4040b2",
    "shape": "circle",
    "shapePolygonPoints": "",
@@ -27,6 +28,7 @@
    "name": "terraform",
    "version": "1.1.2",
    "displayName": "terraform",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

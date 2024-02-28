@@ -20,23 +20,23 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGettingSessionDataCode                = "1098"
-	ErrNoAdaptersCode                        = "1099"
-	ErrPromptCode                            = "1100"
-	ErrCreatingDeployRequestCode             = "1101"
-	ErrCreatingDeployResponseRequestCode     = "1102"
-	ErrCreatingDeployResponseStreamCode      = "1103"
-	ErrCreatingValidateResponseStreamCode    = "1104"
-	ErrTimeoutWaitingForDeployResponseCode   = "1105"
-	ErrFailedDeployingMeshCode               = "1106"
-	ErrCreatingValidateRequestCode           = "1107"
-	ErrCreatingValidateResponseRequestCode   = "1108"
-	ErrTimeoutWaitingForValidateResponseCode = "1109"
-	ErrSMIConformanceTestsFailedCode         = "1110"
-	ErrValidateAdapterCode                   = "1111"
-	ErrSendOperationCode                     = "1112"
-	ErrValidMeshNameCode                     = "1113"
-	ErrWaitValidateResponseCode              = "1114"
+	ErrGettingSessionDataCode                = "mesheryctl-1020"
+	ErrNoAdaptersCode                        = "mesheryctl-1021"
+	ErrPromptCode                            = "mesheryctl-1022"
+	ErrCreatingDeployRequestCode             = "mesheryctl-1023"
+	ErrCreatingDeployResponseRequestCode     = "mesheryctl-1024"
+	ErrCreatingDeployResponseStreamCode      = "mesheryctl-1025"
+	ErrCreatingValidateResponseStreamCode    = "mesheryctl-1026"
+	ErrTimeoutWaitingForDeployResponseCode   = "mesheryctl-1027"
+	ErrFailedDeployingMeshCode               = "mesheryctl-1028"
+	ErrCreatingValidateRequestCode           = "mesheryctl-1029"
+	ErrCreatingValidateResponseRequestCode   = "mesheryctl-1030"
+	ErrTimeoutWaitingForValidateResponseCode = "mesheryctl-1031"
+	ErrSMIConformanceTestsFailedCode         = "mesheryctl-1032"
+	ErrValidateAdapterCode                   = "mesheryctl-1033"
+	ErrSendOperationCode                     = "mesheryctl-1034"
+	ErrValidMeshNameCode                     = "mesheryctl-1035"
+	ErrWaitValidateResponseCode              = "mesheryctl-1036"
 )
 
 var (
@@ -115,7 +115,7 @@ func ErrCreatingValidateRequest(err error) error {
 	return errors.New(ErrCreatingValidateRequestCode, errors.Fatal,
 		[]string{"Error sending Validate request"},
 		[]string{err.Error()},
-		[]string{"An HTTP error occured due to network connection"},
+		[]string{"An HTTP error occurred due to network connection"},
 		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
