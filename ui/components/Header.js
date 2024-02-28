@@ -266,26 +266,24 @@ function K8sContextMenu({
   };
 
   const handleKubernetesDelete = (name, connectionID) => async () => {
-    if (deleteCtxtRef.current) {
-      let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-        title: `Delete ${name} context ?`,
-        subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
-        options: ['CONFIRM', 'CANCEL'],
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (responseOfDeleteK8sCtx === 'CONFIRM') {
-        const successCallback = async () => {
-          const updatedConfig = await loadActiveK8sContexts();
-          if (Array.isArray(updatedConfig)) {
-            updateK8SConfig({ k8sConfig: updatedConfig });
-          }
-        };
-        deleteKubernetesConfig(
-          successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
-          errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
-          connectionID,
-        );
-      }
+    let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+      title: `Delete ${name} context ?`,
+      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options: ['CONFIRM', 'CANCEL'],
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (responseOfDeleteK8sCtx === 'CONFIRM') {
+      const successCallback = async () => {
+        const updatedConfig = await loadActiveK8sContexts();
+        if (Array.isArray(updatedConfig)) {
+          updateK8SConfig({ k8sConfig: updatedConfig });
+        }
+      };
+      deleteKubernetesConfig(
+        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
+        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
+        connectionID,
+      );
     }
   };
 

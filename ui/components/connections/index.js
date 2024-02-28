@@ -981,70 +981,56 @@ function Connections(props) {
 
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
-    if (modalRef.current) {
-      let response = await modalRef.current.show({
-        title: `Connection Status Transition`,
-        subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
-        options: ['Confirm', 'No'],
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.CONFIRMATION,
+
+    let response = await modalRef.current.show({
+      title: `Connection Status Transition`,
+      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
+      options: ['Confirm', 'No'],
+      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+      variant: PROMPT_VARIANTS.CONFIRMATION,
+    });
+    if (response === 'Confirm') {
+      const requestBody = JSON.stringify({
+        [connectionId]: e.target.value,
       });
-      if (response === 'Confirm') {
+      UpdateConnectionStatus(connectionKind, requestBody);
+    }
+  };
+
+  const handleDeleteConnection = async (connectionId, connectionKind) => {
+    if (connectionId) {
+      let response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete the connection?`,
+        options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'Delete') {
         const requestBody = JSON.stringify({
-          [connectionId]: e.target.value,
+          [connectionId]: CONNECTION_STATES.DELETED,
         });
         UpdateConnectionStatus(connectionKind, requestBody);
       }
     }
   };
 
-  const handleDeleteConnection = async (connectionId, connectionKind) => {
-    if (connectionId) {
-      if (modalRef.current) {
-        let response = await modalRef.current.show({
-          title: `Delete Connection`,
-          subtitle: `Are you sure that you want to delete the connection?`,
-          options: ['Delete', 'No'],
-          showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-          variant: PROMPT_VARIANTS.DANGER,
-        });
-        if (response === 'Delete') {
-          const requestBody = JSON.stringify({
-            [connectionId]: CONNECTION_STATES.DELETED,
-          });
-          UpdateConnectionStatus(connectionKind, requestBody);
-        }
-      }
-    }
-  };
-
   const handleDeleteConnections = async (selected) => {
     if (selected) {
-      if (modalRef.current) {
-        let response = await modalRef.current.show({
-          title: `Delete Connections`,
-          subtitle: `Are you sure that you want to delete the connections?`,
-          options: ['Delete', 'No'],
-          showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-          variant: PROMPT_VARIANTS.DANGER,
-        });
-        if (response === 'Delete') {
-          // let bulkConnections = {}
-          // selected.data.map(({ index }) => {
-          //   bulkConnections = {
-          //     ...bulkConnections,
-          //     [connections[index].id]: CONNECTION_STATES.DELETED
-          //   };
-          // })
-          // const requestBody = JSON.stringify(bulkConnections);
-          // updateConnectionStatus(requestBody);
-          selected.data.map(({ index }) => {
-            const requestBody = JSON.stringify({
-              [connections[index].id]: CONNECTION_STATES.DELETED,
-            });
-            UpdateConnectionStatus(connections[index].kind, requestBody);
+      let response = await modalRef.current.show({
+        title: `Delete Connections`,
+        subtitle: `Are you sure that you want to delete the connections?`,
+        options: ['Delete', 'No'],
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'Delete') {
+        selected.data.map(({ index }) => {
+          const requestBody = JSON.stringify({
+            [connections[index].id]: CONNECTION_STATES.DELETED,
           });
-        }
+          UpdateConnectionStatus(connections[index].kind, requestBody);
+        });
       }
     }
   };
@@ -1062,32 +1048,31 @@ function Connections(props) {
   const handleFlushMeshSync = (index) => {
     return async () => {
       handleActionMenuClose();
-      if (meshSyncResetRef.current) {
-        let response = await meshSyncResetRef.current.show({
-          title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
-          subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-          options: ['PROCEED', 'CANCEL'],
-          variant: PROMPT_VARIANTS.WARNING,
+
+      let response = await meshSyncResetRef.current.show({
+        title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
+        subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+        options: ['PROCEED', 'CANCEL'],
+        variant: PROMPT_VARIANTS.WARNING,
+      });
+      if (response === 'PROCEED') {
+        updateProgress({ showProgress: true });
+        resetDatabase({
+          selector: {
+            clearDB: 'true',
+            ReSync: 'true',
+            hardReset: 'false',
+          },
+          k8scontextID: connections[index].metadata?.id,
+        }).subscribe({
+          next: (res) => {
+            updateProgress({ showProgress: false });
+            if (res.resetStatus === 'PROCESSING') {
+              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+            }
+          },
+          error: handleError('Database is not reachable, try restarting server.'),
         });
-        if (response === 'PROCEED') {
-          updateProgress({ showProgress: true });
-          resetDatabase({
-            selector: {
-              clearDB: 'true',
-              ReSync: 'true',
-              hardReset: 'false',
-            },
-            k8scontextID: connections[index].metadata?.id,
-          }).subscribe({
-            next: (res) => {
-              updateProgress({ showProgress: false });
-              if (res.resetStatus === 'PROCESSING') {
-                notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-              }
-            },
-            error: handleError('Database is not reachable, try restarting server.'),
-          });
-        }
       }
     };
   };

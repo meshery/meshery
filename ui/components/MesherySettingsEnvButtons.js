@@ -86,111 +86,107 @@ const MesherySettingsEnvButtons = () => {
   };
 
   const showUploadedContexts = async (inputFileName) => {
-    if (ref.current) {
-      const modal = ref.current;
-      const registeredContexts = contextsRef.current.registered_contexts;
-      const connectedContexts = contextsRef.current.connected_contexts;
-      const ignoredContexts = contextsRef.current.ignored_contexts;
-      if (
-        registeredContexts.length === 0 &&
-        connectedContexts.length == 0 &&
-        ignoredContexts.length == 0
-      ) {
-        notify({
-          message: `No reachable contexts found in the uploaded kube config "${inputFileName}". `,
-          event_type: EVENT_TYPES.WARNING,
-          showInNotificationCenter: true,
-        });
-        return;
-      }
-      await modal.show({
-        title: `Available contexts in "${inputFileName}".`,
-        subtitle: (
-          <>
-            <ShowDiscoveredContexts
-              registeredContexts={registeredContexts}
-              connectedContexts={connectedContexts}
-              ignoredContexts={ignoredContexts}
-              allContextsRef={contextsRef}
-            />
-          </>
-        ),
-        options: ['OK'],
+    const modal = ref.current;
+    const registeredContexts = contextsRef.current.registered_contexts;
+    const connectedContexts = contextsRef.current.connected_contexts;
+    const ignoredContexts = contextsRef.current.ignored_contexts;
+    if (
+      registeredContexts.length === 0 &&
+      connectedContexts.length == 0 &&
+      ignoredContexts.length == 0
+    ) {
+      notify({
+        message: `No reachable contexts found in the uploaded kube config "${inputFileName}". `,
+        event_type: EVENT_TYPES.WARNING,
+        showInNotificationCenter: true,
       });
+      return;
     }
+    await modal.show({
+      title: `Available contexts in "${inputFileName}".`,
+      subtitle: (
+        <>
+          <ShowDiscoveredContexts
+            registeredContexts={registeredContexts}
+            connectedContexts={connectedContexts}
+            ignoredContexts={ignoredContexts}
+            allContextsRef={contextsRef}
+          />
+        </>
+      ),
+      options: ['OK'],
+    });
   };
 
   const handleClick = async () => {
-    if (ref.current) {
-      const modal = ref.current;
-      let response = await modal.show({
-        title: 'Add Kubernetes Cluster(s)',
-        subtitle: (
-          <>
-            <div style={{ overflow: 'hidden' }}>
-              <Typography variant="h6">Upload your kubeconfig</Typography>
-              <Typography variant="body2">commonly found at ~/.kube/config</Typography>
-              <FormGroup>
-                <input
-                  id="k8sfile"
-                  type="file"
-                  value={k8sfileElementVal}
-                  onChange={handleChange}
-                  style={{ display: 'none' }}
-                />
+    const modal = ref.current;
+    let response = await modal.show({
+      title: 'Add Kubernetes Cluster(s)',
+      subtitle: (
+        <>
+          <div style={{ overflow: 'hidden' }}>
+            <Typography variant="h6">Upload your kubeconfig</Typography>
+            <Typography variant="body2">commonly found at ~/.kube/config</Typography>
+            <FormGroup>
+              <input
+                id="k8sfile"
+                type="file"
+                value={k8sfileElementVal}
+                onChange={handleChange}
+                style={{ display: 'none' }}
+              />
 
-                <TextField
-                  id="k8sfileLabelText"
-                  name="k8sfileLabelText"
-                  style={{ cursor: 'pointer' }}
-                  placeholder="Upload kubeconfig"
-                  variant="outlined"
-                  fullWidth
-                  onClick={() => {
-                    document.querySelector('#k8sfile')?.click();
-                  }}
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <CloudUploadIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormGroup>
-            </div>
-          </>
-        ),
-        options: ['IMPORT', 'CANCEL'],
-      });
+              <TextField
+                id="k8sfileLabelText"
+                name="k8sfileLabelText"
+                style={{ cursor: 'pointer' }}
+                placeholder="Upload kubeconfig"
+                variant="outlined"
+                fullWidth
+                onClick={() => {
+                  document.querySelector('#k8sfile')?.click();
+                }}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <CloudUploadIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </FormGroup>
+          </div>
+        </>
+      ),
+      options: ['IMPORT', 'CANCEL'],
+    });
 
-      if (response === 'IMPORT') {
-        if (formData.get('k8sfile') === null) {
-          handleError('No file selected')('Please select a valid kube config');
-          return;
-        }
-
-        const inputFileName = formData.get('k8sfile').name;
-        const invalidExtensions = /^.*\.(jpg|gif|jpeg|pdf|png|svg)$/i;
-
-        if (invalidExtensions.test(inputFileName)) {
-          handleError('Invalid file selected')('Please select a valid kube config');
-          return;
-        }
-
-        uploadK8SConfig()
-          .then((obj) => {
-            contextsRef.current = obj;
-            showUploadedContexts(inputFileName);
-            handleConfigSnackbars(obj);
-          })
-          .catch((err) => {
-            handleError('failed to upload kubernetes config')(err);
-          });
-        formData.delete('k8sfile');
+    if (response === 'IMPORT') {
+      if (formData.get('k8sfile') === null) {
+        handleError('No file selected')('Please select a valid kube config');
+        return;
       }
+
+      const inputFileName = formData.get('k8sfile').name;
+      const invalidExtensions = /^.*\.(jpg|gif|jpeg|pdf|png|svg)$/i;
+
+      if (invalidExtensions.test(inputFileName)) {
+        handleError('Invalid file selected')('Please select a valid kube config');
+        return;
+      }
+
+      uploadK8SConfig()
+        .then((obj) => {
+          contextsRef.current = obj;
+          showUploadedContexts(inputFileName);
+          handleConfigSnackbars(obj);
+        })
+        .catch((err) => {
+          handleError('failed to upload kubernetes config')(err);
+        });
+      formData.delete('k8sfile');
     }
   };
 

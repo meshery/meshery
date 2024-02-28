@@ -775,31 +775,29 @@ function MesheryPatterns({
     if (canPublishPattern) {
       ev.stopPropagation();
       return async () => {
-        if (modalRef.current) {
-          let response = await modalRef.current.show({
-            title: `Unpublish Catalog item?`,
-            subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
-            options: ['Yes', 'No'],
-          });
-          if (response === 'Yes') {
-            updateProgress({ showProgress: true });
-            dataFetch(
-              `/api/pattern/catalog/unpublish`,
-              {
-                credentials: 'include',
-                method: 'DELETE',
-                body: JSON.stringify({ id: pattern?.id }),
-              },
-              () => {
-                updateProgress({ showProgress: false });
-                notify({
-                  message: `Design Unpublished`,
-                  event_type: EVENT_TYPES.SUCCESS,
-                });
-              },
-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-            );
-          }
+        let response = await modalRef.current.show({
+          title: `Unpublish Catalog item?`,
+          subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
+          options: ['Yes', 'No'],
+        });
+        if (response === 'Yes') {
+          updateProgress({ showProgress: true });
+          dataFetch(
+            `/api/pattern/catalog/unpublish`,
+            {
+              credentials: 'include',
+              method: 'DELETE',
+              body: JSON.stringify({ id: pattern?.id }),
+            },
+            () => {
+              updateProgress({ showProgress: false });
+              notify({
+                message: `Design Unpublished`,
+                event_type: EVENT_TYPES.SUCCESS,
+              });
+            },
+            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
+          );
         }
       };
     }
@@ -1368,16 +1366,15 @@ function MesheryPatterns({
 
   async function showModal(count, patterns) {
     console.log('patterns to be deleted', count, patterns);
-    if (modalRef.current) {
-      let response = await modalRef.current.show({
-        title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
-        subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
-        variant: PROMPT_VARIANTS.DANGER,
-        options: ['Yes', 'No'],
-      });
-      return response;
-    }
+    let response = await modalRef.current.show({
+      title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
+
+      subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
+      variant: PROMPT_VARIANTS.DANGER,
+      options: ['Yes', 'No'],
+    });
+    return response;
   }
 
   async function deletePatterns(patterns) {

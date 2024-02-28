@@ -96,8 +96,7 @@ const PromptComponent = forwardRef(({ classes }, ref) => {
   const [showCheckbox, setShowCheckbox] = useState(false);
   const [showInfoIcon, setShowInfoIcon] = useState(null);
   const [variant, setVariant] = useState(null);
-  // const modalRef = useRef();
-  console.log('1');
+
   const handleCheckboxChange = () => {
     setIsChecked((prevState) => !prevState);
   };

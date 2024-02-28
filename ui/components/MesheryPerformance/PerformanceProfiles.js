@@ -207,17 +207,15 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   }
 
   async function showModal(count) {
-    if (modalRef.current) {
-      let response = await modalRef.current.show({
-        title: `Delete ${count ? count : ''} Performance Profile${count > 1 ? 's' : ''}?`,
-        subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
-          count ? count : ''
-        } performance profile${count > 1 ? 's' : ''}?`,
-        variant: PROMPT_VARIANTS.DANGER,
-        options: ['Yes', 'No'],
-      });
-      return response;
-    }
+    let response = await modalRef.current.show({
+      title: `Delete ${count ? count : ''} Performance Profile${count > 1 ? 's' : ''}?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
+        count ? count : ''
+      } performance profile${count > 1 ? 's' : ''}?`,
+      variant: PROMPT_VARIANTS.DANGER,
+      options: ['Yes', 'No'],
+    });
+    return response;
   }
 
   function deleteProfile(id) {

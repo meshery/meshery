@@ -380,16 +380,15 @@ const Workspaces = ({ organization, classes }) => {
 
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
     e.stopPropagation();
-    if (ref.current) {
-      let response = await ref.current.show({
-        title: `Delete workspace ?`,
-        subtitle: deleteWorkspaceModalContent(workspace.name),
-        options: ['DELETE', 'CANCEL'],
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (response === 'DELETE') {
-        handleDeleteWorkspace(workspace.id, workspace.name);
-      }
+
+    let response = await ref.current.show({
+      title: `Delete workspace ?`,
+      subtitle: deleteWorkspaceModalContent(workspace.name),
+      options: ['DELETE', 'CANCEL'],
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      handleDeleteWorkspace(workspace.id, workspace.name);
     }
   };
 
