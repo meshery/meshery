@@ -133,6 +133,9 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
     setIsLoading(true);
     dispatch(updateProgress({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
+    // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
+    // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
+    // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
     const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe({
       next: () => {
         setIsLoading(false);

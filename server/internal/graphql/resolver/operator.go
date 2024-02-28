@@ -14,6 +14,13 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
+/**
+	Contains resolvers for,
+	1. Performing the synthetic test for the Operator and its controllers and returns their latest status.
+	
+	[Deprecated, the connection states should be used to control the behaviour [Connected/Disconnected]]
+	2. Invoking action on the Operator (Provisoning/Deprovisioning)
+**/
 type operatorStatusK8sContext struct {
 	ctxID      string
 	processing interface{}
@@ -256,105 +263,3 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	status.ConnectionID = connectionID
 	return &status, nil
 }
-
-// func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
-// 	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
-
-// 	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-// 	if !ok || len(k8sctxs) == 0 {
-// 		return nil, ErrNilClient
-// 	}
-// 	var k8sContexts []models.K8sContext
-// 	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
-// 		k8sContexts = k8sctxs
-// 	} else if len(k8scontextIDs) != 0 {
-// 		var k8sContextIDsMap = make(map[string]bool)
-// 		for _, k8sContext := range k8scontextIDs {
-// 			k8sContextIDsMap[k8sContext] = true
-// 		}
-// 		for _, k8Context := range k8sctxs {
-// 			if k8sContextIDsMap[k8Context.ID] {
-// 				k8sContexts = append(k8sContexts, k8Context)
-// 			}
-// 		}
-// 	}
-// 	var group sync.WaitGroup
-// 	for _, k8scontext := range k8sContexts {
-// 		group.Add(1)
-// 		go func(k8scontext models.K8sContext) {
-// 			defer group.Done()
-// 			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
-// 			r.Broadcast.Register(operatorSyncChannel)
-// 			r.Log.Info("Operator subscription started for ", k8scontext.Name)
-
-// 			// Enforce enable operator
-// 			status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
-// 			if err != nil {
-// 				r.Log.Error(ErrOperatorSubscription(err))
-// 				return
-// 			}
-// 			statusWithContext := model.OperatorStatusPerK8sContext{
-// 				ContextID:      k8scontext.ID,
-// 				OperatorStatus: status,
-// 			}
-// 			operatorChannel <- &statusWithContext
-// 			err = r.connectToBroker(ctx, provider, k8scontext.ID)
-// 			if err != nil && err != ErrNoMeshSync {
-// 				r.Log.Error(err)
-// 				// The subscription should remain live to send future messages and only die when context is done
-// 				// return
-// 			}
-// 			for {
-// 				select {
-// 				case processing := <-operatorSyncChannel:
-// 					if processing.Source == broadcast.OperatorSyncChannel {
-// 						r.Log.Info("Operator sync channel called for ", k8scontext.Name)
-// 						status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
-// 						if err != nil {
-// 							r.Log.Error(ErrOperatorSubscription(err))
-// 							return
-// 						}
-// 						switch processing.Data.(type) {
-// 						case operatorStatusK8sContext:
-// 							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
-// 								continue
-// 							}
-// 							switch processing.Data.(operatorStatusK8sContext).processing.(type) {
-// 							case bool:
-// 								if processing.Data.(operatorStatusK8sContext).processing.(bool) {
-// 									status.Status = model.StatusProcessing
-// 								}
-// 							case *errors.Error:
-// 								status.Error = &model.Error{
-// 									Code:        "",
-// 									Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
-// 								}
-// 							case error:
-// 								status.Error = &model.Error{
-// 									Code:        "",
-// 									Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
-// 								}
-// 							}
-// 						}
-// 						statusWithContext := model.OperatorStatusPerK8sContext{
-// 							ContextID:      k8scontext.ID,
-// 							OperatorStatus: status,
-// 						}
-// 						operatorChannel <- &statusWithContext
-// 					}
-// 				case <-ctx.Done():
-// 					r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
-// 					r.Broadcast.Unregister(operatorSyncChannel)
-// 					close(operatorSyncChannel)
-
-// 					return
-// 				}
-// 			}
-// 		}(k8scontext)
-// 	}
-// 	go func() {
-// 		group.Wait()
-// 		close(operatorChannel)
-// 	}()
-// 	return operatorChannel, nil
-// }
