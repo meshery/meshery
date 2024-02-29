@@ -24,26 +24,25 @@ const designs = api
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
-      addPatterns: builder.mutation({
+      publishPattern: builder.mutation({
         query: (queryArg) => ({
           url: `pattern/catalog/publish`,
           credentials: 'include',
           method: 'POST',
           body: queryArg.patternPayload,
         }),
-        //provides or invalidates any tags?
       }),
 
-      removePatterns: builder.mutation({
+      unpublishPattern: builder.mutation({
         query: (queryArg) => ({
           url: `pattern/catalog/unpublish`,
           credentials: 'include',
           method: 'DELETE',
           body: queryArg.patternPayload,
         }),
-        //provides or invalidates any tags?
       }),
     }),
   });
 
-export const { useGetPatternsQuery, useAddPatternsMutation, useRemovePatternsMutation } = designs;
+export const { useGetPatternsQuery, usePublishPatternMutation, useUnpublishPatternMutation } =
+  designs;
