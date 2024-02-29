@@ -20,7 +20,6 @@ import {
 } from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-// import dataFetch from '../../../../lib/data-fetch';
 import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
@@ -205,7 +204,6 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
-  // const [existingCredentials, setExistingCredentials] = useState([]);
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = useState(null);
@@ -216,26 +214,10 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   const [connectionRegister] = useRegisterConnectionMutation();
   const { data: credentialsData } = useGetcredentialsQuery();
   const existingCredentials = credentialsData?.credentials || [];
-  // useEffect(() => {
-  //   getchExistingCredential();
-  // }, []);
 
   useEffect(() => {
     CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
   }, [sharedData.kind]);
-
-  // const getchExistingCredential = () => {
-  //   dataFetch(
-  //     '/api/integrations/credentials',
-  //     {
-  //       method: 'GET',
-  //       credentials: 'include',
-  //     },
-  //     (result) => {
-  //       setExistingCredentials(result?.credentials);
-  //     },
-  //   );
-  // };
 
   const verifyConnection = () => {
     let credential = {};
