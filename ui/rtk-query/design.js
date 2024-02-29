@@ -41,8 +41,31 @@ const designs = api
           body: queryArg.patternPayload,
         }),
       }),
+
+      //   deployPattern: builder.mutation({
+      //     query: (queryArg) => ({
+      //       url: queryArg.url,
+      //       credentials: 'include',
+      //       method: 'POST',
+      //       body:
+      //   })
+      // })
+      //
+
+      undeployPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: queryArg.url,
+          credentials: 'include',
+          method: 'DELETE',
+          body: queryArg.patternPayload,
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery, usePublishPatternMutation, useUnpublishPatternMutation } =
-  designs;
+export const {
+  useGetPatternsQuery,
+  usePublishPatternMutation,
+  useUnpublishPatternMutation,
+  useUndeployPatternMutation,
+} = designs;

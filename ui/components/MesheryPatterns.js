@@ -81,7 +81,11 @@ import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
-import { usePublishPatternMutation, useUnpublishPatternMutation } from '@/rtk-query/design';
+import {
+  usePublishPatternMutation,
+  useUnpublishPatternMutation,
+  useUndeployPatternMutation,
+} from '@/rtk-query/design';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -424,6 +428,7 @@ function MesheryPatterns({
 
   const [publishPattern] = usePublishPatternMutation();
   const [unPublishPattern] = useUnpublishPatternMutation();
+  const [undeployPattern] = useUndeployPatternMutation();
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
@@ -812,89 +817,6 @@ function MesheryPatterns({
     }
   };
 
-  const handlePublishModalClose = () => {
-    setPublishModal({
-      open: false,
-      pattern: {},
-      name: '',
-    });
-  };
-
-  const handleDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design Deployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
-  };
-
-  const handleVerify = (e, pattern_file, pattern_id) => {
-    e.stopPropagation();
-    const validationPayloads = generateValidatePayload(pattern_file, workloadTraitSet);
-    console.log(validationPayloads);
-    if (validationPayloads.err) {
-      handleError(validationPayloads.err);
-    }
-    dataFetch(
-      '/api/meshmodel/validate',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({ validationItems: validationPayloads }),
-      },
-      (res) => {
-        let errors = [];
-        const keys = Object.keys(res.result);
-        keys.forEach((key) => {
-          const error = res.result[key];
-          if (!error.isValid) {
-            errors = errors.concat({ service: key, errors: error.errors });
-          }
-        });
-        setPatternErrors((prevErrors) => new Map([...prevErrors, [pattern_id, errors]]));
-        handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
-      },
-      handleError('Error validating pattern'),
-    );
-  };
-
-  const handleUnDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'DELETE',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design undeployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
-    );
-  };
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
@@ -938,6 +860,119 @@ function MesheryPatterns({
           details: err.toString(),
         });
       });
+  };
+
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open: false,
+      pattern: {},
+      name: '',
+    });
+  };
+
+  const handleDeploy = (pattern_file, pattern_id, name) => {
+    updateProgress({ showProgress: true });
+    //TODO: /pattern/deploy
+
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      {
+        credentials: 'include',
+        method: 'POST',
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
+      },
+      () => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" Design Deployed`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      },
+      handleError(ACTION_TYPES.DEPLOY_PATTERN),
+    );
+  };
+
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
+    updateProgress({ showProgress: true });
+
+    undeployPattern({
+      //NOTE: needed to hardcode 'pattern/deploy' route here since for some reason I kept getting errors because
+      //the resulting URL would be '/api/api/pattern/deploy', not sure if rtk-query already adds the /api endpoint
+      //to the crxUrl path. Let me know if there's another work around here.
+      url: ctxUrl('/pattern/deploy', selectedK8sContexts),
+      patternPayload: {
+        pattern_file: pattern_file,
+        pattern_id: pattern_id,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" Design undeployed`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UNDEPLOY_PATTERN.error_msg}: ${err.error}`,
+          eventType: EVENT_TYPES.ERROR,
+        });
+      });
+
+    // Previous implementation:
+    // dataFetch(
+    //   ctxUrl(DEPLOY_URL, selectedK8sContexts),
+    //   {
+    //     credentials: 'include',
+    //     method: 'DELETE',
+    //     body: JSON.stringify({
+    //       pattern_file: pattern_file,
+    //       pattern_id: pattern_id,
+    //     }),
+    //   },
+    //   () => {
+    //     updateProgress({ showProgress: false });
+    //     notify({
+    //       message: `"${name}" Design undeployed`,
+    //       event_type: EVENT_TYPES.SUCCESS,
+    //     });
+    //   },
+    //   handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
+    // );
+  };
+
+  const handleVerify = (e, pattern_file, pattern_id) => {
+    e.stopPropagation();
+    const validationPayloads = generateValidatePayload(pattern_file, workloadTraitSet);
+    console.log(validationPayloads);
+    if (validationPayloads.err) {
+      handleError(validationPayloads.err);
+    }
+    dataFetch(
+      '/api/meshmodel/validate',
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({ validationItems: validationPayloads }),
+      },
+      (res) => {
+        let errors = [];
+        const keys = Object.keys(res.result);
+        keys.forEach((key) => {
+          const error = res.result[key];
+          if (!error.isValid) {
+            errors = errors.concat({ service: key, errors: error.errors });
+          }
+        });
+        setPatternErrors((prevErrors) => new Map([...prevErrors, [pattern_id, errors]]));
+        handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
+      },
+      handleError('Error validating pattern'),
+    );
   };
 
   function handleClone(patternID, name) {
