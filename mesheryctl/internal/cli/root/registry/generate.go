@@ -238,6 +238,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// If model is published mark the comps as published.
 				// The published attribute controls whether the comp will be registered inside registry or not.
 				comp.Metadata["published"] = isModelPublished
+				comp.Model = *modelDef
 				err := comp.WriteComponentDefinition(compDirName)
 				if err != nil {
 					utils.Log.Info(err)
