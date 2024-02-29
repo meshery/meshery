@@ -84,6 +84,7 @@ import UniversalFilter from '../utils/custom-filter';
 import {
   usePublishPatternMutation,
   useUnpublishPatternMutation,
+  useDeployPatternMutation,
   useUndeployPatternMutation,
 } from '@/rtk-query/design';
 
@@ -368,7 +369,6 @@ function MesheryPatterns({
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
-  const DEPLOY_URL = `${PATTERN_URL}/deploy`;
   const CLONE_URL = '/clone';
   const [modalOpen, setModalOpen] = useState({
     open: false,
@@ -428,6 +428,7 @@ function MesheryPatterns({
 
   const [publishPattern] = usePublishPatternMutation();
   const [unPublishPattern] = useUnpublishPatternMutation();
+  const [deployPattern] = useDeployPatternMutation();
   const [undeployPattern] = useUndeployPatternMutation();
 
   const ACTION_TYPES = {
@@ -872,36 +873,38 @@ function MesheryPatterns({
 
   const handleDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
-    //TODO: /pattern/deploy
 
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
+    //NOTE: needed to hardcode 'pattern/deploy' route here since for some reason I kept getting errors because
+    //the resulting URL would be '/api/api/pattern/deploy', not sure if rtk-query already adds the /api endpoint
+    //to the ctxUrl path. Let me know if there's another work around here.
+    deployPattern({
+      url: ctxUrl('/pattern/deploy', selectedK8sContexts),
+      patternPayload: {
+        pattern_file: pattern_file,
+        pattern_id: pattern_id,
       },
-      () => {
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" Design Deployed`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.DEPLOY_PATTERN.error_msg}: ${err.error}`,
+          eventType: EVENT_TYPES.ERROR,
+        });
+      });
   };
 
   const handleUnDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
 
     undeployPattern({
-      //NOTE: needed to hardcode 'pattern/deploy' route here since for some reason I kept getting errors because
-      //the resulting URL would be '/api/api/pattern/deploy', not sure if rtk-query already adds the /api endpoint
-      //to the crxUrl path. Let me know if there's another work around here.
+      //NOTE: Same thing as for 'deployPattern'
       url: ctxUrl('/pattern/deploy', selectedK8sContexts),
       patternPayload: {
         pattern_file: pattern_file,
