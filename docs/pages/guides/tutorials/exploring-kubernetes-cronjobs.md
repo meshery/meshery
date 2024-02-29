@@ -103,7 +103,7 @@ To view the resources created for the CronJob, we will utilize the Visualize tab
    1. Ensure that you are on the Visualize tab, located at the top center of the canvas.
    2. Give the view a name.
    3. Click on the filter icon.
-   4. Choose appropriate filters; for this lab, select the label that was set earlier during the CronJob creation, i.e., 'CronJob'.
+   4. Choose appropriate filters; for this lab, select the kind item that was set earlier during the CronJob creation, i.e., 'CronJob'.
    5. Click the filter icon again to close. This action should display a filtered view with only your resources, similar to the screenshot below:
    [![Vizualize CronJob]({{site.baseurl}}/assets/img/meshmap/view.png)]({{site.baseurl}}/assets/img/meshmap/view.png)
 
@@ -119,31 +119,21 @@ Show user how to use Views and filters in MeshMap Visualizer.
    - Explore how to scale the CronJob or update its schedule by modifying the CronJob configuration.
 
    1. Return to the  Designer tab
-   
-
    2. Select the CronJob Design:
         Choose the design that contains the CronJob you want to scale from the list of existing designs.
-
    3. Locate the CronJob Component:
         Within the design canvas, identify the representation of the CronJob you wish to scale. It should be labeled as "CronJob" or have a specific icon associated with CronJobs.
-
+        [![Vizualize CronJob]({{site.baseurl}}/assets/img/meshmap/design-cronjob.png)]({{site.baseurl}}/assets/img/meshmap/design-cronjob.png)
    4.  Select the CronJob Component:
-        Click on the CronJob component to select it..
-
-   5. Access CronJob Scaling Settings:
-        Click to access the settings panel or properties inspector where CronJob-specific settings are displayed. You should find options for scaling the CronJob.
-
+        Click on the CronJob component to open the toolbar..
+   5. Continue to configure your cronjob with your preffered specifications that match your desired scaling options.
    6. Adjust the Number of Replicas or Parallelism:
-        Within the settings panel, locate the field related to the number of replicas or parallelism for the CronJob. Adjust this value to scale the CronJob up or down according to your requirements.
+        Within the toolbar, locate the field related to the number of replicas or parallelism for the CronJob. Adjust this value to scale the CronJob up or down according to your requirements.
+        [![Vizualize CronJob]({{site.baseurl}}/assets/img/meshmap/scale.png)]({{site.baseurl}}/assets/img/meshmap/scale.png)
 
-   7. Apply Changes:
-        Once you've adjusted the scaling settings, apply the changes within the settings panel to update the CronJob configuration.
-
-    Preview Changes:
-        Observe how the modifications affect the representation of the CronJob within the MeshMap Designer canvas. Ensure that the changes align with your intentions visually.
-
-   8.    Save Changes:
+   7.  Save Changes:
         After verifying the adjustments, save the changes made to the CronJob settings within the MeshMap Designer interface to ensure they are retained for future reference.
+        [![Save CronJob]({{site.baseurl}}/assets/img/meshmap/save.png)]({{site.baseurl}}/assets/img/meshmap/save.png)
 <!-- 
 
 Show user how to use Designs and components in MeshMap Designer.
@@ -156,28 +146,13 @@ Use Meshery Playground to visualize the changes and observe the impact on the sc
    - Delete the CronJob and application resources after completing the lab.
 
 1. Identify the CronJob Component:
-
     Within the design canvas, find the representation of the CronJob you wish to delete. It should be labeled as "CronJob" or have a specific icon associated with CronJobs.
-
 2. Select the CronJob Component:
-
-    Click on the CronJob component to select it. This action will enable access to settings and options specific to the selected CronJob.
-
-3. Delete the CronJob:
-
-    Look for an option or button within the settings panel or properties inspector to delete the CronJob. Confirm the deletion when prompted.
-
-4. Delete Associated Application Resources:
-
-    Additionally, delete any associated application resources such as Pods, Services, or ConfigMaps that were created alongside the CronJob. You can do this by selecting each resource and deleting them individually.
-
-5. Confirm Deletion:
-
-    Ensure to confirm the deletion of each resource when prompted. This action will remove the resources from the Kubernetes cluster.
-
-6. Save Changes:
-
-    After deleting the CronJob and associated application resources, save the changes made within the MeshMap Designer interface to reflect the cleanup.
+    Click on the CronJob component to open the tooltip. This action will enable access to the delete icon. Click to delete the CronJob.
+    [![Save CronJob]({{site.baseurl}}/assets/img/meshmap/delete.png)]({{site.baseurl}}/assets/img/meshmap/delete.png)
+3. Save Changes:
+    After deleting the CronJob, save the changes made within the MeshMap Designer interface to reflect the cleanup.
+    [![Save CronJob]({{site.baseurl}}/assets/img/meshmap/save-app.png)]({{site.baseurl}}/assets/img/meshmap/save-app.png)
 <!-- 
 
 Show user how to use Designs and components in MeshMap Designer.
