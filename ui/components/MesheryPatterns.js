@@ -81,7 +81,7 @@ import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
-import { useAddPatternsMutation, useRemovePatternsMutation } from '@/rtk-query/design';
+import { usePublishPatternMutation, useUnpublishPatternMutation } from '@/rtk-query/design';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -422,8 +422,8 @@ function MesheryPatterns({
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
-  const [addPatterns] = useAddPatternsMutation();
-  const [removePatterns] = useRemovePatternsMutation();
+  const [publishPattern] = usePublishPatternMutation();
+  const [unPublishPattern] = useUnpublishPatternMutation();
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
@@ -789,7 +789,7 @@ function MesheryPatterns({
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
 
-          removePatterns({
+          unPublishPattern({
             patternPayload: JSON.stringify({ id: pattern?.id }),
           })
             .unwrap()
@@ -808,20 +808,6 @@ function MesheryPatterns({
               });
             });
         }
-
-        //TODO: CR-delete Previous implementation
-        // dataFetch(
-        //   `/api/pattern/catalog/unpublish`,
-        //   { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
-        //   () => {
-        //     updateProgress({ showProgress: false });
-        //     notify({
-        //       message: `Design Unpublished`,
-        //       event_type: EVENT_TYPES.SUCCESS,
-        //     });
-        //   },
-        //   handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-        // );
       };
     }
   };
@@ -926,7 +912,7 @@ function MesheryPatterns({
     };
     updateProgress({ showProgress: true });
 
-    addPatterns({
+    publishPattern({
       patternPayload: JSON.stringify(payload),
     })
       .unwrap()
@@ -952,28 +938,6 @@ function MesheryPatterns({
           details: err.toString(),
         });
       });
-
-    //TODO: CR - Delete previous implementation:
-    // dataFetch(
-    //   `/api/pattern/catalog/publish`,
-    //   { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-    //   () => {
-    //     updateProgress({ showProgress: false });
-    //     if (user.role_names.includes('admin')) {
-    //       notify({
-    //         message: `${publishModal.pattern?.name} Design Published`,
-    //         event_type: EVENT_TYPES.SUCCESS,
-    //       });
-    //     } else {
-    //       notify({
-    //         message:
-    //           'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
-    //         event_type: EVENT_TYPES.SUCCESS,
-    //       });
-    //     }
-    //   },
-    //   handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    // );
   };
 
   function handleClone(patternID, name) {
