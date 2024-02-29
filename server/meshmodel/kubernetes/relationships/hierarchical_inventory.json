@@ -1438,6 +1438,117 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from":[
+          {
+            "kind": "RuntimeClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "RuntimeClass in Kubernetes specifies different runtime configurations for Pods, allowing for flexibility in choosing container runtimes and customizing runtime behavior of Pods based on workload requirements."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "runtimeClassName"]
+              ],
+              "description": "Pods inherit the name of RuntimeClass. RuntimeClass defines the runtime configuration that the Pod should adhere to, allowing Kubernetes controllers to schedule the Pod on nodes that support the specified runtime."
+            }
+          },
+          {
+            "kind": "PodTemplate",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "spec", "runtimeClassName"]
+              ],
+              "description": "A PodTemplate in Kubernetes can specify a RuntimeClass for its pods, ensuring that the pods created from the PodTemplate adhere to the specified runtime configuration."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "Deployments in Kubernetes can specify a RuntimeClass, ensuring Pods created by the Deployment adhere to the specified runtime configuration."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "StatefulSets manage stateful applications. The RuntimeClass specifies the runtime configuration for the containers within the StatefulSet-managed Pods."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "DaemonSets ensure all nodes run a copy of a Pod. The RuntimeClass specifies the runtime configuration for the DaemonSet-managed Pods, allowing control over the container runtime used across all nodes in the cluster for specific workload requirements."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "ReplicaSets inherit RuntimeClass from Pod templates, ensuring the RuntimeClass specifies the runtime configuration used by individual Pods maintained by the ReplicaSet."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "A Job in Kubernetes inherits the name of the RuntimeClass. RuntimeClass ensures the appropriate runtime environment for executing the job's tasks."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "jobTemplate", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "CronJobs in Kubernetes manage the scheduling of job execution, the RuntimeClass ensures that the Pods adhere to specific runtime requirements while executing scheduled jobs."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
     }
   ]
 }
