@@ -83,20 +83,15 @@ Show user how to do this using MeshMap Designer to drag and drop components and 
 6. Using the search bar, enter "Cron Job" and click on the corresponding icon to display it on the canvas.
 [![Navigate MeshMap]({{site.baseurl}}/assets/img/meshmap/select-cronjob.png)]({{site.baseurl}}/assets/img/meshmap/select-cronjob.png)
 7. Once the cronjob component appears on the canvas, click on it to open the toolbar and begin configuration.
-[![CronJob Toolbar]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)
+[![CronJob Toolbar]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)]({{site.baseurl}}/assets/img/meshmap/tool-bar-pop-up.png)
 8. Fill out the details for the CronJob i.e Name field: "backup-cronjob". Under **Spec**, enter the specifications, i.e schedule: "0 * * * *" to run every hour.
-    
-   
-<details>
-<summary>
-Alternate: Command line instructions
-</summary>
+[![CronJob Toolbar]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)
 
-</details>
-
-9. Click on the deploy icon located in the top right corner.
-10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button. You'll receive a confirmation message indicating that your app has been successfully deployed.
+9. Click on the **Action** drop down menu located in the top right corner, click on **Deploy**
 [![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy.png)
+10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button.
+[![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy-app.png)
+11. You'll receive a confirmation message indicating that your app has been successfully deployed.
 
 #### 4. **Verifying CronJob Execution:**
    - Monitor the execution of the CronJob and verify that backups are created at the specified intervals.
