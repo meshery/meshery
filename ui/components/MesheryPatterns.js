@@ -922,27 +922,6 @@ function MesheryPatterns({
           eventType: EVENT_TYPES.ERROR,
         });
       });
-
-    // Previous implementation:
-    // dataFetch(
-    //   ctxUrl(DEPLOY_URL, selectedK8sContexts),
-    //   {
-    //     credentials: 'include',
-    //     method: 'DELETE',
-    //     body: JSON.stringify({
-    //       pattern_file: pattern_file,
-    //       pattern_id: pattern_id,
-    //     }),
-    //   },
-    //   () => {
-    //     updateProgress({ showProgress: false });
-    //     notify({
-    //       message: `"${name}" Design undeployed`,
-    //       event_type: EVENT_TYPES.SUCCESS,
-    //     });
-    //   },
-    //   handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
-    // );
   };
 
   const handleVerify = (e, pattern_file, pattern_id) => {
