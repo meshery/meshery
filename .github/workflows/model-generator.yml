@@ -34,6 +34,10 @@ jobs:
         with:
           name: generate-logs
           path: ~/.meshery/logs/
+      - name: Fetch remote master and rebase with master
+        run: |
+          git fetch origin master
+          git rebase origin/master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -84,6 +88,10 @@ jobs:
         run: |
           cd mesheryctl;
           ./mesheryctl registry update -i ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+      - name: Fetch remote master and rebase with master
+        run: |
+          git fetch origin master
+          git rebase origin/master    
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
