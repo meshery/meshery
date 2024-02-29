@@ -87,7 +87,14 @@ Show user how to do this using MeshMap Designer to drag and drop components and 
 8. Fill out the details for the CronJob i.e Name field: "backup-cronjob". Under **Spec**, enter the specifications, i.e schedule: "0 * * * *" to run every hour.
 [![CronJob Toolbar]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)]({{site.baseurl}}/assets/img/meshmap/tool-bar.png)
 
+<<<<<<< HEAD
 9. Click on the **Action** drop down menu located in the top right corner, click on **Deploy**
+=======
+</details>
+
+9. Click on the deploy icon located in the top right corner.
+10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button. You'll receive a confirmation message indicating that your app has been successfully deployed.
+>>>>>>> e62ee6b8de856da64a43badf18ccf5990c0b69ab
 [![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy.png)
 10. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button.
 [![Deploy CronJob]({{site.baseurl}}/assets/img/meshmap/deploy.png)]({{site.baseurl}}/assets/img/meshmap/deploy-app.png)
