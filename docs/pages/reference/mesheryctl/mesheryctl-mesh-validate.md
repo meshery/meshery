@@ -12,11 +12,11 @@ subcommand: validate
 
 # mesheryctl mesh validate
 
-Validate conformance to cloud native standards
+Validate conformance to predefined standards
 
 ## Synopsis
 
-Validate cloud native conformance to different standard specifications
+Validate predefined conformance to different standard specifications
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh validate [flags]
@@ -26,7 +26,7 @@ mesheryctl mesh validate [flags]
 
 ## Examples
 
-Validate conformance to cloud native standards
+Validate conformance to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
@@ -34,7 +34,7 @@ mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath
 </div>
 </pre> 
 
-Validate Istio to cloud native standards
+Validate Istio to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh validate istio --adapter meshery-istio --spec smi

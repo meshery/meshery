@@ -16,7 +16,7 @@ Cloud Native Lifecycle Management
 
 ## Synopsis
 
-Provisioning, configuration, and on-going operational management of infrastructure.
+Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	
 ## Options
 

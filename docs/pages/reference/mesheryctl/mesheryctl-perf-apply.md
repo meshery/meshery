@@ -151,7 +151,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
   -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification
   -h, --help                         help for apply
       --load-generator string        (optional) Load-Generator to be used (fortio/wrk2/nighthawk)
-      --mesh string                  (optional) Name of the Infrastructure
+      --mesh string                  (optional) Name of the infrastructure
       --name string                  (optional) Name of the Test
       --options string               (optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json
       --qps string                   (optional) Queries per second

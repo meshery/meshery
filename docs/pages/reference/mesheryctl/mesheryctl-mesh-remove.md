@@ -12,11 +12,11 @@ subcommand: remove
 
 # mesheryctl mesh remove
 
-remove a infrastructure in the kubernetes cluster
+remove cloud and cloud native infrastructure
 
 ## Synopsis
 
-remove infrastructure in the connected kubernetes cluster
+remove cloud and cloud native infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh remove [flags]
@@ -26,7 +26,7 @@ mesheryctl mesh remove [flags]
 
 ## Examples
 
-Remove a infrastructure
+Remove Linkerd deployment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh remove linkerd
@@ -34,7 +34,7 @@ mesheryctl mesh remove linkerd
 </div>
 </pre> 
 
-Remove a infrastructure under a specific namespace(linkerd-ns)
+Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh remove linkerd --namespace linkerd-ns

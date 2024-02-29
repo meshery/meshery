@@ -16,7 +16,7 @@ Deploy infrastructure to the Kubernetes cluster
 
 ## Synopsis
 
-Deploy a infrastructure to the connected Kubernetes cluster
+Deploy infrastructure to the connected Kubernetes cluster
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy [flags]
@@ -34,7 +34,7 @@ mesheryctl mesh deploy
 </div>
 </pre> 
 
-Deploy a infrastructure
+Deploy infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy linkerd
