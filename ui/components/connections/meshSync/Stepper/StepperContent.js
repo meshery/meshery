@@ -20,10 +20,11 @@ import {
 } from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import dataFetch from '../../../../lib/data-fetch';
+// import dataFetch from '../../../../lib/data-fetch';
 import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
+import { useGetcredentialsQuery, useRegisterConnectionMutation } from '@/rtk-query/connection';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -35,19 +36,17 @@ const schema = selectCompSchema(
 );
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
+  const [connectionRegister] = useRegisterConnectionMutation();
 
   const registerConnection = (componentName) => {
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          kind: componentName,
-          status: 'initialize',
-        }),
-      },
-      (result) => {
+    connectionRegister({
+      body: JSON.stringify({
+        kind: componentName,
+        status: 'initialize',
+      }),
+    })
+      .unwrap()
+      .then((result) => {
         let schemaObj = {
           connection: JsonParse(result?.connection?.schema),
           credential: JsonParse(result?.credential?.schema),
@@ -60,8 +59,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
           kind: componentName.toLowerCase(),
         }));
         handleNext();
-      },
-    );
+      });
   };
 
   const handleCallback = () => {
@@ -207,7 +205,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
-  const [existingCredentials, setExistingCredentials] = useState([]);
+  // const [existingCredentials, setExistingCredentials] = useState([]);
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = useState(null);
@@ -215,26 +213,29 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   const [disableVerify, setDisableVerify] = useState(true);
   const [isSuccess, setIsSuccess] = React.useState(null);
   const formRef = React.createRef();
-  useEffect(() => {
-    getchExistingCredential();
-  }, []);
+  const [connectionRegister] = useRegisterConnectionMutation();
+  const { data: credentialsData } = useGetcredentialsQuery();
+  const existingCredentials = credentialsData?.credentials || [];
+  // useEffect(() => {
+  //   getchExistingCredential();
+  // }, []);
 
   useEffect(() => {
     CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
   }, [sharedData.kind]);
 
-  const getchExistingCredential = () => {
-    dataFetch(
-      '/api/integrations/credentials',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setExistingCredentials(result?.credentials);
-      },
-    );
-  };
+  // const getchExistingCredential = () => {
+  //   dataFetch(
+  //     '/api/integrations/credentials',
+  //     {
+  //       method: 'GET',
+  //       credentials: 'include',
+  //     },
+  //     (result) => {
+  //       setExistingCredentials(result?.credentials);
+  //     },
+  //   );
+  // };
 
   const verifyConnection = () => {
     let credential = {};
@@ -248,38 +249,36 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       credential.id = selectedCredential?.id;
     }
 
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          skip_credential_verification: skipCredentialVerification,
-          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.componentForm?.name, // This name is from the name field in schema
-          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
-          metadata: sharedData?.componentForm,
-          credential_secret: credential,
-          id: sharedData?.connection?.id,
-          status: 'register',
-        }),
-      },
-      (result) => {
-        if (result === '') {
-          setIsSuccess(true);
-          connectToConnection();
-        } else {
-          setIsSuccess(false);
-        }
-      },
-      (err) => {
-        if (err != '') {
-          console.error(err);
-          setIsSuccess(false);
-        }
-      },
-    );
+    connectionRegister({
+      body: JSON.stringify({
+        skip_credential_verification: skipCredentialVerification,
+        kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
+        name: sharedData?.componentForm?.name, // This name is from the name field in schema
+        type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
+        sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+        metadata: sharedData?.componentForm,
+        credential_secret: credential,
+        id: sharedData?.connection?.id,
+        status: 'register',
+      }),
+    })
+      .unwrap()
+      .then(
+        (result) => {
+          if (result === '') {
+            setIsSuccess(true);
+            connectToConnection();
+          } else {
+            setIsSuccess(false);
+          }
+        },
+        (err) => {
+          if (err != '') {
+            console.error(err);
+            setIsSuccess(false);
+          }
+        },
+      );
   };
 
   const connectToConnection = () => {
@@ -294,30 +293,26 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       credential.id = selectedCredential?.id;
     }
 
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.componentForm?.name, // This name is from the name field in schema
-          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
-          metadata: sharedData?.componentForm,
-          credential_secret: credential,
-          id: sharedData?.connection?.id,
-          status: 'connect',
-        }),
-      },
-      (result) => {
+    connectionRegister({
+      body: JSON.stringify({
+        kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
+        name: sharedData?.componentForm?.name, // This name is from the name field in schema
+        type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
+        sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+        metadata: sharedData?.componentForm,
+        credential_secret: credential,
+        id: sharedData?.connection?.id,
+        status: 'connect',
+      }),
+    })
+      .unwrap()
+      .then((result) => {
         if (result === '') {
           setIsSuccess(true);
         } else {
           setIsSuccess(false);
         }
-      },
-    );
+      });
   };
 
   const handleCallback = () => {
