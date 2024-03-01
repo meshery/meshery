@@ -303,7 +303,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 				continue
 			}
 			go func(connectionID string, brokerEventsChan chan *broker.Message) {
-				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
+				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(handler.MeshsyncChannel, resChan, r, 5*time.Second)
 				for event := range brokerEventsChan {
 					if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 						// TODO: Handle errors accordingly
