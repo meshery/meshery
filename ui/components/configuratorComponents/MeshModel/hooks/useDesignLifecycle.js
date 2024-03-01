@@ -5,9 +5,6 @@ import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import os from 'os';
-import path from 'path';
-import fs from 'fs/promises';
 
 export default function useDesignLifecycle() {
   const [designName, setDesignName] = useState('Unitled Design');
@@ -63,34 +60,28 @@ export default function useDesignLifecycle() {
 
   function onDelete() {}
 
-  async function designSave() {
-    try {
-      const tempFilePath = path.join(os.tmpdir(), 'design_temp.yaml');
-      await fs.writeFile(tempFilePath, designYaml); 
-  
-      // Send the temporary file in the request
-      const response = await promisifiedDataFetch('/api/pattern', {
-        body: JSON.stringify({
-          pattern_data: {
-            name: designName,
-            pattern_file: tempFilePath,
-          },
-          save: true,
-        }),
-        method: 'POST',
+  function designSave() {
+    promisifiedDataFetch('/api/pattern', {
+      body: JSON.stringify({
+        pattern_data: {
+          name: designName,
+          pattern_file: designYaml,
+        },
+        save: true,
+      }),
+      method: 'POST',
+    })
+      .then((data) => {
+        setDesignId(data[0].id);
+        notify({ message: `"${designName}" saved successfully`, event_type: EVENT_TYPES.SUCCESS });
+      })
+      .catch((err) => {
+        notify({
+          message: `failed to save design file`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
       });
-  
-      setDesignId(response[0].id);
-      notify({ message: `"${designName}" saved successfully`, event_type: EVENT_TYPES.SUCCESS });
-  
-      await fs.unlink(tempFilePath);
-    } catch (err) {
-      notify({
-        message: `Failed to save design file`,
-        event_type: EVENT_TYPES.ERROR,
-        details: err.toString(),
-      });
-    }
   }
 
   async function designUpdate() {
