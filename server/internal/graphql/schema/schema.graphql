@@ -75,7 +75,7 @@ enum MesheryControllerStatus {
   }
 
 type MesheryControllersStatusListItem {
-    contextId: String!
+    connectionID: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
     version: String!
@@ -84,7 +84,7 @@ type MesheryControllersStatusListItem {
 type MeshSyncEvent {
     type: String!
     object: Any!
-    contextId: String!
+    connectionID: String!
   }
 
 
@@ -274,31 +274,6 @@ input OperatorStatusInput {
   contextID: String!
 }
 
-type OperatorStatusPerK8sContext{
-  contextID: String!
-  operatorStatus: OperatorStatus!
-}
-type OperatorControllerStatusPerK8sContext{
-  contextID: String!
-  OperatorControllerStatus: OperatorControllerStatus!
-}
-# Status of Meshery Operator and its controllers
-type OperatorStatus {
-  # Status of Meshery Operator
-  status: Status!
-
-  # Verion of Meshery Operator
-  version: String!
-
-  # Details about various Controllers of Meshery Operator
-  controllers: [OperatorControllerStatus!]!
-
-  # Error Logs encountered by Meshery Operator
-  error: Error
-
-  contextID: String!
-}
-
 # Controllers of Meshery Operator
 type OperatorControllerStatus {
   # Controller Name
@@ -313,7 +288,7 @@ type OperatorControllerStatus {
   # Controller Error Log
   error: Error
 
-  contextID: String!
+  connectionID: String!
 
 }
 
@@ -595,7 +570,7 @@ type Query {
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
-        k8scontextID: String!
+        connectionID: String!
   ): MesheryControllersStatusListItem @KubernetesMiddleware
 
   # Query to resync the cluster discovery
@@ -677,11 +652,6 @@ type Mutation {
 }
 
 type Subscription {
-  # Listen to changes in status of Meshery Operator in your cluster
-  listenToOperatorState(
-    k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext @KubernetesMiddleware
-
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
@@ -690,13 +660,13 @@ type Subscription {
 
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
-    k8scontextIDs: [String!]
+    connectionIDs: [String!]
   ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
-    k8scontextIDs: [String!]
+    connectionIDs: [String!]
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 

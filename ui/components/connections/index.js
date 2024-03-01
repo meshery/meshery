@@ -1100,6 +1100,7 @@ function Connections(props) {
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = connections[index].metadata?.id;
+    const connectionID = connections[index]?.id;
     const variables = {
       status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
@@ -1117,14 +1118,18 @@ function Connections(props) {
         message: `Operator ${response.operatorStatus?.toLowerCase()}`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-
-      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
-        next: (res) => {
-          _setOperatorState(updateCtxInfo(contextId, res));
-          tempSubscription.unsubscribe();
+      // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
+      // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
+      // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
+      const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe(
+        {
+          next: (res) => {
+            _setOperatorState(updateCtxInfo(contextId, res));
+            tempSubscription.unsubscribe();
+          },
+          error: (err) => console.log('error at operator scan: ' + err),
         },
-        error: (err) => console.log('error at operator scan: ' + err),
-      });
+      );
     }, variables);
   };
 

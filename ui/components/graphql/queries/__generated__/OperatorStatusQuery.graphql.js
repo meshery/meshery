@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8db057b6a9f9bea598930f295bc40f58>>
+ * @generated SignedSource<<72371de5e888cd09251acd22c1310b50>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "k8scontextID"
+    "name": "connectionID"
   }
 ],
 v1 = [
@@ -22,8 +22,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "k8scontextID",
-        "variableName": "k8scontextID"
+        "name": "connectionID",
+        "variableName": "connectionID"
       }
     ],
     "concreteType": "MesheryControllersStatusListItem",
@@ -49,7 +49,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "contextId",
+        "name": "connectionID",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c130db726cf439ef5854c0e9055c6141",
+    "cacheID": "1edf459162cb7e0a916856a8bb8649e2",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusQuery",
     "operationKind": "query",
-    "text": "query OperatorStatusQuery(\n  $k8scontextID: String!\n) {\n  operator: getOperatorStatus(k8scontextID: $k8scontextID) {\n    status\n    controller\n    contextId\n  }\n}\n"
+    "text": "query OperatorStatusQuery(\n  $connectionID: String!\n) {\n  operator: getOperatorStatus(connectionID: $connectionID) {\n    status\n    controller\n    connectionID\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "f23b3f72594b73c2a5136019efc1b85a";
+node.hash = "519b77a47c22930c9d148d1e4f4011cb";
 
 module.exports = node;

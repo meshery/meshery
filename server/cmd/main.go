@@ -34,8 +34,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
-	"github.com/vmihailenco/taskq/v3"
-	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
 var (
@@ -157,11 +155,6 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
-	QueueFactory := memqueue.NewFactory()
-	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
-		Name: "loadTestReporterQueue",
-	})
-
 	provs := map[string]models.Provider{}
 
 	preferencePersister, err := models.NewMapPreferencePersister()
@@ -232,8 +225,6 @@ func main() {
 		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
 		AdapterTracker:         adapterTracker,
 		QueryTracker:           queryTracker,
-
-		Queue: mainQueue,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 

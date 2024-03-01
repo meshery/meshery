@@ -3,14 +3,14 @@ import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 export default function fetchMesheryOperatorStatus(variables) {
   const environment = createRelayEnvironment({});
-  const vars = { k8scontextID: variables.k8scontextID };
+  const vars = { connectionID: variables.connectionID };
 
   const OperatorStatusQueryNode = graphql`
-    query OperatorStatusQuery($k8scontextID: String!) {
-      operator: getOperatorStatus(k8scontextID: $k8scontextID) {
+    query OperatorStatusQuery($connectionID: String!) {
+      operator: getOperatorStatus(connectionID: $connectionID) {
         status
         controller
-        contextId
+        connectionID
       }
     }
   `;
