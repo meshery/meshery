@@ -41,7 +41,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 	}
 }
 
-func(mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {	
+func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
 	return mh.broker
 }
 

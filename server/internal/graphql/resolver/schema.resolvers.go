@@ -424,7 +424,7 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 	return nil, ErrInvalidRequest
 }
 
-func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan  chan struct{}, publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
+func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan chan struct{}, publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
 	type syncedProcessMap struct {
 		mu         sync.Mutex
@@ -466,7 +466,9 @@ func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan  chan struct{}, pub
 					publishChannel <- v
 					go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 					// instead send the MeshSync event itself and update the plugin to send out this particular event instead of again querying the database.
-					meshsyncChan <- struct{}{}
+					go func() {
+						meshsyncChan <- struct{}{}
+					}()
 					// delete the key once processed to collect new entries
 					delete(processMap.processMap, k)
 				}
