@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "argo-workflows",
-  "version": "0.40.11",
+  "version": "0.40.12",
   "displayName": "Argo Workflows",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
