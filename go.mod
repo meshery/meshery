@@ -22,7 +22,7 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
 	github.com/envoyproxy/go-control-plane v0.11.1
-	github.com/fatih/color v1.15.0
+	github.com/fatih/color v1.16.0
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.26.2
@@ -225,7 +225,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
