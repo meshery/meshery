@@ -115,7 +115,7 @@
         "set-value": "^4.0.1",
         "styled-jsx": "^5.1.2",
         "tar": "^6.1.15",
-        "universal-cookie": "^4.0.4",
+        "universal-cookie": "^7.1.0",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
