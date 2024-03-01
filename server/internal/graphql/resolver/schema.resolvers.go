@@ -303,7 +303,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 				continue
 			}
 			go func(connectionID string, brokerEventsChan chan *broker.Message) {
-				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
+				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(handler.MeshsyncChannel, resChan, r, 5*time.Second)
 				for event := range brokerEventsChan {
 					if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 						// TODO: Handle errors accordingly
@@ -423,7 +423,8 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 
 	return nil, ErrInvalidRequest
 }
-func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
+
+func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan  chan struct{}, publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
 	type syncedProcessMap struct {
 		mu         sync.Mutex
@@ -464,7 +465,8 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 				for k, v := range processMap.processMap {
 					publishChannel <- v
 					go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
-
+					// instead send the MeshSync event itself and update the plugin to send out this particular event instead of again querying the database.
+					meshsyncChan <- struct{}{}
 					// delete the key once processed to collect new entries
 					delete(processMap.processMap, k)
 				}
