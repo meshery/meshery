@@ -2,7 +2,7 @@
 
 ## About Meshery
 
-[Meshery](https://meshery.io/) is a cloud native management plane designed to facilitate the management, configuration, and performance testing of cloud native in cloud-native environments. 
+[Meshery](https://meshery.io/) is a self-service engineering platform, designed to manage the complete lifecycle of modern infrastructure.
 
 The project encompasses tools that can be utilized through a command-line interface, integrated into clusters, or incorporated into various other tools. It enables users to assess cloud native configurations during development, integration, and post-deployment phases.
 
