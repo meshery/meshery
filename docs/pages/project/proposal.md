@@ -6,17 +6,14 @@
 
 The project encompasses tools that can be utilized through a command-line interface, integrated into clusters, or incorporated into various other tools. It enables users to assess cloud native configurations during development, integration, and post-deployment phases.
 
-Meshery stands out for its commitment to providing a comprehensive approach to cloud native security, adopting and automating best practices. The project supports various cloud native frameworks, including Istio, Linkerd, and Consul.
-
 ## Meshery in the CNCF Sandbox
 
-Meshery entered the CNCF Sandbox on June 22, 2021, and has since undergone substantial enhancements and expansions:
+Since its entry into the CNCF Sandbox on June 22, 2021, Meshery has undergone significant enhancements and expansions. 
 
-* Inclusion of support for additional cloud native frameworks such as Envoy and Kuma.
-* Introduction of advanced traffic management features.
-* Integration with popular observability tools like Grafana and Jaeger.
+* Supports every CNCF project and public cloud services that have native resource / service integration with Kubernetes.
+* Introduction of advanced load generation and performance characterization features.
 * Enhanced support for multi-cluster and hybrid cloud environments.
-* Implementation of a robust extensibility framework for easy integration of new features and extensions.
+* Meshery has evolved into a full-blown self-service engineering platform with a robust extensibility framework for easy integration of new extensions whether they are backend adapters, frontend plugins, or separately hosted providers of additional functionality (e.g. identity providers).
 
 ### Community & Growth
 
@@ -24,56 +21,42 @@ Since joining the CNCF Sandbox, Meshery has experienced notable community growth
 
 * [Is the 10th fastest growing project in the CNCF](https://www.cncf.io/blog/2023/10/27/october-2023-where-we-are-with-velocity-of-cncf-lf-and-top-30-open-source-projects/).
 * Accumulated a total of 4,000 new GitHub stars
-* Created 8,000 [Pull Requests (PRs)](https://github.com/pulls?q=is%3Aissue+created%3A%3E%3D2021-06-21+org%3Ameshery), showcasing an active contributor community.
-* Addressed and resolved 2,600 [issues](https://github.com/issues?q=is%3Aissue+created%3A%3E%3D2021-06-21+org%3Ameshery+), ensuring ongoing project improvement.
-* Participated in mentoring initiatives, guiding hundreds students through the Linux Foundation (LFX) program.
+* Closed 9,000 [Pull Requests (PRs)](https://github.com/pulls?q=is%3Aissue+created%3A%3E%3D2021-06-21+org%3Ameshery), showcasing an active contributor community.
+* Addressed and resolved 3,000 [issues](https://github.com/issues?q=is%3Aissue+created%3A%3E%3D2021-06-21+org%3Ameshery+), ensuring ongoing project improvement.
+* Participated heavily in mentoring initiatives and is the #1 most popular LFX internship.
 
 ### Neutrality
 
-Meshery, committed to maintaining vendor neutrality, ensures its tools and services are accessible to users without bias. Any commercial services associated with Meshery are transparently presented and separated from the core project. Meshery places emphasis on fostering an open and inclusive ecosystem.
+Meshery, committed to maintaining vendor neutrality, ensuring a diverse collection of maintainers representing 10 different organizations. As an extensible platform, Meshery goes to great lengths to support third-party plugins, elevating them within its ecosystem of integrations. Meshery places emphasis on fostering an open and inclusive community of contributors, maintainers, and integrators. 
 
 ## Incubation stage requirements
 
 ### Used successfully in production by at least three independent direct adopters
 
-Meshery has demonstrated robust adoption with thousands of users leveraging its features directly or through integration with commercial solutions. Feedback from adopters and the broader community has been positive, validating its production-readiness.
+Meshery's non-exhaustive, public list of [adaptors](https://github.com/meshery/meshery/blob/master/ADOPTERS.md) is available for reference. With thousands of users already leveraging its features, Meshery has proven its production-readiness and garnered positive feedback from adopters and the broader community.
 
 ### Have a healthy number of committers
-
-Meshery boasts a diverse and active community of contributors, with 10 maintainers overseeing the [main repository](https://github.com/meshery/meshery/blob/main/MAINTAINERS.md) and [extension modules](https://github.com/meshery/meshery/blob/main/EXTENSIONS.md). Over the past year, [85 committers have had PRs merged](https://meshery.devstats.cncf.io/d/66/developer-activity-counts-by-companies?orgId=1&var-period_name=Last%20year&var-metric=merged_prs&var-repogroup_name=All&var-country_name=All&var-companies=All), and [280 contributors actively participated](https://meshery.devstats.cncf.io/d/66/developer-activity-counts-by-companies?orgId=1&var-period_name=Last%20year&var-metric=contributions&var-repogroup_name=All&var-country_name=All&var-companies=All).
+Meshery boasts a diverse and active community of maintainers, with [15 maintainers](https://github.com/meshery/meshery/blob/main/MAINTAINERS.md) overseeing the ~30 repositories included in the `meshery` GitHub organization.  and [extension modules](https://github.com/meshery/meshery/blob/main/EXTENSIONS.md). 
 
 ### Demonstrates a substantial ongoing flow of commits and merged contributions
 
-Meshery has maintained a consistent and active development pipeline, as evidenced by [1800 merged PRs](https://meshery.devstats.cncf.io/d/66/developer-activity-counts-by-companies?orgId=1&var-period_name=Last%20year&var-metric=merged_prs&var-repogroup_name=All&var-country_name=All&var-companies=All) over the past 12 months.
+Meshery is the 10th fastest growing CNCF project.
+
+Over the past year, over [300 committers have had PRs merged](https://meshery.devstats.cncf.io/d/66/developer-activity-counts-by-companies?orgId=1&var-period_name=Last%20year&var-metric=merged_prs&var-repogroup_name=All&var-country_name=All&var-companies=All), and [800 contributors actively participating](https://meshery.devstats.cncf.io/d/66/developer-activity-counts-by-companies?orgId=1&var-period_name=Last%20year&var-metric=contributions&var-repogroup_name=All&var-country_name=All&var-companies=All).
 
 ### Clear versioning scheme
 
-Meshery follows a clear and well-documented versioning scheme for its components:
-
-* [Meshery CLI and core services](https://github.com/meshery/meshery/releases)
-* [Meshery Adapters](https://github.com/meshery/adapters/releases)
-* [Meshery Operator](https://github.com/meshery/operator/releases)
-
-All components adhere to the principles of [semantic versioning](https://semver.org/).
+Meshery follows a clear and [well-documented](https://docs.meshery.io/project/contributing/build-and-release) build and release process. All components adhere to the principles of [semantic versioning](https://semver.org/). The project releases page documents [Meshery Server, UI, and CLI releases](https://docs.meshery.io/project/releases) with Meshery Adapters, Meshery Operator and custom controllers, centralized API schemas, and so on all releasing independently. See each repo for a release history.
 
 ### Clearly documented security processes explaining how to report security issues to the project, and describing how the project provides updated releases or patches to resolve security vulnerabilities
 
-Meshery employs the [GitHub security reporting process](https://github.com/meshery/meshery/blob/main/SECURITY.md), ensuring a swift response within 7 days for contact and 90 days for disclosure. The project adheres to a regular release schedule, with security patches integrated into the latest version.
+Meshery's [security reporting process](https://docs.meshery.io/project/security-vulnerabilities) is well-documented and has [previous and current CVEs](https://docs.meshery.io/project/security-vulnerabilities) published along with the reporting process and expectation setting of how reports are handled. This process is followed successfully with GitHub engineers being the most recent to report vulneraabilities and a Meshery maintainer (from Intel) to provide patches. Mainatiners strive to acknowledge reports within 24 hours of being received and offer an analysis and plan for a full response withing 10 days.
 
 ## Alignment with the CNCF Mission
 
-Meshery aligns closely with the CNCF mission by contributing to the security and efficiency of cloud-native computing. Focused solely on cloud native management, Meshery integrates seamlessly with various CNCF projects, including:
-
-* Istio: primary data source for Istio configurations
-* Envoy: supported cloud native framework
-* Prometheus: metrics and observability
-* Jaeger: distributed tracing
-* OpenTelemetry: telemetry data collection
-* Helm: installation and configuration
-
-Meshery's commitment to interoperability and collaboration makes it a valuable asset to the CNCF ecosystem.
+Meshery aligns closely with the CNCF mission by contributing to the security and efficiency of cloud-native computing. Focused solely on cloud native management, Meshery integrates deeply and seamlessly with _many_ CNCF projects. The full list of project integrations can be seen on https://meshery.io/integrations. Meshery's commitment to interoperability and collaboration is one of a number of reasons that it is a valuable asset to the CNCF ecosystem.
 
 ## Future plans
 
-Looking ahead to 2024, Meshery's roadmap includes the introduction of advanced features in network security and enhanced runtime/threat detection. These additions will be crafted through a combination of new developments and integration with best-of-breed open-source engines. Meshery remains dedicated to evolving as a key player in the cloud-native landscape, responding to user needs and industry trends.
+Looking ahead to 2024, Meshery's roadmap includes the introduction of advanced features in collaborative workflows of developer-defined infrasturcture and the engineering teams that operate this infrastructure. These additions will be crafted through a combination of new AI-centric developments, integration of workflow engine, and potential launch as the [CNCF's official project playground](https://docs.google.com/document/d/1Cr0MxlOxWq70d-BUisfKXF_VPGss0hK8XqRxy4xm4YE/edit#heading=h.58lqw93jp55u). Meshery remains dedicated to evolving as a key player in the cloud native landscape, responding to user needs and industry trends.
 
