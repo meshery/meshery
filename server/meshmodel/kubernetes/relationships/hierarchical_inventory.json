@@ -1438,6 +1438,117 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "RuntimeClass",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "RuntimeClass in Kubernetes is used to specify the runtime that should be used to run a Pod. RuntimeClass is used to select the container runtime and configure the runtime behavior of the Pod."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "runtimeClassName"]
+              ],
+              "description": "Pods in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pod."
+            }
+          },
+          {
+            "kind": "PodTemplate",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "spec", "runtimeClassName"]
+              ],
+              "description": "PodTemplates in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created from the PodTemplate."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "Deployments in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the Deployment."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "StatefulSets in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the StatefulSet."
+            }
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "DaemonSets in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the DaemonSet."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "ReplicaSets in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the ReplicaSet."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "Jobs in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the Job."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "jobTemplate", "spec", "template", "spec", "runtimeClassName"]
+              ],
+              "description": "CronJobs in Kubernetes can specify the RuntimeClass to select the container runtime and configure the runtime behavior of the Pods created by the CronJob."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
