@@ -1,6 +1,1 @@
-Test Name not provided
-Using random test name: smecgfkk
-Fetching performance profile
-http://localhost:9081/api/user/performance/profiles?pagesize=25&page=0&search=test
-Initiating Performance test ...
 Response Status Code 400, possibly Server error

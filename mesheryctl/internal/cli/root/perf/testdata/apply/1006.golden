@@ -1,6 +1,1 @@
-Test Name not provided
-Using random test name: gaxabnpm
-Fetching performance profile
-http://localhost:9081/api/user/performance/profiles?pagesize=25&page=0&search=new
-Creating new performance profile inside function
 Unable to get URL for performing test

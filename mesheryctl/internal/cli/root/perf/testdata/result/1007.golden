@@ -1,4 +1,3 @@
-http://localhost:9081/api/user/performance/profiles?pagesize=25&page=0&search=abhishek
 - mesh: istio
   meshery_id: 71fc9834-8968-4d61-bab6-689b013b5a34
   name: istio_1630091576784
