@@ -15,6 +15,7 @@
 package system
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -29,11 +30,17 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/manifoldco/promptui"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
+	"oras.land/oras-go/v2"
+	"oras.land/oras-go/v2/content/file"
+	"oras.land/oras-go/v2/registry/remote"
+	"oras.land/oras-go/v2/registry/remote/auth"
+	"oras.land/oras-go/v2/registry/remote/retry"
 )
 
 var (
@@ -47,6 +54,12 @@ var (
 
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+
+	username   string
+	password   string
+	registry   string
+	repository string
+	tag        string
 )
 
 // represents the mesheryctl exp model list subcommand.
@@ -413,6 +426,82 @@ mesheryctl exp model search [query-text]
 	},
 }
 
+// add command to push aritfacts to the oci registry
+var pushModelCmd = &cobra.Command{
+	Use:   "push",
+	Short: "push model",
+	Long:  "push a model to the registry",
+	Example: `
+// Push a model
+mesheryctl exp model push [path-to-model] --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]
+	`,
+	// skip preRunE as it is not required for this command
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
+
+		// path to model
+		modelPath := args[0]
+
+		// Push logic
+		fs, err := file.New(".")
+		if err != nil {
+			return err
+		}
+		ctx := context.Background()
+
+		mediaType := "application/vnd.test.folder"
+		fileNames := []string{modelPath}
+		fileDescriptors := make([]v1.Descriptor, 0)
+		for _, name := range fileNames {
+			fileDescriptor, err := fs.Add(ctx, name, mediaType, "")
+			if err != nil {
+				panic(err)
+			}
+			fileDescriptors = append(fileDescriptors, fileDescriptor)
+			fmt.Printf("file descriptor for %s: %v\n", name, fileDescriptor)
+		}
+		artifactType := "application/vnd.test.artifact"
+		opts := oras.PackManifestOptions{
+			Layers: fileDescriptors,
+		}
+		manifestDescriptor, err := oras.PackManifest(ctx, fs, oras.PackManifestVersion1_1_RC4, artifactType, opts)
+		if err != nil {
+			return err
+		}
+
+		tag := tag
+		if err = fs.Tag(ctx, manifestDescriptor, tag); err != nil {
+			return err
+		}
+
+		reg := registry
+		pathToFolder := fmt.Sprintf("%s/%s/%s", reg, username, repository)
+		repo, err := remote.NewRepository(pathToFolder)
+
+		if err != nil {
+			return err
+		}
+		repo.Client = &auth.Client{
+			Client: retry.DefaultClient,
+			Cache:  auth.NewCache(),
+			Credential: auth.StaticCredential(reg, auth.Credential{
+				Username: username,
+				Password: password,
+			}),
+		}
+
+		_, err = oras.Copy(ctx, fs, tag, repo, tag, oras.DefaultCopyOptions)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("Succeed")
+		return nil
+	},
+}
+
 // ModelCmd represents the mesheryctl exp model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
@@ -473,7 +562,12 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	pushModelCmd.Flags().StringVarP(&username, "username", "u", "", "Username for authentication")
+	pushModelCmd.Flags().StringVarP(&password, "password", "p", "", "Password for authentication")
+	pushModelCmd.Flags().StringVarP(&registry, "registry", "r", "", "Registry to push the model to")
+	pushModelCmd.Flags().StringVarP(&repository, "repository", "n", "", "Repository name to push the model to")
+	pushModelCmd.Flags().StringVarP(&tag, "tag", "t", "", "Tag for the model")
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, pushModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
