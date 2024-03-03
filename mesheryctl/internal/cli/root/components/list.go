@@ -41,8 +41,6 @@ var listComponentCmd = &cobra.Command{
 mesheryctl exp components list
 // View list of components with specified page number (25 components per page)
 mesheryctl exp components list --page 2
-// View Total number of components
-mesheryctl exp components list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites for the command here
