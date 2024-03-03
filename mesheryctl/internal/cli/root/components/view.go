@@ -126,6 +126,10 @@ mesheryctl exp components view [component-name]
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
+
+		if outFormatFlag != "json" && outFormatFlag != "yaml" {
+			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
+		}
 		// Get the home directory of the user to save the output file
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")

@@ -124,11 +124,6 @@ mesheryctl exp components list --count
 			return nil
 		}
 
-		if cmd.Flag("count").Value.String() == "true" {
-			fmt.Println("Total components: ", componentsResponse.Count)
-			return nil
-		}
-
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
@@ -146,6 +141,8 @@ mesheryctl exp components list --count
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
 				whiteBoardPrinter.Print("Total pages: ", len(rows)/maxRowsPerPage+1)
+				fmt.Println()
+				whiteBoardPrinter.Println("Press ↑/← or ↓/→ to navigate, Esc or Ctrl+C to exit")
 				fmt.Println()
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
@@ -185,8 +182,6 @@ mesheryctl exp components list --count
 				if startIndex >= len(rows) {
 					break
 				}
-
-				whiteBoardPrinter.Println("Press ↑/← or ↓/→ to navigate, Esc or Ctrl+C to exit")
 			}
 		}
 		return nil
@@ -196,5 +191,4 @@ mesheryctl exp components list --count
 func init() {
 	// Add the new exp components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of components in total")
 }
