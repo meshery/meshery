@@ -502,6 +502,56 @@ mesheryctl exp model push [path-to-model] --username [username] --password [pass
 	},
 }
 
+// add command to pull aritfacts from the oci registry
+var pullModelCmd = &cobra.Command{
+	Use:   "pull",
+	Short: "pull model",
+	Long:  "pull a model to the registry",
+	Example: `
+// Push a model
+mesheryctl exp model pull --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]
+	`,
+	// skip preRunE as it is not required for this command
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Push logic
+		fs, err := file.New("./tmp/")
+		if err != nil {
+			panic(err)
+		}
+		defer fs.Close()
+		// 1. Connect to a remote repository
+		ctx := context.Background()
+		reg := registry
+		pathToFolder := fmt.Sprintf("%s/%s/%s", reg, username, repository)
+		repo, err := remote.NewRepository(pathToFolder)
+		if err != nil {
+			panic(err)
+		}
+
+		if err != nil {
+			panic(err)
+		}
+		repo.Client = &auth.Client{
+			Client: retry.DefaultClient,
+			Cache:  auth.NewCache(),
+			Credential: auth.StaticCredential(reg, auth.Credential{
+				Username: username,
+				Password: password,
+			}),
+		}
+
+		// 2. Copy from the remote repository to the OCI layout store
+		tag := tag
+		manifestDescriptor, err := oras.Copy(ctx, repo, tag, fs, tag, oras.DefaultCopyOptions)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("manifest pulled:", manifestDescriptor.Digest, manifestDescriptor.MediaType)
+		return nil
+	},
+}
+
 // ModelCmd represents the mesheryctl exp model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
@@ -567,7 +617,12 @@ func init() {
 	pushModelCmd.Flags().StringVarP(&registry, "registry", "r", "", "Registry to push the model to")
 	pushModelCmd.Flags().StringVarP(&repository, "repository", "n", "", "Repository name to push the model to")
 	pushModelCmd.Flags().StringVarP(&tag, "tag", "t", "", "Tag for the model")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, pushModelCmd}
+	pullModelCmd.Flags().StringVarP(&username, "username", "u", "", "Username for authentication")
+	pullModelCmd.Flags().StringVarP(&password, "password", "p", "", "Password for authentication")
+	pullModelCmd.Flags().StringVarP(&registry, "registry", "r", "", "Registry to pull the model from")
+	pullModelCmd.Flags().StringVarP(&tag, "tag", "t", "", "Tag for the model")
+	pullModelCmd.Flags().StringVarP(&repository, "repository", "n", "", "Repository name to pull the model from")
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, pushModelCmd, pullModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
