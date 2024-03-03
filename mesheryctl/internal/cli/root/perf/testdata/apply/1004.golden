@@ -1,1 +1,5 @@
+Test Name not provided
+Using random test name: yopoqsta
+Fetching performance profile
+http://localhost:9081/api/user/performance/profiles?pagesize=25&page=0&search=new
 Invalid URL for performing test
