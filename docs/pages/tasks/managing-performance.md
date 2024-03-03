@@ -9,7 +9,7 @@ list: include
 abstract: "Advanced performance characterization with Meshery."
 ---
 
-Key to the efficient operation of any service mesh is the measurement and management of it's performance.
+Key to the efficient operation of any infrastructure is the measurement and management of it's performance.
 
 ## Performance Profiles
 
@@ -61,19 +61,19 @@ Meshery provides a highly configurable set of load profiles with various, tuneab
 - Load Generator Type
 - Custom HTTP Headers
 
-See [Service Mesh Performance](https://smp-spec.io) (SMP) for a full description of the different types of performance tests that Meshery provides.
+See [Cloud Native Performance](https://smp-spec.io) for a full description of the different types of performance tests that Meshery provides.
 
 ### Using Performance Test Profiles
 
 As Meshery user you can customize and save your load test configuration in the form of a Performance Test Profile. Using Performance Test Profiles, you can return to Meshery to run the same set of customized tests again and again, tracking variations in performance overtime.
 
-### Comparing Test Results and Service Meshes
+### Comparing Test Results and Different Configurations
 
 Meshery users can easily compare the difference in request performance (latency and throughput) between independent performance tests. Statistical analysis is run upon finalization of every performance test and presented in the form of a histogram with latency buckets.
 
-## Kubernetes Cluster and Service Mesh Metrics
+## Kubernetes Cluster and Workload Metrics
 
-Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
+Meshery provides performance test results alongside environment metrics, including control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their control plane and data plane in context of the overhead incurred on nodes within the cluster.
 
 ### Grafana and Meshery
 
@@ -94,7 +94,7 @@ If you have an API key configured to restrict access to your Grafana boards, you
 
 ### [Prometheus and Meshery]({{ site.baseurl }}/guides/meshery-metrics#expose-prometheus-service)
 
-Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or any other metric that Prometheus has collected.
+Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to Kubernetes and applications or any other metric that Prometheus has collected.
 
 Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.
 

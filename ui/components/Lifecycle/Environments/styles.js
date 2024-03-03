@@ -198,10 +198,16 @@ const styles = (theme) => ({
 
   descriptionLabel: {
     height: 'fit-content',
-    fontStyle: 'normal',
+    fontStyle: 'italic',
     '&:hover': {
       cursor: 'default',
     },
+  },
+
+  name: {
+    height: 'fit-content',
+    textAlign: 'left',
+    fontWeight: 'bold',
   },
 
   status: {

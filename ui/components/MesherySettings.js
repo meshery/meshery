@@ -21,7 +21,7 @@ import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
 import {
   getComponentsDetail,
-  getModelsDetail,
+  getMeshModels,
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../api/meshmodel';
@@ -30,7 +30,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
-
+import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
@@ -246,12 +246,12 @@ class MesherySettings extends React.Component {
 
   async componentDidMount() {
     try {
-      const modelsResponse = await getModelsDetail();
+      const modelsResponse = await getMeshModels();
       const componentsResponse = await getComponentsDetail();
       const relationshipsResponse = await getRelationshipsDetail();
       const registrantResponce = await getMeshModelRegistrants();
 
-      const modelsCount = modelsResponse.total_count;
+      const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
       const componentsCount = componentsResponse.total_count;
       const relationshipsCount = relationshipsResponse.total_count;
       const registrantCount = registrantResponce.total_count;

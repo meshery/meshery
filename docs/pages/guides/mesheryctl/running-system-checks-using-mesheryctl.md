@@ -88,7 +88,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
 
-**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying service mesh and so on, if you want to do them via Meshery._
+**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
 
 ##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned postive results but I couldn't start Meshery. What to do?
 
@@ -126,7 +126,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
 
-##### Question: In the "Meshery Adapter" section of check, I could see only some service mesh adapters up and running and not all. Is this fine?
+##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
 
 **Answer**: _Not a problem, if you feel you need to have all mesh adapters to be up running, you can do so by creating a new context `mesheryctl system context create [context-name] --set` (if you voluntarily deleted mesh adapters in your current context)_
 

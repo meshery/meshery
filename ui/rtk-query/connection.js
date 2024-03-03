@@ -14,6 +14,8 @@ const connectionsApi = api.injectEndpoints({
           pagesize: queryArg.pagesize,
           search: queryArg.search,
           order: queryArg.order,
+          status: queryArg.status,
+          kind: queryArg.kind,
         },
         method: 'GET',
       }),
@@ -78,6 +80,13 @@ const connectionsApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    cancelConnectionRegister: builder.mutation({
+      query: (queryArg) => ({
+        url: `integrations/connections/register`,
+        method: 'DELETE',
+        body: queryArg.body,
+      }),
+    }),
   }),
 });
 
@@ -91,4 +100,5 @@ export const {
   useUpdateConnectionMutation,
   useGetAllConnectionStatusQuery,
   useGetConnectionByKindQuery,
+  useCancelConnectionRegisterMutation,
 } = connectionsApi;
