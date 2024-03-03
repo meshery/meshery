@@ -28,7 +28,6 @@
    "name": "postgres-with-operator",
    "version": "0.1.0",
    "displayName": "Postgres With Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Database",

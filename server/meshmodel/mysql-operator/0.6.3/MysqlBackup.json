@@ -28,7 +28,6 @@
    "name": "mysql-operator",
    "version": "0.6.3",
    "displayName": "MySQL Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

@@ -28,7 +28,6 @@
    "name": "kubedb-ui-server",
    "version": "2021.12.21",
    "displayName": "Kubedb UI Server",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

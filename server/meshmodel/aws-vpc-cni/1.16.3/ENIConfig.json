@@ -28,7 +28,6 @@
    "name": "aws-vpc-cni",
    "version": "1.16.3",
    "displayName": "AWS VPC CNI",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

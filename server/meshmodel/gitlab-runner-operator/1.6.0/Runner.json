@@ -28,7 +28,6 @@
    "name": "gitlab-runner-operator",
    "version": "1.6.0",
    "displayName": "Gitlab Runner Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

@@ -28,7 +28,6 @@
    "name": "amd-gpu",
    "version": "0.12.0",
    "displayName": "AMD GPU",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

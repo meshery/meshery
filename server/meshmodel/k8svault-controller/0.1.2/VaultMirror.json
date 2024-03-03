@@ -28,7 +28,6 @@
    "name": "k8svault-controller",
    "version": "0.1.2",
    "displayName": "K8s Vault Controller",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

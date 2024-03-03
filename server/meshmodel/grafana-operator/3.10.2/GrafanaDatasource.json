@@ -28,7 +28,6 @@
    "name": "grafana-operator",
    "version": "3.10.2",
    "displayName": "Grafana Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

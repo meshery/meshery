@@ -32,7 +32,6 @@
    "name": "contrail-analytics",
    "version": "22.2.0-rev0bb9dbbd1",
    "displayName": "Contrail Analytics",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

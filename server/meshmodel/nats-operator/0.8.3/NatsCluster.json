@@ -28,7 +28,6 @@
    "name": "nats-operator",
    "version": "0.8.3",
    "displayName": "NATS Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

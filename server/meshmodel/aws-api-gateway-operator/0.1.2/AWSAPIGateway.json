@@ -28,7 +28,6 @@
    "name": "aws-api-gateway-operator",
    "version": "0.1.2",
    "displayName": "AWS API Gateway Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

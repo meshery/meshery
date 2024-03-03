@@ -28,7 +28,6 @@
    "name": "kusk-gateway",
    "version": "0.0.65",
    "displayName": "Kusk Gateway",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

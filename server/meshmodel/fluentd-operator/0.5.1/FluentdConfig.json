@@ -28,7 +28,6 @@
    "name": "fluentd-operator",
    "version": "0.5.1",
    "displayName": "Fluentd Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

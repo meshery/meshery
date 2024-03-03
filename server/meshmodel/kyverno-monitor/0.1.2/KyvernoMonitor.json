@@ -28,7 +28,6 @@
    "name": "kyverno-monitor",
    "version": "0.1.2",
    "displayName": "Kyverno Monitor",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

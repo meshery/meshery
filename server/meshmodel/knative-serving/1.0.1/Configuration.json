@@ -28,7 +28,6 @@
    "name": "knative-serving",
    "version": "1.0.1",
    "displayName": "Knative Serving",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Serverless",

@@ -28,7 +28,6 @@
    "name": "hybridnet",
    "version": "0.6.8",
    "displayName": "Hybridnet",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

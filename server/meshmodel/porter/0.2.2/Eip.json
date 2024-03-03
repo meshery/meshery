@@ -28,7 +28,6 @@
    "name": "porter",
    "version": "0.2.2",
    "displayName": "Porter",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

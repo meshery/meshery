@@ -32,7 +32,6 @@
    "name": "kubeteach-core",
    "version": "0.2.3",
    "displayName": "Kubeteach Core",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

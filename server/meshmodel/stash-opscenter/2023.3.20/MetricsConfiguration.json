@@ -32,7 +32,6 @@
    "name": "stash-opscenter",
    "version": "2023.3.20",
    "displayName": "Stash Opscenter",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

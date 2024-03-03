@@ -28,7 +28,6 @@
    "name": "contour-operator",
    "version": "3.0.0",
    "displayName": "Contour",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

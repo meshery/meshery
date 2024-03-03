@@ -28,7 +28,6 @@
    "name": "rabbitmq-operator",
    "version": "0.0.3",
    "displayName": "RabbitMQ Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

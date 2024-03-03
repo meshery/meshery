@@ -28,7 +28,6 @@
    "name": "pulsar-resources-operator",
    "version": "0.4.7",
    "displayName": "Pulsar Resources Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

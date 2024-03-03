@@ -28,7 +28,6 @@
    "name": "stackgres-operator",
    "version": "1.8.1",
    "displayName": "Stackgres Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

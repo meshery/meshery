@@ -28,7 +28,6 @@
    "name": "gatekeeper",
    "version": "3.16.0-beta.0",
    "displayName": "OPA Gatekeeper",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Security \u0026 Compliance",

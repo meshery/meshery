@@ -32,7 +32,6 @@
    "name": "grafana-agent",
    "version": "0.10.0",
    "displayName": "Grafana Agent",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

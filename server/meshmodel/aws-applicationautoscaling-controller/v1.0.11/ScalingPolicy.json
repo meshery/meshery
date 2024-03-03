@@ -28,7 +28,6 @@
    "name": "aws-applicationautoscaling-controller",
    "version": "v1.0.11",
    "displayName": "AWS Applilcation Autoscaling",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

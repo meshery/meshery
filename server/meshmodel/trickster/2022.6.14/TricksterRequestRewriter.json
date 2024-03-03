@@ -32,7 +32,6 @@
    "name": "trickster",
    "version": "2022.6.14",
    "displayName": "Trickster",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

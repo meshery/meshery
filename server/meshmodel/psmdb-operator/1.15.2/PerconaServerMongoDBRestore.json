@@ -28,7 +28,6 @@
    "name": "psmdb-operator",
    "version": "1.15.2",
    "displayName": "Percona Operator for MongoDB",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Database",

@@ -28,7 +28,6 @@
    "name": "istio-ratelimit-operator",
    "version": "2.11.1",
    "displayName": "Istio Rate Limit Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",

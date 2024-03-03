@@ -28,7 +28,6 @@
    "name": "ps-operator",
    "version": "0.6.1",
    "displayName": "Percona Operator for MySQL",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Database",

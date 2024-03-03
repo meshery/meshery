@@ -28,7 +28,6 @@
    "name": "gerrit-operator",
    "version": "2.19.0",
    "displayName": "Gerrit Operator",
-   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",
