@@ -16,8 +16,6 @@ var newProfileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
 var (
 	// server returning existing profile "new"
 	apply1001 = "1001.golden"
-	// server running test with existing profile
-	apply1002 = "1002.golden"
 	// server response for no protocol added to url
 	apply1003 = "1003.golden"
 	// server response for creating new profile "test"
@@ -27,8 +25,6 @@ var (
 )
 
 var (
-	// mesheryctl response for success fully ran test
-	apply1001output = "1001.golden"
 	// mesheryctl response for url not having protocol added
 	apply1002output = "1002.golden"
 	// mesheryctl response for invalid url
