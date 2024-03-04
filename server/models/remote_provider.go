@@ -140,6 +140,11 @@ func (l *RemoteProvider) LoadCapabilities(token string) {
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
 	}
+	
+	// Download the package for the user only if they have extension capability
+	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
+		l.downloadProviderExtensionPackage()
+	}
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
@@ -3299,11 +3304,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// Get new capabilities
 	// Doing this here is important so that
 	l.LoadCapabilities(tokenString)
-
-	// Download the package for the user only if they have extension capability
-	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.downloadProviderExtensionPackage()
-	}
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded
