@@ -1,0 +1,35 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "RateLimitService",
+  "apiVersion": "getambassador.io/v2",
+  "displayName": "Rate Limit Service",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "azureorkestra",
+   "version": "6.7.9",
+   "displayName": "Azure Orkestra",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Provisioning",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Automation \u0026 Configuration",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"RateLimitService is the Schema for the ratelimitservices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RateLimitServiceSpec defines the desired state of RateLimitService\",\n   \"properties\": {\n    \"ambassador_id\": {\n     \"description\": \"Common to all Ambassador objects.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"oneOf\": [\n      {\n       \"type\": \"string\"\n      },\n      {\n       \"type\": \"array\"\n      }\n     ]\n    },\n    \"domain\": {\n     \"type\": \"string\"\n    },\n    \"protocol_version\": {\n     \"enum\": [\n      \"v2\",\n      \"v3\"\n     ],\n     \"type\": \"string\"\n    },\n    \"service\": {\n     \"type\": \"string\"\n    },\n    \"timeout_ms\": {\n     \"type\": \"integer\"\n    },\n    \"tls\": {\n     \"description\": \"BoolOrString is a type that can hold a Boolean or a string.\",\n     \"oneOf\": [\n      {\n       \"type\": \"string\"\n      },\n      {\n       \"type\": \"boolean\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"service\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit Service\",\n \"type\": \"object\"\n}"
+ }

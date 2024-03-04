@@ -1,0 +1,35 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "GrafanaNotificationChannel",
+  "apiVersion": "integreatly.org/v1alpha1",
+  "displayName": "Grafana Notification Channel",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "fmtok8s-conference-chart",
+   "version": "0.1.4",
+   "displayName": "Fmtok8S Conference Chart",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"GrafanaNotificationChannel is the Schema for the GrafanaNotificationChannels API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaNotificationChannelSpec defines the desired state of GrafanaNotificationChannel\",\n   \"properties\": {\n    \"json\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"json\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Notification Channel\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,35 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Queue",
+  "apiVersion": "sqs.services.k8s.aws/v1alpha1",
+  "displayName": "Queue",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-sqs-controller",
+   "version": "v1.0.10",
+   "displayName": "AWS Simple Queuing Service",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Streaming \u0026 Messaging",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Queue is the Schema for the Queues API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"QueueSpec defines the desired state of Queue.\",\n   \"properties\": {\n    \"contentBasedDeduplication\": {\n     \"type\": \"string\"\n    },\n    \"delaySeconds\": {\n     \"type\": \"string\"\n    },\n    \"fifoQueue\": {\n     \"type\": \"string\"\n    },\n    \"kmsDataKeyReusePeriodSeconds\": {\n     \"type\": \"string\"\n    },\n    \"kmsMasterKeyID\": {\n     \"type\": \"string\"\n    },\n    \"kmsMasterKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maximumMessageSize\": {\n     \"type\": \"string\"\n    },\n    \"messageRetentionPeriod\": {\n     \"type\": \"string\"\n    },\n    \"policy\": {\n     \"type\": \"string\"\n    },\n    \"policyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"queueName\": {\n     \"type\": \"string\"\n    },\n    \"receiveMessageWaitTimeSeconds\": {\n     \"type\": \"string\"\n    },\n    \"redriveAllowPolicy\": {\n     \"type\": \"string\"\n    },\n    \"redrivePolicy\": {\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Add cost allocation tags to the specified Amazon SQS queue. For an overview,\\nsee Tagging Your Amazon SQS Queues (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-tags.html)\\nin the Amazon SQS Developer Guide.\\n\\n\\nWhen you use queue tags, keep the following guidelines in mind:\\n\\n\\n  - Adding more than 50 tags to a queue isn't recommended.\\n\\n\\n  - Tags don't have any semantic meaning. Amazon SQS interprets tags as\\n    character strings.\\n\\n\\n  - Tags are case-sensitive.\\n\\n\\n  - A new tag with a key identical to that of an existing tag overwrites\\n    the existing tag.\\n\\n\\nFor a full list of tag restrictions, see Quotas related to queues (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-limits.html#limits-queues)\\nin the Amazon SQS Developer Guide.\\n\\n\\nTo be able to tag a queue on creation, you must have the sqs:CreateQueue\\nand sqs:TagQueue permissions.\\n\\n\\nCross-account permissions don't apply to this action. For more information,\\nsee Grant cross-account permissions to a role and a username (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-customer-managed-policy-examples.html#grant-cross-account-permissions-to-role-and-user-name)\\nin the Amazon SQS Developer Guide.\",\n     \"type\": \"object\"\n    },\n    \"visibilityTimeout\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"queueName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Queue\",\n \"type\": \"object\"\n}"
+ }

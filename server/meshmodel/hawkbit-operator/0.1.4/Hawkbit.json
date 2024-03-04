@@ -6,26 +6,8 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "hawkbit-operator",
-   "modelDisplayName": "Hawkbit Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "published": false
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
@@ -39,7 +21,12 @@
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://github.com/ctron/helm-charts/releases/download/hawkbit-operator-0.1.4/hawkbit-operator-0.1.4.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

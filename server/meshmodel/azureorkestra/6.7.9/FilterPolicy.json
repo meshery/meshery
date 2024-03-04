@@ -1,0 +1,34 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "FilterPolicy",
+  "apiVersion": "getambassador.io/v1beta2",
+  "displayName": "Filter Policy",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "azureorkestra",
+   "version": "6.7.9",
+   "displayName": "Azure Orkestra",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Provisioning",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Automation \u0026 Configuration",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  }
+ }

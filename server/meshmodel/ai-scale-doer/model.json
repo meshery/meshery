@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "ai-scale-doer",
+  "version": "0.1.0",
+  "displayName": "Ai Scale Doer",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "App Definition and Development",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Database",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "components": null,
+  "relationships": null
+ }
