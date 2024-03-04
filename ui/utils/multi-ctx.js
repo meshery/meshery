@@ -172,7 +172,7 @@ export function getClusterNameFromCtxId(ctxId, k8sConfig) {
 export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
   const filteredK8sConnfigs = k8sConfig.filter((config) => {
     const context = contexts.find((context) => context == config.id);
-    if (!!context) {
+    if (context) {
       return true;
     }
     return false;
