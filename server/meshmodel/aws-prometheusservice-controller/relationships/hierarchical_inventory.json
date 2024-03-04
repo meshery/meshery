@@ -25,7 +25,8 @@
             "model": "Kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["type"], ["name"], ["namespace"]]
+              "mutatorRef": [["type"], ["name"], ["namespace"]],
+              "description": "when a Pod interacts with an Adopted Resource, the Pod's configuration, like its type, name, and namespace, is updated based on the specifications from the Adopted Resource. This integration ensures smooth operation between Pods and Adopted Resources within the controller environment."
             }
           }
         ],
@@ -39,7 +40,8 @@
                 ["settings", "spec", "kubernetes", "kind"],
                 ["settings", "spec", "kubernetes", "metadata", "name"],
                 ["settings", "spec", "kubernetes", "metadata", "namespace"]
-              ]
+              ],
+              "description": "The AdoptedResource component's Kubernetes-related specifications, such as kind, name, and namespace, are replaced to match the configurations of Pods. This enables seamless integration between AdoptedResources and Pods within the Kubernetes environment."
             }
           }
         ]
