@@ -14,7 +14,7 @@ list: include
 To start contributing to Meshery Docker Extension, make sure you have [Docker](https://docs.docker.com/get-docker/) installed on your system.
 ### Docker Extension for Meshery
 
-The Docker Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes.
+The Docker Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure. The extension provides a seamless experience for developers to manage and monitor their Kubernetes applications and services.
 
 #### Using Docker Desktop
 

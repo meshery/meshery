@@ -149,5 +149,6 @@ module.exports = {
     '@material-ui/core/Avatar': require('@material-ui/core/Avatar'),
     '@material-ui/lab/AvatarGroup': require('@material-ui/lab/AvatarGroup'),
     '@material-ui/icons/Person': require('@material-ui/icons/Person'),
+    '@layer5/sistent': require('@layer5/sistent'),
   },
 };

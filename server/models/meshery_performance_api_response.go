@@ -15,7 +15,7 @@ type PerformanceProfileParameters struct {
 	LoadGenerators []string `json:"load_generators,omitempty" gorm:"type:text[]"`
 	// array of urls of performance results
 	Endpoints []string `json:"endpoints,omitempty" gorm:"type:text[]"`
-	// service mesh for performance tests
+	// infrastructure for performance tests
 	ServiceMesh string `json:"service_mesh,omitempty"`
 	// number of concurrent requests
 	ConcurrentRequest int `json:"concurrent_request,omitempty"`
@@ -35,7 +35,7 @@ type PerformanceTestParameters struct {
 	LoadGenerator string `json:"loadGenerator"`
 	// url for test
 	URL string `json:"url"`
-	// service mesh for performance test
+	// infrastructure for performance test
 	ServiceMesh string `json:"mesh"`
 	// concurrent request in number
 	ConcurrentRequest int `json:"c"`

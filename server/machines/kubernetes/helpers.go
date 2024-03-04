@@ -4,10 +4,17 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/spf13/viper"
+)
+
+var (
+	adapterURLs    = viper.GetStringSlice("ADAPTER_URLS")
+	adapterTracker = helpers.NewAdaptersTracker(adapterURLs)
 )
 
 func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events.EventBuilder) (*kubernetes.Client, error) {
@@ -50,4 +57,8 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 	}
 	machinectx.clientset = handler
 	return nil
+}
+
+func AssignControllerHandlers(machinectx *MachineCtx) {
+	machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(machinectx.log, models.NewOperatorDeploymentConfig(adapterTracker), models.GetDBInstance())
 }

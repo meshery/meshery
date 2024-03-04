@@ -118,13 +118,12 @@ const DefaultPropertyFormatters = {
 
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const classes = useKubernetesStyles();
-  const contextID = metadata.id;
 
   const pingKubernetes = useKubernetesHook();
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
   const { ping: pingNats } = useNatsController();
-  const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
+  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const handleKubernetesClick = () => {
     pingKubernetes(metadata.name, metadata.server, connection.id);
@@ -135,7 +134,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   };
 
   const handleOperatorClick = () => {
-    pingMesheryOperator(contextID);
+    pingMesheryOperator({ connectionID: connection.id });
   };
 
   const handleMeshSyncClick = () => {
@@ -143,7 +142,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   };
 
   const { operatorState, meshSyncState, natsState, operatorVersion, meshSyncVersion, natsVersion } =
-    getControllerStatesByContexID(contextID);
+    getControllerStatesByConnectionID(connection.id);
 
   return (
     <Grid container spacing={1} className={classes.root}>
@@ -216,7 +215,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     title={'Operator'}
                     disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
                     status={operatorState}
-                    handlePing={() => handleOperatorClick(connection.id)}
+                    handlePing={handleOperatorClick}
                     iconSrc="/static/img/meshery-operator.svg"
                   />
                 </ListItem>

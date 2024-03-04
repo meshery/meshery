@@ -90,7 +90,7 @@ mesheryctl perf apply meshery-profile --load-generator wrk2
 // Execute a Performance test with specified queries per second
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
-// Execute a Performance test with specified service mesh
+// Execute a Performance test with specified infrastructure
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
@@ -346,7 +346,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 func init() {
 	applyCmd.Flags().StringVar(&testURL, "url", "", "(optional) Endpoint URL to test (required with --profile)")
 	applyCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	applyCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
+	applyCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the infrastructure")
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
