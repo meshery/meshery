@@ -1,0 +1,53 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metdata": {
+    "description": "Hierarchical"
+  },
+  "model": {
+    "name": "aws-prometheusservice-controller",
+    "version": "*",
+    "displayName": "AWS Managed Service for Prometheus",
+    "category": {
+      "name": "Observability and Analysis",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "Kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["type"], ["name"], ["namespace"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "AdoptedResource",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["settings", "spec", "kubernetes", "kind"],
+                ["settings", "spec", "kubernetes", "metadata", "name"],
+                ["settings", "spec", "kubernetes", "metadata", "namespace"]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
