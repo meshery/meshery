@@ -285,6 +285,12 @@ func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request,
 	}
 }
 
+func (h *Handler) CapabilitiesMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+		token, _ := utils.Cast[string](req.Context().Value(models.TokenCtxKey))
+		provider.LoadCapabilities(token)
+	}
+}
 type dataHandlerToClusterID struct {
 	mdh       models.MeshsyncDataHandler
 	clusterID string

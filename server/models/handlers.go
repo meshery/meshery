@@ -108,6 +108,8 @@ type HandlerInterface interface {
 	DeletePerformanceProfileHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	CapabilitiesMiddleware(func(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider))func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
+
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)

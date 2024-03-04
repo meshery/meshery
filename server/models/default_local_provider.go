@@ -115,6 +115,10 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
+func(l *DefaultLocalProvider) LoadCapabilities(token string) {
+	return
+}
+
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	return &User{
 		UserID:    "meshery",

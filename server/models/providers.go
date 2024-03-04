@@ -368,6 +368,7 @@ type Provider interface {
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
 	InitiateLogin(http.ResponseWriter, *http.Request, bool)
 	TokenHandler(http.ResponseWriter, *http.Request, bool)
+	LoadCapabilities(string)
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)

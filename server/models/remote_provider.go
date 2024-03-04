@@ -83,7 +83,7 @@ func (l *RemoteProvider) Initialize() {
 	// Get the capabilities with no token
 	// assuming that this will help get basic info
 	// of the provider
-	l.loadCapabilities("")
+	l.LoadCapabilities("")
 }
 
 // loadCapabilities loads the capabilities of the remote provider
@@ -92,7 +92,7 @@ func (l *RemoteProvider) Initialize() {
 // if an empty string is provided then it will try to make a request
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
-func (l *RemoteProvider) loadCapabilities(token string) {
+func (l *RemoteProvider) LoadCapabilities(token string) {
 	var resp *http.Response
 	var err error
 
@@ -3298,7 +3298,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Get new capabilities
 	// Doing this here is important so that
-	l.loadCapabilities(tokenString)
+	l.LoadCapabilities(tokenString)
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
