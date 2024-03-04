@@ -7,6 +7,7 @@
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
    "capabilities": "",
+   "published": true,
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
@@ -30,7 +31,7 @@
    "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
-    "name": "",
+    "name": "Provisioning",
     "metadata": null
    },
    "metadata": {
