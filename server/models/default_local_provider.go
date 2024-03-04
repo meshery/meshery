@@ -116,7 +116,6 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 }
 
 func(l *DefaultLocalProvider) LoadCapabilities(token string) {
-	return
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
