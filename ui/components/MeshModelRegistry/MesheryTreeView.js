@@ -17,6 +17,10 @@ import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Colors } from '../../themes/app';
+import { JustifyAndAlignCenter } from './MeshModel.style';
+import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
 
 const ComponentTree = ({
   expanded,
@@ -44,7 +48,6 @@ const ComponentTree = ({
           key={index}
           nodeId={`${component.id}`}
           data-id={`${component.id}`}
-          check
           labelText={component.displayName}
           onClick={() => {
             setShowDetailsData({
@@ -84,7 +87,6 @@ const RelationshipTree = ({
           key={index}
           nodeId={`${relationshipByKind.relationships[0].id}`}
           data-id={`${relationshipByKind.relationships[0].id}`}
-          check
           labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
           onClick={() => {
             setShowDetailsData({
@@ -100,7 +102,6 @@ const RelationshipTree = ({
               key={index}
               nodeId={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
               data-id={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
-              check
               labelText={relationship.subType}
               onClick={() => {
                 setShowDetailsData({
@@ -136,11 +137,13 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
           <StyledTreeItem
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
             labelText={
               versionedModel.version[0] == 'v'
                 ? versionedModel.version
                 : `v${versionedModel.version}`
             }
+            check={true}
             onClick={() => {
               setShowDetailsData({
                 type: MODELS,
@@ -169,7 +172,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.1.${component.id}`}
-                    check
                     labelText={component.displayName}
                     onClick={() => {
                       setShowDetailsData({
@@ -201,7 +203,6 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.2.${relationship.id}`}
-                    check
                     labelText={relationship.subType}
                     onClick={() => {
                       setShowDetailsData({
@@ -299,7 +300,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.summary?.models})`}
+              labelText={`Models (${registrant?.models.length})`}
             >
               {registrant?.models.map((model, index) => (
                 <MesheryTreeViewItem
@@ -364,6 +365,7 @@ const MesheryTreeView = ({
   setChecked,
   setShowDetailsData,
   showDetailsData,
+  setResourcesDetail,
 }) => {
   const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
   const [expanded, setExpanded] = React.useState([]);
@@ -380,8 +382,9 @@ const MesheryTreeView = ({
         [scrollingView]: Number(prevPage[scrollingView]) + 1,
       }));
     }
-
-    scrollRef.current = div.scrollTop;
+    if (!data.length === 0) {
+      scrollRef.current = div.scrollTop;
+    }
   };
 
   useEffect(() => {
@@ -469,7 +472,7 @@ const MesheryTreeView = ({
             selectedNode.scrollIntoView({ behavior: 'smooth' });
           }
         });
-      }, 100);
+      }, 1000);
     }
   }, [view]);
 
@@ -533,9 +536,11 @@ const MesheryTreeView = ({
                 <CustomTextTooltip
                   placement="right"
                   interactive={true}
-                  title={`View all duplicate entries of ${_.toLower(
-                    view,
-                  )}. Entries with identical name and version attributes are considered duplicates.`}
+                  title={getHyperLinkDiv(
+                    `View all duplicate entries of ${_.toLower(
+                      view,
+                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`,
+                  )}
                 >
                   <IconButton color="primary">
                     <InfoOutlinedIcon height={20} width={20} />
@@ -550,7 +555,7 @@ const MesheryTreeView = ({
         <SearchBar
           onSearch={debounce((value) => setSearchText(value), 200)}
           expanded={isSearchExpanded}
-          setExpanded={setIsSearchExpanded}
+          setExpanded={setSearchExpand}
           placeholder="Search"
           value={searchText}
         />
@@ -558,16 +563,34 @@ const MesheryTreeView = ({
     </div>
   );
 
+  const setSearchExpand = (isExpand) => {
+    if (!isExpand && searchText) {
+      setSearchText(() => null);
+      setResourcesDetail(() => []);
+    }
+    setIsSearchExpanded(isExpand);
+  };
+
   const renderTree = (treeComponent, type) => (
     <div>
       {renderHeader(type)}
-      <div
-        className="scrollElement"
-        style={{ overflowY: 'auto', height: '27rem' }}
-        onScroll={handleScroll(type)}
-      >
-        {treeComponent}
-      </div>
+      {data.length === 0 && !searchText ? (
+        <JustifyAndAlignCenter style={{ height: '27rem' }}>
+          <CircularProgress sx={{ color: Colors.keppelGreen }} />
+        </JustifyAndAlignCenter>
+      ) : data.length === 0 && searchText ? (
+        <JustifyAndAlignCenter style={{ height: '27rem' }}>
+          <p>No result found</p>
+        </JustifyAndAlignCenter>
+      ) : (
+        <div
+          className="scrollElement"
+          style={{ overflowY: 'auto', height: '27rem' }}
+          onScroll={handleScroll(type)}
+        >
+          {treeComponent}
+        </div>
+      )}
     </div>
   );
 

@@ -32,6 +32,7 @@
    "name": "velero-s3-deployment",
    "version": "0.1.1",
    "displayName": "Velero S3 Deployment",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

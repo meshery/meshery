@@ -32,6 +32,7 @@
    "name": "victoria-metrics-k8s-stack",
    "version": "0.14.16",
    "displayName": "Victoria Metrics K8S Stack",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

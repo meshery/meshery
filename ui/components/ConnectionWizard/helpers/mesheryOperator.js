@@ -12,7 +12,7 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
  */
 export const pingMesheryOperator = (id, successcb, errorcb) => {
   const subscription = fetchMesheryOperatorStatus({
-    k8scontextID: id,
+    connectionID: id,
   }).subscribe({
     next: (data) => {
       if (

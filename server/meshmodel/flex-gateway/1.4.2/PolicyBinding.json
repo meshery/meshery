@@ -32,6 +32,7 @@
    "name": "flex-gateway",
    "version": "1.4.2",
    "displayName": "Flex Gateway",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

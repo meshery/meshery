@@ -33,7 +33,7 @@ SHELL :=/bin/bash -o pipefail
 # All Adapters
 # ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10009 localhost:10010 localhost:10012"
 # No Adapters
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10012"
+ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10012 localhost:10013"
 
 #-----------------------------------------------------------------------------
 # Providers

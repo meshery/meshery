@@ -32,6 +32,7 @@
    "name": "hydra-maester",
    "version": "0.28.2",
    "displayName": "Hydra Maester",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

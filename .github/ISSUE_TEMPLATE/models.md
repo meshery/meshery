@@ -39,6 +39,7 @@ While the default shape for new components is a circle, each component should be
 1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 1. Create a Relationship Definition (yaml).
 1. Create a policy for evaluation of the relationship (rego).
+1. Review a prior pull request as an example of how to define a Relationships: https://github.com/meshery/meshery/pull/9880/files
 
 ### Instructions for Policies
 1. _Forthcoming_

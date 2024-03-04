@@ -32,6 +32,7 @@
    "name": "reporting-legacy-api",
    "version": "2.0.4",
    "displayName": "Reporting Legacy Api",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

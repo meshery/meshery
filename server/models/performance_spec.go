@@ -10,7 +10,7 @@ type Environment struct {
 	NodeCount  int    `yaml:"node_count,omitempty"`
 }
 
-// MeshConfig - represents a service mesh config
+// MeshConfig - represents configuration
 type MeshConfig struct {
 	MeshPolicyEnabled    bool `yaml:"mesh_policy_enabled,omitempty"`
 	MeshTelemetryEnabled bool `yaml:"mesh_telemetry_enabled,omitempty"`
