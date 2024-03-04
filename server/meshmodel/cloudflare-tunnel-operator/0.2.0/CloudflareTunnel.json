@@ -6,26 +6,8 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "cloudflare-tunnel-operator",
-   "modelDisplayName": "Cloudflare Tunnel Operator",
-   "primaryColor": "#00B39F",
-   "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "published": false
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
@@ -35,11 +17,16 @@
    "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
-    "name": "Uncategorized",
+    "name": "Cloud Native Network",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://charts.beezlabs.app/cloudflare-tunnel-operator/cloudflare-tunnel-operator-0.2.0.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Cloud Native Network",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

@@ -1,0 +1,35 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CouchbaseAutoscaler",
+  "apiVersion": "couchbase.com/v2",
+  "displayName": "Couchbase Autoscaler",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "couchbase-operator",
+   "version": "2.61.0",
+   "displayName": "Couchbase Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Database",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CouchbaseAutoscaler provides an interface for the Kubernetes Horizontal Pod Autoscaler to interact with the Couchbase cluster and provide autoscaling.  This resource is not defined by the end user, and is managed by the Operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseAutoscalerSpec allows control over an autoscaling group.\",\n   \"properties\": {\n    \"servers\": {\n     \"description\": \"Servers specifies the server group that this autoscaler belongs to.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"size\": {\n     \"description\": \"Size allows the server group to be dynamically scaled.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"servers\",\n    \"size\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase Autoscaler\",\n \"type\": \"object\"\n}"
+ }

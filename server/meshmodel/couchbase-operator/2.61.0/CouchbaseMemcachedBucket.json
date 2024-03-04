@@ -1,0 +1,35 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CouchbaseMemcachedBucket",
+  "apiVersion": "couchbase.com/v2",
+  "displayName": "Couchbase Memcached Bucket",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "couchbase-operator",
+   "version": "2.61.0",
+   "displayName": "Couchbase Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Database",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"The CouchbaseMemcachedBucket resource defines a set of documents in Couchbase server. A Couchbase client connects to and operates on a bucket, which provides independent management of a set documents and a security boundary for role based access control. A CouchbaseEphemeralBucket provides in-memory only storage for documents contained by it.\",\n \"properties\": {\n  \"spec\": {\n   \"default\": {},\n   \"description\": \"CouchbaseMemcachedBucketSpec is the specification for a Memcached bucket resource, and allows the bucket to be customized.\",\n   \"properties\": {\n    \"enableFlush\": {\n     \"description\": \"EnableFlush defines whether a client can delete all documents in a bucket. This field defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"memoryQuota\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"default\": \"100Mi\",\n     \"description\": \"MemoryQuota is a memory limit to the size of a bucket. The memory quota is defined per Couchbase pod running the data service.  This field defaults to, and must be greater than or equal to 100Mi.  More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"type\": \"string\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the bucket within Couchbase server.  By default the Operator will use the `metadata.name` field to define the bucket name.  The `metadata.name` field only supports a subset of the supported character set.  When specified, this field overrides `metadata.name`.  Legal bucket names have a maximum length of 100 characters and may be composed of any character from \\\"a-z\\\", \\\"A-Z\\\", \\\"0-9\\\" and \\\"-_%\\\\.\\\".\",\n     \"maxLength\": 100,\n     \"pattern\": \"^[a-zA-Z0-9-_%\\\\.]{1,100}$\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Couchbase Memcached Bucket\",\n \"type\": \"object\"\n}"
+ }
