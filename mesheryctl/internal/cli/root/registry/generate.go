@@ -17,8 +17,11 @@ package registry
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -68,8 +71,25 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		//
+		out, err := exec.Command("git", "config", "--get", "remote.origin.url").CombinedOutput()
+		if err != nil {
+			log.Fatal("error getting git origin url: ", err)
+		}
+		originUrl := string(out)
+		repositoryName := strings.Split(filepath.Base(originUrl), ".")[0]
 
-		err := os.MkdirAll(logDirPath, 0755)
+		if repositoryName != "meshery" {
+			log.Fatal("Please ensure the command is executed from a fork of meshery/meshery")
+		}
+		pwd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if filepath.Base(pwd) != "meshery" {
+			log.Fatal("Please run this command from the root of the project")
+		}
+
+		err = os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
