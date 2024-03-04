@@ -294,7 +294,7 @@ func ErrApplyChange(err error) error {
 }
 
 func ErrRetrieveMeshData(err error) error {
-	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting service mesh name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{"Make sure adapter is reachable and running"})
+	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting component name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{"Make sure adapter is reachable and running"})
 }
 
 func ErrApplicationFailure(err error, obj string) error {

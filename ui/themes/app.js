@@ -47,6 +47,7 @@ export var darkTheme = createTheme({
   palette: {
     type: 'dark',
     primary: blueGrey,
+    colors: Colors,
     secondary: {
       main: '#EE5351',
       primeColor: '#303030',
@@ -121,6 +122,7 @@ export var darkTheme = createTheme({
       white: '#202020',
       whiteIcon: '#ffffff',
       btnDisabled: '#b0bec5',
+      interactiveArea: '#00B39F',
     },
     tables: {
       head: {
@@ -329,6 +331,7 @@ let theme = createTheme({
     //   dark: '#455a64',
     // },
     primary: blueGrey,
+    colors: Colors,
     secondary: {
       main: '#EE5351',
       primeColor: '#ebeff1',
@@ -404,6 +407,7 @@ let theme = createTheme({
       white: '#ffffff',
       whiteIcon: '#ffffff',
       btnDisabled: '#b0bec5',
+      interactiveArea: '#00B39F',
     },
     tables: {
       head: {

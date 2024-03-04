@@ -32,6 +32,7 @@
    "name": "k8s-object-syncer",
    "version": "0.1.7",
    "displayName": "K8s Object Syncer",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

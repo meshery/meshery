@@ -8,7 +8,7 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
+   "genealogy": "inventory",
    "isAnnotation": false,
    "isCustomResource": false,
    "isModelAnnotation": "FALSE",
@@ -33,6 +33,7 @@
    "name": "kubernetes",
    "version": "v1.25.2",
    "displayName": "Kubernetes",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

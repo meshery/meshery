@@ -7,12 +7,12 @@ export class GQLSubscription {
   subscription;
   state;
   callbackFunction;
-  contextIds;
+  connectionIDs;
   type;
 
-  constructor({ type, contextIds, callbackFunction }) {
+  constructor({ type, connectionIDs, callbackFunction }) {
     this.type = type;
-    this.contextIds = contextIds || [];
+    this.connectionIDs = connectionIDs || [];
     this.callbackFunction = callbackFunction;
   }
 
@@ -25,7 +25,7 @@ export class GQLSubscription {
       throw new Error('Subscription Type is Empty, initialise a subscription in a constructor');
     }
 
-    this.updateSubscription(this.contextIds);
+    this.updateSubscription(this.connectionIDs);
   };
 
   doCallback = (data) => {
@@ -45,8 +45,8 @@ export class GQLSubscription {
     }
   };
 
-  updateSubscription = (contextIds) => {
+  updateSubscription = (connectionIDs) => {
     this.flushSubscription();
-    this.subscription = fnMapping[this.type].subscriptionFn(this.doCallback, contextIds);
+    this.subscription = fnMapping[this.type].subscriptionFn(this.doCallback, connectionIDs);
   };
 }

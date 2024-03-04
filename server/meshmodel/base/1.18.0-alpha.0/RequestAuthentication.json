@@ -32,6 +32,7 @@
    "name": "base",
    "version": "1.18.0-alpha.0",
    "displayName": "base",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

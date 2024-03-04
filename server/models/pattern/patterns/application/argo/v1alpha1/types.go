@@ -213,7 +213,7 @@ type CanaryStrategy struct {
 	// Steps define the order of phases to execute the canary deployment
 	// +optional
 	Steps []CanaryStep `json:"steps,omitempty" protobuf:"bytes,3,rep,name=steps"`
-	// TrafficRouting hosts all the supported service meshes supported to enable more fine-grained traffic routing
+	// TrafficRouting hosts all the supported infrastructure supported to enable more fine-grained traffic routing
 	TrafficRouting *RolloutTrafficRouting `json:"trafficRouting,omitempty" protobuf:"bytes,4,opt,name=trafficRouting"`
 
 	// MaxUnavailable The maximum number of pods that can be unavailable during the update.
@@ -278,7 +278,7 @@ type ALBTrafficRouting struct {
 	AnnotationPrefix string `json:"annotationPrefix,omitempty" protobuf:"bytes,4,opt,name=annotationPrefix"`
 }
 
-// RolloutTrafficRouting hosts all the different configuration for supported service meshes to enable more fine-grained traffic routing
+// RolloutTrafficRouting hosts all the different configuration for supported infrastructure to enable more fine-grained traffic routing
 type RolloutTrafficRouting struct {
 	// Istio holds Istio specific configuration to route traffic
 	Istio *IstioTrafficRouting `json:"istio,omitempty" protobuf:"bytes,1,opt,name=istio"`
@@ -321,7 +321,7 @@ type NginxTrafficRouting struct {
 	AdditionalIngressAnnotations map[string]string `json:"additionalIngressAnnotations,omitempty" protobuf:"bytes,3,rep,name=additionalIngressAnnotations"`
 }
 
-// IstioTrafficRouting configuration for Istio service mesh to enable fine grain configuration
+// IstioTrafficRouting configuration for Istio to enable fine grain configuration
 type IstioTrafficRouting struct {
 	// VirtualService references an Istio VirtualService to modify to shape traffic
 	VirtualService IstioVirtualService `json:"virtualService" protobuf:"bytes,1,opt,name=virtualService"`

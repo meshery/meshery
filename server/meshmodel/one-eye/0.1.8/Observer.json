@@ -32,6 +32,7 @@
    "name": "one-eye",
    "version": "0.1.8",
    "displayName": "One Eye",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

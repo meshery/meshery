@@ -27,6 +27,7 @@
    "name": "gitlab",
    "version": "7.9.0",
    "displayName": "gitlab",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "",

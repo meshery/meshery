@@ -17,7 +17,6 @@ import (
 	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -28,10 +27,6 @@ const (
 	MeshsyncSubject          = "meshery.meshsync.core"
 	BrokerQueue              = "meshery"
 	MeshSyncBrokerConnection = "meshsync"
-)
-
-var (
-	meshsyncVersion string
 )
 
 type Connections struct {
@@ -74,31 +69,8 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, log logger.Handler) ([]*OperatorControllerStatus, error) {
-	controllers := make([]*OperatorControllerStatus, 0)
-
-	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
-	if err != nil {
-		if mesheryclient == nil {
-			return controllers, ErrMesheryClientNil
-		}
-		return controllers, ErrMesheryClient(err)
-	}
-
-	broker := GetBrokerInfo(mesheryKubeClient, log)
-
-	controllers = append(controllers, &broker)
-
-	meshsync := GetMeshSyncInfo(mesheryKubeClient, nil, log)
-	controllers = append(controllers, &meshsync)
-
-	return controllers, nil
-}
-
-func GetBrokerInfo(mesheryKubeClient *mesherykube.Client, log logger.Handler) OperatorControllerStatus {
-	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
 	brokerStatus := broker.GetStatus().String()
-
 	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
 	log.Debug("broker monitor endpoint", monitorEndpoint, err)
 
@@ -106,6 +78,8 @@ func GetBrokerInfo(mesheryKubeClient *mesherykube.Client, log logger.Handler) Op
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		brokerStatus = fmt.Sprintf("%s %s", brokerStatus, brokerEndpoint)
 	}
+	// change the type of IMesheryController GetName() to to models.MesheryController
+	// and use MesheryControllersStatusListItem instead of OperatorControllerStatus
 	brokerControllerStatus := OperatorControllerStatus{
 		Name:   broker.GetName(),
 		Status: Status(brokerStatus),
@@ -116,24 +90,25 @@ func GetBrokerInfo(mesheryKubeClient *mesherykube.Client, log logger.Handler) Op
 	return brokerControllerStatus
 }
 
-func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
-	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
+func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
 	meshsyncStatus := meshsync.GetStatus().String()
-	if broker == nil {
-		broker = controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+
+	// Debug block
+	if broker != nil {
+		monitorEndpoint, err := broker.GetEndpointForPort("monitor")
+		log.Debug("broker monitor endpoint", monitorEndpoint, err)
 	}
 
-	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
-	log.Debug("broker monitor endpoint", monitorEndpoint, err)
-
-	if meshsyncStatus == controllers.Connected.String() {
+	// change the type of IMesheryController GetName() to to models.MesheryController
+	// and use MesheryControllersStatusListItem instead of OperatorControllerStatus
+	if meshsyncStatus == controllers.Connected.String() && broker != nil {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
 	}
-
+	version, _ := meshsync.GetVersion()
 	meshsyncControllerStatus := OperatorControllerStatus{
 		Name:    meshsync.GetName(),
-		Version: meshsyncVersion,
+		Version: version,
 		Status:  Status(meshsyncStatus),
 	}
 
@@ -231,34 +206,9 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 		},
 	})
 
-	go getVersion(brokerConn)
-
 	if err != nil {
 		return endpoint, ErrPublishBroker(err)
 	}
 
 	return endpoint, nil
-}
-
-func getVersion(brokerConn brokerpkg.Handler) {
-	versionch := make(chan *brokerpkg.Message)
-
-	err := brokerConn.SubscribeWithChannel("meshsync-meta", "meshery", versionch) // what is this queue used for now just using "meshery"
-
-	if err != nil {
-		logrus.Error(err.Error())
-		return
-	}
-	err = brokerConn.Publish(RequestSubject, &brokerpkg.Message{
-		Request: &brokerpkg.RequestObject{
-			Entity: "meshsync-meta",
-		},
-	})
-	if err != nil {
-		logrus.Error(err.Error())
-		return
-	}
-
-	ch := <-versionch
-	meshsyncVersion = ch.Object.(string)
 }
