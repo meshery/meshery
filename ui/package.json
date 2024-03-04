@@ -87,7 +87,7 @@
         "next": "^12.3.4",
         "next-redux-wrapper": "^3.0.0-alpha.3",
         "next-remove-imports": "^1.0.12",
-        "notistack": "^1.0.10",
+        "notistack": "^3.0.1",
         "patch-package": "^6.4.7",
         "path-parse": "^1.0.7",
         "pluralize": "^8.0.0",
