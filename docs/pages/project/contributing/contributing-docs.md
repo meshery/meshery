@@ -244,7 +244,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 
 You can also use the `code` component created for this feature to make it easy to use. It can be used by including code.html and then passing the code snippet to it.
 
-If the code snippet does not cotain any special characters then, it can be used directly like,<br><br>
+If the code snippet does not contain any special characters then, it can be used directly like,<br><br>
 `{% raw %}{% include code.html code="code_snippet_here" %}{% endraw %}`.
 
 If the code snippet has special characters then we need to capture it first in variable `code_content` like this,<br><br> `{% raw %}{% capture code_content%}code_snippet_here{% endcapture %}{% endraw %}`<br><br> and then pass it to the component like this,<br><br> `{% raw %}{% include code.html code=code_content %}{% endraw %}`.<br><br> That's it.
@@ -288,7 +288,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `make docs`
 6. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
-7. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
+7. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
 
 ### Navigation Table of Contents in Sidebar (toc)
 

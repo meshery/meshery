@@ -14,7 +14,6 @@ import PatternServiceForm from './MesheryMeshInterface/PatternServiceForm';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironment';
-import subscribeMeshSyncStatusEvents from '../components/graphql/subscriptions/MeshSyncStatusSubscription';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
 import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
@@ -31,6 +30,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
+import { FormatStructuredData } from './DataFormatter';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -103,7 +103,6 @@ function NavigatorExtension({
           query: {},
           mutation: {},
           subscription: {
-            subscribeMeshSyncStatusEvents,
             ConfigurationSubscription,
           },
         },
@@ -120,6 +119,7 @@ function NavigatorExtension({
         CapabilitiesRegistryClass: CapabilitiesRegistry,
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
+        StructuredDataFormatter: FormatStructuredData,
       }}
     />
   );

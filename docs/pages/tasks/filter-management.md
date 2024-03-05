@@ -110,7 +110,7 @@ WebAssembly is a low-level assembly-like language with a compact binary format t
 
 ### Q: What are the disadvantages of WASM filters to be taken into consideration?
 
-Execution of WASM filters requires system resources. Just as executing the same functionality that your filter provides outside of the WASM virtual machine, resources can include overhead of latency, CPU, and memory. See the [Service Mesh Performance](https://smp-spec.io) project for more detail.
+Execution of WASM filters requires system resources. Just as executing the same functionality that your filter provides outside of the WASM virtual machine, resources can include overhead of latency, CPU, and memory. See the [Cloud Native Performance](https://smp-spec.io) project for more detail.
 
 ### Q: What is the Envoy Proxy WASM SDK?
 

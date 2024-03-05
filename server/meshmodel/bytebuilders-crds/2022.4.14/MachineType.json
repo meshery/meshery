@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": false,
-   "logoURL": "",
-   "model": "bytebuilders-crds",
-   "modelDisplayName": "Bytebuilders Crds",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "bytebuilders-crds",
    "version": "2022.4.14",
    "displayName": "Bytebuilders Crds",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://charts.appscode.com/stable/bytebuilders-crds/bytebuilders-crds-v2022.04.14.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

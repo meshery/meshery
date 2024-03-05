@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import MesheryOperatorIcon from '../icons/MesheryOperatorIcon.js';
 import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
-import subscribeOperatorStatusEvents from '../../graphql/subscriptions/OperatorStatusSubscription';
 import ServiceCard from '../ServiceCard';
 import { CircularProgress, Grid } from '@material-ui/core';
 import MesheryOperatorDataPanel from '../DataPanels/MesheryOperator';
@@ -39,7 +38,6 @@ const MesheryOperatorScreen = ({ setStepStatus }) => {
   }, [isConnected]);
 
   useEffect(() => {
-    subscribeOperatorStatusEvents(setOperatorState);
     setIsLoading(true);
     fetchMesheryOperatorStatus().subscribe({
       next: (res) => {

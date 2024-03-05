@@ -6,7 +6,7 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "{\"designer\":{\"show-node-group-badge\":false, \"edit\":{\"config\":false, \"text\":false,\"lock\":true,\"shape\":{\"convert-shape\":true},\"style\":true},\"label\":{\"edit\":true,\"show\":true,\"sync-with-config-property\":\"label\"}}}",
+   "capabilities": "{\"designer\":{\"show-node-group-badge\":false, \"edit\":{\"config\":false, \"text\":false,\"lock\":true,\"shape\":{\"convert-shape\":false},\"style\":true},\"label\":{\"edit\":true,\"show\":true,\"sync-with-config-property\":\"label\"}}}",
    "defaultData": "{\"label\":\"\"}",
    "genealogy": "parent",
    "isAnnotation": true,
@@ -32,6 +32,7 @@
    "name": "meshery-shapes",
    "version": "1.0.0",
    "displayName": "Meshery Shapes",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Orchestration \u0026 Management",

@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "bottlerocket-update-operator",
-   "modelDisplayName": "Bottlerocket Update Operator",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "bottlerocket-update-operator",
    "version": "0.3.0",
    "displayName": "Bottlerocket Update Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://franklinpashok.github.io/bottlerocket-update-operator/bottlerocket-update-operator-0.3.0.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

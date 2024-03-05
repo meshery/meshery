@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "bundle-controller",
-   "modelDisplayName": "Bundle Controller",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "bundle-controller",
    "version": "1.0.0-alpha1",
    "displayName": "Bundle Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://charts.kubegems.io/kubegems/charts/bundle-controller-1.0.0-alpha1.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

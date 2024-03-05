@@ -42,19 +42,19 @@ var linkDocMeshValidate = map[string]string{
 	"caption": "Usage of mesheryctl mesh validate",
 }
 
-// validateCmd represents the service mesh validation command
+// validateCmd represents the infrastructure validation command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
-	Short: "Validate conformance to service mesh standards",
+	Short: "Validate conformance to predefined standards",
 	Example: `
-// Validate conformance to service mesh standards
+// Validate conformance to predefined standards
 mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
-// Validate Istio to service mesh standards
+// Validate Istio to predefined standards
 mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 	`,
 	Annotations: linkDocMeshValidate,
-	Long:        `Validate service mesh conformance to different standard specifications`,
+	Long:        `Validate predefined conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof("Verifying prerequisites...")
 
@@ -84,7 +84,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof("Starting service mesh validation...")
+		log.Infof("Starting cloud and cloud native infrastructure validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

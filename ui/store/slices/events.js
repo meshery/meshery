@@ -4,7 +4,7 @@ import { SEVERITY, STATUS, validateEvents } from '../../components/NotificationC
 const initialState = {
   current_view: {
     page: 1,
-    page_size: 10,
+    pagesize: 10,
     filters: {
       initial: true,
     },

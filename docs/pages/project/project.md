@@ -39,12 +39,12 @@ Meshery supports all Kubernetes-based infrastructure including most cloud servic
    - Registry and configuration of WebAssembly filters for Envoy
 1. Interoperability and Federation
    - Integration with thousands of cloud services and cloud native projects
-   - Manage multiple service meshes concurrently
+   - Manage multiple cloud and cloud native environments concurrently
    - Connect to multiple clusters independently
 
 ### Meshery is for Developers, Operators, and Product Owners
 
-Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
+Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage Cloud and cloud native infrastructure in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
 ### Meshery is for cloud native patterns
 
@@ -58,7 +58,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 
 #### **Stable**
 
-| Service Mesh | Status |
+| Adapter | Status |
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
@@ -68,7 +68,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 
 ##### **Beta**
 
-| Service Mesh | Status |
+| Adapter | Status |
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
@@ -76,9 +76,9 @@ Meshery helps users weigh the value of their cloud native deployments against th
 {% endif -%}
 {% endfor %}
 
-##### **Alpha** - Service mesh adapters for which we are seeking community-contributed support.
+##### **Alpha** - Meshery adapters for which we are seeking community-contributed support.
 
-| Service Mesh | Status |
+| Adapter | Status |
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}

@@ -32,6 +32,7 @@
    "name": "accurate",
    "version": "0.5.0",
    "displayName": "Accurate",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",
