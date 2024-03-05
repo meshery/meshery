@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "goldilocks",
+  "version": "8.0.1",
+  "displayName": "Goldilocks",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Security \u0026 Compliance",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Security \u0026 Compliance",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "components": null,
+  "relationships": null
+ }

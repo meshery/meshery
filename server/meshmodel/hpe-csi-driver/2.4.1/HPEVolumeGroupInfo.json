@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "HPEVolumeGroupInfo",
+  "apiVersion": "storage.hpe.com/v1",
+  "displayName": "HPE Volume Group Info",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hpe-csi-driver",
+   "version": "2.4.1",
+   "displayName": "HPE CSI Driver",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"hpeVolumeGroupInfos\": {\n   \"description\": \"List of HPE volume groups configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume group\",\n      \"type\": \"object\"\n     },\n     \"snapshotGroups\": {\n      \"description\": \"Snapshot groups that are linked to this volume group\",\n      \"items\": {\n       \"properties\": {\n        \"id\": {\n         \"description\": \"ID of the snapshot group\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the snapshot group\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     },\n     \"volumes\": {\n      \"description\": \"Volumes that are members in this volume group\",\n      \"items\": {\n       \"properties\": {\n        \"volumeId\": {\n         \"description\": \"ID of the member volume\",\n         \"type\": \"string\"\n        },\n        \"volumeName\": {\n         \"description\": \"Name of the member volume\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Group Info\",\n \"type\": \"object\"\n}"
+ }

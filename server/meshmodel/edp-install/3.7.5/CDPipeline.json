@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CDPipeline",
+  "apiVersion": "v2.edp.epam.com/v1",
+  "displayName": "CD Pipeline",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "edp-install",
+   "version": "3.7.5",
+   "displayName": "EDP Install",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CDPipeline is the Schema for the cdpipelines API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CDPipelineSpec defines the desired state of CDPipeline.\",\n   \"properties\": {\n    \"applications\": {\n     \"description\": \"A list of applications included in CDPipeline.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"applicationsToPromote\": {\n     \"description\": \"A list of applications which will promote after successful release.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"deploymentType\": {\n     \"description\": \"Which type of kind will be deployed e.g. Container, Custom\",\n     \"type\": \"string\"\n    },\n    \"inputDockerStreams\": {\n     \"description\": \"A list of docker streams\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"description\": \"Name of CD pipeline\",\n     \"minLength\": 2,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applications\",\n    \"deploymentType\",\n    \"inputDockerStreams\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"CD Pipeline\",\n \"type\": \"object\"\n}"
+ }

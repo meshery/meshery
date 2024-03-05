@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ClickHouseKeeperInstallation",
+  "apiVersion": "clickhouse-keeper.altinity.com/v1",
+  "displayName": "Click House Keeper Installation",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "altinity-clickhouse-operator",
+   "version": "0.23.3",
+   "displayName": "Altinity Clickhouse Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"define a set of Kubernetes resources (StatefulSet, PVC, Service, ConfigMap) which describe behavior one ClickHouse Keeper cluster\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeeperSpec defines the desired state of a Keeper cluster\",\n   \"properties\": {\n    \"configuration\": {\n     \"description\": \"allows configure multiple aspects and behavior for `clickhouse-server` instance and also allows describe multiple `clickhouse-server` clusters inside one `chi` resource\",\n     \"properties\": {\n      \"clusters\": {\n       \"description\": \"describes ClickHouseKeeper clusters layout and allows change settings on cluster-level and replica-level\\n\",\n       \"items\": {\n        \"properties\": {\n         \"layout\": {\n          \"description\": \"describe current cluster layout, how many replicas\\n\",\n          \"properties\": {\n           \"replicasCount\": {\n            \"description\": \"how many replicas in ClickHouseKeeper cluster\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"name\": {\n          \"description\": \"cluster name, used to identify set of ClickHouseKeeper servers and wide used during generate names of related Kubernetes resources\",\n          \"maxLength\": 15,\n          \"minLength\": 1,\n          \"pattern\": \"^[a-zA-Z0-9-]{0,15}$\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"settings\": {\n       \"description\": \"allows configure multiple aspects and behavior for `clickhouse-keeper` instance\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"namespaceDomainPattern\": {\n     \"description\": \"Custom domain pattern which will be used for DNS names of `Service` or `Pod`.\\nTypical use scenario - custom cluster domain in Kubernetes cluster\\nExample: %s.svc.my.test\\n\",\n     \"type\": \"string\"\n    },\n    \"replicas\": {\n     \"description\": \"Replicas is the expected size of the keeper cluster.\\nThe valid range of size is from 1 to 7.\\n\",\n     \"format\": \"int32\",\n     \"maximum\": 7,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"templates\": {\n     \"description\": \"allows define templates which will use for render Kubernetes resources like StatefulSet, ConfigMap, Service, PVC, by default, clickhouse-operator have own templates, but you can override it\",\n     \"properties\": {\n      \"podTemplates\": {\n       \"description\": \"podTemplate will use during render `Pod` inside `StatefulSet.spec` and allows define rendered `Pod.spec`, pod scheduling distribution and pod zone\\nMore information: https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md#spectemplatespodtemplates\\n\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows pass standard object's metadata from template to Pod\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside top-level `chi.spec.defaults.templates.podTemplate`, cluster-level `chi.spec.configuration.clusters.templates.podTemplate`, shard-level `chi.spec.configuration.clusters.layout.shards.temlates.podTemplate`, replica-level `chi.spec.configuration.clusters.layout.replicas.templates.podTemplate`\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"allows define whole Pod.spec inside StaefulSet.spec, look to https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates for details\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"serviceTemplates\": {\n       \"description\": \"allows define template for rendering `Service` which would get endpoint from Pods which scoped chi-wide, cluster-wide, shard-wide, replica-wide level\\n\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows pass standard object's metadata from template to Service\\nCould be use for define specificly for Cloud Provider metadata which impact to behavior of service\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside\\nchi-level `chi.spec.defaults.templates.serviceTemplate`\\ncluster-level `chi.spec.configuration.clusters.templates.clusterServiceTemplate`\\nshard-level `chi.spec.configuration.clusters.layout.shards.temlates.shardServiceTemplate`\\nreplica-level `chi.spec.configuration.clusters.layout.replicas.templates.replicaServiceTemplate` or `chi.spec.configuration.clusters.layout.shards.replicas.replicaServiceTemplate`\\n\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"describe behavior of generated Service\\nMore info: https://kubernetes.io/docs/concepts/services-networking/service/\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"volumeClaimTemplates\": {\n       \"description\": \"allows define template for rendering `PVC` kubernetes resource, which would use inside `Pod` for mount clickhouse `data`, clickhouse `logs` or something else\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows to pass standard object's metadata from template to PVC\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside\\ntop-level `chi.spec.defaults.templates.dataVolumeClaimTemplate` or `chi.spec.defaults.templates.logVolumeClaimTemplate`,\\ncluster-level `chi.spec.configuration.clusters.templates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.templates.logVolumeClaimTemplate`,\\nshard-level `chi.spec.configuration.clusters.layout.shards.temlates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.layout.shards.temlates.logVolumeClaimTemplate`\\nreplica-level `chi.spec.configuration.clusters.layout.replicas.templates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.layout.replicas.templates.logVolumeClaimTemplate`\\n\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"allows define all aspects of `PVC` resource\\nMore info: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Click House Keeper Installation\",\n \"type\": \"object\"\n}"
+ }
