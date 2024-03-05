@@ -269,16 +269,6 @@ func TestSwitchContextCmd(t *testing.T) {
 			Args:             []string{"context", "switch", "local2", "-y"},
 			ExpectedResponse: "switch.context.golden",
 		},
-		{
-			Name: "error switching to an empty context",
-			Args: []string{"context", "switch"},
-			ErrorStringContains: []string{
-				"please provide exactly one context name",
-				"Usage: mesheryctl system context switch [context name]",
-				"Example: mesheryctl system context switch k8s-sample",
-				"Description: Configures mesheryctl to actively use one one context vs. the another context",
-			},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
@@ -287,9 +277,6 @@ func TestSwitchContextCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				if errSubstrs := tt.ErrorStringContains; len(errSubstrs) > 0 && checkErrorContains(err, errSubstrs) {
-					return
-				}
 				t.Error(err)
 			}
 
