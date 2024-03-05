@@ -3,8 +3,10 @@ layout: default
 title: Exploring Kubernetes Pods with Meshery Playground
 abstract: Learn Kubernetes Pods with Meshery Playground
 permalink: guides/tutorials/kubernetes-pods
+model: kubernetes
+kind: pods
 type: tutorials
-category: tutorials
+category: tutorial
 language: en
 list: include
 abstract: "Explore Kubernetes Pods using Meshery Playground, an interactive live cluster environment, through a series of hands-on excercises."
