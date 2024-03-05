@@ -12,11 +12,11 @@ subcommand: publish
 
 # mesheryctl registry publish
 
-Publish Meshery Models to Websites, Remote Provider, Meshery
+Publish Meshery Models to Websites, Remote Provider, Meshery Server
 
 ## Synopsis
 
-Publishes metadata about Meshery Models to Websites, Remote Provider and Meshery by reading from a Google Spreadsheet.
+Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
@@ -85,6 +85,14 @@ Publishing to layer5 site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+
+</div>
+</pre> 
+
+Publishing to any website
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 
 </div>
 </pre> 
