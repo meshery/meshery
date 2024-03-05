@@ -82,7 +82,7 @@ mesheryctl perf result -o yaml
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/Users/lee/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
