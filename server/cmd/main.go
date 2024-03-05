@@ -58,6 +58,8 @@ func main() {
 	viper.AutomaticEnv()
 
 	// Meshery Server configuration
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")
 	viper.SetConfigFile("./server-config.env")
 	viper.WatchConfig()
 
@@ -298,6 +300,7 @@ func main() {
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
+		return
 	}
 
 	models.InitMeshSyncRegistrationQueue()
@@ -355,6 +358,7 @@ func main() {
 	err = dbHandler.DBClose()
 	if err != nil {
 		log.Error(ErrClosingDatabaseInstance(err))
+		return
 	}
 
 	log.Info("Shutting down Meshery Server...")
