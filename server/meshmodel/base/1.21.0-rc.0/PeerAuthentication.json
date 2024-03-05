@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PeerAuthentication",
+  "apiVersion": "security.istio.io/v1beta1",
+  "displayName": "Peer Authentication",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "base",
+   "version": "1.21.0-rc.0",
+   "displayName": "base",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Peer authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/peer_authentication.html\",\n   \"properties\": {\n    \"mtls\": {\n     \"description\": \"Mutual TLS settings for workload.\",\n     \"properties\": {\n      \"mode\": {\n       \"description\": \"Defines the mTLS mode used for peer authentication.\",\n       \"enum\": [\n        \"UNSET\",\n        \"DISABLE\",\n        \"PERMISSIVE\",\n        \"STRICT\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"portLevelMtls\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"mode\": {\n        \"description\": \"Defines the mTLS mode used for peer authentication.\",\n        \"enum\": [\n         \"UNSET\",\n         \"DISABLE\",\n         \"PERMISSIVE\",\n         \"STRICT\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Port specific mutual TLS settings.\",\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"description\": \"The selector determines the workloads to apply the PeerAuthentication on.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Peer Authentication\",\n \"type\": \"object\"\n}"
+ }

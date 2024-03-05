@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CapsuleConfiguration",
+  "apiVersion": "capsule.clastix.io/v1beta2",
+  "displayName": "Capsule Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "capsule",
+   "version": "0.6.1",
+   "displayName": "Capsule",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CapsuleConfiguration is the Schema for the Capsule configuration API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CapsuleConfigurationSpec defines the Capsule configuration.\",\n   \"properties\": {\n    \"enableTLSReconciler\": {\n     \"default\": true,\n     \"description\": \"Toggles the TLS reconciler, the controller that is able to generate CA and certificates for the webhooks when not using an already provided CA and certificate, or when these are managed externally with Vault, or cert-manager.\",\n     \"type\": \"boolean\"\n    },\n    \"forceTenantPrefix\": {\n     \"default\": false,\n     \"description\": \"Enforces the Tenant owner, during Namespace creation, to name it using the selected Tenant name as prefix, separated by a dash. This is useful to avoid Namespace name collision in a public CaaS environment.\",\n     \"type\": \"boolean\"\n    },\n    \"nodeMetadata\": {\n     \"description\": \"Allows to set the forbidden metadata for the worker nodes that could be patched by a Tenant. This applies only if the Tenant has an active NodeSelector, and the Owner have right to patch their nodes.\",\n     \"properties\": {\n      \"forbiddenAnnotations\": {\n       \"description\": \"Define the annotations that a Tenant Owner cannot set for their nodes.\",\n       \"properties\": {\n        \"denied\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"deniedRegex\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"forbiddenLabels\": {\n       \"description\": \"Define the labels that a Tenant Owner cannot set for their nodes.\",\n       \"properties\": {\n        \"denied\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"deniedRegex\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"forbiddenAnnotations\",\n      \"forbiddenLabels\"\n     ],\n     \"type\": \"object\"\n    },\n    \"overrides\": {\n     \"default\": {\n      \"TLSSecretName\": \"capsule-tls\",\n      \"mutatingWebhookConfigurationName\": \"capsule-mutating-webhook-configuration\",\n      \"validatingWebhookConfigurationName\": \"capsule-validating-webhook-configuration\"\n     },\n     \"description\": \"Allows to set different name rather than the canonical one for the Capsule configuration objects, such as webhook secret or configurations.\",\n     \"properties\": {\n      \"TLSSecretName\": {\n       \"default\": \"capsule-tls\",\n       \"description\": \"Defines the Secret name used for the webhook server. Must be in the same Namespace where the Capsule Deployment is deployed.\",\n       \"type\": \"string\"\n      },\n      \"mutatingWebhookConfigurationName\": {\n       \"default\": \"capsule-mutating-webhook-configuration\",\n       \"description\": \"Name of the MutatingWebhookConfiguration which contains the dynamic admission controller paths and resources.\",\n       \"type\": \"string\"\n      },\n      \"validatingWebhookConfigurationName\": {\n       \"default\": \"capsule-validating-webhook-configuration\",\n       \"description\": \"Name of the ValidatingWebhookConfiguration which contains the dynamic admission controller paths and resources.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"TLSSecretName\",\n      \"mutatingWebhookConfigurationName\",\n      \"validatingWebhookConfigurationName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"protectedNamespaceRegex\": {\n     \"description\": \"Disallow creation of namespaces, whose name matches this regexp\",\n     \"type\": \"string\"\n    },\n    \"userGroups\": {\n     \"default\": [\n      \"capsule.clastix.io\"\n     ],\n     \"description\": \"Names of the groups for Capsule users.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"enableTLSReconciler\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Capsule Configuration\",\n \"type\": \"object\"\n}"
+ }

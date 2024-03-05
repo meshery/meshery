@@ -6,7 +6,7 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
+   "capabilities": " {\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,

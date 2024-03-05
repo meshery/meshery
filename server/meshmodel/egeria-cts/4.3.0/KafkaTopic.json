@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "KafkaTopic",
+  "apiVersion": "kafka.strimzi.io/v1beta2",
+  "displayName": "Kafka Topic",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "egeria-cts",
+   "version": "4.3.0",
+   "displayName": "Egeria Cts",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the topic.\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"The topic configuration.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"partitions\": {\n     \"description\": \"The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning. When absent this will default to the broker configuration for `num.partitions`.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"replicas\": {\n     \"description\": \"The number of replicas the topic should have. When absent this will default to the broker configuration for `default.replication.factor`.\",\n     \"maximum\": 32767,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"topicName\": {\n     \"description\": \"The name of the topic. When absent this will default to the metadata.name of the topic. It is recommended to not set this unless the topic name is not a valid Kubernetes resource name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Topic\",\n \"type\": \"object\"\n}"
+ }

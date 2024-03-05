@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "KafkaConnector",
+  "apiVersion": "kafka.strimzi.io/v1beta2",
+  "displayName": "Kafka Connector",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "egeria-cts",
+   "version": "4.3.0",
+   "displayName": "Egeria Cts",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Kafka Connector.\",\n   \"properties\": {\n    \"autoRestart\": {\n     \"description\": \"Automatic restart of connector and tasks configuration.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"Whether automatic restart for failed connectors and tasks should be enabled or disabled.\",\n       \"type\": \"boolean\"\n      },\n      \"maxRestarts\": {\n       \"description\": \"The maximum number of connector restarts that the operator will try. If the connector remains in a failed state after reaching this limit, it must be restarted manually by the user. Defaults to an unlimited number of restarts.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"class\": {\n     \"description\": \"The Class for the Kafka Connector.\",\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"The Kafka Connector configuration. The following properties cannot be set: connector.class, tasks.max.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"pause\": {\n     \"description\": \"Whether the connector should be paused. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"tasksMax\": {\n     \"description\": \"The maximum number of tasks for the Kafka Connector.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Connector\",\n \"type\": \"object\"\n}"
+ }

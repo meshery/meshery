@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "cni-hostnic",
+  "version": "0.1.0",
+  "displayName": "CNI Host NIC",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Cloud Native Network",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Cloud Native Network",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "components": null,
+  "relationships": null
+ }

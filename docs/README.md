@@ -1,8 +1,13 @@
-# Meshery Docs
+# Meshery Docs Contributing Overview ([Website](https://docs.meshery.io))
 
-![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
-_Check out the [Meshery Docs](https://docs.meshery.io/)!_
-Detailed documentation on contributing to Meshery docs is available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).
+Please do! Thank you for your help in improving Meshery Docs! :balloon:
+
+---
+
+<details>
+
+  <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3>
+## See full contributing instructions for Meshery Docs available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).</summary>
 
 ## Contributing to the Meshery Documentation
 
@@ -59,6 +64,7 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 - _See the [Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) for additional reference._
 - Theme - https://github.com/vsoch/docsy-jekyll
+</details>
 
 # Meshery Documentation Stucture
 
@@ -154,3 +160,4 @@ A component tool reference page shows the description and flag options output fo
 - **FAQ:** Answers to frequently asked questions.
 
 This high-level outline provides a comprehensive framework for structuring the Meshery documentation, catering to diverse user needs while ensuring information is readily accessible and actionable. By further refining each section with specific content recommendations and considering the needs of specific personas, the documentation can effectively serve as a valuable resource for everyone interacting with Meshery.
+</details>

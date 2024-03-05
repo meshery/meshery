@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "StrimziPodSet",
+  "apiVersion": "core.strimzi.io/v1beta2",
+  "displayName": "Strimzi Pod Set",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "egeria-cts",
+   "version": "4.3.0",
+   "displayName": "Egeria Cts",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the StrimziPodSet.\",\n   \"properties\": {\n    \"pods\": {\n     \"description\": \"The Pods managed by this StrimziPodSet.\",\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"description\": \"Selector is a label query which matches all the pods managed by this `StrimziPodSet`. Only `matchLabels` is supported. If `matchExpressions` is set, it will be ignored.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"selector\",\n    \"pods\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Strimzi Pod Set\",\n \"type\": \"object\"\n}"
+ }

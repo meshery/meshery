@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Invite",
+  "apiVersion": "dashboard.presslabs.com/v1alpha1",
+  "displayName": "Invite",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "bitpoke",
+   "version": "1.8.14",
+   "displayName": "Bitpoke",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Invite is the Schema for the invites API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InviteSpec defines the desired state of Invite\",\n   \"properties\": {\n    \"email\": {\n     \"description\": \"The email of the invited user (it is recommended to encrypt the string)\",\n     \"type\": \"string\"\n    },\n    \"redeemToken\": {\n     \"description\": \"RedeemToken is the token used for verification purposes when redeeming the invite. It is recommended to encrypt the string.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Invite\",\n \"type\": \"object\"\n}"
+ }
