@@ -10,7 +10,7 @@ command: exp
 subcommand: registry
 ---
 
-# mesheryctl exp registry publish
+# mesheryctl registry publish
 
 Publish Meshery Models to Websites, Remote Provider, Meshery
 
@@ -19,7 +19,7 @@ Publish Meshery Models to Websites, Remote Provider, Meshery
 Publishes metadata about Meshery Models to Websites, Remote Provider and Meshery by reading from a Google Spreadsheet.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
+mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [m
 Publish To System
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
+mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl exp registry publish [system] [google-sheet-credential] [sheet-id] [m
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl exp registry publish meshery GoogleCredential GoogleSheetID [repo]/se
 Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl exp registry publish remote-provider GoogleCredential GoogleSheetID [
 Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
+mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
 </div>
 </pre> 
@@ -68,7 +68,7 @@ cd docs;
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
 </div>
 </pre> 
@@ -76,7 +76,7 @@ mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuv
 Publishing to mesheryio site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 </div>
 </pre> 
@@ -84,7 +84,7 @@ mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuv
 Publishing to layer5 site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 
 </div>
 </pre> 
