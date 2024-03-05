@@ -78,7 +78,7 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/Users/lee/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.mesheryconfig.yaml")
   -v, --verbose         verbose output
 
 </div>

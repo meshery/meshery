@@ -39,7 +39,7 @@ mesheryctl system [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/Users/lee/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.mesheryconfig.yaml")
   -v, --verbose         verbose output
 
 </div>

@@ -62,7 +62,7 @@ mesheryctl -v [or] --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/Users/lee/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.mesheryconfig.yaml")
   -h, --help            help for mesheryctl
   -v, --verbose         verbose output
 
