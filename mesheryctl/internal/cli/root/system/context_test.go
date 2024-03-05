@@ -323,11 +323,3 @@ func resetVariables() {
 	tempCntxt = ""
 }
 
-func checkErrorContains(err error, substrs []string) bool {
-	for _, substr := range substrs {
-		if !strings.Contains(err.Error(), substr) {
-			return false
-		}
-	}
-	return true
-}
