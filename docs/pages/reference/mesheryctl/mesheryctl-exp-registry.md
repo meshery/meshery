@@ -10,7 +10,7 @@ command: exp
 subcommand: registry
 ---
 
-# mesheryctl exp registry
+# mesheryctl registry
 
 Meshery Registry Management
 
@@ -19,7 +19,7 @@ Meshery Registry Management
 Manage the state and configuration of Meshery Registry.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp registry [flags]
+mesheryctl registry [flags]
 
 </div>
 </pre> 
