@@ -46,7 +46,7 @@ var (
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 // Example publishing to layer5 docs
-// mesheryctl/mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
@@ -74,7 +74,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 // Publishing to layer5 site
-mesheryctl/mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 5 {

@@ -84,7 +84,7 @@ mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuv
 Publishing to layer5 site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl/mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+mesheryctl exp registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 
 </div>
 </pre> 
