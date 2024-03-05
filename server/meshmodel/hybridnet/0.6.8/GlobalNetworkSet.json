@@ -6,22 +6,9 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
    "isNamespaced": false,
-   "primaryColor": "",
    "published": true,
-   "secondaryColor": "",
-   "shape": "",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shape": "circle"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
