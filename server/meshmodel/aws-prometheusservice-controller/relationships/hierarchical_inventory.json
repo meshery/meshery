@@ -39,6 +39,24 @@
               "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
               "description": "AlertManagerDefiniton component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the AlertManager system."
             }
+          },
+          {
+            "kind": "LoggingConfiguration",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "description": "LoggingConfiguration component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the Logging system."
+            }
+          },
+          {
+            "kind": "RuleGroupsNamespace",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "description": "RuleGroupsNamespace component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the RuleGroupsNamespace system."
+            }
           }
         ]
       },
