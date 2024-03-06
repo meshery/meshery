@@ -9,7 +9,10 @@ import future.keywords.every
 import future.keywords.in
 
 heirarchical_inventory_relationship[updated_comps] {
-	selector_set := data.inventory.selectors[_]
+	relationship := data.relationships[_]
+	relationship.subType in {"Inventory"}
+		
+	selector_set := relationship.selectors[_]
 
 	from_selectors := {kind: selectors |
 		selectors := selector_set.allow.from[_]
