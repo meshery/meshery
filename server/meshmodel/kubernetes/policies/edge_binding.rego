@@ -5,11 +5,11 @@ import data.common.extract_components
 import data.common.get_array_pos
 import future.keywords.in
 
-binding_types := ["mount", "permission"]
-
 edge_binding_relationship[results] {
-	binding_type := binding_types[_]
-	selector_set := data[binding_type].selectors[_]
+	relationship := data.relationships[_]
+	relationship.subType in {"Mount", "Permission"}
+
+	selector_set := relationship.selectors[_]
 
 	from_selectors := {kind: selectors |
 		selectors := selector_set.allow.from[_]
@@ -51,7 +51,7 @@ edge_binding_relationship[results] {
 		some comp in from
 
 		some edge in comp.traits.meshmap.edges
-		contains(binding_types, lower(edge.data.subType))
+		relationship.subType == edge.data.subType
 
 		e := {
 			"from": {"id": edge.data.source},
@@ -64,7 +64,7 @@ edge_binding_relationship[results] {
 	# print("edges_set - evaluation_results: ", edges_set - union_of_results)
 	# print("union_of_results: ", union_of_results)
 	# print(union(union_of_results, {}))
-	results = {binding_type: {
+	results = {lower(relationship.subType): {
 		"edges_to_add": union_of_results,
 		"edges_to_remove": edges_set - union_of_results,
 	}}
