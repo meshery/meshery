@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	shouldRegisterMod        = "publishToSites"
+	shouldRegisterMod = "publishToSites"
 )
 
 type ModelCSV struct {

@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "integrated-service-operator",
-   "modelDisplayName": "Integrated Service Operator",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -39,7 +35,12 @@
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/integrated-service-operator-0.5.0.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

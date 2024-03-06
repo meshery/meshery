@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "ingressmonitorcontroller",
+  "version": "2.1.50",
+  "displayName": "Ingressmonitorcontroller",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Uncategorized",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Uncategorized",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "components": null,
+  "relationships": null
+ }
