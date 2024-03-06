@@ -770,6 +770,23 @@
               ],
               "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
             }
+          },
+          {
+            "kind": "CSINode",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "drivers",
+                  "_",
+                  "name"
+                ]
+              ],
+              "description": "CSI drivers generate node specific information. Instead of storing this in the Kubernetes Node API Object, a new CSI specific Kubernetes CSINode object is used which can reference the CSI Drivers."
+            }
           }
         ]
       },
@@ -1319,6 +1336,17 @@
                 ["settings", "spec", "storageClassName"]
               ],
               "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
+            }
+          },
+          {
+            "kind": "CSIStorageCapacity",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "storageClassName"]
+              ],
+              "description": "A CSIStorageCapacity gets produced by a CSI driver in the namespace where the driver is installed. Each CSIStorageCapacity contains capacity information for one Storage Class and defines which nodes have access to that storage."
             }
           }
         ],
