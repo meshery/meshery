@@ -24,7 +24,7 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
       return REGISTRANTS;
     } else if (isPropertyIncluded(COMPONENTS) || isPropertyIncluded(RELATIONSHIPS)) {
       return MODELS;
-    } else if (isPropertyIncluded('evaluationQuery')) {
+    } else if (isPropertyIncluded('evaluationQuery') || isPropertyIncluded('selector')) {
       return RELATIONSHIPS;
     } else if (isPropertyIncluded('schema') || isPropertyIncluded('apiVersion')) {
       return COMPONENTS;
@@ -80,7 +80,9 @@ export const removeDuplicateVersions = (data) => {
           components: {},
         };
         modelsWithSameVersion.map((model) => {
-          subVal.relationships = _.union(subVal.relationships, model.relationships);
+          subVal.relationships = groupRelationshipsByKind(
+            _.union(subVal.relationships, model.relationships),
+          );
           subVal.components = _.union(subVal.components, model.components);
         });
         return {

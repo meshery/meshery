@@ -403,7 +403,7 @@ function K8sContextMenu({
                 )}
                 {contexts?.contexts?.map((ctx, idx) => {
                   const { operatorState, meshSyncState, natsState } =
-                    getControllerStatesByConnectionID(ctx.id);
+                    getControllerStatesByConnectionID(ctx.connection_id);
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>

@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PrometheusRule",
+  "apiVersion": "monitoring.coreos.com/v1",
+  "displayName": "Prometheus Rule",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "cloudman",
+   "version": "0.11.2",
+   "displayName": "Cloudman",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"\u003e\u003c/rect\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#D1BE06\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E7E5DE\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003c/svg\u003e\n"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"PrometheusRule defines recording and alerting rules for a Prometheus instance\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of desired alerting rule definitions for Prometheus.\",\n   \"properties\": {\n    \"groups\": {\n     \"description\": \"Content of Prometheus rule file\",\n     \"items\": {\n      \"description\": \"RuleGroup is a list of sequentially evaluated recording and alerting rules. Note: PartialResponseStrategy is only used by ThanosRuler and will be ignored by Prometheus instances.  Valid values for this field are 'warn' or 'abort'.  More info: https://github.com/thanos-io/thanos/blob/master/docs/components/rule.md#partial-response\",\n      \"properties\": {\n       \"interval\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"partial_response_strategy\": {\n        \"type\": \"string\"\n       },\n       \"rules\": {\n        \"items\": {\n         \"description\": \"Rule describes an alerting or recording rule See Prometheus documentation: [alerting](https://www.prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) or [recording](https://www.prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules) rule\",\n         \"properties\": {\n          \"alert\": {\n           \"type\": \"string\"\n          },\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"expr\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"for\": {\n           \"type\": \"string\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"record\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"expr\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"rules\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Prometheus Rule\",\n \"type\": \"object\"\n}"
+ }
