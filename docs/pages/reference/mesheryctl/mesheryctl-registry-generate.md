@@ -33,14 +33,7 @@ mesheryctl registry generate [flags]
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential>
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-# Example: mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 
 </div>
 </pre> 
@@ -48,7 +41,7 @@ mesheryctl registry generate --spreadsheet-id <id> --spreadsheet-cred <base64 en
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
+mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 
 </div>
 </pre> 
@@ -78,7 +71,7 @@ mesheryctl registry generate --registrant-def <path to connection definition> --
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

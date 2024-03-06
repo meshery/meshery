@@ -23,6 +23,7 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: cloud native patterns and Open Application Model integration
 - `mesheryctl app` - Cloud Native Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
+- `mesheryctl registry` - Meshery's Registry Management: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
 ## Global Commands and Flags
@@ -725,9 +726,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-
-## Experimental Features
-
+## Meshery Registry Management
 <table>
 <thead>
   <tr>
@@ -736,9 +735,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command10 = site.data.mesheryctlcommands.cmds.exp %}
+  {% assign command10 = site.data.mesheryctlcommands.cmds.registry %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/registry">{{ command10.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command10.description }}</td>
@@ -750,9 +749,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
-{% assign subcommand1 = command10.subcommands.registry %}
+{% assign subcommand1 = command10.subcommands.publish %}
       <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/exp/registry">{{ subcommand1.name }}</a></td>
+        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/registry/publish">{{ subcommand1.name }}</a></td>
         <td></td>
         <td>{{ subcommand1.description }}</td>
       </tr>
@@ -762,18 +761,69 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-      {% assign sub_subcommand1 = subcommand1.subcommands.publish %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/exp/registry/publish">{{ sub_subcommand1.name }}</a></td>
+{% assign subcommand2 = command10.subcommands.update %}
+<tr>
+        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/registry/update">{{ subcommand2.name }}</a></td>
         <td></td>
-        <td>{{ sub_subcommand1.description }}</td>
+        <td>{{ subcommand2.description }}</td>
       </tr>
-      {% for flag_hash in sub_subcommand1.flags %}{% assign flag = flag_hash[1] %}
+      {% for flag_hash in subcommand2.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td>{{ flag.name }}</td>
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
+{% assign subcommand3 = command10.subcommands.import %}
+<tr>
+        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/registry/import">{{ subcommand3.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand3.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+{% assign subcommand4 = command10.subcommands.generate %}
+<tr>
+        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/registry/generate">{{ subcommand4.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand4.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+</thead>
+</table>
+
+## Experimental Features
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command11 = site.data.mesheryctlcommands.cmds.exp %}
+    <tr>
+      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command11.description }}</td>
+    </tr>
+    {% for flag_hash in command11.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
 </thead>
 </table>
 

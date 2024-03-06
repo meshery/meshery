@@ -35,7 +35,7 @@ mesheryctl registry update [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry update --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
+	mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
 </div>
 </pre> 
@@ -70,7 +70,7 @@ mesheryctl registry update [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
