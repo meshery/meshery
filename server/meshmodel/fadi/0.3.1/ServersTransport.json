@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ServersTransport",
+  "apiVersion": "traefik.containo.us/v1alpha1",
+  "displayName": "Servers Transport",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"#3ABC9B\"/\u003e\n\u003c/svg\u003e\r",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "fadi",
+   "version": "0.3.1",
+   "displayName": "Fadi",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 45 51\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 45 51\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ServersTransport is a specification for a ServersTransport resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServersTransportSpec options to configure communication between Traefik and the servers.\",\n   \"properties\": {\n    \"certificatesSecrets\": {\n     \"description\": \"Certificates for mTLS.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"disableHTTP2\": {\n     \"description\": \"Disable HTTP/2 for connections with backend servers.\",\n     \"type\": \"boolean\"\n    },\n    \"forwardingTimeouts\": {\n     \"description\": \"Timeouts for requests forwarded to the backend servers.\",\n     \"properties\": {\n      \"dialTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"The amount of time to wait until a connection to a backend server can be established. If zero, no timeout exists.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"idleConnTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"The maximum period for which an idle HTTP keep-alive connection will remain open before closing itself.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"responseHeaderTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"The amount of time to wait for a server's response headers after fully writing the request (including its body, if any). If zero, no timeout exists.\",\n       \"x-kubernetes-int-or-string\": true\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"insecureSkipVerify\": {\n     \"description\": \"Disable SSL certificate verification.\",\n     \"type\": \"boolean\"\n    },\n    \"maxIdleConnsPerHost\": {\n     \"description\": \"If non-zero, controls the maximum idle (keep-alive) to keep per-host. If zero, DefaultMaxIdleConnsPerHost is used.\",\n     \"type\": \"integer\"\n    },\n    \"peerCertURI\": {\n     \"description\": \"Defines the URI used to match against SAN URIs during the server's certificate verification.\",\n     \"type\": \"string\"\n    },\n    \"rootCAsSecrets\": {\n     \"description\": \"Add cert file for self-signed certificate.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"serverName\": {\n     \"description\": \"ServerName used to contact the server.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Servers Transport\",\n \"type\": \"object\"\n}"
+ }
