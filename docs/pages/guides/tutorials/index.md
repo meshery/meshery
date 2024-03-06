@@ -14,12 +14,10 @@ redirect_from: guides/tutorials/
 <ul>
   {% for group in items_grouped %}
     <h2>{{ group.name | capitalize }}</h2>
-    <li>
       <ul>
         {% for item in group.items %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
         {% endfor %}
       </ul>
-    </li>
   {% endfor %}
 </ul>
