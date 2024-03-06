@@ -737,7 +737,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command10 = site.data.mesheryctlcommands.cmds.registry %}
     <tr>
-      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/registry">{{ command10.name }}</a></td>
+      <td rowspan=14><a href="{{ site.baseurl }}/reference/mesheryctl/registry">{{ command10.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command10.description }}</td>
@@ -773,25 +773,13 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-{% assign subcommand3 = command10.subcommands.import %}
+{% assign subcommand3 = command10.subcommands.generate %}
 <tr>
-        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/registry/import">{{ subcommand3.name }}</a></td>
+        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/registry/generate">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
       {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-{% assign subcommand4 = command10.subcommands.generate %}
-<tr>
-        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/registry/generate">{{ subcommand4.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand4.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td>{{ flag.name }}</td>
           <td>{{ flag.description }}</td>

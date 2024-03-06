@@ -858,36 +858,6 @@ registry:
           description: id of the spreadsheet to download
           usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] --spreadsheet-id [spreadsheet id]
           example: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] --spreadsheet-id "1a2b3c4d5e6f7g8h9i0j"
-    import:
-      name: import
-      description: Import Models into the registry
-      usage: mesheryctl registry import [flags]
-      flags:
-        output-format:
-          name: --output-format, -o
-          description: (optional) format to display in [md | mdx | js]
-          usage: mesheryctl registry import --output-format [md | mdx | js]
-          example: mesheryctl registry import --output-format md
-        registrant_cred:
-          name: --registrant-cred
-          description: path pointing to the registrant credetial definition
-          usage: mesheryctl registry import --registrant_cred [path to registrant credential file]
-          example: mesheryctl registry import --registrant_cred "~/Downloads/auth.json"
-        registrant_def:
-          name: --registrant-def
-          description: path pointing to the registrant connection definition
-          usage: mesheryctl registry import --registrant_def [path to registrant definition file]
-          example: mesheryctl registry import --registrant_def "~/Downloads/registrant.json"
-        spreadsheet_cred:
-          name: --spreadsheet-cred
-          description: base64 encoded credential to download the spreadsheet
-          usage: mesheryctl registry import --spreadsheet_cred [path to spreadsheet credential file]
-          example: mesheryctl registry import --spreadsheet_cred "~/Downloads/auth.json"
-        spreadsheet_id:
-          name: --spreadsheet-id
-          description: id of the spreadsheet to download
-          usage: mesheryctl registry import --spreadsheet_id [spreadsheet id]
-          example: mesheryctl registry import --spreadsheet_id "1a2b3c4d5e6f7g8h9i0j"
     generate:
       name: generate
       description: Generate Models to the registry
