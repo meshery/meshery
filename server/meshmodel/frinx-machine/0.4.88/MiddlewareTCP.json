@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MiddlewareTCP",
+  "apiVersion": "traefik.containo.us/v1alpha1",
+  "displayName": "Middleware TCP",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "frinx-machine",
+   "version": "0.4.88",
+   "displayName": "Frinx Machine",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MiddlewareTCP is the CRD implementation of a Traefik TCP middleware. More info: https://doc.traefik.io/traefik/v2.9/middlewares/overview/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec defines the desired state of a MiddlewareTCP.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"InFlightConn defines the InFlightConn middleware configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"description\": \"Amount defines the maximum amount of allowed simultaneous connections. The middleware closes the connection if there are already amount connections opened.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"IPWhiteList defines the IPWhiteList middleware configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"description\": \"SourceRange defines the allowed IPs (or ranges of allowed IPs by using CIDR notation).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
+ }

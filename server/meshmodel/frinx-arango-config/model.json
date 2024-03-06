@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "frinx-arango-config",
+  "version": "3.0.0",
+  "displayName": "Frinx Arango Config",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Uncategorized",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Uncategorized",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+  },
+  "components": null,
+  "relationships": null
+ }

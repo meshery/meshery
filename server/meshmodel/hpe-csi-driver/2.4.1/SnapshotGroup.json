@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SnapshotGroup",
+  "apiVersion": "storage.hpe.com/v1",
+  "displayName": "Snapshot Group",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hpe-csi-driver",
+   "version": "2.4.1",
+   "displayName": "HPE CSI Driver",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"SnapshotGroup is a user's request for creating a snapshotgroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshotGroup requested by a user. Required.\",\n   \"properties\": {\n    \"snapshotGroupClassName\": {\n     \"description\": \"snapshotGroupClassName is the name of the SnapshotGroupClass requested by the SnapshotGroup.\",\n     \"type\": \"string\"\n    },\n    \"snapshotGroupContentName\": {\n     \"description\": \"snapshotGroupContentName is the name of the snapshotGroupContent the snapshotGroup is bound.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies where a snapshotGroup will be created. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"apiGroup of the source. Current supported is storage.hpe.com\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind of the source (VolumeGroup) is the only supported one.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name specifies the volumeGroupName of the VolumeGroup object in the same namespace as the SnapshotGroup object where the snapshotGroup should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the volumeSnapshotClass to create pre-provisioned snapshots\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"volumeSnapshotClassName\",\n    \"snapshotGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Snapshot Group\",\n \"type\": \"object\"\n}"
+ }
