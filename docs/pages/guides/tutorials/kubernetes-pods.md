@@ -54,7 +54,7 @@ The pod at this stage does not have a container, so we will add one. This is sim
       ![](./screenshots/2024-02-23_11-54.png)
    8. Expand **Containers-0**.
       ![](./screenshots/2024-02-23_11-54_1.png)
-   9. Next, fillout some of the requred container specifications. Start by entering the container image, we will use _nginx:latest_ for this exercise.
+   9. Next, fill out some of the required container specifications. Start by entering the container image, we will use _nginx:latest_ for this exercise.
    10. Give the container a name.
        ![](./screenshots/2024-02-23_11-57.png) 
    11. Additionally, we will also give it a label. This will server many advantages later in this exercise. To do so, click the label icon on the modal.
