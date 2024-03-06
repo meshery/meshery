@@ -273,7 +273,7 @@ ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
-ui-build:
+ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 

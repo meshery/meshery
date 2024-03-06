@@ -164,7 +164,7 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance/managing-performance
-- title: 🛠 Integrations and Extensions
+- title: 🛠 Integrations & Extensions
   url: extensibility
   links:
     - title: "APIs"
