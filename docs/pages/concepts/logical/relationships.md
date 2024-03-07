@@ -33,9 +33,16 @@ Here is a list of the different types of relationships that Meshery supports:
 <details open>
 <summary>Example Visual Representations</summary>
     <details close><summary>Hierarchical</summary>
-    <figure><br><figcaption>Hierarchical - Parent</figcaption>
-    <img alt="Hierarchical - Parent: Namespace to other components" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
-    </figure>
+     <details close><summary>Inventory</summary>
+        <figure><br><figcaption>Hierarchical - Inventory</figcaption>
+        <img alt="Hierarchical Inventory Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_inventory_relationship.png"/>
+        </figure>
+    </details>
+    <details close><summary>Parent</summary>
+        <figure><br><figcaption>Hierarchical - Parent</figcaption>
+        <img alt="Hierarchical Parent Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_parent_relationship.png"/>
+        </figure>
+        </details>
     </details>
     <details close><summary>Sibling</summary>
     <figure><br><figcaption>Hierarchical - Sibling: Matching Label Selectors</figcaption>
@@ -49,40 +56,56 @@ Here is a list of the different types of relationships that Meshery supports:
     </details>
     <details close><summary>Edge</summary>
     <figure><br><figcaption>Edge - Mount</figcaption>
-    <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
+    <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_mount_relationship_pod_persistent_volume.png"/>
     </figure>
     <br>
     <figure><figcaption>Edge - Network: Ingress to Service</figcaption>
-    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_ingress_to_service_relationship.svg"/>
     <figure><figcaption>Edge - Network: Service to Pod</figcaption>
-    <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
+    <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_pod_relationship.svg"/>
+    </figure>
     <figure><figcaption>Edge - Network: Service to Service</figcaption>
-    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_service_relationship.svg"/>
+    </figure>
     <figure><figcaption>Edge - Network: Service to Endpoint</figcaption>
-    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_endpoint_relationship.png"/>
+    </figure>
     <figure><figcaption>Edge - Network: Service to Deployment</figcaption>
     <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
     </figure>
     <br>
     <figure><figcaption>Edge - Permission</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
+    </figure>
     <figure><figcaption>Edge - Permission: Role to Service</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
+    </figure>
     <figure><figcaption>Edge - Permission: Role to Deployment</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
+    </figure>
     <figure><figcaption>Edge - Permission: Cluster Role to Pod</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
+    </figure>
     <figure><figcaption>Edge - Permission: Cluster Role to Service</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
+    </figure>
     <figure><figcaption>Edge - Permission: Cluster Role to Deployment</figcaption>
     <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Permission: Cluster Role to Service Account</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_permission_relationship_cluster_role_service_account.png"/>
     </figure>
     <br>
     <figure><figcaption>Edge - Network Policy</figcaption>
     <img alt="Edge - Network Policy" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
     </figure>
-    </details>
+    <br>
+     <figure><figcaption>Edge - Firewall</figcaption>
+    <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.png">
+    </figure>
 </details>
+
 
 ## The Meaning of Relationships
 
