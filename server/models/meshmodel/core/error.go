@@ -3,7 +3,7 @@ package core
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrCreatingKubernetesComponentsCode = "1545"
+	ErrCreatingKubernetesComponentsCode = "meshery-server-1313"
 )
 
 func ErrCreatingKubernetesComponents(err error, ctxID string) error {
