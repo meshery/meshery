@@ -26,30 +26,18 @@ mesheryctl registry update [flags]
 
 ## Examples
 
+Update models from Meshery Integration Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	// Update models from Meshery Integration Spreadsheet
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
 </div>
 </pre> 
 
+Updating models in the meshery/meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	// Updating models in the meshery/meshery repo
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
 
 </div>
 </pre> 
@@ -70,7 +58,7 @@ mesheryctl registry update [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
