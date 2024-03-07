@@ -61,6 +61,7 @@ Here is a list of the different types of relationships that Meshery supports:
     <br>
     <figure><figcaption>Edge - Network: Ingress to Service</figcaption>
     <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_ingress_to_service_relationship.svg"/>
+    </figure>
     <figure><figcaption>Edge - Network: Service to Pod</figcaption>
     <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_pod_relationship.svg"/>
     </figure>
@@ -104,6 +105,7 @@ Here is a list of the different types of relationships that Meshery supports:
      <figure><figcaption>Edge - Firewall</figcaption>
     <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.png">
     </figure>
+</details>
 </details>
 
 
