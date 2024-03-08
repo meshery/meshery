@@ -15,8 +15,8 @@ assignees: ''
 
 ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
 
-- [MeshModel Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
-- 🖥 [MeshModel Overview](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g226f5de5180_19_259)
+- [Models Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
+- 🖥 [Models Overview](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g226f5de5180_19_259)
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](http://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
 
 ## Contributing to Meshery Models
