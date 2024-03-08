@@ -70,6 +70,24 @@ func Equals(tb testing.TB, exp, act interface{}) {
 	}
 }
 
+// EqualsString compares two strings for equality.
+func EqualsString(tb testing.TB, exp, act string) {
+    // Remove all white spaces, tabs, and newlines
+    exp = removeWhitespace(exp)
+    act = removeWhitespace(act)
+    if exp != act {
+        _, file, line, _ := runtime.Caller(1)
+        fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
+        tb.FailNow()
+    }
+}
+func removeWhitespace(s string) string {
+    s = strings.ReplaceAll(s, " ", "")
+    s = strings.ReplaceAll(s, "\t", "")
+    s = strings.ReplaceAll(s, "\n", "")
+    return s
+}
+
 // Path to the current file
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)

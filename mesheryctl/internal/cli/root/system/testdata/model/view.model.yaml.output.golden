@@ -1,14 +1,16 @@
-name: spire
-version: 0.12.2
-displayname: SPIRE
-hostname: ""
-hostid: 00000000-0000-0000-0000-000000000000
-displayhostname: ""
+name: ambassador
+version: 6.9.5
+displayname: Ambassador
+hostname: artifacthub
+hostid: 9a672bbb-51a1-5586-8dfc-75013445eebb
+displayhostname: artifacthub
 category:
-  name: Security & Compliance
+  name: Cloud Native Network
   metadata: {}
 modelMetadata:
-  svgColor: ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg
-  svgWhite: ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg
+  isAnnotation: false
+  source_uri: https://wenerme.github.io/charts/ambassador-6.9.5.tgz
+  svgColor: ui\public\static\img\meshmodels\ambassador\color\ambassador-color.svg
+  svgWhite: ui\public\static\img\meshmodels\ambassador\white\ambassador-white.svg
 components: []
 relationships: []

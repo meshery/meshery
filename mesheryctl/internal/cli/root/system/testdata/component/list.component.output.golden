@@ -1,0 +1,26 @@
+COMPONENT                       MODEL                   KIND                            VERSION
+Admin Console                   admin-console-operator  AdminConsole                    v2.edp.epam.com/v1
+Auth Service                    ambassador              AuthService                     getambassador.io/v2
+Consul Resolver                 ambassador              ConsulResolver                  getambassador.io/v2
+Dev Portal                      ambassador              DevPortal                       getambassador.io/v2
+Host                            ambassador              Host                            getambassador.io/v2
+Kubernetes Endpoint Resolver    ambassador              KubernetesEndpointResolver      getambassador.io/v2
+Kubernetes Service Resolver     ambassador              KubernetesServiceResolver       getambassador.io/v2
+Log Service                     ambassador              LogService                      getambassador.io/v2
+Mapping                         ambassador              Mapping                         getambassador.io/v2
+Module                          ambassador              Module                          getambassador.io/v2
+Rate Limit Service              ambassador              RateLimitService                getambassador.io/v2
+TCP Mapping                     ambassador              TCPMapping                      getambassador.io/v2
+TLS Context                     ambassador              TLSContext                      getambassador.io/v2
+Tracing Service                 ambassador              TracingService                  getambassador.io/v2
+Node Feature                    amd-gpu                 NodeFeature                     nfd.k8s-sigs.io/v1alpha1
+Node Feature Rule               amd-gpu                 NodeFeatureRule                 nfd.k8s-sigs.io/v1alpha1
+Antrea Agent Info               antrea                  AntreaAgentInfo                 crd.antrea.io/v1beta1
+Antrea Controller Info          antrea                  AntreaControllerInfo            crd.antrea.io/v1beta1
+Cluster Group                   antrea                  ClusterGroup                    crd.antrea.io/v1alpha2
+Cluster Network Policy          antrea                  ClusterNetworkPolicy            crd.antrea.io/v1alpha1
+Egress                          antrea                  Egress                          crd.antrea.io/v1alpha2
+External Entity                 antrea                  ExternalEntity                  crd.antrea.io/v1alpha2
+External IP Pool                antrea                  ExternalIPPool                  crd.antrea.io/v1alpha2
+External Node                   antrea                  ExternalNode                    crd.antrea.io/v1alpha1
+Group                           antrea                  Group                           crd.antrea.io/v1alpha3
