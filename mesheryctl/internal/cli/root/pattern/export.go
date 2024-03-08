@@ -62,24 +62,22 @@ mesheryctl pattern export [pattern-name | ID] -o [path]
 			utils.Log.Error(err)
 			return nil
 		}
-		pattern := ""
+		design := ""
 		isID := false
 
-		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
-			if err != nil {
-				utils.Log.Error(ErrPatternInvalidNameOrID(err))
-				return nil
-			}
+		design, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+		if err != nil {
+			utils.Log.Error(ErrPatternInvalidNameOrID(err))
+			return nil
 		}
 
 		urlString := mctlCfg.GetBaseMesheryURL()
 		if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
-			urlString += "/api/pattern/" + pattern
+			urlString += "/api/pattern/" + design
 		} else {
 			// else search pattern by name
-			urlString += "/api/pattern?search=" + url.QueryEscape(pattern)
+			urlString += "/api/pattern?search=" + url.QueryEscape(design)
 		}
 
 		req, err := utils.NewRequest("GET", urlString, nil)
