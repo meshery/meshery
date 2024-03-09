@@ -1,19 +1,16 @@
-# Meshery Docs Contributing Overview ([Website](https://docs.meshery.io))
+# Meshery Docs
 
-Please do! Thank you for your help in improving Meshery Docs! :balloon:
+<h2>Contributing to the Meshery Documentation</h2>
 
----
+Please do! Thank you for your help in improving [Meshery Docs](https://docs.meshery.io)! :balloon:
 
 <details>
-
-  <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3>
-## See full contributing instructions for Meshery Docs available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).</summary>
-
-## Contributing to the Meshery Documentation
+<summary>
+Find the complete set of Meshery Docs contributor guides at https://docs.meshery.io/project/contributing/contributing-docs</summary>
 
 Before contributing, please review the [Documentation Contribution Flow](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
 
-### 1. Set up your development environment
+<h3>1. Set up your development environment</h3>
 
 - _The Meshery Docs site is built using Jekyll - a simple static site generator! You can learn more about Jekyll and setting up your development environment in the [Jekyll Docs](https://jekyllrb.com/docs/)._
 
@@ -40,7 +37,7 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
   $ bundle install
   ```
 
-### 3. Serve the site
+<h3>3. Serve the site</h3>
 
 - Serve the code locally
   ```bash
@@ -68,16 +65,16 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 # Meshery Documentation Stucture
 
-## High-Level Outline & Information Architecture for Meshery Documentation
+<details>
+<summary>High-Level Outline & Information Architecture for Meshery Documentation</summary>
 
 **Goal:** Offer comprehensive, organized, and accessible documentation for diverse audiences, from new users to expert contributors.
-
 **Target Audience:**
-
 - **Personas:** Beginners, developers, admins, operators, security specialists, contributors, users of all experience levels.
 - **Needs:** Varied - learning fundamentals, managing tasks, understanding advanced concepts, contributing code.
 
-**Information Architecture:**
+
+## High-Level Outline
 
 ### Overview and Installation (User Persona)
 

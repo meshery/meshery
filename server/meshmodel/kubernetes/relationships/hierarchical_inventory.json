@@ -1466,6 +1466,40 @@
           "to": []
         }
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "PersistentVolume",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["name"]
+              ],
+              "description": "PersistentVolume in Kubernetes provides durable storage for Pods, ensuring data persistence across Pod restarts and rescheduling."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "VolumeAttachment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["settings", "spec", "source", "persistentVolumeName"]
+              ],
+              "description": "VolumeAttachment in Kubernetes facilitates the attachment of a PersistentVolume to a node, enabling its utilization by Pods on that node."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }
