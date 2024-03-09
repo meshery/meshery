@@ -41,7 +41,7 @@ func TestGetLocation(t *testing.T) {
 		got := token.GetLocation()
 		want, err := os.UserHomeDir()
 		MesheryFolder := ".meshery"
-		path := filepath.Join(want,MesheryFolder,test)
+		path := filepath.Join(want, MesheryFolder, test)
 		want = path
 		if err != nil {
 			t.Errorf("Fail")

@@ -321,4 +321,3 @@ func resetVariables() {
 	currContext = ""
 	tempCntxt = ""
 }
-
