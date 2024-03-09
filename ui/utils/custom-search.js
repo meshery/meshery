@@ -87,7 +87,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <TextField
         className={classes.searchInput}
         id="searchClick"
