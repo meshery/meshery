@@ -301,15 +301,9 @@ func main() {
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
-  
-  // create a repo instance
-  k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
-  rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
-	if err != nil {
-		logrus.Warn("error creating rego instance, policies will not be evaluated")
-		return
-	}
 
+	// create a repo instance
+	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)

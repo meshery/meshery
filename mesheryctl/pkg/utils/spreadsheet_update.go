@@ -178,7 +178,7 @@ func updateComponentsSheet(srv *sheets.Service, cred, sheetId string, values []*
 	return err
 }
 
-func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values [][]interface{}) error {
+func appendSheet(srv *sheets.Service, _, sheetId, appendRange string, values [][]interface{}) error {
 
 	if len(values) == 0 {
 		return nil
