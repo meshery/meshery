@@ -297,6 +297,7 @@ func main() {
 	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
+
 	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
