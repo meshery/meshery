@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "aws-rds-controller",
-  "version": "v1.2.1",
+  "version": "v1.2.2",
   "displayName": "AWS Relational Database Service",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
