@@ -145,7 +145,7 @@ mesheryctl pattern apply [pattern-name]
 						utils.Log.Error(err)
 						return nil
 					}
-					utils.Log.Debug("saved pattern file")
+
 					var response []*models.MesheryPattern
 					defer resp.Body.Close()
 

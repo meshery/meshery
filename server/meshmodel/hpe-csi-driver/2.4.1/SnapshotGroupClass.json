@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "SnapshotGroupClass",
+  "apiVersion": "storage.hpe.com/v1",
+  "displayName": "Snapshot Group Class",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hpe-csi-driver",
+   "version": "2.4.1",
+   "displayName": "HPE CSI Driver",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"SnapshotGroupClass specifies parameters that a underlying storage system uses when creating a volumegroup snapshot. A specific SnapshotGroupClass is used by specifying its name in a VolumeGroupSnapshot object. SnapshotGroupClasses are non-namespaced\",\n \"properties\": {\n  \"deletionPolicy\": {\n   \"description\": \"deletionPolicy determines whether a SnapshotGroupContent created through the SnapshotGroupClass should be deleted when its bound SnapshotGroup is deleted. Supported values are \\\"Retain\\\" and \\\"Delete\\\". \\\"Retain\\\" means that the SnapshotGroupContent and its physical snapshotGroup on underlying storage system are kept. \\\"Delete\\\" means that the SnapshotGroupContent and its physical snapshotGroup on underlying storage system are deleted. Required.\",\n   \"enum\": [\n    \"Delete\",\n    \"Retain\"\n   ],\n   \"type\": \"string\"\n  },\n  \"parameters\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"description\": \"parameters is a key-value map with storage driver specific parameters for creating snapshotGroups. These values are opaque to Kubernetes.\",\n   \"type\": \"object\"\n  },\n  \"snapshotter\": {\n   \"description\": \"snapshotter is the name of the storage driver that handles this SnapshotGroupClass. Required.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"deletionPolicy\",\n  \"snapshotter\"\n ],\n \"title\": \"Snapshot Group Class\",\n \"type\": \"object\"\n}"
+ }

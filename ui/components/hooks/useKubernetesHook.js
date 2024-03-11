@@ -61,10 +61,10 @@ export function useMesheryOperator() {
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
-  const ping = (contextID) => {
+  const ping = (connectionID) => {
     dispatch(updateProgress({ showProgress: true }));
     pingMesheryOperator(
-      contextID,
+      connectionID,
       () => handleSuccess(`Meshery Operator  pinged`),
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
@@ -120,7 +120,7 @@ export function useMeshsSyncController() {
   return { ping };
 }
 
-export const useGetOperatorInfoQuery = ({ contextID }) => {
+export const useGetOperatorInfoQuery = ({ connectionID }) => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
 
@@ -133,7 +133,10 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     setIsLoading(true);
     dispatch(updateProgress({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
-    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextID }).subscribe({
+    // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
+    // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
+    // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
+    const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe({
       next: () => {
         setIsLoading(false);
 
@@ -219,7 +222,7 @@ export const useNatsController = () => {
 };
 
 export const useControllerStatus = (controllerState) => {
-  const getContextStatus = (ctxId) => {
+  const getContextStatus = (connectionID) => {
     const defaultState = {
       operatorState: CONTROLLER_STATES.DISABLED,
       operatorVersion: 'Not Available',
@@ -229,7 +232,7 @@ export const useControllerStatus = (controllerState) => {
       natsVersion: 'Not Available',
     };
 
-    const controller = controllerState?.filter((op) => op.contextId === ctxId);
+    const controller = controllerState?.filter((op) => op.connectionID === connectionID);
     if (!controller) {
       return defaultState;
     }
@@ -259,9 +262,9 @@ export const useControllerStatus = (controllerState) => {
       }
     }
 
-    function getOperatorStatus(ctxId) {
+    function getOperatorStatus(connectionID) {
       const operator = controllerState?.find(
-        (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
+        (op) => op.connectionID === connectionID && op.controller === CONTROLLERS.OPERATOR,
       );
       if (!operator) {
         return defaultState;
@@ -274,7 +277,7 @@ export const useControllerStatus = (controllerState) => {
     }
 
     const actualOperatorState = {
-      ...getOperatorStatus(ctxId),
+      ...getOperatorStatus(connectionID),
       ...getMeshSyncStats(),
       ...getBrokerStats(),
     };
@@ -283,6 +286,6 @@ export const useControllerStatus = (controllerState) => {
   };
 
   return {
-    getControllerStatesByContexID: getContextStatus,
+    getControllerStatesByConnectionID: getContextStatus,
   };
 };

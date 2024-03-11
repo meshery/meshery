@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "containerd",
+  "version": "0.0.8",
+  "displayName": "Containerd",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Runtime",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Container Runtime",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"30.84 -0.16 153.31 216.06\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 216 216}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M35.1 4v208h145.1V4H35.1zm121 183.8H59.3V95.9H127V62h29v125.8z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M88.3 120.1H127v43.5H88.3z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"30.30 -1.20 154.89 218.14\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 216 216}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#fff}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M88.5 120.2h39.1v44H88.5z\" class=\"st0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34.7 3v210h146.5V3H34.7zm122.1 185.6H59.1V95.8h68.4V61.6h29.3v127z\" class=\"st0\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "components": null,
+  "relationships": null
+ }

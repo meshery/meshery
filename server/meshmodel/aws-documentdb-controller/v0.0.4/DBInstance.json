@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "DBInstance",
+  "apiVersion": "documentdb.services.k8s.aws/v1alpha1",
+  "displayName": "DB Instance",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-documentdb-controller",
+   "version": "v0.0.4",
+   "displayName": "AWS DocumentDB",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Database",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"DBInstance is the Schema for the DBInstances API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DBInstanceSpec defines the desired state of DBInstance.\\n\\n\\nDetailed information about an instance.\",\n   \"properties\": {\n    \"autoMinorVersionUpgrade\": {\n     \"description\": \"This parameter does not apply to Amazon DocumentDB. Amazon DocumentDB does\\nnot perform minor version upgrades regardless of the value set.\\n\\n\\nDefault: false\",\n     \"type\": \"boolean\"\n    },\n    \"availabilityZone\": {\n     \"description\": \"The Amazon EC2 Availability Zone that the instance is created in.\\n\\n\\nDefault: A random, system-chosen Availability Zone in the endpoint's Amazon\\nWeb Services Region.\\n\\n\\nExample: us-east-1d\",\n     \"type\": \"string\"\n    },\n    \"caCertificateIdentifier\": {\n     \"description\": \"The CA certificate identifier to use for the DB instance's server certificate.\\n\\n\\nFor more information, see Updating Your Amazon DocumentDB TLS Certificates\\n(https://docs.aws.amazon.com/documentdb/latest/developerguide/ca_cert_rotation.html)\\nand Encrypting Data in Transit (https://docs.aws.amazon.com/documentdb/latest/developerguide/security.encryption.ssl.html)\\nin the Amazon DocumentDB Developer Guide.\",\n     \"type\": \"string\"\n    },\n    \"copyTagsToSnapshot\": {\n     \"description\": \"A value that indicates whether to copy tags from the DB instance to snapshots\\nof the DB instance. By default, tags are not copied.\",\n     \"type\": \"boolean\"\n    },\n    \"dbClusterIdentifier\": {\n     \"description\": \"The identifier of the cluster that the instance will belong to.\",\n     \"type\": \"string\"\n    },\n    \"dbInstanceClass\": {\n     \"description\": \"The compute and memory capacity of the instance; for example, db.r5.large.\",\n     \"type\": \"string\"\n    },\n    \"dbInstanceIdentifier\": {\n     \"description\": \"The instance identifier. This parameter is stored as a lowercase string.\\n\\n\\nConstraints:\\n\\n\\n  - Must contain from 1 to 63 letters, numbers, or hyphens.\\n\\n\\n  - The first character must be a letter.\\n\\n\\n  - Cannot end with a hyphen or contain two consecutive hyphens.\\n\\n\\nExample: mydbinstance\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"The name of the database engine to be used for this instance.\\n\\n\\nValid value: docdb\",\n     \"type\": \"string\"\n    },\n    \"performanceInsightsEnabled\": {\n     \"description\": \"A value that indicates whether to enable Performance Insights for the DB\\nInstance. For more information, see Using Amazon Performance Insights (https://docs.aws.amazon.com/documentdb/latest/developerguide/performance-insights.html).\",\n     \"type\": \"boolean\"\n    },\n    \"performanceInsightsKMSKeyID\": {\n     \"description\": \"The KMS key identifier for encryption of Performance Insights data.\\n\\n\\nThe KMS key identifier is the key ARN, key ID, alias ARN, or alias name for\\nthe KMS key.\\n\\n\\nIf you do not specify a value for PerformanceInsightsKMSKeyId, then Amazon\\nDocumentDB uses your default KMS key. There is a default KMS key for your\\nAmazon Web Services account. Your Amazon Web Services account has a different\\ndefault KMS key for each Amazon Web Services region.\",\n     \"type\": \"string\"\n    },\n    \"performanceInsightsKMSKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"preferredMaintenanceWindow\": {\n     \"description\": \"The time range each week during which system maintenance can occur, in Universal\\nCoordinated Time (UTC).\\n\\n\\nFormat: ddd:hh24:mi-ddd:hh24:mi\\n\\n\\nThe default is a 30-minute window selected at random from an 8-hour block\\nof time for each Amazon Web Services Region, occurring on a random day of\\nthe week.\\n\\n\\nValid days: Mon, Tue, Wed, Thu, Fri, Sat, Sun\\n\\n\\nConstraints: Minimum 30-minute window.\",\n     \"type\": \"string\"\n    },\n    \"promotionTier\": {\n     \"description\": \"A value that specifies the order in which an Amazon DocumentDB replica is\\npromoted to the primary instance after a failure of the existing primary\\ninstance.\\n\\n\\nDefault: 1\\n\\n\\nValid values: 0-15\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tags\": {\n     \"description\": \"The tags to be assigned to the instance. You can assign up to 10 tags to\\nan instance.\",\n     \"items\": {\n      \"description\": \"Metadata assigned to an Amazon DocumentDB resource consisting of a key-value\\npair.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"dbClusterIdentifier\",\n    \"dbInstanceClass\",\n    \"dbInstanceIdentifier\",\n    \"engine\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DB Instance\",\n \"type\": \"object\"\n}"
+ }

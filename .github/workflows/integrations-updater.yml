@@ -45,7 +45,7 @@ jobs:
             cd meshery/scripts/component_updater
             go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --system docs layer5/src/collections/integrations meshery.io/integrations docs/
       - name: Commit changes to Layer5.io repo
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: l5io
           repository: ./layer5
@@ -55,7 +55,7 @@ jobs:
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
       - name: Commit changes to Meshery.io repo
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: l5io
           repository: ./meshery.io
@@ -65,7 +65,7 @@ jobs:
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
       - name: Commit changes to Meshery repo
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: l5io
           repository: ./meshery

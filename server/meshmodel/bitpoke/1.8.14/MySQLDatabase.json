@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "MySQLDatabase",
+  "apiVersion": "dashboard.presslabs.com/v1alpha1",
+  "displayName": "My SQL Database",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "bitpoke",
+   "version": "1.8.14",
+   "displayName": "Bitpoke",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"MySQLDatabase is the Schema for the MySQL Database API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MySQLDatabaseSpec defines the desired state of MySQLDatabaseSpec\",\n   \"properties\": {\n    \"clusterRef\": {\n     \"description\": \"ClusterRef represents a reference to the MySQL cluster. This field should be immutable.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"database\": {\n     \"description\": \"Database represents the database name which will be created. This field should be immutable.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterRef\",\n    \"database\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"My SQL Database\",\n \"type\": \"object\"\n}"
+ }

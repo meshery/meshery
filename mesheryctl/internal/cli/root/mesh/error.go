@@ -45,11 +45,11 @@ var (
 		[]string{"Unable to validate adapter"},
 		[]string{"Adapter for required mesh not found"},
 		[]string{"Unable to fetch Mesh adapter, adapter not valid."},
-		[]string{"Deploy a proper Meshery Adapter for your service mesh. See https://docs.meshery.io/concepts/architecture/adapters for list of adapters"})
+		[]string{"Run the appropriate Meshery Adapter for your specific use case. See https://docs.meshery.io/concepts/architecture/adapters for list of adapters"})
 
 	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal,
-		[]string{"Failed to deploy the service mesh"},
-		[]string{"Failed to deploy the service mesh"},
+		[]string{"Failed to deploy"},
+		[]string{"Failed to deploy"},
 		[]string{"Network error or wrong environment configurations"},
 		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
@@ -81,8 +81,8 @@ func ErrPrompt(err error) error {
 	return errors.New(ErrPromptCode, errors.Fatal,
 		[]string{"Error while reading selected option"},
 		[]string{err.Error()},
-		[]string{"Unable to execute Service Mesh from the list"},
-		[]string{"Ensure you enter a valid Service Mesh"})
+		[]string{"Unable to identify your selected component from the list"},
+		[]string{"Ensure you enter a component name"})
 }
 
 func ErrCreatingDeployRequest(err error) error {

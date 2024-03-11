@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "HNCConfiguration",
+  "apiVersion": "hnc.x-k8s.io/v1alpha2",
+  "displayName": "HNC Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "cloudbees-previews",
+   "version": "1.2.0",
+   "displayName": "Cloudbees Previews",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Continuous Integration \u0026 Delivery",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"HNCConfiguration is a cluster-wide configuration for HNC as a whole. See details in http://bit.ly/hnc-type-configuration\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HNCConfigurationSpec defines the desired state of HNC configuration.\",\n   \"properties\": {\n    \"resources\": {\n     \"description\": \"Resources defines the cluster-wide settings for resource synchronization. Note that 'roles' and 'rolebindings' are pre-configured by HNC with 'Propagate' mode and are omitted in the spec. Any configuration of 'roles' or 'rolebindings' are not allowed. To learn more, see https://github.com/kubernetes-sigs/hierarchical-namespaces/blob/master/docs/user-guide/how-to.md#admin-types\",\n     \"items\": {\n      \"description\": \"ResourceSpec defines the desired synchronization state of a specific resource.\",\n      \"properties\": {\n       \"group\": {\n        \"description\": \"Group of the resource defined below. This is used to unambiguously identify the resource. It may be omitted for core resources (e.g. \\\"secrets\\\").\",\n        \"type\": \"string\"\n       },\n       \"mode\": {\n        \"description\": \"Synchronization mode of the kind. If the field is empty, it will be treated as \\\"Propagate\\\".\",\n        \"enum\": [\n         \"Propagate\",\n         \"Ignore\",\n         \"Remove\"\n        ],\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"description\": \"Resource to be configured.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HNC Configuration\",\n \"type\": \"object\"\n}"
+ }

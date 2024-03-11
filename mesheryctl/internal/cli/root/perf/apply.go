@@ -90,7 +90,7 @@ mesheryctl perf apply meshery-profile --load-generator wrk2
 // Execute a Performance test with specified queries per second
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
-// Execute a Performance test with specified service mesh
+// Execute a Performance test with specified infrastructure
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
@@ -178,9 +178,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		// Run test based on flags
 		if testName == "" {
-			utils.Log.Debug("Test Name not provided")
+			log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			utils.Log.Debug("Using random test name: ", testName)
+			log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
@@ -203,7 +203,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		profileName = strings.Join(args, "%20")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
-		utils.Log.Debug("Fetching performance profile")
+		log.Debug("Fetching performance profile")
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 		if err != nil {
 			utils.Log.Error(err)
@@ -322,7 +322,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 		req.URL.RawQuery = q.Encode()
 
-		utils.Log.Info("Initiating Performance test ...")
+		log.Info("Initiating Performance test ...")
 
 		resp, err := utils.MakeRequest(req)
 
@@ -336,9 +336,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		utils.Log.Debug(string(data))
+		log.Debug(string(data))
 
-		utils.Log.Info("Test Completed Successfully!")
+		log.Info("Test Completed Successfully!")
 		return nil
 	},
 }
@@ -346,7 +346,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 func init() {
 	applyCmd.Flags().StringVar(&testURL, "url", "", "(optional) Endpoint URL to test (required with --profile)")
 	applyCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	applyCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
+	applyCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the infrastructure")
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
@@ -359,7 +359,7 @@ func init() {
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	utils.Log.Debug("Creating new performance profile inside function")
+	log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -398,7 +398,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if loadTestBody != "" {
 		// Check if the loadTestBody is a filepath or a string
 		if _, err := os.Stat(loadTestBody); err == nil {
-			utils.Log.Info("Reading test body from file")
+			log.Info("Reading test body from file")
 			bodyFile, err := os.ReadFile(loadTestBody)
 			if err != nil {
 				return "", "", ErrReadFilepath(err)
@@ -498,6 +498,6 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	utils.Log.Debug("New profile created")
+	log.Debug("New profile created")
 	return profileID, profileName, nil
 }

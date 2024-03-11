@@ -38,7 +38,7 @@ language: en
 
 ## Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}}. A number of sample applications can be installed using the {{page.name}}.
 
 ### Install {{ page.component }}
 
@@ -48,7 +48,7 @@ The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}
   <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.component}}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
   <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
