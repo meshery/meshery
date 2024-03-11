@@ -23,7 +23,49 @@ const designs = api
         }),
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
+
+      publishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/publish`,
+          credentials: 'include',
+          method: 'POST',
+          body: queryArg.patternPayload,
+        }),
+      }),
+
+      unpublishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/unpublish`,
+          credentials: 'include',
+          method: 'DELETE',
+          body: queryArg.patternPayload,
+        }),
+      }),
+
+      deployPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: queryArg.url,
+          credentials: 'include',
+          method: 'POST',
+          body: queryArg.patternPayload,
+        }),
+      }),
+
+      undeployPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: queryArg.url,
+          credentials: 'include',
+          method: 'DELETE',
+          body: queryArg.patternPayload,
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery } = designs;
+export const {
+  useGetPatternsQuery,
+  usePublishPatternMutation,
+  useUnpublishPatternMutation,
+  useDeployPatternMutation,
+  useUndeployPatternMutation,
+} = designs;
