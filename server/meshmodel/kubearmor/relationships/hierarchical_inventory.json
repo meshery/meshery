@@ -6,7 +6,7 @@
     },
     "model": {
       "name": "kubearmor",
-      "version": "v1.3.1",
+      "version": "*",
       "displayName": "KubeArmor",
       "category": {
         "name": "Provisioning",
