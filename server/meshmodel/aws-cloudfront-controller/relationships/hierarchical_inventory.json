@@ -1,0 +1,76 @@
+{
+  "apiVersion": "v0.0.7",
+  "kind": "Hierarchical",
+  "metadata": {
+    "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "name": "aws-cloudfront-controller",
+    "version": "*",
+    "displayName": "AWS CloudFront",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "published": false,
+      "subCategory": "Service Proxy",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    }
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "Kubernetes",
+            "patch": {
+              "mutatorRef": [["name"], ["namespace"], ["type"]],
+              "description": ""
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "Kubernetes",
+            "patch": {
+              "mutatorRef": [["name"], ["namespace"], ["type"]],
+              "description": ""
+            }
+          },
+          {
+            "kind": "Service",
+            "model": "Kubernetes",
+            "patch": {
+              "mutatorRef": [["name"], ["namespace"], ["type"]],
+              "description": ""
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "FieldExport",
+            "model": "aws-cloudfront-controller",
+            "patch": {
+              "mutatorRef": [
+                ["settings", "spec", "from", "resource", "name"],
+                ["settings", "spec", "from", "resource", "namespace"],
+                ["settings", "spec", "from", "resource", "type"]
+              ],
+              "description": ""
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
