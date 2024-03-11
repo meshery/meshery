@@ -162,7 +162,7 @@ bundle install{% endcapture %}
 
 If you've Docker and `make` installed in your system, then you can serve the site locally
 
-{% capture code_content %}make docker{% endcapture %}
+{% capture code_content %}make docker-build{% endcapture %}
 {% include code.html code=code_content %}
 
 This doesn't require the need for installing Jekyll and Ruby in your system
@@ -180,7 +180,7 @@ This is because Jekyll always considers the exact version of Ruby unlike JavaScr
 So, you need to follow either of the three steps to resolve this problem;
 
 - Install the required Ruby version by using `rvm` or by any means given above
-- Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
+- Alternatively, if you have Docker installed, then type `make docs-docker` to view the changes
 - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
 
 ```
