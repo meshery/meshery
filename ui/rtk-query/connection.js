@@ -87,6 +87,19 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
     }),
+    registerConnection: builder.mutation({
+      query: (queryArg) => ({
+        url: `integrations/connections/register`,
+        method: 'POST',
+        body: queryArg.body,
+      }),
+    }),
+    getcredentials: builder.query({
+      query: () => ({
+        url: `integrations/credentials`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -101,4 +114,6 @@ export const {
   useGetAllConnectionStatusQuery,
   useGetConnectionByKindQuery,
   useCancelConnectionRegisterMutation,
+  useRegisterConnectionMutation,
+  useGetcredentialsQuery,
 } = connectionsApi;
