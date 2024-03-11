@@ -1,5 +1,5 @@
 {
-  "apiVersion": "v0.0.7",
+  "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Hierarchical",
   "metadata": {
     "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
