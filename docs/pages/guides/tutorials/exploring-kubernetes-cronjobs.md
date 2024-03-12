@@ -3,13 +3,13 @@ layout: default
 title: Exploring Kubernetes CronJobs
 abstract: Learn Kubernetes CronJobs with Meshery Playground
 permalink: guides/tutorials/exploring-kubernetes-cronjobs
-# redirect_from: guides/tutorials/
+model: kubernetes
+kind: cronjobs
 type: guides
-category: tutorials
+category: tutorial
 language: en
 abstract: "In this tutorial, we will explore how to use Meshery Playground, an interactive live cluster environment, to perform hands-on labs for managing Kubernetes CronJobs."
 list: include
-abstract: Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
 ---
 
 Introduction:
