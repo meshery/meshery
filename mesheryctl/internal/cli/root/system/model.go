@@ -15,25 +15,31 @@
 package system
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"strings"
+	"bytes"
+    "encoding/json"
+    "fmt"
+    "io"
+    "io/ioutil"
+    "net/http"
+    "os"
+    "path/filepath"
+    "strings"
 
-	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-	"github.com/manifoldco/promptui"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
+	"github.com/asaskevich/govalidator"
+    "github.com/eiannone/keyboard"
+    "github.com/fatih/color"
+    "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+    "github.com/layer5io/meshery/mesheryctl/pkg/utils"
+    "github.com/layer5io/meshery/server/models"
+    "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+    "github.com/layer5io/meshkit/models/meshmodel/registry"
+    "github.com/manifoldco/promptui"
+
+    "github.com/pkg/errors"
+    log "github.com/sirupsen/logrus"
+    "github.com/spf13/cobra"
+    "github.com/spf13/viper"
+    "gopkg.in/yaml.v2"
 )
 
 var (
@@ -413,6 +419,84 @@ mesheryctl exp model search [query-text]
 	},
 }
 
+var ModelImportCmd = &cobra.Command{
+    Use:   "import",
+    Short: "import model",
+    Long:  "import a model from the registry",
+    Example: `
+// Import a model
+mesheryctl exp model import --file <URI>
+    `,
+    RunE: func(cmd *cobra.Command, args []string) error {
+        
+        // Check if file path is provided
+        if len(args) == 0 {
+            return errors.New("file/URI path is required")
+        }
+        var registrantData *registry.MeshModelRegistrantData
+        if validURL := govalidator.IsURL(args[0]); !validURL {
+            // Read the content of the file
+            
+            fileContent := []byte{}
+            // get the directory path
+            dirPath := args[0]
+            // read the files in the directory
+            files, err := ioutil.ReadDir(dirPath)
+            for _, file := range files {
+                fileContent, err = ioutil.ReadFile(filepath.Join(dirPath, file.Name()))
+                if err != nil {
+                    return err
+                }
+            }
+            // Construct the request body
+            registrantData = &registry.MeshModelRegistrantData{
+                Host: registry.Host{ // Hardcoded host information
+                    Hostname: "localhost",
+                    // You can populate other fields as needed
+                },
+                EntityType: "component", // Hardcoded entity type
+                Entity:     fileContent,
+            }
+        } else {
+            // Here we will be reading the content of the file from the URL
+        }
+        mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+        if err != nil {
+            log.Fatal(err, "error processing config")
+        }
+        baseUrl := mctlCfg.GetBaseMesheryURL()
+        url := fmt.Sprintf("%s/api/meshmodel/components/register", baseUrl)
+        // Marshal the registrant data into JSON
+        requestBody, err := json.Marshal(registrantData)
+        fmt.Println(string(requestBody))
+        if err != nil {
+            return err
+        }
+        // Create a new HTTP POST request
+        req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestBody))
+        if err != nil {
+            return err
+        }
+        // Set headers
+        req.Header.Set("Content-Type", "application/json")
+        // Send the request
+        resp, err := http.DefaultClient.Do(req)
+        if err != nil {
+            return err
+        }
+        fmt.Println(resp)
+        defer resp.Body.Close()
+        // Check the response status code
+        if resp.StatusCode == http.StatusOK {
+            fmt.Println("Model imported successfully")
+            return nil
+        }
+        // If the response status code is not OK, print an error message
+        fmt.Println("Error:", resp.Status)
+        return nil
+    },
+}
+
 // ModelCmd represents the mesheryctl exp model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
@@ -473,7 +557,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, ModelImportCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
