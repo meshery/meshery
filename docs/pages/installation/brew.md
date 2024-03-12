@@ -3,7 +3,7 @@ layout: default
 title: Brew
 permalink: installation/linux-mac/brew
 type: installation
-category: mesheryctl
+category: linux-mac
 redirect_from:
 - installation/platforms/brew
 display-title: "true"

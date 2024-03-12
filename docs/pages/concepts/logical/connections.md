@@ -3,6 +3,7 @@ layout: enhanced
 title: Connections
 permalink: concepts/logical/connections
 type: concepts
+category: models
 abstract: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments."
 language: en
 list: include

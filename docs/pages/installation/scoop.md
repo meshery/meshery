@@ -3,7 +3,7 @@ layout: default
 title: Scoop
 permalink: installation/windows/scoop
 type: installation
-category: mesheryctl
+category: windows
 redirect_from:
 - installation/platforms/scoop
 display-title: "false"

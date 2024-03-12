@@ -3,7 +3,7 @@ layout: default
 title: Bash
 permalink: installation/linux-mac/bash
 type: installation
-category: mesheryctl
+category: linux-mac
 redirect_from:
 - installation/platforms/bash
 display-title: "false"

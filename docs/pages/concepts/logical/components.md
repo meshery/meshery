@@ -3,6 +3,7 @@ layout: enhanced
 title: Components
 permalink: concepts/logical/components
 type: concepts
+category: models
 abstract: "Meshery Components identify and characterize infrastructure under management."
 language: en
 list: include

@@ -1,104 +1,672 @@
 <div class="sidebar-menu">
   <form class="sidebar__search-form">
-    <input
-      type="search"
-      class="sidebar__search-input"
-      id="sidebar-search-input"
-      placeholder="Search this site..."
-      aria-label="Search this site..."
-      autocomplete="off"
-    />
+    <input type="search" class="sidebar__search-input" id="sidebar-search-input" placeholder="Search this site..."
+      aria-label="Search this site..." autocomplete="off" />
   </form>
   <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
   <script type="text/javascript">
-    // <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
-    // <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
-    (() => {
-      window.addEventListener("load", function () {
-        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
-        if (scrollElem) {
-         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-        }
-        let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
+    // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+    // Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move
+    document.addEventListener("DOMContentLoaded", function () {
+      // Get the current URL
+      let currentUrl = window.location.pathname;
+  
+      // Scroll to the active section
+      let scrollElem = document.querySelector(".sidebar-nav__section-link.active");
+      if (scrollElem) {
+        scrollElem.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+  
+      // Expand parent collapses for active sections
+      let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
       activeSections.forEach(function (activeSection) {
         let parentCollapse = activeSection.closest(".collapse");
         if (parentCollapse) {
           parentCollapse.classList.add("show");
         }
       });
+  
+      console.log("Current URL:", currentUrl);
+      let navLinks = document.querySelectorAll(".sidebar-nav__section-link");
+      navLinks.forEach(function (navLink) {
+        if (navLink.getAttribute("href") === currentUrl) {
+          navLink.closest("a").classList.add("active");
+          console.log("Active class added!");
+        }
+      });
     });
-  })();
   </script>
+  
 
+  {% assign sorted_pages = include.pages | sort: "name" | alphabetical %}
   <nav class="sidebar-nav" id="td-section-nav">
-    {% for section in site.data.toc %}
     <ul class="sidebar-nav__section">
-      {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
-      page.url | replace: "/", "" }}{% endcapture %}
+
 
       <li class="sidebar-nav__section-title">
         <!-- Toggle button -->
-        <div class="toggle"  data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false" aria-controls="section{{forloop.index0}}"> ⇅ </div>
-        <a
-          href="{% if section.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ section.url }}{% else %}{{
-		  section.external_url }}{% endif %}"
-          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section {% if pageUrl == sectionUrl %} active {% endif %}"
-          > {{ section.title }}
+        <div class="toggle" data-toggle="collapse" data-target="#section0" aria-expanded="false"
+          aria-controls="section0"> ⇅ </div>
+        <a href="/project/overview" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🗺 Overview
         </a>
-  
-      {% if section.links %}
-          <ul class="td-sidebar-nav__section collapse" id="section{{forloop.index0}}">
-            {% for entry in section.links %} {% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{%
-            endcapture %}
-            <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
-              <a
-                href="{% if entry.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ entry.url }}{% else %}
-                {{entry.external_url }}{% endif %}"
-                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
-                >{{ entry.title }}</a
-              >
-            </li>
-            {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
-             <ul style="margin-bottom: 0;">
 
-                  {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
-                  }}{{ linkUrlSelected }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
-                  capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
-                  "/", "" | strip}}{% endcapture %}
-                  <li id="{{ child.title | slugify }}">
-                  <a
-                    class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
-                    id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify}}"
-                    href="{{childUrl}}"
-                    >{{ child.title }}</a>
-                  </li>
-                  {% if child.grandchildren %}
-                  <ul style="margin-bottom: 0;">
-                      {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
-                      }}{{ linkUrlSelected }}/{{ grandchild.url }}{% else %}{{ grandchild.external_url }}{% endif %} {% endcapture %} {%
-                      capture grandchildUrl %}{{grandchildUrl | strip}}{% endcapture %} {% capture grandchildTitle %}{{ grandchildUrl | replace:
-                      "/", "" | strip}}{% endcapture %}
-                      <li id="{{ grandchild.title | slugify }}">
-                        <a
-                        class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
-                        id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
-                        href="{{grandchildUrl}}"
-                        ><strong style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title }}</strong></a
-                      >
-                      </li>
-                      {% endfor %} <!-- grandchild -->
-                  </ul>
-                  
-                  {% endif %} <!-- end grandchild -->
-                {% endfor %} <!-- children -->
-              </ul> 
-              {% endif %}  <!-- end children -->
-              {% endif %}  <!-- end pageurl -->
-            {% endfor %} <!--  section.links -->
+
+        <ul class="td-sidebar-nav__section collapse" id="section0">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/project/faq" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">FAQ</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/installation/quick-start" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">🚀
+              Quick Start</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/installation" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Installation
+            </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section01" aria-expanded="false"
+              aria-controls="section01"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section01">
+            {% for child in sorted_pages %}
+            {% if child.type=="installation" and child.category!="integrations" and child.list=="include" and
+            child.language == "en" and child.category == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
+            </li>
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="installation" and grandchild.category!="integrations" and
+              grandchild.list=="include" and
+              grandchild.language == "en" and grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+            {% endif %}
+
+            {% endif %}
+            {% endfor %}
           </ul>
-      {% endif %} <!--  section.links -->
-    </li>
-  </ul> <!-- end of "sidebar-nav__section" -->
-  {% endfor %}
-</nav>
+
+        </ul>
+
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section2" aria-expanded="false"
+          aria-controls="section2"> ⇅ </div>
+        <a href="/concepts" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🧠 Concepts
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section2">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/concepts/architecture"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Architectural </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section010" aria-expanded="false"
+              aria-controls="section010"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section010">
+            {% for child in sorted_pages %}
+            {% if child.type=="components" and child.language == "en" and child.category == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
+            </li>
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="components" and grandchild.language == "en" and
+              grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+            {% endif %}
+
+            {% endif %}
+            {% endfor %}
+          </ul>
+          <!-- end children -->
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/concepts/logical" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Logical
+            </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section012" aria-expanded="false"
+              aria-controls="section012"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section012">
+            {% for child in sorted_pages %}
+            {% if child.type=="concepts" and child.language == "en" and child.concepts == nil -%}
+            <li id="{{ child.title | slugify }}">
+              <a class="sidebar-nav__section-link " id="m-overview-installation-ↆ{{ child.title | slugify}}-ↆ"
+                href="{{ site.baseurl }}{{ child.url }}">{{ child.title }} </a>
+              {% if child.type-child != nil -%}
+              <div class="toggle" data-toggle="collapse" data-target="#section{{ forloop.index0 }}"
+                aria-expanded="false" aria-controls="section{{forloop.index0}}"> ↆ </div>
+              {% endif %}
+            </li>
+            {% if child.type-child != nil -%}
+            <ul style="margin-bottom: 0;" id="section{{forloop.index0}}">
+              {% for grandchild in sorted_pages %}
+              {% if grandchild.type=="concepts" and grandchild.language == "en" and
+              grandchild.category==child.type-child -%}
+              <li id="{{ grandchild.title | slugify }}">
+                <a class="sidebar-nav__section-link " id="m-overview-installation-{{ grandchild.title | slugify}}"
+                  href="{{ site.baseurl }}{{ grandchild.url }}"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">{{ grandchild.title
+                    }}</strong></a>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+            {% endif %}
+
+            {% endif %}
+            {% endfor %}
+          </ul>
+          <!--  section.links -->
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section3" aria-expanded="false"
+          aria-controls="section3"> ⇅ </div>
+        <a href="/guides" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 📚 Guides (all)
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section3">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/configuration-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Configuring Kubernetes
+              Infrastructure </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section014" aria-expanded="false"
+              aria-controls="section014"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section014">
+            {% assign configuration = site.pages | where: "type","guides" %}
+            {% for item in configuration %}
+            {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
+              <a class="sidebar-nav__section-link "
+                id="m-guides-all-configuring-kubernetes-infrastructure-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/events-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Managing Events with Notification
+              Center</a>
+          </li>
+          <!-- end pageurl -->
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/gitops-with-meshery"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">GitOps with Meshery</a>
+          </li>
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/performance-management"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using Metrics in Meshery </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section024" aria-expanded="false"
+              aria-controls="section024"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section024">
+
+            {% assign performance = site.pages | where: "type","guides" %}
+            {% for item in performance %}
+            {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
+              <a class="sidebar-nav__section-link "
+                id="m-guides-all-using-metrics-in-meshery-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/guides/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using
+              Meshery CLI Guides </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section016" aria-expanded="false"
+              aria-controls="section016"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section016">
+
+            {% assign sorted_mesheryctl = site.pages | where: "type","guides" %}
+            {% for item in sorted_mesheryctl %}
+            {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
+            <li id="{{ item.title | slugify }}">
+              <a class="sidebar-nav__section-link "
+                id="m-guides-all-using-meshery-cli-guides-ↆ-{{ item.title | slugify }}"
+                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            </ul>
+
+            <li class="sidebar-nav__section-link ">
+              <a href="/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Troubleshooting Guides </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section017" aria-expanded="false"
+                aria-controls="section017"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section017">
+              {% assign troubleshooting = site.pages | where: "category","troubleshooting" %}
+              {% for item in troubleshooting %}
+              {% if item.type=="guides" and item.category=="troubleshooting" and item.language=="en" -%}
+              <li id="{{ item.title | slugify }}">
+                <a class="sidebar-nav__section-link "
+                  id="m-guides-all-troubleshooting-guides-ↆ-{{ item.title | slugify }}"
+                  href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+
+            <li class="sidebar-nav__section-link ">
+              <a href="/guides/upgrade" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Upgrading
+                Meshery </a>
+            </li>
+          
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section4" aria-expanded="false"
+          aria-controls="section4"> ⇅ </div>
+        <a href="/tasks" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> ⚙️ Tasks (all)
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section4">
+
+          {% assign sorted_tasks = site.pages | where: "type","tasks" %}
+          {% for item in sorted_tasks %}
+          {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
+          <li class="sidebar-nav__section-link ">
+            <a href="{{ site.baseurl }}{{ item.url }}"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{
+              item.title }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
+
+
+        </ul>
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section5" aria-expanded="false"
+          aria-controls="section5"> ⇅ </div>
+        <a href="/extensibility" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🛠 Integrations
+          and Extensions
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section5">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/api" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">APIs</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/adapters"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Adapters </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section019" aria-expanded="false"
+              aria-controls="section019"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section019">
+
+
+            <li id="compatibility-matrix">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-compatibility-matrix"
+                href="/installation/compatibility-matrix">Compatibility Matrix</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="app-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-app-mesh"
+                href="/extensibility/adapters/app-mesh">App Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="citrix-service-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-citrix-service-mesh"
+                href="/extensibility/adapters/cpx">Citrix Service Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="cilium-service-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-cilium-service-mesh"
+                href="/extensibility/adapters/cilium">Cilium Service Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="consul">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-consul"
+                href="/extensibility/adapters/consul">Consul</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="istio">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-istio"
+                href="/extensibility/adapters/istio">Istio</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="kuma">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-kuma"
+                href="/extensibility/adapters/kuma">Kuma</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="linkerd">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-linkerd"
+                href="/extensibility/adapters/linkerd">Linkerd</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="network-service-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-network-service-mesh"
+                href="/extensibility/adapters/nsm">Network Service Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="nginx-service-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-nginx-service-mesh"
+                href="/extensibility/adapters/nginx-sm">NGINX Service Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="open-service-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-open-service-mesh"
+                href="/extensibility/adapters/osm">Open Service Mesh</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="tanzu">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-tanzu"
+                href="/extensibility/adapters/tanzu-sm">Tanzu</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="traefik-mesh">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-adapters-ↆ-traefik-mesh"
+                href="/extensibility/adapters/traefik-mesh">Traefik Mesh</a>
+            </li>
+            <!-- end grandchild -->
+            <!-- children -->
+          </ul>
+          <!-- end children -->
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/integrations"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Integrations</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/load-generators"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Load Generators</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/providers"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Providers</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensibility/ui" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">UI
+              Plugins</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/extensions" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">🦾 Extensions
+            </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section020" aria-expanded="false"
+              aria-controls="section020"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section020">
+
+
+            <li id="plugin-meshmap">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-extensions-ↆ-plugin-meshmap"
+                href="/extensions/meshmap">Plugin: MeshMap</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="gitops-snapshots">
+              <a class="sidebar-nav__section-link " id="m-integrations-and-extensions-extensions-ↆ-gitops-snapshots"
+                href="/extensions/snapshot">GitOps: Snapshots</a>
+            </li>
+            <!-- end grandchild -->
+            <!-- children -->
+          </ul>
+          <!-- end children -->
+          <!-- end pageurl -->
+          <!--  section.links -->
+        </ul>
+        <!--  section.links -->
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section1" aria-expanded="false"
+          aria-controls="section1"> ⇅ </div>
+        <a href="/project" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 🧑‍💻 Contributing &
+          Community
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section1">
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/project/community"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Community</a>
+          </li>
+          <!-- end pageurl -->
+
+          <li class="sidebar-nav__section-link ">
+            <a href="/project/contributing"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Contributing </a>
+            <div class="toggle" data-toggle="collapse" data-target="#section06" aria-expanded="false"
+              aria-controls="section06"> ↆ </div>
+          </li>
+
+          <ul style="margin-bottom: 0;" id="section06">
+
+
+            <li id="build-release-ci-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-build-release-ci-ↆ"
+                href="/project/contributing/build-and-release">Build & Release (CI) </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section07" aria-expanded="false"
+                aria-controls="section07"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section07">
+
+              <li id="end-to-end-testing">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-end-to-end-testing"
+                  href="/project/contributing/contributing-cypress"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">End-to-End Testing</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="adapters">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-adapters"
+                href="/project/contributing/contributing-adapters">Adapters</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="cli-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-cli-ↆ"
+                href="/project/contributing/contributing-cli">CLI ↆ</a>
+              <div class="toggle" data-toggle="collapse" data-target="#section08" aria-expanded="false"
+                aria-controls="section08"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section08">
+
+              <li id="design-principles">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-design-principles"
+                  href="/project/contributing/contributing-cli-guide"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Design Principles</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="docs">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docs"
+                href="/project/contributing/contributing-docs">Docs</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="server-ↆ">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-ↆ"
+                href="/project/contributing/contributing-server">Server </a>
+              <div class="toggle" data-toggle="collapse" data-target="#section09" aria-expanded="false"
+                aria-controls="section09"> ↆ </div>
+            </li>
+
+            <ul style="margin-bottom: 0;" id="section09">
+
+              <li id="server-events">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-events"
+                  href="/project/contributing/contributing-server-events"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Events</strong></a>
+              </li>
+
+              <li id="server-errors">
+                <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-server-errors"
+                  href="/project/contributing/contributing-error"><strong
+                    style="color: var(--color-secondary-medium); font-weight: normal;">Server Errors</strong></a>
+              </li>
+              <!-- grandchild -->
+            </ul>
+
+            <!-- end grandchild -->
+
+            <li id="ui">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-ui"
+                href="/project/contributing/contributing-ui">UI</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="docker-extension">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-docker-extension"
+                href="/project/contributing/contributing-docker-extension">Docker Extension</a>
+            </li>
+            <!-- end grandchild -->
+
+            <li id="models">
+              <a class="sidebar-nav__section-link " id="m-contributing-community-contributing-ↆ-models"
+                href="/project/contributing/contributing-models">Models</a>
+            </li>
+          </ul>
+        </ul>
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+
+    <ul class="sidebar-nav__section">
+
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle" data-toggle="collapse" data-target="#section6" aria-expanded="false"
+          aria-controls="section6"> ⇅ </div>
+        <a href="/reference" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "> 📖 Reference
+        </a>
+
+
+        <ul class="td-sidebar-nav__section collapse" id="section6">
+          {% for item in sorted_pages %}
+          {% if item.type=="Reference" and item.list!="exclude" and item.language!="es" -%}
+          <li class="sidebar-nav__section-link ">
+            <a href="{{ site.baseurl }}{{ item.url }}"
+              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{
+              item.title }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        <!--  section.links -->
+      </li>
+    </ul> <!-- end of "sidebar-nav__section" -->
+  </nav>
 </div>

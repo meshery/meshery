@@ -3,7 +3,7 @@ layout: default
 title: Codespaces
 permalink: installation/codespaces
 type: installation
-category: kubernetes
+# category: kubernetes
 redirect_from:
 - installation/platforms/codespaces
 display-title: "false"
