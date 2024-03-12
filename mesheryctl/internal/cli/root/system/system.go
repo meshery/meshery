@@ -72,7 +72,6 @@ func init() {
 		logoutCmd,
 		tokenCmd,
 		dashboardCmd,
-		ExportCmd,
 		// ModelCmd,
 	}
 	// --context flag to temporarily change context. This is global to all system commands
