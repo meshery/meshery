@@ -158,7 +158,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
       {% endif %}
       <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
         <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
-        <td class="error-name-code">
+        <td id="{{ heading | slugify }}-{{err_code[1]["code"] }}" class="error-name-code">
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>

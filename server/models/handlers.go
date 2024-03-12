@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
-	"github.com/vmihailenco/taskq/v3"
 )
 
 // HandlerInterface defines the methods a Handler should define
@@ -120,6 +119,7 @@ type HandlerInterface interface {
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+	UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
 
@@ -237,8 +237,6 @@ type HandlerConfig struct {
 
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface
-
-	Queue taskq.Queue
 
 	KubeConfigFolder string
 

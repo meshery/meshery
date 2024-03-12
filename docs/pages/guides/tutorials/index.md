@@ -1,24 +1,23 @@
 ---
 layout: default
-title: Hands-on Labs using Meshery Playground
+title: Tutorials
+display_title: true
+type: guides
 permalink: guides/tutorials
-language: en
-list: exclude
-abstract: Tutorials showcasing hands-on labs in the Meshery Playground, emphasizing Kubernetes management and simplified adoption of cloud and cloud-native technologies.
+redirect_from: guides/tutorials/
 ---
 
-Tutorials showcasing hands-on labs in the Meshery Playground, emphasizing Kubernetes management and simplified adoption of cloud and cloud-native technologies.
 
-{% assign sorted_pages = site.pages | sort: "name" %}
+{% assign tutorials = site.pages | where: "type", "tutorials" %}
 
-<ul class="section-title">
-    {% for item in sorted_pages %}
-    {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    {% if item.abstract != " " %}
-        -  {{ item.abstract }}
-    {% endif %}
-    </li>
-    {% endif %}
-    {% endfor %}
+{% assign items_grouped = tutorials | group_by: 'model' %}
+<ul>
+  {% for group in items_grouped %}
+    <h2>{{ group.name | capitalize }}</h2>
+      <ul>
+        {% for item in group.items %}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        {% endfor %}
+      </ul>
+  {% endfor %}
 </ul>

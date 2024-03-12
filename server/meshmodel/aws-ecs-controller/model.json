@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "aws-ecs-controller",
+  "version": "v0.0.4",
+  "displayName": "AWS Elastic Container Service",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Provisioning",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Automation \u0026 Configuration",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "components": null,
+  "relationships": null
+ }

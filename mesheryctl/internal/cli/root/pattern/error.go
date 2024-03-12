@@ -17,9 +17,9 @@ package pattern
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrPatternsNotFoundCode       = "1115"
-	ErrInvalidPatternFileCode     = "1116"
-	ErrPatternInvalidNameOrIDCode = "1117"
+	ErrPatternsNotFoundCode       = "mesheryctl-1037"
+	ErrInvalidPatternFileCode     = "mesheryctl-1038"
+	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
 )
 
 func ErrPatternNotFound() error {

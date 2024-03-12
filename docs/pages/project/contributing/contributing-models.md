@@ -10,6 +10,14 @@ category: contributing
 list: include
 ---
 
+<!-- Concepts for which docs needs to be updated: -->
+<!-- Scopes - What they mean to contributors/expand on which takes precedence?
+1. Which policies get loaded?
+2. What policies are loaded by default?
+3. What happens in conflict?
+4. What controls are exposed to model contributors?
+5. Are there any Global meshery defaults (can user change them?) -->
+
 Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.
 
 Models often represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery.

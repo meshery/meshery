@@ -28,13 +28,13 @@ import (
 var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
-		Short: "remove a service mesh in the kubernetes cluster",
-		Long:  `remove service mesh in the connected kubernetes cluster`,
+		Short: "remove cloud and cloud native infrastructure",
+		Long:  `remove cloud and cloud native infrastructure`,
 		Example: `
-// Remove a service mesh(linkerd)
+// Remove Linkerd deployment
 mesheryctl mesh remove linkerd
 
-// Remove a service mesh(linkerd) under a specific namespace(linkerd-ns)
+// Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 mesheryctl mesh remove linkerd --namespace linkerd-ns
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -52,7 +52,7 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s service mesh removed successfully", meshName))
+			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s infrastructure removed", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				utils.Log.Error(err)
@@ -62,7 +62,7 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true, "null")
 			if err != nil {
-				utils.Log.Error(ErrSendOperation(errors.Wrap(err, "error removing service mesh")))
+				utils.Log.Error(ErrSendOperation(errors.Wrap(err, "error removing infrastructure")))
 				return nil
 			}
 			s.Stop()
