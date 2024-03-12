@@ -191,5 +191,3 @@ Show user how to make Design public and share with other users in MeshMap Design
 
 ### Conclusion
 Congratulations! You've successfully completed the lab on exploring Kubernetes CronJobs using Meshery Playground. This hands-on experience has provided valuable insights into scheduling and automating tasks in Kubernetes using CronJobs. Explore more scenarios in the Meshery Playground to enhance your skills in cloud-native technologies.
-
-{% include related-content.html type="tutorials" %}
