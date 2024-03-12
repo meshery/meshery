@@ -21,7 +21,7 @@ jobs:
             printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: $RELEASE_TAG\n---\n\n`curl -s https://api.github.com/repos/meshery/meshery/releases/latest | jq -r '.["body"]'`" > ./docs/_releases/$RELEASE_TAG.md
 
         - name: Commit
-          uses: stefanzweifel/git-auto-commit-action@v4
+          uses: stefanzweifel/git-auto-commit-action@v5
           with:
             file_pattern: docs
             commit_user_name: l5io
