@@ -15,27 +15,25 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oci"
-	location "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	save string
-	wd   string
+	outputPath string
 )
 
-var ExportCmd = &cobra.Command{
+var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export model",
 	Long:  `Export model to OCI format`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
-// export a model to default path
+// Export the model to current directory
 mesheryctl system model export [model-name]
-mesheryctl system model export "my meshery design"
+mesheryctl system model export kubernetes
 
-// export model to the path that given by user
+// Export model to the path specified by the user
 mesheryctl system model export [model-name] -o [path]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -61,7 +59,7 @@ mesheryctl system model export [model-name] -o [path]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		model := args[0]
@@ -121,23 +119,23 @@ mesheryctl system model export [model-name] -o [path]
 		}
 		defer os.RemoveAll(tmpDir)
 
-		tmpDesignFile := filepath.Join(tmpDir, ModelName+".yaml")
-		file, err := os.Create(tmpDesignFile)
+		tmpModelFile := filepath.Join(tmpDir, ModelName+".yaml")
+		file, err := os.Create(tmpModelFile)
 		if err != nil {
-			utils.Log.Error(handlers.ErrCreateFile(err, tmpDesignFile))
+			utils.Log.Error(handlers.ErrCreateFile(err, tmpModelFile))
 			return nil
 		}
 		defer file.Close()
 
 		modelReader := strings.NewReader(strcontent)
-		ymlDesign, err := io.ReadAll(modelReader)
+		ymlModel, err := io.ReadAll(modelReader)
 		if err != nil {
 			utils.Log.Error(handlers.ErrIOReader(err))
 			return err
 		}
 
-		if _, err := file.Write(ymlDesign); err != nil {
-			utils.Log.Error(handlers.ErrWritingIntoFile(err, tmpDesignFile))
+		if _, err := file.Write(ymlModel); err != nil {
+			utils.Log.Error(handlers.ErrWritingIntoFile(err, tmpModelFile))
 			return err
 		}
 
@@ -169,13 +167,13 @@ mesheryctl system model export [model-name] -o [path]
 		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pretifiedName)
 		if err != nil {
 			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
-			return nil
+			return err
 		}
 
 		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
 		if err != nil {
 			utils.Log.Error(handlers.ErrOpenFile(tmpOCITarFilePath))
-			return nil
+			return err
 		}
 
 		content, err := io.ReadAll(file)
@@ -184,17 +182,20 @@ mesheryctl system model export [model-name] -o [path]
 			return nil
 		}
 
-		err = os.WriteFile(save+"/"+pretifiedName, content, 0644)
+		err = os.WriteFile(outputPath+"/"+pretifiedName, content, 0644)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to write oci image data to file: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("OCI Image %s is successfully built on %s \nDigest: %v, Size: %v", pretifiedName, save, digest, size)
+		fmt.Printf("OCI Image %s is successfully built on %s \nDigest: %v, Size: %v", pretifiedName, outputPath, digest, size)
 		return nil
 	},
 }
 
 func init() {
-	wd = filepath.Join(location.GetHome(), ".meshery", "content")
-	ExportCmd.Flags().StringVarP(&save, "output", "o", wd, "location for exported oci file")
+	wd,err := os.Getwd()
+	if err != nil { 
+        fmt.Println(err) 
+    }
+	exportModelCmd.Flags().StringVarP(&outputPath, "output", "o", wd, "location for exported oci file")
 }
