@@ -473,7 +473,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, exportModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
