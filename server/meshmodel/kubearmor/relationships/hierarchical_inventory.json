@@ -46,7 +46,7 @@
                     "security.kubearmor.com/psp"
                   ]
                 ],
-                "description": "Nodes are annotated with the name of the desired KubeArmorHostPolicy, directing the KubeArmor agent to enforce the specified policy on processes running on that node."
+                "description": "Nodes are annotated with the name of the desired KubeArmorHostPolicy, directing the KubeArmor agent to enforce the specified policy on processes running on that Node."
               }
             }
         ]
