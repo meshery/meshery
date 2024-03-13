@@ -4,6 +4,7 @@ import CreatableSelect from 'react-select/creatable';
 import theme, { Colors } from '../themes/app';
 import { MenuItem } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
+import useStyles from '@/assets/styles/general/tool.styles';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -23,16 +24,18 @@ const MultiSelectWrapper = (props) => {
   let filteredSelectedOptions = filterOptions(props.value, selectInput).sort(comparator);
 
   const Option = (props) => {
+    const StyleClass = useStyles();
     return (
       <MenuItem
         buttonRef={props.innerRef}
         selected={props.isFocused}
         {...props.innerProps}
+        className={props.isSelected ? StyleClass.backgroundColor : ''}
         component="div"
         style={{
           fontWeight: props.isSelected ? 500 : 400,
           padding: '0.4rem 1rem',
-          backgroundColor: props.isSelected ? 'lightgray' : 'transparent', // Highlight selected option
+          // backgroundColor: props.isSelected ? theme.palette.secondary.menuBg : 'transparent', // Highlight selected option
         }}
       >
         {props.label}
