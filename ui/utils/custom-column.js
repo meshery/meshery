@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Box from '@mui/material/Box';
 import { Card } from '@material-ui/core';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { ColumnIcon } from '@layer5/sistent-svg';
+import { ColumnIcon } from '@layer5/sistent';
 
 const styles = (theme) => ({
   epaper: {

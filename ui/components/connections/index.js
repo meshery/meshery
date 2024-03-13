@@ -32,7 +32,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import SearchBar from '../../utils/custom-search';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
@@ -179,7 +179,7 @@ function Connections(props) {
   } = props;
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -827,7 +827,6 @@ function Connections(props) {
     serverSide: true,
     count: connectionData?.total_count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 30],
     fixedHeader: true,
     page,
     print: false,
