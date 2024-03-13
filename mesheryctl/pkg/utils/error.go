@@ -38,6 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+	ErrClearLineCode          = "mesheryctl-1117"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -502,4 +503,12 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
+}
+
+func ErrClearLine(err error) error {
+	return errors.New(ErrClearLineCode, errors.Alert,
+		[]string{"Failed to clear terminal"},
+		[]string{err.Error()},
+		[]string{"Error occurred while attempting to command-line interface"},
+		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
