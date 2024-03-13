@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import theme, { Colors } from '../themes/app';
@@ -6,18 +6,10 @@ import { MenuItem } from '@material-ui/core';
 import { Checkbox } from '@material-ui/core';
 import { FormControlLabel } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import _ from 'lodash';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
-  const [selectedItems, setSelectedItems] = useState(props.value);
-
   const selectAllLabel = useRef('Select all');
-
-  useEffect(() => {
-    setSelectedItems(props.value);
-  }, [props.refresh]);
-
   const allOption = { value: '*', label: selectAllLabel.current };
 
   const filterOptions = (options, input) =>
@@ -129,7 +121,7 @@ const MultiSelectWrapper = (props) => {
           JSON.stringify(selected.sort(comparator)))
     ) {
       setSelectInput('');
-      const toSelect = _.uniqBy(
+      return props.onChange(
         [
           ...(props.value ?? []),
           ...props.options.filter(
@@ -137,11 +129,9 @@ const MultiSelectWrapper = (props) => {
               label?.toLowerCase().includes(selectInput?.toLowerCase()) &&
               (props.value ?? []).filter((opt) => opt.label === label).length === 0,
           ),
-        ],
-        (item) => item.value,
-      ).sort(comparator);
-      setSelectedItems(toSelect);
-      return props.onChange(toSelect, []);
+        ].sort(comparator),
+        [],
+      );
     } else if (
       selected.length > 0 &&
       selected[selected.length - 1].value !== allOption.value &&
@@ -151,22 +141,15 @@ const MultiSelectWrapper = (props) => {
         (opts) => !selected.some((sel) => sel.value === opts.value),
       );
       setSelectInput('');
-      const selectedOptions = _.uniqBy(selected, (item) => item.value).sort(comparator);
-      setSelectedItems(selectedOptions);
-      return props.onChange(selectedOptions, filteredUnselectedOptions);
+      return props.onChange(selected, filteredUnselectedOptions);
     } else {
-      const toSelect = _.uniqBy(
+      setSelectInput('');
+      return props.onChange(
         [
           ...props.value.filter(
             ({ label }) => !label.toLowerCase().includes(selectInput?.toLowerCase()),
           ),
         ],
-        (i) => i.value,
-      ).sort(comparator);
-      console.log('toSelect', toSelect);
-      setSelectedItems(toSelect);
-      return props.onChange(
-        toSelect,
         filteredSelectedOptions.length == 1 ? filteredSelectedOptions : props.options,
       );
     }
@@ -223,7 +206,6 @@ const MultiSelectWrapper = (props) => {
   return (
     <CreatableSelect
       {...props}
-      value={selectedItems}
       inputValue={selectInput}
       onInputChange={onInputChange}
       onKeyDown={onKeyDown}

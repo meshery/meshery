@@ -204,7 +204,6 @@ function Connections(props) {
     isError: isConnectionError,
     error: connectionError,
     refetch: getConnections,
-    isSuccess: isConnectionDataSucces,
   } = useGetConnectionsQuery({
     page: page,
     pagesize: pageSize,
@@ -213,15 +212,6 @@ function Connections(props) {
     status: statusFilter ? JSON.stringify([statusFilter]) : '',
     kind: kindFilter ? JSON.stringify([kindFilter]) : '',
   });
-
-  const [refreshEnvironmentSelector, setRefreshEnvironmentSelector] = useState(false);
-
-  useEffect(() => {
-    if (isConnectionDataSucces) {
-      console.log('refreshing');
-      setRefreshEnvironmentSelector(!refreshEnvironmentSelector);
-    }
-  }, [isConnectionDataSucces]);
 
   const {
     data: environmentsResponse,
@@ -517,7 +507,6 @@ function Connections(props) {
                           unselected,
                         )
                       }
-                      refresh={refreshEnvironmentSelector}
                       options={getOptions()}
                       value={cleanedEnvs}
                       placeholder={`Assigned Environments`}
