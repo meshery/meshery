@@ -12,6 +12,8 @@ const MultiSelectWrapper = (props) => {
   const selectAllLabel = useRef('Select all');
   const allOption = { value: '*', label: selectAllLabel.current };
 
+  console.log('Updating MultiSelectWrapper', props.updating);
+
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
 
