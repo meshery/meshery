@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "AccessPoint",
+  "apiVersion": "efs.services.k8s.aws/v1alpha1",
+  "displayName": "Access Point",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-efs-controller",
+   "version": "v0.0.5",
+   "displayName": "AWS Elastic File System",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Cloud Native Storage",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Cloud Native Storage",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"AccessPoint is the Schema for the AccessPoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AccessPointSpec defines the desired state of AccessPoint.\",\n   \"properties\": {\n    \"fileSystemID\": {\n     \"description\": \"The ID of the EFS file system that the access point provides access to.\",\n     \"type\": \"string\"\n    },\n    \"fileSystemRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"posixUser\": {\n     \"description\": \"The operating system user and group applied to all file system requests made\\nusing the access point.\",\n     \"properties\": {\n      \"gid\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"secondaryGIDs\": {\n       \"items\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"type\": \"array\"\n      },\n      \"uid\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rootDirectory\": {\n     \"description\": \"Specifies the directory on the EFS file system that the access point exposes\\nas the root directory of your file system to NFS clients using the access\\npoint. The clients using the access point can only access the root directory\\nand below. If the RootDirectory \\u003e Path specified does not exist, Amazon EFS\\ncreates it and applies the CreationInfo settings when a client connects to\\nan access point. When specifying a RootDirectory, you must provide the Path,\\nand the CreationInfo.\\n\\n\\nAmazon EFS creates a root directory only if you have provided the CreationInfo:\\nOwnUid, OwnGID, and permissions for the directory. If you do not provide\\nthis information, Amazon EFS does not create the root directory. If the root\\ndirectory does not exist, attempts to mount using the access point will fail.\",\n     \"properties\": {\n      \"creationInfo\": {\n       \"description\": \"Required if the RootDirectory \\u003e Path specified does not exist. Specifies\\nthe POSIX IDs and permissions to apply to the access point's RootDirectory\\n\\u003e Path. If the access point root directory does not exist, EFS creates it\\nwith these settings when a client connects to the access point. When specifying\\nCreationInfo, you must include values for all properties.\\n\\n\\nAmazon EFS creates a root directory only if you have provided the CreationInfo:\\nOwnUid, OwnGID, and permissions for the directory. If you do not provide\\nthis information, Amazon EFS does not create the root directory. If the root\\ndirectory does not exist, attempts to mount using the access point will fail.\\n\\n\\nIf you do not provide CreationInfo and the specified RootDirectory does not\\nexist, attempts to mount the file system using the access point will fail.\",\n       \"properties\": {\n        \"ownerGID\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"ownerUID\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"permissions\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"Creates tags associated with the access point. Each tag is a key-value pair,\\neach key must be unique. For more information, see Tagging Amazon Web Services\\nresources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html)\\nin the Amazon Web Services General Reference Guide.\",\n     \"items\": {\n      \"description\": \"A tag is a key-value pair. Allowed characters are letters, white space, and\\nnumbers that can be represented in UTF-8, and the following characters:+\\n- = . _ : /.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Access Point\",\n \"type\": \"object\"\n}"
+ }

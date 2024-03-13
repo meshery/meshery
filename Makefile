@@ -101,6 +101,19 @@ build-server: dep-check
 	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
 
+## Build and run Meshery Server on your local machine
+## and point to Remote Provider in staging environment
+server-stg: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
+
 ## Build and run Meshery Server on your local machine.
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -273,7 +286,7 @@ ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
-ui-build:
+ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 

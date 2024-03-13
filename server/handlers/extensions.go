@@ -8,12 +8,13 @@ import (
 	"plugin"
 	"sync"
 
+	"github.com/layer5io/meshery/server/extensions"
 	"github.com/layer5io/meshery/server/models"
 )
 
 var (
 	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
-	extendedEndpoints = make(map[string]*models.Router)
+	extendedEndpoints = make(map[string]*extensions.Router)
 	mx                sync.Mutex
 )
 
@@ -52,13 +53,14 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 	if err != nil {
 		return ErrPluginLookup(err)
 	}
-	runFunction := symRun.(func(*models.ExtensionInput) (*models.ExtensionOutput, error))
+	runFunction := symRun.(func(*extensions.ExtensionInput) (*extensions.ExtensionOutput, error))
 
-	output, err := runFunction(&models.ExtensionInput{
+	output, err := runFunction(&extensions.ExtensionInput{
 		DBHandler:       provider.GetGenericPersister(),
-		MeshSyncChannel: h.meshsyncChannel,
+		MeshSyncChannel: h.MeshsyncChannel,
 		BrokerConn:      h.brokerConn,
 		Logger:          h.log,
+		K8sConnectionTracker: h.ConnectionToStateMachineInstanceTracker,
 	})
 	if err != nil {
 		return ErrPluginRun(err)

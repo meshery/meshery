@@ -38,7 +38,7 @@ redirect_from: service-meshes/adapters/consul
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}} service mesh.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.component}}.
 
 ### Install {{ page.component }}
 
@@ -48,7 +48,7 @@ The {{page.name}} can install **{{page.earliest_version}}** of the {{page.compon
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
-##### Click on (+) and choose the {{page.earliest_version}} of the {{page.component}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.component}}.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />
@@ -63,7 +63,7 @@ A number of [sample applications](#sample-applications) for {{page.component}} c
 1. Performance management of {{page.component}} and it workloads
    - Prometheus and Grafana integration
 1. Configuration management and best practices of {{page.component}}
-1. Custom service mesh configuration
+1. Custom configuration
 
 ### Sample Applications
 

@@ -38,7 +38,7 @@ import {
   setConnectionMetadata,
 } from '../lib/store';
 import theme, { styles } from '../themes';
-import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
+import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import { bindActionCreators } from 'redux';
@@ -112,7 +112,6 @@ class MesheryApp extends App {
       activeK8sContexts: [],
       operatorSubscription: null,
       mesheryControllerSubscription: null,
-      meshSyncSubscription: null,
       disposeK8sContextSubscription: null,
       theme: 'light',
       isOpen: false,
@@ -207,7 +206,7 @@ class MesheryApp extends App {
         }
       },
       {
-        k8scontextIDs: contexts,
+        connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
         eventTypes: ['ADDED', 'DELETED'],
       },
     );
@@ -300,22 +299,18 @@ class MesheryApp extends App {
     }
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
-      const { meshSyncSubscription, mesheryControllerSubscription } = this.state;
+      const { mesheryControllerSubscription } = this.state;
       console.log(
         'k8sconfig changed, re-initialising subscriptions',
         k8sConfig,
         this.state.activeK8sContexts,
       );
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      // if (operatorSubscription) {
-      //   operatorSubscription.updateSubscription(ids);
-      // }
 
       if (mesheryControllerSubscription) {
-        mesheryControllerSubscription.updateSubscription(ids);
-      }
-      if (meshSyncSubscription) {
-        meshSyncSubscription.updateSubscription(ids);
+        mesheryControllerSubscription.updateSubscription(
+          getConnectionIDsFromContextIds(ids, k8sConfig),
+        );
       }
 
       if (this.meshsyncEventsSubscriptionRef.current) {
@@ -327,7 +322,7 @@ class MesheryApp extends App {
   initSubscriptions = (contexts) => {
     const mesheryControllerSubscription = new GQLSubscription({
       type: MESHERY_CONTROLLER_SUBSCRIPTION,
-      contextIds: contexts,
+      connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
       callbackFunction: (data) => {
         this.props.store.dispatch({
           type: actionTypes.SET_CONTROLLER_STATE,
@@ -335,9 +330,8 @@ class MesheryApp extends App {
         });
       },
     });
-    // const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback }) above uses old listenToMeshSyncEvents subscription, instead new subscribeMeshSyncEvents is used
+
     this.setState({ mesheryControllerSubscription });
-    // this.setState({ operatorSubscription });
   };
 
   handleDrawerToggle = () => {
@@ -731,7 +725,6 @@ const mapStateToProps = (state) => ({
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
   k8sConfig: state.get('k8sConfig'),
   operatorSubscription: state.get('operatorSubscription'),
-  meshSyncSubscription: state.get('meshSyncSubscription'),
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),

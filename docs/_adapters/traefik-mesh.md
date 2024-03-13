@@ -38,7 +38,7 @@ language: en
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}}. A number of sample applications can be installed using the {{page.name}}.
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 

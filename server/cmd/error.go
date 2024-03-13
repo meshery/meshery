@@ -6,19 +6,19 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrCreatingUUIDInstanceCode                   = "1001"
-	ErrRegisteringMesheryOAMTraitsCode            = "1002"
-	ErrRegisteringMesheryOAMWorkloadsCode         = "1003"
-	ErrRetrievingUserHomeDirectoryCode            = "1004"
-	ErrCreatingUserDataDirectoryCode              = "1005"
-	ErrCreatingMapPreferencePersisterInstanceCode = "1006"
-	ErrDatabaseAutoMigrationCode                  = "1008"
-	ErrInvalidURLSkippingProviderCode             = "1009"
-	ErrListenAndServeCode                         = "1010"
-	ErrCleaningUpLocalProviderCode                = "1011"
-	ErrClosingDatabaseInstanceCode                = "1012"
-	ErrInitializingRegistryManagerCode            = "1013"
-	ErrInitializingKeysRegistrationCode           = "1569"
+	ErrCreatingUUIDInstanceCode                   = "meshery-server-1001"
+	ErrRegisteringMesheryOAMTraitsCode            = "meshery-server-1002"
+	ErrRegisteringMesheryOAMWorkloadsCode         = "meshery-server-1003"
+	ErrRetrievingUserHomeDirectoryCode            = "meshery-server-1004"
+	ErrCreatingUserDataDirectoryCode              = "meshery-server-1005"
+	ErrCreatingMapPreferencePersisterInstanceCode = "meshery-server-1006"
+	ErrDatabaseAutoMigrationCode                  = "meshery-server-1007"
+	ErrInvalidURLSkippingProviderCode             = "meshery-server-1008"
+	ErrListenAndServeCode                         = "meshery-server-1009"
+	ErrCleaningUpLocalProviderCode                = "meshery-server-1010"
+	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
+	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
+	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
 )
 
 func ErrInitializingRegistryManager(err error) error {

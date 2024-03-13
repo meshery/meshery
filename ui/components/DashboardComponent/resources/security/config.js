@@ -49,7 +49,7 @@ export const SecurityTypesConfig = (
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
                       : {}
                   }
                   value={value}
@@ -156,7 +156,7 @@ export const SecurityTypesConfig = (
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
                       : {}
                   }
                   value={value}
@@ -294,7 +294,7 @@ export const SecurityTypesConfig = (
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
                       : {}
                   }
                   value={value}
@@ -401,7 +401,7 @@ export const SecurityTypesConfig = (
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
                       : {}
                   }
                   value={value}
@@ -508,7 +508,7 @@ export const SecurityTypesConfig = (
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
                       : {}
                   }
                   value={value}

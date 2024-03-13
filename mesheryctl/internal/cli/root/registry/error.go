@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	ErrGenerateModelCode     = "1190"
-	ErrGenerateComponentCode = "1191"
-	ErrUpdateModelCode       = "1192"
-	ErrUpdateComponentCode   = "1193"
-	ErrUpdateRegistryCode    = "1194"
+	ErrGenerateModelCode     = "mesheryctl-1055"
+	ErrGenerateComponentCode = "mesheryctl-1056"
+	ErrUpdateModelCode       = "mesheryctl-1057"
+	ErrUpdateComponentCode   = "mesheryctl-1058"
+	ErrUpdateRegistryCode    = "mesheryctl-1059"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
