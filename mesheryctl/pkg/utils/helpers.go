@@ -549,7 +549,7 @@ func ClearLine() {
 	clearCmd.Stdout = os.Stdout
 	err := clearCmd.Run()
 	if err != nil {
-		Log.Error(utils.ErrClearLine(err))
+		Log.Error(ErrClearLine(err))
 		return
 	}
 }
