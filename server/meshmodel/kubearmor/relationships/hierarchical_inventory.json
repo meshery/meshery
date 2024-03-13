@@ -46,7 +46,7 @@
                     "security.kubearmor.com/policy"
                   ]
                 ],
-                "description": "Pods in Kubernetes are subjects to KubeArmorPolicy, enforcing security measures on the Pods' system calls and resource access, enhancing the overall security posture of containerized workloads."
+                "description": "Pods in Kubernetes are subjects to KubeArmorPolicy. KubeArmorPolicy defines security measures on the annotated Pods' system calls and resource access, enhancing the overall security posture of containerized workloads."
               }
             },
             {
