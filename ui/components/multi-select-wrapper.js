@@ -4,7 +4,8 @@ import CreatableSelect from 'react-select/creatable';
 import theme, { Colors } from '../themes/app';
 import { MenuItem } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import useStyles from '@/assets/styles/general/tool.styles';
+import { Checkbox } from '@material-ui/core';
+import { FormControlLabel } from '@material-ui/core';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -24,20 +25,44 @@ const MultiSelectWrapper = (props) => {
   let filteredSelectedOptions = filterOptions(props.value, selectInput).sort(comparator);
 
   const Option = (props) => {
-    const StyleClass = useStyles();
     return (
       <MenuItem
         buttonRef={props.innerRef}
         selected={props.isFocused}
         {...props.innerProps}
-        className={props.isSelected ? StyleClass.backgroundColor : ''}
         component="div"
         style={{
           fontWeight: props.isSelected ? 500 : 400,
           padding: '0.4rem 1rem',
         }}
       >
-        {props.label}
+        <FormControlLabel
+          control={
+            props.value === '*' && filteredSelectedOptions?.length > 0 ? (
+              <Checkbox
+                color="primary"
+                key={props.value}
+                ref={(input) => {
+                  if (input) input.indeterminate = true;
+                }}
+                style={{
+                  padding: '0',
+                }}
+              />
+            ) : (
+              <Checkbox
+                color="primary"
+                key={props.value}
+                checked={props.isSelected}
+                onChange={() => {}}
+                style={{
+                  padding: '0',
+                }}
+              />
+            )
+          }
+          label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
+        />
       </MenuItem>
     );
   };

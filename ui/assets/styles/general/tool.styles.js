@@ -16,10 +16,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     zIndex: '101',
   },
-  backgroundColor: {
-    backgroundColor: theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.disableButtonBg,
-    marginTop: '0.2rem',
-  },
   meshModelToolbar: {
     display: 'flex',
     justifyContent: 'space-between',
