@@ -186,6 +186,7 @@ const MultiSelectWrapper = (props) => {
       tabSelectsValue={false}
       backspaceRemovesValue={false}
       hideSelectedOptions={false}
+      isDisabled={props.updating}
       blurInputOnSelect={false}
     />
   );
