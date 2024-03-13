@@ -35,7 +35,6 @@ const MultiSelectWrapper = (props) => {
         style={{
           fontWeight: props.isSelected ? 500 : 400,
           padding: '0.4rem 1rem',
-          // backgroundColor: props.isSelected ? theme.palette.secondary.menuBg : 'transparent', // Highlight selected option
         }}
       >
         {props.label}
@@ -156,21 +155,6 @@ const MultiSelectWrapper = (props) => {
       backgroundColor: base.backgroundColor2,
     }),
   };
-
-  // if (props.isSelectAll && props.options.length !== 0) {
-  //   isAllSelected.current =
-  //     JSON.stringify(filteredSelectedOptions.sort(comparator)) ===
-  //     JSON.stringify(filteredOptions.sort(comparator));
-
-  //   if (filteredSelectedOptions?.length > 0) {
-  //     if (filteredSelectedOptions?.length === filteredOptions?.length)
-  //       selectAllLabel.current = `All (${filteredOptions.length}) selected`;
-  //     else
-  //       selectAllLabel.current = `${filteredSelectedOptions?.length} / ${filteredOptions.length} selected`;
-  //   } else selectAllLabel.current = 'Select all';
-
-  //   allOption.label = selectAllLabel.current;
-  // }
 
   return (
     <CreatableSelect
