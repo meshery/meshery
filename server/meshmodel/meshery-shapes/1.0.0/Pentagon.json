@@ -20,7 +20,7 @@
    "subCategory": "",
    "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.4711 1.78955L2.37842 15.614L9.28517 37.9999H31.657L38.5888 15.614L20.4711 1.78955Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
    "svgComplete": "",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M20.4711 1.78955L2.37842 15.614L9.28517 37.9999H31.657L38.5888 15.614L20.4711 1.78955Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n"
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.4711 1.78955L2.37842 15.614L9.28517 37.9999H31.657L38.5888 15.614L20.4711 1.78955Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
