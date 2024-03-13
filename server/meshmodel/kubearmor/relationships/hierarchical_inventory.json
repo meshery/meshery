@@ -43,7 +43,6 @@
                 "mutatedRef": [
                   [
                     "annotations",
-                    "_", 
                     "security.kubearmor.com/policy"
                   ]
                 ],
@@ -58,7 +57,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -73,7 +71,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -88,7 +85,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -103,7 +99,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -118,7 +113,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -133,7 +127,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
@@ -148,7 +141,6 @@
                   "mutatedRef": [
                     [
                       "annotations",
-                      "_", 
                       "security.kubearmor.com/policy"
                     ]
                   ],
