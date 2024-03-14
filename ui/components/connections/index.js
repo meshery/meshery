@@ -199,6 +199,11 @@ function Connections(props) {
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
 
+  // lock for not allowing multiple updates at the same time
+  // needs to be a ref because it needs to be shared between renders
+  // and useState loses reactivity when down table custom cells
+  const updatingConnection = useRef(false);
+
   const {
     data: connectionData,
     isError: isConnectionError,
@@ -252,10 +257,9 @@ function Connections(props) {
     connectionId,
     connectionName,
   ) => {
-    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+    return addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections();
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -270,13 +274,13 @@ function Connections(props) {
       });
   };
 
-  const removeConnectionFromEnvironment = (
+  const removeConnectionFromEnvironment = async (
     environmentId,
     environmentName,
     connectionId,
     connectionName,
   ) => {
-    removeConnectionFromEnvMutator({ environmentId, connectionId })
+    return removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
         notify({
@@ -293,8 +297,8 @@ function Connections(props) {
       });
   };
 
-  const saveEnvironment = (connectionId, connectionName, environmentName) => {
-    saveEnvironmentMutator({
+  const saveEnvironment = async (connectionId, connectionName, environmentName) => {
+    return saveEnvironmentMutator({
       body: {
         name: environmentName,
         organization_id: organization?.id,
@@ -340,35 +344,46 @@ function Connections(props) {
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  const handleEnvironmentSelect = (
+  const handleEnvironmentSelect = async (
     connectionId,
     connName,
     assignedEnvironments,
     selectedEnvironments,
     unSelectedEnvironments,
   ) => {
-    let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
-      return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
-    });
+    if (updatingConnection.current) {
+      return;
+    }
 
-    newlySelectedEnvironments.forEach((environment) => {
-      let envName = environment.label;
-      let environmentId = environment.value || '';
-      let isNew = environment.__isNew__ || false;
+    updatingConnection.current = true;
 
-      if (isNew) {
-        saveEnvironment(connectionId, connName, envName);
-        return;
+    try {
+      let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+        return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+      });
+
+      for (let environment of newlySelectedEnvironments) {
+        let envName = environment.label;
+        let environmentId = environment.value || '';
+        let isNew = environment.__isNew__ || false;
+
+        if (isNew) {
+          await saveEnvironment(connectionId, connName, envName);
+          return;
+        }
+
+        addConnectionToEnvironment(environmentId, envName, connectionId, connName);
       }
+      for (let environment of unSelectedEnvironments) {
+        let envName = environment.label;
+        let environmentId = environment.value || '';
 
-      addConnectionToEnvironment(environmentId, envName, connectionId, connName);
-    });
-    unSelectedEnvironments.forEach((environment) => {
-      let envName = environment.label;
-      let environmentId = environment.value || '';
-
-      removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
-    });
+        await removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
+      }
+    } finally {
+      getConnections();
+      updatingConnection.current = false;
+    }
   };
 
   let colViews = [
@@ -492,12 +507,15 @@ function Connections(props) {
             return environments.map((env) => ({ label: env.name, value: env.id }));
           };
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
+          let updatingEnvs = updatingConnection.current;
+          console.log('cleanedEnvs', updatingEnvs);
           return (
             isEnvironmentsSuccess && (
               <div onClick={(e) => e.stopPropagation()}>
                 <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
                   <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                     <MultiSelectWrapper
+                      updating={updatingEnvs}
                       onChange={(selected, unselected) =>
                         handleEnvironmentSelect(
                           getColumnValue(tableMeta.rowData, 'id', columns),
