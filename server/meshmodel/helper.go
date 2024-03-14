@@ -6,19 +6,25 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
 var ModelsPath = "../meshmodel"
 var RelativeRelationshipsPath = "relationships"
+var InstanceID uuid.UUID
+var Providers = make(map[string]int)
 
 type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
@@ -44,6 +50,8 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
 	ctx, cancel := context.WithCancel(context.TODO())
+	ctx = context.WithValue(ctx, models.SystemIDKey, &InstanceID)
+
 	defer cancel()
 
 	go erh.watchComponents(ctx)
@@ -180,11 +188,105 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
+			erh.registryLog(ctx)
 			return
 		}
 
 		if err != nil {
 			erh.errorChan <- err
 		}
+	}
+}
+
+func writeToFile(filePath string, data []byte) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (erh *EntityRegistrationHelper) registryLog(ctx context.Context) {
+
+	log := erh.log
+	hosts, _, err := erh.regManager.GetRegistrants(&v1alpha1.HostFilter{})
+	if err != nil {
+		log.Error(err)
+	}
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+
+	ID := "00000000-0000-0000-0000-000000000000"
+
+	userID := uuid.FromStringOrNil(ID)
+	eventBuilder := events.NewEvent().FromSystem(*sysID).FromUser(userID).WithCategory("entity").WithAction("get_summary")
+	for _, host := range hosts {
+
+		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Hostname)
+		appendIfNonZero := func(value int64, label string) {
+			if value != 0 {
+				successMessage += fmt.Sprintf(" %d %s", value, label)
+			}
+		}
+		appendIfNonZero(host.Summary.Models, "models")
+		appendIfNonZero(host.Summary.Components, "components")
+		appendIfNonZero(host.Summary.Relationships, "relationships")
+		appendIfNonZero(host.Summary.Policies, "policies")
+
+		log.Info(successMessage)
+		eventBuilder.WithMetadata(map[string]interface{}{
+			"Hostname": host.Hostname,
+		})
+		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
+		successEvent := eventBuilder.Build()
+		for key, _ := range Providers {
+			Provider := erh.handlerConfig.Providers[key]
+			_ = Provider.PersistEvent(successEvent)
+		}
+
+		failedMsg, _ := meshmodel.FailedMsgCompute("", host.Hostname)
+		if failedMsg != "" {
+			log.Error(meshmodel.ErrRegisteringEntity(failedMsg, host.Hostname))
+			errorEventBuilder := events.NewEvent().FromUser(userID).FromSystem(*sysID).WithCategory("entity").WithAction("get_summary")
+			errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
+			errorEvent := errorEventBuilder.Build()
+			errorEventBuilder.WithMetadata(map[string]interface{}{
+				"Details":               fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", host.Hostname, failedMsg),
+				"Suggested-remediation": fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
+				// "DownloadLink":          fmt.Sprintf("%s://%s%s%s", protocol, host, "/api/meshmodel/download?file=", filePath),
+				// "View-Link":             fmt.Sprintf("%s://%s%s%s", protocol, host, "/api/meshmodel/view?file=", filePath),
+			})
+			for key, _ := range Providers {
+				Provider := erh.handlerConfig.Providers[key]
+				_ = Provider.PersistEvent(errorEvent)
+			}
+		}
+
+	}
+
+	fileRoute := path.Join(viper.GetString("SERVER_CONTENT_FOLDER"), "entities")
+	errDir := os.MkdirAll(fileRoute, 0755)
+	if errDir != nil {
+		log.Error(meshmodel.ErrCreatingUserDataDirectory(viper.GetString("SERVER_CONTENT_FOLDER")))
+		os.Exit(1)
+	}
+
+	filePath := fileRoute + "/entities.json"
+	jsonData, err := json.MarshalIndent(meshmodel.RegisterAttempts, "", "  ")
+	if err != nil {
+		log.Error(meshmodel.ErrMarshalingRegisteryAttempts(err))
+		return
+	}
+
+	err = writeToFile(filePath, jsonData)
+	if err != nil {
+		log.Error(meshmodel.ErrWritingRegisteryAttempts(err))
+		return
 	}
 }
