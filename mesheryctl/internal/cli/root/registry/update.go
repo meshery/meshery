@@ -42,11 +42,11 @@ var updateCmd = &cobra.Command{
 	Short: "Update the registry with latest data.",
 	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
 	Example: `
-	// Update models from Meshery Integration Spreadsheet
-	mesheryctl registry update --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
+// Update models from Meshery Integration Spreadsheet
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
-	// Updating models in the meshery/meshery repo
-	mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+// Updating models in the meshery/meshery repo
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 

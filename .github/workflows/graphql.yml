@@ -28,7 +28,7 @@ jobs:
           bundle install
           bundle exec rake graphql:compile_docs
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: docs/
           commit_user_name: l5io
