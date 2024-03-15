@@ -16,7 +16,9 @@ package registry
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sync"
@@ -24,9 +26,11 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
+	"github.com/layer5io/meshkit/generators/github"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -208,8 +212,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			version := pkg.GetVersion()
 
+			version := pkg.GetVersion()
+			utils.Log.Info("Package info [ %s ]", pkg)
 			modelDefPath, modelDef, err := writeModelDefToFileSystem(&model, version)
 			if err != nil {
 				utils.Log.Error(err)
@@ -217,6 +222,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			comps, err := pkg.GenerateComponents()
+			utils.Log.Info("Package info [ %s ]", pkg)
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
@@ -263,8 +269,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-// For registrants eg: meshery, whose components needs to be directly created by referencing the sheet.
-// the sourceURL contains the "rangeString" : the value that describes the sheet in which the components are listed, and their starting row to ending row.
+// For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
+// the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	totalComps := 0
 	version := "1.0.0"
@@ -280,7 +286,6 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		return ErrGenerateModel(err, model.Model)
 	}
 	isModelPublished, _ := modelDef.Metadata["published"].(bool)
-	components, err := srv.Spreadsheets.Values.Get(spreadsheeetID, model.SourceURL).Do()
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
@@ -289,37 +294,48 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		err = ErrGenerateModel(err, modelDef.Name)
 		return err
 	}
+	path, err := url.Parse(model.SourceURL)
+	if err != nil {
+		return err
+	}
+	gitRepo := github.GitRepo{
+		URL:         path,
+		PackageName: model.Model,
+	}
+	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
+	if err != nil {
+		return err
+	}
 
-	if len(componentSpreadsheetCols) > 0 {
-		for _, comp := range components.Values {
-			totalComps++
-			component := make(map[string]interface{}, len(comp))
-			for i, compValue := range comp {
-				component[componentSpreadsheetCols[i]] = compValue
-			}
-			compName, _ := component["component"].(string)
-			compCSV, err := mutils.MarshalAndUnmarshal[map[string]interface{}, utils.ComponentCSV](component)
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
+	//Initialize walker
+	gitWalker := walker.NewGit()
+	if isModelPublished {
+		gw := gitWalker.
+			Owner(owner).
+			Repo(repo).
+			Branch(branch).
+			Root(root).
+			RegisterFileInterceptor(func(f walker.File) error {
+				// Check if the file has a JSON extension
+				if filepath.Ext(f.Name) != ".json" {
+					return nil
+				}
+				contentBytes := []byte(f.Content)
+				var componentDef v1alpha1.ComponentDefinition
+				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
+					return err
+				}
 
-			componentDef, err := compCSV.CreateComponentDefinition(isModelPublished)
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
-			componentDef.Model = *modelDef // remove this, left for backward compatibility
-
-			err = componentDef.WriteComponentDefinition(compDirName)
-
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
+				err = componentDef.WriteComponentDefinition(compDirName)
+				if err != nil {
+					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
+					utils.Log.Error(err)
+				}
+				return nil
+			})
+		err = gw.Walk()
+		if err != nil {
+			return err
 		}
 	}
 
