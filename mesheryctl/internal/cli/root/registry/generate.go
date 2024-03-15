@@ -214,7 +214,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			version := pkg.GetVersion()
-			utils.Log.Info("Package info [ %s ]", pkg)
 			modelDefPath, modelDef, err := writeModelDefToFileSystem(&model, version)
 			if err != nil {
 				utils.Log.Error(err)
@@ -222,7 +221,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			comps, err := pkg.GenerateComponents()
-			utils.Log.Info("Package info [ %s ]", pkg)
 			if err != nil {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
