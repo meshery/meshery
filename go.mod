@@ -65,7 +65,7 @@ require (
 	gonum.org/v1/gonum v0.14.0
 	google.golang.org/api v0.152.0
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.5
 	k8s.io/api v0.28.4
