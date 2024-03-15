@@ -93,4 +93,4 @@ An _instance_ represents a realized construct. An _instance_ is a dynamic repres
 
 ### Generating Models does not require Meshery Server
 
-Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components.
+Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components. For adding a model, the link to the CRDs for the specific model needs to be added to the Meshery Integration Spreadsheet. On adding the link to the Meshery Integration Spreadsheet, the model generator automatically registers the specific model with Meshery.
