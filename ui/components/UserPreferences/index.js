@@ -232,7 +232,7 @@ const RemoteProviderTab = () => {
             </strong>
           </p>
           {Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
-            <li>
+            <li key={index}>
               <u>{extensionName}</u>
               <ul>
                 <strong>component:</strong>{' '}
