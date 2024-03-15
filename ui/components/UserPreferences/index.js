@@ -27,7 +27,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import SpacesPreferences from './spaces-preferences';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent';
+import { CHARCOAL } from '@layer5/sistent-components';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -157,6 +157,125 @@ function ThemeToggler({ theme, themeSetter, classes }) {
     </div>
   );
 }
+
+const RemoteProviderTab = () => {
+  const [providerInfo, setProviderInfo] = useState(null);
+
+  useEffect(() => {
+    dataFetch(
+      '/api/provider/capabilities',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          setProviderInfo(result);
+        }
+      },
+      (err) => console.error('Error fetching capabilities:', err),
+    );
+  }, []);
+
+  return (
+    <div>
+      {providerInfo && (
+        <div>
+          <p>
+            <strong>
+              <u>Provider Type:</u>
+            </strong>{' '}
+            {providerInfo.provider_type}
+          </p>
+          <p>
+            <strong>
+              <u>Name:</u>
+            </strong>{' '}
+            {providerInfo.provider_name}
+          </p>
+          <p>
+            <strong>
+              <u>Description:</u>
+            </strong>
+          </p>
+          <ul>
+            {providerInfo.provider_description.map((desc, index) => (
+              <li key={index}>{desc}</li>
+            ))}
+          </ul>
+          <p>
+            <strong>
+              <u>Package Version:</u>
+            </strong>{' '}
+            {providerInfo.package_version}
+          </p>
+          <p>
+            <strong>
+              <u>Provider URL:</u>
+            </strong>{' '}
+            <a
+              href={providerInfo.provider_url}
+              style={{ color: '#00b39f' }}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {providerInfo.provider_url}
+            </a>
+          </p>
+        </div>
+      )}
+      {providerInfo && (
+        <div>
+          <p>
+            <strong>
+              <u>Extensions:</u>
+            </strong>
+          </p>
+          {Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
+            <li>
+              <u>{extensionName}</u>
+              <ul>
+                <strong>component:</strong>{' '}
+                <a
+                  href={extension[0].component}
+                  style={{ color: '#00b39f' }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {extension[0].component}
+                </a>
+              </ul>
+            </li>
+          ))}
+        </div>
+      )}
+      {providerInfo && (
+        <div>
+          <p>
+            <strong>
+              <u>Capabilities:</u>
+            </strong>
+          </p>
+          <ul>
+            {providerInfo.capabilities.map((capability, index) => (
+              <li key={index}>
+                <strong>{capability.feature}</strong>:{' '}
+                <a
+                  href={capability.endpoint}
+                  style={{ color: '#00b39f' }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {capability.endpoint}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
@@ -431,7 +550,21 @@ const UserPreference = (props) => {
         )}
         {tabVal === 1 && <MesherySettingsPerformanceComponent />}
         {tabVal === 2 && userPrefs && providerType !== 'local' && (
-          <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
+          <>
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
+
+            <div className={props.classes.formContainer}>
+              <FormControl component="fieldset" className={props.classes.formGrp}>
+                <FormLabel component="legend" className={props.classes.formLegend}>
+                  Remote Provider Info
+                </FormLabel>
+
+                <FormGroup>
+                  <RemoteProviderTab />
+                </FormGroup>
+              </FormControl>
+            </div>
+          </>
         )}
       </Paper>
     </NoSsr>
