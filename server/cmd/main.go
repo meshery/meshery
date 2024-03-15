@@ -271,7 +271,6 @@ func main() {
 
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
-	meshmodelhelper.Providers[lProv.Name()] = 0
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
@@ -299,8 +298,6 @@ func main() {
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
 		provs[cp.Name()] = cp
-		meshmodelhelper.Providers[cp.Name()] = 1
-
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
@@ -324,7 +321,6 @@ func main() {
 		BrokerConn:  brokerConn,
 		Broadcaster: b,
 	})
-	meshmodelhelper.InstanceID = instanceID
 
 	gp := graphql.NewPlayground(graphql.Options{
 		URL: "/api/system/graphql/query",
