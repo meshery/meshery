@@ -38,7 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrClearLineCode          = ""
+	ErrClearLineCode          = "mesheryctl-1117"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
