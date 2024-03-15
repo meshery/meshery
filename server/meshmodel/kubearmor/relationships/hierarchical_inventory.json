@@ -1,0 +1,61 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Hierarchical",
+    "metadata": {
+      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
+    },
+    "model": {
+      "name": "kubearmor",
+      "version": "*",
+      "displayName": "KubeArmor",
+      "category": {
+        "name": "Provisioning",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Inventory",
+    "evaluationQuery": "heirarchical_inventory_relationship",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "KubeArmorHostPolicy",
+              "model": "kubearmor",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatorRef": [
+                  [
+                    "name"
+                  ]
+                ],
+                "description": "KubeArmorHostPolicy specifies rules for controlling process behaviors and access permissions on a Node in Kubernetes, enhancing security and isolation within the cluster and ensuring granular enforcement of security measures at the host level."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "Node",
+              "model": "kubernetes",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "annotations",
+                    "security.kubearmor.com/psp"
+                  ]
+                ],
+                "description": "Nodes are annotated with the name of the desired KubeArmorHostPolicy, directing the KubeArmor agent to enforce the specified policy on processes running on that Node."
+              }
+            }
+        ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
+  }
+]
+}
+        
