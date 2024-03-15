@@ -16,30 +16,36 @@ package system
 
 import (
 	"bytes"
-    "encoding/json"
-    "fmt"
-    "io"
-    "io/ioutil"
-    "net/http"
-    "os"
-    "path/filepath"
-    "strings"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
-    "github.com/eiannone/keyboard"
-    "github.com/fatih/color"
-    "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-    "github.com/layer5io/meshery/mesheryctl/pkg/utils"
-    "github.com/layer5io/meshery/server/models"
-    "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-    "github.com/layer5io/meshkit/models/meshmodel/registry"
-    "github.com/manifoldco/promptui"
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/utils/walker"
+	"github.com/manifoldco/promptui"
 
-    "github.com/pkg/errors"
-    log "github.com/sirupsen/logrus"
-    "github.com/spf13/cobra"
-    "github.com/spf13/viper"
-    "gopkg.in/yaml.v2"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
+	oras "oras.land/oras-go/v2"
+	"oras.land/oras-go/v2/content/file"
+	"oras.land/oras-go/v2/registry/remote"
 )
 
 var (
@@ -419,82 +425,131 @@ mesheryctl exp model search [query-text]
 	},
 }
 
-var ModelImportCmd = &cobra.Command{
-    Use:   "import",
-    Short: "import model",
-    Long:  "import a model from the registry",
-    Example: `
+var importModelCmd = &cobra.Command{
+	Use:   "import",
+	Short: "import model",
+	Long:  "import a model from the registry",
+	Example: `
+
 // Import a model
 mesheryctl exp model import --file <URI>
-    `,
-    RunE: func(cmd *cobra.Command, args []string) error {
-        
-        // Check if file path is provided
-        if len(args) == 0 {
-            return errors.New("file/URI path is required")
-        }
-        var registrantData *registry.MeshModelRegistrantData
-        if validURL := govalidator.IsURL(args[0]); !validURL {
-            // Read the content of the file
-            
-            fileContent := []byte{}
-            // get the directory path
-            dirPath := args[0]
-            // read the files in the directory
-            files, err := ioutil.ReadDir(dirPath)
-            for _, file := range files {
-                fileContent, err = ioutil.ReadFile(filepath.Join(dirPath, file.Name()))
-                if err != nil {
-                    return err
-                }
-            }
-            // Construct the request body
-            registrantData = &registry.MeshModelRegistrantData{
-                Host: registry.Host{ // Hardcoded host information
-                    Hostname: "localhost",
-                    // You can populate other fields as needed
-                },
-                EntityType: "component", // Hardcoded entity type
-                Entity:     fileContent,
-            }
-        } else {
-            // Here we will be reading the content of the file from the URL
-        }
-        mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-        if err != nil {
-            log.Fatal(err, "error processing config")
-        }
-        baseUrl := mctlCfg.GetBaseMesheryURL()
-        url := fmt.Sprintf("%s/api/meshmodel/components/register", baseUrl)
-        // Marshal the registrant data into JSON
-        requestBody, err := json.Marshal(registrantData)
-        fmt.Println(string(requestBody))
-        if err != nil {
-            return err
-        }
-        // Create a new HTTP POST request
-        req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestBody))
-        if err != nil {
-            return err
-        }
-        // Set headers
-        req.Header.Set("Content-Type", "application/json")
-        // Send the request
-        resp, err := http.DefaultClient.Do(req)
-        if err != nil {
-            return err
-        }
-        fmt.Println(resp)
-        defer resp.Body.Close()
-        // Check the response status code
-        if resp.StatusCode == http.StatusOK {
-            fmt.Println("Model imported successfully")
-            return nil
-        }
-        // If the response status code is not OK, print an error message
-        fmt.Println("Error:", resp.Status)
-        return nil
-    },
+	`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp model import <URI/path to Model>\nRun 'mesheryctl exp model import --help' to see detailed help message"
+		if len(args) == 0 {
+			return fmt.Errorf("Path/URI term is missing\n\n%v", errMsg)
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Here we have to call the model import API /api/meshmodel/components/register with POST
+		// The body of the request will be the json of type below
+		// type MeshModelRegistrantData struct {
+		// 	Host       Host                 `json:"host"`
+		// 	EntityType types.CapabilityType `json:"entityType"`
+		// 	Entity     []byte               `json:"entity"` //This will be type converted to appropriate entity on server based on passed entity type
+		// }
+
+		// Check if file path is provided
+		if validURL := govalidator.IsURL(args[0]); !validURL {
+			if _, err := os.Stat(args[0]); os.IsNotExist(err) {
+				return errors.New("file path does not exist")
+			}
+			// get the directory path
+			dirPath := args[0]
+			// read the files in the directory
+			err := processDirectory(dirPath)
+			if err != nil {
+				fmt.Println("Error processing directory:", err)
+				return err
+			}
+		} else if isGithubURL := strings.Contains(args[0], "github.com"); isGithubURL {
+			// Here we will be reading the content of the file from the URL
+
+			// Parse the URL
+			parsedURL, err := url.Parse(args[0])
+			if err != nil {
+				fmt.Println("Error parsing URL:", err)
+				return err
+			}
+
+			// Extract parts
+			pathParts := strings.Split(parsedURL.Path, "/")
+
+			githubInfo := walker.NewGithub()
+			githubInfo.Owner(pathParts[1])
+			githubInfo.Repo(pathParts[2])
+			githubInfo.Branch(pathParts[4])
+			githubInfo.Root(strings.Join(pathParts[5:], "/"))
+			FileInterceptor := func(file walker.GithubContentAPI) error {
+
+				// Download the file content
+				contentResponse, err := http.Get(file.DownloadURL)
+				if err != nil {
+					return err
+				}
+				defer contentResponse.Body.Close()
+
+				// Read the file content directly into a []byte
+				fileContent, err := ioutil.ReadAll(contentResponse.Body)
+				if err != nil {
+					return err
+				}
+
+				// Register the file content as a component
+				if err := registerComponent(file.Name, fileContent); err != nil {
+					return err
+				}
+
+				return nil
+			}
+
+			githubInfo.RegisterFileInterceptor(FileInterceptor)
+
+			if err := githubInfo.Walk(); err != nil {
+				fmt.Println("Error occurred during traversal:", err)
+				return err
+			}
+		} else {
+			// If the user wants to import the model from the oci registry
+
+			// Here extract the registry address and tag
+			// docker.io/repo/container:tag
+			reg := strings.Split(args[0], ":")
+			regAddress := reg[0]
+			tag := reg[1]
+			// 0. Create an OCI layout store
+			fs, err := file.New("./tmp/")
+			if err != nil {
+				panic(err)
+			}
+			defer fs.Close()
+			// 1. Connect to a remote repository
+			ctx := context.Background()
+			repo, err := remote.NewRepository(regAddress)
+			if err != nil {
+				panic(err)
+			}
+
+			// 2. Copy from the remote repository to the OCI layout store
+			_, err = oras.Copy(ctx, repo, tag, fs, tag, oras.DefaultCopyOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// fmt.Println("manifest pulled:", manifestDescriptor.Digest, manifestDescriptor.MediaType)
+
+			// read file content and send it to the server
+			dirPath := "./tmp"
+
+			err = processDirectory(dirPath)
+			if err != nil {
+				fmt.Println("Error processing directory:", err)
+				return err
+			}
+		}
+		return nil
+	},
 }
 
 // ModelCmd represents the mesheryctl exp model command
@@ -557,7 +612,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, ModelImportCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
@@ -614,4 +669,86 @@ func prettifyJson(model v1alpha1.Model) error {
 
 	// Any errors during the encoding process will be returned as an error.
 	return enc.Encode(model)
+}
+
+
+func processDirectory(dirPath string) error {
+	entries, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return fmt.Errorf("error reading directory %s: %s", dirPath, err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			subdirPath := filepath.Join(dirPath, entry.Name())
+			err := processDirectory(subdirPath)
+			if err != nil {
+				fmt.Printf("Error processing directory %s: %s\n", subdirPath, err)
+				continue
+			}
+		} else {
+			fileContent, err := ioutil.ReadFile(filepath.Join(dirPath, entry.Name()))
+			if err != nil {
+				fmt.Printf("Error reading file %s: %s\n", entry.Name(), err)
+				continue
+			}
+
+			err = registerComponent(entry.Name(), fileContent)
+			if err != nil {
+				fmt.Println("Error registering component:", entry.Name(), err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func registerComponent(fileName string, content []byte) error {
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+	baseURL := mctlCfg.GetBaseMesheryURL()
+
+	registrantData := &registry.MeshModelRegistrantData{
+		Host: registry.Host{
+			Hostname: "localhost",
+		},
+		EntityType: "component",
+		Entity:     content,
+	}
+
+	url := fmt.Sprintf("%s/api/meshmodel/components/register", baseURL)
+
+	// Marshal the registrant data into JSON
+	requestBody, err := json.Marshal(registrantData)
+	if err != nil {
+		return err
+	}
+
+	// Create a new HTTP POST request
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestBody))
+	if err != nil {
+		return err
+	}
+
+	// Set headers
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Check the response status code
+	if resp.StatusCode == http.StatusOK {
+		fmt.Println("Model imported successfully:", fileName)
+	} else {
+		fmt.Println("Error registering component:", fileName, resp.Status)
+	}
+
+	return nil
 }
