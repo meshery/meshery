@@ -38,7 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrClearLineCode          = "mesheryctl-1117"
+	ErrClearLineCode          = "test_code"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -509,6 +509,6 @@ func ErrClearLine(err error) error {
 	return errors.New(ErrClearLineCode, errors.Alert,
 		[]string{"Failed to clear terminal"},
 		[]string{err.Error()},
-		[]string{"Error occurred while attempting to command-line interface"},
+		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
