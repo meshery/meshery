@@ -16,7 +16,7 @@ Relationships within Model play a crucial role in establishing concrete visualis
 2. Propose a specific visual representation for the relationship.
 3. Visual representation examples:
 
-   - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png)
+   - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png)
    - [Sibling]({{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png)
    - [Binding]({{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png)
    - [Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png)
