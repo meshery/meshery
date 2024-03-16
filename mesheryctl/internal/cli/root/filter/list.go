@@ -19,15 +19,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 var (
@@ -83,64 +86,104 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
 
-		if verbose {
-			if provider == "None" {
-				for _, v := range response.Filters {
-					FilterID := v.ID.String()
-					FilterName := v.Name
-					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
-				}
-				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-				return nil
+		// Initialize pagination variables
+		startIndex := 0
+		endIndex := min(pageSize, len(data))
+		totalFilters := int(response.TotalCount)
+
+		for {
+			// Clear the terminal screen and print pagination details
+			if terminal.IsTerminal(int(os.Stdout.Fd())) {
+				fmt.Print("\033[H\033[2J") // ANSI escape code to clear the screen
+			}
+			fmt.Printf("Total number of filters: %d\n", totalFilters)
+			fmt.Printf("Page: %d of %d\n", (startIndex/pageSize)+1, (totalFilters+pageSize-1)/pageSize)
+
+			// Display the current page of filters
+			displayCurrentPage(data[startIndex:endIndex], verbose)
+
+			// Check if we've displayed all filters
+			if endIndex == totalFilters {
+				break
 			}
 
-			for _, v := range response.Filters {
-				FilterID := utils.TruncateID(v.ID.String())
-				var UserID string
-				if v.UserID != nil {
-					UserID = *v.UserID
-				} else {
-					UserID = "null"
-				}
-				FilterName := v.Name
-				CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+			// Wait for user input to navigate pages
+			fmt.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
+
+			char, key, err := keyboard.GetKey()
+			if err != nil {
+				utils.Log.Error(err)
+				return err
 			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-			return nil
+
+			// Handle user input
+			if key == keyboard.KeyEsc || key == keyboard.KeyCtrlC {
+				break
+			} else if char == '\r' || key == keyboard.KeyArrowDown {
+				startIndex += pageSize
+				endIndex = min(startIndex+pageSize, totalFilters)
+				pageNumber = startIndex/pageSize + 1
+
+				// Fetch the next set of filters
+				response, err = fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+				if err != nil {
+					utils.Log.Error(ErrFetchFilter(err))
+					return err
+				}
+				data = processData(response.Filters, verbose, provider)
+			}
 		}
 
-		// Check if meshery provider is set
-		if provider == "None" {
-			for _, v := range response.Filters {
-				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
-				FilterID := utils.TruncateID(v.ID.String())
-				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
-			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-			return nil
-		}
-		for _, v := range response.Filters {
-			FilterID := utils.TruncateID(v.ID.String())
-			var UserID string
-			if v.UserID != nil {
-				UserID = utils.TruncateID(*v.UserID)
-			} else {
-				UserID = "null"
-			}
-			FilterName := v.Name
-			CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-			data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
-		}
-		utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 		return nil
 	},
+}
+
+func displayCurrentPage(filters [][]string, verbose bool) {
+	if verbose {
+		utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, filters, []string{"Total", fmt.Sprintf("%d", len(filters)), "", "", ""})
+	} else {
+		utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, filters, []string{"Total", fmt.Sprintf("%d", len(filters)), "", ""})
+	}
+}
+
+func processData(filters []models.MesheryFilter, verbose bool, provider string) [][]string {
+	var data [][]string
+
+	// Iterate through the filters and format the data based on the verbose flag and provider
+	for _, v := range filters {
+		// Define variables for the fields you want to display
+		filterID := v.ID.String()
+		filterName := v.Name
+		createdAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", v.CreatedAt.Year(), v.CreatedAt.Month(), v.CreatedAt.Day(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
+		updatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", v.UpdatedAt.Year(), v.UpdatedAt.Month(), v.UpdatedAt.Day(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+
+		// Depending on the verbose flag, display additional information
+		if verbose {
+			if provider == "None" {
+				data = append(data, []string{filterID, filterName, createdAt, updatedAt})
+			} else {
+				userID := "null"
+				if v.UserID != nil {
+					userID = *v.UserID
+				}
+				data = append(data, []string{filterID, userID, filterName, createdAt, updatedAt})
+			}
+		} else {
+			filterNameTrimmed := strings.TrimSuffix(filterName, filepath.Ext(filterName))
+			filterIDShort := utils.TruncateID(filterID) // Assuming TruncateID is a utility function that shortens the ID
+			data = append(data, []string{filterIDShort, filterNameTrimmed, createdAt, updatedAt})
+		}
+	}
+
+	return data
+}
+
+// min returns the smaller of x or y.
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }
 
 // Pagination(making multiple requests) to retrieve filter Data in batches
