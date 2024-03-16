@@ -18,9 +18,9 @@
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1,\"data\":{\"label\":\"\"}}",
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1}",
    "subCategory": "",
-   "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.5 1L5.26817 8.53202L1.5 25.4529L12.0349 39.0001H28.9651L39.5001 25.4529L35.7319 8.53202L20.5 1Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M20.5 1L5.26817 8.53202L1.5 25.4529L12.0349 39.0001H28.9651L39.5001 25.4529L35.7319 8.53202L20.5 1Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n",
    "svgComplete": "",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.5 1L5.26817 8.53202L1.5 25.4529L12.0349 39.0001H28.9651L39.5001 25.4529L35.7319 8.53202L20.5 1Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n"
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M20.5 1L5.26817 8.53202L1.5 25.4529L12.0349 39.0001H28.9651L39.5001 25.4529L35.7319 8.53202L20.5 1Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
