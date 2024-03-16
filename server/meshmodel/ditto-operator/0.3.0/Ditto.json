@@ -10,15 +10,11 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "ditto-operator",
-   "modelDisplayName": "ditto-operator",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
-   "shape": "",
+   "shape": "circle",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",
@@ -31,7 +27,7 @@
    "id": "00000000-0000-0000-0000-000000000000",
    "name": "ditto-operator",
    "version": "0.3.0",
-   "displayName": "ditto-operator",
+   "displayName": "Ditto Operator",
    "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
@@ -39,7 +35,12 @@
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://github.com/ctron/helm-charts/releases/download/ditto-operator-0.3.0/ditto-operator-0.3.0.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

@@ -13,7 +13,7 @@
    "isNamespaced": true,
    "primaryColor": "#F15B2A",
    "secondaryColor": "#00D3A9",
-   "shape": "",
+   "shape": "circle",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",
@@ -30,7 +30,7 @@
    "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
-    "name": "",
+    "name": "Observability and Analysis",
     "metadata": null
    },
    "metadata": {

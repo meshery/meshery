@@ -85,15 +85,11 @@
           url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
-#    - title: Meshery and SMI Management
-#      url: tasks/service-mesh-interface  
 # - title: 📑 Features
 #   url: features
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-    # - title: Service Mesh Interface (SMI) Conformance
-    #   url: tasks/service-mesh-interface
 - title: 📚 Guides (all)
   url: guides
   links:
@@ -147,6 +143,11 @@
           url: guides/troubleshooting/meshery-operator-meshsync
         - title: Meshery Server 
           url: guides/troubleshooting/meshery-server
+    - title: Tutorials ↆ
+      url: guides/tutorials
+      children:
+      - title: Exploring Kubernetes Pods
+        url: guides/tutorials/kubernetes-pods
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
@@ -168,7 +169,7 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance/managing-performance
-- title: 🛠 Integrations and Extensions
+- title: 🛠 Integrations & Extensions
   url: extensibility
   links:
     - title: "APIs"

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import CustomColumnVisibilityControl from '../../../utils/custom-column';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
@@ -36,7 +36,7 @@ const ResourcesTable = (props) => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [pageSize, setPageSize] = useState();
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [selectedResource, setSelectedResource] = useState({});
@@ -118,7 +118,6 @@ const ResourcesTable = (props) => {
       selectableRows: false,
       count,
       rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 25, 30],
       fixedHeader: true,
       page,
       print: false,

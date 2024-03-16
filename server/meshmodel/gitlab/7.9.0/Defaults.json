@@ -13,7 +13,7 @@
    "isNamespaced": true,
    "primaryColor": "#1988d9",
    "secondaryColor": "#54aef0",
-   "shape": "",
+   "shape": "rectangle",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",
@@ -30,7 +30,7 @@
    "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
-    "name": "",
+    "name": "App Definition and Development",
     "metadata": null
    },
    "metadata": {

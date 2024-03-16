@@ -19,7 +19,7 @@
    "primaryColor": "#326CE5",
    "published": true,
    "secondaryColor": "#7aa1f0",
-   "shape": "",
+   "shape": "triangle",
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"23px\",\"width\":\"23px\",\"x\":\"7\", \"y\":\"14\"}",
    "styles": "{\"height\":\"23px\",\"width\":\"23px\",\"x\":\"7\", \"y\":\"14\"}",

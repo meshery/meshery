@@ -14,7 +14,7 @@ import {
 import Moment from 'react-moment';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import CustomColumnVisibilityControl from '../../../utils/custom-column';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
@@ -53,7 +53,7 @@ export default function MeshSyncTable(props) {
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
   const [setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -382,7 +382,6 @@ export default function MeshSyncTable(props) {
     selectableRows: false,
     count: meshSyncData?.total_count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [25, 50, 100],
     fixedHeader: true,
     page,
     print: false,
