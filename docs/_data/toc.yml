@@ -257,8 +257,11 @@
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        - title: Models
+        - title: Models ↆ
           url: project/contributing/contributing-models
+          grandchildren:
+          - title: Relationships
+            url: project/contributing/contributing-model-relationships
 - title: 📖 Reference
   url: reference
   links:
