@@ -20,7 +20,7 @@
    "subCategory": "",
    "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M30 1H11L1.5 20L11 39H30L39.5 20L30 1Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
    "svgComplete": "",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M30 1H11L1.5 20L11 39H30L39.5 20L30 1Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n"
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\n\u003cpath d=\"M30 1H11L1.5 20L11 39H30L39.5 20L30 1Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\r\n\u003c/svg\u003e\r\n"
   },
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
