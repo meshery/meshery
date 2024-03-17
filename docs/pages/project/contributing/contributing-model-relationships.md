@@ -1,8 +1,8 @@
 ---
 layout: page
 title: Contributing to Model Relationships
-permalink: project/contributing/contributing-model-relationships
-redirect_from: project/contributing/contributing-model-relationships/
+permalink: project/contributing/contributing-relationships
+redirect_from: project/contributing/contributing-relationships/
 abstract: How to contribute to Meshery Models Relationships, Policies...
 language: en
 type: project

@@ -261,7 +261,7 @@
           url: project/contributing/contributing-models
           grandchildren:
           - title: Relationships
-            url: project/contributing/contributing-model-relationships
+            url: project/contributing/contributing-relationships
 - title: 📖 Reference
   url: reference
   links:
