@@ -45,11 +45,6 @@ var (
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
-	// Maps the relationship between the Models sheet and Components sheet of the Meshery Integration spreadsheet columns.
-	// Used when generating Component definition from spreadsheet itself, for eg: Component of Meshery core model.
-	// The GoogleSpreadsheetAPI doesn't return column names, hence when invoking generation columns names are retrived by dumoing the sheet in CSV format then extrcting the columns (ComponentCSVHelper)
-	componentSpreadsheetCols []string
-
 	// current working directory location
 	cwd string
 
