@@ -166,8 +166,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
 	}()
 
-	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
-
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
 		totalAvailableModels++
