@@ -287,7 +287,9 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	}
 	path, err := url.Parse(model.SourceURL)
 	if err != nil {
-		return err
+		err = ErrGenerateModel(err, modelDef.Name)
+		utils.Log.Error(err)
+		return nil
 	}
 	gitRepo := github.GitRepo{
 		URL:         path,
@@ -295,7 +297,9 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	}
 	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
 	if err != nil {
-		return err
+		err = ErrGenerateModel(err, modelDef.Name)
+		utils.Log.Error(err)
+		return nil
 	}
 
 	//Initialize walker
