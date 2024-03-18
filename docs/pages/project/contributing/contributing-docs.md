@@ -9,17 +9,19 @@ category: contributing
 list: include
 ---
 
-Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
+{% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
+
+Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 
 {% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and it information architecture." %}
 
 ## Documentation Framework
 
-Meshery documentation is made of these components:
+Meshery documentation is built using the following components:
 
 - Framework - [Jekyll](https://jekyllrb.com)
 - Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
-- Repo - [https://github.com/layer5io/meshery/tree/master/docs](https://github.com/layer5io/meshery/tree/master/docs)
+- Repo - [https://github.com/meshery/meshery/tree/master/docs](https://github.com/meshery/meshery/tree/master/docs)
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
 - AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
 
@@ -29,52 +31,68 @@ Meshery documentation is made of these components:
 
 ### For Windows
 
-**Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
+{% include alert.html type="light" title="Note" content="Windows users can run Jekyll by following the <a href='https://jekyllrb.com/docs/installation/windows/'>Windows Installation Guide</a> and also installing Ruby Version Manager <a href='https://rvm.io'>RVM</a>. RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux <a href='https://docs.microsoft.com/en-us/windows/wsl/install-win10'>WSL</a> and run Jekyll in Linux instead." %}
 
 - Fire up your WSL VM and install the ruby version manager (RVM):
 
-{% capture code_content %}sudo apt update
-sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
- 	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
- 	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
- 	libreadline-dev libssl-dev
-sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-curl -sSL https://get.rvm.io | sudo bash -s stable
-sudo usermod -a -G rvm `whoami`{% endcapture %}
-{% include code.html code=code_content %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">sudo apt update
+  sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
+   	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
+   	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
+   	libreadline-dev libssl-dev
+  sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+  curl -sSL https://get.rvm.io | sudo bash -s stable
+  sudo usermod -a -G rvm `whoami`
+  </code>
+  </div></pre>
 
-If `gpg --keyserver` gives an error, you can use:
+  
+  If `gpg --keyserver` gives an error, you can use:
 
-{% include code.html code="sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3" %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+  </code>
+  </div></pre>
+  
+  OR
 
-or
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB %}
+  </code>
+  </div></pre>
 
-{% include code.html code="sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB" %}
+  Restart your WSL VM before moving forward to install Ruby.
 
-Restart your WSL VM before moving forward.
+- To install Ruby, run:
 
-- For installing Ruby, run:
-
-  ```bash
+    <pre class="codeblock-pre"><div class="codeblock">
+    <code class="clipboardjs">bash
     rvm install ruby
     rvm --default use ruby 2.7.5
     gem update
     gem install jekyll bundler
-  ```
+    </code>
+    </div></pre>
   
 - Update the Gemfile located in meshery/docs directory
-  ```
-    ruby '3.0.2'
-  ```
+
+    <pre class="codeblock-pre"><div class="codeblock">
+    <code class="clipboardjs">ruby '3.0.2'
+    </code>
+    </div></pre>
+
   <strong>Note:</strong> In place of `3.0.2` add your installed version
   
-- Also add this to the next line in the Gemfile
-  ```
-    gem 'wdm','>=0.1.0' if Gem.win_platform?
-  ```
-  <strong>Note:</strong> This is just a workaround for your local machine so do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests
+- Also add this to the next line in the _Gemfile_.
+    <pre class="codeblock-pre"><div class="codeblock">
+    <code class="clipboardjs">gem 'wdm','>=0.1.0' if Gem.win_platform?
+    </code>
+    </div></pre>
   
-- Next, go to this folder on your device
+{% include alert.html type="warning" title="Don't Commit Gemfile" content="This is just a workaround for your local machine. So, do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests." %}
+  
+- Next, navigate to the following folder 
   ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
   
 - Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
@@ -82,149 +100,214 @@ Restart your WSL VM before moving forward.
 ### For Linux
 
 - Prerequisites
-{% capture code_content %}sudo apt-get update
-sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev{% endcapture %}
-{% include code.html code=code_content %}
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">sudo apt-get update
+  sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+  </code>
+  </div></pre>
+
 #### Installing rbenv
 
 - Cloning the rbenv repository
-{% capture code_content %}git clone https://github.com/rbenv/rbenv.git ~/.rbenv{% endcapture %}
-{% include code.html code=code_content %}
-  <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  </code>
+  </div></pre>
+
+{% include alert.html type="info" title="Note" content="Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc." %}
+
 - Setting the path
-{% capture code_content %}echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+  </code>
+  </div></pre>
+
 - rbenv init
-{% capture code_content %}echo 'eval "$(rbenv init -)"' >> ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+  </code>
+  </div></pre>
+
 - Reload your bashrc
-{% capture code_content %}source ~/.bashrc{% endcapture %}
-{% include code.html code=code_content %}
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">source ~/.bashrc
+  </code>
+  </div></pre>
+
 - Check installation
-{% capture code_content %}type rbenv{% endcapture %}
-{% include code.html code=code_content %}
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">type rbenv
+  </code>
+  </div></pre>
+
 
 #### Install Ruby
 
 - rbenv install version
 
-{% capture code_content %}rbenv install 3.2.2{% endcapture %}
-{% include code.html code=code_content %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">rbenv install 3.2.2
+  </code>
+  </div></pre>
 
 - To list all the versions that can be installed
 
-{% capture code_content %}rbenv install --list{% endcapture %}
-{% include code.html code=code_content %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">rbenv install --list
+  </code>
+  </div></pre>
 
 - Set which Ruby version you want to use
 
-{% capture code_content %}rbenv global version{% endcapture %}
-{% include code.html code=code_content %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">rbenv global version
+  </code>
+  </div></pre>
 
 - Check Ruby installation
 
-{% capture code_content %}ruby -v{% endcapture %}
-{% include code.html code=code_content %}
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">ruby -v
+  </code>
+  </div></pre>
 
 ### For MacOS
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
-**Note:** In case of any installation issues, use the [discussion forum](http://discuss.meshery.io).
+{% include alert.html type="light" title="Note" content="In case of any installation issues, use the <a href='http://discuss.meshery.io)'>discussion forum</a>." %}
 
 ### Get the code
 
 - Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
-{% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
-{% include code.html code=code_content %}
-- Change to the docs directory
-{% capture code_content %}cd docs{% endcapture %}
-{% include code.html code=code_content %}
-- Install any Ruby dependencies
-{% capture code_content %}gem install bundler
-bundle install{% endcapture %}
-{% include code.html code=code_content %}
 
-  <strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git clone https://github.com/YOUR-USERNAME/meshery
+  </code>
+  </div></pre>
+
+- Change to the docs directory
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">cd docs
+  </code>
+  </div></pre>
+
+- Install any Ruby dependencies
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">gem install bundler
+  bundle install
+  </code>
+  </div></pre>
+
+{% include alert.html type="info" title="Note" content="If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site." %}
 
 ### Serve the site
 
-- Serve the code locally
-{% capture code_content %}make docs{% endcapture %}
-{% include code.html code=code_content %}
-- If that gives an error run:
-{% capture code_content %}bundle exec jekyll serve --drafts --config _config_dev.yml{% endcapture %}
-{% include code.html code=code_content %}
+- Serve the code locally.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">make docs
+  </code>
+  </div></pre>
 
-  _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
+- If that gives an error run:
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">bundle exec jekyll serve --drafts --config _config_dev.yml
+  </code>
+  </div></pre>
+
+  
+  _From the `Makefile`, this command runs `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command results in an error, try running the server without Livereload using the command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Note that you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configurations, `jekyll serve` for local development and `jekyll build` to generate site artefacts for production deployment._
 
 ### Using Docker
 
-If you've Docker and `make` installed in your system, then you can serve the site locally
+If you've Docker and `make` installed in your system, then you can serve the site locally. This doesn't require the need to install _Jekyll_ and _Ruby_ in your system. 
 
-{% capture code_content %}make docker-build{% endcapture %}
+{% include alert.html type="info" content="This may not work in Windows." %}
+
+Run the following command from the _docs_ folder, else it will fail.
+
+{% capture code_content %}make docker{% endcapture %}
 {% include code.html code=code_content %}
 
-This doesn't require the need for installing Jekyll and Ruby in your system
 
-**But, you need to make sure that GNU make is working in your system (might not work in Windows)**
+#### Troubleshooting Note
 
-#### Note
-
-While performing the above step, if you're facing errors with a message like below...
+While performing any of the above steps, if you receive an error about mismatching ruby versions similar to the example below, follow one of the steps mentioned below.
 
 `Your ruby version is x.x.x but your Gemfile specified 2.7.x`
 
-This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
+The reason for this error is because Jekyll always considers the exact version of Ruby unlike JavaScript.
 
-So, you need to follow either of the three steps to resolve this problem;
+- Install the required Ruby version by using `rvm` or by any means given above.
+- If you're unable to install the required Ruby version, then manually configure the `Gemfile` (This is not recommended and should be done only if the above steps fail). Modify the ruby version inside the Gemfile similar to the example below:
 
-- Install the required Ruby version by using `rvm` or by any means given above
-- Alternatively, if you have Docker installed, then type `make docs-docker` to view the changes
-- If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">source "https://rubygems.org"
+  ruby '3.1.1' //Change to the version you have installed
+  </code>
+  </div></pre>
 
-```
-source "https://rubygems.org"
-ruby '2.7.5' //to any version you have installed
-```
+The `Gemfile.lock` will be updated automatically once the `make docs` command is run. 
+(For Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
-Automatically the `Gemfile.lock` will update once the `make docs` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
-
-**WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+{% include alert.html type="warning" title="Don't Commit Gemfile" content="If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR." %}
 
 ### Using Gitpod
-- Make sure to have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
+- Ensure you have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
 - Open your forked Meshery repository on GitHub.
-- Click on the "Gitpod" button in the top right corner of the repository page (only visible with the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod browser extension</a> installed).
+- Click on the "**Gitpod**" button in the top right corner of the repository page (it is only visible with the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod browser extension</a> installed).
 
-{% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on opening and comes with Docker and other tools pre-installed making it one of the fastest ways to spin up an environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+{% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on launch, comes with Docker and other tools pre-installed, making it one of the fastest ways to spin up a development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
-- After opening the project on Gitpod, change to the docs directory
-{% capture code_content %}cd docs{% endcapture %}
-{% include code.html code=code_content %}
+- After opening the project on Gitpod, change to the docs directory.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">cd docs
+  </code>
+  </div></pre>
 
-- Serve the code locally
-{% capture code_content %}make docs{% endcapture %}
-{% include code.html code=code_content %}
+- Serve the code locally.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">make docs
+  </code>
+  </div></pre>
 
 You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
 ### Make Necessary Changes
-- Make changes as required by the issue you are solving
-- Be sure check that your changes appear correctly locally by serving the site using `make docs`
+- Make changes as required based on the issue you are solving.
+- Ensure to verify that your changes reflect correctly by serving the site locally using `make docs`.
 
-#### Note
-- If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
+{% include alert.html type="light" title="Note" content="If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created." %}
 
 
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
-{% capture code_content %}git commit -s -m “my commit message w/signoff”{% endcapture %}
-{% include code.html code=code_content %}
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git commit -s -m “my commit message w/signoff”
+  </code>
+  </div></pre>
+
 - Once all changes have been committed, push the changes.
-{% capture code_content %}git push origin <branch-name>{% endcapture %}
-{% include code.html code=code_content %}
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git push origin [branch-name]
+  </code>
+  </div></pre>
+
 - Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
 
 ---
@@ -244,12 +327,16 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 
 You can also use the `code` component created for this feature to make it easy to use. It can be used by including code.html and then passing the code snippet to it.
 
-If the code snippet does not contain any special characters then, it can be used directly like,<br><br>
-`{% raw %}{% include code.html code="code_snippet_here" %}{% endraw %}`.
+If the code snippet does not contain any special characters then, it can be used directly as below:
+```{% raw %}{% include code.html code="code_snippet_here" %}{% endraw %}````
 
-If the code snippet has special characters then we need to capture it first in variable `code_content` like this,<br><br> `{% raw %}{% capture code_content%}code_snippet_here{% endcapture %}{% endraw %}`<br><br> and then pass it to the component like this,<br><br> `{% raw %}{% include code.html code=code_content %}{% endraw %}`.<br><br> That's it.
+If the code snippet has special characters then it must be captured first in variable `code_content`,  and then pass it to the component. 
+```
+{% raw %}{% capture code_content%}code_snippet_here{% endcapture %}{% endraw %}
+{% raw %}{% include code.html code=code_content %}{% endraw %}
+```
 
-**NOTE:** Don't use `code` component when the snippet is in between an ordered list, it breaks the order and next item in the list will have numbering from 1. So better use `<pre class="codeblock_pre">...</pre>` method above instead when the snippet is in between an ordered list.
+Don't use `code` component when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock_pre">...</pre>` method described above."
 
 **A full block:**
 {% capture code_content %}```code snippet```{% endcapture %}
@@ -271,7 +358,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 
 ## Documentation Contribution Flow Summary
 
-**NOTE: For contributing `mesheryctl` reference section, refer [Contributing CLI](/contributing-cli)**
+{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/contributing-cli'>Contributing CLI</a>" %}
 
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
@@ -463,5 +550,3 @@ Two helpful resources:
 
 1. Liquid Docs - [https://shopify.github.io/liquid/](https://shopify.github.io/liquid/)
 2. Jekyll Docs - [https://jekyllrb.com/docs/](https://jekyllrb.com/docs/)
-
-
