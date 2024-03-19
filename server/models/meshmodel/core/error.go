@@ -8,7 +8,7 @@ import (
 
 const (
 	ErrCreatingKubernetesComponentsCode = "meshery-server-1313"
-	ErrRegisterEntityCode               = "replace-me"
+	ErrRegisterEntityCode               = "meshery-server-1319"
 )
 
 func ErrCreatingKubernetesComponents(err error, ctxID string) error {
