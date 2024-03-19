@@ -4,6 +4,8 @@ import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
 import { makeStyles } from '@material-ui/core/styles';
+import { Provider } from 'react-redux';
+import { store } from '@/store/index';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -11,16 +13,18 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
 
   return (
-    <Grid item {...gridProps}>
-      <PerformanceCard
-        profile={profile}
-        handleEdit={() => setProfileForModal(profile)}
-        handleDelete={() => deleteHandler(profile.id)}
-        handleRunTest={() => setProfileForModal({ ...profile, runTest: true })}
-        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
-        requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-      />
-    </Grid>
+    <Provider store={store}>
+      <Grid item {...gridProps}>
+        <PerformanceCard
+          profile={profile}
+          handleEdit={() => setProfileForModal(profile)}
+          handleDelete={() => deleteHandler(profile.id)}
+          handleRunTest={() => setProfileForModal({ ...profile, runTest: true })}
+          requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
+          requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
+        />
+      </Grid>
+    </Provider>
   );
 }
 const useStyles = makeStyles(() => ({

@@ -1,5 +1,5 @@
 //@ts-check
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Button,
@@ -20,11 +20,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../../css/icons.styles';
 import { useTheme } from '@material-ui/core/styles';
 import moment from 'moment';
-import dataFetch from '../../lib/data-fetch';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import ReusableTooltip from '../reusable-tooltip';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useGetUserByIdQuery } from '@/rtk-query/user';
 
 const useStyles = makeStyles((theme) => ({
   cardButtons: {
@@ -67,39 +67,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const avatarHandler = (function AvatarHandler() {
-  const idToAvatarMap = {};
-
-  function fetchUserAvatarLink(userId, setterCallbackFunction) {
-    if (!userId) return null;
-    dataFetch(
-      `/api/user/profile/${userId}`,
-      {
-        credentials: 'include',
-      },
-      function assignAvatarLinkToId(result) {
-        if (result.avatar_url) {
-          idToAvatarMap[userId] = result.avatar_url;
-          setterCallbackFunction(result.avatar_url);
-        }
-      },
-      function handleProfileFetchError(error) {
-        console.error('failed to fetch user profile with ID', userId, error);
-      },
-    );
-  }
-
-  return {
-    getAvatar: async function _getAvatar(userId, setterFn) {
-      if (idToAvatarMap[userId]) {
-        return setterFn(idToAvatarMap[userId]);
-      }
-
-      fetchUserAvatarLink(userId, setterFn);
-    },
-  };
-})();
-
 function PerformanceCard({
   profile,
   handleDelete,
@@ -110,11 +77,9 @@ function PerformanceCard({
 }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [userAvatar, setUserAvatar] = useState(null);
 
-  useEffect(() => {
-    avatarHandler.getAvatar(profile.user_id, setUserAvatar);
-  }, []);
+  const { data: user } = useGetUserByIdQuery(profile.user_id);
+  const userAvatar = user?.avatar_url;
 
   const {
     id,

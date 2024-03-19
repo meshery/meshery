@@ -8,7 +8,10 @@ const userApi = api.injectEndpoints({
     getUserById: builder.query({
       query: (id) => `user/profile/${id}`,
     }),
+    getUserPrefs: builder.query({
+      query: () => `user/prefs`,
+    }),
   }),
 });
 
-export const { useGetLoggedInUserQuery, useGetUserByIdQuery } = userApi;
+export const { useGetLoggedInUserQuery, useGetUserByIdQuery, useGetUserPrefsQuery } = userApi;
