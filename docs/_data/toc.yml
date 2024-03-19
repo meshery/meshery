@@ -1,4 +1,4 @@
-- title: 🗺 Overview
+- title: 🗺 Overview & Installation
   url: project/overview
   links:
   - title: FAQ
@@ -90,7 +90,7 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-- title: 📚 Guides (all)
+- title: 📚 Administrator's Guide
   url: guides
   links:
     # - title: Deploying Designs
@@ -141,9 +141,9 @@
           url: guides/troubleshooting/installation
         - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Meshery Server 
+        - title: Meshery Server asdf
           url: guides/troubleshooting/meshery-server
-    - title: Tutorials ↆ
+    - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
       - title: Exploring Kubernetes Pods
@@ -153,7 +153,7 @@
       children:
         - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks (all)
+- title: ⚙️ Tasks & Operations (User Guide)
   url: tasks
   links:
     - title: Infrastructure Management
