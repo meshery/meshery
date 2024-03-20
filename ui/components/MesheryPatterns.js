@@ -15,15 +15,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import SaveIcon from '@material-ui/icons/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
 import { withSnackbar } from 'notistack';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
@@ -68,7 +62,15 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  AddIcon,
+  CloseIcon,
+  DeleteIcon,
+  FullScreenIcon,
+  FullScreenIconExit,
+  ResponsiveDataTable,
+  SaveAsIcon,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -147,6 +149,7 @@ const styles = (theme) => ({
   },
   addIcon: {
     paddingRight: '.35rem',
+    fill: theme.palette.secondary.iconMain,
   },
   visibilityImg: {
     filter: theme.palette.secondary.img,
@@ -255,10 +258,14 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? (
+              <FullScreenIconExit className={classes.displayIcon} />
+            ) : (
+              <FullScreenIcon className={classes.displayIcon} />
+            )}
           </ReusableTooltip>
           <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
-            <CloseIcon />
+            <CloseIcon className={classes.displayIcon} />
           </ReusableTooltip>
         </div>
       </DialogTitle>
@@ -295,7 +302,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
               })
             }
           >
-            <SaveIcon />
+            <SaveAsIcon className={classes.displayIcon} />
           </IconButton>
         </ReusableTooltip>
         <ReusableTooltip title="Delete Pattern">
@@ -312,7 +319,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
               })
             }
           >
-            <DeleteIcon />
+            <DeleteIcon className={classes.displayIcon} />
           </IconButton>
         </ReusableTooltip>
       </DialogActions>

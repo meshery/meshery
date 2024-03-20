@@ -1,10 +1,10 @@
 //@ts-check
 import React from 'react';
 import { Typography, Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../css/icons.styles';
+import { AddIcon } from '@layer5/sistent';
 
 const useStyles = makeStyles(() => ({
   addIcon: {
