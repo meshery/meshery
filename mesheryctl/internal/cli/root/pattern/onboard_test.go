@@ -1,4 +1,4 @@
-package app
+package pattern
 
 import (
 	"path/filepath"
@@ -44,8 +44,8 @@ func TestOnboardCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Onboard Application",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "-s", "Kubernetes Manifest"},
+			Name:             "Onboard patternlication",
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplepattern.golden"), "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -69,7 +69,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.applicationdeploy.response.golden",
+					Response:     "onboard.patterndeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -77,8 +77,8 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard Application with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
+			Name:             "Onboard patternlication with --skip-save",
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplepattern.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -96,7 +96,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.applicationdeploy.response.golden",
+					Response:     "onboard.patterndeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -126,9 +126,9 @@ func TestOnboardCmd(t *testing.T) {
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
-			AppCmd.SetArgs(tt.Args)
-			AppCmd.SetOutput(b)
-			err := AppCmd.Execute()
+			PatternCmd.SetArgs(tt.Args)
+			PatternCmd.SetOutput(b)
+			err := PatternCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {

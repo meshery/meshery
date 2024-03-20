@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bufio"
@@ -34,30 +34,28 @@ import (
 )
 
 var (
-	skipSave   bool   // skip saving the app
-	appFile    string // app file
-	sourceType string // app file type (manifest / compose)
+	sourceType string // pattern file type (manifest / compose)
 )
 
-var linkDocAppOnboard = map[string]string{
-	"link":    "![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)",
-	"caption": "Usage of mesheryctl app onboard",
+var linkDocpatternOnboard = map[string]string{
+	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
+	"caption": "Usage of mesheryctl pattern onboard",
 }
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
-	Short: "Onboard application",
-	Long:  `Command will trigger deploy of application`,
+	Short: "Onboard pattern",
+	Long:  `Command will trigger deploy of pattern`,
 	Example: `
-// Onboard application by providing file path
-mesheryctl app onboard -f [filepath] -s [source type]
-mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
+// Onboard pattern by providing file path
+mesheryctl pattern onboard -f [filepath] -s [source type]
+mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	`,
-	Annotations: linkDocAppOnboard,
+	Annotations: linkDocpatternOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" && len(args) == 0 {
-			return ErrOnboardApp()
+			return ErrOnboardpattern()
 		}
 		return nil
 	},
@@ -75,17 +73,17 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
-		appURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
-		// app name has been passed
+		// pattern name has been passed
 		if len(args) > 0 {
-			// Merge args to get app-name
-			appName := strings.Join(args, "%20")
+			// Merge args to get pattern-name
+			patternName := strings.Join(args, "%20")
 
-			// search and fetch apps with app-name
-			utils.Log.Debug("Fetching apps")
+			// search and fetch patterns with pattern-name
+			utils.Log.Debug("Fetching patterns")
 
-			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -112,31 +110,31 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(utils.ErrNotFound(errors.New("no app found with the given name")))
+				utils.Log.Error(utils.ErrNotFound(errors.New("no pattern found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
-				appFile = response.Patterns[0].PatternFile
+				patternFile = response.Patterns[0].PatternFile
 			} else {
-				// Multiple apps with same name
-				index = multipleApplicationsConfirmation(response.Patterns)
-				appFile = response.Patterns[index].PatternFile
+				// Multiple patterns with same name
+				index = multiplepatternsConfirmation(response.Patterns)
+				patternFile = response.Patterns[index].PatternFile
 			}
 		} else {
 			// Check if a valid source type is set
 			if sourceType, err = getFullSourceType(sourceType); err != nil {
 				return ErrInValidSource(sourceType, validSourceTypes)
 			}
-			app, err := importApp(sourceType, file, appURL, !skipSave)
+			pattern, err := importPattern(sourceType, file, patternURL, !skipSave)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
 
-			appFile = app.PatternFile
+			patternFile = pattern.PatternFile
 		}
 
 		payload := models.MesheryPatternFileDeployPayload{
-			PatternFile: appFile,
+			PatternFile: patternFile,
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -165,27 +163,27 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("app successfully onboarded")
+			utils.Log.Info("pattern successfully onboarded")
 		}
 		utils.Log.Info(string(body))
 		return nil
 	},
 }
 
-func multipleApplicationsConfirmation(profiles []models.MesheryPattern) int {
+func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
-		fmt.Printf("ApplicationFile:\n")
+		fmt.Printf("patternFile:\n")
 		fmt.Printf(a.PatternFile)
 		fmt.Println("---------------------")
 	}
 
 	for {
-		fmt.Printf("Enter the index of app: ")
+		fmt.Printf("Enter the index of pattern: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			utils.Log.Info(err)
@@ -203,8 +201,65 @@ func multipleApplicationsConfirmation(profiles []models.MesheryPattern) int {
 	}
 }
 
+func getSourceTypes() error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
+	req, err := utils.NewRequest("GET", validTypesURL, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	defer resp.Body.Close()
+
+	var response []*models.PatternSourceTypesAPIResponse
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
+		return nil
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
+		return nil
+	}
+
+	for _, apiResponse := range response {
+		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
+	}
+
+	return nil
+}
+
+// returns full source name e.g. helm -> `Helm Chart`
+// user passes only helm, compose or manifest but server accepts full source type
+// e.g `Heml Chart`, `Docker Compose`, `Kubernetes Manifest`
+func getFullSourceType(sType string) (string, error) {
+	for _, validType := range validSourceTypes {
+		lowerType := strings.ToLower(validType)
+		// user may pass Pascal Case source e.g Helm
+		sType = strings.ToLower(sType)
+		if strings.Contains(lowerType, sType) {
+			return validType, nil
+		}
+	}
+
+	return sType, fmt.Errorf("no matching source type found")
+}
+
 func init() {
-	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
-	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a app")
+	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a pattern")
 	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

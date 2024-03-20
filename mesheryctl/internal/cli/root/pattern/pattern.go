@@ -25,6 +25,7 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
+	validSourceTypes     []string
 )
 
 // PatternCmd represents the root command for pattern commands
@@ -60,6 +61,6 @@ mesheryctl pattern list
 func init() {
 	PatternCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
 }
