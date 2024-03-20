@@ -14,9 +14,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
-import { Search } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { setK8sContexts, updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from './ConnectionWizard/helpers/common';
@@ -25,7 +23,6 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import DoneIcon from '@material-ui/icons/Done';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
@@ -36,6 +33,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
+import { CloseIcon, RemoveDoneIcon, SearchIcon } from '@layer5/sistent';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -134,6 +132,7 @@ const styles = (theme) => ({
         theme.palette.type == 'light'
           ? theme.palette.secondary.modalTabs
           : theme.palette.secondary.mainBackground,
+      fill: 'red',
     },
   },
   tabLabel: {
@@ -210,6 +209,9 @@ const styles = (theme) => ({
   },
   closeIconButton: {
     color: 'white',
+  },
+  displayIcon: {
+    fill: theme.palette.secondary.iconMain,
   },
 });
 
@@ -339,7 +341,7 @@ function ConfirmationMsg(props) {
                 className={classes.closeIconButton}
               >
                 <CloseIcon
-                  fill={'#FFFFF'}
+                  fill="#FFFFFF"
                   className={classes.closeIcon}
                   style={{ ...iconMedium }}
                 ></CloseIcon>
@@ -392,7 +394,12 @@ function ConfirmationMsg(props) {
                 <div style={{ display: 'flex' }}>
                   <div style={{ margin: '2px', paddingRight: '2px' }}>
                     {' '}
-                    <RemoveDoneIcon style={iconSmall} width="20" height="20" />{' '}
+                    <RemoveDoneIcon
+                      className={classes.displayIcon}
+                      style={iconSmall}
+                      width="20"
+                      height="20"
+                    />{' '}
                   </div>{' '}
                   <span className={classes.tabLabel}>Undeploy</span>{' '}
                 </div>
@@ -451,7 +458,9 @@ function ConfirmationMsg(props) {
                           margin: '1px 1px 8px ',
                         }}
                         InputProps={{
-                          endAdornment: <Search style={iconMedium} />,
+                          endAdornment: (
+                            <SearchIcon className={classes.displayIcon} style={iconMedium} />
+                          ),
                         }}
                         // margin="none"
                       />
