@@ -1,6 +1,8 @@
 import dataFetch from '../../../lib/data-fetch';
 import { EVENT_TYPES } from '../../../lib/event-types';
-
+import { commitMutation } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import AdapterStatusMutation from '../../graphql/mutations/__generated__/AdapterStatusMutation.graphql.js';
 /**
  * fetch the adapters that are available
  *
@@ -109,14 +111,17 @@ export const configureAdapter = (successCb, errorCb, adapterLocation) => {
   );
 };
 
-export const handleDeleteAdapter = (successCb, errorCb) => (adapterLoc) => {
-  return dataFetch(
-    `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
-    {
-      method: 'DELETE',
-      credentials: 'include',
-    },
-    successCb,
-    errorCb,
-  );
+export const handleDeleteAdapter = (successCb, errorCb) => {
+  const environment = createRelayEnvironment({});
+  const mutation = AdapterStatusMutation;
+  const vars = {
+    input: { targetStatus: 'DISABLED', targetPort: '10000', adapter: 'meshery-istio' },
+  };
+
+  commitMutation(environment, {
+    mutation,
+    vars,
+    onCompleted: successCb,
+    onError: errorCb,
+  });
 };
