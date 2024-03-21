@@ -38,6 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+	ErrBadRequestCode 		  = "mesheryctl-1117"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -138,6 +139,17 @@ func SystemModelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdModelList)
 	case "view":
 		return formatError(msg, cmdModelView)
+	default:
+		return formatError(msg, cmdModel)
+	}
+}
+
+func SystemConnectionSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdConnectionList)
+	case "delete":
+		return formatError(msg, cmdConnectionDelete)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -284,6 +296,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+	case cmdConnectionList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -502,4 +516,12 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
+}
+
+func ErrBadRequest(err error) error {
+	return errors.New(ErrBadRequestCode, errors.Alert,
+		[]string{"Failed to delete the connection"},
+		[]string{err.Error()},
+		[]string{"Error occurred while deleting the connection"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }

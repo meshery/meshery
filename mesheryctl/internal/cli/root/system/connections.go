@@ -34,7 +34,6 @@ var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
 	Long:  `List all the connections`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List all the connections
 mesheryctl system connections list 
@@ -64,10 +63,15 @@ mesheryctl system connections list --page 2
 		return nil
 	},
 
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
 		if len(args) != 0 {
-			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
-		}
+			return errors.New(utils.SystemConnectionSubError(errMsg, "list"))
+		} 
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
@@ -133,7 +137,7 @@ mesheryctl system connections list --page 2
 				utils.ClearLine()
 
 				// Print number of connections and current page number
-				whiteBoardPrinter.Print("Total number of models: ", len(rows))
+				whiteBoardPrinter.Print("Total number of connections: ", len(rows))
 				fmt.Println()
 				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
 				fmt.Println()
@@ -207,13 +211,19 @@ mesheryctl system connections delete <connection_id>
 		return nil
 	},
 
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
 		if len(args) != 1 {
-			return errors.New(utils.SystemModelSubError("this command takes exactly one argument\n", "delete"))
-		}
+			return errors.New(utils.SystemConnectionSubError(errMsg, "delete"))
+		} 
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return err
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
@@ -239,7 +249,7 @@ mesheryctl system connections delete <connection_id>
 			return nil
 		}
 
-		return errors.New("unable to delete the connection")
+		return utils.ErrBadRequest(errors.New(fmt.Sprintf("failed to delete connection with id %s", args[0])))
 	},
 }
 
@@ -283,10 +293,6 @@ mesheryctl exp connections list
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
-		}
-		err = viewProviderCmd.RunE(cmd, args)
-		if err != nil {
-			return err
 		}
 		err = cmd.Usage()
 		if err != nil {

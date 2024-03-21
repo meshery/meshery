@@ -86,6 +86,7 @@ const (
 	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
 	modelViewURL      = docsBaseURL + "reference/mesheryctl/system/model/view"
+	connectionListURL = docsBaseURL + "reference/mesheryctl/system/connections/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -133,6 +134,8 @@ const (
 	cmdModelView       cmdType = "model view"
 	cmdRegistryPublish cmdType = "registry publish"
 	cmdRegistry        cmdType = "regisry"
+	cmdConnectionList  cmdType = "connection list"
+	cmdConnectionDelete  cmdType = "connection delete"
 )
 
 const (
