@@ -13,11 +13,11 @@ list: include
 The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including:
 
 - [Models](./models): Blueprints defining configurations for interacting with cloud-native infrastructure. They consist of operations, components, relationships, and policies.
-  - [Components](./components): Reusable building blocks for constructing configurations within models.
-  - [Relationships](./relationships): Define connections and dependencies between components within a model.
-  - [Policies](./policies): Enforce specific rules and governance for system behavior under Meshery's management.
-  - [Connections](/.connections): managed and unmanaged resources that Meshery can interact with.
-  - [Credentials](./credentials): Optionally, included secrets associated with connections contained in a model.
+  - [Components](../components): Reusable building blocks for constructing configurations within models.
+  - [Relationships](../relationships): Define connections and dependencies between components within a model.
+  - [Policies](../policies): Enforce specific rules and governance for system behavior under Meshery's management.
+  - [Connections](../connections): managed and unmanaged resources that Meshery can interact with.
+  - [Credentials](../credentials): Optionally, included secrets associated with connections contained in a model.
 
 ## Understanding Key Actors
 
