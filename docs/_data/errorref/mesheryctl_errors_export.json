@@ -2864,6 +2864,15 @@
         "short_description": "error performing a dry run on the design",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1319": {
+        "name": "ErrRegisterEntityCode",
+        "code": "1319",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
