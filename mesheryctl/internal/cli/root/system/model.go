@@ -432,10 +432,10 @@ var importModelCmd = &cobra.Command{
 	Example: `
 
 // Import a model
-mesheryctl exp model import --file <URI>
+mesheryctl exp model import --file [URI]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model import <URI/path to Model>\nRun 'mesheryctl exp model import --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp model import [URI/path to Model]\nRun 'mesheryctl exp model import --help' to see detailed help message"
 		if len(args) == 0 {
 			return fmt.Errorf("Path/URI term is missing\n\n%v", errMsg)
 		}
