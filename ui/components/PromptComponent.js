@@ -17,6 +17,7 @@ import theme from '../themes/app';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
+import HelpOutlineIcon from '@/assets/icons/HelpOutlineIcon';
 
 const styles = (theme) => ({
   title: {
@@ -26,6 +27,26 @@ const styles = (theme) => ({
     color: '#fff',
     backgroundColor:
       theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  },
+  titleHeading: {
+    textAlign: 'center',
+    minWidth: 400,
+    padding: '10px',
+    color: theme.palette.secondary.canvas,
+    '& h2': {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      textAlign: 'center',
+    },
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.headerColor
+        : theme.palette.secondary.mainBackground,
+  },
+  titleItems: {
+    display: 'inline-flex',
+    alignItems: 'center',
   },
   subtitle: {
     minWidth: 400,
@@ -121,6 +142,7 @@ class PromptComponent extends React.Component {
         showCheckbox: !!passed.showCheckbox,
         show: true,
         showInfoIcon: passed.showInfoIcon || null,
+        helpText: passed.helpText || '',
       });
     });
   };
@@ -140,7 +162,8 @@ class PromptComponent extends React.Component {
   };
 
   render() {
-    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = this.state;
+    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon, helpText } =
+      this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
     return (
@@ -153,8 +176,33 @@ class PromptComponent extends React.Component {
           className={classes.dialogBox}
         >
           {title !== '' && (
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-              <b>{title}</b>
+            <DialogTitle
+              id="alert-dialog-title"
+              className={helpText ? classes.titleHeading : classes.title}
+            >
+              {helpText ? (
+                <>
+                  <div className="titleItems">&nbsp;&nbsp;</div>
+                  <div className={helpText ? 'titleItems' : null}>
+                    <Typography variant="h6" component="h6">
+                      <b>{title}</b>
+                    </Typography>
+                  </div>
+                  <div className="titleItems">
+                    <CustomTextTooltip title={helpText}>
+                      <IconButton>
+                        <HelpOutlineIcon
+                          height={'2rem'}
+                          width={'2rem'}
+                          fill={theme.palette.secondary.primaryModalText}
+                        />
+                      </IconButton>
+                    </CustomTextTooltip>
+                  </div>
+                </>
+              ) : (
+                <b>{title}</b>
+              )}
             </DialogTitle>
           )}
           {subtitle !== '' && (

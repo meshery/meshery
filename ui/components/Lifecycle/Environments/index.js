@@ -296,6 +296,7 @@ const Environments = ({ organization, classes }) => {
       
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
+      helpText: `Deletes the Environment`,
     });
     if (response === 'DELETE') {
       handleDeleteEnvironment(environment.id);
