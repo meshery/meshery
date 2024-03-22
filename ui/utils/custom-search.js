@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import debounce from './debounce';
-import { CloseIcon, SearchIcon } from '@layer5/sistent-svg';
+import { CloseIcon, SearchIcon } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({
   icon: {

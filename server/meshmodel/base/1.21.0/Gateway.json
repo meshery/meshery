@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Gateway",
+  "apiVersion": "networking.istio.io/v1alpha3",
+  "displayName": "Gateway",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "base",
+   "version": "1.21.0",
+   "displayName": "base",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 160 240\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html\",\n   \"properties\": {\n    \"selector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more labels that indicate a specific set of pods/VMs on which this gateway configuration should be applied.\",\n     \"type\": \"object\"\n    },\n    \"servers\": {\n     \"description\": \"A list of server specifications.\",\n     \"items\": {\n      \"properties\": {\n       \"bind\": {\n        \"description\": \"The ip or the Unix domain socket to which the listener should be bound to.\",\n        \"type\": \"string\"\n       },\n       \"defaultEndpoint\": {\n        \"type\": \"string\"\n       },\n       \"hosts\": {\n        \"description\": \"One or more hosts exposed by this gateway.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"An optional name of the server, when set must be unique across all servers.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"The Port on which the proxy should listen for incoming connections.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Label assigned to the port.\",\n          \"type\": \"string\"\n         },\n         \"number\": {\n          \"description\": \"A valid non-negative integer port number.\",\n          \"type\": \"integer\"\n         },\n         \"protocol\": {\n          \"description\": \"The protocol exposed on the port.\",\n          \"type\": \"string\"\n         },\n         \"targetPort\": {\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"number\",\n         \"protocol\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"tls\": {\n        \"description\": \"Set of TLS related options that govern the server's behavior.\",\n        \"properties\": {\n         \"caCertificates\": {\n          \"description\": \"REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"cipherSuites\": {\n          \"description\": \"Optional: If specified, only support the specified cipher list.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"credentialName\": {\n          \"description\": \"For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.\",\n          \"type\": \"string\"\n         },\n         \"httpsRedirect\": {\n          \"description\": \"If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.\",\n          \"type\": \"boolean\"\n         },\n         \"maxProtocolVersion\": {\n          \"description\": \"Optional: Maximum TLS protocol version.\",\n          \"enum\": [\n           \"TLS_AUTO\",\n           \"TLSV1_0\",\n           \"TLSV1_1\",\n           \"TLSV1_2\",\n           \"TLSV1_3\"\n          ],\n          \"type\": \"string\"\n         },\n         \"minProtocolVersion\": {\n          \"description\": \"Optional: Minimum TLS protocol version.\",\n          \"enum\": [\n           \"TLS_AUTO\",\n           \"TLSV1_0\",\n           \"TLSV1_1\",\n           \"TLSV1_2\",\n           \"TLSV1_3\"\n          ],\n          \"type\": \"string\"\n         },\n         \"mode\": {\n          \"description\": \"Optional: Indicates whether connections to this port should be secured using TLS.\",\n          \"enum\": [\n           \"PASSTHROUGH\",\n           \"SIMPLE\",\n           \"MUTUAL\",\n           \"AUTO_PASSTHROUGH\",\n           \"ISTIO_MUTUAL\",\n           \"OPTIONAL_MUTUAL\"\n          ],\n          \"type\": \"string\"\n         },\n         \"privateKey\": {\n          \"description\": \"REQUIRED if mode is `SIMPLE` or `MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"serverCertificate\": {\n          \"description\": \"REQUIRED if mode is `SIMPLE` or `MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"subjectAltNames\": {\n          \"description\": \"A list of alternate names to verify the subject identity in the certificate presented by the client.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"verifyCertificateHash\": {\n          \"description\": \"An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"verifyCertificateSpki\": {\n          \"description\": \"An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"port\",\n       \"hosts\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gateway\",\n \"type\": \"object\"\n}"
+ }
