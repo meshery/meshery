@@ -1,0 +1,62 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Sibling",
+  "metadata": {
+    "description": "A relationship between two objects that are siblings."
+  },
+  "model": {
+    "name": "argo-cd",
+    "version": "v3.3.5",
+    "displayName": "Argo CD Applications",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "evaluationQuery": "sibling_matchlabels_relationship",
+  "subType": "MatchLabels",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "kind": "ApplicationSet",
+                        "model": "argo-cd"
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "ApplicationSet",
+                        "model": "argo-cd"
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        },
+        {
+            "allow": {
+                "from": [
+                    {
+                        "kind": "Application",
+                        "model": "argo-cd"
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Application",
+                        "model": "argo-cd"
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ]
+}  
+
