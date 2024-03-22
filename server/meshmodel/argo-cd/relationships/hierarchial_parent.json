@@ -1,0 +1,39 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A relationship that defines whether a component can be a parent of other components."
+  },
+  "model": {
+    "name": "argo-cd",
+    "version": "v3.3.5",
+    "displayName": "Argo CD Applications",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "evaluationQuery": "heirarcal_parent_relationship",
+  "subType": "Parent",
+  "selectors": [{
+    "allow": {
+      "from": [
+        {
+          "kind": "ApplicationSet",
+          "model": "argo-cd"
+        }
+      ],
+      "to": [
+        {
+          "kind": "Application",
+          "model": "argo-cd"
+        }
+      ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
+  }]
+}

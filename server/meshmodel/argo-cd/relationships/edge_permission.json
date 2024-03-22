@@ -1,0 +1,43 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "A relationship that defines permission for components, It ensures that only authorized components can interact with each other."
+  },
+  "model": {
+    "name": "argo-cd",
+    "version": "v3.3.5",
+    "displayName": "Argo CD Applications",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "evaluationQuery": "edge_binding_relationship",
+  "subType": "Permission",
+  "selectors": [{
+    "allow": {
+      "from": [
+        {
+          "kind": "AppProject",
+          "model": "argo-cd"
+        }
+      ],
+      "to": [
+        {
+          "kind": "Application",
+          "model": "argo-cd"
+        },
+        {
+          "kind": "ApplicationSet",
+          "model": "argo-cd"
+        }
+      ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
+  }]
+}
