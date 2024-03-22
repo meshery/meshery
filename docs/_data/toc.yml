@@ -141,7 +141,7 @@
           url: guides/troubleshooting/installation
         - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Meshery Server asdf
+        - title: Meshery Server
           url: guides/troubleshooting/meshery-server
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
