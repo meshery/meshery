@@ -90,7 +90,7 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-- title: 📚 Administrator's Guide
+- title: 📚 Guides
   url: guides
   links:
     # - title: Deploying Designs
@@ -153,7 +153,7 @@
       children:
         - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks & Operations (User Guide)
+- title: ⚙️ Tasks
   url: tasks
   links:
     - title: Infrastructure Management
