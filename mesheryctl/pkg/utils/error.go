@@ -38,6 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+	ErrInvalidArgumentCode    = "mesheryctl-1117"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -504,4 +505,8 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
+}
+
+func ErrInvalidArgument(err error) error {
+	return errors.New(ErrInvalidArgumentCode, errors.Alert, []string{"Invalid Argument"}, []string{err.Error()}, []string{"Invalid Argument"}, []string{"Please check the arguments passed"})
 }
