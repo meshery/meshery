@@ -38,6 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 )
 
