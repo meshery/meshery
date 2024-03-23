@@ -52,7 +52,7 @@ mesheryctl system connections list --page 2
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
 		if len(args) != 0 {
-			return ErrInvalidArgument(errors.New(errMsg))
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		} 
 		return nil
 	},

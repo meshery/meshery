@@ -38,7 +38,7 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrBadRequestCode 		  = "mesheryctl-1117"
+	ErrInvalidArgumentCode    = "mesheryctl-1118"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -139,17 +139,6 @@ func SystemModelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdModelList)
 	case "view":
 		return formatError(msg, cmdModelView)
-	default:
-		return formatError(msg, cmdModel)
-	}
-}
-
-func SystemConnectionSubError(msg string, cmd string) string {
-	switch cmd {
-	case "list":
-		return formatError(msg, cmdConnectionList)
-	case "delete":
-		return formatError(msg, cmdConnectionDelete)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -296,8 +285,6 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
-	case cmdConnectionList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -524,4 +511,8 @@ func ErrBadRequest(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while deleting the connection"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrInvalidArgument(err error) error {
+	return errors.New(ErrInvalidArgumentCode, errors.Alert, []string{"Invalid Argument"}, []string{err.Error()}, []string{"Invalid Argument"}, []string{"Please check the arguments passed"})
 }

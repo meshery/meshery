@@ -47,7 +47,7 @@ mesheryctl system connections delete <connection_id>
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
 		if len(args) != 1 {
-			return ErrInvalidArgument(errors.New(errMsg))
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		} 
 		return nil
 	},
