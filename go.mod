@@ -56,8 +56,8 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
-	github.com/stretchr/testify v1.8.4
-	github.com/vektah/gqlparser/v2 v2.5.10
+	github.com/stretchr/testify v1.9.0
+	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.15.0
 	golang.org/x/sync v0.6.0
@@ -136,7 +136,6 @@ require (
 	github.com/containerd/containerd v1.7.13 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.14.3 // indirect
-	github.com/containerd/typeurl/v2 v2.1.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
