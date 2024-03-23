@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, exportModelCmd}
 	// flag used to specify the page number in list command
 	pageNumberFlag int
 	// flag used to specify format of output of view {model-name} command
@@ -87,6 +87,11 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	wd,err := os.Getwd()
+	if err != nil { 
+        fmt.Println(err) 
+    }
+	exportModelCmd.Flags().StringVarP(&outputPath, "output", "o", wd, "location for exported oci file")
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 
