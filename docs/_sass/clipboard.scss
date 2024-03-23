@@ -28,11 +28,12 @@ pre.codeblock-pre {
 
 .clipboardjs {
   width: 100%;
-  height: 0.5rem;
   overflow: hidden;
   font-size: 1.25rem;
   margin: 0px;
   color: #f8f9fa;
+  display: flex;
+  align-items: center;
 
   &::-webkit-scrollbar {
     width: 0.5rem !important;
