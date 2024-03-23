@@ -44,7 +44,7 @@ func TestOnboardCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Onboard patternlication",
+			Name:             "Onboard pattern",
 			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplepattern.golden"), "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
@@ -77,7 +77,7 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard patternlication with --skip-save",
+			Name:             "Onboard pattern with --skip-save",
 			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplepattern.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{

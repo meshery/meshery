@@ -43,7 +43,7 @@ mesheryctl pattern import -f [file/URL] -s [source-type]
 
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
-			return ErrpatternManifest()
+			return ErrPatternManifest()
 		}
 
 		return nil

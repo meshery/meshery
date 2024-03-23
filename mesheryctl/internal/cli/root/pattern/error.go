@@ -17,30 +17,30 @@ package pattern
 import (
 	"fmt"
 	"strings"
-	
+
 	"github.com/layer5io/meshkit/errors"
 )
 
 const (
-	ErrImportpatternCode          = "mesheryctl-1001"
+	ErrImportPatternCode          = "mesheryctl-1001"
 	ErrInValidSourceCode          = "mesheryctl-1002"
-	ErrOnboardpatternCode         = "mesheryctl-1003"
-	ErrpatternFoundCode           = "mesheryctl-1004"
-	ErrInvalidpatternNameOrIDCode = "mesheryctl-1005"
-	ErrpatternFlagCode            = "mesheryctl-1006"
-	ErrpatternManifestCode        = "mesheryctl-1007"
+	ErrOnboardPatternCode         = "mesheryctl-1003"
+	ErrPatternFoundCode           = "mesheryctl-1004"
+	ErrInvalidPatternNameOrIDCode = "mesheryctl-1005"
+	ErrPatternFlagCode            = "mesheryctl-1006"
+	ErrPatternManifestCode        = "mesheryctl-1007"
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidPatternFileCode     = "mesheryctl-1038"
 	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
 )
 
 const (
-	errpatternMsg = `Usage: mesheryctl pattern import -f [file/url] -s [source-type]
-Example: mesheryctl pattern import -f ./patternlication.yml -s "Kubernetes Manifest"`
+	errPatternMsg = `Usage: mesheryctl pattern import -f [file/url] -s [source-type]
+Example: mesheryctl pattern import -f ./pattern.yml -s "Kubernetes Manifest"`
 
 	errOnboardMsg = `Usage: mesheryctl pattern onboard -f [filepath] -s [source type]
-Example: mesheryctl pattern onboard -f ./patternlication.yml -s "Kubernetes Manifest"
-Description: Onboard patternlication`
+Example: mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
+Description: Onboard pattern`
 )
 
 func ErrPatternNotFound() error {
@@ -61,59 +61,59 @@ func ErrPatternInvalidNameOrID(err error) error {
 		[]string{"Run `mesheryctl pattern view -a` to view all available patterns."})
 }
 
-func ErrImportpattern(err error) error {
-	return errors.New(ErrImportpatternCode, errors.Fatal,
+func ErrImportPattern(err error) error {
+	return errors.New(ErrImportPatternCode, errors.Fatal,
 		[]string{"Unable to import pattern"},
 		[]string{err.Error()},
-		[]string{"Invalid patternlication file"},
-		[]string{"Check your patternlication URL/file path"})
+		[]string{"Invalid pattern file"},
+		[]string{"Check your pattern URL/file path"})
 }
 
 func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
 	return errors.New(ErrInValidSourceCode, errors.Fatal,
-		[]string{fmt.Sprintf("Invalid patternlication source type: `%s`", invalidSourceType)},
-		[]string{"Invalid patternlication source type due to wrong type/passing"},
-		[]string{"patternlication source type (-s) is invalid or not passed."},
+		[]string{fmt.Sprintf("Invalid pattern source type: `%s`", invalidSourceType)},
+		[]string{"Invalid pattern source type due to wrong type/passing"},
+		[]string{"pattern source type (-s) is invalid or not passed."},
 		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})
 }
 
-func ErrpatternManifest() error {
-	return errors.New(ErrpatternManifestCode, errors.Alert,
+func ErrPatternManifest() error {
+	return errors.New(ErrPatternManifestCode, errors.Alert,
 		[]string{"No file path detected"},
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
-		[]string{"Provide the path to the pattern manifest. \n\n%v", errpatternMsg})
+		[]string{"Provide the path to the pattern manifest. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardpattern() error {
-	return errors.New(ErrOnboardpatternCode, errors.Alert,
+func ErrOnboardPattern() error {
+	return errors.New(ErrOnboardPatternCode, errors.Alert,
 		[]string{"Error Onboarding pattern"},
 		[]string{"Unable to onboard pattern due to empty path"},
-		[]string{"File path or patternlication name not provided."},
+		[]string{"File path or pattern name not provided."},
 		[]string{"Provide a file path/pattern name. \n\n%v", errOnboardMsg})
 }
 
-func ErrpatternFound() error {
-	return errors.New(ErrpatternFoundCode, errors.Alert,
+func ErrPatternFound() error {
+	return errors.New(ErrPatternFoundCode, errors.Alert,
 		[]string{"pattern not found"},
 		[]string{"No pattern found with a given name"},
-		[]string{"patternlication name not provided"},
+		[]string{"pattern name not provided"},
 		[]string{"Provide an pattern name. Use `mesheryctl pattern list`to display list of patternlications"},
 	)
 }
 
-func ErrInvalidpatternNameOrID(err error) error {
-	return errors.New(ErrInvalidpatternNameOrIDCode, errors.Alert,
-		[]string{"Invalid patternlication"},
-		[]string{"Failed to get patternlication based on input"},
-		[]string{"patternlication name|id is invalid"},
+func ErrInvalidPatternNameOrID(err error) error {
+	return errors.New(ErrInvalidPatternNameOrIDCode, errors.Alert,
+		[]string{"Invalid pattern"},
+		[]string{"Failed to get pattern based on input"},
+		[]string{"pattern name|id is invalid"},
 		[]string{"Run `mesheryctl pattern view --all` to view all patternlications"})
 }
 
-func ErrViewpatternFlag() error {
-	return errors.New(ErrpatternFlagCode, errors.Alert,
+func ErrViewPatternFlag() error {
+	return errors.New(ErrPatternFlagCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{"Wrong use of command flags"},
 		[]string{"-a/all flag is being used while an pattern is specified"},
-		[]string{"-a/-all cannot be used when [patternlication name|id] is specified"})
+		[]string{"-a/-all cannot be used when [pattern name|id] is specified"})
 }
