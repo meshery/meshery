@@ -20,13 +20,15 @@ list: exclude
   <!-- OVERVIEW -->
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
-        <div class="btn-primary">Overview</div>
+        <div class="btn-primary">Overview & Installation</div>
     </a>
     <!-- <h6>Getting Started</h6> -->
     <ul>
         <!-- <li><a href="{{ site.baseurl }}/project">Project Overview</a></li> -->
         <li><a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a></li>
         <!-- <li><a href="{{ site.baseurl }}/project">Essential Features</a></li>  -->
+        <li><a href="{{ site.baseurl }}/project/faq">FAQs</a></li>
+        
     </ul>
     <details>
       <summary>
@@ -158,7 +160,8 @@ list: exclude
       </summary>
       <ul class="section-title">
         {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
-        See all <a href="{{site.baseurl}}/extensibility/integrations">{{ sorted_ints | size }} integations</a>
+        <ul><li>
+        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
         {% for item in sorted_ints %}
         {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
@@ -305,11 +308,13 @@ list: exclude
 
   <div class="section">
     <a href="{{ site.baseurl }}/project">
-        <div class="btn-primary">Contributing and Community</div>
+        <div class="btn-primary">Contributing & Community</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
-    <a href="{{ site.baseurl }}/project/community" style="font-size:1.8rem">Community</a>
+    <ul>
+     <li><a href="{{ site.baseurl }}/project/community" style="font-size:1.8rem">Community</a></li>
+    </ul>
     <details>
       <summary>
         <p style="display:inline">
