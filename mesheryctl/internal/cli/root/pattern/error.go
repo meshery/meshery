@@ -26,7 +26,7 @@ const (
 	ErrInValidSourceCode          = "mesheryctl-1002"
 	ErrOnboardPatternCode         = "mesheryctl-1003"
 	ErrPatternFoundCode           = "mesheryctl-1004"
-	ErrInvalidPatternNameOrIDCode = "mesheryctl-1005"
+	ErrOffboardPatternCode        = "mesheryctl-1005"
 	ErrPatternFlagCode            = "mesheryctl-1006"
 	ErrPatternManifestCode        = "mesheryctl-1007"
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
@@ -102,18 +102,18 @@ func ErrPatternFound() error {
 	)
 }
 
-func ErrInvalidPatternNameOrID(err error) error {
-	return errors.New(ErrInvalidPatternNameOrIDCode, errors.Alert,
-		[]string{"Invalid pattern"},
-		[]string{"Failed to get pattern based on input"},
-		[]string{"pattern name|id is invalid"},
-		[]string{"Run `mesheryctl pattern view --all` to view all patternlications"})
-}
-
 func ErrViewPatternFlag() error {
 	return errors.New(ErrPatternFlagCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{"Wrong use of command flags"},
 		[]string{"-a/all flag is being used while an pattern is specified"},
 		[]string{"-a/-all cannot be used when [pattern name|id] is specified"})
+}
+
+func ErrOffboardPattern(err error) error {
+	return errors.New(ErrOffboardPatternCode, errors.Alert,
+		[]string{"Error Offboarding pattern"},
+		[]string{"Unable to offboard pattern due to empty path"},
+		[]string{"File path or pattern name not provided."},
+		[]string{"Provide a file path/pattern name. \n\n%v", errOnboardMsg})
 }

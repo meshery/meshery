@@ -35,11 +35,19 @@ var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard pattern",
 	Long:  `Offboard pattern will trigger undeploy of pattern`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard pattern by providing file path
 mesheryctl pattern offboard -f [filepath]
 	`,
+
+	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && file == "" {
+			errMsg := `Usage: mesheryctl pattern offboard -f [filepath]`
+			return ErrOffboardPattern(errors.New(errMsg))
+		}
+		return nil 
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
 			const errMsg = `Usage: mesheryctl pattern offboard -f [filepath]`
