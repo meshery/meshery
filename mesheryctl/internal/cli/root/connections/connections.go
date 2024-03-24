@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,7 +22,6 @@ var ConnectionsCmd = &cobra.Command{
 	Use:   "connections",
 	Short: "Manage connections",
 	Long:  `Manage connections`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List all the connections
 mesheryctl exp connections list
@@ -32,32 +31,41 @@ mesheryctl exp connections list
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(system.ErrGetCurrentContext(err))	
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+
+	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
 		if len(args) == 0 {
 			return cmd.Help()
-		}
+		} 
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp connections --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			return utils.ErrLoadConfig(err)
 		}
 		err = cmd.Usage()
 		if err != nil {
