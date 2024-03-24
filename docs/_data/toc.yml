@@ -103,7 +103,7 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
-    - title: ⚙️ Infrastructure Management
+    - title: ⚙️ Infrastructure Management ↆ
       url: guides/infrastructure-management/infrastructure-management/overview
       children:
       - title: Managing Envoy Filters
