@@ -1,9 +1,12 @@
 ---
 layout: default
 title: Infrastructure Management
-permalink: tasks/infrastructure-management
-redirect_from: tasks/application-management
-type: tasks
+permalink: guides/infrastructure-management/overview
+redirect_from: 
+- tasks/application-management
+- tasks/infrastructure-management
+type: guides
+category: infrastructure
 language: en
 list: include
 abstract: 'Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.'

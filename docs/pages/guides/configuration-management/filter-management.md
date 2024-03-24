@@ -1,8 +1,10 @@
 ---
 layout: default
 title: Envoy WASM Filter Management
-permalink: tasks/filter-management
-type: tasks
+permalink: guides/configuration-management/filter-management
+redirect_from: /tasks/filter-management
+type: guides
+category: configuration
 language: en
 list: include
 abstract: "Meshery provides the ability to manage WASM filters for data plane proxies for agility, maintainability, diversity, reliability and isolation, security, and speed."
