@@ -1,0 +1,197 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
+  },
+  "model": {
+    "name": "kubearmor",
+    "version": "*",
+    "displayName": "KubeArmor",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "KubeArmorPolicy",
+            "model": "kubearmor",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "KubeArmorPolicy defines rules governing system call behavior within Kubernetes Pods, ensuring security and compliance by controlling access to resources and actions. KubeArmorPolicy helps enforce fine-grained security measures tailored to specific application requirements and threat landscapes."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "Pods in Kubernetes are subjects to KubeArmorPolicy. KubeArmorPolicy defines security measures on the annotated Pods' system calls and resource access, enhancing the overall security posture of containerized workloads."
+            }
+          },
+          {
+            "kind": "PodTemplate",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "PodTemplate in Kubernetes defines the blueprint for creating Pods, which include annotations specifying KubeArmorPolicy to be enforced within the pod's runtime environment, ensuring security compliance."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "Deployment in Kubernetes can be related to KubeArmorPolicy by associating policies with pod templates, ensuring security measures are enforced consistently across all replicas of the deployed workload."
+            }
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "StatefulSets in Kubernetes can have KubeArmorPolicy applied to enforce security measures consistently across Stateful application replicas, ensuring data integrity and access control."
+            }
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "ReplicaSets in Kubernetes manage the replication of Pods. KubeArmorPolicy can be applied uniformly across all replicas to enforce consistent security measures within the cluster."
+            }
+          },
+          {
+            "kind": "Daemonset",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "A DaemonSet in Kubernetes ensures a copy of a Pod runs on each node. KubeArmorPolicy can be applied to DaemonSets to enforce consistent security measures across all nodes in the cluster."
+            }
+          },
+          {
+            "kind": "Job",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "In Kubernetes, KubeArmorPolicy can be applied to a Job to enforce security measures during the execution of the Job, ensuring that batch processing workloads adhere to defined security rules and restrictions."
+            }
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "CronJobs in Kubernetes can have KubeArmorPolicy associated to enforce security measures during scheduled job executions, ensuring compliance and protection against unauthorized actions."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "KubeArmorHostPolicy",
+            "model": "kubearmor",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "KubeArmorHostPolicy specifies rules for controlling process behaviors and access permissions on a Node in Kubernetes, enhancing security and isolation within the cluster and ensuring granular enforcement of security measures at the host level."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "annotations",
+                  "security.kubearmor.com/psp"
+                ]
+              ],
+              "description": "Nodes are annotated with the name of the desired KubeArmorHostPolicy, directing the KubeArmor agent to enforce the specified policy on processes running on that Node."
+            }
+          }
+        ]
+      },
+      "deny": {
+      "from": [],
+      "to": []
+      }
+    }
+  ]
+}

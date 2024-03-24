@@ -3,7 +3,7 @@ import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';

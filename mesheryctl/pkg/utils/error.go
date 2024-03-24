@@ -286,6 +286,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+	case cmdRegistry:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

@@ -51,7 +51,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -240,7 +240,7 @@ function MesheryFilters({
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -1093,7 +1093,6 @@ function MesheryFilters({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,
