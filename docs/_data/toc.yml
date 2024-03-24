@@ -108,11 +108,11 @@
       children:
       - title: Managing Envoy Filters
         url: guides/infrastructure-management/filter-management
-    - title: Managing Connections
-      url: guides/infrastructure-management/lifecycle-management
-      children:
-      - title: Registering a Connection
-        url: guides/infrastructure-management/registering-a-connection
+      - title: Managing Connections
+        url: guides/infrastructure-management/lifecycle-management
+        grandchildren:
+        - title: Registering a Connection
+          url: guides/infrastructure-management/registering-a-connection
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
