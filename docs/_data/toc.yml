@@ -103,8 +103,8 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
-    - title: Infrastructure Management
-      url: guides/infrastructure-management/infrastructure-management
+    - title: ⚙️ Infrastructure Management
+      url: guides/infrastructure-management/infrastructure-management/overview
       children:
       - title: Managing Envoy Filters
         url: guides/infrastructure-management/filter-management
@@ -126,14 +126,13 @@
         url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center
       url: guides/events-management
-    
     - title: GitOps with Meshery
       url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
         - title: Performance Management
-          url: tasks/performance/managing-performance
+          url: guides/performance/managing-performance
         - title: Integrating Prometheus and Grafana
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
@@ -172,10 +171,9 @@
       children:
         - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks
-  url: tasks
-  links:
-
+# - title: ⚙️ Tasks
+#   url: tasks
+#   links:
 - title: 🛠 Integrations & Extensions
   url: extensibility
   links:
