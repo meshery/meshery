@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Managing Performance
-permalink: tasks/performance/managing-performance
-type: tasks
+permalink: guides/performance-management/managing-performance
+redirect_from: tasks/performance/managing-performance
+type: guides
 category: performance
 language: en
 list: include

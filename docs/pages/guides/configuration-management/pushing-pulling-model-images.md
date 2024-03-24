@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Push or Pull a Model Image
-permalink: tasks/push-pull-model-image
-type: tasks
+permalink: guides/configuration-management/push-pull-model-image
+type: guides
+category: configuration
 language: en
 list: include
 abstract: "Push or pull a model image to or from an OCI-compatible image repository."
