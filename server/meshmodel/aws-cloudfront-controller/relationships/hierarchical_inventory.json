@@ -1,0 +1,60 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "name": "aws-cloudfront-controller",
+    "version": "*",
+    "displayName": "AWS CloudFront",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "published": false,
+      "subCategory": "Service Proxy",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    }
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CachePolicy",
+            "model": "aws-cloudfront-controller",
+            "patch": {
+              "mutatorRef": [
+                ["settings", "spec", "cachePolicyConfig", "name"]
+              ],
+              "description": "Cache Policy"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Distribution",
+            "model": "aws-cloudfront-controller",
+            "patch": {
+              "mutatorRef": [
+                ["settings", "spec", "distributionConfig", "cacheBehaviors", "items", "_", "cachePolicyId"]
+              ],
+              "description": "Distribution"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
