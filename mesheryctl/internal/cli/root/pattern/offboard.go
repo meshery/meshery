@@ -49,10 +49,6 @@ mesheryctl pattern offboard -f [filepath]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cmd.Flags().Changed("file") && file == "" {
-			const errMsg = `Usage: mesheryctl pattern offboard -f [filepath]`
-			return fmt.Errorf("no file path provided \n\n%v", errMsg)
-		}
 		var req *http.Request
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
