@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Meshery Playground
-permalink: playground
+permalink: project/playground
 abstract: Details of the cloud native playground
 language: en
 type: project

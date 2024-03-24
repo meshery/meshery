@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Operation Guides
+title: Guides
 permalink: guides
 redirect_from: guides/
 language: en
 list: exclude
-abstract: Operating and troubleshooting Meshery deployments.
+abstract: Using, operating, and troubleshooting Meshery.
 ---
 
 Guides to using and troubleshooting Meshery's various features and components.
@@ -16,10 +16,21 @@ Guides to using and troubleshooting Meshery's various features and components.
 
 <ul>
     {% for item in sorted_guides %}
-    {% if item.type=="guides" and item.category!="mesheryctl" and item.list!="exclude" and item.language=="en"  -%}
+    {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="tutorials" and item.list!="exclude" and item.language=="en"  -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
+</ul>
+
+### <a href="{{ site.baseurl }}/guides/tutorials" class="text-black">Tutorials</a>
+
+<ul>
+  {% for item in sorted_guides %}
+  {% if item.type=="guides" and item.category=="tutorials" and item.list!="exclude" and item.language=="en" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
 </ul>
 
 ### <a href="{{ site.baseurl }}/guides/mesheryctl" class="text-black">Meshery CLI</a>

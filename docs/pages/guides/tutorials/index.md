@@ -3,12 +3,15 @@ layout: default
 title: Tutorials
 display_title: true
 type: guides
+category: tutorials
+language: en
+list: exclude
 permalink: guides/tutorials
 redirect_from: guides/tutorials/
 ---
 
 
-{% assign tutorials = site.pages | where: "type", "tutorials" %}
+{% assign tutorials = site.pages | where: "category", "guides" %}
 
 {% assign items_grouped = tutorials | group_by: 'model' %}
 <ul>
