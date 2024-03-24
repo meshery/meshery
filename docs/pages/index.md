@@ -109,76 +109,6 @@ list: exclude
 
 <div class="flex flex-col--2 container">
 
-  <!-- TASKS -->
-  <div class="section">
-    <a href="{{ site.baseurl }}/tasks">
-        <div class="btn-primary">Tasks</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    <ul>
-      {% assign sorted_tasks = site.pages | where: "type","tasks" %}
-      {% for item in sorted_tasks %}
-      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-  </div>
-
- <!-- Extensions -->
-  <div class="section">
-    <a href="{{ site.baseurl }}/extensibility">
-        <div class="btn-primary">Integrations & Extensions</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
-        <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
-        </p>
-      </summary>
-      <ul class="section-title">
-        {% assign sorted_extensions = site.pages | where: "type","extensions" %}
-        {% for item in sorted_extensions %}
-        {% if item.type=="extensions" and item.language=="en" -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
-            - {{ item.abstract }}
-          {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </details>
-    <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{ site.baseurl }}/extensibility/integrations" class="text-black">Integrations</a>
-        </p>
-      </summary>
-      <ul class="section-title">
-        {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
-        <ul><li>
-        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
-        {% for item in sorted_ints %}
-        {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
-            - {{ item.abstract }}
-          {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </details>
-  </div>
-
-</div>
-
-<div class="flex flex-col--2 container">
-
 <!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">
@@ -304,6 +234,79 @@ list: exclude
     </ul> -->
   </div>
 
+
+
+  <!-- TASKS
+  <div class="section">
+    <a href="{{ site.baseurl }}/tasks">
+        <div class="btn-primary">Tasks</div>
+    </a>
+    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> 
+    <ul>
+      {% assign sorted_tasks = site.pages | where: "type","tasks" %}
+      {% for item in sorted_tasks %}
+      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
+  </div>
+ -->
+
+ <!-- Extensions -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/extensibility">
+        <div class="btn-primary">Integrations & Extensions</div>
+    </a>
+    <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
+        <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_extensions = site.pages | where: "type","extensions" %}
+        {% for item in sorted_extensions %}
+        {% if item.type=="extensions" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility/integrations" class="text-black">Integrations</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
+        <ul><li>
+        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
+        {% for item in sorted_ints %}
+        {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+  </div>
+
+</div>
+
+<div class="flex flex-col--2 container">
+
     <!-- CONTRIBUTING -->
 
   <div class="section">
@@ -335,11 +338,8 @@ list: exclude
       </ul>
     </details>
   </div>
-    
-</div>
-<div class="flex flex-col--2 container">
 
-    <!-- PROJECT -->
+      <!-- PROJECT -->
 
   <div class="section">
     <a href="{{ site.baseurl }}/project/overview">
@@ -357,6 +357,10 @@ list: exclude
     </ul>
 
   </div>
+    
+</div>
+<div class="flex flex-col--2 container">
+
 
     <!-- REFERENCE -->
 
