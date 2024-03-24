@@ -1,26 +1,6 @@
 Node Metrics Collection
 Performance Management
 
-
-Purpose	3
-Guiding Principles	3
-Goals	3
-Design	3
-Reports / Node Metrics	3
-Cluster-wide Metrics:	3
-Per Node Metrics:	4
-Mechanics	4
-Requirements	4
-Metrics Retrieval	5
-Execution plan for persisting server-side metrics	5
-What-ifs:	5
-Metrics Storage	6
-Implementation	6
-Per node metrics:	6
-Cluster metrics:	7
-Tasks	7
-
-
 Purpose
 Collection, summarization and persistence of node metrics for inclusion in performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in service mesh adoption.
 Guiding Principles
