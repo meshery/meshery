@@ -43,7 +43,9 @@
         url: installation/windows 
         grandchildren: 
           - title: "Scoop"
-            url: installation/windows/scoop 
+            url: installation/windows/scoop
+      - title: Using Multiple Meshery Adapters
+        url: guides/multiple-adapters
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -99,6 +101,16 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: Infrastructure Management
+      url: guides/infrastructure-management/infrastructure-management
+      children:
+      - title: Managing Envoy Filters
+        url: guides/infrastructure-management/filter-management
+    - title: Managing Connections
+      url: guides/infrastructure-management/lifecycle-management
+      children:
+      - title: Registering a Connection
+        url: guides/infrastructure-management/registering-a-connection
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
@@ -108,15 +120,18 @@
         url: guides/configuration-management/working-with-designs
       - title: Importing Applications
         url: guides/configuration-management/importing-apps
+      - title: Working with design patterns
+        url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center
       url: guides/events-management
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
+    
     - title: GitOps with Meshery
       url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
+        - title: Performance Management
+          url: tasks/performance/managing-performance
         - title: Integrating Prometheus and Grafana
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
@@ -158,19 +173,7 @@
 - title: ⚙️ Tasks
   url: tasks
   links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Managing Connections
-      url: tasks/lifecycle-management
-      children:
-      - title: Registering a Connection
-        url: guides/infrastructure-management/registering-a-connection
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance/managing-performance
+
 - title: 🛠 Integrations & Extensions
   url: extensibility
   links:
