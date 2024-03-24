@@ -5,8 +5,8 @@ a > * {
   color: var(--brand-color);
   text-decoration: none;
   background-color: transparent;
-}
 
+}
 img {
   max-width: 100%;
   border-style: none;
@@ -39,6 +39,9 @@ h5,
 h6 {
   margin: 1.6rem 0 1rem;
   font-weight: 500;
+  > a {
+    color: var(--color-secondary-light);
+  }
 }
 h1 {
   font-size: 3.6rem;

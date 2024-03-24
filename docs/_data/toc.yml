@@ -148,6 +148,8 @@
       children:
       - title: Exploring Kubernetes Pods
         url: guides/tutorials/kubernetes-pods
+      - title: Understanding Kubernetes ConfigMaps and Secrets
+        url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
