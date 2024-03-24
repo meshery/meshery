@@ -3,9 +3,9 @@ layout: default
 title: Tasks
 permalink: tasks
 # redirect_from: tasks/
-redirect_to: guides/
 language: en
 list: exclude
+published: false
 abstract: Common tasks for using Meshery's various features and components.
 ---
 

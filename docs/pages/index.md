@@ -234,28 +234,7 @@ list: exclude
     </ul> -->
   </div>
 
-
-
-  <!-- TASKS
-  <div class="section">
-    <a href="{{ site.baseurl }}/tasks">
-        <div class="btn-primary">Tasks</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> 
-    <ul>
-      {% assign sorted_tasks = site.pages | where: "type","tasks" %}
-      {% for item in sorted_tasks %}
-      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
-  </div>
- -->
-
- <!-- Extensions -->
+  <!-- Extensions -->
   <div class="section">
     <a href="{{ site.baseurl }}/extensibility">
         <div class="btn-primary">Integrations & Extensions</div>
@@ -302,12 +281,28 @@ list: exclude
       </ul>
     </details>
   </div>
-
+   
 </div>
-
 <div class="flex flex-col--2 container">
 
-    <!-- CONTRIBUTING -->
+  <!-- PROJECT 
+  <div class="section">
+    <a href="{{ site.baseurl }}/project/overview">
+        <div class="btn-primary">Project</div>
+    </a>
+    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> 
+    {% assign project = site.pages | sort: "name" | alphabetical %}
+    <ul>
+      {% for item in project %}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+  </div> -->
+   <!-- CONTRIBUTING -->
 
   <div class="section">
     <a href="{{ site.baseurl }}/project">
@@ -315,9 +310,17 @@ list: exclude
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
+      <!-- PROJECT -->
+    {% assign project = site.pages | sort: "name" | alphabetical %}
     <ul>
-     <li><a href="{{ site.baseurl }}/project/community" style="font-size:1.8rem">Community</a></li>
+      {% for item in project %}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
     </ul>
+      <!-- CONTRIBUTING -->
     <details>
       <summary>
         <p style="display:inline">
@@ -338,29 +341,6 @@ list: exclude
       </ul>
     </details>
   </div>
-
-      <!-- PROJECT -->
-
-  <div class="section">
-    <a href="{{ site.baseurl }}/project/overview">
-        <div class="btn-primary">Project</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    {% assign project = site.pages | sort: "name" | alphabetical %}
-    <ul>
-      {% for item in project %}
-      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-
-  </div>
-    
-</div>
-<div class="flex flex-col--2 container">
-
 
     <!-- REFERENCE -->
 

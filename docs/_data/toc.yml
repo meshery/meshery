@@ -46,6 +46,8 @@
             url: installation/windows/scoop
       - title: Using Multiple Meshery Adapters
         url: guides/multiple-adapters
+      - title: Meshery Playground
+        url: installation/playground
 - title: 🧠 Concepts
   url: concepts
   links:

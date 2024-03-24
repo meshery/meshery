@@ -10,7 +10,7 @@ abstract: "Explore the tutorials to learn how to use Meshery for collaboratively
 permalink: guides/tutorials
 redirect_from: guides/tutorials/
 ---
-Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the [Meshery Playground]({{site.baseurl}}/project/playground) as a convenient resource for the labs in these tutorials.
+Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the [Meshery Playground]({{site.baseurl}}/installation/playground) as a convenient resource for the labs in these tutorials.
 
 {% assign tutorials = site.pages | where: "category", "tutorials" %}
 
