@@ -22,6 +22,9 @@ p.error-details {
     text-wrap: wrap;
     width:85%
 }
+td {
+  vertical-align: middle;
+}
 .tbl-head-row{
   background-color:#F2F2F2;
 }

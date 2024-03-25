@@ -1,7 +1,7 @@
-- title: 🗺 Overview
+- title: 🗺 Overview & Installation
   url: project/overview
   links:
-  - title: FAQ
+  - title: FAQs
     url: project/faq
   - title: 🚀 Quick Start
     url: installation/quick-start
@@ -43,7 +43,11 @@
         url: installation/windows 
         grandchildren: 
           - title: "Scoop"
-            url: installation/windows/scoop 
+            url: installation/windows/scoop
+      - title: Using Multiple Meshery Adapters
+        url: guides/multiple-adapters
+      - title: Meshery Playground
+        url: installation/playground
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -90,7 +94,7 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-- title: 📚 Guides (all)
+- title: 📚 Guides
   url: guides
   links:
     # - title: Deploying Designs
@@ -99,6 +103,16 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: ⚙️ Infrastructure Management ↆ
+      url: guides/infrastructure-management/infrastructure-management/overview
+      children:
+      - title: Managing Envoy Filters
+        url: guides/infrastructure-management/filter-management
+      - title: Managing Connections
+        url: guides/infrastructure-management/lifecycle-management
+        grandchildren:
+        - title: Registering a Connection
+          url: guides/infrastructure-management/registering-a-connection
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
@@ -108,15 +122,17 @@
         url: guides/configuration-management/working-with-designs
       - title: Importing Applications
         url: guides/configuration-management/importing-apps
+      - title: Working with design patterns
+        url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center
       url: guides/events-management
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
     - title: GitOps with Meshery
       url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
+        - title: Performance Management
+          url: guides/performance/managing-performance
         - title: Integrating Prometheus and Grafana
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
@@ -141,36 +157,25 @@
           url: guides/troubleshooting/installation
         - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Meshery Server 
+        - title: Meshery Server
           url: guides/troubleshooting/meshery-server
-    - title: Tutorials ↆ
+    - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
       - title: Exploring Kubernetes Pods
         url: guides/tutorials/kubernetes-pods
       - title: Exploring Kubernetes ConJobs
         url: guides/tutorials/exploring-kubernetes-cronjobs
+      - title: Understanding Kubernetes ConfigMaps and Secrets
+        url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
         - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks (all)
-  url: tasks
-  links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Managing Connections
-      url: tasks/lifecycle-management
-      children:
-      - title: Registering a Connection
-        url: guides/infrastructure-management/registering-a-connection
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance/managing-performance
+# - title: ⚙️ Tasks
+#   url: tasks
+#   links:
 - title: 🛠 Integrations & Extensions
   url: extensibility
   links:
@@ -259,8 +264,11 @@
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        - title: Models
+        - title: Models ↆ
           url: project/contributing/contributing-models
+          grandchildren:
+          - title: Relationships
+            url: project/contributing/contributing-relationships
 - title: 📖 Reference
   url: reference
   links:

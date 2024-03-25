@@ -129,6 +129,11 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 }
 
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
+	// skip the validation if the component does not have a schema and has isAnnotation set to true.
+	isAnnotation, _ := wc.Metadata["isAnnotation"].(bool)
+	if wc.Schema == "" && isAnnotation {
+		return nil
+	}
 	schemaByt := []byte(wc.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()

@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "fluentd",
-  "version": "5.19.0",
+  "version": "6.1.0",
   "displayName": "Fluentd Operator",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

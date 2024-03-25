@@ -10,13 +10,29 @@ redirect_from:
   - concepts/relationships
 ---
 
+**Meshery uses relationships to map how interconnected components interact.** These relationships are defined by a combination of properties: kind, type, and subtype. This allows you to model various connections between components, including:
+
+- **Hierarchical structures:** Parent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
+- **Interdependencies:** This captures how components rely on each other to function.
+- **Collateral connections:** These describe components that share a common origin but operate independently (siblings, cousins, etc.).
+- **Non-genealogical ties:** Relationships like "parent," "sibling," or "binding" can exist regardless of ancestry.
+
+Relationships are further customized by:
+
+- **Selectors:** These specify which components the relationship applies to.
+- **Selector sets:** Combine multiple selectors for more granular control.
+- **Metadata:** Provides additional descriptive information about the relationship.
+- **Optional parameters:** Allow for further tailoring of the relationship behavior.
+
+{% include alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>Contributing to Meshery Relationships</a> guide." %}
+
 Relationships define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
 
 {% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-models#contribute-to-meshmodel-relationships'>Contributing to Meshery Relationships</a> guide." %}
 
 ## Types of Relationships
 
-Meshery supports a variety of relationships between components. Relationships are are categorized into different kinds and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+Meshery supports a variety of relationships between components. Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
 
 Here is a list of the different types of relationships that Meshery supports:
 
@@ -94,7 +110,6 @@ Here is a list of the different types of relationships that Meshery supports:
         </figure>
     </details> -->
 </details>
-
 
 ## The Meaning of Relationships
 
@@ -208,8 +223,50 @@ Selectors can be applied to various components, enabling a wide range of relatio
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
 
 
-<!-- @RipulHandoo - Please add a snippet of the selector backing this relationship. -->
-
+```json
+"selector": {
+    "allow": {
+        "from": [
+          {
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "configMapRef",
+                  "name"
+                ]
+              ],
+              "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the Pod."
+            }
+          }
+        ]
+    }
+}
+```
+The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
  <!-- add images -->
 
 ## Relationship Evaluation
@@ -220,13 +277,13 @@ The above relationships pairs have hierarchical inventory relationships, and vis
 
 1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies)'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
-2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied. 
+2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
   
 {% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
 
-The Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships
+Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluationof relationships on -->

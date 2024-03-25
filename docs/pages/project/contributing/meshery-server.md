@@ -65,10 +65,6 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 
 For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
-
 ### Configuring Log levels at Runtime
 
 The server log levels can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`server-config.env`](https://github.com/meshery/meshery/blob/master/server/cmd/server-config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
@@ -86,3 +82,8 @@ The server log levels can be configured at runtime by changing the env variable 
 ```
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
+
+
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
