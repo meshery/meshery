@@ -1,35 +1,35 @@
 ---
 layout: default
-title: mesheryctl-app-list
-permalink: reference/mesheryctl/app/list
-redirect_from: reference/mesheryctl/app/list/
+title: mesheryctl-pattern-import
+permalink: reference/mesheryctl/pattern/import
+redirect_from: reference/mesheryctl/pattern/import/
 type: reference
 display-title: "false"
 language: en
-command: app
-subcommand: list
+command: pattern
+subcommand: import
 ---
 
-# mesheryctl app list
+# mesheryctl pattern import
 
-List applications
+Import pattern manifests
 
 ## Synopsis
 
-Display list of all available applications.
+Import the pattern manifest into Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app list [flags]
+mesheryctl pattern import [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all the applications
+Import pattern manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app list
+mesheryctl pattern import -f [file/URL] -s [source-type]
 
 </div>
 </pre> 
@@ -38,8 +38,9 @@ mesheryctl app list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help      help for list
-  -v, --verbose   Display full length user and app file identifiers
+  -f, --file string          Path/URL to pattern file
+  -h, --help                 help for import
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>
 </pre>
@@ -50,14 +51,10 @@ mesheryctl app list
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
 
 </div>
 </pre>
-
-## Screenshots
-
-Usage of mesheryctl app list
-![app-list-usage](/assets/img/mesheryctl/app-list.png)
 
 ## See Also
 

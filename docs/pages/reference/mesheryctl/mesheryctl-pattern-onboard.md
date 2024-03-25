@@ -1,35 +1,42 @@
 ---
 layout: default
-title: mesheryctl-app-offboard
-permalink: reference/mesheryctl/app/offboard
-redirect_from: reference/mesheryctl/app/offboard/
+title: mesheryctl-pattern-onboard
+permalink: reference/mesheryctl/pattern/onboard
+redirect_from: reference/mesheryctl/pattern/onboard/
 type: reference
 display-title: "false"
 language: en
-command: app
-subcommand: offboard
+command: pattern
+subcommand: onboard
 ---
 
-# mesheryctl app offboard
+# mesheryctl pattern onboard
 
-Offboard application
+Onboard pattern
 
 ## Synopsis
 
-Offboard application will trigger undeploy of application
+Command will trigger deploy of pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app offboard [flags]
+mesheryctl pattern onboard [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Offboard application by providing file path
+Onboard pattern by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app offboard -f [filepath]
+mesheryctl pattern onboard -f [filepath] -s [source type]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 </div>
 </pre> 
@@ -38,8 +45,10 @@ mesheryctl app offboard -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string   Path to app file
-  -h, --help          help for offboard
+  -f, --file string          Path to pattern file
+  -h, --help                 help for onboard
+      --skip-save            Skip saving a pattern
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>
 </pre>
@@ -54,6 +63,11 @@ mesheryctl app offboard -f [filepath]
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl pattern onboard
+![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)
 
 ## See Also
 

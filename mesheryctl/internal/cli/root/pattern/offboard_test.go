@@ -1,20 +1,18 @@
-package app
+package pattern
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "update golden files")
-
-func TestAppCmd(t *testing.T) {
+func TestOffboardCmd(t *testing.T) {
+	// setup current context
 	utils.SetupContextEnv(t)
+
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
 
@@ -39,24 +37,9 @@ func TestAppCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "App list Test",
-			Args:             []string{"list"},
-			ExpectedResponse: "applist.output.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      false,
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "app.list.api.response.golden",
-					ResponseCode: 200,
-				},
-			},
-		},
-		{
-			Name:             "App Offboard Test",
+			Name:             "Offboard Application",
 			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden")},
-			ExpectedResponse: "app.offborad.output.golden",
+			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -67,59 +50,15 @@ func TestAppCmd(t *testing.T) {
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "app.offboard.response.golden",
+					Response:     "offboard.response.golden",
 					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
-		},
-		// {
-		// 	Name:             "App View All Test",
-		// 	Args:             []string{"view", "--all"},
-		// 	ExpectedResponse: "app.viewall.output.golden",
-		// 	URLs: []utils.MockURL{
-		// 		{
-		// 			Method:       "GET",
-		// 			URL:          testContext.BaseURL + "/api/application",
-		// 			Response:     "app.viewall.api.response.golden",
-		// 			ResponseCode: 200,
-		// 		},
-		// 	},
-		// 	Token:       filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError: false,
-		// },
-		{
-			Name:             "App view test with ID",
-			Args:             []string{"view", "41f81b3d-64dc-42de-8b68-fa904ec46da9"},
-			ExpectedResponse: "app.viewid.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/41f81b3d-64dc-42de-8b68-fa904ec46da9",
-					Response:     "app.viewid.api.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
-		},
-		{
-			Name:             "App Invalid view ID",
-			Args:             []string{"view", "bbf81b3d-64dc-42de-8b68-uy904ec46da9"},
-			ExpectedResponse: "app.invalid.view.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/bbf81b3d-64dc-42de-8b68-uy904ec46da9",
-					Response:     "app.view.invalidid.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
 		},
 	}
+
 	// Run tests
 	for _, tt := range tests {
 		// View api response from golden files
@@ -140,9 +79,9 @@ func TestAppCmd(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			AppCmd.SetOutput(b)
-			AppCmd.SetArgs(tt.Args)
-			err := AppCmd.Execute()
+			PatternCmd.SetOutput(b)
+			PatternCmd.SetArgs(tt.Args)
+			err := PatternCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -167,7 +106,7 @@ func TestAppCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			assert.Equal(t, expectedResponse, actualResponse)
+			utils.Equals(t, expectedResponse, actualResponse)
 		})
 	}
 

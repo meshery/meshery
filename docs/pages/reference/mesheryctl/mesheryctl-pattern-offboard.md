@@ -1,35 +1,35 @@
 ---
 layout: default
-title: mesheryctl-app-import
-permalink: reference/mesheryctl/app/import
-redirect_from: reference/mesheryctl/app/import/
+title: mesheryctl-pattern-offboard
+permalink: reference/mesheryctl/pattern/offboard
+redirect_from: reference/mesheryctl/pattern/offboard/
 type: reference
 display-title: "false"
 language: en
-command: app
-subcommand: import
+command: pattern
+subcommand: offboard
 ---
 
-# mesheryctl app import
+# mesheryctl pattern offboard
 
-Import app manifests
+Offboard pattern
 
 ## Synopsis
 
-Import the app manifest into Meshery
+Offboard pattern will trigger undeploy of pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app import [flags]
+mesheryctl pattern offboard [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Import app manifest
+Offboard pattern by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app import -f [file/URL] -s [source-type]
+mesheryctl pattern offboard -f [filepath]
 
 </div>
 </pre> 
@@ -38,9 +38,8 @@ mesheryctl app import -f [file/URL] -s [source-type]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string          Path/URL to app file
-  -h, --help                 help for import
-  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
+  -f, --file string   Path to pattern file
+  -h, --help          help for offboard
 
 </div>
 </pre>

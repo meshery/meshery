@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bytes"
@@ -33,17 +33,17 @@ import (
 
 var importCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import app manifests",
-	Long:  `Import the app manifest into Meshery`,
+	Short: "Import pattern manifests",
+	Long:  `Import the pattern manifest into Meshery`,
 	Example: `
-// Import app manifest
-mesheryctl app import -f [file/URL] -s [source-type]
+// Import pattern manifest
+mesheryctl pattern import -f [file/URL] -s [source-type]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
-			return ErrAppManifest()
+			return ErrPatternManifest()
 		}
 
 		return nil
@@ -59,31 +59,31 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			return nil
 		}
 
-		appURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
-		// If app file is passed via flags
+		// If pattern file is passed via flags
 		if sourceType, err = getFullSourceType(sourceType); err != nil {
 			return ErrInValidSource(sourceType, validSourceTypes)
 		}
 
-		app, err := importApp(sourceType, file, appURL, true)
+		pattern, err := importPattern(sourceType, file, patternURL, true)
 
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
 
-		fmt.Printf("App file imported successfully. \nID of the app: %s \n", utils.TruncateID(app.ID.String()))
+		fmt.Printf("pattern file imported successfully. \nID of the pattern: %s \n", utils.TruncateID(pattern.ID.String()))
 
 		return nil
 	},
 }
 
-func importApp(sourceType string, file string, appURL string, save bool) (*models.MesheryPattern, error) {
+func importPattern(sourceType string, file string, patternURL string, save bool) (*models.MesheryPattern, error) {
 	var req *http.Request
-	var app *models.MesheryPattern
+	var pattern *models.MesheryPattern
 
-	// Check if the app manifest is file or URL
+	// Check if the pattern manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
 		if err != nil {
@@ -100,7 +100,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		if err != nil {
 			return nil, utils.ErrMarshal(err)
 		}
-		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err = utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +109,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		if err != nil {
 			return nil, err
 		}
-		utils.Log.Debug("App file saved")
+		utils.Log.Debug("pattern file saved")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
@@ -123,8 +123,8 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			utils.Log.Debug("failed to unmarshal JSON response")
 			return nil, utils.ErrUnmarshal(err)
 		}
-		// set app
-		app = response[0]
+		// set pattern
+		pattern = response[0]
 	} else {
 		var jsonValues []byte
 		url, path, err := utils.ParseURLGithub(file)
@@ -135,7 +135,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		utils.Log.Debug(url)
 		utils.Log.Debug(path)
 
-		// save the app with Github URL
+		// save the pattern with Github URL
 		if path != "" {
 			jsonValues, _ = json.Marshal(map[string]interface{}{
 				"url":  url,
@@ -149,7 +149,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			})
 		}
 
-		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err = utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, utils.ErrCreatingRequest(err)
 		}
@@ -158,7 +158,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		if err != nil {
 			return nil, utils.ErrRequestResponse(err)
 		}
-		utils.Log.Debug("remote hosted app request success")
+		utils.Log.Debug("remote hosted pattern request success")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
@@ -173,14 +173,14 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			return nil, utils.ErrUnmarshal(err)
 		}
 
-		// set app
-		app = response[0]
+		// set pattern
+		pattern = response[0]
 	}
 
-	return app, nil
+	return pattern, nil
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to app file")
+	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

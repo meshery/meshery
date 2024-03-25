@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package pattern
 
 import (
 	"bytes"
@@ -33,18 +33,22 @@ import (
 
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
-	Short: "Offboard application",
-	Long:  `Offboard application will trigger undeploy of application`,
-	Args:  cobra.MinimumNArgs(0),
+	Short: "Offboard pattern",
+	Long:  `Offboard pattern will trigger undeploy of pattern`,
 	Example: `
-// Offboard application by providing file path
-mesheryctl app offboard -f [filepath]
+// Offboard pattern by providing file path
+mesheryctl pattern offboard -f [filepath]
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+
+	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
-			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
-			return fmt.Errorf("no file path provided \n\n%v", errMsg)
+			errMsg := `Usage: mesheryctl pattern offboard -f [filepath]`
+			return ErrOffboardPattern(errors.New(errMsg))
 		}
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -53,24 +57,24 @@ mesheryctl app offboard -f [filepath]
 			return nil
 		}
 
-		app := ""
+		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
 		}
 
-		// Delete the app using the id
+		// Delete the pattern using the id
 		if isID {
-			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				utils.Log.Error(err)
-				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
+				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
-			utils.Log.Info("Application ", args[0], " deleted successfully")
+			utils.Log.Info("pattern ", args[0], " deleted successfully")
 			return nil
 		}
 
@@ -85,14 +89,14 @@ mesheryctl app offboard -f [filepath]
 				return utils.ErrFileRead(err)
 			}
 
-			appFile = string(content)
+			patternFile = string(content)
 		} else {
 			utils.Log.Info("URLs are not currently supported")
 		}
 
-		// Convert App File into Pattern File
+		// Convert pattern File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"K8sManifest": appFile,
+			"K8sManifest": patternFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
@@ -122,7 +126,7 @@ mesheryctl app offboard -f [filepath]
 			return nil
 		}
 
-		utils.Log.Debug("application file converted to pattern file")
+		utils.Log.Debug("pattern file converted to pattern file")
 
 		patternFile := response[0].PatternFile
 
@@ -146,7 +150,7 @@ mesheryctl app offboard -f [filepath]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("app successfully offboarded")
+			utils.Log.Info("pattern successfully offboarded")
 		}
 		utils.Log.Info(string(body))
 
@@ -155,5 +159,5 @@ mesheryctl app offboard -f [filepath]
 }
 
 func init() {
-	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
+	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
 }
