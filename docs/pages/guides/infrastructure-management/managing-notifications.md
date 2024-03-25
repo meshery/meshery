@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Managing Events with Notification Center
-permalink: tasks/notification-management
-type: tasks
+permalink: guides/infrastructure-management/notification-management
+type: guides
+category: infrastructure
 language: en
 list: include
 abstract: "Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on."

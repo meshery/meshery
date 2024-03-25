@@ -1,9 +1,10 @@
 ---
 layout: default
 title: Cloud Native Design Patterns
-permalink: tasks/pattern-management
-# redirect_from: tasks/pattern-management/
-type: tasks
+permalink: guides/configuration-management/pattern-management
+redirect_from: tasks/pattern-management/
+type: guides
+category: configuration
 language: en
 list: include
 abstract: 'Meshery applies DRY principle when managing the configuration of cloud native infrastructure .'

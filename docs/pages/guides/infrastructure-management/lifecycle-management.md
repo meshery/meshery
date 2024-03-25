@@ -1,17 +1,18 @@
 ---
 layout: default
 title: Managing Connections
-permalink: tasks/lifecycle-management
-type: tasks
+permalink: guides/infrastructure-management/managing-connections
+redirect_from: tasks/lifecycle-management
+type: guides
+category: infrastructure
 language: en
 list: include
-abstract: 'Meshery provides the ability to manage infrastructure declaratively, visually, and collaboratively.'
+abstract: 'Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery.'
 ---
 
 <a name="lifecycle-management"></a>
 
 Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations](/integrations).
-
 
 ## Cloud Native Infrastructure Lifecycle Management
 
