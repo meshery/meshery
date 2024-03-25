@@ -33,8 +33,7 @@ Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-c
     - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-- [Post-Installation Steps](#post-installation-steps)
-  - [Access Meshery UI](#access-meshery-ui)
+  - [Post-Installation Steps](#post-installation-steps)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
 
@@ -76,11 +75,13 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
-## Access Meshery UI
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+
+{% include_cached installation/accessing-meshery-ui.md %}
 
 # Out-of-cluster Installation
 

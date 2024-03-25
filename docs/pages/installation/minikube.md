@@ -39,8 +39,7 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
   - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
-- [Post-Installation Steps](#post-installation-steps)
-  - [Access Meshery UI](#access-meshery-ui)
+  - [Post-Installation Steps](#post-installation-steps)
 
 # In-cluster Installation
 
@@ -183,11 +182,13 @@ Once you have verified that all the services are up and running, Meshery UI will
 
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
-## Access Meshery UI
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+
+{% include_cached installation/accessing-meshery-ui.md %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
