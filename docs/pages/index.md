@@ -248,7 +248,6 @@ list: exclude
     </details>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="tutorials" and item.category!="performance" and item.category!="configuration" and item.language=="en" -%}
       {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
