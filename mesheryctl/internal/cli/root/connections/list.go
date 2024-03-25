@@ -23,10 +23,10 @@ var listConnectionsCmd = &cobra.Command{
 	Long:  `List all the connections`,
 	Example: `
 // List all the connections
-mesheryctl system connections list 
+mesheryctl exp connections list 
 
 // List all the connections with page number
-mesheryctl system connections list --page 2
+mesheryctl exp connections list --page 2
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
