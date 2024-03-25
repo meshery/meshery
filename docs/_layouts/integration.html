@@ -1,4 +1,25 @@
 ---
 layout: default
 ---
+
+<!-- <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1> -->
+
 {{ content }}
+
+<h2>Features</h2>
+
+<h6>With the {{ page.title }} in Meshery you can:</h6>
+
+<ul>
+    {% for feature in page.featureList %}
+
+    <li>{{ feature }}</li>
+
+    {% endfor %}
+</ul>
+
+<h2>How it Works</h2>
+<h6>{{ page.howItWorks }}</h6>
+<p>{{ page.howItWorksDetails }}</p>
+
+<p>To get started with {{ page.title }}, follow these simple steps: <a href="/installation">See Installation Guide</a></p>
