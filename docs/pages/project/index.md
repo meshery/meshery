@@ -39,7 +39,6 @@ list: exclude
       {% endfor %}
   </ul>
 </details>
-</div>
 
 <div class="wrapper">
   <a href="/project/community"><div class="overview">Community</div></a>
