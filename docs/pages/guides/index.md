@@ -12,7 +12,7 @@ abstract: Using, operating, and troubleshooting Meshery.
 
 Guides to using, operating, and troubleshooting Meshery's various features and components.
 
-{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+<!-- {% assign sorted_guides = site.pages | sort: "type" | reverse %} -->
 
 <!-- ### General 
 
