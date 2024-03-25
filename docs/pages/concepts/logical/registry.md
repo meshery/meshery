@@ -3,22 +3,38 @@ layout: enhanced
 title: Registry
 permalink: concepts/logical/registry
 type: concepts
-abstract: Registry is a component within Meshery that contains a database of known capabilities.
+abstract: Meshery Registry is a database acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including models, components, relationships, and policies.
 language: en
 list: include
 
 ---
-The Meshery Registry is a component within Meshery that contains a database of known capabilities. Capabilities include registered models that many contains operations, components, relationships, policies, and more. The Registry is a key component of Meshery's core functionality.
+# The Meshery Registry: A Central Hub for Capabilities
 
-Each Meshery release includes a predefined set of [models](../models) that are registered upon boot of Meshery Server in the Registry. The Meshery Registry is a key component of Meshery's core functionality.
+The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including:
 
-## Glossary of Core Concepts
+- [Models](./models): Blueprints defining configurations for interacting with cloud-native infrastructure. They consist of operations, components, relationships, and policies.
+  - [Components](../components): Components are reusable building blocks for depicting capabilities defined within models.
+  - [Relationships](../relationships): Define connections and dependencies between components within a model.
+  - [Policies](../policies): Enforce specific rules and governance for system behavior under Meshery's management.
+  - [Connections](../connections): managed and unmanaged resources that Meshery can interact with.
+  - [Credentials](../credentials): Optionally, included secrets associated with connections contained in a model.
 
-- **Registry** - a component within Meshery that contains a database of known capabilities.
-- **Registrar** - the Meshery Server process responsible for the process of record keeping.
-- **Entity** *(registree)* - an capability (an entity) that is found in the Meshery Registry; e.g. a model, component, relationship, policy.Sometimes referred to as a capability.
-- **Entity Source** - an entity’s original location from which it was sourced; e.g. (source_uri is used as the flag by th pattern engine to assess whether additional support). The Entity Source should have all the information that Meshery needs to generate the components.  
-- **Registrant** *(host)* - A Connection responsible for the sourcing and registration of entities. Sometimes Registrants perform registration for their own components, while other times they act on behalf of the component source.
+## Understanding Key Actors
+
+- **Registry**: a component within Meshery that contains a database of known capabilities.
+- **Registrar**: The internal Meshery Server process responsible for managing and maintaining the registry.
+- **Registrant** (Entity Source): The source of an entity (e.g., model file, Kubernetes cluster).
+Entity (Registree): An individual capability stored in the registry (e.g., model, component).
+- **Registrant** *(Host)*: A Meshery Cnnection responsible for sourcing and registering entities. A registrant can perform registration for their own entities, or a registrant can act as a proxy on behalf of a third-party entity source.
+- **Entity** *(registree)* - an entry in the Meshery Registry; e.g. a model, component, relationship, or policy. Sometimes referred to as a capability.
+<!-- - **Entity Source**: an entity’s original location from which it was sourced; e.g. (source_uri is used as the flag by Meshery Server to assess whether additional support). The Entity Source should have all the information that Meshery needs to generate the components.   -->
+
+### Model Dynamics: Static vs. Dynamic
+
+Each Meshery release comes with a built-in set of models automatically registered during server startup. These models offer a core set of entities for Meshery's supported [integrations](/extensibility/integrations).
+
+**Static Models:** Pre-defined models included with each Meshery release.
+**Dynamic Models:** Models generated at runtime by connecting to supported platforms like Kubernetes clusters or cloud providers.
 
 ## Lifecycle of Entities in Registry
 
@@ -26,7 +42,7 @@ Each Meshery release includes a predefined set of [models](../models) that are r
 
 The process of registering an entity in the Meshery Registry is a multi-step process. The process begins with the sourcing of the entity from the Registrant's source. The entity is then registered in the Meshery Registry. The entity is then available for use within the Meshery ecosystem.
 
-Meshery [Adapters]({{site.baseurl/concepts/architecture/adapters}}) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+Meshery [Adapters]({{ site.baseurl }}/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
 
 #### Using Meshery CLI to Register a Model
 

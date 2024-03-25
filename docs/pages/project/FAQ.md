@@ -14,7 +14,7 @@ type: project
     <h6>Question: What is Meshery?</h6>
 </summary>
 
-<p><strong>Answer:</strong> As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</p>
+<p><strong>Answer:</strong> Meshery is a self-service engineering platform that enables collaborative design and operation of cloud and cloud native infrastructure.</p>
 </details>
 
 <details>
@@ -22,7 +22,7 @@ type: project
     <h6>Question: Why was Meshery created?</h6>
 </summary>
 
-<p><strong>Answer:</strong> As an open source, vendor neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, devops engineers... engineers to collaborate in the management of their infrastucture and workloads. Meshery was created to enable you to expect more from your infrastructure and to do so with confidence.</p>
+<p><strong>Answer:</strong> As an open source, vendor neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, DevSecOps teams - all engineers to collaborate in the management of their infrastucture and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.</p>
 </details>
 
 <details>
@@ -30,7 +30,7 @@ type: project
     <h6>Question: What does Meshery do?</h6>
 </summary>
 
-<p><strong>Answer:</strong>Collaborative infrastructure management. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</p>
+<p><strong>Answer:</strong> Collaborative infrastructure management. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence, and in partnership with your teammates.</p>
 </details>
 
 <!-- - _offers a catalog of operational best practices._
@@ -40,9 +40,9 @@ type: project
 
 <details>
     <summary>
-    <h6>Question: Is Meshery open source project?</h6>
+    <h6>Question: Is Meshery an open source project?</h6>
 </summary>
-<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality.</p>
+<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is a [highly extensible](/extensibility), offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
 </details>
 
 <details>
@@ -131,7 +131,7 @@ type: project
 <p>If MeshSync, Meshery Broker and Meshery Operator are healthy, then perhaps, there is corruption in the Meshery Database. Use the following troubleshooting steps to resolve this issue:</p>
 <ul>
 <li>Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.</li>
-<li>If still `Service Mesh` is not visible in UI, move on to `Hard Reset` of Database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
+<li>If you don't see the specific entities in Meshery UI, you may choose to reset Meshery's database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
 </ul>
 
 <p>Note: You can also verify health of your system using <a href="{{site.baseurl}}/reference/mesheryctl/system/check">mesheryctl system check</a></p>

@@ -27,7 +27,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import SpacesPreferences from './spaces-preferences';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent-components';
+import { CHARCOAL } from '@layer5/sistent';
 
 const styles = (theme) => ({
   statsWrapper: {

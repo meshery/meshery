@@ -103,16 +103,16 @@ jobs:
   #   runs-on: ubuntu-22.04
   #   steps:
   #     - name: Check out code
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 0
   #     - name: Check out meshery-istio code
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         repository: layer5io/meshery-istio
   #         path: ./meshery-istio
   #     - name: Check out meshery-consul code
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         repository: layer5io/meshery-consul
   #         path: ./meshery-consul
@@ -188,12 +188,12 @@ jobs:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #     - name: Upload artifacts
   #       if: always()
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: cypress-ss
   #         path: ./ui/cypress/screenshots
   #     - name: Upload Videos
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       if: always()
   #       with:
   #         name: cypress-ss
@@ -240,9 +240,9 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Check if handlers were modified
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -267,7 +267,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Check if schema was modified

@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -222,6 +225,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
+		Status:        queryParams.Get("status"),
 	}
 	if queryParams.Get("search") != "" {
 		filter.DisplayName = queryParams.Get("search")
@@ -1349,4 +1353,53 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
+}
+
+// swagger:route POST /api/meshmodel/update/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
+// Handle POST request for updating the ignore status of a model.
+//
+// Update the ignore status of a model based on the provided parameters.
+//
+// responses:
+// 	200: NoContent
+
+// request body should be json
+// request body should be of struct containing ID and Status fields
+func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	dec := json.NewDecoder(r.Body)
+	userID := uuid.FromStringOrNil(user.ID)
+	entityType := mux.Vars(r)["entityType"]
+	var updateData struct {
+		ID          string `json:"id"`
+		Status      string `json:"status"`
+		DisplayName string `json:"displayname"`
+	}
+	err := dec.Decode(&updateData)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
+	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update '%s' status to %s", updateData.DisplayName, updateData.Status)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	// Respond with success status
+	rw.WriteHeader(http.StatusNoContent)
 }

@@ -86,6 +86,7 @@ const (
 	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
 	modelViewURL      = docsBaseURL + "reference/mesheryctl/system/model/view"
+	registryUsageURL  = docsBaseURL + "reference/mesheryctl/system/registry"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"

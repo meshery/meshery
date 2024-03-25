@@ -8,10 +8,10 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGetK8sComponentsCode     = "1400"
-	ErrParseK8sManifestCode     = "1401"
-	ErrCreatePatternServiceCode = "1402"
-	ErrPatternFromCytoscapeCode = "1403"
+	ErrGetK8sComponentsCode     = "meshery-server-1314"
+	ErrParseK8sManifestCode     = "meshery-server-1315"
+	ErrCreatePatternServiceCode = "meshery-server-1316"
+	ErrPatternFromCytoscapeCode = "meshery-server-1317"
 )
 
 func ErrGetK8sComponents(err error) error {

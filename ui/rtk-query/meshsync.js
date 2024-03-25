@@ -44,7 +44,19 @@ const meshSyncApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
+      deleteMeshsyncResource: builder.mutation({
+        query: (resourceId) => ({
+          url: `system/meshsync/resources/${resourceId}`,
+          method: 'DELETE',
+          credentials: 'include',
+        }),
+        invalidatesTags: [{ type: TAGS.MESH_SYNC }],
+      }),
     }),
   });
 
-export const { useGetMeshSyncResourcesQuery, useGetMeshSyncResourceKindsQuery } = meshSyncApi;
+export const {
+  useGetMeshSyncResourcesQuery,
+  useGetMeshSyncResourceKindsQuery,
+  useDeleteMeshsyncResourceMutation,
+} = meshSyncApi;

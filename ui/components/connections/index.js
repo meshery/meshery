@@ -32,7 +32,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import SearchBar from '../../utils/custom-search';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
@@ -179,7 +179,7 @@ function Connections(props) {
   } = props;
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -198,6 +198,11 @@ function Connections(props) {
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
+
+  // lock for not allowing multiple updates at the same time
+  // needs to be a ref because it needs to be shared between renders
+  // and useState loses reactivity when down table custom cells
+  const updatingConnection = useRef(false);
 
   const {
     data: connectionData,
@@ -252,10 +257,9 @@ function Connections(props) {
     connectionId,
     connectionName,
   ) => {
-    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+    return addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
-        getConnections();
         notify({
           message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -270,13 +274,13 @@ function Connections(props) {
       });
   };
 
-  const removeConnectionFromEnvironment = (
+  const removeConnectionFromEnvironment = async (
     environmentId,
     environmentName,
     connectionId,
     connectionName,
   ) => {
-    removeConnectionFromEnvMutator({ environmentId, connectionId })
+    return removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
       .then(() => {
         notify({
@@ -293,8 +297,8 @@ function Connections(props) {
       });
   };
 
-  const saveEnvironment = (connectionId, connectionName, environmentName) => {
-    saveEnvironmentMutator({
+  const saveEnvironment = async (connectionId, connectionName, environmentName) => {
+    return saveEnvironmentMutator({
       body: {
         name: environmentName,
         organization_id: organization?.id,
@@ -340,35 +344,46 @@ function Connections(props) {
     [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
-  const handleEnvironmentSelect = (
+  const handleEnvironmentSelect = async (
     connectionId,
     connName,
     assignedEnvironments,
     selectedEnvironments,
     unSelectedEnvironments,
   ) => {
-    let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
-      return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
-    });
+    if (updatingConnection.current) {
+      return;
+    }
 
-    newlySelectedEnvironments.forEach((environment) => {
-      let envName = environment.label;
-      let environmentId = environment.value || '';
-      let isNew = environment.__isNew__ || false;
+    updatingConnection.current = true;
 
-      if (isNew) {
-        saveEnvironment(connectionId, connName, envName);
-        return;
+    try {
+      let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+        return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+      });
+
+      for (let environment of newlySelectedEnvironments) {
+        let envName = environment.label;
+        let environmentId = environment.value || '';
+        let isNew = environment.__isNew__ || false;
+
+        if (isNew) {
+          await saveEnvironment(connectionId, connName, envName);
+          return;
+        }
+
+        addConnectionToEnvironment(environmentId, envName, connectionId, connName);
       }
+      for (let environment of unSelectedEnvironments) {
+        let envName = environment.label;
+        let environmentId = environment.value || '';
 
-      addConnectionToEnvironment(environmentId, envName, connectionId, connName);
-    });
-    unSelectedEnvironments.forEach((environment) => {
-      let envName = environment.label;
-      let environmentId = environment.value || '';
-
-      removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
-    });
+        await removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
+      }
+    } finally {
+      getConnections();
+      updatingConnection.current = false;
+    }
   };
 
   let colViews = [
@@ -492,12 +507,15 @@ function Connections(props) {
             return environments.map((env) => ({ label: env.name, value: env.id }));
           };
           let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
+          let updatingEnvs = updatingConnection.current;
+          console.log('cleanedEnvs', updatingEnvs);
           return (
             isEnvironmentsSuccess && (
               <div onClick={(e) => e.stopPropagation()}>
                 <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
                   <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                     <MultiSelectWrapper
+                      updating={updatingEnvs}
                       onChange={(selected, unselected) =>
                         handleEnvironmentSelect(
                           getColumnValue(tableMeta.rowData, 'id', columns),
@@ -827,7 +845,6 @@ function Connections(props) {
     serverSide: true,
     count: connectionData?.total_count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 30],
     fixedHeader: true,
     page,
     print: false,
@@ -1100,6 +1117,7 @@ function Connections(props) {
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = connections[index].metadata?.id;
+    const connectionID = connections[index]?.id;
     const variables = {
       status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
       contextID: contextId,
@@ -1117,14 +1135,18 @@ function Connections(props) {
         message: `Operator ${response.operatorStatus?.toLowerCase()}`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-
-      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
-        next: (res) => {
-          _setOperatorState(updateCtxInfo(contextId, res));
-          tempSubscription.unsubscribe();
+      // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
+      // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
+      // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
+      const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe(
+        {
+          next: (res) => {
+            _setOperatorState(updateCtxInfo(contextId, res));
+            tempSubscription.unsubscribe();
+          },
+          error: (err) => console.log('error at operator scan: ' + err),
         },
-        error: (err) => console.log('error at operator scan: ' + err),
-      });
+      );
     }, variables);
   };
 

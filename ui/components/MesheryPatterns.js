@@ -56,7 +56,7 @@ import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import Modal from './Modal';
 import downloadContent from '../utils/fileDownloader';
-import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
+// import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import ReusableTooltip from './reusable-tooltip';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
@@ -68,7 +68,7 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -336,7 +336,7 @@ function MesheryPatterns({
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -634,30 +634,37 @@ function MesheryPatterns({
       },
     );
     catalogVisibilityRef.current = catalogVisibility;
-    const fetchCatalogPatterns = fetchCatalogPattern({
-      selector: {
-        search: '',
-        order: '',
-        page: 0,
-        pagesize: 0,
-      },
-    }).subscribe({
-      next: (result) => {
-        catalogContentRef.current = result?.catalogPatterns;
-        initPatternsSubscription();
-      },
-      error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
-    });
 
-    return () => {
-      fetchCatalogPatterns.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
-    };
+    /*
+     Below is a graphql query that fetches the catalog patterns that is published so
+     when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
+     which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
+     Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
+    */
+    // const fetchCatalogPatterns = fetchCatalogPattern({
+    //   selector: {
+    //     search: '',
+    //     order: '',
+    //     page: 0,
+    //     pagesize: 0,
+    //   },
+    // }).subscribe({
+    //   next: (result) => {
+    //     catalogContentRef.current = result?.catalogPatterns;
+    //     initPatternsSubscription();
+    //   },
+    //   error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
+    // });
+
+    // return () => {
+    //   fetchCatalogPatterns.unsubscribe();
+    //   disposeConfSubscriptionRef.current?.dispose();
+    // };
   }, []);
 
-  useEffect(() => {
-    handleSetPatterns(patterns);
-  }, [catalogVisibility]);
+  // useEffect(() => {
+  //   handleSetPatterns(patterns);
+  // }, [catalogVisibility]);
 
   const handleSetPatterns = (patterns) => {
     console.log('Patterns', patterns);
@@ -964,7 +971,7 @@ function MesheryPatterns({
           setCount(result.total_count || 0);
           handleSetPatterns(filteredPatterns);
           setVisibilityFilter(visibilityFilter);
-          // setPatterns(result.patterns || []);
+          setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS),
@@ -1412,7 +1419,6 @@ function MesheryPatterns({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,

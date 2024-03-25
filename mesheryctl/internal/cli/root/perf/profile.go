@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ mesheryctl perf profile test --view
 			fmt.Printf("Load Generators: %v\n", a.LoadGenerators[0])
 			fmt.Printf("Test run duration: %v\n", a.Duration)
 			fmt.Printf("QPS: %d\n", a.QPS)
-			fmt.Printf("Service Mesh: %v\n", a.ServiceMesh)
+			fmt.Printf("Infrastructure: %v\n", a.ServiceMesh)
 			if a.LastRun != nil {
 				fmt.Printf("Last Run: %v\n", a.LastRun.Time.Format("2006-01-02 15:04:05"))
 			} else {
@@ -151,7 +151,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		url = url + "&search=" + searchString
 	}
 
-	utils.Log.Debug(url)
+	// utils.Log.Debug(url)
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {

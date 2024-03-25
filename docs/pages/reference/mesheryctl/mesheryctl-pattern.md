@@ -16,7 +16,7 @@ Cloud Native Patterns Management
 
 ## Synopsis
 
-Manage service meshes using predefined patterns.
+Manage cloud and cloud native infrastructure using predefined patterns.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

@@ -39,8 +39,8 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
-import { CHARCOAL } from '@layer5/sistent-components';
+import { OutlinedSettingsIcon } from '@layer5/sistent';
+import { CHARCOAL } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 
@@ -251,7 +251,7 @@ function K8sContextMenu({
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
 
-  const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
+  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
@@ -402,9 +402,8 @@ function K8sContextMenu({
                   </Link>
                 )}
                 {contexts?.contexts?.map((ctx, idx) => {
-                  const { operatorState, meshSyncState, natsState } = getControllerStatesByContexID(
-                    ctx.id,
-                  );
+                  const { operatorState, meshSyncState, natsState } =
+                    getControllerStatesByConnectionID(ctx.connection_id);
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>

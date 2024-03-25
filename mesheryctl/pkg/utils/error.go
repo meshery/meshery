@@ -197,16 +197,6 @@ func PatternViewError(msg string) string {
 	return formatError(msg, cmdPatternView)
 }
 
-// AppError returns a formatted error message with a link to 'app' command usage page in addition to the error message
-func AppError(msg string) string {
-	return formatError(msg, cmdApp)
-}
-
-// AppError returns a formatted error message with a link to 'app view' command usage page in addition to the error message
-func AppViewError(msg string) string {
-	return formatError(msg, cmdAppView)
-}
-
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
 	switch cmd {
@@ -244,10 +234,6 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdPatternView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
-	case cmdApp:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appViewURL)
-	case cmdAppView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appUsageURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
 	case cmdContextCreate:
@@ -284,6 +270,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+	case cmdRegistry:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

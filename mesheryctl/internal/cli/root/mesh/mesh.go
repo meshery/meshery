@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ var (
 	MeshCmd    = &cobra.Command{
 		Use:   "mesh",
 		Short: "Cloud Native Lifecycle Management",
-		Long: `Provisioning, configuration, and on-going operational management of service meshes.
+		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -152,7 +152,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 
 	// allow the user to select a mesh from the list of available ones
 	prompt := promptui.Select{
-		Label: "Select a Service Mesh from the list",
+		Label: "Select a component from the list",
 		Items: meshNames,
 	}
 	i, _, err := prompt.Run()

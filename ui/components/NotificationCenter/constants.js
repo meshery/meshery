@@ -5,7 +5,7 @@ import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import Ajv from 'ajv';
 import _ from 'lodash';
-import { InfoIcon } from '@layer5/sistent-svg';
+import { InfoIcon } from '@layer5/sistent';
 
 export const SEVERITY = {
   INFO: 'informational',
