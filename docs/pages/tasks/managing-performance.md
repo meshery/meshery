@@ -97,8 +97,3 @@ If you have an API key configured to restrict access to your Grafana boards, you
 Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to Kubernetes and applications or any other metric that Prometheus has collected.
 
 Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.
-
-## Suggested Reading
-
-- Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)
-

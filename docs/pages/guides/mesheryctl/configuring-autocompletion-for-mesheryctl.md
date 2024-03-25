@@ -71,8 +71,6 @@ To load fish shell completions for each session, execute once:
  <div class="clipboardjs">mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish</div></div>
  </pre>
 
-#### Suggested Reading
-
 For an exhaustive list of `mesheryctl` commands and syntax:
 
 - See [`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl).
@@ -85,8 +83,5 @@ Guides to using Meshery's various features and components.
 
 {% endcapture %}
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
 
 {% include related-discussions.html tag="mesheryctl" %}
