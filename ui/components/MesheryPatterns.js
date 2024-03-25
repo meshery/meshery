@@ -750,6 +750,7 @@ function MesheryPatterns({
     setInfoModal({
       open: false,
     });
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
   };
 
   const handleInfoModal = (pattern) => {
