@@ -25,7 +25,7 @@ list: exclude
     <!-- <h6>Getting Started</h6> -->
     <ul>
         <!-- <li><a href="{{ site.baseurl }}/project">Project Overview</a></li> -->
-        <li>🚀 <a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a> and <a href="{{ site.baseurl }}/project/faq">FAQs</a><</li>
+        <li>🚀 <a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a> and <a href="{{ site.baseurl }}/project/faq">FAQs</a></li>
         <!-- <li><a href="{{ site.baseurl }}/project">Essential Features</a></li>  -->
     </ul>
     <details>
