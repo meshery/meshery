@@ -750,7 +750,6 @@ function MesheryPatterns({
     setInfoModal({
       open: false,
     });
-    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
   };
 
   const handleInfoModal = (pattern) => {
@@ -977,6 +976,11 @@ function MesheryPatterns({
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS),
     );
+  }
+
+  // this function returns fetchPattern function with latest values so that it can be used in child components
+  function fetchPatternsCaller() {
+    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
   }
 
   const handleError = (action) => (error) => {
@@ -1769,6 +1773,7 @@ function MesheryPatterns({
               selectedResource={infoModal.selectedResource}
               resourceOwnerID={infoModal.ownerID}
               currentUserID={user?.id}
+              patternFetcher={fetchPatternsCaller}
               formSchema={publishSchema}
               meshModels={meshModels}
             />

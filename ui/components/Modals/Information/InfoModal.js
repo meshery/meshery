@@ -49,6 +49,7 @@ const InfoModal_ = React.memo((props) => {
     dataName,
     selectedResource,
     currentUserID,
+    patternFetcher,
     formSchema,
     meshModels = [],
   } = props;
@@ -129,6 +130,9 @@ const InfoModal_ = React.memo((props) => {
             message: `${selectedResource.name} data saved successfully`,
             event_type: EVENT_TYPES.SUCCESS,
           });
+        })
+        .then(() => {
+          patternFetcher()();
         })
         .catch((error) => {
           setSaveFormLoading(false);
