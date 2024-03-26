@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+// import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,13 +8,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-const useStyles = makeStyles(() => ({
-  dialogContent: {},
-}));
-
 function MesheryChartDialog(props) {
   const { open, title, handleClose, content } = props;
-  const classes = useStyles();
   return (
     <React.Fragment>
       <Dialog
@@ -28,7 +23,7 @@ function MesheryChartDialog(props) {
           {title && title.length ? title : 'Comparison'}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText className={classes.dialogContent}>{content}</DialogContentText>
+          <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -41,7 +36,6 @@ function MesheryChartDialog(props) {
 }
 
 MesheryChartDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   content: PropTypes.node.isRequired,
