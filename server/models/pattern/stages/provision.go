@@ -7,15 +7,16 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
-	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
 
 type CompConfigPair struct {
-	Component     v1alpha1.Component
+	Component     v1beta1.Component
 	Configuration v1alpha1.Configuration
-	Hosts         map[meshmodel.Host]bool
+	Hosts         map[v1beta1.Host]bool
 }
 
 const ProvisionSuffixKey = ".isProvisioned"
@@ -68,7 +69,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 
 			// Get annotations for the component and merge with existing, if any
 			comp.ObjectMeta.SetAnnotations(helpers.MergeStringMaps(
-				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
+				v1beta1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
 				comp.GetAnnotations(),
 				getAdditionalAnnotations(data.Pattern),
 			))
@@ -123,8 +124,8 @@ func processAnnotations(pattern *core.Pattern) {
 	}
 }
 
-func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
-	res := map[meshmodel.Host]bool{}
+func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[v1beta1.Host]bool {
+	res := map[v1beta1.Host]bool{}
 	host := reg.GetRegistrant(wc)
 	res[host] = true
 	// for _, tc := range tcs {
@@ -151,7 +152,7 @@ func mergeErrors(errs []error) error {
 
 func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
 	annotations := make(map[string]string, 2)
-	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name
-	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID
+	annotations[fmt.Sprintf("%s.name", v1beta1.MesheryAnnotationPrefix)] = pattern.Name
+	annotations[fmt.Sprintf("%s.id", v1beta1.MesheryAnnotationPrefix)] = pattern.PatternID
 	return annotations
 }

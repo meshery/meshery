@@ -21,11 +21,11 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/sirupsen/logrus"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
 )
 

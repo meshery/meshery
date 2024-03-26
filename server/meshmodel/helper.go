@@ -12,21 +12,22 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
 )
 
-var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
+var ArtifactHubComponentsHandler = v1beta1.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
 var ModelsPath = "../meshmodel"
 var RelativeRelationshipsPath = "relationships"
 
 type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
 	regManager       *meshmodel.RegistryManager
-	componentChan    chan v1alpha1.ComponentDefinition
-	relationshipChan chan v1alpha1.RelationshipDefinition
+	componentChan    chan v1beta1.ComponentDefinition
+	relationshipChan chan v1alpha2.RelationshipDefinition
 	errorChan        chan error
 	log              logger.Handler
 }
@@ -35,8 +36,8 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 	return &EntityRegistrationHelper{
 		handlerConfig:    hc,
 		regManager:       rm,
-		componentChan:    make(chan v1alpha1.ComponentDefinition),
-		relationshipChan: make(chan v1alpha1.RelationshipDefinition),
+		componentChan:    make(chan v1beta1.ComponentDefinition),
+		relationshipChan: make(chan v1alpha2.RelationshipDefinition),
 		errorChan:        make(chan error),
 		log:              log,
 	}
@@ -103,7 +104,7 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 
 		if !info.IsDir() {
 			// Read the component definition from file
-			var comp v1alpha1.ComponentDefinition
+			var comp v1beta1.ComponentDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
 				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
@@ -141,7 +142,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 			return nil
 		}
 		if !info.IsDir() {
-			var rel v1alpha1.RelationshipDefinition
+			var rel v1alpha2.RelationshipDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
 				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
@@ -168,16 +169,16 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	for {
 		select {
 		case comp := <-erh.componentChan:
-			err = erh.regManager.RegisterEntity(meshmodel.Host{
+			err = erh.regManager.RegisterEntity(v1beta1.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
-			}, comp)
+			}, &comp)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 			}
 		case rel := <-erh.relationshipChan:
-			err = erh.regManager.RegisterEntity(meshmodel.Host{
+			err = erh.regManager.RegisterEntity(v1beta1.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
-			}, rel)
+			}, &rel)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
 			}
