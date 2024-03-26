@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-target-group-bind
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: target-group-binding
   colorIcon: assets/img/integrations/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg

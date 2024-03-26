@@ -6,6 +6,7 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   metadataNameCell: {
+    textTransform: 'uppercase',
     fontSize: '1rem',
     textAlign: 'left',
     maxWidth: '100%',
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '7px 12px',
     [theme.breakpoints.down('sm')]: {
       color: theme.palette.text.primary,
-      fontSize: '1.5rem',
+      fontSize: '1rem',
       minWidth: '100%',
       width: '100%',
       maxWidth: '100%',
@@ -52,7 +53,9 @@ const useStyles = makeStyles((theme) => ({
   table: {
     border: '1px solid #e7e7e7',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.secondary.mainBackground,
+    backgroundColor: theme.palette.secondary.elevatedComponents2,
+    padding: '0.375rem',
+    width: '98%',
   },
   highlightRow: {
     color: theme.palette.tables.head.color,

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/keycloak-operator
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: keycloak-realm-import
   colorIcon: assets/img/integrations/keycloak-operator/components/keycloak-realm-import/icons/color/keycloak-realm-import-color.svg

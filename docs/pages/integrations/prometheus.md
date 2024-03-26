@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/prometheus
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Native support for PromQL",

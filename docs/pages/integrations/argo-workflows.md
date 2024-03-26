@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/argo-workflows
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: cluster-workflow-template
   colorIcon: assets/img/integrations/argo-workflows/components/cluster-workflow-template/icons/color/cluster-workflow-template-color.svg

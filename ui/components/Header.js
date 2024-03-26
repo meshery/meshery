@@ -6,7 +6,6 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
@@ -40,8 +39,10 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent-svg';
-import { WHITE } from '@layer5/sistent-components';
+import { OutlinedSettingsIcon } from '@layer5/sistent';
+import { CHARCOAL } from '@layer5/sistent';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { Colors } from '@/themes/app';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -104,7 +105,15 @@ const styles = (theme) => ({
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   itemActiveItem: { fill: '#00B39F' },
-  headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
+  headerIcons: {
+    fontSize: '1.5rem',
+    height: '1.5rem',
+    width: '1.5rem',
+    fill: theme.palette.secondary.whiteIcon,
+    '&:hover': {
+      fill: Colors.keppelGreen,
+    },
+  },
   cbadge: {
     fontSize: '0.65rem',
     backgroundColor: 'white',
@@ -242,7 +251,7 @@ function K8sContextMenu({
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
 
-  const { getControllerStatesByContexID } = useControllerStatus(meshsyncControllerState);
+  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
@@ -393,13 +402,13 @@ function K8sContextMenu({
                   </Link>
                 )}
                 {contexts?.contexts?.map((ctx, idx) => {
-                  const { operatorState, meshSyncState, natsState } = getControllerStatesByContexID(
-                    ctx.id,
-                  );
+                  const { operatorState, meshSyncState, natsState } =
+                    getControllerStatesByConnectionID(ctx.connection_id);
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
-                      <Tooltip
+                      <CustomTextTooltip
+                        backgroundColor={CHARCOAL}
                         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
                           operatorState,
                         )}, MeshSync: ${formatToTitleCase(
@@ -430,7 +439,7 @@ function K8sContextMenu({
                             status={operatorState}
                           />
                         </div>
-                      </Tooltip>
+                      </CustomTextTooltip>
                     </div>
                   );
                 })}
@@ -581,7 +590,7 @@ class Header extends React.PureComponent {
                         color="inherit"
                       >
                         <OutlinedSettingsIcon
-                          fill={WHITE}
+                          // fill={WHITE}
                           className={
                             classes.headerIcons +
                             ' ' +

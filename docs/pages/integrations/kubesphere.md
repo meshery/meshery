@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/kubernetes/kubesphere
 description: 
 integrations-category: Platform
 integrations-subcategory: Certified Kubernetes - Distribution
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

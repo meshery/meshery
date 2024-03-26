@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/litmus-core
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Chaos Engineering
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: chaos-engine
   colorIcon: assets/img/integrations/litmus-core/components/chaos-engine/icons/color/chaos-engine-color.svg

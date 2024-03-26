@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/camel-k
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: build
   colorIcon: assets/img/integrations/camel-k/components/build/icons/color/build-color.svg

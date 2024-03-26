@@ -1,1 +1,48 @@
-{"kind":"Check","apiVersion":"crd.k8s.afrank.local/v1","displayName":"Check","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"https://layer5.io/company/brand","model":"mozalert-controller","modelDisplayName":"Moz Alert Controller","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"mozalert-controller","version":"0.4.0","displayName":"Moz Alert Controller","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"source_uri":"https://mozilla-it.github.io/helm-charts/mozalert-controller-0.4.0.tgz"},"components":null,"relationships":null},"schema":"{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"args\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"check_cm\": {\n     \"type\": \"string\"\n    },\n    \"check_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"check_url\": {\n     \"type\": \"string\"\n    },\n    \"escalations\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"image\": {\n     \"type\": \"string\"\n    },\n    \"max_attempts\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"notification_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"references\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"retry_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"secret_ref\": {\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"timeout\": {\n     \"x-kubernetes-int-or-string\": true\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Check\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Check",
+  "apiVersion": "crd.k8s.afrank.local/v1",
+  "displayName": "Check",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "https://layer5.io/company/brand",
+   "model": "mozalert-controller",
+   "modelDisplayName": "Moz Alert Controller",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "mozalert-controller",
+   "version": "0.4.0",
+   "displayName": "Moz Alert Controller",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://mozilla-it.github.io/helm-charts/mozalert-controller-0.4.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"args\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"check_cm\": {\n     \"type\": \"string\"\n    },\n    \"check_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"check_url\": {\n     \"type\": \"string\"\n    },\n    \"escalations\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"image\": {\n     \"type\": \"string\"\n    },\n    \"max_attempts\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"notification_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"references\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"retry_interval\": {\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"secret_ref\": {\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"timeout\": {\n     \"x-kubernetes-int-or-string\": true\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Check\",\n \"type\": \"object\"\n}"
+ }

@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VolumeSnapshot",
+  "apiVersion": "snapshot.storage.k8s.io/v1",
+  "displayName": "Volume Snapshot",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "primaryColor": "",
+    "secondaryColor": "",
+    "shape": "",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "subCategory": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "openebs",
+    "version": "2.2.0",
+    "displayName": "openebs",
+    "status": "",
+    "hostID": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Cloud Native Storage",
+      "metadata": null
+    },
+    "metadata": {
+      "source_uri": "https://github.com/truecharts/helm-staging/releases/download/openebs-2.2.0/openebs-2.2.0.tgz"
+    },
+    "components": null,
+    "relationships": null
+  },
+  "schema": "{\n \"description\": \"VolumeSnapshot is a user's request for either creating a point-in-time snapshot of a persistent volume, or binding to a pre-existing snapshot.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshot requested by a user. More info: https://kubernetes.io/docs/concepts/storage/volume-snapshots#volumesnapshots Required.\",\n   \"properties\": {\n    \"source\": {\n     \"description\": \"source specifies where a snapshot will be created from. This field is immutable after creation. Required.\",\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"persistentVolumeClaimName\"\n       ]\n      },\n      {\n       \"required\": [\n        \"volumeSnapshotContentName\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"persistentVolumeClaimName\": {\n       \"description\": \"persistentVolumeClaimName specifies the name of the PersistentVolumeClaim object representing the volume from which a snapshot should be created. This PVC is assumed to be in the same namespace as the VolumeSnapshot object. This field should be set if the snapshot does not exists, and needs to be created. This field is immutable.\",\n       \"type\": \"string\"\n      },\n      \"volumeSnapshotContentName\": {\n       \"description\": \"volumeSnapshotContentName specifies the name of a pre-existing VolumeSnapshotContent object representing an existing volume snapshot. This field should be set if the snapshot already exists and only needs a representation in Kubernetes. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"VolumeSnapshotClassName is the name of the VolumeSnapshotClass requested by the VolumeSnapshot. VolumeSnapshotClassName may be left nil to indicate that the default SnapshotClass should be used. A given cluster may have multiple default Volume SnapshotClasses: one default per CSI Driver. If a VolumeSnapshot does not specify a SnapshotClass, VolumeSnapshotSource will be checked to figure out what the associated CSI Driver is, and the default VolumeSnapshotClass associated with that CSI Driver will be used. If more than one VolumeSnapshotClass exist for a given CSI Driver and more than one have been marked as default, CreateSnapshot will fail and generate an event. Empty string is not allowed for this field.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Snapshot\",\n \"type\": \"object\"\n}"
+}

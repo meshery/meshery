@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/elasticsearch-operato
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: apm-server
   colorIcon: assets/img/integrations/elasticsearch-operator/components/apm-server/icons/color/apm-server-color.svg

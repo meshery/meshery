@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/terraform
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: workspace
   colorIcon: assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/devstream
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Centrally manage your toolchain with versioned code, and keep track of every change.",

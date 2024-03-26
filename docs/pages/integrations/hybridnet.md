@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/hybridnet
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: remote-cluster
   colorIcon: assets/img/integrations/hybridnet/components/remote-cluster/icons/color/remote-cluster-color.svg

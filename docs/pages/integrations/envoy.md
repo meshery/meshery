@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/envoy
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

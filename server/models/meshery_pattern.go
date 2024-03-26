@@ -128,3 +128,8 @@ func GetPatternName(stringifiedFile string) (string, error) {
 
 	return name, nil
 }
+
+type MesheryPatternFileDeployPayload struct {
+	PatternFile string `json:"pattern_file"`
+	PatternID   string `json:"pattern_id"`
+}

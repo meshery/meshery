@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-ope
 description: 
 integrations-category: Tools
 integrations-subcategory: Tools
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: customer
   colorIcon: assets/img/integrations/jira-service-desk-operator/components/customer/icons/color/customer-color.svg

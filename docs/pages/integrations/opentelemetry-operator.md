@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/opentelemetry-operato
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Tracing
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: op-amp-bridge
   colorIcon: assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg

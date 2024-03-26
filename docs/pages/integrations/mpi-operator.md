@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
 description: 
 integrations-category: Machine Learning
 integrations-subcategory: Machine Learning
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: mpi-job
   colorIcon: assets/img/integrations/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg

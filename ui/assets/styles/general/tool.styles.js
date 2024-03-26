@@ -153,7 +153,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '1rem',
     backgroundColor: theme.palette.secondary.detailsContainer,
     borderRadius: '6px',
-    padding: '2.5rem',
+    padding: '1rem 2rem',
     overflowY: 'auto',
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     [theme.breakpoints.down('sm')]: {

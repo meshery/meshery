@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: inno-db-cluster
   colorIcon: assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/color/inno-db-cluster-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/etcd-cluster-operator
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: etcd-backup
   colorIcon: assets/img/integrations/etcd-cluster-operator/components/etcd-backup/icons/color/etcd-backup-color.svg

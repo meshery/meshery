@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/nats-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: nats-cluster
   colorIcon: assets/img/integrations/nats-operator/components/nats-cluster/icons/color/nats-cluster-color.svg

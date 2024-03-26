@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/intel-device-plugins-
 description: 
 integrations-category: Runtime
 integrations-subcategory: Container Runtime
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: dlb-device-plugin
   colorIcon: assets/img/integrations/intel-device-plugins-operator/components/dlb-device-plugin/icons/color/dlb-device-plugin-color.svg

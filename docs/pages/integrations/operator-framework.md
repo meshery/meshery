@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/operator framework
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

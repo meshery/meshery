@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kanister-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Provisioning
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: action-set
   colorIcon: assets/img/integrations/kanister-operator/components/action-set/icons/color/action-set-color.svg

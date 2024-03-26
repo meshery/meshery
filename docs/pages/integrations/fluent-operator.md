@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fluent-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: cluster-filter
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-filter/icons/color/cluster-filter-color.svg

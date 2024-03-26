@@ -1,0 +1,22 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "fadi",
+  "version": "0.3.1",
+  "displayName": "Fadi",
+  "status": "",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "category": {
+   "name": "Uncategorized",
+   "metadata": null
+  },
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Uncategorized",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 45 51\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"#3ABC9B\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 45 51\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+  },
+  "components": null,
+  "relationships": null
+ }

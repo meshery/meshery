@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/openebs
 description: 
 integrations-category: Cloud Native Storage
 integrations-subcategory: Cloud Native Storage
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: block-device
   colorIcon: assets/img/integrations/openebs/components/block-device/icons/color/block-device-color.svg

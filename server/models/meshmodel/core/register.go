@@ -11,12 +11,12 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
 	"github.com/layer5io/meshery/server/models"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"

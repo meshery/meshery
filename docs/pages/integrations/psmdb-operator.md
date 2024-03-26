@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/psmdb-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: percona-server-mongo-db-backup
   colorIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg

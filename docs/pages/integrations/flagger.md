@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/flagger
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: canary
   colorIcon: assets/img/integrations/flagger/components/canary/icons/color/canary-color.svg

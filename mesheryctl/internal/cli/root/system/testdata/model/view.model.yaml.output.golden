@@ -1,6 +1,7 @@
 name: spire
 version: 0.12.2
 displayname: SPIRE
+status: ""
 hostname: ""
 hostid: 00000000-0000-0000-0000-000000000000
 displayhostname: ""

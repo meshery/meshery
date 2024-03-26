@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/tasks/performance/managing-performance
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Observability and Analysis
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Get 100% Prometheus compatible, including remote write, PromQL, and alerting",

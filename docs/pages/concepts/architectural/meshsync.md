@@ -38,17 +38,16 @@ The resources that are present inside the cluster are discovered efficiently wit
 
 ### Greenfield: Tracking newly created resources
 
- Meshery earmarks infrastucture for which it is the orginal lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
+Meshery earmarks infrastucture for which it is the orginal lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
 
 `designs.meshery.io: <design-id>`
 
 The propagation of the labels and annotations to the native k8s resources would be the responsibility of the workload/trait implementor.
 The following annotations are added to resources that are created by Meshery Server.
 
-
 ```yaml
 Labels:
- - resource.pattern.meshery.io/id=<uuid> # unique identifier for the design
+  - resource.pattern.meshery.io/id=<uuid> # unique identifier for the design
 ```
 
 ## Identifying Infrastructure under Management
@@ -59,8 +58,8 @@ Supplied by Meshery Server, MeshSync uses composite fingerprints to uniquely and
 
 Fingerprinting, the process of positively identifying and classifying resources, is performed using a set of pre-defined attributes that have been designated as unique to that type of resource. For example:
 
- - Prometheus typically offers metrics on 9090/tcp, but not always.
- - Prometheus is typically deployed from a prebuilt container offered by the open source project, but not always.
+- Prometheus typically offers metrics on 9090/tcp, but not always.
+- Prometheus is typically deployed from a prebuilt container offered by the open source project, but not always.
 
 See Connnection State Management for additional information.
 
@@ -74,7 +73,6 @@ Creating a composite set of keys involves using the builder pattern. For example
 - CRDs
 - Deployment
 
-
 ## Configuration
 
 ### Subscribing to events/changes on every component
@@ -83,28 +81,29 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ## Subscription Status and Health
 
-
 ### Flushing MeshSync
 
 ### Sythentic Test of MeshSync
 
-*TODO: Include example of how to invoke this built-in check.*
+_TODO: Include example of how to invoke this built-in check._
+
 # Scalability and Performance
 
 One Meshery Operator and one MeshSync are deployed to each Kuberentes cluster under management.
 
 ## Tiered Discovery
 
-Kubernetes clusters may grow very large with thousands of objects on them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of  infrasturcture identification (see [Composite Prints](#composite-fingerprints)). 
+Kubernetes clusters may grow very large with thousands of objects on them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrasturcture identification (see [Composite Prints](#composite-fingerprints)).
 
 For efficient management of large Kubernetes clusters, MeshSync uses tiered discovery. This approach progressively refines the identification of relevant infrastructure, optimizing the speed and scalability of MeshSync. You have control over the depth of object discovery, enabling you to strike the right balance between granularity and performance for efficient cluster management.
+
 ## Event-Driven Implementation
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](./broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
 # MeshSync FAQs
 
-## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?  
+## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
 MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the `meshsync` CRD using kubectl:
 
@@ -124,5 +123,7 @@ MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always h
 
 # Suggested Reading
 
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 {% include related-discussions.html tag="meshery" %}

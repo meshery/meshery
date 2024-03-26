@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: API Gateway
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: envoy-fleet
   colorIcon: assets/img/integrations/kusk-gateway/components/envoy-fleet/icons/color/envoy-fleet-color.svg

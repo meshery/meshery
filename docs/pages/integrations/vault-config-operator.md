@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: auth-engine-mount
   colorIcon: assets/img/integrations/vault-config-operator/components/auth-engine-mount/icons/color/auth-engine-mount-color.svg

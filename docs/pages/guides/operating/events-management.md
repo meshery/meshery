@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Managing Events with Notification Center
 abstract: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management
@@ -55,6 +55,8 @@ Meshery's Notification Center simplifies the task of managing events in your Kub
 
 You can easily collaborate with stakeholders by sharing event data, enhancing communication and issue resolution. What's more, Meshery enables you to track event statuses, ensuring no crucial event goes unnoticed. Plus, events are always persisted, providing a historical record for compliance and trend analysis. With Meshery's Notification Center, you can gain deep insights into your infrastructure, swiftly respond to critical events, and maintain optimal performance for your applications and services. Detailed instructions and best practices can be found in the official documentation and Meshery's user guide.
 
-{% include suggested-reading.html language="en" %}
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
+{% endif %}
 
 {% include related-discussions.html tag="meshery" %}

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent-operato
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Meshery discovers your Grafana servers",

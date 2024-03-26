@@ -10,7 +10,7 @@ import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import {
   CustomTextTooltip,
-  renderTooltipContent,
+  RenderTooltipContent,
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import { useGetPatternsQuery } from '@/rtk-query/design';
@@ -86,7 +86,7 @@ export default function MesheryConfigurationChart({ classes }) {
               backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={renderTooltipContent({
+              title={RenderTooltipContent({
                 showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
                 link: url,
               })}

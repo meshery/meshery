@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { IconButton, FormControlLabel, Switch, Tooltip } from '@material-ui/core';
+import { IconButton, FormControlLabel, Switch } from '@material-ui/core';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
@@ -16,8 +14,22 @@ import { getFilteredDataForDetailsComponent } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
+import CollapseAllIcon from '@/assets/icons/CollapseAll';
+import ExpandAllIcon from '@/assets/icons/ExpandAll';
+import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Colors } from '../../themes/app';
+import { JustifyAndAlignCenter } from './MeshModel.style';
+import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
 
-const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect, data }) => {
+const ComponentTree = ({
+  expanded,
+  selected,
+  handleToggle,
+  handleSelect,
+  data,
+  setShowDetailsData,
+}) => {
   return (
     <TreeView
       aria-label="controlled"
@@ -36,10 +48,12 @@ const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect
           key={index}
           nodeId={`${component.id}`}
           data-id={`${component.id}`}
-          check
           labelText={component.displayName}
           onClick={() => {
-            setComp(component);
+            setShowDetailsData({
+              type: COMPONENTS,
+              data: component,
+            });
           }}
         />
       ))}
@@ -47,7 +61,16 @@ const ComponentTree = ({ setComp, expanded, selected, handleToggle, handleSelect
   );
 };
 
-const RelationshipTree = ({ setRela, expanded, selected, handleToggle, handleSelect, data }) => {
+const RelationshipTree = ({
+  expanded,
+  selected,
+  handleToggle,
+  handleSelect,
+  data,
+  setShowDetailsData,
+  view = RELATIONSHIPS,
+  idForKindAsProp,
+}) => {
   return (
     <TreeView
       aria-label="controlled"
@@ -61,23 +84,56 @@ const RelationshipTree = ({ setRela, expanded, selected, handleToggle, handleSel
       expanded={expanded}
       selected={selected}
     >
-      {data.map((relationship, index) => (
-        <StyledTreeItem
-          key={index}
-          nodeId={`${relationship.id}`}
-          data-id={`${relationship.id}`}
-          check
-          labelText={relationship.subType}
-          onClick={() => {
-            setRela(relationship);
-          }}
-        />
-      ))}
+      {data.map((relationshipByKind, index) => {
+        const idForKind =
+          view === RELATIONSHIPS
+            ? `${relationshipByKind.relationships[0].id}`
+            : `${idForKindAsProp}.${relationshipByKind.relationships[0].id}`;
+        return (
+          <StyledTreeItem
+            key={index}
+            nodeId={idForKind}
+            data-id={idForKind}
+            labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
+            onClick={() => {
+              setShowDetailsData({
+                type: 'none',
+                data: {
+                  id: relationshipByKind.relationships[0].id,
+                },
+              });
+            }}
+          >
+            {relationshipByKind.relationships.map((relationship) => (
+              <StyledTreeItem
+                key={index}
+                nodeId={`${idForKind}.${relationship.id}`}
+                data-id={`${idForKind}.${relationship.id}`}
+                labelText={relationship.subType}
+                onClick={() => {
+                  setShowDetailsData({
+                    type: RELATIONSHIPS,
+                    data: relationship,
+                  });
+                }}
+              />
+            ))}
+          </StyledTreeItem>
+        );
+      })}
     </TreeView>
   );
 };
 
-const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
+const MesheryTreeViewItem = ({
+  model,
+  registrantID,
+  setShowDetailsData,
+  handleToggle,
+  handleSelect,
+  selected,
+  expanded,
+}) => {
   return (
     <StyledTreeItem
       key={model.id}
@@ -86,10 +142,9 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
       top
       labelText={model.displayName}
       onClick={() => {
-        setShow({
-          model: model,
-          components: [],
-          relationships: [],
+        setShowDetailsData({
+          type: MODELS,
+          data: model,
         });
       }}
     >
@@ -98,7 +153,19 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
           <StyledTreeItem
             key={versionedModel.id}
             nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
-            labelText={versionedModel.version}
+            data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            labelText={
+              versionedModel.version[0] == 'v'
+                ? versionedModel.version
+                : `v${versionedModel.version}`
+            }
+            check={true}
+            onClick={() => {
+              setShowDetailsData({
+                type: MODELS,
+                data: versionedModel,
+              });
+            }}
           >
             <StyledTreeItem
               nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
@@ -121,25 +188,11 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
                     data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
                       versionedModel.id
                     }.1.${component.id}`}
-                    check
                     labelText={component.displayName}
                     onClick={() => {
-                      setShow((prevShow) => {
-                        const { components } = prevShow;
-                        const compIndex = components.findIndex((item) => item === component);
-                        if (compIndex !== -1) {
-                          return {
-                            ...prevShow,
-                            model: model,
-                            components: components.filter((item) => item !== component),
-                          };
-                        } else {
-                          return {
-                            ...prevShow,
-                            model: model,
-                            components: [...components, component],
-                          };
-                        }
+                      setShowDetailsData({
+                        type: COMPONENTS,
+                        data: component,
                       });
                     }}
                   />
@@ -156,39 +209,18 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
                 versionedModel.relationships ? versionedModel.relationships.length : 0
               })`}
             >
-              {versionedModel.relationships &&
-                versionedModel.relationships.map((relationship, subIndex) => (
-                  <StyledTreeItem
-                    key={subIndex}
-                    nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.2.${relationship.id}`}
-                    data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.2.${relationship.id}`}
-                    check
-                    labelText={relationship.displayhostname}
-                    onClick={() => {
-                      setShow((prevShow) => {
-                        const { relationships } = prevShow;
-                        const relaIndex = relationships.findIndex((item) => item === relationship);
-                        if (relaIndex !== -1) {
-                          return {
-                            ...prevShow,
-                            model: model,
-                            relationships: relationships.filter((item) => item !== relationship),
-                          };
-                        } else {
-                          return {
-                            ...prevShow,
-                            model: model,
-                            relationships: [...relationships, relationship],
-                          };
-                        }
-                      });
-                    }}
-                  />
-                ))}
+              <RelationshipTree
+                handleToggle={handleToggle}
+                handleSelect={handleSelect}
+                expanded={expanded}
+                selected={selected}
+                data={versionedModel.relationships}
+                view={MODELS}
+                setShowDetailsData={setShowDetailsData}
+                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                  versionedModel.id
+                }.2`}
+              />
             </StyledTreeItem>
           </StyledTreeItem>
         ))}
@@ -198,11 +230,11 @@ const MesheryTreeViewItem = ({ model, setShow, registrantID }) => {
 
 const MesheryTreeViewModel = ({
   data,
-  setShow,
   handleToggle,
   handleSelect,
   expanded,
   selected,
+  setShowDetailsData,
 }) => {
   return (
     <TreeView
@@ -224,7 +256,7 @@ const MesheryTreeViewModel = ({
           handleSelect={handleSelect}
           expanded={expanded}
           selected={selected}
-          setShow={setShow}
+          setShowDetailsData={setShowDetailsData}
         />
       ))}
     </TreeView>
@@ -238,6 +270,7 @@ const MesheryTreeViewRegistrants = ({
   handleSelect,
   expanded,
   selected,
+  setShowDetailsData,
 }) => {
   return (
     <TreeView
@@ -258,13 +291,17 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={registrant.hostname}
+          labelText={
+            <TootltipWrappedConnectionChip
+              title={registrant.hostname}
+              iconSrc="/static/img/artifact-hub-color.svg" //TODO: remove this hardcoded iconSrc for artifact hub as we will get from API
+            />
+          }
           newParentId={registrant.id}
           onClick={() => {
-            setShow({
-              model: {},
-              components: [],
-              relationships: [],
+            setShowDetailsData({
+              type: REGISTRANTS,
+              data: registrant,
             });
           }}
         >
@@ -272,7 +309,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.summary?.models})`}
+              labelText={`Models (${registrant?.models.length})`}
             >
               {registrant?.models.map((model, index) => (
                 <MesheryTreeViewItem
@@ -284,6 +321,7 @@ const MesheryTreeViewRegistrants = ({
                   selected={selected}
                   setShow={setShow}
                   registrantID={registrant.id}
+                  setShowDetailsData={setShowDetailsData}
                 />
               ))}
             </StyledTreeItem>
@@ -329,23 +367,20 @@ const useRegistryRouter = () => {
 const MesheryTreeView = ({
   data,
   view,
-  comp,
-  rela,
-  setShow,
-  setComp,
-  setRela,
-  setRegi,
   setSearchText,
   searchText,
   setPage,
   checked,
   setChecked,
+  setShowDetailsData,
+  showDetailsData,
+  setResourcesDetail,
 }) => {
   const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
   const scrollRef = useRef();
 
   const handleScroll = (scrollingView) => (event) => {
@@ -356,8 +391,9 @@ const MesheryTreeView = ({
         [scrollingView]: Number(prevPage[scrollingView]) + 1,
       }));
     }
-
-    scrollRef.current = div.scrollTop;
+    if (!data.length === 0) {
+      scrollRef.current = div.scrollTop;
+    }
   };
 
   useEffect(() => {
@@ -371,12 +407,18 @@ const MesheryTreeView = ({
     setChecked((prevChecked) => !prevChecked);
   }, [setChecked]);
 
+  // Expand first level tree
   const expandAll = () => {
     const arr = [];
     data.map((parent) => {
-      arr.push(parent.id);
-      arr.push(`${parent.id}.1`);
-      arr.push(`${parent.id}.2`);
+      if (view === RELATIONSHIPS) {
+        // Hard coded for relationships
+        // parent id will be same as relationships[0].id
+        // so we can use that id for expanding first level tree for relationships
+        arr.push(parent.relationships[0].id);
+      } else {
+        arr.push(parent.id);
+      }
     });
     setExpanded(arr);
   };
@@ -406,32 +448,28 @@ const MesheryTreeView = ({
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
-      setExpanded(
-        selectedIdArr.reduce(
-          (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
-          [],
-        ),
-      );
-      setSelected([selectedItemUUID]);
-
-      const { selectedComponent, selectedModel, selectedRelationship } =
-        getFilteredDataForDetailsComponent(data, selectedItemUUID, view);
-
-      setShow({
-        model: selectedModel || {},
-        components: selectedComponent ? [selectedComponent] : [],
-        relationships: selectedRelationship ? [selectedRelationship] : [],
-      });
+      // Check if showDetailsData data matches with item from route
+      // This will prevent unnecessary state update
+      if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
+        setExpanded(
+          selectedIdArr.reduce(
+            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+            [],
+          ),
+        );
+        setSelected([selectedItemUUID]);
+        const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
+        setShowDetailsData(showData);
+      }
     } else {
       setExpanded([]);
       setSelected([]);
-      setShow({
-        model: {},
-        components: [],
-        relationships: [],
+      setShowDetailsData({
+        type: '',
+        data: {},
       });
     }
-  }, [view]);
+  }, [view, selectedItemUUID]);
 
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
@@ -443,15 +481,13 @@ const MesheryTreeView = ({
             selectedNode.scrollIntoView({ behavior: 'smooth' });
           }
         });
-      }, 200);
+      }, 1000);
     }
   }, [view]);
 
-  useEffect(() => {
-    setComp({});
-    setRela({});
-    setRegi({});
-  }, [view]);
+  const disabledExpand = () => {
+    return view === COMPONENTS;
+  };
 
   const renderHeader = (type) => (
     <div
@@ -465,22 +501,33 @@ const MesheryTreeView = ({
       <div>
         {width < 1370 && isSearchExpanded ? null : (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Tooltip title="Expand All" placement="top">
-              <IconButton onClick={expandAll} size="large" disableRipple>
-                <KeyboardArrowDownIcon />
-              </IconButton>
-            </Tooltip>
+            <CustomTextTooltip title="Expand All" placement="top">
+              {/* span is added to make sure tooltip is not listening to disabled elements to prevent MUI error */}
+              <span>
+                <IconButton
+                  onClick={expandAll}
+                  size="large"
+                  disableRipple
+                  disabled={disabledExpand()}
+                >
+                  <ExpandAllIcon height={17} width={17} />
+                </IconButton>
+              </span>
+            </CustomTextTooltip>
 
-            <Tooltip title="Collapse All" placement="top">
-              <IconButton
-                onClick={() => setExpanded([])}
-                style={{ marginRight: '4px' }}
-                size="large"
-                disableRipple
-              >
-                <KeyboardArrowUpIcon />
-              </IconButton>
-            </Tooltip>
+            <CustomTextTooltip title="Collapse All" placement="top">
+              <span>
+                <IconButton
+                  onClick={() => setExpanded([])}
+                  style={{ marginRight: '4px' }}
+                  size="large"
+                  disableRipple
+                  disabled={disabledExpand()}
+                >
+                  <CollapseAllIcon height={17} width={17} />
+                </IconButton>
+              </span>
+            </CustomTextTooltip>
             {type === MODELS && (
               <>
                 <FormControlLabel
@@ -496,12 +543,13 @@ const MesheryTreeView = ({
                   style={{ margin: 0 }}
                 />
                 <CustomTextTooltip
-                  backgroundColor="#3C494F"
                   placement="right"
                   interactive={true}
-                  title={`View all duplicate entries of ${_.toLower(
-                    view,
-                  )}. Entries with identical name and version attributes are considered duplicates.`}
+                  title={getHyperLinkDiv(
+                    `View all duplicate entries of ${_.toLower(
+                      view,
+                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`,
+                  )}
                 >
                   <IconButton color="primary">
                     <InfoOutlinedIcon height={20} width={20} />
@@ -516,37 +564,56 @@ const MesheryTreeView = ({
         <SearchBar
           onSearch={debounce((value) => setSearchText(value), 200)}
           expanded={isSearchExpanded}
-          setExpanded={setIsSearchExpanded}
+          setExpanded={setSearchExpand}
           placeholder="Search"
+          value={searchText}
         />
       </div>
     </div>
   );
 
+  const setSearchExpand = (isExpand) => {
+    if (!isExpand) {
+      setSearchText(() => null);
+      setResourcesDetail(() => []);
+    }
+    setIsSearchExpanded(isExpand);
+  };
+
   const renderTree = (treeComponent, type) => (
     <div>
       {renderHeader(type)}
-      <div
-        className="scrollElement"
-        style={{ overflowY: 'auto', height: '27rem' }}
-        onScroll={handleScroll(type)}
-      >
-        {treeComponent}
-      </div>
+      {data.length === 0 && !searchText ? (
+        <JustifyAndAlignCenter style={{ height: '27rem' }}>
+          <CircularProgress sx={{ color: Colors.keppelGreen }} />
+        </JustifyAndAlignCenter>
+      ) : data.length === 0 && searchText ? (
+        <JustifyAndAlignCenter style={{ height: '27rem' }}>
+          <p>No result found</p>
+        </JustifyAndAlignCenter>
+      ) : (
+        <div
+          className="scrollElement"
+          style={{ overflowY: 'auto', height: '27rem' }}
+          onScroll={handleScroll(type)}
+        >
+          {treeComponent}
+        </div>
+      )}
     </div>
   );
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', height: '28.86rem' }}>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
             data={data}
-            setShow={setShow}
             handleToggle={handleToggle}
             handleSelect={handleSelect}
             expanded={expanded}
             selected={selected}
+            setShowDetailsData={setShowDetailsData}
           />,
           MODELS,
         )}
@@ -554,11 +621,11 @@ const MesheryTreeView = ({
         renderTree(
           <MesheryTreeViewRegistrants
             data={data}
-            setShow={setShow}
             handleToggle={handleToggle}
             handleSelect={handleSelect}
             expanded={expanded}
             selected={selected}
+            setShowDetailsData={setShowDetailsData}
           />,
           REGISTRANTS,
         )}
@@ -570,12 +637,11 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             data={data}
-            comp={comp}
             setExpanded={setExpanded}
-            setComp={setComp}
             setSelected={setSelected}
             handleScroll={handleScroll}
             setSearchText={setSearchText}
+            setShowDetailsData={setShowDetailsData}
           />,
           COMPONENTS,
         )}
@@ -587,12 +653,7 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             data={data}
-            rela={rela}
-            setExpanded={setExpanded}
-            setRela={setRela}
-            setSelected={setSelected}
-            handleScroll={handleScroll}
-            setSearchText={setSearchText}
+            setShowDetailsData={setShowDetailsData}
           />,
           RELATIONSHIPS,
         )}

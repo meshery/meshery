@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cubefs
 description: 
 integrations-category: Runtime
 integrations-subcategory: Cloud Native Storage
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Multiple Access Protocol Support.",

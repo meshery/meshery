@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/stackgres-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: sg-backup
   colorIcon: assets/img/integrations/stackgres-operator/components/sg-backup/icons/color/sg-backup-color.svg

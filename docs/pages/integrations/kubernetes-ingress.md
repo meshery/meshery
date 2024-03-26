@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: backend
   colorIcon: assets/img/integrations/kubernetes-ingress/components/backend/icons/color/backend-color.svg

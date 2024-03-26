@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: filter
   colorIcon: assets/img/integrations/fluentbit-operator/components/filter/icons/color/filter-color.svg

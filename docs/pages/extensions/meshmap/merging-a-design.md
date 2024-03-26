@@ -1,6 +1,8 @@
 ---
 layout: enhanced
+abstract: Import your existing designs into Meshery.
 title: Merging Designs
+abstract: Treat other designs as templates or building blocks and combine your designs with others and power-up your designs.
 permalink: extensions/merging-design
 language: en
 display-title: "false"

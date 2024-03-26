@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import debounce from './debounce';
-import { CloseIcon, SearchIcon } from '@layer5/sistent-svg';
+import { CloseIcon, SearchIcon } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -50,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
-  const [searchText, setSearchText] = useState('');
+const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' }) => {
+  const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
   const classes = useStyles();
 
@@ -87,7 +87,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <TextField
         className={classes.searchInput}
         id="searchClick"

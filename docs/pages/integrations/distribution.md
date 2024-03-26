@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/distribution
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Container Registry
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "JFrog Distribution is a centralized platform that lets you provision software release distribution",

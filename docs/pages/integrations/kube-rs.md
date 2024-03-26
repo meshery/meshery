@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
 integrations-category: Runtime
 integrations-subcategory: Scheduling & Orchestration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

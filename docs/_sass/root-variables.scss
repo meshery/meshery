@@ -59,6 +59,10 @@
   --background-grey-secondary: linear-gradient(to right top, #868e96, #767e86, #676e76, #585f66, #495057);
   --background-neumorphic: #ecf0f3;
 
+  // table color
+  --test-detail-data-color: #ccfff9;
+  --hidden-details-data-color: #ccfff9;
+
   // Gradients
   --section-button: linear-gradient(315deg, #3C494F 0%, rgba(70, 86, 93, 1) 87%);
   
@@ -86,6 +90,10 @@
   --color-summary-background:#333;
   --color-summary-background-hover:#666666;
   --color-details-background:#282828;
+
+  // table color
+  --test-detail-data-color: #495057;
+  --hidden-details-data-color: #00B39F;
 
   --box-shadow-primary: 4px 4px 8px rgba(0, 0, 0, 1);
   --box-shadow-primary-light: 2px 2px 8px rgb(0 0 0 / 70%);

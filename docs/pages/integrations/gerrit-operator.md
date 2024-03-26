@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/gerrit-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: gerrit-group-member
   colorIcon: assets/img/integrations/gerrit-operator/components/gerrit-group-member/icons/color/gerrit-group-member-color.svg

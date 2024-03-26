@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/spiffe
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Design and apply policy for node and workload attestation.",

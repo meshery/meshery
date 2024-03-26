@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operato
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: admin-console
   colorIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg

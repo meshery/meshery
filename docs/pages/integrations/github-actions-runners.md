@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: horizontal-runner-autoscaler
   colorIcon: assets/img/integrations/github-actions-runners/components/horizontal-runner-autoscaler/icons/color/horizontal-runner-autoscaler-color.svg

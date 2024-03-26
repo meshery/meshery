@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/nginx-sm
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: http-route-group
   colorIcon: assets/img/integrations/nginx-service-mesh/components/http-route-group/icons/color/http-route-group-color.svg

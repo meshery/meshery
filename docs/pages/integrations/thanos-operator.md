@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: object-store
   colorIcon: assets/img/integrations/thanos-operator/components/object-store/icons/color/object-store-color.svg

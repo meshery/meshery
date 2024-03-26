@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

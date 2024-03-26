@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pulsar-resources-oper
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: pulsar-connection
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg

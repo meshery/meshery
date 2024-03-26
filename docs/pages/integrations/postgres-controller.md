@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/postgres-controller
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: postgres-database
   colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Simplifies the process of obtaining, renewing and using those certificates.",

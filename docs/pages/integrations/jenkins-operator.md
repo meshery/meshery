@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/jenkins-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: jenkins
   colorIcon: assets/img/integrations/jenkins-operator/components/jenkins/icons/color/jenkins-color.svg

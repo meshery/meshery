@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/cpx
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Enable and enforce mutual TLS between your clusters",

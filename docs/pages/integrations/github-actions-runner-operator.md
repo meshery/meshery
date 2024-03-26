@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: github-action-runner
   colorIcon: assets/img/integrations/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg

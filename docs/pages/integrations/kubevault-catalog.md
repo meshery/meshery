@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubevault-catalog
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: vault-server-version
   colorIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg

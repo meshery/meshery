@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/armory-spinnaker-oper
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: armory-account
   colorIcon: assets/img/integrations/armory-spinnaker-operator/components/armory-account/icons/color/armory-account-color.svg

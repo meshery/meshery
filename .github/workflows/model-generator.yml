@@ -1,0 +1,110 @@
+name: Model Component Generator and Updater
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  generate-components:
+    name: Generate Components
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Pull changes from remote
+        run: git pull origin master
+      - name: Build mesheryctl
+        run: |
+          cd mesheryctl; make;
+      - name: Generate Models and Components
+        run: |
+          cd mesheryctl;
+          ./mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generate-logs
+          path: ~/.meshery/logs/
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "New Models generated"
+          branch: master
+
+      - name: Send Email on Model Generator Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Model Generator" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.
+
+  update-components:
+    name: Update Components
+    needs: generate-components
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Pull changes from remote
+        run: git pull origin master
+      - name: Build mesheryctl
+        run: |
+          cd mesheryctl; make;
+      - name: Run Model Updater
+        run: |
+          cd mesheryctl;
+          ./mesheryctl registry update -i ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "Models updated"
+          branch: master
+      - name: Send Email on Model Updaters Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Model Updater" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.

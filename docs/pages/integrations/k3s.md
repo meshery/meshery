@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/k3s
 description: 
 integrations-category: Platform
 integrations-subcategory: Kubernetes
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

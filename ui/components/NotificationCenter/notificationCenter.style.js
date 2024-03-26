@@ -5,7 +5,12 @@ export const useStyles = makeStyles((theme) => ({
     width: '45rem',
     maxWidth: '95vw',
   },
-  notificationButton: { height: '100%' },
+  notificationButton: {
+    height: '100%',
+    '&:hover': {
+      color: theme.palette.secondary.whiteIcon,
+    },
+  },
   notificationDrawer: {
     backgroundColor: theme.palette.secondary.drawer,
     display: 'flex',

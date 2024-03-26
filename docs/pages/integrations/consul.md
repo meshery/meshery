@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/consul
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Visualize the topology of your Consul service mesh deployment",

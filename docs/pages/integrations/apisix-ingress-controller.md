@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/apisix-ingress-contro
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: API Gateway
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: apisix-cluster-config
   colorIcon: assets/img/integrations/apisix-ingress-controller/components/apisix-cluster-config/icons/color/apisix-cluster-config-color.svg

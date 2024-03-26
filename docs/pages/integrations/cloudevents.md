@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cloudevents
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Provides SDKs for Go, JavaScript, Java, C#, Ruby, PHP, PowerShell, Rust, and Python that can be used to build event routers, tracing systems, and other tools.",

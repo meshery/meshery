@@ -1,1 +1,48 @@
-{"kind":"TunnelConnector","apiVersion":"kubetunnel.d2iq.io/v1alpha1","displayName":"Tunnel Connector","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":true,"logoURL":"","model":"kommander","modelDisplayName":"Kommander","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"kommander","version":"0.39.2","displayName":"Kommander","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"source_uri":"https://mesosphere.github.io/charts/stable/kommander-0.39.2.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"Describes an intention to create a tunnel between the current cluster and the target cluster. This would allow the current cluster to access the target cluster through the tunnel  (assuming that the current cluster does not have direct access to the target cluster).\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"gatewayRef\": {\n     \"description\": \"A reference to the `TunnelGateway` object which describes how various services would be exposed outside the current cluster.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"proxyPort\": {\n     \"description\": \"The port for the tunnel proxy.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tunnel Connector\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TunnelConnector",
+  "apiVersion": "kubetunnel.d2iq.io/v1alpha1",
+  "displayName": "Tunnel Connector",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "kommander",
+   "modelDisplayName": "Kommander",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kommander",
+   "version": "0.39.2",
+   "displayName": "Kommander",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://mesosphere.github.io/charts/stable/kommander-0.39.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Describes an intention to create a tunnel between the current cluster and the target cluster. This would allow the current cluster to access the target cluster through the tunnel  (assuming that the current cluster does not have direct access to the target cluster).\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"gatewayRef\": {\n     \"description\": \"A reference to the `TunnelGateway` object which describes how various services would be exposed outside the current cluster.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"proxyPort\": {\n     \"description\": \"The port for the tunnel proxy.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tunnel Connector\",\n \"type\": \"object\"\n}"
+ }

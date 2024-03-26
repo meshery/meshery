@@ -8,6 +8,7 @@ type: guides
 category: configuration
 language: en
 published: true
+suggested-reading: false
 abstract: Learn how to create a Meshery design from scratch or from a template.
 ---
 

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/argo-cd
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: argo-cd-extension
   colorIcon: assets/img/integrations/argo-cd/components/argo-cd-extension/icons/color/argo-cd-extension-color.svg

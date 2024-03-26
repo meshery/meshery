@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "IPPool",
+  "apiVersion": "crd.projectcalico.org/v1",
+  "displayName": "IP Pool",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": true,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FF6A00;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n\th17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n\tc0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n        h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n        c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hybridnet",
+   "version": "0.6.8",
+   "displayName": "Hybridnet",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Cloud Native Network",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": true,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FF6A00;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\u0026#xA;\u0026#x9;h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\u0026#xA;\u0026#x9;c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\u0026#xA;        h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\u0026#xA;        c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPPoolSpec contains the specification for an IPPool resource.\",\n   \"properties\": {\n    \"blockSize\": {\n     \"description\": \"The block size to use for IP address assignments from this pool. Defaults to 26 for IPv4 and 112 for IPv6.\",\n     \"type\": \"integer\"\n    },\n    \"cidr\": {\n     \"description\": \"The pool CIDR.\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"When disabled is true, Calico IPAM will not assign addresses from this pool.\",\n     \"type\": \"boolean\"\n    },\n    \"ipip\": {\n     \"description\": \"Deprecated: this field is only used for APIv1 backwards compatibility. Setting this field is not allowed, this field is for internal use only.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"When enabled is true, ipip tunneling will be used to deliver packets to destinations within this pool.\",\n       \"type\": \"boolean\"\n      },\n      \"mode\": {\n       \"description\": \"The IPIP mode.  This can be one of \\\"always\\\" or \\\"cross-subnet\\\".  A mode of \\\"always\\\" will also use IPIP tunneling for routing to destination IP addresses within this pool.  A mode of \\\"cross-subnet\\\" will only use IPIP tunneling when the destination node is on a different subnet to the originating node.  The default value (if not specified) is \\\"always\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipipMode\": {\n     \"description\": \"Contains configuration for IPIP tunneling for this pool. If not specified, then this is defaulted to \\\"Never\\\" (i.e. IPIP tunneling is disabled).\",\n     \"type\": \"string\"\n    },\n    \"nat-outgoing\": {\n     \"description\": \"Deprecated: this field is only used for APIv1 backwards compatibility. Setting this field is not allowed, this field is for internal use only.\",\n     \"type\": \"boolean\"\n    },\n    \"natOutgoing\": {\n     \"description\": \"When nat-outgoing is true, packets sent from Calico networked containers in this pool to destinations outside of this pool will be masqueraded.\",\n     \"type\": \"boolean\"\n    },\n    \"nodeSelector\": {\n     \"description\": \"Allows IPPool to allocate for a specific node by label selector.\",\n     \"type\": \"string\"\n    },\n    \"vxlanMode\": {\n     \"description\": \"Contains configuration for VXLAN tunneling for this pool. If not specified, then this is defaulted to \\\"Never\\\" (i.e. VXLAN tunneling is disabled).\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cidr\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP Pool\",\n \"type\": \"object\"\n}"
+ }

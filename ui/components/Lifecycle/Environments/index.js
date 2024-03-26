@@ -199,7 +199,7 @@ const Environments = ({ organization, classes }) => {
           organization: {
             ...updatedSchema.rjsfSchema.properties.organization,
             enum: [organization?.id],
-            enumName: [organization?.name],
+            enumNames: [organization?.name],
           },
         },
       }),
@@ -289,9 +289,12 @@ const Environments = ({ organization, classes }) => {
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
     let response = await modalRef.current.show({
-      title: `Delete Environment ?`,
+      title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
       options: ['DELETE', 'CANCEL'],
+      showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. 
+      
+      Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {

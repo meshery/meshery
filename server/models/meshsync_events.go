@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -40,6 +39,10 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		InstanceID:   instanceID,
 		Token:        token,
 	}
+}
+
+func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
+	return mh.broker
 }
 
 func (mh *MeshsyncDataHandler) Run() error {
@@ -156,7 +159,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	switch event.EventType {
 	case broker.Add:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		result := mh.dbHandler.Create(&obj)
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
@@ -168,7 +171,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 	case broker.Update:
 		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = mutils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 		if result.Error != nil {
@@ -191,7 +194,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = mutils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
 	result := mh.dbHandler.Create(object)
 	regQueue := GetMeshSyncRegistrationQueue()
 
@@ -255,19 +258,27 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
-	var metadata map[string]interface{}
+	var data map[string]interface{}
+	metadata := make(map[string]interface{})
 
 	result := mh.dbHandler.Model(v1alpha1.ComponentDefinitionDB{}).Select("metadata").
-		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
+		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&data)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
-			metadata = K8sMeshModelMetadata
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
-			metadata = K8sMeshModelMetadata
 		}
+		metadata = K8sMeshModelMetadata
+		return metadata
 	}
-
+	strMetadata, err := utils.Cast[string](data["metadata"])
+	if err != nil {
+		return K8sMeshModelMetadata
+	}
+	err = utils.Unmarshal(strMetadata, &metadata)
+	if err != nil {
+		return K8sMeshModelMetadata
+	}
 	return metadata
 }

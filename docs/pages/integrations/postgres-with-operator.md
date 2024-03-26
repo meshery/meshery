@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/postgres-with-operato
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: kubegres
   colorIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg

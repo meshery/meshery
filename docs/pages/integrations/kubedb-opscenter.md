@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubedb-opscenter
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: elasticsearch
   colorIcon: assets/img/integrations/kubedb-opscenter/components/elasticsearch/icons/color/elasticsearch-color.svg

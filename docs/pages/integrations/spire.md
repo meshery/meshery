@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: cluster-federated-trust-domain
   colorIcon: assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg

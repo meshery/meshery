@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus-stack
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: alertmanager-config
   colorIcon: assets/img/integrations/kube-prometheus-stack/components/alertmanager-config/icons/color/alertmanager-config-color.svg

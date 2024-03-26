@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/chaos-mesh
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Chaos Engineering
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: block-chaos
   colorIcon: assets/img/integrations/chaos-mesh/components/block-chaos/icons/color/block-chaos-color.svg

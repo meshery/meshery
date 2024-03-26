@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TrafficLog",
+  "apiVersion": "kuma.io/v1alpha1",
+  "displayName": "Traffic Log",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#003465",
+   "secondaryColor": "",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill:#FFFFFF;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kong-mesh",
+   "version": "2.6.0",
+   "displayName": "kong-mesh",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Cloud Native Network",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.6.0/kong-mesh-2.6.0.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"mesh\": {\n   \"description\": \"Mesh is the name of the Kuma mesh this resource belongs to.\\nIt may be omitted for cluster-scoped resources.\",\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma TrafficLog resource.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Traffic Log\",\n \"type\": \"object\"\n}"
+ }

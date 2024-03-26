@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/bfe
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "BFE has a builtin plugin framework that makes it possible to develop new features rapidly by writing plugins.",

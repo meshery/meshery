@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/gitlab
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: backend
   colorIcon: assets/img/integrations/gitlab/components/backend/icons/color/backend-color.svg

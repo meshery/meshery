@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: agent
   colorIcon: assets/img/integrations/aperture-agent/components/agent/icons/color/agent-color.svg

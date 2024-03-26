@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kyverno-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: kyverno-operator
   colorIcon: assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg

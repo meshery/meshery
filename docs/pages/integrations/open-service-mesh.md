@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/osm
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Configuration an simplier understanding of your Open Service Mesh deployments and microservices",

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pg-db
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: pgcluster
   colorIcon: assets/img/integrations/pg-db/components/pgcluster/icons/color/pgcluster-color.svg

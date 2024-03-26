@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-csi-driv
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: ca-provider-class
   colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg

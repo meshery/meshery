@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/installation/kubernetes/helm
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: bucket
   colorIcon: assets/img/integrations/helm-controller/components/bucket/icons/color/bucket-color.svg

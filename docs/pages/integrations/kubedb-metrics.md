@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubedb-metrics
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",

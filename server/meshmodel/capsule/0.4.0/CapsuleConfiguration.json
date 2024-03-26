@@ -1,1 +1,48 @@
-{"kind":"CapsuleConfiguration","apiVersion":"capsule.clastix.io/v1alpha1","displayName":"Capsule Configuration","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":false,"logoURL":"","model":"capsule","modelDisplayName":"Capsule","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Scheduling \u0026 Orchestration","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"capsule","version":"0.4.0","displayName":"Capsule","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Orchestration \u0026 Management","metadata":null},"metadata":{"source_uri":"https://clastix.github.io/charts/capsule-0.4.6.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"CapsuleConfiguration is the Schema for the Capsule configuration API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CapsuleConfigurationSpec defines the Capsule configuration.\",\n   \"properties\": {\n    \"forceTenantPrefix\": {\n     \"default\": false,\n     \"description\": \"Enforces the Tenant owner, during Namespace creation, to name it using the selected Tenant name as prefix, separated by a dash. This is useful to avoid Namespace name collision in a public CaaS environment.\",\n     \"type\": \"boolean\"\n    },\n    \"protectedNamespaceRegex\": {\n     \"description\": \"Disallow creation of namespaces, whose name matches this regexp\",\n     \"type\": \"string\"\n    },\n    \"userGroups\": {\n     \"default\": [\n      \"capsule.clastix.io\"\n     ],\n     \"description\": \"Names of the groups for Capsule users.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Capsule Configuration\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "CapsuleConfiguration",
+  "apiVersion": "capsule.clastix.io/v1alpha1",
+  "displayName": "Capsule Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "capsule",
+   "modelDisplayName": "Capsule",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "capsule",
+   "version": "0.4.0",
+   "displayName": "Capsule",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://clastix.github.io/charts/capsule-0.4.6.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"CapsuleConfiguration is the Schema for the Capsule configuration API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CapsuleConfigurationSpec defines the Capsule configuration.\",\n   \"properties\": {\n    \"forceTenantPrefix\": {\n     \"default\": false,\n     \"description\": \"Enforces the Tenant owner, during Namespace creation, to name it using the selected Tenant name as prefix, separated by a dash. This is useful to avoid Namespace name collision in a public CaaS environment.\",\n     \"type\": \"boolean\"\n    },\n    \"protectedNamespaceRegex\": {\n     \"description\": \"Disallow creation of namespaces, whose name matches this regexp\",\n     \"type\": \"string\"\n    },\n    \"userGroups\": {\n     \"default\": [\n      \"capsule.clastix.io\"\n     ],\n     \"description\": \"Names of the groups for Capsule users.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Capsule Configuration\",\n \"type\": \"object\"\n}"
+ }

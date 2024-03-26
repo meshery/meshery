@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package config
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrInvalidMeshConfigCode = "1086"
-	ErrUpdateConfigCode      = "1087"
+	ErrInvalidMeshConfigCode = "mesheryctl-1008"
+	ErrUpdateConfigCode      = "mesheryctl-1009"
 )
 
 func ErrInvalidMeshConfig(err error) error {

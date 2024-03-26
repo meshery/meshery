@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/crossplane
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.",

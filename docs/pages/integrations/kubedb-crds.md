@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Database
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: elasticsearch-autoscaler
   colorIcon: assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/color/elasticsearch-autoscaler-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Infrastructure Discovery
 abstract: Discovering Components with MeshSync and Registering as a Connection
 permalink: guides/infrastructure-management/registering-a-connection

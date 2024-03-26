@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: wasm-plugin
   colorIcon: assets/img/integrations/istio-base/components/wasm-plugin/icons/color/wasm-plugin-color.svg

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/grafana-ui-server
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",

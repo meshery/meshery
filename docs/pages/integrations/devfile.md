@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/devfile
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Development environments are quick to create, can be thrown away at will, and can be easily re-created when needed.",

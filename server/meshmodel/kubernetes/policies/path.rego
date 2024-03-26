@@ -12,7 +12,8 @@ ensureParentPathsExist(patches, object) = result {
 
 	missingPaths := {sprintf("/%s", [concat("/", prefixPath)]) |
 		paths[path]
-		path[i]
+		path[i] # walk over path
+
 
 		# If a path is missing, all its subpaths will be added.
 		# Eg: a/b/c: If path b is missing all its subpaths will be added.

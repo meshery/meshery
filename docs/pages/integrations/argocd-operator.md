@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/argocd-operator
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: argo-cd-export
   colorIcon: assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg

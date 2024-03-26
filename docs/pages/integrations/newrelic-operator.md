@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Observability and Analysis
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: alert-channel
   colorIcon: assets/img/integrations/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg

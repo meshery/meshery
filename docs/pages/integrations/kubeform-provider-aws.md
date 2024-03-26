@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubeform-provider-aws
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Cloud Provider
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: provider-config
   colorIcon: assets/img/integrations/kubeform-provider-aws/components/provider-config/icons/color/provider-config-color.svg

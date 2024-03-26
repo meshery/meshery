@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/hexa
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

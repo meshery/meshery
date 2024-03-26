@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/external-secrets-oper
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: external-backend
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-backend/icons/color/external-backend-color.svg

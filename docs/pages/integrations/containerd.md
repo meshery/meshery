@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/containerd
 description: 
 integrations-category: Runtime
 integrations-subcategory: Container Runtime
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Implements a chunk-based content-addressable filesystem on top of a called RAFS (Registry Acceleration File System) format.",

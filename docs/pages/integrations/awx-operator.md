@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: awx-backup
   colorIcon: assets/img/integrations/awx-operator/components/awx-backup/icons/color/awx-backup-color.svg

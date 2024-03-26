@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -109,9 +110,10 @@ func init() {
 		pattern.PatternCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
-		app.AppCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
+		registry.RegistryCmd,
+		components.ComponentsCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)

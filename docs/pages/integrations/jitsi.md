@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/jitsi
 description: 
 integrations-category: Tools
 integrations-subcategory: Video Conferencing
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: backup
   colorIcon: assets/img/integrations/jitsi/components/backup/icons/color/backup-color.svg

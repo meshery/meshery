@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: terminator
   colorIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg

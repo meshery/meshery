@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kong-mesh
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: access-audit
   colorIcon: assets/img/integrations/kong-mesh/components/access-audit/icons/color/access-audit-color.svg

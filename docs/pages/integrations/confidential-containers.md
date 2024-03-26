@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/confidential containe
 description: 
 integrations-category: Runtime
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Allows cloud native application owners to enforce application security requirements.",

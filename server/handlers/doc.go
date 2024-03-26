@@ -610,3 +610,9 @@ type meshsyncResourcesKindsResponseWrapper struct {
 	// in: body
 	Body *models.MeshSyncResourcesKindsAPIResponse
 }
+
+// Payload for meshery pattern file deploy handler idPostDeployPattern idDeleteDeployPattern
+type mesheryPatternFileDeployPayloadWrapper struct {
+	// in: body
+	Body *models.MesheryPatternFileDeployPayload
+}

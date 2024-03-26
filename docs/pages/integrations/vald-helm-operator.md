@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Key Management
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: vald-helm-operator-release
   colorIcon: assets/img/integrations/vald-helm-operator/components/vald-helm-operator-release/icons/color/vald-helm-operator-release-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Mesheryctl system commands
 permalink: guides/mesheryctl/system-commands
 language: en

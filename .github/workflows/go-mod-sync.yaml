@@ -31,7 +31,7 @@ jobs:
       run: cd meshery-extensions;make graphql-sync;
 
     - name: Commit
-      uses: stefanzweifel/git-auto-commit-action@v4
+      uses: stefanzweifel/git-auto-commit-action@v5
       with:
         repository: meshery-extensions
         commit_user_name: l5io

@@ -1,1 +1,48 @@
-{"kind":"InstanceDatasetTemplate","apiVersion":"templates.sitewhere.io/v1alpha4","displayName":"Instance Dataset Template","format":"JSON","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","metadata":{"capabilities":"","genealogy":"","isAnnotation":false,"isModelAnnotation":"FALSE","isNamespaced":false,"logoURL":"","model":"sitewhere-infrastructure","modelDisplayName":"Sitewhere Infrastructure","primaryColor":"#00B39F","published":false,"secondaryColor":"#00D3A9","shape":"circle","styleOverrides":"","subCategory":"Uncategorized","svgColor":"","svgComplete":"","svgWhite":""},"model":{"name":"sitewhere-infrastructure","version":"0.1.13","displayName":"Sitewhere Infrastructure","hostname":"","hostID":"00000000-0000-0000-0000-000000000000","displayhostname":"","category":{"name":"Uncategorized","metadata":null},"metadata":{"source_uri":"https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"},"components":null,"relationships":null},"schema":"{\n \"description\": \"InstanceDatasetTemplate is the Schema for the instancedatasets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstanceDatasetTemplateSpec defines the desired state of InstanceDatasetTemplate\",\n   \"properties\": {\n    \"datasets\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Datasets is map of datasets\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Instance Dataset Template\",\n \"type\": \"object\"\n}"}
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "InstanceDatasetTemplate",
+  "apiVersion": "templates.sitewhere.io/v1alpha4",
+  "displayName": "Instance Dataset Template",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "sitewhere-infrastructure",
+   "modelDisplayName": "Sitewhere Infrastructure",
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "sitewhere-infrastructure",
+   "version": "0.1.13",
+   "displayName": "Sitewhere Infrastructure",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"InstanceDatasetTemplate is the Schema for the instancedatasets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstanceDatasetTemplateSpec defines the desired state of InstanceDatasetTemplate\",\n   \"properties\": {\n    \"datasets\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Datasets is map of datasets\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Instance Dataset Template\",\n \"type\": \"object\"\n}"
+ }

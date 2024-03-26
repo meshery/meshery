@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/buildpacks
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Transform application source code into OCI images.",

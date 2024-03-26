@@ -35,7 +35,7 @@ import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import { DeleteIcon } from '@layer5/sistent-svg';
+import { DeleteIcon } from '@layer5/sistent';
 import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
@@ -285,7 +285,7 @@ const Workspaces = ({ organization, classes }) => {
           organization: {
             ...updatedSchema.rjsfSchema.properties.organization,
             enum: [organization?.id],
-            enumName: [organization?.name],
+            enumNames: [organization?.name],
           },
         },
       }),

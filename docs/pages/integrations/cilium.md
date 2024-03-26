@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/cilium
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Ensure Cilium Service Mesh daemonset operation",

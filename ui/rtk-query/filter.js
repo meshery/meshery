@@ -17,6 +17,7 @@ const filters = api
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
+            visibility: queryArg.visibility,
           },
           method: 'GET',
         }),

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/curiefense
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 featureList: [
   "Protects all forms of web traffic, services, and APIs.",

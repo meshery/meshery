@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-api-gateway-opera
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: awsapi-gateway
   colorIcon: assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg

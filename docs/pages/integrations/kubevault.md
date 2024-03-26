@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/kubevault
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Uncategorized
-registrant: artifacthub
+registrant: Artifact Hub
 components: 
 - name: aws-role
   colorIcon: assets/img/integrations/kubevault/components/aws-role/icons/color/aws-role-color.svg
