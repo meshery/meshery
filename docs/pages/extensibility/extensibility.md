@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Extensibility
 permalink: extensibility
 type: Extensibility

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Configuring Autocompletion for `mesheryctl`
 permalink: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
 language: en

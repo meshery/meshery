@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Performance Management Guides
 permalink: guides/performance-management
 type: guides

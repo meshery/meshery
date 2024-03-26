@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Authenticating with Meshery via CLI
 permalink: guides/mesheryctl/authenticate-with-meshery-via-cli
 language: en
