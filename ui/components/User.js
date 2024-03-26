@@ -20,6 +20,8 @@ import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user'
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { styled } from '@mui/material/styles';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -45,7 +47,7 @@ const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  // const anchorEl = useRef(null);
+  const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
 
@@ -87,11 +89,19 @@ const User = (props) => {
     props.updateUser({ user: userData });
     setUserLoaded(true);
   } else if (isGetUserError) {
-    console.error('Error fetching user: ', getUserError?.data);
+    notify({
+      message: 'Error fetching user',
+      event_type: EVENT_TYPES.ERROR,
+      details: getUserError?.data,
+    });
   }
 
   if (isTokenError) {
-    console.error('Error fetching token: ', tokenError?.data);
+    notify({
+      message: 'Error fetching token',
+      event_type: EVENT_TYPES.ERROR,
+      details: tokenError?.data,
+    });
   }
 
   if (!capabilitiesLoaded && capabilitiesRegistry) {
