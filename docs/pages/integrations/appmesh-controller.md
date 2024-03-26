@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS App Mesh
 subtitle: Collaborative and visual infrastructure as code for AWS App Mesh
 image: /assets/img/integrations/appmesh-controller/icons/color/appmesh-controller-color.svg

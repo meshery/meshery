@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubedb UI Server
 subtitle: Collaborative and visual infrastructure as code for Kubedb UI Server
 image: /assets/img/integrations/kubedb-ui-server/icons/color/kubedb-ui-server-color.svg

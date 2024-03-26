@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Openkruise
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
 image: /assets/img/integrations/openkruise/icons/color/openkruise-color.svg

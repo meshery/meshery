@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: New Relic Operator
 subtitle: Collaborative and visual infrastructure as code for New Relic Operator
 image: /assets/img/integrations/newrelic-operator/icons/color/newrelic-operator-color.svg

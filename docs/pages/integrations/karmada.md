@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Karmada
 subtitle: Collaborative and visual infrastructure as code for Karmada
 image: /assets/img/integrations/karmada/icons/color/karmada-color.svg

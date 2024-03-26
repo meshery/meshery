@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Percona Postgres Operator
 subtitle: Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.
 image: /assets/img/integrations/pg-operator/icons/color/pg-operator-color.svg
