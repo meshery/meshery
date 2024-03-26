@@ -133,6 +133,7 @@
             "ServiceAccount": [
               [
                 "settings",
+                "spec",
                 "secrets",
                 "_",
                 "name"
