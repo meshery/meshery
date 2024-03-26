@@ -326,7 +326,7 @@ docs-build:
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
