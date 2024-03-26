@@ -5,6 +5,7 @@ permalink: /archive/
 excluded_in_search: true
 language: en
 list: exclude
+published: false
 ---
 # News Archive
 
