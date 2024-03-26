@@ -2,7 +2,7 @@ package stages
 
 import (
 	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 )
 
 // import "github.com/layer5io/meshery/server/models/pattern/patterns"
@@ -26,7 +26,7 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			act.Terminate(err)
 			return
 		}
-		var comps []v1alpha1.Component
+		var comps []v1beta1.Component
 		processAnnotations(data.Pattern)
 		for name, svc := range data.Pattern.Services {
 			if mesheryDefinedAPIVersions[svc.APIVersion] {
@@ -37,7 +37,7 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 				continue
 			}
 			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
-				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
+				v1beta1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
 				comp.ObjectMeta.Annotations,
 			)
 			comps = append(comps, comp)
