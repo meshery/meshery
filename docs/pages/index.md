@@ -135,6 +135,25 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">Hands-on Labs using Meshery Playground</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_tutorials = site.pages | where: "type","guides" %}
+        {% for item in sorted_tutorials %}
+        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
         </p>
       </summary>

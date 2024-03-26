@@ -164,6 +164,8 @@
       children:
       - title: Exploring Kubernetes Pods
         url: guides/tutorials/kubernetes-pods
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
