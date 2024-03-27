@@ -36,8 +36,7 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
     - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-- [Post-Installation Steps](#post-installation-steps)
-  - [Access Meshery UI](#access-meshery-ui)
+  - [Post-Installation Steps](#post-installation-steps)
 
 # In-cluster Installation
 
@@ -91,13 +90,13 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
-## Access Meshery UI
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-Note:   _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
+{% include_cached installation/accessing-meshery-ui.md %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}

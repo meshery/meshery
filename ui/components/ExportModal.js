@@ -9,14 +9,14 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import PatternIcon from '@/assets/icons/Pattern';
-import { CloseIcon } from '@layer5/sistent-svg';
+import { CloseIcon } from '@layer5/sistent';
 import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DialogActions } from '@layer5/sistent-components';
+import { DialogActions } from '@layer5/sistent';
 import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 import { Colors } from '@/themes/app';
 
