@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 component: Tanzu Service Mesh

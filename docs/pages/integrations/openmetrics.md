@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: OpenMetrics
 subtitle: Collaborative and visual infrastructure as code for OpenMetrics
 image: /assets/img/integrations/openmetrics/icons/color/openmetrics-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Using Multiple Adapters
 permalink: installation/multiple-adapters
 type: installation

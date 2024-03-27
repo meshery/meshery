@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 component: Open Service Mesh
