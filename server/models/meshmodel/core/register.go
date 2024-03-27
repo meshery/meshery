@@ -57,7 +57,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	count := 0
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
-		err = reg.RegisterEntity(meshmodel.Host{
+		_, _, err = reg.RegisterEntity(meshmodel.Host{
 			Hostname: "kubernetes",
 			Metadata: ctxID,
 		}, c)
@@ -117,7 +117,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 			fmt.Println("err here: ", err.Error())
 			return
 		}
-		_ = reg.RegisterEntity(meshmodel.Host{
+		_, _, _ = reg.RegisterEntity(meshmodel.Host{
 			Hostname: meshmodel.Kubernetes{}.String(),
 			Metadata: contextID,
 		}, v1alpha1.ComponentDefinition{

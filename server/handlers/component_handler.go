@@ -1273,7 +1273,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		err = h.registryManager.RegisterEntity(cc.Host, c)
+		_, _, err = h.registryManager.RegisterEntity(cc.Host, c)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
