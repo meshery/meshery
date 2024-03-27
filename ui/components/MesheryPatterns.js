@@ -81,6 +81,12 @@ import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
+import {
+  usePublishPatternMutation,
+  useUnpublishPatternMutation,
+  useDeployPatternMutation,
+  useUndeployPatternMutation,
+} from '@/rtk-query/design';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -363,7 +369,6 @@ function MesheryPatterns({
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
-  const DEPLOY_URL = `${PATTERN_URL}/deploy`;
   const CLONE_URL = '/clone';
   const [modalOpen, setModalOpen] = useState({
     open: false,
@@ -420,6 +425,11 @@ function MesheryPatterns({
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
+
+  const [publishPattern] = usePublishPatternMutation();
+  const [unPublishPattern] = useUnpublishPatternMutation();
+  const [deployPattern] = useDeployPatternMutation();
+  const [undeployPattern] = useUndeployPatternMutation();
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
@@ -760,6 +770,52 @@ function MesheryPatterns({
     });
   };
 
+  const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
+    const payload = {
+      id: publishModal.pattern?.id,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
+    };
+
+    updateProgress({ showProgress: true });
+
+    publishPattern({
+      patternPayload: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        if (user.role_names.includes('admin')) {
+          notify({
+            message: `${publishModal.pattern?.name} Design Published`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        } else {
+          notify({
+            message:
+              'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.PUBLISH_CATALOG.error_msg}: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
+  };
+
   const handlePublishModal = (ev, pattern) => {
     if (canPublishPattern) {
       ev.stopPropagation();
@@ -774,26 +830,35 @@ function MesheryPatterns({
   const handleUnpublishModal = (ev, pattern) => {
     if (canPublishPattern) {
       ev.stopPropagation();
+
       return async () => {
         let response = await modalRef.current.show({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
           options: ['Yes', 'No'],
         });
+
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/pattern/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
-            () => {
+
+          unPublishPattern({
+            patternPayload: JSON.stringify({ id: pattern?.id }),
+          })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `Design Unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch((err) => {
+              notify({
+                message: `${ACTION_TYPES.UNPUBLISH_CATALOG.error_msg}: ${err.error}`,
+                event_type: EVENT_TYPES.ERROR,
+                details: err.toString(),
+              });
+            });
         }
       };
     }
@@ -809,25 +874,58 @@ function MesheryPatterns({
 
   const handleDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
+
+    //NOTE: needed to hardcode 'pattern/deploy' route here since for some reason I kept getting errors because
+    //the resulting URL would be '/api/api/pattern/deploy', not sure if rtk-query already adds the /api endpoint
+    //to the ctxUrl path. Let me know if there's another work around here.
+    deployPattern({
+      url: ctxUrl('/pattern/deploy', selectedK8sContexts),
+      patternPayload: {
+        pattern_file: pattern_file,
+        pattern_id: pattern_id,
       },
-      () => {
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" Design Deployed`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.DEPLOY_PATTERN.error_msg}: ${err.error}`,
+          eventType: EVENT_TYPES.ERROR,
+        });
+      });
+  };
+
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
+    updateProgress({ showProgress: true });
+
+    undeployPattern({
+      //NOTE: Same thing as for 'deployPattern'
+      url: ctxUrl('/pattern/deploy', selectedK8sContexts),
+      patternPayload: {
+        pattern_file: pattern_file,
+        pattern_id: pattern_id,
       },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" Design undeployed`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        notify({
+          message: `${ACTION_TYPES.UNDEPLOY_PATTERN.error_msg}: ${err.error}`,
+          eventType: EVENT_TYPES.ERROR,
+        });
+      });
   };
 
   const handleVerify = (e, pattern_file, pattern_id) => {
@@ -857,66 +955,6 @@ function MesheryPatterns({
         handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
       },
       handleError('Error validating pattern'),
-    );
-  };
-
-  const handleUnDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'DELETE',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design undeployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
-    );
-  };
-  const handlePublish = (formData) => {
-    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-      ?.filter((model) =>
-        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
-      )
-      ?.map((model) => model.name);
-
-    const payload = {
-      id: publishModal.pattern?.id,
-      catalog_data: {
-        ...formData,
-        compatibility: compatibilityStore,
-        type: _.toLower(formData?.type),
-      },
-    };
-    updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
-        updateProgress({ showProgress: false });
-        if (user.role_names.includes('admin')) {
-          notify({
-            message: `${publishModal.pattern?.name} Design Published`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        } else {
-          notify({
-            message:
-              'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
   };
 
