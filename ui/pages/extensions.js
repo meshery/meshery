@@ -46,7 +46,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
               className={classes.button}
               onClick={(e) => handleSignUp(e)}
             >
-              {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
+              {hasAccessToMeshMap ? 'Open' : 'Sign Up'}
             </Button>
           </div>
         }
@@ -105,8 +105,49 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   );
 };
 
+const ServiceMeshPerformanceCard = ({ classes, githubActionEnabled = false }) => {
+  const handleEnable = (e) => {
+    window.open(
+      'https://github.com/marketplace/actions/performance-testing-with-meshery',
+      '_blank',
+    );
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+          GitHub Action: Performance Analysis
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <MeshMapSnapShotLogo />
+          Integrate Meshery performance analysis GitHub Action into your CI/CD pipeline to benchmark
+          service performance using load generators and statistical analysis, catching regressions
+          early by monitoring percentile trends like P99.
+        </Typography>
+        {
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={githubActionEnabled}
+              className={classes.button}
+              onClick={(e) => handleEnable(e)}
+            >
+              {githubActionEnabled ? 'Open' : 'Enable'}
+            </Button>
+          </div>
+        }
+      </div>
+    </Grid>
+  );
+};
+
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
+export const WrappedServiceMeshPerformanceCard = withStyles(styles)(ServiceMeshPerformanceCard);
 
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
@@ -150,7 +191,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
       },
       () => {
         notify({
-          message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
+          message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       },
@@ -175,6 +216,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
         <Grid container spacing={1}>
           <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
+          <WrappedServiceMeshPerformanceCard githubActionEnabled={false} />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
               <Typography className={classes.frontContent} variant="h5" component="div">
@@ -218,14 +260,14 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                 }}
               >
                 <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                  Explore the{' '}
+                  {/* Explore the{' '} */}
                   <a
                     href="https://meshery.io/catalog"
                     target="_blank"
                     rel="noreferrer"
                     className={classes.link}
                   >
-                    Meshery Catalog
+                    Open Meshery Catalog
                   </a>
                 </Typography>
 
