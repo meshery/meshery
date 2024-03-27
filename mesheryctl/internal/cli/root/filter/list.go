@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -30,7 +29,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 var (
@@ -93,9 +91,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		for {
 			// Clear the terminal screen and print pagination details
-			if terminal.IsTerminal(int(os.Stdout.Fd())) {
-				fmt.Print("\033[H\033[2J") // ANSI escape code to clear the screen
-			}
+			utils.ClearLine()
 			fmt.Printf("Total number of filters: %d\n", totalFilters)
 			fmt.Printf("Page: %d of %d\n", (startIndex/pageSize)+1, (totalFilters+pageSize-1)/pageSize)
 
@@ -110,16 +106,24 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			// Wait for user input to navigate pages
 			fmt.Println("Press Enter or ↓ to continue, Esc or Ctrl+C to exit")
 
-			char, key, err := keyboard.GetKey()
+			keysEvents, err := keyboard.GetKeys(10)
 			if err != nil {
-				utils.Log.Error(err)
 				return err
+			}
+			defer func() {
+				_ = keyboard.Close()
+			}()
+
+			event := <-keysEvents
+			if event.Err != nil {
+				utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
+				break
 			}
 
 			// Handle user input
-			if key == keyboard.KeyEsc || key == keyboard.KeyCtrlC {
+			if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
 				break
-			} else if char == '\r' || key == keyboard.KeyArrowDown {
+			} else if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
 				startIndex += pageSize
 				endIndex = min(startIndex+pageSize, totalFilters)
 				pageNumber = startIndex/pageSize + 1
