@@ -13,35 +13,98 @@ list: include
 Relationships within Model play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected Components.
 
 1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models, or potentially other components, models, or environmental considerations.
-2. Propose a specific visual representation for the relationship.
-3. Visual representation examples:
 
-   - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png)
-   - [Sibling]({{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png)
-   - [Binding]({{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png)
-   - [Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png)
+2. Propose the appropriate relationship type, using one of the predefined set of relationship types, or suggest a new relationship where an existing type does not fit.
+3. Create a Relationship Definition (yaml), including the following attributes:
+   - `kind`: The type of relationship (e.g., hierarchical, edge, sibling).
+   - `subType`: The subtype of the relationship (e.g., parent, mount, network).
+   - `selectors`: The scope of the relationship, including the components involved and any constraints.
+   - `evaluationQuery`: The OPA policy to invoke for relationship evaluation.
+   - `documentation`: A description of the relationship, its purpose, and any constraints or considerations.
+4. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego).
+5. Submit a pull request to the Meshery repository with the new relationship definition.
 
-4. Propose the appropriate relationship type, using one of the predefined set of relationship types, or suggest a new relationship where an existing type does not fit.
-5. Create a Relationship Definition (yaml).
-6. Create a policy for evaluation of the relationship (rego).
-   - Review existing policies and relationships they satisfy. The relationships you define fall within the scope of the existing policies.
-7. Add in Documentation.
+### Relationship Visualizations
+## Relationship Types
 
-### Existing Relationships, their Definitions, their Types, and their Subtypes
+1. Edge
+   1. Network
+   1. Firewall
+   1. Binding
+      1. Mount
+      1. Permission
+1. Heirarchical
+   1. Inventory
+   1. Parent
+
+<details open>
+<summary>Example Visual Representations</summary>
+    <details close><summary>Hierarchical</summary>
+    <figure><br><figcaption>Hierarchical - Parent</figcaption>
+    <img alt="Hierarchical - Parent: Namespace to other components" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
+    </figure>
+    </details>
+    <details close><summary>Sibling</summary>
+    <figure><br><figcaption>Hierarchical - Sibling: Matching Label Selectors</figcaption>
+    <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
+    </figure>
+    </details>
+    <details close><summary>Binding</summary>
+    <figure><br><figcaption>Hierarchical - Binding: Cluster Role with Cluster Role Binding to ConfigMap</figcaption>
+    <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
+    </figure>
+    </details>
+    <details close><summary>Edge</summary>
+    <figure><br><figcaption>Edge - Mount</figcaption>
+    <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Network: Ingress to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Pod</figcaption>
+    <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
+    <figure><figcaption>Edge - Network: Service to Service</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
+    <figure><figcaption>Edge - Network: Service to Endpoint</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
+    <figure><figcaption>Edge - Network: Service to Deployment</figcaption>
+    <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Permission</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
+    <figure><figcaption>Edge - Permission: Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
+    <figure><figcaption>Edge - Permission: Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Pod</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Service</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
+    <figure><figcaption>Edge - Permission: Cluster Role to Deployment</figcaption>
+    <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
+    </figure>
+    <br>
+    <figure><figcaption>Edge - Network Policy</figcaption>
+    <img alt="Edge - Network Policy" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
+    </figure>
+    </details>
+</details>
+
+### Existing Relationships: Kinds, Types, Subtypes
 
 1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection that involves the inheritance of features from one Component to the other.
 
-- `Parent`: A parent-child relationship implies the requirement of the parent component before the child component can be created. `For example`, a "Namespace" in Kubernetes can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it. 
-- `Inventory`: A hierarchical inventory relationship implies the configuration of a(parent) component is patched with the configuration of other (child) component. `For example`, Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features. 
+    1. `Parent`: A parent-child relationship implies the requirement of the parent component before the child component can be created. `For example`, a "Namespace" in Kubernetes can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it. 
+    1. `Inventory`: A hierarchical inventory relationship implies the configuration of a(parent) component is patched with the configuration of other (child) component. `For example`, Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features. 
 
-2. `Edge` relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
+1. `Edge` relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
 
-- `Mount`: This subtype addresses the storage and access possibility between involved components. `For example`, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
-- `Network`: This deals with IP addresses and DNS names and provides stable endpoints for communication. `For example`, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment". 
-- `Firewall`: This acts as an intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. `For example`, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster. 
-- `Permission`: This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. `For example`, a "Role" can define permissions for Components to access specific resources. 
-
-3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category. `For example`, a Service and a Pod in Kubernetes are siblings as they share a common parent and are at the same hierarchical level.
+    1. `Mount`: This subtype addresses the storage and access possibility between involved components. `For example`, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
+    1. `Network`: This deals with IP addresses and DNS names and provides stable endpoints for communication. `For example`, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment". 
+   1. `Firewall`: This acts as an intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. `For example`, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster. 
+    1. `Permission`: This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. `For example`, a "Role" can define permissions for Components to access specific resources. 
+1. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category. `For example`, a Service and a Pod in Kubernetes are siblings as they share a common parent and are at the same hierarchical level.
 
 ### Structure of Selectors
 
