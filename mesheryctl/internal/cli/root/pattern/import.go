@@ -21,7 +21,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -31,13 +30,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	name string
+)
+
 var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import pattern manifests",
 	Long:  `Import the pattern manifest into Meshery`,
 	Example: `
 // Import pattern manifest
-mesheryctl pattern import -f [file/URL] -s [source-type]
+mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 
@@ -92,7 +95,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
 			"pattern_data": map[string]interface{}{
-				"name":         path.Base(file),
+				"name":         "name",
 				"pattern_file": content,
 			},
 			"save": save,
@@ -127,29 +130,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		pattern = response[0]
 	} else {
 		var jsonValues []byte
-		url, path, err := utils.ParseURLGithub(file)
-		if err != nil {
-			return nil, utils.ErrParseGithubFile(err, file)
-		}
 
-		utils.Log.Debug(url)
-		utils.Log.Debug(path)
+		jsonValues, _ = json.Marshal(map[string]interface{}{
+			"url":  file,
+			"save": save,
+			"name": name,
+		})
 
-		// save the pattern with Github URL
-		if path != "" {
-			jsonValues, _ = json.Marshal(map[string]interface{}{
-				"url":  url,
-				"path": path,
-				"save": save,
-			})
-		} else {
-			jsonValues, _ = json.Marshal(map[string]interface{}{
-				"url":  url,
-				"save": save,
-			})
-		}
-
-		req, err = utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err := utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, utils.ErrCreatingRequest(err)
 		}
@@ -183,4 +171,5 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the pattern file")
 }
