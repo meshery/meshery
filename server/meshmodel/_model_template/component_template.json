@@ -1,0 +1,51 @@
+{
+    "id": "",
+    "kind": "",
+    "apiVersion": "",
+    "displayName": "",
+    "format": "JSON",
+    "hostID": "",
+    "metadata": {
+     "capabilities": "",
+     "defaultData": "",
+     "genealogy": "",
+     "isAnnotation": false,
+     "isCustomResource": false,
+     "isModelAnnotation": "FALSE",
+     "isNamespaced": true,
+     "logoURL": "",
+     "model": "",
+     "modelDisplayName": "",
+     "primaryColor": "",
+     "published": true,
+     "secondaryColor": "",
+     "shape": "",
+     "shapePolygonPoints": "",
+     "styleOverrides": "",
+     "styles": "",
+     "subCategory": "",
+     "svgColor": "",
+     "svgComplete": "",
+     "svgWhite": ""
+    },
+    "model": {
+     "id": "",
+     "name": "",
+     "version": "",
+     "displayName": "",
+     "status": "",
+     "hostID": "",
+     "category": {
+      "name": "",
+      "metadata": null
+     },
+     "metadata": {
+      "isAnnotation": false,
+      "svgColor": "",
+      "svgWhite": ""
+     },
+     "components": null,
+     "relationships": null
+    },
+    "schema": ""
+   }

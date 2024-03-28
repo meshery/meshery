@@ -1,0 +1,53 @@
+{
+    "apiVersion": "",
+    "kind": "Hierarchical",
+    "metadata": {
+      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+    },
+    "model": {
+      "name": "",
+      "version": "",
+      "displayName": "",
+      "category": {
+        "name": "",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Inventory",
+    "evaluationQuery": "heirarchical_inventory_relationship",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "",
+              "model": "",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatorRef": [
+                ],
+                "description": ""
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "",
+              "model": "",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                 ],
+                "description": ""
+              }
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    ]
+}

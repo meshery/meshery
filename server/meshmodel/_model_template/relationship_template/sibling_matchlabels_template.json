@@ -1,0 +1,39 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Sibling",
+    "metadata": {
+      "description": "A relationship between two objects that are siblings."
+    },
+    "model": {
+      "name": "",
+      "version": "",
+      "displayName": "",
+      "category": {
+        "name": "",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "MatchLabels",
+    "evaluationQuery": "sibling_matchlabels_relationship",
+    "selectors": [{
+      "allow": {
+        "from": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ],
+        "to": [
+          {
+            "kind": "",
+            "model": ""
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }]
+  }
