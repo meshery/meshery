@@ -24,7 +24,7 @@ RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.15.3 as seed_content
+FROM alpine:3.18.6 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -62,7 +62,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM alpine:3.15.3
+FROM alpine:3.18.6
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
 ENV GLIBC_VERSION=2.34-r0
 # To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
