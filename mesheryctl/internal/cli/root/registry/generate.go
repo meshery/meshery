@@ -50,6 +50,7 @@ var (
 
 	registryLocation    string
 	totalAggregateModel int
+	defVersion          = "v1.0.0"
 )
 
 var generateCmd = &cobra.Command{
@@ -225,15 +226,15 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			isModelPublished, _ := modelDef.Metadata["published"].(bool)
 
 			for _, comp := range comps {
+				comp.Version = defVersion
 				if comp.Metadata == nil {
 					comp.Metadata = make(map[string]interface{})
 				}
-				// If model is published mark the comps as published.
-				// The published attribute controls whether the comp will be registered inside registry or not.
-				comp.Metadata["published"] = isModelPublished
+				// Assign the component status corresponding to model status.
+				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status. 
+				// The status "enabled" indicates that the component will be registered inside the registry.
 				comp.Metadata["shape"] = model.Shape
 				comp.Model = *modelDef
 				err := comp.WriteComponentDefinition(compDirName)
@@ -369,8 +370,9 @@ func createVersionDirectoryForModel(modelDefPath, version string) (string, error
 }
 
 func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1beta1.Model, error) {
-	modelDef := model.CreateModelDefinition(version)
-	modelDefPath := filepath.Join(location, modelDef.Name)
+	modelDef := model.CreateModelDefinition(version, defVersion)
+	modelDefPath := filepath.Join(registryLocation, modelDef.Name)
+
 	err := modelDef.WriteModelDefinition(modelDefPath)
 	if err != nil {
 		return "", nil, err

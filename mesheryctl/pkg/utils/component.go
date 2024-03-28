@@ -46,11 +46,11 @@ type ComponentCSV struct {
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
-func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) (v1beta1.ComponentDefinition, error) {
+func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (v1beta1.ComponentDefinition, error) {
 	componentDefinition := &v1beta1.ComponentDefinition{
 		VersionMeta: v1beta1.VersionMeta{
 			SchemaVersion: v1beta1.SchemaVersion,
-			Version:       "v1.0.0", // remove hardcoding
+			Version:       defVersion,
 		},
 		DisplayName: c.Component,
 		Format:      "JSON",

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -54,10 +55,11 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
-func (mcv *ModelCSV) CreateModelDefinition(version string) v1beta1.Model {
-	var isModelPublished, isAnnotation bool
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.Model {
+	var isAnnotation bool
+	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
-		isModelPublished = true
+		status = entity.Enabled
 	}
 	if strings.ToLower(mcv.IsAnnotation) == "true" {
 		isAnnotation = true
@@ -76,7 +78,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1beta1.Model {
 	model := v1beta1.Model{
 		Name: mcv.Model,
 		VersionMeta: v1beta1.VersionMeta{
-			Version:       version,
+			Version:       defVersion,
 			SchemaVersion: v1beta1.SchemaVersion,
 		},
 		DisplayName: mcv.ModelDisplayName,
@@ -85,11 +87,14 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1beta1.Model {
 			"svgColor":     svgColor,
 			"svgWhite":     svgWhite,
 			"svgComplete":  mcv.SVGComplete,
-			"subCategory":  mcv.SubCategory, // move as first class attribute
-			"published":    isModelPublished,
 		},
+		SubCategory: mcv.SubCategory,
+		Status:      status,
 		Category: v1beta1.Category{
 			Name: mcv.Category,
+		},
+		Model: v1beta1.ModelEntity{
+			Version: version,
 		},
 	}
 	return model
