@@ -221,7 +221,10 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       width: '70%'
     },
-  }
+  },
+  displayIcon: {
+   fill: theme.palette.secondary.iconMain
+  },
   // Define other styles as needed
 }));
 

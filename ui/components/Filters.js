@@ -16,17 +16,13 @@ import {
   Button,
 } from '@material-ui/core';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
-import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
@@ -38,7 +34,6 @@ import ConfirmationMsg from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
-import SaveIcon from '@material-ui/icons/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
@@ -51,7 +46,14 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  CloseIcon,
+  DeleteIcon,
+  FullScreenIcon,
+  FullScreenIconExit,
+  ResponsiveDataTable,
+  SaveAsIcon,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -110,6 +112,9 @@ const styles = (theme) => ({
       display: 'none',
     },
   },
+  displayIcon: {
+    fill: theme.palette.secondary.iconMain,
+  },
 });
 
 function TooltipIcon({ children, onClick, title }) {
@@ -157,13 +162,13 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           onClick={toggleFullScreen}
         >
           {fullScreen ? (
-            <FullscreenExitIcon style={iconMedium} />
+            <FullScreenIconExit className={classes.displayIcon} style={iconMedium} />
           ) : (
-            <FullscreenIcon style={iconMedium} />
+            <FullScreenIcon className={classes.displayIcon} style={iconMedium} />
           )}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon style={iconMedium} />
+          <CloseIcon className={classes.displayIcon} style={iconMedium} />
         </TooltipIcon>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -198,7 +203,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
               })
             }
           >
-            <SaveIcon style={iconMedium} />
+            <SaveAsIcon className={classes.displayIcon} style={iconMedium} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete Filter">
@@ -215,7 +220,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
               })
             }
           >
-            <DeleteIcon style={iconMedium} />
+            <DeleteIcon className={classes.displayIcon} style={iconMedium} />
           </IconButton>
         </Tooltip>
       </DialogActions>
