@@ -345,7 +345,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")
-
+	gMux.Handle("/api/meshmodel/download", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.DownloadEntity), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodel/view", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ViewHandler), models.NoAuth))).Methods("GET")
 	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
 	gMux.Handle("/user/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

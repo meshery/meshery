@@ -338,6 +338,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	ID := "00000000-0000-0000-0000-000000000000"
+	if userID == ID {
+		return nil, nil
+	}
 	if !l.Capabilities.IsSupported(UsersProfile) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersProfile", l.ProviderName)

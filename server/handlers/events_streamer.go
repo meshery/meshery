@@ -50,6 +50,8 @@ type statusIDs struct {
 // 	200: eventsResponseWrapper
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	ownerID := "00000000-0000-0000-0000-000000000000"
+	ownerUserID := uuid.FromStringOrNil(ownerID)
 	userID := uuid.FromStringOrNil(user.ID)
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
@@ -66,7 +68,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
 
-	eventsResult, err := provider.GetAllEvents(filter, userID)
+	eventsResult, err := provider.GetAllEvents(filter, userID, ownerUserID)
 	if err != nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
@@ -86,9 +88,11 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // responses:
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	ownerID := "00000000-0000-0000-0000-000000000000"
+	ownerUserID := uuid.FromStringOrNil(ownerID)
 	userID := uuid.FromStringOrNil(user.ID)
 
-	eventTypes, err := provider.GetEventTypes(userID)
+	eventTypes, err := provider.GetEventTypes(userID, ownerUserID)
 	if err != nil {
 		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
 		return

@@ -3,9 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/environments"
@@ -38,7 +39,6 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 
 	q := req.URL.Query()
-
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))

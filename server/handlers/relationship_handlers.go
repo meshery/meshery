@@ -204,7 +204,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = h.registryManager.RegisterEntity(cc.Host, r)
+		_, _, err = h.registryManager.RegisterEntity(cc.Host, r)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)

@@ -14,13 +14,17 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-/**
+/*
+*
+
 	Contains resolvers for,
 	1. Performing the synthetic test for the Operator and its controllers and returns their latest status.
-	
+
 	[Deprecated, the connection states should be used to control the behaviour [Connected/Disconnected]]
 	2. Invoking action on the Operator (Provisoning/Deprovisioning)
-**/
+
+*
+*/
 type operatorStatusK8sContext struct {
 	ctxID      string
 	processing interface{}
