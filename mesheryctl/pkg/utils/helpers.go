@@ -134,6 +134,8 @@ const (
 	cmdModelView       cmdType = "model view"
 	cmdRegistryPublish cmdType = "registry publish"
 	cmdRegistry        cmdType = "regisry"
+	cmdConnectionList  cmdType = "connection list"
+	cmdConnectionDelete  cmdType = "connection delete"
 )
 
 const (
