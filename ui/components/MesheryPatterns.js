@@ -967,7 +967,7 @@ function MesheryPatterns({
             return false;
           });
           // setPage(result.page || 0);
-          // setPageSize(result.page_size || 0);
+          setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(filteredPatterns);
           setVisibilityFilter(visibilityFilter);
