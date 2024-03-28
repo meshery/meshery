@@ -784,7 +784,11 @@ function MesheryPatterns({
           updateProgress({ showProgress: true });
           dataFetch(
             `/api/pattern/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
+            {
+              credentials: 'include',
+              method: 'DELETE',
+              body: JSON.stringify({ id: pattern?.id }),
+            },
             () => {
               updateProgress({ showProgress: false });
               notify({
@@ -1367,6 +1371,7 @@ function MesheryPatterns({
 
   async function showModal(count, patterns) {
     console.log('patterns to be deleted', count, patterns);
+
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 

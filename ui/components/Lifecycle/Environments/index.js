@@ -288,6 +288,7 @@ const Environments = ({ organization, classes }) => {
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
+
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
@@ -335,6 +336,7 @@ const Environments = ({ organization, classes }) => {
 
   const handleBulkDeleteEnvironmentConfirm = async (e) => {
     e.stopPropagation();
+
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,

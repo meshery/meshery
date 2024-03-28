@@ -443,11 +443,16 @@ function MesheryFilters({
           For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.
           `,
         });
+
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
           dataFetch(
             `/api/filter/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: filter?.id }) },
+            {
+              credentials: 'include',
+              method: 'DELETE',
+              body: JSON.stringify({ id: filter?.id }),
+            },
             () => {
               updateProgress({ showProgress: false });
               notify({

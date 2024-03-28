@@ -998,6 +998,7 @@ function Connections(props) {
 
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
+
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
@@ -1041,15 +1042,6 @@ function Connections(props) {
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -1073,6 +1065,7 @@ function Connections(props) {
   const handleFlushMeshSync = (index) => {
     return async () => {
       handleActionMenuClose();
+
       let response = await meshSyncResetRef.current.show({
         title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,

@@ -189,6 +189,7 @@ function MesherySettingsNew({
   const handleFlushMeshSync = (index) => {
     return async () => {
       handleMenuClose(index);
+
       let response = await meshSyncResetRef.current.show({
         title: `Flush MeshSync data for ${data[index].context} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${data[index].context}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
