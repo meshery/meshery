@@ -274,7 +274,7 @@ func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata string) string {
 	formattedName := utils.FormatName(m.Model)
 
 	var template string = `---
-layout: enhanced
+layout: default
 title: %s
 subtitle: %s
 image: /assets/img/integrations/%s/icons/color/%s-color.svg
