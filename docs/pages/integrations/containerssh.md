@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Containerssh
 subtitle: Collaborative and visual infrastructure as code for Containerssh
 image: /assets/img/integrations/containerssh/icons/color/containerssh-color.svg

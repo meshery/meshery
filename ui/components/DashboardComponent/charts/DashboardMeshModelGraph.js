@@ -2,7 +2,7 @@ import Grid from '@material-ui/core/Grid';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
-import { donut, pie } from 'billboard.js';
+import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
@@ -174,7 +174,21 @@ function MeshModelCategories({ classes }) {
       data: {
         columns: cleanedData,
         colors: dataToColors(cleanedData),
-        type: pie(),
+        type: donut(),
+      },
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
+        },
+      },
+      donut: {
+        title: 'Models\nby Category',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
+        },
       },
       tooltip: {
         format: {

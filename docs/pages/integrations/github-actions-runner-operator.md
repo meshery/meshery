@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Github Actions Runner Operator
 subtitle: Collaborative and visual infrastructure as code for Github Actions Runner Operator
 image: /assets/img/integrations/github-actions-runner-operator/icons/color/github-actions-runner-operator-color.svg

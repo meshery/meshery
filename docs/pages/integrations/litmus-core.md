@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Litmus Chaos
 subtitle: Collaborative and visual infrastructure as code for Litmus Chaos
 image: /assets/img/integrations/litmus-core/icons/color/litmus-core-color.svg

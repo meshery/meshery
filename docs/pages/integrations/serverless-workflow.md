@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Serverless Workflow
 subtitle: Collaborative and visual infrastructure as code for Serverless Workflow
 image: /assets/img/integrations/serverless-workflow/icons/color/serverless-workflow-color.svg

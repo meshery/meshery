@@ -1,15 +1,15 @@
 ---
 layout: default
-title: Exploring Kubernetes Pods with Meshery Playground
-abstract: Learn Kubernetes Pods with Meshery Playground
+title: Exploring Kubernetes Pods with Meshery
+abstract: Learn Kubernetes Pods
 permalink: guides/tutorials/kubernetes-pods
 model: kubernetes
 kind: pods
-type: tutorials
-category: tutorial
+type: guides
+category: tutorials
 language: en
 list: include
-abstract: "Explore Kubernetes Pods using Meshery Playground, an interactive live cluster environment, through a series of hands-on excercises."
+abstract: "Explore Kubernetes Pods using Meshery in an interactive live cluster environment, through a series of hands-on excercises."
 ---
 
 ### Introduction
@@ -21,7 +21,7 @@ In this tutorial, we'll learn the fundamentals of Pods, the smallest deployable 
 ### Prerequisites
 
 - Basic understanding of containerization and Kubernetes concepts.
-- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://meshery.layer5.io/).
+- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
 
 ### Lab Scenario
 

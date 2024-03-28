@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Apisix
 subtitle: Collaborative and visual infrastructure as code for Apisix
 image: /assets/img/integrations/apisix/icons/color/apisix-color.svg

@@ -121,9 +121,3 @@ Even if you're not using Kubernetes, Meshery empowers you to manage your infrast
 
 MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always have an accurate view of your infrastructure. This snapshot is refreshed in real-time through event-based updates. Whether you're starting fresh or adopting Meshery into existing setups, MeshSync supports both greenfield and brownfield discovery of your environment.
 
-# Suggested Reading
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
-{% include related-discussions.html tag="meshery" %}

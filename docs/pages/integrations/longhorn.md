@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Longhorn
 subtitle: Collaborative and visual infrastructure as code for Longhorn
 image: /assets/img/integrations/longhorn/icons/color/longhorn-color.svg

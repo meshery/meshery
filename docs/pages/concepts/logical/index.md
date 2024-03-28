@@ -9,10 +9,30 @@ abstract: Concepts for understanding Meshery's various features and components.
 
 As a cloud-native management plane, Meshery empowers you with a wide range of tools that provide support for the majority of the systems in the cloud and cloud native ecosystems. Meshery abstracts away the system specific requirements and help you focus on getting things done.
 
+{% assign sorted_pages = site.pages | sort: "name" %}
+
+## Logical Concepts
+
+<ul>
+    {% for item in sorted_pages %}
+    {% if item.type=="concepts" and item.language=="en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract != " " %}
+        -  {{ item.abstract }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
+
+[![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
+
+_Figure: Extension points available throughout Meshery_
+
 The logical concepts included in Meshery establish a set of constructs with clearly-defined boundaries, each of which is extensible. These contructs set a foundation for the project to build upon and provide a consistent way of relating between multiple components. The logical concepts are:
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
-2. Extensible (see [Extension Points](/extensibility)
+2. Extensible (see [Extension Points](/extensibility))
 3. Composable (see Patterns)
 4. Portable (v0.8.0 Export/Import)
 5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
@@ -33,23 +53,3 @@ Every construct is represented in multiple forms:
   - *Example: Component configuration of an NGINX container as a Kubernetes Pod*
 - **Instance** (dynamic) - A realized construct (deployed/discovered); An instantiation of the Declaration.
   - *Example: NGINX-as234z2 pod running in cluster*
-
-{% assign sorted_pages = site.pages | sort: "name" %}
-
-## Logical Concepts
-
-<ul>
-    {% for item in sorted_pages %}
-    {% if item.type=="concepts" and item.language=="en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.abstract != " " %}
-        -  {{ item.abstract }}
-      {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
-</ul>
-
-[![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
-
-_Figure: Extension points available throughout Meshery_

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Windows
 subtitle: Collaborative and visual infrastructure as code for Windows
 image: /assets/img/integrations/windows/icons/color/windows-color.svg

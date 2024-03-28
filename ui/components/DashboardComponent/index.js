@@ -14,6 +14,7 @@ import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { iconLarge } from '../../css/icons.styles';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -178,9 +179,9 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     className={classes.tab}
                     icon={
                       resource === 'Overview' ? (
-                        <MesheryIcon style={{ width: '28px', height: '28px' }} />
+                        <MesheryIcon style={iconLarge} />
                       ) : (
-                        <KubernetesIcon style={{ width: '28px', height: '28px' }} />
+                        <KubernetesIcon style={iconLarge} />
                       )
                     }
                     label={resource}

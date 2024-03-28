@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Envoy
 subtitle: Collaborative and visual infrastructure as code for Envoy
 image: /assets/img/integrations/envoy/icons/color/envoy-color.svg
