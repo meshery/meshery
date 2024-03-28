@@ -52,7 +52,6 @@ mesheryctl exp connections list
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
 		if len(args) == 0 {
 			return cmd.Help()
 		} 
