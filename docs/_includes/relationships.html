@@ -1,0 +1,92 @@
+<style>
+    figcaption {
+        margin: 1rem auto;
+    }
+</style>
+<details open>
+    <summary>Example Visual Representations</summary>
+    <details close><summary>Kind: Hierarchical</summary>
+        <figure>
+            <figcaption>subType: Parent</figcaption>
+        </figure>
+        <img alt="Hierarchical - Parent: Namespace to other components" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
+    </details>
+    <details close><summary>Kind: Sibling</summary>
+        <figure>
+            <figcaption>Type: Match, subType: Matching Label Selectors</figcaption>
+        </figure>
+        <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
+    </details>
+    <details close><summary>Kind: Edge</summary>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Permission`: Cluster Role with Cluster Role Binding to ConfigMap</figcaption>
+        </figure>
+        <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
+        <figure>
+            <figcaption>Type: `Binding`, subType: Mount</figcaption>
+        </figure>
+        <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Network`: Ingress to Service</figcaption>
+        </figure>
+        <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Network`: Service to Pod</figcaption>
+        </figure>
+        <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Network`: Service to Service</figcaption>
+        </figure>
+        <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Network`: Service to Endpoint</figcaption>
+        </figure>
+        <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Non-Binding`, subType: `Network`: Service to Deployment</figcaption>
+        </figure>
+        <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
+        <br>
+        <figure>
+            <figcaption>Type: `Binding`, subType: `Permission`</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
+        <br>
+        <figure>
+            <figcaption>type: `Binding`,  subType: `Permission`: Role to Service</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
+        <br>
+        <figure>
+            <figcaption>type: `Binding`, subType: `Permission`: Role to Deployment</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
+        <br>
+        <figure>
+            <figcaption>type: `Binding`, subType: `Permission`: Cluster Role to Pod</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
+        <br>
+        <figure>
+            <figcaption>type: `Binding`, subType: `Permission`: Cluster Role to Service</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
+        <br>
+        <figure>
+            <figcaption>type: `Binding`, subType: `Permission`: Cluster Role to Deployment</figcaption>
+        </figure>
+        <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
+        </figure>
+        <br>
+        <figure>
+            <figcaption>type: `Non-Binding`, subType: `Network`: Network Policy</figcaption>
+        </figure>
+        <img alt="Edge - Network Policy" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
+        </figure>
+        </details>
+    </details>
