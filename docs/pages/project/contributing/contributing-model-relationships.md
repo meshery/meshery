@@ -39,17 +39,17 @@ Relationships are defined in the `relationships.yaml` file in the Meshery reposi
 
 1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection that involves the inheritance of features from one Component to the other.
 
-   1. `Parent`: A parent-child relationship implies the requirement of the parent component before the child component can be created. `For example`, a "Namespace" in Kubernetes can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it.
-   2. `Inventory`: A hierarchical inventory relationship implies the configuration of a(parent) component is patched with the configuration of other (child) component. `For example`, Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
+   1. `Parent`: A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a "Namespace" in Kubernetes can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it.
+   2. `Inventory`: A hierarchical inventory relationship implies the configuration of a(parent) component is patched with the configuration of other (child) component. For example, Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
 
 2. `Edge` relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
 
-   1. `Mount`: This subtype addresses the storage and access possibility between involved components. `For example`, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
-   2. `Network`: This deals with IP addresses and DNS names and provides stable endpoints for communication. `For example`, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment".
-   3. `Firewall`: This acts as an intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. `For example`, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster.
-   4. `Permission`: This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. `For example`, a "Role" can define permissions for Components to access specific resources.
+   1. `Mount`: This subtype addresses the storage and access possibility between involved components. For example, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
+   2. `Network`: This deals with IP addresses and DNS names and provides stable endpoints for communication. For example, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment".
+   3. `Firewall`: This acts as an intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. For example, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster.
+   4. `Permission`: This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. For example, a "Role" can define permissions for Components to access specific resources.
 
-3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category. `For example`, a Service and a Pod in Kubernetes are siblings as they share a common parent and are at the same hierarchical level.
+3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category. For example, a Service and a Pod in Kubernetes are siblings as they share a common parent and are at the same hierarchical level.
 
 ### Structure of Selectors
 
@@ -67,111 +67,111 @@ This arrangement enhances flexibility and reusability in the definition and conf
 
 {% highlight yaml %}
 selector: [
-{
-"allow": {
-"from": [
-{
-"kind": "WASMFilter",
-"model": "istio-base",
-"patch": {
-"patchStrategy": "replace",
-"mutatorRef": [
-[
-"settings",
-"config"
-],
-[
-"settings",
-"wasm-filter"
-]
-],
-"description": "WASM filter configuration to be applied to Envoy Filter."
-}
-},
-{
-"kind": "EBPFFilter",
-.....
-}
-],
-"to": [
-{
-"kind": "EnvoyFilter",
-"model": "istio-base",
-"patch": {
-"patchStrategy": "replace",
-"mutatedRef": [
-[
-"settings",
-"configPatches",
-"_",
-"patch",
-"value"
-]
-],
-"description": "Receive the WASM filter configuration."
-}
-},
-{
-"kind" : "WASMPlugin",
-....
-}
-...
-]
-},
-"deny": {
-...
-}
-},
-{
-"allow": {
-"from": [
-{
-"kind": "ConfigMap",
-"model": "kubernetes",
-"patch": {
-"patchStrategy": "replace",
-"mutatorRef": [
-[
-"name"
-]
-],
-"description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-}
-}
-],
-"to": [
-{
-"kind": "Deployment",
-"model": "kubernetes",
-"patch": {
-"patchStrategy": "replace",
-"mutatedRef": [
-[
-"spec",
-"containers",
-"_",
-"envFrom",
-"configMapRef",
-"name"
-]
-],
-"description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-}
-},
-{
-"kind": "StatefulSets",
-"model": "kubernetes",
-"patch": {
-....
-}
-}
-...
-]
-},
-"deny": {
-...
-}
-}
+   {
+      "allow": {
+         "from": [
+            {
+               "kind": "WASMFilter",
+               "model": "istio-base",
+               "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                     [
+                        "settings",
+                        "config"
+                     ],
+                     [
+                        "settings",
+                        "wasm-filter"
+                     ]
+                  ],
+                  "description": "WASM filter configuration to be applied to Envoy Filter."
+               }
+            },
+            {
+               "kind": "EBPFFilter",
+   .....
+            }
+         ],
+         "to": [
+            {
+               "kind": "EnvoyFilter",
+               "model": "istio-base",
+               "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                     [
+                        "settings",
+                        "configPatches",
+                        "_",
+                        "patch",
+                        "value"
+                     ]
+                  ],
+                  "description": "Receive the WASM filter configuration."
+               }
+            },
+            {
+               "kind": "WASMPlugin",
+   ....
+            }
+   ...
+         ]
+      },
+      "deny": {
+   ...
+      }
+   },
+   {
+      "allow": {
+         "from": [
+            {
+               "kind": "ConfigMap",
+               "model": "kubernetes",
+               "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                     [
+                        "name"
+                     ]
+                  ],
+                  "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+               }
+            }
+         ],
+         "to": [
+            {
+               "kind": "Deployment",
+               "model": "kubernetes",
+               "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                     [
+                        "spec",
+                        "containers",
+                        "_",
+                        "envFrom",
+                        "configMapRef",
+                        "name"
+                     ]
+                  ],
+                  "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
+               }
+            },
+            {
+               "kind": "StatefulSets",
+               "model": "kubernetes",
+               "patch": {
+   ....
+               }
+            }
+   ...
+         ]
+      },
+      "deny": {
+   ...
+      }
+   }
 ]
 {% endhighlight %}
 
