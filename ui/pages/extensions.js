@@ -46,7 +46,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
               className={classes.button}
               onClick={(e) => handleSignUp(e)}
             >
-              {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
+              {hasAccessToMeshMap ? 'Open' : 'Sign Up'}
             </Button>
           </div>
         }
@@ -204,7 +204,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
       },
       () => {
         notify({
-          message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
+          message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       },
@@ -266,14 +266,14 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                 }}
               >
                 <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                  Explore the{' '}
+                  {/* Explore the{' '} */}
                   <a
                     href="https://meshery.io/catalog"
                     target="_blank"
                     rel="noreferrer"
                     className={classes.link}
                   >
-                    Meshery Catalog
+                    Open Meshery Catalog
                   </a>
                 </Typography>
 
