@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -54,7 +54,7 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
-func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
+func (mcv *ModelCSV) CreateModelDefinition(version string) v1beta1.Model {
 	var isModelPublished, isAnnotation bool
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
 		isModelPublished = true
@@ -73,9 +73,12 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
 		svgColor = mcv.SVGWhite
 	}
 
-	model := v1alpha1.Model{
-		Name:        mcv.Model,
-		Version:     version,
+	model := v1beta1.Model{
+		Name: mcv.Model,
+		VersionMeta: v1beta1.VersionMeta{
+			Version:       version,
+			SchemaVersion: v1beta1.SchemaVersion,
+		},
 		DisplayName: mcv.ModelDisplayName,
 		Metadata: map[string]interface{}{
 			"isAnnotation": isAnnotation,
@@ -85,7 +88,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
 			"subCategory":  mcv.SubCategory, // move as first class attribute
 			"published":    isModelPublished,
 		},
-		Category: v1alpha1.Category{
+		Category: v1beta1.Category{
 			Name: mcv.Category,
 		},
 	}

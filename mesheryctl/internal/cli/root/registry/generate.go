@@ -27,7 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/github"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -316,7 +316,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					return nil
 				}
 				contentBytes := []byte(f.Content)
-				var componentDef v1alpha1.ComponentDefinition
+				var componentDef v1beta1.ComponentDefinition
 				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
@@ -368,7 +368,7 @@ func createVersionDirectoryForModel(modelDefPath, version string) (string, error
 	return versionDirPath, err
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1alpha1.Model, error) {
+func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version)
 	modelDefPath := filepath.Join(location, modelDef.Name)
 	err := modelDef.WriteModelDefinition(modelDefPath)

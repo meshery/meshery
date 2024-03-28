@@ -250,7 +250,7 @@ func WriteSVGsOnFileSystem(comp *v1beta1.ComponentDefinition) {
 	if comp.Model.Metadata == nil {
 		comp.Model.Metadata = make(map[string]interface{})
 	}
-	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Component.Kind)             //Write SVG on components
+	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Component.Kind)   //Write SVG on components
 	writeSVGHelper(comp.Model.Metadata, comp.Model.Name, comp.Model.Name) //Write SVG on models
 }
 

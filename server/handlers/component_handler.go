@@ -12,10 +12,10 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -62,7 +62,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	offset := (page - 1) * limit
-	filter := &v1alpha1.ModelFilter{
+	filter := &regv1beta1.ModelFilter{
 		Category:    cat,
 		Version:     queryParams.Get("version"),
 		Limit:       limit,
@@ -75,7 +75,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(h.dbHandler, filter)
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	var modelDefs []v1beta1.Model
 	for _, model := range entities {
 		model, ok := model.(*v1beta1.Model)
@@ -149,7 +149,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _, _ := h.registryManager.GetEntities(h.dbHandler, &v1alpha1.ModelFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Category:    cat,
 		Name:        model,
 		Version:     queryParams.Get("version"),
@@ -230,7 +230,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	filter := &v1alpha1.ModelFilter{
+	filter := &regv1beta1.ModelFilter{
 		Registrant:  queryParams.Get("registrant"),
 		Version:     v,
 		Limit:       limit,
@@ -248,7 +248,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	entities, count, _, _ := h.registryManager.GetEntities(h.dbHandler, filter)
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	var modelDefs []v1beta1.Model
 	for _, model := range entities {
 		model, ok := model.(*v1beta1.Model)
@@ -321,7 +321,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _, _ := h.registryManager.GetEntities(h.dbHandler, &v1alpha1.ModelFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Name:        name,
 		Version:     v,
 		Limit:       limit,
@@ -395,7 +395,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		page = 1
 	}
 	offset := (page - 1) * limit
-	filter := &v1alpha1.CategoryFilter{
+	filter := &regv1beta1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
@@ -406,7 +406,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		filter.Name = r.URL.Query().Get("search")
 	}
 
-	categories, count, _, _ := h.registryManager.GetEntities(h.dbHandler, filter)
+	categories, count, _, _ := h.registryManager.GetEntities(filter)
 
 	var pgSize int64
 
@@ -466,7 +466,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	categories, count, _, _ := h.registryManager.GetEntities(h.dbHandler, &v1alpha1.CategoryFilter{
+	categories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
 		Greedy:  greedy,
@@ -547,7 +547,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
@@ -560,18 +560,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Sort:         queryParams.Get("sort"),
 		Annotations:  returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -646,7 +636,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		ModelName:    queryParams.Get("model"),
 		CategoryName: cat,
@@ -659,18 +649,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         queryParams.Get("sort"),
 		Annotations:  returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -744,7 +723,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		ModelName:   typ,
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -756,18 +735,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -841,7 +809,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -854,18 +822,8 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -933,7 +891,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		ModelName:   typ,
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
@@ -949,18 +907,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -1030,7 +977,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
 		Version:      v,
@@ -1047,18 +994,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -1126,7 +1062,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
 		Trim:         queryParams.Get("trim") == "true",
@@ -1142,18 +1078,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -1221,7 +1146,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -1236,22 +1161,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = queryParams.Get("search")
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		// host := h.registryManager.GetRegistrant(r)
-		if ok {
-			// 	m := make(map[string]interface{})
-			// 	_ = json.Unmarshal([]byte(comp.Schema), &m)
-			// 	m = core.Format.Prettify(m, true)
-			// 	b, _ := json.Marshal(m)
-			// 	comp.Schema = string(b)
-			// 	comp.HostID = host.ID
-			// 	comp.HostName = host.Hostname
-			// 	comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 
@@ -1291,7 +1201,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var c v1alpha1.ComponentDefinition
+	var c v1beta1.ComponentDefinition
 	switch cc.EntityType {
 	case entity.ComponentDefinition:
 		err = json.Unmarshal(cc.Entity, &c)
@@ -1300,7 +1210,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		err = h.registryManager.RegisterEntity(cc.Host, c)
+		err = h.registryManager.RegisterEntity(cc.Host, &c)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -1348,7 +1258,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	offset := (page - 1) * limit
-	filter := &v1alpha1.HostFilter{
+	filter := &v1beta1.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
 		Sort:    r.URL.Query().Get("sort"),
@@ -1432,4 +1342,20 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
+}
+
+func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefinition {
+	var comps []v1beta1.ComponentDefinition
+	for _, r := range entities {
+		comp, ok := r.(*v1beta1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
+			m = core.Format.Prettify(m, true)
+			b, _ := json.Marshal(m)
+			comp.Component.Schema = string(b)
+			comps = append(comps, *comp)
+		}
+	}
+	return comps
 }
