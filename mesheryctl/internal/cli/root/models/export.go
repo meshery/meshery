@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
@@ -27,7 +28,6 @@ var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export model",
 	Long:  `Export model to OCI format`,
-	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // Export the model to current directory
 mesheryctl system model export [model-name]
@@ -39,19 +39,29 @@ mesheryctl system model export [model-name] -o [path]
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
+		}
+		return nil
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl system model export [model-name]\nRun 'mesheryctl system model export --help' to see detailed help message"
+		if len(args) == 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg))
 		}
 		return nil
 	},
@@ -142,19 +152,19 @@ mesheryctl system model export [model-name] -o [path]
 		ociImg, err := oci.BuildImage(tmpDir)
 		if err != nil {
 			utils.Log.Error(handlers.ErrBuildOCIImg(err))
-			return nil
+			return err
 		}
 
 		digest, err := ociImg.Digest()
 		if err != nil {
 			utils.Log.Error(handlers.ErrBuildOCIImg(err))
-			return nil
+			return err
 		}
 
 		size, err := ociImg.Size()
 		if err != nil {
 			utils.Log.Error(handlers.ErrBuildOCIImg(err))
-			return nil
+			return err
 		}
 
 		FullName := ModelName+ModelVersion
@@ -179,7 +189,7 @@ mesheryctl system model export [model-name] -o [path]
 		content, err := io.ReadAll(file)
 		if err != nil {
 			utils.Log.Error(handlers.ErrIOReader(err))
-			return nil
+			return err
 		}
 
 		err = os.WriteFile(outputPath+"/"+pretifiedName, content, 0644)

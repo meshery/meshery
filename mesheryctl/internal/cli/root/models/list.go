@@ -8,6 +8,7 @@ import (
 
 	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
@@ -32,18 +33,21 @@ mesheryctl exp model list --page 2
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		return nil

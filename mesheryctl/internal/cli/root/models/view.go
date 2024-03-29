@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -32,18 +32,21 @@ mesheryctl exp model view [model-name]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		return nil
@@ -51,16 +54,16 @@ mesheryctl exp model view [model-name]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model view [model-name]\nRun 'mesheryctl exp model view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			return utils.ErrLoadConfig(err)
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()

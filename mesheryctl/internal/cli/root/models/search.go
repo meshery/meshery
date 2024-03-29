@@ -7,10 +7,10 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -28,18 +28,21 @@ mesheryctl exp model search [query-text]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		return nil
@@ -54,7 +57,7 @@ mesheryctl exp model search [query-text]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			return utils.ErrLoadConfig(err)
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()

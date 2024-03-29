@@ -7,6 +7,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/manifoldco/promptui"
@@ -47,26 +48,33 @@ mesheryctl exp model view [model-name]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp model [subcommand]\nRun 'mesheryctl exp model --help' to see detailed help message"
 		if len(args) == 0 {
-			return cmd.Help()
+			return utils.ErrInvalidArgument(fmt.Errorf("model subcommand isn't specified\n\n%v", errMsg))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))
 		}
