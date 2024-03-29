@@ -31,7 +31,7 @@ mesheryctl exp connections delete [connection_id]
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)		
+			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
