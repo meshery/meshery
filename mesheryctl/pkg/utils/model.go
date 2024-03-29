@@ -76,22 +76,25 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.M
 	}
 
 	model := v1beta1.Model{
-		Name: mcv.Model,
 		VersionMeta: v1beta1.VersionMeta{
 			Version:       defVersion,
 			SchemaVersion: v1beta1.SchemaVersion,
 		},
+		Name: mcv.Model,
 		DisplayName: mcv.ModelDisplayName,
+		Status:      status,
+		Registrant: v1beta1.Host{
+			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+		},
+		Category: v1beta1.Category{
+			Name: mcv.Category,
+		},
+		SubCategory: mcv.SubCategory,
 		Metadata: map[string]interface{}{
 			"isAnnotation": isAnnotation,
 			"svgColor":     svgColor,
 			"svgWhite":     svgWhite,
 			"svgComplete":  mcv.SVGComplete,
-		},
-		SubCategory: mcv.SubCategory,
-		Status:      status,
-		Category: v1beta1.Category{
-			Name: mcv.Category,
 		},
 		Model: v1beta1.ModelEntity{
 			Version: version,
