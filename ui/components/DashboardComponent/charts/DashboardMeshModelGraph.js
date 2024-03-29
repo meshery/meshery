@@ -96,7 +96,7 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/models`;
+  const url = `https://docs.meshery.io/concepts/logical/registry`;
 
   return (
     <Link href="/settings?settingsCategory=Registry&tab=Models">
