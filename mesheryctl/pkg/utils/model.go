@@ -80,7 +80,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.M
 			Version:       defVersion,
 			SchemaVersion: v1beta1.SchemaVersion,
 		},
-		Name: mcv.Model,
+		Name:        mcv.Model,
 		DisplayName: mcv.ModelDisplayName,
 		Status:      status,
 		Registrant: v1beta1.Host{

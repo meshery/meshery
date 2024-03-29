@@ -208,7 +208,12 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			version := pkg.GetVersion()
-			modelDefPath, modelDef, err := WriteModelDefToFileSystem(&model, version, registryLocation)
+			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+			if err != nil {
+				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
+			modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 			if err != nil {
 				utils.Log.Error(err)
 				return
@@ -221,23 +226,17 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
 
-			compDirName, err := createVersionDirectoryForModel(modelDefPath, version)
-			if err != nil {
-				utils.Log.Error(ErrGenerateModel(err, model.Model))
-				return
-			}
-
 			for _, comp := range comps {
 				comp.Version = defVersion
 				if comp.Metadata == nil {
 					comp.Metadata = make(map[string]interface{})
 				}
 				// Assign the component status corresponding to model status.
-				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status. 
+				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
 				comp.Metadata["shape"] = model.Shape
 				comp.Model = *modelDef
-				err := comp.WriteComponentDefinition(compDirName)
+				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					utils.Log.Info(err)
 				}
@@ -272,8 +271,12 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 			version:    version,
 		})
 	}()
-
-	modelPath, modelDef, err := WriteModelDefToFileSystem(&model, version, registryLocation) // how to infer this? @Beginner86 any idea? new column?
+	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+	if err != nil {
+		err = ErrGenerateModel(err, model.Model)
+		return err
+	}
+	modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
@@ -281,11 +284,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
-	compDirName, err := createVersionDirectoryForModel(modelPath, modelDef.Version)
-	if err != nil {
-		err = ErrGenerateModel(err, modelDef.Name)
-		return err
-	}
+
 	path, err := url.Parse(model.SourceURL)
 	if err != nil {
 		err = ErrGenerateModel(err, modelDef.Name)
@@ -322,7 +321,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					return err
 				}
 
-				err = componentDef.WriteComponentDefinition(compDirName)
+				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
 					utils.Log.Error(err)
@@ -363,22 +362,28 @@ func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 	return compCSVHelper, nil
 }
 
-func createVersionDirectoryForModel(modelDefPath, version string) (string, error) {
-	versionDirPath := filepath.Join(modelDefPath, version)
-	err := mutils.CreateDirectory(versionDirPath)
-	return versionDirPath, err
-}
-
-func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1beta1.Model, error) {
-	modelDef := model.CreateModelDefinition(version, defVersion)
-	modelDefPath := filepath.Join(registryLocation, modelDef.Name)
-
-	err := modelDef.WriteModelDefinition(modelDefPath)
+// version corresponds to the version of the pacakge from which model was sourced and not the definition version.
+// Eg: helm chart version for kube-prom-stack.
+func createVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
+	modelDirPath := filepath.Join(registryLocation, modelName, version, defVersion)
+	err := mutils.CreateDirectory(modelDirPath)
 	if err != nil {
-		return "", nil, err
+		return "", "", err
 	}
 
-	return modelDefPath, &modelDef, nil
+	compDirPath := filepath.Join(modelDirPath, "components")
+	err = mutils.CreateDirectory(compDirPath)
+	return modelDirPath, compDirPath, err
+}
+
+func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
+	modelDef := model.CreateModelDefinition(version, defVersion)
+	err := modelDef.WriteModelDefinition(modelDefPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &modelDef, nil
 }
 
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
