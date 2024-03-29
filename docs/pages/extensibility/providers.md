@@ -33,9 +33,9 @@ What a given Remote Provider offers might vary broadly between providers. Mesher
 
 <a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot.png">
 <img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot.png" width="50%" /></a>
-<figure>
+
   <figcaption>Figure: Selection of Provider upon login to Meshery</figcaption>
-</figure>
+
 
 ## Types of providers
 

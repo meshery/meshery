@@ -42,7 +42,7 @@ type: project
     <summary>
     <h6>Question: Is Meshery an open source project?</h6>
 </summary>
-<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is a [highly extensible](/extensibility), offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
+<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is <a href="/extensibility">highly extensible</a>, offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
 </details>
 
 <details>
