@@ -108,16 +108,12 @@ mesheryctl exp workspace create orgId --name [workspace-name] --description [wor
 		}
 
 		_, err = utils.MakeRequest(req)
-		// http code 201 will be returned if the workspace is created successfully
-
 		if strings.Contains(err.Error(), "201") {
 			fmt.Println("Workspace created successfully")
 			return nil
-		} else {
-			fmt.Println("Error creating workspace")
-			return err
 		}
 
+		fmt.Println("Error creating workspace")
 		return nil
 	},
 }
