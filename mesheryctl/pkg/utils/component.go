@@ -23,6 +23,7 @@ type ComponentCSV struct {
 	Registrant         string `json:"registrant" csv:"registrant"`
 	Model              string `json:"model" csv:"model"`
 	Component          string `json:"component" csv:"component"`
+	Description        string `json:"description" csv:"description"`
 	Shape              string `json:"shape" csv:"shape"`
 	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
 	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
@@ -30,7 +31,6 @@ type ComponentCSV struct {
 	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
 	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
 	HasSchema          string `json:"hasSchema" csv:"hasSchema"`
-	Description        string `json:"description" csv:"description"`
 	Docs               string `json:"docs" csv:"docs"`
 	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
 	Styles             string `json:"styles" csv:"styles"`
