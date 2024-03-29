@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: OpenGitOps
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
 image: /assets/img/integrations/opengitops/icons/color/opengitops-color.svg

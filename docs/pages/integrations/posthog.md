@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Posthog
 subtitle: Collaborative and visual infrastructure as code for Posthog
 image: /assets/img/integrations/posthog/icons/color/posthog-color.svg

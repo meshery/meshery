@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 component: Network Service Mesh

@@ -13,7 +13,7 @@ image: /assets/img/platforms/kubesphere.png
 abstract: Install Meshery on KubeSphere
 ---
 
-{% include installation_prerequisites.html %}
+{% include installation/installation_prerequisites.html %}
 
 [Meshery](https://meshery.io/) is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
 
@@ -66,9 +66,5 @@ Perform the following steps in order:
 3. Access the Meshery Dashboard by entering **${NodeIP}:${NODEPORT}** in your browser.
 
     ![meshery-dashboard]({{ site.baseurl }}/assets/img/platforms/meshery-dashboard.png)
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
 
 {% include related-discussions.html tag="meshery" %}

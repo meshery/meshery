@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Ambassador
 subtitle: Collaborative and visual infrastructure as code for Ambassador
 image: /assets/img/integrations/ambassador/icons/color/ambassador-color.svg

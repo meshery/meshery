@@ -2,7 +2,7 @@ import Grid from '@material-ui/core/Grid';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
-import { donut, pie } from 'billboard.js';
+import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
@@ -99,7 +99,7 @@ function MeshModelContructs({ classes }) {
   const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
-    <Link href="/settings#registry">
+    <Link href="/settings?settingsCategory=Registry&tab=Models">
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
@@ -112,8 +112,8 @@ function MeshModelContructs({ classes }) {
               interactive={true}
               title={RenderTooltipContent({
                 showPriortext:
-                  'Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.',
-                showAftertext: 'to learn more about Models, Components, and Relationships',
+                  'The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery.',
+                showAftertext: 'about the Registry.',
                 link: url,
               })}
             >
@@ -174,7 +174,21 @@ function MeshModelCategories({ classes }) {
       data: {
         columns: cleanedData,
         colors: dataToColors(cleanedData),
-        type: pie(),
+        type: donut(),
+      },
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
+        },
+      },
+      donut: {
+        title: 'Models\nby Category',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
+        },
       },
       tooltip: {
         format: {
@@ -197,14 +211,14 @@ function MeshModelCategories({ classes }) {
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
-            Categories
+            Models by Category
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               backgroundColor="#3C494F"
               title={RenderTooltipContent({
                 showPriortext:
-                  'Each Model corresponds to a category, so the category shows the high-level use case of that model, e.g., prometheus is under “Observability and Analysis category.',
+                  'Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category.',
                 showAftertext: 'to learn more about all Categories',
                 link: url,
               })}

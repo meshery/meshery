@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Relationships
 permalink: concepts/logical/relationships
 type: concepts
@@ -222,8 +222,51 @@ Selectors can be applied to various components, enabling a wide range of relatio
 
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
 
-<!-- @RipulHandoo - Please add a snippet of the selector backing this relationship. -->
 
+```json
+"selector": {
+    "allow": {
+        "from": [
+          {
+            "kind": "ConfigMap",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "containers",
+                  "_",
+                  "envFrom",
+                  "0",
+                  "configMapRef",
+                  "name"
+                ]
+              ],
+              "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the Pod."
+            }
+          }
+        ]
+    }
+}
+```
+The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
  <!-- add images -->
 
 ## Relationship Evaluation

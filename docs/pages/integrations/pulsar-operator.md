@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Pulsar Operator
 subtitle: Collaborative and visual infrastructure as code for Pulsar Operator
 image: /assets/img/integrations/pulsar-operator/icons/color/pulsar-operator-color.svg

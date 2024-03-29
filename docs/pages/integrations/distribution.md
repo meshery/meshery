@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Jfrog Distribution
 subtitle: Managed release binary distribution with JFrog distribution
 image: /assets/img/integrations/distribution/icons/color/distribution-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Open Cluster Management
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/open-cluster-management/icons/color/open-cluster-management-color.svg

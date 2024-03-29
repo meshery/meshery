@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 component: App Mesh

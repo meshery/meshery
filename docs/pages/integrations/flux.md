@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Flux
 subtitle: Collaborative and visual infrastructure as code for Flux
 image: /assets/img/integrations/flux/icons/color/flux-color.svg

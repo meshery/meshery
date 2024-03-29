@@ -38,7 +38,8 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrInvalidArgumentCode    = "mesheryctl-1117"
+	ErrBadRequestCode         = "mesheryctl-1117"
+	ErrInvalidArgumentCode    = "mesheryctl-1118"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -198,16 +199,6 @@ func PatternViewError(msg string) string {
 	return formatError(msg, cmdPatternView)
 }
 
-// AppError returns a formatted error message with a link to 'app' command usage page in addition to the error message
-func AppError(msg string) string {
-	return formatError(msg, cmdApp)
-}
-
-// AppError returns a formatted error message with a link to 'app view' command usage page in addition to the error message
-func AppViewError(msg string) string {
-	return formatError(msg, cmdAppView)
-}
-
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
 	switch cmd {
@@ -245,10 +236,6 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdPatternView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
-	case cmdApp:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appViewURL)
-	case cmdAppView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appUsageURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
 	case cmdContextCreate:
@@ -505,6 +492,14 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
+}
+
+func ErrBadRequest(err error) error {
+	return errors.New(ErrBadRequestCode, errors.Alert,
+		[]string{"Failed to delete the connection"},
+		[]string{err.Error()},
+		[]string{"Error occurred while deleting the connection"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
 func ErrInvalidArgument(err error) error {

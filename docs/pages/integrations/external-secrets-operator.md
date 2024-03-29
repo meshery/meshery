@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: External Secrets Operator
 subtitle: Collaborative and visual infrastructure as code for External Secrets Operator
 image: /assets/img/integrations/external-secrets-operator/icons/color/external-secrets-operator-color.svg

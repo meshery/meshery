@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Overview
 abstract: An overview of Meshery concepts and its functionality.
 permalink: /getting-started/overview
