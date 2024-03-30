@@ -56,12 +56,12 @@ mesheryctl exp relationship view [model-name]
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
