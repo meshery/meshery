@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Skooner
 subtitle: Collaborative and visual infrastructure as code for Skooner
 image: /assets/img/integrations/skooner/icons/color/skooner-color.svg

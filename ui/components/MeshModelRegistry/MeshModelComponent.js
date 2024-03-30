@@ -68,7 +68,7 @@ const useMeshModelComponentRouter = () => {
 
   const searchQuery = query.searchText || null;
   const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
-  const selectedPageSize = query.pagesize || 14;
+  const selectedPageSize = query.pagesize || 25;
 
   return { searchQuery, selectedTab, selectedPageSize };
 };
@@ -184,8 +184,8 @@ const MeshModelComponent_ = ({
         // Deeplink may contain higher rowsPerPage val for first time fetch
         // In such case set it to default as 14 after UI renders
         // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
-        if (rowsPerPage !== 14) {
-          setRowsPerPage(14);
+        if (rowsPerPage !== 25) {
+          setRowsPerPage(25);
         }
       }
     } catch (error) {
@@ -248,7 +248,7 @@ const MeshModelComponent_ = ({
       };
     }
     setCount(response.total_count);
-    setRowsPerPage(14);
+    setRowsPerPage(25);
     return response;
   };
 

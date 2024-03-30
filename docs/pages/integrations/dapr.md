@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Dapr
 subtitle: Collaborative and visual infrastructure as code for Dapr
 image: /assets/img/integrations/dapr/icons/color/dapr-color.svg

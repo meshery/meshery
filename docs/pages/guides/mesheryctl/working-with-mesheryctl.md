@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Using Meshery CLI
 abstract: How to use mesheryctl
 permalink: guides/mesheryctl/working-with-mesheryctl
@@ -111,10 +111,6 @@ Guides to using Meshery's various features and components.
 <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

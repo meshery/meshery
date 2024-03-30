@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Citrix Service Mesh
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
 image: /assets/img/integrations/cpx/icons/color/cpx-color.svg

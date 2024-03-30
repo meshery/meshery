@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubesphere
 subtitle: Collaborative and visual infrastructure as code for Kubesphere
 image: /assets/img/integrations/kubesphere/icons/color/kubesphere-color.svg

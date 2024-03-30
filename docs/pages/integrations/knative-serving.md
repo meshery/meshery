@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Knative Serving
 subtitle: Collaborative and visual infrastructure as code for Knative Serving
 image: /assets/img/integrations/knative-serving/icons/color/knative-serving-color.svg

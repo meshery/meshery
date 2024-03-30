@@ -59,7 +59,7 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: mesheryctl/helpers server/helpers/ **.go docs/
           commit_user_name: l5io

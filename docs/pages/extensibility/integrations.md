@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: "Extensibility: Meshery Integrations"
 permalink: extensibility/integrations
 type: Extensibility

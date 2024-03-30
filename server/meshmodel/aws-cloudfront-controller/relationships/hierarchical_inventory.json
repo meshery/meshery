@@ -1,0 +1,60 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the FieldExport (parent) component is patched with the configuration as received from Pod (child) component."
+  },
+  "model": {
+    "name": "aws-cloudfront-controller",
+    "version": "*",
+    "displayName": "AWS CloudFront",
+    "category": {
+      "name": "App Definition and Development",
+      "metadata": null
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "published": false,
+      "subCategory": "Service Proxy",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    }
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "*",
+            "model": "Kubernetes",
+            "patch": {
+              "mutatorRef": [["name"], ["namespace"], ["type"]],
+              "description": "Kubernetes components manage containerized applications, while AWS Field Export exports data from AWS CloudFront. Kubernetes can run applications that generate data ingested by CloudFront, facilitating efficient content delivery and scaling in AWS environments."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "FieldExport",
+            "model": "aws-cloudfront-controller",
+            "patch": {
+              "mutatorRef": [
+                ["settings", "spec", "from", "resource", "name"],
+                ["settings", "spec", "from", "resource", "namespace"],
+                ["settings", "spec", "from", "resource", "type"]
+              ],
+              "description": "AWS CloudFront Field Export allows users to extract and export logs data stored in AWS CloudFront distributions for further analysis."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

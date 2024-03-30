@@ -10,9 +10,11 @@ import (
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
 )
 
@@ -50,7 +52,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 	models, err := os.ReadDir(ModelsPath)
 	if err != nil {
-		erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for generating components"), ModelsPath)
 		return
 	}
 
@@ -58,11 +60,12 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 	// change to queue approach to register comps, relationships and policies
 	// Read component and relationship definitions from files and send them to respective channels
+
 	for _, model := range models {
 		entitiesPath := filepath.Join(ModelsPath, model.Name())
 		entities, err := os.ReadDir(entitiesPath)
 		if err != nil {
-			erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+			erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for generating components"), entitiesPath)
 			continue
 		}
 
@@ -89,7 +92,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		erh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
+		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while getting absolute path for generating components"), pathToComponents)
 		return
 	}
 
@@ -103,12 +106,12 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 			var comp v1alpha1.ComponentDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
-				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
 				return nil
 			}
 			err = json.Unmarshal(byt, &comp)
 			if err != nil {
-				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				erh.errorChan <- mutils.ErrMarshal(errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path)))
 				return nil
 			}
 			// Only register components that have been marked as published
@@ -121,7 +124,7 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 		return nil
 	})
 	if err != nil {
-		erh.errorChan <- errors.Wrapf(err, "error while generating components")
+		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while generating components"), pathToComponents)
 	}
 }
 
@@ -129,7 +132,7 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		erh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
+		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while getting absolute path for generating relationships"), pathToComponents)
 		return
 	}
 
@@ -141,12 +144,12 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 			var rel v1alpha1.RelationshipDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
-				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
 				return nil
 			}
 			err = json.Unmarshal(byt, &rel)
 			if err != nil {
-				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				erh.errorChan <- mutils.ErrUnmarshal(errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path)))
 				return nil
 			}
 			erh.relationshipChan <- rel
@@ -154,7 +157,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 		return nil
 	})
 	if err != nil {
-		erh.errorChan <- errors.Wrapf(err, "error while generating relationships")
+		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while generating relationships"), pathToComponents)
 	}
 }
 
@@ -168,10 +171,16 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
 			}, comp)
+			if err != nil {
+				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
+			}
 		case rel := <-erh.relationshipChan:
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
 			}, rel)
+			if err != nil {
+				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
+			}
 
 		//Watching and logging errors from error channel
 		case mhErr := <-erh.errorChan:
@@ -184,7 +193,7 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		}
 
 		if err != nil {
-			erh.errorChan <- err
+			go func() { erh.errorChan <- err }()
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Virtual Kubelet
 subtitle: Collaborative and visual infrastructure as code for Virtual Kubelet
 image: /assets/img/integrations/virtual-kubelet/icons/color/virtual-kubelet-color.svg

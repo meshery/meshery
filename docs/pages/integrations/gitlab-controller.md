@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Gitlab Controller
 subtitle: Collaborative and visual infrastructure as code for Gitlab Controller
 image: /assets/img/integrations/gitlab-controller/icons/color/gitlab-controller-color.svg

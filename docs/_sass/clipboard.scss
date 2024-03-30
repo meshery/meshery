@@ -28,19 +28,22 @@ pre.codeblock-pre {
 
 .clipboardjs {
   width: 100%;
-  overflow-x: auto;
-  padding: 1rem;
+  overflow: hidden;
   font-size: 1.25rem;
   margin: 0px;
   color: #f8f9fa;
+  display: flex;
+  align-items: center;
 
   &::-webkit-scrollbar {
     width: 0.5rem !important;
+    height: 0.5rem !important;
     padding: 6px;
   }
 
   &::-webkit-scrollbar-track {
     width: 0.5rem !important;
+    height: 0.5rem !important;
     border-radius: 11px;
     overflow: hidden;
     padding: 6px;
@@ -48,6 +51,7 @@ pre.codeblock-pre {
   &::-webkit-scrollbar-thumb {
     background: #868e96;
     width: 0.5rem !important;
+    height: 0.5rem !important;
     border-radius: 11px;
     margin: 5px;
   }
@@ -80,4 +84,3 @@ pre.codeblock-pre {
   background-color: #495057;
   transform: scale(0.75);
 }
-

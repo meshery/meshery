@@ -18,7 +18,7 @@ import { iconMedium } from '../../css/icons.styles';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import Moment from 'react-moment';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PerformanceResults from './PerformanceResults';
@@ -127,7 +127,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
   const { notify } = useNotification();
@@ -463,7 +463,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     selectableRows: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
     fixedHeader: true,
     page,
     print: false,

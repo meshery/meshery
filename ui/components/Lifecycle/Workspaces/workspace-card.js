@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
 import { ArrowForward, Edit } from '@material-ui/icons';
-import { DeleteIcon } from '@layer5/sistent-svg';
+import { DeleteIcon } from '@layer5/sistent';
 import {
   BulkSelectCheckbox,
   CardTitle,
