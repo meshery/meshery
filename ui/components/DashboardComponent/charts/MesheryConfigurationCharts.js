@@ -72,7 +72,7 @@ export default function MesheryConfigurationChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/guides/configuration-management`;
+  const url = `https://docs.meshery.io/concepts/logical/designs`;
 
   return (
     <Link href="/configuration/designs">
@@ -87,7 +87,8 @@ export default function MesheryConfigurationChart({ classes }) {
               placement="left"
               interactive={true}
               title={RenderTooltipContent({
-                showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
+                showPriortext:
+                  'Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured.',
                 link: url,
               })}
             >

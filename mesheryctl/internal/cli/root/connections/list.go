@@ -56,7 +56,7 @@ mesheryctl exp connections list --page 2
 		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
-		} 
+		}
 		return nil
 	},
 
