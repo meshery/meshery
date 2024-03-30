@@ -66,11 +66,14 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 		return nil
 	},
+
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp workspace list --orgId [orgId]\nRun 'mesheryctl exp workspace list --help' to see detailed help message"
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [orgId]. " + errMsg))
-		} else if orgID == "" || len(args) > 2 {
+		const errMsg = "Usage: mesheryctl exp environment create --orgId [orgId] --name [environment-name] --description [environment-description]\nRun 'mesheryctl exp environment create --help' to see detailed help message"
+
+		// Check if all flag is set
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+
+		if orgIdFlag == "" {
 			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "list"))
 		}
 		return nil
@@ -84,7 +87,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 
-		url := fmt.Sprintf("%s/api/experimental/workspaces?org_id=%s", baseUrl, orgID)
+		url := fmt.Sprintf("%s/api/workspaces?orgID=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)

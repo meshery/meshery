@@ -68,12 +68,17 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp workspace create --orgId [orgId] --name [workspace-name] --description [workspace-description]\nRun 'mesheryctl exp workspace create --help' to see detailed help message"
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [orgId], [workspace-name], [workspace-description] " + errMsg))
-		}else if len(args) >= 3 {
+		const errMsg = "Usage: mesheryctl exp environment create --orgId [orgId] --name [environment-name] --description [environment-description]\nRun 'mesheryctl exp environment create --help' to see detailed help message"
+
+		// Check if all three flags are set
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		nameFlag, _ := cmd.Flags().GetString("name")
+		descriptionFlag, _ := cmd.Flags().GetString("description")
+
+		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
 			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "create"))
 		}
+
 		return nil
 	},
 
