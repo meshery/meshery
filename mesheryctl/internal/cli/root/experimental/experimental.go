@@ -18,9 +18,8 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/connections"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -47,6 +46,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd, components.ComponentsCmd, connections.ConnectionsCmd, workspaces.WorkSpaceCmd)
+	availableSubcommands = append(availableSubcommands, components.ComponentsCmd, connections.ConnectionsCmd, workspaces.WorkSpaceCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

@@ -67,18 +67,19 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp workspace [subcommands]\nRun 'mesheryctl exp workspace --help' to see detailed help message"
 		if len(args) == 0 {
-			return cmd.Help()
+			return utils.ErrInvalidArgument(errors.New("missing required argument: [subcommands] " + errMsg))
 		}
 		return nil
 	},
