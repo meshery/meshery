@@ -37,14 +37,14 @@ var (
 )
 
 var RelationshipCmd = &cobra.Command{
-	Use:   "relationships",
-	Short: "View list of relationships and detailed information of a specific relationship",
+	Use:   "relationship",
+	Short: "View list of relationships and details of relationship",
 	Long:  "View list of relationships and detailed information of a specific relationship",
 	Example: `
-// To view list of components
+// To view list of relationships
 mesheryctl exp relationships list
 
-// To view a specific model
+// To view a specific relationship
 mesheryctl exp relationships view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -73,13 +73,14 @@ mesheryctl exp relationships view [model-name]
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			errMsg := "Usage: mesheryctl exp relationships [subcommand]\nRun 'mesheryctl exp relationships --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationships --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationships --help' to display usage guide.\n", args[0]), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

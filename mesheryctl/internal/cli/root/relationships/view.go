@@ -38,8 +38,8 @@ var ViewRelationshipsCmd = &cobra.Command{
 	Short: "view relationships of a model by its name",
 	Long:  "view a relationship queried by the model name",
 	Example: `
-// View current provider
-mesheryctl exp model view [model-name]
+// View relationships of a model
+mesheryctl exp relationship view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -65,12 +65,12 @@ mesheryctl exp model view [model-name]
 		}
 		return nil
 	},
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationships view [model-name]\nRun 'mesheryctl exp relationships view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "view"))
 		}
 		return nil
 	},
