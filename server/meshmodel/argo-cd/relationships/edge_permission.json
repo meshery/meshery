@@ -2,11 +2,11 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
-    "description": "A relationship that defines permission for components, It ensures that only authorized components can interact with each other."
+    "description": "A relationship that defines permission for components, It ensures that Applications are only deployed only to authorized namespaces, by controlling permissions to ApplicationSets and Applications"
   },
   "model": {
     "name": "argo-cd",
-    "version": "v3.3.5",
+    "version": "3.3.5",
     "displayName": "Argo CD Applications",
     "category": {
       "name": "App Definition and Development",
