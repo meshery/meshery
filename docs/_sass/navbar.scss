@@ -85,14 +85,14 @@ header {
       & > img {
         padding: 0 !important;
         margin-left: 10%;
-        width: 2.8rem;
-        height: 2.8rem;
+        width: 2.2rem;
+        height: 2.2rem;
         filter: var(--image-color);
         transition: filter 0.3s;
         cursor: pointer;
         @media (max-width: 600px) {
-          width: 3.4rem;
-          height: 3.4rem;
+          width: 1.8rem;
+          height: 1.8rem;
         }
       }
 
@@ -124,8 +124,8 @@ header {
       }
       @media (max-width: 600px) {
         & #menu-nav-toggle-btn {
-          width: 2.4rem;
-          height: 2.4rem;
+          width: 1.8rem;
+          height: 1.8rem;
         }
       }
 
@@ -143,8 +143,8 @@ header {
     }
 
     & #menu-nav-toggle-btn {
-      width: 2.8rem;
-      height: 2.8rem;
+      width: 2.2rem;
+      height: 2.2rem;
       stroke: var(--color-secondary-dark);
     }
   }

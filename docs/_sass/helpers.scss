@@ -22,13 +22,13 @@
 // BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .btn-primary {
-  padding: 1rem 2rem;
+  padding: .8rem 1.4rem;
   // background: var(--section-button);
   position: relative;
   border-radius: 11px;
   color: white;
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.4rem;
   -webkit-transition: background-color 0.9s ease-out;
   -moz-transition: background-color 0.9s ease-out;
   -o-transition: background-color 2.9s ease-out;
@@ -116,7 +116,7 @@ details {
 }
 
 summary {
-  padding: .5rem 0rem;
+  padding: .25rem 0rem;
   margin-right: -1.5rem;
   margin-left: -1.5rem;
   display: block;
@@ -156,6 +156,6 @@ details summary::-webkit-details-marker {
 }
 
 details > ul {
-  padding-bottom: 1rem;
+  padding: 1rem auto;
   margin-bottom: 0;
 }

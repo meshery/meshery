@@ -35,22 +35,17 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 
 In Meshery v0.6.0, Adapters will register with Meshery Server over HTTP POST. If Meshery Server is not available, Meshery Adapters will backoff and retry to connect to Meshery Server perpetually.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg" width="50%" /></a>
-<figure>
-  <figcaption>Figure: Meshery architecture</figcaption>
-</figure>
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
 #### Adapters and Capabilities Registry
 
 Each Meshery Adapter delivers its own unique specific functionality. As such, at time of deployment, the Meshery Adapter will register its cloud native infrastructure-specific capabilities (its operations) with Meshery Server's capability registry.
-<a href="{{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg">
+
+<a href="{{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg" width="50%" /></a>
-<figure>
-  <figcaption>Figure: Meshery Adapter Operation Registratio</figcaption>
-</figure>
 
 _Figure: Meshery Adapter Operation Registration_
 
@@ -58,19 +53,17 @@ _Figure: Meshery Adapter Operation Registration_
 
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" width="50%" /></a>
-<figure>
-  <figcaption>Figure: Meshery Client architecture</figcaption>
-</figure>
+
 
 _Figure: Clients use Meshery's [REST API](extensibility/api#rest), [GraphQL API](extensibility/api#graphql), or a combination of both._
 
 ### Providers
 
-As a point of extension, Meshery supports two types of providers: _Local_ and _Remote_.
+As a point of extensibility, Meshery supports two types of [providers](/extensibility/providers): _Local_ and _Remote_.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Provider architecture</figcaption>
@@ -80,8 +73,8 @@ As a point of extension, Meshery supports two types of providers: _Local_ and _R
 
 This diagram outlines logical constructs within Meshery and their relationships.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery_extension_points.svg" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/meshery_extension_points.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Object Model</figcaption>
 </figure>
@@ -90,7 +83,7 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 Meshery Operator is the multi-cluster Kubernetes operator that manages MeshSync and Meshery Broker.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Operator and MeshSync</figcaption>
@@ -102,7 +95,7 @@ See the [**Operator**]({{ site.baseurl }}/concepts/architecture/operator) sectio
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
@@ -114,7 +107,7 @@ _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) secti
 
 Meshery's Docker extension provides a simple and flexible way to design and operate cloud native infrastructure on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg">
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
