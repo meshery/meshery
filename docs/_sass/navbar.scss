@@ -3,8 +3,8 @@
 // }
 
 .breadcrumb {
-  font-size: 1.25rem;
-  line-height: 1.25rem;
+  font-size: 1.05rem;
+  line-height: .925rem;
   padding: 0;
 }
 
@@ -124,8 +124,8 @@ header {
       }
       @media (max-width: 600px) {
         & #menu-nav-toggle-btn {
-          width: 3.4rem;
-          height: 3.4rem;
+          width: 2.4rem;
+          height: 2.4rem;
         }
       }
 
@@ -151,7 +151,7 @@ header {
 
   & .navbar-brand {
     display: inline-block;
-    font-size: 3.2rem;
+    font-size: 2.2rem;
     line-height: inherit;
     white-space: nowrap;
 
@@ -215,7 +215,7 @@ header {
 
   & #main_navbar {
     overflow: hidden;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-left: auto !important;
 
     @media (max-width: 1200px) {
