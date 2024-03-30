@@ -24,6 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,14 +32,16 @@ import (
 
 var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all registered workspace",
-	Long:  `List all registered workspace`,
+	Short: "List registered workspaces",
+	Long:  `List name of all registered workspaces`,
 	Example: `
 // List all registered workspace
 mesheryctl exp workspace list --orgID [orgId]
 
-// List of models with specified page number (25 workspace per page)
-mesheryctl exp workspace list --orgId [orgId] --page 1`,
+// Documentation for workspace can be found at:
+https://docs.layer5.io/cloud/spaces/workspaces/
+
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 
@@ -65,8 +68,10 @@ mesheryctl exp workspace list --orgId [orgId] --page 1`,
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace list \nRun 'mesheryctl exp workspace list --help' to see detailed help message"
-		if orgID == "" || len(args) > 2{
-			return utils.ErrInvalidArgument(fmt.Errorf("%s: expected 1 arguments (orgId)", errMsg))
+		if len(args) == 0 {
+			return cmd.Help()
+		} else if orgID == "" || len(args) > 2 {
+			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "list"))
 		}
 		return nil
 	},
@@ -78,13 +83,8 @@ mesheryctl exp workspace list --orgId [orgId] --page 1`,
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
 
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/workspaces?orgID=%s&page=%d", baseUrl, orgID, page)
-		} else {
-			url = fmt.Sprintf("%s/api/workspaces?orgID=%s&pagesize=all", baseUrl, orgID)
-		}
+		url := fmt.Sprintf("%s/api/experimental/workspaces?org_id=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -132,11 +132,9 @@ mesheryctl exp workspace list --orgId [orgId] --page 1`,
 				// Clear the entire terminal screen
 				utils.ClearLine()
 
-				// Print number of models and current page number
-				whiteBoardPrinter.Print("Total number of models: ", len(rows))
-				fmt.Println()
-				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
-				fmt.Println()
+				// Print number of workspaces and current page number
+				whiteBoardPrinter.Println("Total number of workspaces: ", len(rows))
+				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
 
 				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
 

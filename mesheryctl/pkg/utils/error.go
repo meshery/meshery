@@ -145,6 +145,17 @@ func SystemModelSubError(msg string, cmd string) string {
 	}
 }
 
+func WorkspaceSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdWorkspaceList)
+	case "create":
+		return formatError(msg, cmdWorkspaceCreate)
+	default:
+		return formatError(msg, cmdWorkspace)
+	}
+}
+
 func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
@@ -274,6 +285,12 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
 	case cmdRegistry:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+	case cmdWorkspace:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceUsageURL)
+	case cmdWorkspaceCreate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceCreateURL)
+	case cmdWorkspaceList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

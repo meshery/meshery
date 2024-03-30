@@ -31,7 +31,6 @@ var (
 	name        string
 	description string
 	orgID       string
-	page        int
 
 	maxRowsPerPage       = 25
 	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
@@ -40,14 +39,18 @@ var (
 
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
-	Short: "View list of workspace and detailed information of a specific relationship",
-	Long:  "View list of workspace and detailed information of a specific relationship",
+	Short: "View list of workspaces and detail of workspaces",
+	Long:  "View list of workspaces and detailed information of a specific workspaces",
 	Example: `
-// To view list of components
-mesheryctl exp workspace list
 
-// To view a specific model
-mesheryctl exp workspace view [model-name]
+// To view a list workspaces
+mesheryctl exp workspace list --orgId [orgId]
+
+// To create a workspace
+mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+
+// Documentation for workspace can be found at:
+https://docs.layer5.io/cloud/spaces/workspaces/
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -81,7 +84,7 @@ mesheryctl exp workspace view [model-name]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp workspace --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp workspace --help' to display usage guide.\n", args[0]), "workspace"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -98,9 +101,8 @@ mesheryctl exp workspace view [model-name]
 
 func init() {
 	listWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	listWorkspaceCmd.Flags().IntVarP(&page, "page", "p", 1, "Page number")
 	CreateWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
 	CreateWorkspaceCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace")
 	CreateWorkspaceCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the workspace")
-	WorkSpaceCmd.AddCommand(availableSubcommands...)	
+	WorkSpaceCmd.AddCommand(availableSubcommands...)
 }

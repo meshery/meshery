@@ -33,11 +33,15 @@ import (
 
 var CreateWorkspaceCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new workspace",
-	Long:  `Create a new workspace`,
+	Short: "Create a new workspaces",
+	Long:  `Create a new workspaces by providing the name and description of the workspace`,
 	Example: `
 // Create a new workspace
-mesheryctl exp workspace create orgId --name [workspace-name] --description [workspace-description]`,
+mesheryctl exp workspace create orgId --name [workspace-name] --description [workspace-description]
+
+// Documentation for workspace can be found at:
+https://docs.layer5.io/cloud/spaces/workspaces/
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 
@@ -65,8 +69,10 @@ mesheryctl exp workspace create orgId --name [workspace-name] --description [wor
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace list \nRun 'mesheryctl exp workspace list --help' to see detailed help message"
-		if len(args) >= 3 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s: expected 3 arguments (name, orgId, description)", errMsg))
+		if len(args) == 0 {
+			return cmd.Help()
+		}else if len(args) >= 3 {
+			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "create"))
 		}
 		return nil
 	},
