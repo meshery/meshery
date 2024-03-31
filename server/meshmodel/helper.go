@@ -63,27 +63,45 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Read component and relationship definitions from files and send them to respective channels
 
 	for _, model := range models {
-		entitiesPath := filepath.Join(ModelsPath, model.Name())
-		entities, err := os.ReadDir(entitiesPath)
+		modelVersionsDirPath := filepath.Join(ModelsPath, model.Name())
+		// contains all versions for the model
+		modelVersionsDir, err := os.ReadDir(modelVersionsDirPath)
 		if err != nil {
-			erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for generating components"), entitiesPath)
+			erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
 			continue
 		}
 
-		for _, entity := range entities {
-			entityPath := filepath.Join(entitiesPath, entity.Name())
-			if entity.IsDir() {
-				switch entity.Name() {
-				case "relationships":
-					relationships = append(relationships, entityPath)
-				case "policies":
-				default:
-					erh.generateComponents(entityPath) // register components first
+		for _, version := range modelVersionsDir {
+			modelDefVersionsDirPath := filepath.Join(modelVersionsDirPath, version.Name())
+		
+			// contains all def versions for a particular version of a model.
+			modelDefVersionsDir, err := os.ReadDir(modelDefVersionsDirPath)
+			if err != nil {
+				erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
+			}
+			for _, defVersion := range modelDefVersionsDir {
+				defPath := filepath.Join(modelDefVersionsDirPath, defVersion.Name())
+			
+				entities, err := os.ReadDir(defPath)
+				if err != nil {
+					erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
+					continue
+				}
+				for _, entity := range entities {
+					entityPath := filepath.Join(defPath, entity.Name())
+					if entity.IsDir() {
+						switch entity.Name() {
+						case "relationships":
+							relationships = append(relationships, entityPath)
+						case "policies":
+						default:
+							erh.generateComponents(entityPath) // register components first
+						}
+					}
 				}
 			}
 		}
 	}
-
 	for _, relationship := range relationships {
 		erh.generateRelationships(relationship)
 	}
@@ -115,8 +133,9 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 				erh.errorChan <- mutils.ErrMarshal(errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path)))
 				return nil
 			}
+
 			// Only register components that have been marked as published
-			if comp.Metadata != nil && comp.Metadata["published"] == true {
+			if comp.Metadata != nil && comp.Metadata["status"] == "enabled" {
 				// Generate SVGs for the component and save them on the file system
 				utils.WriteSVGsOnFileSystem(&comp)
 				erh.componentChan <- comp
