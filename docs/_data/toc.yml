@@ -260,6 +260,9 @@
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
+          grandchildren:
+          - title: Notification Center
+            url: project/contributing/contributing-ui-notification-center
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Models ↆ
