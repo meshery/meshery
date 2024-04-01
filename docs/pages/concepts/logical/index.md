@@ -7,7 +7,7 @@ list: exclude
 abstract: Concepts for understanding Meshery's various features and components.
 ---
 
-As a cloud-native management plane, Meshery empowers you with a wide range of tools that provide support for the majority of the systems in the cloud and cloud native ecosystems. Meshery abstracts away the system specific requirements and help you focus on getting things done.
+As an extensible platform, Meshery empowers you with a wide range of logical constructs that provide support for the majority of the systems in the cloud and cloud native ecosystems. Meshery abstracts away the system specific requirements and help you focus on getting things done.
 
 {% assign sorted_pages = site.pages | sort: "name" %}
 
@@ -25,25 +25,21 @@ As a cloud-native management plane, Meshery empowers you with a wide range of to
     {% endfor %}
 </ul>
 
-[![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
-
-_Figure: Extension points available throughout Meshery_
-
-The logical concepts included in Meshery establish a set of constructs with clearly-defined boundaries, each of which is extensible. These contructs set a foundation for the project to build upon and provide a consistent way of relating between multiple components. The logical concepts are:
+The logical concepts included in Meshery establish a set of foundational constructs. Each logical construct is:
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
 2. Extensible (see [Extension Points](/extensibility))
-3. Composable (see Patterns)
-4. Portable (v0.8.0 Export/Import)
-5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
-6. Configurable (see [Lifecycle Management](/tasks/lifecycle-management))
+3. Composable (see [Patterns]({{ site.baseurl }}/concepts/logical/patterns))
+4. Portable (see Export/Import of [Designs]({{ site.baseurl }}/concepts/logical/designs) and [Models]({{ site.baseurl }}/concepts/logical/models))
+5. Interoperable (see [Compatibility Matrix]({{ site.baseurl }}/installation/compatibility-matrix))
+6. Configurable (see [Lifecycle Management]({{ site.baseurl }}/guides/lifecycle-management))
 7. Documented (_you are here_)
 8. Testable
 9. Maintainable
 10. Secure (v0.9.0)
 11. Observable (v0.1.0)
 
-Every construct is represented in multiple forms:
+Every construct is represented in each of the following forms:
 
 - **Schema** (static) - the skeletal structure representing a logical view of the size, shape, characteristics of a construct.
   - *Example: Component schema found in github.com/meshery/schemas*
