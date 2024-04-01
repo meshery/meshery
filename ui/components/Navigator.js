@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -15,7 +16,6 @@ import Zoom from '@material-ui/core/Zoom';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -553,6 +553,7 @@ function Navigator(props) {
     release_channel: 'NA',
   });
   const [navigatorComponents, setNavigatorComponents] = useState([]);
+  const router = useRouter();
 
   // const isServiceMeshActive = () => {
   //   return meshAdapters.length > 0;
@@ -711,70 +712,65 @@ function Navigator(props) {
   };
 
   const updatenavigatorComponentsMenus = () => {
-    setNavigatorComponents((prevState) => {
-      prevState.forEach((cat, ind) => {
-        if (cat.id === LIFECYCLE) {
-          cat.children.forEach((catc, ind1) => {
-            if (catc.id == SERVICE_MESH) {
-              return;
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          if (catc.id == SERVICE_MESH) {
+            return;
+          }
+          const icon = pickIcon(catc.id, catc.href);
+          navigatorComponents[ind].children[ind1].icon = icon;
+
+          const cr = fetchChildren(catc.id);
+          navigatorComponents[ind].children[ind1].children = cr;
+        });
+      }
+
+      if (cat.id === 'Configuration') {
+        let show = false;
+        cat.children?.forEach((ch) => {
+          if (ch.id === 'Designs') {
+            const idx = props.capabilitiesRegistry?.capabilities?.findIndex(
+              (cap) => cap.feature === 'persist-meshery-patterns',
+            );
+            if (idx != -1) {
+              ch.show = true;
+              show = true;
             }
-            const icon = pickIcon(catc.id, catc.href);
-            prevState[ind].children[ind1].icon = icon;
+          }
+        });
 
-            const cr = fetchChildren(catc.id);
-            prevState[ind].children[ind1].children = cr;
-          });
-        }
-
-        if (cat.id === 'Configuration') {
-          let show = false;
-          cat.children?.forEach((ch) => {
-            if (ch.id === 'Designs') {
-              const idx = props.capabilitiesRegistry?.capabilities?.findIndex(
-                (cap) => cap.feature === 'persist-meshery-patterns',
-              );
-              if (idx != -1) {
-                ch.show = true;
-                show = true;
-              }
-            }
-          });
-
-          cat.show = show;
-        }
-      });
-      return prevState;
+        cat.show = show;
+      }
     });
   };
 
   const updateAdaptersLink = () => {
-    setNavigatorComponents((prevState) => {
-      prevState.forEach((cat, ind) => {
-        if (cat.id === LIFECYCLE) {
-          cat.children.forEach((catc, ind1) => {
-            if (
-              typeof prevState[ind].children[ind1].children[0] !== 'undefined' &&
-              typeof prevState[ind].children[ind1].children[0].href !== 'undefined'
-            ) {
-              const val = true;
-              const newhref = `${prevState[ind].children[ind1].children[0].href}`;
-              prevState[ind].children[ind1].link = val;
-              prevState[ind].children[ind1].href = newhref;
-            }
-          });
-        }
-        return prevState;
-      });
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          if (
+            typeof navigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
+            typeof navigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
+          ) {
+            const val = true;
+            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
+            navigatorComponents[ind].children[ind1].link = val;
+            navigatorComponents[ind].children[ind1].href = newhref;
+          }
+        });
+      }
     });
   };
 
   useEffect(() => {
-    const newPath = window.location.pathname;
-    setPath(newPath);
+    const path = window.location.pathname;
+    setPath(path);
     if (props.meshAdaptersts > mts) {
       setMeshAdapters(props.meshAdapters);
       setMts(props.meshAdaptersts);
     }
+
     const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
       if (href === path) {
         props.updatepagetitle({ title });
@@ -787,11 +783,10 @@ function Navigator(props) {
         });
       }
     };
-
     navigatorComponents.forEach(({ title, href, children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
-  });
+  }, [props.meshAdaptersts, props.meshAdapters, navigatorComponents, mts]);
 
   /**
    * @param {String} category
@@ -845,7 +840,7 @@ function Navigator(props) {
    * Changes the route to "/"
    */
   const handleTitleClick = () => {
-    props.router.push('/');
+    router.push('/');
   };
 
   /**
@@ -858,7 +853,7 @@ function Navigator(props) {
     const { setAdapter } = props;
     setAdapter({ selectedAdapter: id });
     if (id != -1 && !link) {
-      props.router.push('/management');
+      router.push('/management');
     }
   };
 
@@ -1123,7 +1118,7 @@ function Navigator(props) {
 
   useEffect(() => {
     updatenavigatorComponentsMenus();
-  }, [updatenavigatorComponentsMenus]);
+  }, [navigatorComponents]);
 
   const Title = (
     <div
@@ -1461,6 +1456,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Navigator));
