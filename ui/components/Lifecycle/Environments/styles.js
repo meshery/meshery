@@ -1,3 +1,4 @@
+import { styled } from '@material-ui/core';
 import { Colors } from '../../../themes/app';
 
 const styles = (theme) => ({
@@ -271,6 +272,18 @@ const styles = (theme) => ({
     },
     padding: 0,
   },
+});
+
+export const BulkActionWrapper = styled(`div`)({
+  width: '100%',
+  padding: '0.8rem',
+  justifyContent: 'space-between',
+  marginTop: '0.18rem',
+  marginBottom: '1rem',
+  borderRadius: '.25rem',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
 });
 
 export default styles;
