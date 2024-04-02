@@ -51,17 +51,17 @@ mesheryctl exp relationship view [model-name]
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},
@@ -87,13 +87,13 @@ mesheryctl exp relationship view [model-name]
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -102,14 +102,14 @@ mesheryctl exp relationship view [model-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		relationshipsResponse := &models.MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		var selectedModel v1alpha1.RelationshipDefinition

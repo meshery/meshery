@@ -57,17 +57,17 @@ mesheryctl exp relationships view [model-name]
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},
@@ -90,7 +90,7 @@ mesheryctl exp relationships view [model-name]
 		err = cmd.Usage()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},
