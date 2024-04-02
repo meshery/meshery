@@ -14,7 +14,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 ### API Reference
 
-<main class=>
+<main>
   
 <input id="tab1" type="radio" name="tabs" checked hidden>
 <label for="tab1">REST API</label>
