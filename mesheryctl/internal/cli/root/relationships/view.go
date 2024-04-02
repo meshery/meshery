@@ -50,18 +50,15 @@ mesheryctl exp relationship view [model-name]
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return nil
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
@@ -86,14 +83,12 @@ mesheryctl exp relationship view [model-name]
 		url := fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?pagesize=all", baseUrl, model)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -101,21 +96,19 @@ mesheryctl exp relationship view [model-name]
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		relationshipsResponse := &models.MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		var selectedModel v1alpha1.RelationshipDefinition
 
 		if relationshipsResponse.Count == 0 {
-			fmt.Println("No relationship(s) found for the given name ", model)
+			utils.Log.Info("No relationship(s) found for the given name ", model)
 			return nil
 		} else if relationshipsResponse.Count == 1 {
 			selectedModel = relationshipsResponse.Relationships[0]
@@ -132,7 +125,7 @@ mesheryctl exp relationship view [model-name]
 			if output, err = yaml.Marshal(selectedModel); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
-			fmt.Print(string(output))
+			utils.Log.Info(string(output))
 		} else if outFormatFlag == "json" {
 			return outputRelationshipJson(selectedModel)
 		} else {
