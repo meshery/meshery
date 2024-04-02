@@ -14,12 +14,12 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 ### API Reference
 
-<main>
+<main class=>
   
-<input id="tab1" type="radio" name="tabs" checked>
+<input id="tab1" type="radio" name="tabs" checked hidden>
 <label for="tab1">REST API</label>
 
-<input id="tab2" type="radio" name="tabs">
+<input id="tab2" type="radio" name="tabs" hidden>
 <label for="tab2">GraphQL API</label>
 
 <section class="tabbed" id="content1">
