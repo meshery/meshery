@@ -15,9 +15,7 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -124,32 +122,4 @@ func selectRelationshipPrompt(relationship []v1alpha1.RelationshipDefinition) v1
 
 		return relationshipArray[i]
 	}
-}
-
-func outputRelationshipJson(model v1alpha1.RelationshipDefinition) error {
-	if err := prettifyRelationshipJson(model); err != nil {
-		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
-		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
-		// e.g unicode representation of '&' will be printed as '\u0026'
-		if output, err := json.MarshalIndent(model, "", "  "); err != nil {
-			return errors.Wrap(err, "failed to format output in JSON")
-		} else {
-			fmt.Print(string(output))
-		}
-	}
-	return nil
-}
-
-// prettifyJson takes a v1alpha1.RelationshipDefinition struct as input, marshals it into a nicely formatted JSON representation,
-// and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyRelationshipJson(relationship v1alpha1.RelationshipDefinition) error {
-	// Create a new JSON encoder that writes to the standard output (os.Stdout).
-	enc := json.NewEncoder(os.Stdout)
-	// Configure the JSON encoder settings.
-	// SetEscapeHTML(false) prevents special characters like '<', '>', and '&' from being escaped to their HTML entities.
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-
-	// Any errors during the encoding process will be returned as an error.
-	return enc.Encode(relationship)
 }

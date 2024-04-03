@@ -17,11 +17,13 @@ package relationships
 import (
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"strings"
 
+	"gopkg.in/yaml.v2"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -127,7 +129,8 @@ mesheryctl exp relationship view [model-name]
 			}
 			utils.Log.Info(string(output))
 		} else if outFormatFlag == "json" {
-			return outputRelationshipJson(selectedModel)
+			// return outputRelationshipJson(selectedModel)
+			return components.OutputJson(selectedModel)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
