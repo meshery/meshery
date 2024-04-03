@@ -51,7 +51,13 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  ResponsiveDataTable,
+  importFilterSchema,
+  importFilterUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -1442,15 +1448,15 @@ function MesheryFilters({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportFilter } = props;
+  const { handleClose, handleImportFilter } = props;
 
   const classes = useStyles();
 
   return (
     <Modal
       open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
+      schema={importFilterSchema}
+      uiSchema={importFilterUiSchema}
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"
@@ -1468,13 +1474,13 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { handleClose, handlePublish, title } = props;
 
   return (
     <Modal
       open={true}
-      schema={publishFormSchema.rjsfSchema}
-      uiSchema={publishFormSchema.uiSchema}
+      schema={publishCatalogItemSchema}
+      uiSchema={publishCatalogItemUiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}

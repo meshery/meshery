@@ -68,7 +68,13 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  ResponsiveDataTable,
+  importDesignSchema,
+  importDesignUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -1788,7 +1794,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportDesign } = props;
+  const { handleClose, handleImportDesign } = props;
 
   const classes = useStyles();
 
@@ -1796,8 +1802,8 @@ const ImportModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
+        schema={importDesignSchema}
+        uiSchema={importDesignUiSchema}
         handleClose={handleClose}
         handleSubmit={handleImportDesign}
         title="Import Design"
@@ -1816,14 +1822,14 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <>
       <Modal
         open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
+        schema={publishCatalogItemSchema}
+        uiSchema={publishCatalogItemUiSchema}
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
