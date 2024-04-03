@@ -66,9 +66,6 @@ dependencies:
   - name: meshery-cilium
     version: 0.7.0
     condition: meshery-cilium.enabled
-  - name: meshery-perf
-    version: 0.7.0
-    condition: meshery-perf.enabled
   - name: meshery-nighthawk
     version: 0.7.0
     condition: meshery-nighthawk.enabled
