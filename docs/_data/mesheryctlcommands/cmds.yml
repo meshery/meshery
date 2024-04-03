@@ -678,91 +678,54 @@ pattern:
           usage: mesheryctl pattern view [pattern-name|pattern-id] -o json
           example: mesheryctl pattern view bookInfo -o json
 
-app:
-  name: app
-  description: Cloud native infrastructure and application management
-  usage: mesheryctl app [command] [app-name/flag] [flags]
-  # flags:
-  #   file:
-  #     name: --file, -f
-  #     description: (required) path to pattern file
-  #     usage: mesheryctl app --file [path to pattern file]
-  #     example: mesheryctl app --file "bookInfo.yaml"
-  subcommands:
     import:
       name: import
       description: Import app manifests
-      usage: mesheryctl app import -f [file/URL]
-      example: mesheryctl app import -f "bookInfo.yaml"
+      usage: mesheryctl pattern import -f [file/URL]
+      example: mesheryctl pattern import -f "bookInfo.yaml"
       flags:
         file:
           name: --file, -f
           description: Path/URL to app file
-          usage: mesheryctl app import -f [file/URL]
-          example: mesheryctl app import -f "bookInfo.yaml"
+          usage: mesheryctl pattern import -f [file/URL]
+          example: mesheryctl pattern import -f "bookInfo.yaml"
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl app import -f [file/URL] --source-type [manifest/compose/helm]
-          example: mesheryctl app import -f "bookInfo.yaml" --source-type manifest
-    list:
-      name: list
-      description: Displays a list of available applications
-      usage: mesheryctl app list
-      flags:
-        verbose:
-          name: --verbose, -v
-          description: Display full length user and app file identifiers
-          usage: mesheryctl app list --verbose
-          example: mesheryctl app list --verbose
+          usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
+          example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+
     offboard:
       name: offboard
       description: Offboard application
-      usage: mesheryctl app offboard [app-name] [flags]
+      usage: mesheryctl pattern offboard [app-name] [flags]
       flags:
         file:
           name: --file, -f
           description: Offboard application with an application file
-          usage: mesheryctl app offboard -f [filepath]
-          example: mesheryctl app offboard -f "bookInfo.yaml"
+          usage: mesheryctl pattern offboard -f [filepath]
+          example: mesheryctl pattern offboard -f "bookInfo.yaml"
+
     onboard:
       name: onboard
       description: Onboard application
-      usage: mesheryctl app onboard [app name] [flags]
+      usage: mesheryctl pattern onboard [app name] [flags]
       flags:
         file:
           name: --file, -f
           description: Onboard application with application file
-          usage: mesheryctl app onboard --file [filepath]
-          example: mesheryctl app onboard -f "bookInfo.yaml"
+          usage: mesheryctl pattern onboard --file [filepath]
+          example: mesheryctl pattern onboard -f "bookInfo.yaml"
         skip-save:
           name: --skip-save
           description: Skip saving an application
-          usage: mesheryctl app onboard --file [filepath] --skip-save
-          example: mesheryctl app onboard -f "bookInfo.yaml" --skip-save
+          usage: mesheryctl pattern onboard --file [filepath] --skip-save
+          example: mesheryctl pattern onboard -f "bookInfo.yaml" --skip-save
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl app onboard mesheryctl app onboard --file [filepath] --source-type manifest
-          example: mesheryctl mesheryctl app onboard -f "bookInfo.yaml" --source-type manifest
-    view:
-      name: view
-      description: Displays the contents of a application
-      usage: |
-        mesheryctl app view [application-name|application-id]
-      flags:
-        view-all:
-          name: --all, -a
-          description: Show all application file content
-          usage: mesheryctl app view --all
-          example: mesheryctl app view --all
-        view-json:
-          name: --output-format, -o
-          description: Display the content of an application in [json/yaml] format
-          usage: |
-              mesheryctl app view [application-name|application-id] -o json
-          example:
-              mesheryctl app view bookInfo -o json
+          usage: mesheryctl pattern onboard mesheryctl pattern onboard --file [filepath] --source-type manifest
+          example: mesheryctl mesheryctl pattern onboard -f "bookInfo.yaml" --source-type manifest
     
 filter:
   name: filter

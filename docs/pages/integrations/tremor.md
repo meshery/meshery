@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Tremor
 subtitle: Collaborative and visual infrastructure as code for Tremor
 image: /assets/img/integrations/tremor/icons/color/tremor-color.svg

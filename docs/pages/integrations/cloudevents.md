@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Cloudevents
 subtitle: Collaborative and visual infrastructure as code for Cloudevents
 image: /assets/img/integrations/cloudevents/icons/color/cloudevents-color.svg

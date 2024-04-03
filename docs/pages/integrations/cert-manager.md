@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Cert Manager
 subtitle: Cloud native certificate management with Cert Manager and Meshery
 image: /assets/img/integrations/cert-manager/icons/color/cert-manager-color.svg

@@ -978,6 +978,11 @@ function MesheryPatterns({
     );
   }
 
+  // this function returns fetchPattern function with latest values so that it can be used in child components
+  function fetchPatternsCaller() {
+    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  }
+
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
 
@@ -1768,6 +1773,7 @@ function MesheryPatterns({
               selectedResource={infoModal.selectedResource}
               resourceOwnerID={infoModal.ownerID}
               currentUserID={user?.id}
+              patternFetcher={fetchPatternsCaller}
               formSchema={publishSchema}
               meshModels={meshModels}
             />

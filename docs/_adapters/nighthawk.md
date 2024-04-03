@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Nighthawk
 name: Meshery Adapter for Nighthawk
 component: Nighthawk

@@ -1,7 +1,8 @@
 ---
-layout: enhanced
+layout: default
 title: Using Multiple Adapters
 permalink: installation/multiple-adapters
+redirect_from: guides/multiple-adapters
 type: installation
 category: operating
 language: en

@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/connections"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -45,6 +46,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, system.ModelCmd, components.ComponentsCmd)
+	availableSubcommands = append(availableSubcommands, system.ModelCmd, components.ComponentsCmd, connections.ConnectionsCmd)
 	ExpCmd.AddCommand(availableSubcommands...)
 }

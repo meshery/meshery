@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Armory Spinnaker Operator
 subtitle: Collaborative and visual infrastructure as code for Armory Spinnaker Operator
 image: /assets/img/integrations/armory-spinnaker-operator/icons/color/armory-spinnaker-operator-color.svg

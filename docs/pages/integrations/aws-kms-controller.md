@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Kinesis
 subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
 image: /assets/img/integrations/aws-kms-controller/icons/color/aws-kms-controller-color.svg

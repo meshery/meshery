@@ -13,6 +13,7 @@ keywords:
   - meshery-traefik-mesh
   - meshery-nginx-sm
   - meshery-app-mesh
+  - meshery-nighthawk
 source:
   - https://github.com/layer5io/meshery
 
@@ -68,6 +69,9 @@ dependencies:
   - name: meshery-perf
     version: 0.7.0
     condition: meshery-perf.enabled
+  - name: meshery-nighthawk
+    version: 0.7.0
+    condition: meshery-nighthawk.enabled
 
 maintainers:
   - name: Meshery Authors

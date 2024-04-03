@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kyverno Operator
 subtitle: Collaborative and visual infrastructure as code for Kyverno Operator
 image: /assets/img/integrations/kyverno-operator/icons/color/kyverno-operator-color.svg
