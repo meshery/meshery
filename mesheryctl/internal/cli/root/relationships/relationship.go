@@ -33,7 +33,7 @@ var (
 var RelationshipCmd = &cobra.Command{
 	Use:   "relationship",
 	Short: "View list of relationships and details of relationship",
-	Long:  "View list of relationships and detailed information of a specific relationship",
+	Long:  "Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship",
 	Example: `
 // To view list of relationships
 mesheryctl exp relationships list
