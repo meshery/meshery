@@ -1,0 +1,133 @@
+<style>
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+    th {
+        padding: 1rem;
+        vertical-align: bottom;
+        text-align: left;
+    }
+    td {
+        vertical-align: middle;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+
+    .pagination button {
+        margin: 0 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .pagination button.active {
+        background-color: #00b39f;
+        color: #fff;
+        border: 1px solid #00b39f;
+    }
+</style>
+
+<div class="table-container">
+    <table class="table table-dark table-active" id="myTable" style="margin:auto;padding-right:25%; padding-left:20%;">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Version</th>
+                <th>kind</th>
+                <th>subType</th>
+                <th>evalPolicy</th>
+                <th>selectors.deny.from</th>
+                <th>selectors.deny.to</th>
+                <th>selectors.allow.from</th>
+                <th>selectors.allow.to</th>
+                <th>Complete Definition</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in site.data.RelationshipsData %}
+            <tr>
+                <td>{{ item.Model }}</td>
+                <td>{{ item.Version }}</td>
+                <td>{{ item.kind }}</td>
+                <td>{{ item.subType }}</td>
+                <td>{{ item.evalPolicy }}</td>
+                <td><details>{% include code.html code=item.selectorsDenyFrom %}</details></td>
+                <td><details>{% include code.html code=item.selectorsDenyTo %}</details></td>
+                <td><details>{% include code.html code=item.selectorsAllwowFrom %}</details></td>
+                <td><details>{% include code.html code=item.selectorsAllowTo %}</details></td>
+                <td><details>{% include code.html code=item.CompleteDefinition %}</details></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination" id="pagination"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('myTable');
+        const tbody = table.querySelector('tbody');
+        const pagination = document.getElementById('pagination');
+
+        const rowsPerPage = 6;
+        let currentPage = 1;
+
+        function displayTableRows(page) {
+            const rows = tbody.querySelectorAll('tr');
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function displayTableHeadings() {
+            const headings = table.querySelector('thead');
+            headings.style.display = '';
+        }
+
+        function setupPagination() {
+            pagination.innerHTML = '';
+            const totalRows = tbody.querySelectorAll('tr').length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.innerText = i;
+                button.addEventListener('click', function () {
+                    currentPage = i;
+                    displayTableRows(currentPage);
+                    highlightActiveButton();
+                });
+                pagination.appendChild(button);
+            }
+
+            // Highlight active button
+            highlightActiveButton();
+        }
+
+        function highlightActiveButton() {
+            const buttons = pagination.querySelectorAll('button');
+            buttons.forEach((button, index) => {
+                if (index + 1 === currentPage) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Initial setup
+        displayTableRows(currentPage);
+        displayTableHeadings();
+        setupPagination();
+    });
+</script>
