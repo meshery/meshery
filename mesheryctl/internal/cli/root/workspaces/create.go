@@ -72,8 +72,10 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
 		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			cmd.Usage()
-			return errors.New("All flags are required")
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("all three flags are required")
 		}
 
 		return nil

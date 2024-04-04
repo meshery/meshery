@@ -69,7 +69,9 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
 		if orgIdFlag == "" {
-			cmd.Usage()
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
 			return errors.New("orgID is required")
 		}
 		return nil

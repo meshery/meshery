@@ -75,11 +75,14 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Usage()
-			return errors.New("subcommand is required")
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New(utils.WorkspaceSubError("Please provide a subcommand", "workspace"))
 		}
 		return nil
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp workspace --help' to display usage guide.\n", args[0]), "workspace"))
