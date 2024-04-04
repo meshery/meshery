@@ -51,30 +51,26 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment create --orgId [orgId] --name [environment-name] --description [environment-description]\nRun 'mesheryctl exp environment create --help' to see detailed help message"
-
 		// Check if all flag is set
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
 		if orgIdFlag == "" {
-			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "list"))
+			cmd.Usage()
+			return errors.New("orgID is required")
 		}
 		return nil
 	},
@@ -91,13 +87,13 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -106,14 +102,14 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		workspaceResponse := &models.WorkspacePage{}
 		err = json.Unmarshal(data, workspaceResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
 		rows := [][]string{}
@@ -122,7 +118,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 
 		if len(rows) == 0 {
-			fmt.Println("No workspace found")
+			utils.Log.Info("No workspace found")
 			return nil
 		}
 
@@ -153,7 +149,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 				event := <-keysEvents
 				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
+					utils.Log.Error(errors.New("error reading keyboard event"))
 					break
 				}
 

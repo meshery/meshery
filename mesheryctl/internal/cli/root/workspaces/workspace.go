@@ -61,25 +61,22 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp workspace [subcommands]\nRun 'mesheryctl exp workspace --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [subcommands] " + errMsg))
+			cmd.Usage()
+			return errors.New("subcommand is required")
 		}
 		return nil
 	},
@@ -94,7 +91,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		err = cmd.Usage()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},

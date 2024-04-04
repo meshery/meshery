@@ -37,7 +37,7 @@ var CreateWorkspaceCmd = &cobra.Command{
 	Long:  `Create a new workspaces by providing the name and description of the workspace`,
 	Example: `
 // Create a new workspace
-mesheryctl exp workspace create orgId --name [workspace-name] --description [workspace-description]
+mesheryctl exp workspace create --orgId [orgId] --name [workspace-name] --description [workspace-description]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
@@ -51,24 +51,20 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment create --orgId [orgId] --name [environment-name] --description [environment-description]\nRun 'mesheryctl exp environment create --help' to see detailed help message"
 
 		// Check if all three flags are set
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
@@ -76,7 +72,8 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
 		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "create"))
+			cmd.Usage()
+			return errors.New("All flags are required")
 		}
 
 		return nil
@@ -93,13 +90,6 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/workspaces", baseUrl)
 
-		if name == "" {
-			return utils.ErrInvalidArgument(errors.New("name is required"))
-		}
-
-		if description == "" {
-			return utils.ErrInvalidArgument(errors.New("description is required"))
-		}
 		payload := &models.WorkspacePayload{
 			Name:           name,
 			Description:    description,
@@ -109,22 +99,22 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		_, err = utils.MakeRequest(req)
 		if strings.Contains(err.Error(), "201") {
-			fmt.Println("Workspace created successfully")
+			utils.Log.Info("Workspace created successfully")
 			return nil
 		}
 
-		fmt.Println("Error creating workspace")
+		utils.Log.Error(errors.New("Unable to create workspace. " + err.Error()))
 		return nil
 	},
 }
