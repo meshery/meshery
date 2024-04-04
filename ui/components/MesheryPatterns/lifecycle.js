@@ -156,11 +156,9 @@ export const UpdateDeploymentStepper = ({
     command[action]?.(pattern_file, pattern_id, name);
     handleClose?.();
     handleComplete?.();
-    // designMachineRef.current.send(command[action]);
   };
 
   const handleNext = () => {
-    console.log('deployStepper', deployStepper, deployStepper.canGoForward);
     if (deployStepper.canGoForward) {
       deployStepper.handleNext();
     } else {
