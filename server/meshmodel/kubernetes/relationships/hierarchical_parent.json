@@ -1,42 +1,44 @@
 {
-  "apiVersion": "core.meshery.io/v1alpha1",
-  "kind": "Hierarchical",
-  "metadata": {
-    "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a parent of `to`, where from and to are any components that match the from and to selectors respectively"
-  },
-  "model": {
-    "name": "kubernetes",
-    "version": "v1.25.2",
-    "displayName": "Kubernetes",
-    "category": {
-      "name": "Orchestration \u0026 Management",
-      "metadata": null
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Hierarchical",
+    "metadata": {
+        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a parent of `to`, where from and to are any components that match the from and to selectors respectively"
     },
-    "metadata": {}
-  },
-  "evaluationQuery": "heirarcal_parent_relationship",
-  "subType": "Parent",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "Namespace",
-          "model": "kubernetes"
+    "model": {
+        "name": "kubernetes",
+        "version": "v1.25.2",
+        "displayName": "Kubernetes",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
         },
-        {
-          "kind": "Node",
-          "model": "kubernetes"
-        }
-      ],
-      "to": [
-        {
-          "model": "*"
-        }
-      ]
+        "metadata": {}
     },
-    "deny": {
-      "from": [],
-      "to": []
-    }
-  }]
+    "evaluationQuery": "heirarcal_parent_relationship",
+    "subType": "Parent",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "model": "*"
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Namespace",
+                        "model": "kubernetes"
+                    },
+                    {
+                        "kind": "Node",
+                        "model": "kubernetes"
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ]
 }

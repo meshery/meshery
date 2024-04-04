@@ -1,5 +1,5 @@
 import Grid from '@material-ui/core/Grid';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -13,61 +13,27 @@ import {
 } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import {
-  useGetModelCategoriesQuery,
-  useLazyGetComponentsQuery,
-  useLazyGetMeshModelsQuery,
-  useLazyGetModelFromCategoryQuery,
-  useLazyGetRelationshipsQuery,
+  useGetCategoriesSummary,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
+  useGetRelationshipsQuery,
 } from '@/rtk-query/meshModel';
 
 function MeshModelContructs({ classes }) {
-  const [getAllModels] = useLazyGetMeshModelsQuery();
-  const [getAllComponents] = useLazyGetComponentsQuery();
-  const [getAllRelationships] = useLazyGetRelationshipsQuery();
-
-  // States to hold total counts
-  const [totalModels, setTotalModels] = useState(0);
-  const [totalComponents, setTotalComponents] = useState(0);
-  const [totalRelationships, setTotalRelationships] = useState(0);
-
-  // Fetch data and update state on component mount
-  const fetchData = useCallback(async () => {
-    try {
-      const models = await getAllModels({
-        page: 1,
-        pagesize: 'all',
-      });
-      const components = await getAllComponents({
-        page: 1,
-        pagesize: 'all',
-      });
-      const relationships = await getAllRelationships({
-        page: 1,
-        pagesize: 'all',
-      });
-
-      setTotalModels(models.data.total_count);
-      setTotalComponents(components.data.total_count);
-      setTotalRelationships(relationships.data.total_count);
-    } catch (error) {
-      console.error('Error fetching Mesh Models data:', error);
-    }
-  }, [getAllModels, getAllComponents, getAllRelationships]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const params = {
+    page: 1,
+    pagesize: '1',
+  };
+  const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
+  const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
+  const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
 
   // Data Cleanup
-  const data = useMemo(() => {
-    // TODO: Add Policies
-    return [
-      ['Models', totalModels],
-      ['Components', totalComponents],
-      ['Relationships', totalRelationships],
-      // TODO: Add Policies
-    ];
-  }, [totalModels, totalRelationships, totalComponents]);
+  const data = [
+    ['Models', modelCount],
+    ['Components', componentCount],
+    ['Relationships', relationshipCount],
+  ];
 
   const chartOptions = useMemo(
     () => ({
@@ -96,7 +62,7 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/models`;
+  const url = `https://docs.meshery.io/concepts/logical/registry`;
 
   return (
     <Link href="/settings?settingsCategory=Registry&tab=Models">
@@ -138,31 +104,7 @@ function MeshModelContructs({ classes }) {
 }
 
 function MeshModelCategories({ classes }) {
-  const [categoryMap, setCategoryMap] = useState({});
-  const { data: categories } = useGetModelCategoriesQuery();
-  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
-
-  useEffect(() => {
-    const fetchModelsForCategories = async () => {
-      if (categories) {
-        const updatedCategoryMap = { ...categoryMap };
-        for (const category of categories.categories) {
-          const categoryName = category.name;
-          if (!updatedCategoryMap[categoryName]) {
-            const { data: models } = await getModelFromCategory({
-              page: 1,
-              pagesize: 'all',
-              category: categoryName,
-            });
-            updatedCategoryMap[categoryName] = models?.total_count || 0;
-          }
-        }
-        setCategoryMap(updatedCategoryMap);
-      }
-    };
-
-    fetchModelsForCategories();
-  }, [categories]);
+  const categoryMap = useGetCategoriesSummary();
 
   const cleanedData = useMemo(
     () => Object.keys(categoryMap).map((key) => [key, categoryMap[key]]),
@@ -207,7 +149,7 @@ function MeshModelCategories({ classes }) {
   const url = `https://docs.meshery.io/concepts/logical/models`;
 
   return (
-    <Link href="/settings#registry">
+    <Link href="/settings?settingsCategory=Registry">
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
