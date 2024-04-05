@@ -102,7 +102,7 @@ func init() {
 	pushModelCmd.Flags().StringVarP(&registry, "registry", "r", "", "Registry to push the model to")
 	pushModelCmd.Flags().StringVarP(&repository, "repository", "n", "", "Repository name to push the model to")
 	pushModelCmd.Flags().StringVarP(&tag, "tag", "t", "", "Tag for the model")
-	pushModelCmd.Flags().StringVarP(&pathToModel, "path", "p", "", "Path to the model")
+	pushModelCmd.Flags().StringVarP(&pathToModel, "path", "f", "", "Path to the model")
 	pullModelCmd.Flags().StringVarP(&username, "username", "u", "", "Username for authentication")
 	pullModelCmd.Flags().StringVarP(&password, "password", "p", "", "Password for authentication")
 	pullModelCmd.Flags().StringVarP(&registry, "registry", "r", "", "Registry to push the model to")
