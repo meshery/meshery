@@ -61,7 +61,11 @@
             </div>
             {% endfor %}
           </div>
-          {% endif %} {% include_cached feedback.html %}
+          {% endif %}  
+          {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+            {% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %} 
+          {% endif %} 
+          {% include_cached feedback.html %}
         </div>
       </main>
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
@@ -82,7 +86,7 @@
       </div>
       {% endif %}
     </div>
-    {% include_cached footer.html %} {% include_cached scripts.html %} {% include_cached google-analytics.html %}
+    {% include_cached footer.html %} {% include_cached scripts.html %} {% include_cached scripts/google-analytics.html %}
   </body>
 </html>
 {% include_cached toc.html %}

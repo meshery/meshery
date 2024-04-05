@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: SPIRE
 subtitle: Collaborative and visual infrastructure as code for SPIRE
 image: /assets/img/integrations/spire/icons/color/spire-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Brigade
 subtitle: Collaborative and visual infrastructure as code for Brigade
 image: /assets/img/integrations/brigade/icons/color/brigade-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS ElasticSearch Service
 subtitle: Collaborative and visual infrastructure as code for AWS ElasticSearch Service
 image: /assets/img/integrations/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg

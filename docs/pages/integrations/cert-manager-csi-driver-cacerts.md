@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Cert Manager Csi Driver Cacerts
 subtitle: Collaborative and visual infrastructure as code for Cert Manager Csi Driver Cacerts
 image: /assets/img/integrations/cert-manager-csi-driver-cacerts/icons/color/cert-manager-csi-driver-cacerts-color.svg

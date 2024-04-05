@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Istio Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
 image: /assets/img/integrations/istio-operator/icons/color/istio-operator-color.svg

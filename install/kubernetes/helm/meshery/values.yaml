@@ -82,7 +82,7 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-  
+
 
 resources:
   {}
@@ -151,9 +151,9 @@ meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
 
-meshery-perf:
+meshery-nighthawk:
   enabled: false
-  fullnameOverride: meshery-perf
+  fullnameOverride: meshery-nighthawk
   serviceAccountNameOverride: meshery-server
 
 # If there need the test cases set it as true.

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubeflow MPI Operator
 subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
 image: /assets/img/integrations/mpi-operator/icons/color/mpi-operator-color.svg

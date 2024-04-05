@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Aperture Controller
 subtitle: Collaborative and visual infrastructure as code for Aperture Controller
 image: /assets/img/integrations/aperture-controller/icons/color/aperture-controller-color.svg
