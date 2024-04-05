@@ -123,20 +123,6 @@ const styles = (theme) => ({
     },
   },
 
-  viewButton: {
-    width: '100%',
-    borderRadius: '4px',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: '10px',
-    color: theme.palette.secondary.penColorPrimary,
-    '&:hover': {
-      background: theme.palette.secondary.white,
-    },
-    padding: '15px 10px',
-  },
-
   record: {
     borderBottom: `1px solid ${theme.palette.secondary.modalTabs}60`,
     display: 'flex',
