@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography, useTheme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import { useRouter } from 'next/router';
@@ -27,7 +27,8 @@ const styles = makeStyles((theme) => ({
     width: '100%',
   },
   designerImg: {
-    height: 300,
+    height: '205px',
+    width: 'auto',
     margin: 'auto',
   },
   header: {
@@ -51,7 +52,7 @@ const styles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   imgWrapper: {
-    padding: '15px 10px 15px 0',
+    padding: '0px 10px 15px 0',
     display: 'flex',
   },
   headerWrapper: {
@@ -121,6 +122,9 @@ export function MeshMapEarlyAccessCard({
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
   const { push } = useRouter();
+  const theme = useTheme();
+  const popupImageSrc =
+    theme.palette.type === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
@@ -163,7 +167,7 @@ export function MeshMapEarlyAccessCard({
       </div>
 
       <div className={classes.imgWrapper}>
-        <img className={classes.designerImg} src="/static/img/designer.png" />
+        <img className={classes.designerImg} src={popupImageSrc} />
       </div>
       <Typography className={classes.caption} variant="subtitle1">
         <i>
