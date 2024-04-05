@@ -28,7 +28,7 @@ var pullModelCmd = &cobra.Command{
 	Long:  "pull a model to the registry",
 	Example: `
 // Push a model
-mesheryctl exp model push --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]
+mesheryctl exp model pull --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]
 	`,
 	// skip preRunE as it is not required for this command
 	Args: func(cmd *cobra.Command, args []string) error {
