@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Designs
 permalink: concepts/logical/designs
 type: concepts
@@ -10,11 +10,11 @@ redirect_from:
 - concepts/designs
 ---
 
-Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](<(https://github.com/meshery/schemas)>)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
+Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
 <!-- ### Using Designs -->
 
-A Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and/or [Patterns](../concepts/logical/patterns). A Design is the deployable unit in Meshery. Designs are how the users can describe the desired infrastructure state.
+A Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and [Relationships]]({{site.baseurl}}/concepts/logical/relationships) A Design is the deployable unit in Meshery. Designs are how the users can describe the desired infrastructure state.
 There cannot be two components with the same name within a Design. However, there can be two components with the same name in different Designs.
 
 ### Design Relationships and Restrictions
@@ -50,3 +50,8 @@ There cannot be two components with the same name within a Design. However, ther
 
 When creating a new design by default it's visibility level will be set to **public**. Remove providers have the option of offering additional visibility levels like **private** and **published**.
 
+## Meshery Designs and Models Explained
+
+In Meshery, the deployable unit is the Meshery Design. The Meshery Models are not directly deployed; instead, they are imported by the Meshery Server to provide the necessary understanding for deployment.
+
+ Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.

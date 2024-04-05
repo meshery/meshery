@@ -13,8 +13,7 @@ import (
 )
 
 var (
-	shouldRegisterMod        = "publishToSites"
-	shouldRegisterToRegsitry = "publishToRegistry"
+	shouldRegisterMod = "publishToSites"
 )
 
 type ModelCSV struct {
@@ -130,7 +129,9 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		if parseForDocs {
 			index = GetIndexForRegisterCol(columns, shouldRegisterMod)
 		} else {
-			index = GetIndexForRegisterCol(columns, shouldRegisterToRegsitry)
+			// Generation of models should not consider publishedToRegistry column value.
+			// Generation should happen for all models, while during registration "published" attribute should be respected.
+			return true
 		}
 		if index != -1 && index < len(currentRow) {
 			shouldRegister := currentRow[index]

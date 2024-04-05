@@ -154,6 +154,15 @@ func RegistryError(msg string, cmd string) string {
 	}
 }
 
+func RelationshipsError(msg string, cmd string) string {
+	switch cmd {
+	case "generate":
+		return formatError(msg, cmdRelationshipGenerateDocs)
+	default:
+		return formatError(msg, cmdRelationships)
+	}
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 func MeshError(msg string) string {
 	return formatError(msg, cmdMesh)
@@ -272,6 +281,12 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+	case cmdRegistry:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+	case cmdRelationships:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
+	case cmdRelationshipGenerateDocs:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

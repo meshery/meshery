@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Vault Config Operator
 subtitle: Collaborative and visual infrastructure as code for Vault Config Operator
 image: /assets/img/integrations/vault-config-operator/icons/color/vault-config-operator-color.svg

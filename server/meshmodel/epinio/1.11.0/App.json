@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "App",
+  "apiVersion": "application.epinio.io/v1",
+  "displayName": "App",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "epinio",
+   "version": "1.11.0",
+   "displayName": "Epinio",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"App is the Schema for the apps API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AppSpec defines the desired state of App\",\n   \"properties\": {\n    \"blobuid\": {\n     \"description\": \"BlobUID stores the blob uid that was used when the application was last staged (from code). It can be empty if the application was never staged (e.g. pushed with container image). Epinio will use the value set by the user explicitly but if one is not set, it will try to use the previously set blobUID from the application CRD.\",\n     \"type\": \"string\"\n    },\n    \"builderimage\": {\n     \"description\": \"This field stores the builder image that was used when the application was last staged (from code). It can be empty if the application was never staged (e.g. pushed with container image). Epinio will use the builder image set by the user explicitly but if one is not set, it will try to use the previously set image.\",\n     \"type\": \"string\"\n    },\n    \"chartname\": {\n     \"description\": \"ChartName stores the name of the application support chart used to deploy the currently running application. This is set on deployment, for use in updates. The name references an epinio AppCharts resource.\",\n     \"type\": \"string\"\n    },\n    \"imageurl\": {\n     \"description\": \"ImageURL stores the image reference of the currently running application. This is set on deployment, for use in updates.\",\n     \"type\": \"string\"\n    },\n    \"origin\": {\n     \"properties\": {\n      \"archive\": {\n       \"type\": \"boolean\"\n      },\n      \"container\": {\n       \"type\": \"string\"\n      },\n      \"git\": {\n       \"properties\": {\n        \"branch\": {\n         \"type\": \"string\"\n        },\n        \"provider\": {\n         \"type\": \"string\"\n        },\n        \"repository\": {\n         \"type\": \"string\"\n        },\n        \"revision\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"repository\"\n       ],\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"routes\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"settings\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Settings stores the fields and values set by the user to configure the application chart. See ChartName.\",\n     \"type\": \"object\"\n    },\n    \"stageid\": {\n     \"description\": \"StageID stores the id of the latest attempt to stage the application, regardless of outcome. This enables access to the staging logs of an application which never staged successfully.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"origin\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"App\",\n \"type\": \"object\"\n}"
+ }

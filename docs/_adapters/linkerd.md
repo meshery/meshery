@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 component: Linkerd

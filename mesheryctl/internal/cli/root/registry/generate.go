@@ -16,7 +16,9 @@ package registry
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sync"
@@ -24,9 +26,11 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
+	"github.com/layer5io/meshkit/generators/github"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -41,11 +45,6 @@ var (
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
-	// Maps the relationship between the Models sheet and Components sheet of the Meshery Integration spreadsheet columns.
-	// Used when generating Component definition from spreadsheet itself, for eg: Component of Meshery core model.
-	// The GoogleSpreadsheetAPI doesn't return column names, hence when invoking generation columns names are retrived by dumoing the sheet in CSV format then extrcting the columns (ComponentCSVHelper)
-	componentSpreadsheetCols []string
-
 	// current working directory location
 	cwd string
 
@@ -59,10 +58,9 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
-mesheryctl registry generate --spreadsheet-id <id> --spreadsheet-cred <base64 encoded spreadsheet credential>
-# Example: mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
-mesheryctl registry generate --registrant-def <path to connection definition> --registrant-cred <path to credential definition>
+mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -168,8 +166,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
 	}()
 
-	componentSpreadsheetCols, _ = componentCSVHelper.GetColumns()
-
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
 		totalAvailableModels++
@@ -209,8 +205,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			version := pkg.GetVersion()
 
+			version := pkg.GetVersion()
 			modelDefPath, modelDef, err := writeModelDefToFileSystem(&model, version)
 			if err != nil {
 				utils.Log.Error(err)
@@ -238,6 +234,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// If model is published mark the comps as published.
 				// The published attribute controls whether the comp will be registered inside registry or not.
 				comp.Metadata["published"] = isModelPublished
+				comp.Metadata["shape"] = model.Shape
 				comp.Model = *modelDef
 				err := comp.WriteComponentDefinition(compDirName)
 				if err != nil {
@@ -263,8 +260,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-// For registrants eg: meshery, whose components needs to be directly created by referencing the sheet.
-// the sourceURL contains the "rangeString" : the value that describes the sheet in which the components are listed, and their starting row to ending row.
+// For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
+// the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	totalComps := 0
 	version := "1.0.0"
@@ -280,7 +277,6 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		return ErrGenerateModel(err, model.Model)
 	}
 	isModelPublished, _ := modelDef.Metadata["published"].(bool)
-	components, err := srv.Spreadsheets.Values.Get(spreadsheeetID, model.SourceURL).Do()
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
@@ -289,37 +285,52 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		err = ErrGenerateModel(err, modelDef.Name)
 		return err
 	}
+	path, err := url.Parse(model.SourceURL)
+	if err != nil {
+		err = ErrGenerateModel(err, modelDef.Name)
+		utils.Log.Error(err)
+		return nil
+	}
+	gitRepo := github.GitRepo{
+		URL:         path,
+		PackageName: model.Model,
+	}
+	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
+	if err != nil {
+		err = ErrGenerateModel(err, modelDef.Name)
+		utils.Log.Error(err)
+		return nil
+	}
 
-	if len(componentSpreadsheetCols) > 0 {
-		for _, comp := range components.Values {
-			totalComps++
-			component := make(map[string]interface{}, len(comp))
-			for i, compValue := range comp {
-				component[componentSpreadsheetCols[i]] = compValue
-			}
-			compName, _ := component["component"].(string)
-			compCSV, err := mutils.MarshalAndUnmarshal[map[string]interface{}, utils.ComponentCSV](component)
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
+	//Initialize walker
+	gitWalker := walker.NewGit()
+	if isModelPublished {
+		gw := gitWalker.
+			Owner(owner).
+			Repo(repo).
+			Branch(branch).
+			Root(root).
+			RegisterFileInterceptor(func(f walker.File) error {
+				// Check if the file has a JSON extension
+				if filepath.Ext(f.Name) != ".json" {
+					return nil
+				}
+				contentBytes := []byte(f.Content)
+				var componentDef v1alpha1.ComponentDefinition
+				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
+					return err
+				}
 
-			componentDef, err := compCSV.CreateComponentDefinition(isModelPublished)
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
-			componentDef.Model = *modelDef // remove this, left for backward compatibility
-
-			err = componentDef.WriteComponentDefinition(compDirName)
-
-			if err != nil {
-				err = ErrGenerateComponent(err, model.Model, compName)
-				utils.Log.Error(err)
-				continue
-			}
+				err = componentDef.WriteComponentDefinition(compDirName)
+				if err != nil {
+					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
+					utils.Log.Error(err)
+				}
+				return nil
+			})
+		err = gw.Walk()
+		if err != nil {
+			return err
 		}
 	}
 

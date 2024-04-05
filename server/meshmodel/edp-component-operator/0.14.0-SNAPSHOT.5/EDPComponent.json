@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "EDPComponent",
+  "apiVersion": "v1.edp.epam.com/v1",
+  "displayName": "EDP Component",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "edp-component-operator",
+   "version": "0.14.0-SNAPSHOT.5",
+   "displayName": "EDP Component Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"EDPComponent is the Schema for the edpcomponents API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EDPComponentSpec defines the desired state of EDPComponent.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"base64 encoded SVG icon of a component\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"specifies a type of component, e.g. 'nexus', 'gerrit', etc.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"specifies a link to component\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"description\": \"specifies whether a component is visible\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"EDP Component\",\n \"type\": \"object\"\n}"
+ }

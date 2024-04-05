@@ -68,6 +68,8 @@ const RelationshipTree = ({
   handleSelect,
   data,
   setShowDetailsData,
+  view = RELATIONSHIPS,
+  idForKindAsProp,
 }) => {
   return (
     <TreeView
@@ -82,42 +84,56 @@ const RelationshipTree = ({
       expanded={expanded}
       selected={selected}
     >
-      {data.map((relationshipByKind, index) => (
-        <StyledTreeItem
-          key={index}
-          nodeId={`${relationshipByKind.relationships[0].id}`}
-          data-id={`${relationshipByKind.relationships[0].id}`}
-          labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
-          onClick={() => {
-            setShowDetailsData({
-              type: 'none',
-              data: {
-                id: relationshipByKind.relationships[0].id,
-              },
-            });
-          }}
-        >
-          {relationshipByKind.relationships.map((relationship) => (
-            <StyledTreeItem
-              key={index}
-              nodeId={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
-              data-id={`${relationshipByKind.relationships[0].id}.${relationship.id}`}
-              labelText={relationship.subType}
-              onClick={() => {
-                setShowDetailsData({
-                  type: RELATIONSHIPS,
-                  data: relationship,
-                });
-              }}
-            />
-          ))}
-        </StyledTreeItem>
-      ))}
+      {data.map((relationshipByKind, index) => {
+        const idForKind =
+          view === RELATIONSHIPS
+            ? `${relationshipByKind.relationships[0].id}`
+            : `${idForKindAsProp}.${relationshipByKind.relationships[0].id}`;
+        return (
+          <StyledTreeItem
+            key={index}
+            nodeId={idForKind}
+            data-id={idForKind}
+            labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
+            onClick={() => {
+              setShowDetailsData({
+                type: 'none',
+                data: {
+                  id: relationshipByKind.relationships[0].id,
+                },
+              });
+            }}
+          >
+            {relationshipByKind.relationships.map((relationship) => (
+              <StyledTreeItem
+                key={index}
+                nodeId={`${idForKind}.${relationship.id}`}
+                data-id={`${idForKind}.${relationship.id}`}
+                labelText={relationship.subType}
+                onClick={() => {
+                  setShowDetailsData({
+                    type: RELATIONSHIPS,
+                    data: relationship,
+                  });
+                }}
+              />
+            ))}
+          </StyledTreeItem>
+        );
+      })}
     </TreeView>
   );
 };
 
-const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
+const MesheryTreeViewItem = ({
+  model,
+  registrantID,
+  setShowDetailsData,
+  handleToggle,
+  handleSelect,
+  selected,
+  expanded,
+}) => {
   return (
     <StyledTreeItem
       key={model.id}
@@ -193,25 +209,18 @@ const MesheryTreeViewItem = ({ model, registrantID, setShowDetailsData }) => {
                 versionedModel.relationships ? versionedModel.relationships.length : 0
               })`}
             >
-              {versionedModel.relationships &&
-                versionedModel.relationships.map((relationship, subIndex) => (
-                  <StyledTreeItem
-                    key={subIndex}
-                    nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.2.${relationship.id}`}
-                    data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.2.${relationship.id}`}
-                    labelText={relationship.subType}
-                    onClick={() => {
-                      setShowDetailsData({
-                        type: RELATIONSHIPS,
-                        data: relationship,
-                      });
-                    }}
-                  />
-                ))}
+              <RelationshipTree
+                handleToggle={handleToggle}
+                handleSelect={handleSelect}
+                expanded={expanded}
+                selected={selected}
+                data={versionedModel.relationships}
+                view={MODELS}
+                setShowDetailsData={setShowDetailsData}
+                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
+                  versionedModel.id
+                }.2`}
+              />
             </StyledTreeItem>
           </StyledTreeItem>
         ))}
@@ -564,7 +573,7 @@ const MesheryTreeView = ({
   );
 
   const setSearchExpand = (isExpand) => {
-    if (!isExpand && searchText) {
+    if (!isExpand) {
       setSearchText(() => null);
       setResourcesDetail(() => []);
     }
@@ -644,10 +653,6 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             data={data}
-            setExpanded={setExpanded}
-            setSelected={setSelected}
-            handleScroll={handleScroll}
-            setSearchText={setSearchText}
             setShowDetailsData={setShowDetailsData}
           />,
           RELATIONSHIPS,

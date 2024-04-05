@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Authenticating with Meshery via CLI
 permalink: guides/mesheryctl/authenticate-with-meshery-via-cli
 language: en
@@ -35,7 +35,6 @@ You can retrieve your authentication token from either of Meshery's two clients:
 **_The need for authentication to `Meshery` [provider](https://docs.meshery.io/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
 <br/>
-# Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
@@ -43,14 +42,5 @@ For an exhaustive list of `mesheryctl` commands and syntax:
 
 Guides to using Meshery's various features and components.
 
-{% capture tag %}
-
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
-
-{% endcapture %}
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
 {% include related-discussions.html tag="mesheryctl" %}
 

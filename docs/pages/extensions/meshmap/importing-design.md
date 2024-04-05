@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Importing a Design
 abstract: Import your existing application definitions and infrastructure configuration into Meshery.
 permalink: extensions/importing-a-design

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: "Extensibility: Authorization"
 permalink: extensibility/authorization
 type: Extensibility

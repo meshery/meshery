@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "VerticalPodAutoscalerCheckpoint",
+  "apiVersion": "autoscaling.k8s.io/v1",
+  "displayName": "Vertical Pod Autoscaler Checkpoint",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "insights-agent",
+   "version": "3.1.4",
+   "displayName": "Insights Agent",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}"
+ }

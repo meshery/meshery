@@ -66,9 +66,9 @@ export default function ConnectionStatsChart({ classes }) {
               interactive={true}
               title={RenderTooltipContent({
                 showPriortext:
-                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
+                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments.',
                 link: url,
-                showAftertext: 'to know more about Meshery Connections',
+                showAftertext: 'about Meshery Connections',
               })}
               placement="left"
             >

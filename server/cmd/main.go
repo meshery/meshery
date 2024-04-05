@@ -251,10 +251,16 @@ func main() {
 	}
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
+	rego := policies.Rego{}
 	go func() {
 		ch.SeedComponents()
+		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
+		rego = *r
+		if err != nil {
+			logrus.Warn("error creating rego instance, policies will not be evaluated")
+		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
-		go hc.MeshModelSummaryChannel.Publish()
+		hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)
@@ -295,14 +301,10 @@ func main() {
 	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
-	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
-	if err != nil {
-		logrus.Warn("error creating rego instance, policies will not be evaluated")
-	}
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), &rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
