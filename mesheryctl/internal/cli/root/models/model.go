@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 package models
 
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -30,22 +28,12 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{pushModelCmd, pullModelCmd}
-	// flag used to specify the page number in list command
-	pageNumberFlag int
-	// flag used to specify format of output of view {model-name} command
-	outFormatFlag string
 
-	// Maximum number of rows to be displayed in a page
-	maxRowsPerPage = 25
-
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-
-	username   string
-	password   string
-	registry   string
-	repository string
-	tag        string
+	username    string
+	password    string
+	registry    string
+	repository  string
+	tag         string
 	pathToModel string
 )
 
@@ -70,25 +58,24 @@ mesheryctl exp model view [model-name]
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
-	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model [subcommand]\nRun 'mesheryctl exp model --help' to see detailed help message"
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("model subcommand isn't specified\n\n%v", errMsg))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("Subcommand is required")
 		}
 		return nil
 	},
@@ -100,7 +87,7 @@ mesheryctl exp model view [model-name]
 		if err != nil {
 			log.Fatalln(err, "error processing config")
 		}
-		
+
 		err = cmd.Usage()
 		if err != nil {
 			return err

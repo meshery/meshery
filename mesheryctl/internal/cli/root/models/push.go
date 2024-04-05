@@ -15,10 +15,9 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/models/oci"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -31,9 +30,18 @@ var pushModelCmd = &cobra.Command{
 mesheryctl exp model push [path-to-model] --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		errMsg := "Usage: mesheryctl exp model push [path-to-model] --username [username] --password [password] --registry [registry] --tag [tag] --repository [repository]\nRun 'mesheryctl exp model push --help' to see detailed help message"
-		if len(args) < 5 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s: expected 5 arguments (username, password, registryURL, repository, image_tag)", errMsg))
+		// Check if all flags are set
+		usernameFlag, _ := cmd.Flags().GetString("username")
+		passwordFlag, _ := cmd.Flags().GetString("password")
+		registryFlag, _ := cmd.Flags().GetString("registry")
+		tagFlag, _ := cmd.Flags().GetString("tag")
+		repositoryFlag, _ := cmd.Flags().GetString("repository")
+
+		if usernameFlag == "" || passwordFlag == "" || registryFlag == "" || tagFlag == "" || repositoryFlag == "" {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("all flags are required")
 		}
 		return nil
 	},
@@ -42,11 +50,10 @@ mesheryctl exp model push [path-to-model] --username [username] --password [pass
 		modelPath := pathToModel
 		err := oci.PushToOCIRegistry(modelPath, registry, repository, tag, username, password)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
-		fmt.Println("Model pushed successfully")
+		utils.Log.Info("Model pushed successfully")
 		return nil
 	},
 }
