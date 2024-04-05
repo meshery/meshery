@@ -16,10 +16,12 @@
 
 section.tabbed {
   display: none;
-  padding: 20px 0 0;
-  border-top: 1px solid #ddd;
+  padding: 1rem;
+  border: 1px solid #ddd;
 }
-
+section:after{
+  background-color: red;
+}
 // input {
 //   display: none;
 // }
@@ -59,7 +61,7 @@ label[for*='4']:before {
 label:hover {
   color: #888;
   cursor: pointer;
-  background-color: var(--color-summary-background);
+  background-color: var(--brand-color-secondary-50);
 }
 
 input:checked + label {
@@ -67,8 +69,11 @@ input:checked + label {
   border: 1px solid #ddd;
   border-top: 2px solid var(--brand-color);
   border-bottom: 1px solid #fff;
+  background-color: var(--background-primary);
 }
-
+#content1 {
+  background-color: "pink";
+}
 #tab1:checked ~ #content1,
 #tab2:checked ~ #content2,
 #tab3:checked ~ #content3,

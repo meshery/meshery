@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Workspaces
 permalink: concepts/logical/workspaces
 type: concepts

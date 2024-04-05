@@ -92,8 +92,4 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 {% include_cached installation/accessing-meshery-ui.md %}
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
-
 {% include related-discussions.html tag="meshery" %}

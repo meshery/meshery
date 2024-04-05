@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Relationships
 permalink: concepts/logical/relationships
 type: concepts

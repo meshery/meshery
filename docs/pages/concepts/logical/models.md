@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Models
 permalink: concepts/logical/models
 type: concepts
@@ -10,9 +10,13 @@ redirect_from:
 - concepts/models
 ---
 
-## Introduction
+Each model includes a set of entities (in the form of definitions) that Meshery can manage.
 
-Meshery is a cloud-native management plane that aims to provide a comprehensive set of tools for managing cloud-native applications and infrastructure. To achieve this, Meshery needs a model that can represent a wide range of constructs, from simple applications to complex microservices architectures. This document describes the Meshery Model, a set of constructs that are used to represent and manage cloud-native systems.
+Every entity type is implemented by a [registrant]({{site.baseurl}}/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
+
+Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons. Others registrants offer specific services. For example, the Meshery Adapter for Nighthawk offers load generation and service performance characteriazation.
+
+Meshery is a cloud native management plane that aims to provide a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure. To achieve this, Meshery needs object models that can represent a wide range of constructs, from simple applications to complex microservices architectures. This document describes the Meshery Model, a set of constructs that are used to represent and manage cloud-native systems.
 
 Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as an exportable package to define managed infrastructure and their relationships, and details specifics of how to manage them. A Meshery Model is based on the [Model Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/meshmodels.yml) with well-defined attributes. 
 
@@ -20,7 +24,7 @@ Meshery's internal object model is designed to provide a consistent and extensib
 
 Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
 
-* **Comprehensive:** The model should be able to represent a wide range of cloud-native constructs, including applications, services, meshes, and infrastructure components.
+* **Comprehensive:** The model should be able to represent a wide range of cloud and cloud native resources.
 * **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
 * **User-centric:** The model should be easy for users to understand and use.
 * **Machine-readable:** The model should be machine-readable, allowing it to be used by automation tools.

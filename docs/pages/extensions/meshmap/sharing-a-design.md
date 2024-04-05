@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Sharing a Design
 abstract: Sharing a design lets you make your content visible to any anonymous visitor of meshery.io/catalog and any Meshery Cloud user.
 permalink: extensions/sharing-a-design

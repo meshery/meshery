@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Percona Server for MySQL
 subtitle: Database
 image: /assets/img/integrations/ps-db/icons/color/ps-db-color.svg

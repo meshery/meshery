@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubevault Operator
 subtitle: Collaborative and visual infrastructure as code for Kubevault Operator
 image: /assets/img/integrations/kubevault-operator/icons/color/kubevault-operator-color.svg

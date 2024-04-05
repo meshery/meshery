@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubedb Metrics
 subtitle: Collaborative and visual infrastructure as code for Kubedb Metrics
 image: /assets/img/integrations/kubedb-metrics/icons/color/kubedb-metrics-color.svg

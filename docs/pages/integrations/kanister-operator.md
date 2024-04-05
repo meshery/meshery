@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kanister Operator
 subtitle: Collaborative and visual infrastructure as code for Kanister Operator
 image: /assets/img/integrations/kanister-operator/icons/color/kanister-operator-color.svg
