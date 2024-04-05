@@ -216,7 +216,7 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
-			erh.registryLog(ctx)
+			erh.registryLog()
 			return
 		}
 		if err != nil {
@@ -308,8 +308,9 @@ func handleModelOrRegistrantError(h meshmodel.Host, modelName string, err error,
 }
 
 // To log the event to Terminal and send an event to Ui with id 00000000-0000-0000-0000-000000000000
-func (erh *EntityRegistrationHelper) registryLog(ctx context.Context) {
+func (erh *EntityRegistrationHelper) registryLog() {
 	log := erh.log
+	provider := erh.handlerConfig.Providers["None"]
 	fileRoute := path.Join(viper.GetString("SERVER_CONTENT_FOLDER"), "entities")
 	errDir := os.MkdirAll(fileRoute, 0755)
 	if errDir != nil {
@@ -348,7 +349,6 @@ func (erh *EntityRegistrationHelper) registryLog(ctx context.Context) {
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		provider := erh.handlerConfig.Providers["Meshery"]
 		_ = provider.PersistEvent(successEvent)
 
 		failedMsg, _ := FailedMsgCompute("", host.Hostname)
@@ -363,7 +363,6 @@ func (erh *EntityRegistrationHelper) registryLog(ctx context.Context) {
 				"DownloadLink":         filePath,
 				"ViewLink":             filePath,
 			})
-			provider := erh.handlerConfig.Providers["Meshery"]
 			_ = provider.PersistEvent(errorEvent)
 		}
 
