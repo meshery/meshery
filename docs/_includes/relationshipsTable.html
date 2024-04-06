@@ -3,11 +3,13 @@
         width: 100%;
         overflow-x: auto;
     }
+
     th {
         padding: 1rem;
         vertical-align: bottom;
         text-align: left;
     }
+
     td {
         vertical-align: middle;
     }
@@ -28,38 +30,59 @@
         border: 1px solid #00b39f;
     }
 </style>
-
+{% if hasData %}
+<h2>Relationships for {{page.title}}</h2>
+{% endif %}
 <div class="table-container">
     <table class="table table-dark table-active" id="myTable" style="margin:auto;padding-right:25%; padding-left:20%;">
-        <thead>
-            <tr>
-                <th>Model</th>
-                <th>Version</th>
-                <th>kind</th>
-                <th>subType</th>
-                <th>evalPolicy</th>
-                <th>selectors.deny.from</th>
-                <th>selectors.deny.to</th>
-                <th>selectors.allow.from</th>
-                <th>selectors.allow.to</th>
-                <th>Complete Definition</th>
-            </tr>
-        </thead>
         <tbody>
+            {% assign titleLower = page.title | downcase %}
+            {% assign hasData = false %}
             {% for item in site.data.RelationshipsData %}
+            {% assign modelLower = item.Model | downcase %}
+            {% if titleLower == modelLower %}
+            {% assign hasData = true %}
             <tr>
                 <td>{{ item.Model }}</td>
                 <td>{{ item.Version }}</td>
                 <td>{{ item.kind }}</td>
                 <td>{{ item.subType }}</td>
                 <td>{{ item.evalPolicy }}</td>
-                <td><details>{% include code.html code=item.selectorsDenyFrom %}</details></td>
-                <td><details>{% include code.html code=item.selectorsDenyTo %}</details></td>
-                <td><details>{% include code.html code=item.selectorsAllwowFrom %}</details></td>
-                <td><details>{% include code.html code=item.selectorsAllowTo %}</details></td>
-                <td><details>{% include code.html code=item.CompleteDefinition %}</details></td>
+                <td>
+                    <details>{{ item.selectorsDenyFrom }}</details>
+                </td>                                
+                <td>
+                    <details>{{ item.selectorsDenyTo }}</details>
+                </td>
+                <td>
+                    <details>{% include code.html code=item.selectorsAllwowFrom %}</details>
+                </td>
+                <td>
+                    <details>{% include code.html code=item.selectorsAllowTo %}</details>
+                </td>
+                <td>
+                    <details>{% include code.html code=item.CompleteDefinition %}</details>
+                </td>
             </tr>
+            {% endif %}
             {% endfor %}
+
+            {% if hasData %}
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Version</th>
+                    <th>kind</th>
+                    <th>subType</th>
+                    <th>evalPolicy</th>
+                    <th>selectors.deny.from</th>
+                    <th>selectors.deny.to</th>
+                    <th>selectors.allow.from</th>
+                    <th>selectors.allow.to</th>
+                    <th>Complete Definition</th>
+                </tr>
+            </thead>
+            {% endif %}
         </tbody>
     </table>
 </div>
