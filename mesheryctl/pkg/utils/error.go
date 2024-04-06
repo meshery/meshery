@@ -156,6 +156,8 @@ func RegistryError(msg string, cmd string) string {
 
 func RelationshipsError(msg string, cmd string) string {
 	switch cmd {
+	case "view":
+		return formatError(msg, cmdRelationshipView)
 	case "generate":
 		return formatError(msg, cmdRelationshipGenerateDocs)
 	default:
@@ -283,6 +285,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
 	case cmdRegistry:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+	case cmdRelationshipView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipViewURL)
 	case cmdRelationships:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
 	case cmdRelationshipGenerateDocs:

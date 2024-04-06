@@ -6,7 +6,7 @@
   "format": "JSON",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "{\"designer\":{\"edit\":{\"config\":false,\"lock\":true,\"shape\":{\"convert-shape\":false},\"style\":true},\"label\":{\"edit\":true,\"show\":false,\"sync-with-config-property\":\"none\"}}}",
+   "capabilities": "{\"designer\":{\"edit\":{\"config\":false,\"text\":false,  \"background-image\":false, \"lock\":true,\"shape\":{\"convert-shape\":false},\"style\":true},\"label\":{\"edit\":false,\"show\":false,\"sync-with-config-property\":\"none\"}}}",
    "defaultData": "{\"label\":\"\"}",
    "genealogy": "",
    "isAnnotation": true,
