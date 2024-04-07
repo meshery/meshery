@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestPatternView(t *testing.T) {
+func TestDesignView(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -40,8 +40,8 @@ func TestPatternView(t *testing.T) {
 		{
 			Name:             "Fetch Design View",
 			Args:             []string{"view", "design"},
-			ExpectedResponse: "view.pattern.output.golden",
-			Fixture:          "view.pattern.api.response.golden",
+			ExpectedResponse: "view.design.output.golden",
+			Fixture:          "view.design.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,

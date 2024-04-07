@@ -38,19 +38,19 @@ func TestApplyCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Apply Designs",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "apply.patternSave.response.golden",
+					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "apply.patternDeploy.response.golden",
+					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -59,13 +59,13 @@ func TestApplyCmd(t *testing.T) {
 		},
 		{
 			Name:             "Apply Design with --skip-save",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "samplePattern.golden"), "--skip-save"},
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "apply.patternDeploy.response.golden",
+					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},

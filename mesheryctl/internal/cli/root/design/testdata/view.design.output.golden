@@ -6,7 +6,7 @@ location:
   path: ""
   type: local
 name: Untitled Design
-pattern_file: |
+design_file: |
   name: MesheryGeneratedPatternFile
 updated_at: "2021-07-30T14:14:10.672636Z"
 user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc

@@ -38,19 +38,19 @@ func TestDesigncmd(t *testing.T) {
 	}{
 		{
 			Name:             "design apply",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "pattern.golden")},
-			ExpectedResponse: "pattern.apply.output.golden",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "design.golden")},
+			ExpectedResponse: "design.apply.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "pattern.apply.save.golden",
+					Response:     "design.apply.save.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "pattern.apply.deploy.golden",
+					Response:     "design.apply.deploy.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -59,13 +59,13 @@ func TestDesigncmd(t *testing.T) {
 		},
 		{
 			Name:             "design delete",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "pattern.golden")},
-			ExpectedResponse: "pattern.delete.output.golden",
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "design.golden")},
+			ExpectedResponse: "design.delete.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "pattern.delete.golden",
+					Response:     "design.delete.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -76,12 +76,12 @@ func TestDesigncmd(t *testing.T) {
 		{
 			Name:             "design list",
 			Args:             []string{"list"},
-			ExpectedResponse: "pattern.list.output.golden",
+			ExpectedResponse: "design.list.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "pattern.list.golden",
+					Response:     "design.list.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -91,12 +91,12 @@ func TestDesigncmd(t *testing.T) {
 		{
 			Name:             "design view",
 			Args:             []string{"view", "kumatest"},
-			ExpectedResponse: "pattern.view.kuma.output.golden",
+			ExpectedResponse: "design.view.kuma.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?search=",
-					Response:     "pattern.view.kuma.golden",
+					Response:     "design.view.kuma.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -106,12 +106,12 @@ func TestDesigncmd(t *testing.T) {
 		{
 			Name:             "design view with ID",
 			Args:             []string{"view", "4o7fbc9b-708d-4396-84b8-e2ba37c1adcc"},
-			ExpectedResponse: "pattern.id.view.output.golden",
+			ExpectedResponse: "design.id.view.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "api/pattern/",
-					Response:     "pattern.id.view.golden",
+					Response:     "design.id.view.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -122,12 +122,12 @@ func TestDesigncmd(t *testing.T) {
 		{
 			Name:             "design invalid view",
 			Args:             []string{"view", "kuma-test"},
-			ExpectedResponse: "pattern.view.invalid.output.golden",
+			ExpectedResponse: "design.view.invalid.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:   "GET",
 					URL:      testContext.BaseURL + "api/pattern",
-					Response: "pattern.view.invalid.golden",
+					Response: "design.view.invalid.golden",
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
