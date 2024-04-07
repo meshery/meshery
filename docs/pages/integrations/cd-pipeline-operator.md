@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: CD Pipeline Operator
 subtitle: Collaborative and visual infrastructure as code for CD Pipeline Operator
 image: /assets/img/integrations/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg

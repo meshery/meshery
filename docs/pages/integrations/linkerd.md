@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Linkerd
 subtitle: Collaborative and visual infrastructure as code for Linkerd
 image: /assets/img/integrations/linkerd/icons/color/linkerd-color.svg

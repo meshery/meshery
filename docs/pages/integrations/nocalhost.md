@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Nocalhost
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/nocalhost/icons/color/nocalhost-color.svg

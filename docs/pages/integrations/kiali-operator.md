@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kiali Operator
 subtitle: Collaborative and visual infrastructure as code for Kiali Operator
 image: /assets/img/integrations/kiali-operator/icons/color/kiali-operator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Mimir
 subtitle: Scale to 1 billion metrics and beyond with Meshery and Grafana Mimir
 image: /assets/img/integrations/mimir-distributed/icons/color/mimir-distributed-color.svg

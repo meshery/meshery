@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Open Policy Agent (OPA)
 subtitle: Collaborative and visual infrastructure as code for Open Policy Agent (OPA)
 image: /assets/img/integrations/open-policy-agent-(opa)/icons/color/open-policy-agent-(opa)-color.svg

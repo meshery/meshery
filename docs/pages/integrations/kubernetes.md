@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kubernetes
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
 image: /assets/img/integrations/kubernetes/icons/color/kubernetes-color.svg
@@ -277,10 +277,6 @@ components:
 - name: storage-version
   colorIcon: assets/img/integrations/kubernetes/components/storage-version/icons/color/storage-version-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/storage-version/icons/white/storage-version-white.svg
-  description: 
-- name: subject-access-review
-  colorIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/color/subject-access-review-color.svg
-  whiteIcon: assets/img/integrations/kubernetes/components/subject-access-review/icons/white/subject-access-review-white.svg
   description: 
 - name: token-review
   colorIcon: assets/img/integrations/kubernetes/components/token-review/icons/color/token-review-color.svg

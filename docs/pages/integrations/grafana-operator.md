@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Grafana Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
 image: /assets/img/integrations/grafana-operator/icons/color/grafana-operator-color.svg
@@ -41,6 +41,10 @@ components:
 - name: grafana-credential
   colorIcon: assets/img/integrations/grafana-operator/components/grafana-credential/icons/color/grafana-credential-color.svg
   whiteIcon: assets/img/integrations/grafana-operator/components/grafana-credential/icons/white/grafana-credential-white.svg
+  description: 
+- name: grafana-alert-rule-group
+  colorIcon: assets/img/integrations/grafana-operator/components/grafana-alert-rule-group/icons/color/grafana-alert-rule-group-color.svg
+  whiteIcon: assets/img/integrations/grafana-operator/components/grafana-alert-rule-group/icons/white/grafana-alert-rule-group-white.svg
   description: 
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",

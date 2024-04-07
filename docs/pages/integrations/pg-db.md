@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres Database (CrunchyData)
 subtitle: Collaborative and visual infrastructure as code for Postgres Database (CrunchyData)
 image: /assets/img/integrations/pg-db/icons/color/pg-db-color.svg

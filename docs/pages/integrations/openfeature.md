@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: OpenFeature
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
 image: /assets/img/integrations/openfeature/icons/color/openfeature-color.svg

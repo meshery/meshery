@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres With Operator
 subtitle: Collaborative and visual infrastructure as code for Postgres With Operator
 image: /assets/img/integrations/postgres-with-operator/icons/color/postgres-with-operator-color.svg

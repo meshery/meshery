@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Wasmedge Runtime
 subtitle: Collaborative and visual infrastructure as code for Wasmedge Runtime
 image: /assets/img/integrations/wasmedgeruntime/icons/color/wasmedgeruntime-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Keylime
 subtitle: Collaborative and visual infrastructure as code for Keylime
 image: /assets/img/integrations/keylime/icons/color/keylime-color.svg

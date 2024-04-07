@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Operator for MongoDB
 subtitle: Collaborative and visual infrastructure as code for Percona Operator for MongoDB
 image: /assets/img/integrations/psmdb-operator/icons/color/psmdb-operator-color.svg

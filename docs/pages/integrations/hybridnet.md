@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Hybridnet
 subtitle: Collaborative and visual infrastructure as code for Hybridnet
 image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg
@@ -41,6 +41,38 @@ components:
 - name: subnet
   colorIcon: assets/img/integrations/hybridnet/components/subnet/icons/color/subnet-color.svg
   whiteIcon: assets/img/integrations/hybridnet/components/subnet/icons/white/subnet-white.svg
+  description: 
+- name: bgp-configuration
+  colorIcon: assets/img/integrations/hybridnet/components/bgp-configuration/icons/color/bgp-configuration-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/bgp-configuration/icons/white/bgp-configuration-white.svg
+  description: 
+- name: cluster-information
+  colorIcon: assets/img/integrations/hybridnet/components/cluster-information/icons/color/cluster-information-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/cluster-information/icons/white/cluster-information-white.svg
+  description: 
+- name: felix-configuration
+  colorIcon: assets/img/integrations/hybridnet/components/felix-configuration/icons/color/felix-configuration-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/felix-configuration/icons/white/felix-configuration-white.svg
+  description: 
+- name: global-network-policy
+  colorIcon: assets/img/integrations/hybridnet/components/global-network-policy/icons/color/global-network-policy-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/global-network-policy/icons/white/global-network-policy-white.svg
+  description: 
+- name: global-network-set
+  colorIcon: assets/img/integrations/hybridnet/components/global-network-set/icons/color/global-network-set-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/global-network-set/icons/white/global-network-set-white.svg
+  description: 
+- name: host-endpoint
+  colorIcon: assets/img/integrations/hybridnet/components/host-endpoint/icons/color/host-endpoint-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/host-endpoint/icons/white/host-endpoint-white.svg
+  description: 
+- name: ip-pool
+  colorIcon: assets/img/integrations/hybridnet/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/ip-pool/icons/white/ip-pool-white.svg
+  description: 
+- name: network-policy
+  colorIcon: assets/img/integrations/hybridnet/components/network-policy/icons/color/network-policy-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/network-policy/icons/white/network-policy-white.svg
   description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Load Balancer
 subtitle: Collaborative and visual infrastructure as code for AWS Load Balancer
 image: /assets/img/integrations/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg

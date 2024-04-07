@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Containerd
 subtitle: Collaborative and visual infrastructure as code for Containerd
 image: /assets/img/integrations/containerd/icons/color/containerd-color.svg

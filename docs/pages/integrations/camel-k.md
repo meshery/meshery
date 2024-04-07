@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Camel K
 subtitle: Collaborative and visual infrastructure as code for Camel K
 image: /assets/img/integrations/camel-k/icons/color/camel-k-color.svg
