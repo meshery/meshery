@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Confidential Containers
 subtitle: Collaborative and visual infrastructure as code for Confidential Containers
 image: /assets/img/integrations/confidential-containers/icons/color/confidential-containers-color.svg

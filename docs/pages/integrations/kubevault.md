@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kubevault
 subtitle: Collaborative and visual infrastructure as code for Kubevault
 image: /assets/img/integrations/kubevault/icons/color/kubevault-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: BFE
 subtitle: Collaborative and visual infrastructure as code for BFE
 image: /assets/img/integrations/bfe/icons/color/bfe-color.svg

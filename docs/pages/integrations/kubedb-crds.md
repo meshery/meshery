@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kubedb CRDs
 subtitle: Collaborative and visual infrastructure as code for Kubedb CRDs
 image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg

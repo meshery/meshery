@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Grafana UI Server
 subtitle: Operational dashboards for your data with Grafana and Meshery
 image: /assets/img/integrations/grafana-ui-server/icons/color/grafana-ui-server-color.svg
@@ -10,6 +10,10 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
+- name: grafana-dashboard
+  colorIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+  whiteIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+  description: 
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Fabedge
 subtitle: Collaborative and visual infrastructure as code for Fabedge
 image: /assets/img/integrations/fabedge/icons/color/fabedge-color.svg

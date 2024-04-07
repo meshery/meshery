@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Backstage
 subtitle: Collaborative and visual infrastructure as code for Backstage
 image: /assets/img/integrations/backstage/icons/color/backstage-color.svg

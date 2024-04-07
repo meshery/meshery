@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: OpenEBS
 subtitle: Collaborative and visual infrastructure as code for OpenEBS
 image: /assets/img/integrations/openebs/icons/color/openebs-color.svg

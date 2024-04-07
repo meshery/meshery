@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Strimzi Kafka Operator
 subtitle: Collaborative and visual infrastructure as code for Strimzi Kafka Operator
 image: /assets/img/integrations/strimzi-kafka-operator/icons/color/strimzi-kafka-operator-color.svg

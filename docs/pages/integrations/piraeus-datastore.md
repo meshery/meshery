@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Piraeus Datastore
 subtitle: Collaborative and visual infrastructure as code for Piraeus Datastore
 image: /assets/img/integrations/piraeus-datastore/icons/color/piraeus-datastore-color.svg

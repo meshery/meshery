@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Cilium
 subtitle: The easiest way to get production-grade Kubernetes clusters with Cilium up and running
 image: /assets/img/integrations/cilium/icons/color/cilium-color.svg

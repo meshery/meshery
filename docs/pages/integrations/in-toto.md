@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: In Toto
 subtitle: Collaborative and visual infrastructure as code for In Toto
 image: /assets/img/integrations/in-toto/icons/color/in-toto-color.svg

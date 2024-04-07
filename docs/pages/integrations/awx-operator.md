@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as code for AWX Operator
 image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg
@@ -21,6 +21,10 @@ components:
 - name: awx
   colorIcon: assets/img/integrations/awx-operator/components/awx/icons/color/awx-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx/icons/white/awx-white.svg
+  description: 
+- name: awx-mesh-ingress
+  colorIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
+  whiteIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
   description: 
 featureList: [
   "Keep revision history and audit trail of all configuration changes",

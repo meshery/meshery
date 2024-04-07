@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Operator Framework
 subtitle: Collaborative and visual infrastructure as code for Operator
 image: /assets/img/integrations/operator-framework/icons/color/operator-framework-color.svg

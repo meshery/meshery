@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Rook
 subtitle: Collaborative and visual infrastructure as code for Rook
 image: /assets/img/integrations/rook/icons/color/rook-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Azure Application Gateway 
 subtitle: Collaborative and visual infrastructure as code for Azure Application Gateway 
 image: /assets/img/integrations/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg

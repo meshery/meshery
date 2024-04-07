@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Consul
 subtitle: Collaborative and visual infrastructure as code for Consul
 image: /assets/img/integrations/consul/icons/color/consul-color.svg

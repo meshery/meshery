@@ -31,7 +31,7 @@ import (
 var (
 	outFormatFlag string
 
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd ,GenerateRelationshipDocsCmd}
+	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd}
 )
 
 var RelationshipCmd = &cobra.Command{
