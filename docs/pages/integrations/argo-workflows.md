@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Argo Workflows
 subtitle: Collaborative and visual infrastructure as code for Argo Workflows
 image: /assets/img/integrations/argo-workflows/icons/color/argo-workflows-color.svg

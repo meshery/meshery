@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubeflow
 subtitle: Collaborative and visual infrastructure as code for Kubeflow
 image: /assets/img/integrations/kubeflow/icons/color/kubeflow-color.svg

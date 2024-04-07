@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Vault Secrets
 subtitle: Collaborative and visual infrastructure as code for Vault Secrets
 image: /assets/img/integrations/vault-secrets/icons/color/vault-secrets-color.svg

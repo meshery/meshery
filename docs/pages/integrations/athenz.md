@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Athenz
 subtitle: Collaborative and visual infrastructure as code for Athenz
 image: /assets/img/integrations/athenz/icons/color/athenz-color.svg

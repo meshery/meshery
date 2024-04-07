@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: "Extensibility: APIs"
 permalink: extensibility/api
 type: Extensibility
@@ -16,10 +16,10 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 <main>
   
-<input id="tab1" type="radio" name="tabs" checked>
+<input id="tab1" type="radio" name="tabs" checked hidden>
 <label for="tab1">REST API</label>
 
-<input id="tab2" type="radio" name="tabs">
+<input id="tab2" type="radio" name="tabs" hidden>
 <label for="tab2">GraphQL API</label>
 
 <section class="tabbed" id="content1">
@@ -87,6 +87,3 @@ Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints be
 
 While Meshery only requires a valid token in order to allow clients to invoke its APIs, Remote Providers can optionally enforce key-based permissions.
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Hexa
 subtitle: Collaborative and visual infrastructure as code for Hexa
 image: /assets/img/integrations/hexa/icons/color/hexa-color.svg

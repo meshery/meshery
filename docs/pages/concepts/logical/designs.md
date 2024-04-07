@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Designs
 permalink: concepts/logical/designs
 type: concepts
@@ -50,3 +50,8 @@ There cannot be two components with the same name within a Design. However, ther
 
 When creating a new design by default it's visibility level will be set to **public**. Remove providers have the option of offering additional visibility levels like **private** and **published**.
 
+## Meshery Designs and Models Explained
+
+In Meshery, the deployable unit is the Meshery Design. The Meshery Models are not directly deployed; instead, they are imported by the Meshery Server to provide the necessary understanding for deployment.
+
+ Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.

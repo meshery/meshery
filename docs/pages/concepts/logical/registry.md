@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Registry
 permalink: concepts/logical/registry
 type: concepts

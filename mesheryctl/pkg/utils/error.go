@@ -38,6 +38,8 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+	ErrBadRequestCode         = "mesheryctl-1117"
+	ErrInvalidArgumentCode    = "mesheryctl-1118"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -149,6 +151,17 @@ func RegistryError(msg string, cmd string) string {
 		return formatError(msg, cmdRegistryPublish)
 	default:
 		return formatError(msg, cmdRegistry)
+	}
+}
+
+func RelationshipsError(msg string, cmd string) string {
+	switch cmd {
+	case "view":
+		return formatError(msg, cmdRelationshipView)
+	case "generate":
+		return formatError(msg, cmdRelationshipGenerateDocs)
+	default:
+		return formatError(msg, cmdRelationships)
 	}
 }
 
@@ -272,6 +285,12 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
 	case cmdRegistry:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+	case cmdRelationshipView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipViewURL)
+	case cmdRelationships:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
+	case cmdRelationshipGenerateDocs:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -490,4 +509,16 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
+}
+
+func ErrBadRequest(err error) error {
+	return errors.New(ErrBadRequestCode, errors.Alert,
+		[]string{"Failed to delete the connection"},
+		[]string{err.Error()},
+		[]string{"Error occurred while deleting the connection"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrInvalidArgument(err error) error {
+	return errors.New(ErrInvalidArgumentCode, errors.Alert, []string{"Invalid Argument"}, []string{err.Error()}, []string{"Invalid Argument"}, []string{"Please check the arguments passed"})
 }

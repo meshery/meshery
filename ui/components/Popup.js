@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography, useTheme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ const styles = makeStyles((theme) => ({
   paper: {
     position: 'fixed',
     width: 450,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.secondary.mainBackground,
     border: '0px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(1, 2, 3, 4),
@@ -27,13 +27,19 @@ const styles = makeStyles((theme) => ({
     width: '100%',
   },
   designerImg: {
-    height: 300,
+    height: '205px',
+    width: 'auto',
     margin: 'auto',
+    boxShadow:
+      '1px 2px 2px hsl(173deg, 100%, 35% , 0.133), \
+      2px 4px 4px hsl(173deg, 100%, 35% , 0.133),  \
+      3px 6px 6px hsl(173deg, 100%, 35% , 0.133)',
   },
   header: {
     paddingBottom: '0.5rem',
     paddingTop: '0.6rem',
     fontWeight: 'bold',
+    color: '#F6F8F8',
     ['@media (max-width: 455px)']: {
       fontSize: '1rem',
     },
@@ -43,15 +49,17 @@ const styles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
     whiteSpace: 'nowrap',
     alignItems: 'center',
+    color: '#F6F8F8',
   },
   caption: {
     lineHeight: '1.2',
     paddingBottom: '15px',
-    fontSize: '.75rem',
+    fontSize: '.85rem',
     textAlign: 'center',
+    color: '#F6F8F8',
   },
   imgWrapper: {
-    padding: '15px 10px 15px 0',
+    padding: '0px 10px 15px 0',
     display: 'flex',
   },
   headerWrapper: {
@@ -121,6 +129,9 @@ export function MeshMapEarlyAccessCard({
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
   const { push } = useRouter();
+  const theme = useTheme();
+  const popupImageSrc =
+    theme.palette.type === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
@@ -134,7 +145,7 @@ export function MeshMapEarlyAccessCard({
   useState(() => {
     const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
     if (isMeshMapUser) {
-      setTitle('Your access to collaborative cloud native management is enabled!');
+      setTitle('Collaborative management enabled');
       setButtonText('Open MeshMap');
     } else {
       setTitle(signupHeader);
@@ -163,12 +174,12 @@ export function MeshMapEarlyAccessCard({
       </div>
 
       <div className={classes.imgWrapper}>
-        <img className={classes.designerImg} src="/static/img/designer.png" />
+        <img className={classes.designerImg} src={popupImageSrc} />
       </div>
       <Typography className={classes.caption} variant="subtitle1">
         <i>
           Friends don&apos;t let friends GitOps alone. Visually design and collaborate in real-time
-          with other MeshMap users.
+          with other Meshery users.
         </i>
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

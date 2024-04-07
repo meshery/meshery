@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kubedb
 subtitle: Collaborative and visual infrastructure as code for Kubedb
 image: /assets/img/integrations/kubedb/icons/color/kubedb-color.svg
