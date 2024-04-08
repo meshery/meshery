@@ -51,30 +51,28 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment list --orgId [orgId]\nRun 'mesheryctl exp environment list --help' to see detailed help message"
-
 		// Check if all flag is set
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
 		if orgIdFlag == "" {
-			return errors.New(utils.EnvironmentSubError(fmt.Sprintf("missing required argument: [orgId] %s", errMsg), "list"))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("please provide the orgID of the environment")
 		}
 		return nil
 	},
@@ -90,13 +88,11 @@ https://docs.layer5.io/cloud/spaces/environments/
 		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
@@ -105,14 +101,12 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		environmentResponse := &environments.EnvironmentPage{}
 		err = json.Unmarshal(data, environmentResponse)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
@@ -122,7 +116,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 
 		if len(rows) == 0 {
-			fmt.Println("No environment found")
+			utils.Log.Info("No environment found")
 			return nil
 		}
 

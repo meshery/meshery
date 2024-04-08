@@ -15,9 +15,7 @@
 package environments
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -64,25 +62,24 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment [subcommands]\nRun 'mesheryctl exp environment --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [subcommands] " + errMsg))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("please provide a subcommand")
 		}
 		return nil
 	},
@@ -96,7 +93,6 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 		err = cmd.Usage()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
@@ -138,32 +134,4 @@ func selectEnvironmentPrompt(environment []environments.EnvironmentData) environ
 
 		return environmentArray[i]
 	}
-}
-
-func outputEnvironmentJson(environment environments.EnvironmentData) error {
-	if err := prettifyEnvironmentJson(environment); err != nil {
-		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
-		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
-		// e.g unicode representation of '&' will be printed as '\u0026'
-		if output, err := json.MarshalIndent(environment, "", "  "); err != nil {
-			return errors.Wrap(err, "failed to format output in JSON")
-		} else {
-			fmt.Print(string(output))
-		}
-	}
-	return nil
-}
-
-// prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
-// and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyEnvironmentJson(environment environments.EnvironmentData) error {
-	// Create a new JSON encoder that writes to the standard output (os.Stdout).
-	enc := json.NewEncoder(os.Stdout)
-	// Configure the JSON encoder settings.
-	// SetEscapeHTML(false) prevents special characters like '<', '>', and '&' from being escaped to their HTML entities.
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-
-	// Any errors during the encoding process will be returned as an error.
-	return enc.Encode(environment)
 }

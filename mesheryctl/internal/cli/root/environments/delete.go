@@ -33,7 +33,7 @@ var DeleteEnvironmentCmd = &cobra.Command{
 	Long:  `delete a new environments by providing the name and description of the environment`,
 	Example: `
 // delete a new environment
-mesheryctl exp environment delete environmentId
+mesheryctl exp environment delete [environmentId]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 `,
@@ -46,26 +46,25 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 
-	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment delete \nRun 'mesheryctl exp environment delete --help' to see detailed help message"
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New(utils.EnvironmentSubError(fmt.Sprintf("accepts 1 arg(s), received %d\n%s", len(args), errMsg), "delete"))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("please provide the environment id")
 		}
 		return nil
 	},
@@ -80,13 +79,11 @@ https://docs.layer5.io/cloud/spaces/environments/
 		url := fmt.Sprintf("%s/api/environments/%s", baseUrl, args[0])
 		req, err := utils.NewRequest(http.MethodDelete, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 

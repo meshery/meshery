@@ -49,32 +49,30 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment create --orgId [orgId] --name [environment-name] --description [environment-description]\nRun 'mesheryctl exp environment create --help' to see detailed help message"
-
 		// Check if all three flags are set
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
 		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			return errors.New(utils.EnvironmentSubError(fmt.Sprintf("missing required argument: [orgId, name, description] %s", errMsg), "create"))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("please provide the orgID, name and description of the environment")
 		}
 
 		return nil
@@ -84,7 +82,6 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
@@ -106,23 +103,21 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		resp, _ := utils.MakeRequest(req)
 
 		if resp.StatusCode == http.StatusOK {
-			fmt.Println("environment created successfully")
+			utils.Log.Info("environment created successfully")
 			return nil
 		}
-		fmt.Println("Error creating environment")
+		utils.Log.Info("Error creating environment")
 		return nil
 	},
 }

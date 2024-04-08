@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
@@ -50,7 +51,6 @@ mesheryctl exp environment view [orgId]
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
@@ -59,15 +59,16 @@ mesheryctl exp environment view [orgId]
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
 	},
-	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp environment view [environmentID] \nRun 'mesheryctl exp environment view --help' to see detailed help message"
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New(utils.EnvironmentSubError(fmt.Sprintf("accepts 1 arg(s), received %d\n%s", len(args), errMsg), "view"))
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("please provide the orgID of the environment")
 		}
 		return nil
 	},
@@ -83,13 +84,11 @@ mesheryctl exp environment view [orgId]
 		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgid)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Debug(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
@@ -98,21 +97,19 @@ mesheryctl exp environment view [orgId]
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		environmentResponse := &environments.EnvironmentPage{}
 		err = json.Unmarshal(data, environmentResponse)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		var selectedEnvironment environments.EnvironmentData
 
 		if environmentResponse.TotalCount == 0 {
-			fmt.Println("No environment(s) found for the given ID: ", orgid)
+			utils.Log.Info("No environment(s) found for the given ID: ", orgid)
 			return nil
 		} else if environmentResponse.TotalCount == 1 {
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
@@ -138,18 +135,18 @@ mesheryctl exp environment view [orgId]
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
 			if saveFlag {
-				fmt.Println("Saving output as YAML file")
+				utils.Log.Info("Saving output as YAML file")
 				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
 				if err != nil {
 					return errors.Wrap(err, "failed to save output as YAML file")
 				}
-				fmt.Println("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
+				utils.Log.Info("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
 			} else {
-				fmt.Print(string(output))
+				utils.Log.Info(string(output))
 			}
 		} else if outFormatFlag == "json" {
 			if saveFlag {
-				fmt.Println("Saving output as JSON file")
+				utils.Log.Info("Saving output as JSON file")
 				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
 				if err != nil {
 					return errors.Wrap(err, "failed to format output in JSON")
@@ -158,10 +155,10 @@ mesheryctl exp environment view [orgId]
 				if err != nil {
 					return errors.Wrap(err, "failed to save output as JSON file")
 				}
-				fmt.Println("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
+				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return outputEnvironmentJson(selectedEnvironment)
+			return components.OutputJson(selectedEnvironment)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
