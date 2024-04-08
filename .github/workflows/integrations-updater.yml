@@ -37,6 +37,12 @@ jobs:
           repository: meshery/meshery.io
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
+      - name: Checkout cloud repo
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/meshery-cloud
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: meshery-cloud
       - name: Build mesheryctl
         working-directory: ./meshery/mesheryctl
         run: |
@@ -44,16 +50,19 @@ jobs:
       - name: Pubish to meshery.io site
         working-directory: ./meshery/mesheryctl
         run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery.io/integrations ../meshery.io/assets/images/integration -o js
       - name: Pubish to layer5.io site
         working-directory: ./meshery/mesheryctl
         run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../layer5/src/collections/integrations ../layer5/src/collections/integrations -o mdx
       - name: Pubish to Meshery docs
         working-directory: ./meshery/mesheryctl
         run: |
           ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
-          
+      - name: Pubish to Meshery docs
+        working-directory: ./meshery/mesheryctl
+        run: |
+          ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshmodels/models ../ui/public/img/meshmodels -o md
       - name: Commit changes to Layer5.io repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -83,4 +92,14 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
+      - name: Commit changes to Cloud
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: l5io
+          repository: ./meshery
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated models and icons"
           branch: master

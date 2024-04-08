@@ -207,7 +207,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			version := pkg.GetVersion()
-			modelDefPath, modelDef, err := writeModelDefToFileSystem(&model, version)
+			modelDefPath, modelDef, err := WriteModelDefToFileSystem(&model, version, registryLocation)
 			if err != nil {
 				utils.Log.Error(err)
 				return
@@ -272,7 +272,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 		})
 	}()
 
-	modelPath, modelDef, err := writeModelDefToFileSystem(&model, version) // how to infer this? @Beginner86 any idea? new column?
+	modelPath, modelDef, err := WriteModelDefToFileSystem(&model, version, registryLocation) // how to infer this? @Beginner86 any idea? new column?
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
@@ -368,10 +368,9 @@ func createVersionDirectoryForModel(modelDefPath, version string) (string, error
 	return versionDirPath, err
 }
 
-func writeModelDefToFileSystem(model *utils.ModelCSV, version string) (string, *v1alpha1.Model, error) {
+func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, registryLocationParam string) (string, *v1alpha1.Model, error) {
 	modelDef := model.CreateModelDefinition(version)
-	modelDefPath := filepath.Join(registryLocation, modelDef.Name)
-
+	modelDefPath := filepath.Join(registryLocationParam, modelDef.Name)
 	err := modelDef.WriteModelDefinition(modelDefPath)
 	if err != nil {
 		return "", nil, err

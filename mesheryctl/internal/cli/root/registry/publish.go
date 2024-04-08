@@ -177,8 +177,28 @@ func mesherySystem() error {
 	return nil
 }
 
-// TODO
 func remoteProviderSystem() error {
+	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
+	modalDir := filepath.Join(outputPath)
+	for _, model := range models {
+		comps, ok := components[model.Registrant][model.Model]
+		if !ok {
+			utils.Log.Debug("no components found for ", model.Model)
+			comps = []utils.ComponentCSV{}
+		}
+
+		err := utils.GenerateIcons(model, comps, imgsOutputPath)
+		if err != nil {
+			utils.Log.Debug(ErrGeneratingIcons(err, imgsOutputPath))
+			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
+		}
+
+		_, _, err = WriteModelDefToFileSystem(&model, "", modalDir)
+		if err != nil {
+			return ErrGenerateModel(err, model.Model)
+		}
+	}
+
 	return nil
 }
 
