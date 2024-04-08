@@ -97,9 +97,24 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: l5io
-          repository: ./meshery
+          repository: ./meshery-cloud
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
-          commit_message: "[Docs] Generated models and icons"
+          commit_message: "Models Updated"
           branch: master
+      - name: Send Email on Model Publish Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Model Updater" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.
