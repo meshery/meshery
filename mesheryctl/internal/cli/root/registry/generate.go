@@ -368,9 +368,9 @@ func createVersionDirectoryForModel(modelDefPath, version string) (string, error
 	return versionDirPath, err
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, registryLocationParam string) (string, *v1alpha1.Model, error) {
+func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1alpha1.Model, error) {
 	modelDef := model.CreateModelDefinition(version)
-	modelDefPath := filepath.Join(registryLocationParam, modelDef.Name)
+	modelDefPath := filepath.Join(location, modelDef.Name)
 	err := modelDef.WriteModelDefinition(modelDefPath)
 	if err != nil {
 		return "", nil, err
