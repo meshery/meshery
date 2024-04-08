@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Azure Active Directory (AAD)
 subtitle: Collaborative and visual infrastructure as code for Azure Active Directory (AAD)
 image: /assets/img/integrations/aad-pod-identity/icons/color/aad-pod-identity-color.svg
