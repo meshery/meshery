@@ -327,8 +327,8 @@ class MesherySettings extends React.Component {
                 value={tabVal}
                 className={classes.tabs}
                 onChange={this.handleChange('tabVal')}
-                variant="scrollable"
-                scrollButtons={window.innerWidth < 600 ? 'on' : 'auto'}
+                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
                 centered
