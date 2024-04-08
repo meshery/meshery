@@ -138,7 +138,7 @@ const MeshModelComponent_ = ({
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
-                annotations: false,
+                annotations: true,
               },
             },
             true,
