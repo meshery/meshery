@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS API Gateway v2
 subtitle: Collaborative and visual infrastructure as code for AWS API Gateway v2
 image: /assets/img/integrations/aws-apigatewayv2-controller/icons/color/aws-apigatewayv2-controller-color.svg

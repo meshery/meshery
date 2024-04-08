@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Vineyard
 subtitle: Collaborative and visual infrastructure as code for Vineyard
 image: /assets/img/integrations/vineyard/icons/color/vineyard-color.svg

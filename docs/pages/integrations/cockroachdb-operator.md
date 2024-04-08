@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Cockroachdb Operator
 subtitle: Collaborative and visual infrastructure as code for Cockroachdb Operator
 image: /assets/img/integrations/cockroachdb-operator/icons/color/cockroachdb-operator-color.svg

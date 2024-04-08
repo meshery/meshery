@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Karpenter
 subtitle: Collaborative and visual infrastructure as code for Karpenter
 image: /assets/img/integrations/karpenter/icons/color/karpenter-color.svg

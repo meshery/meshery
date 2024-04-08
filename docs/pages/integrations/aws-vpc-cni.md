@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS VPC CNI
 subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
 image: /assets/img/integrations/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg

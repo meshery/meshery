@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Antrea
 subtitle: Collaborative and visual infrastructure as code for Antrea
 image: /assets/img/integrations/antrea/icons/color/antrea-color.svg

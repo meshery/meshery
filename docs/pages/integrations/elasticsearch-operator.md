@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Elastic Search
 subtitle: Collaborative and visual infrastructure as code for Elastic Search
 image: /assets/img/integrations/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg

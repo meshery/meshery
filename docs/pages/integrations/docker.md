@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Docker
 subtitle: Collaborative and visual infrastructure as code for Docker
 image: /assets/img/integrations/docker/icons/color/docker-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Cubefs
 subtitle: Collaborative and visual infrastructure as code for Cubefs
 image: /assets/img/integrations/cubefs/icons/color/cubefs-color.svg

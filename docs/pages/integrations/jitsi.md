@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Jitsi
 subtitle: Collaborative and visual infrastructure as code for Jitsi
 image: /assets/img/integrations/jitsi/icons/color/jitsi-color.svg

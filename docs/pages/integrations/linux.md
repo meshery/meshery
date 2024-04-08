@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Linux
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
 image: /assets/img/integrations/linux/icons/color/linux-color.svg

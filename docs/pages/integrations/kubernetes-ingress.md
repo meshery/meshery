@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: HAProxy Kubernetes Ingress
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS EventBridge
 subtitle: Collaborative and visual infrastructure as code for AWS EventBridge
 image: /assets/img/integrations/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg

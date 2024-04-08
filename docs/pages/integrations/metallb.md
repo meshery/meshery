@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Metallb
 subtitle: Collaborative and visual infrastructure as code for Metallb
 image: /assets/img/integrations/metallb/icons/color/metallb-color.svg

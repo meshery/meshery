@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Telepresence
 subtitle: Collaborative and visual infrastructure as code for Telepresence
 image: /assets/img/integrations/telepresence/icons/color/telepresence-color.svg

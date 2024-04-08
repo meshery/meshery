@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubernetes
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
 image: /assets/img/integrations/kubernetes/icons/color/kubernetes-color.svg

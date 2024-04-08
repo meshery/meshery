@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: NGINX Service Mesh
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/nginx-service-mesh/icons/color/nginx-service-mesh-color.svg

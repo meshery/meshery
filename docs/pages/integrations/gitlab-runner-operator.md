@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Gitlab Runner Operator
 subtitle: Collaborative and visual infrastructure as code for Gitlab Runner Operator
 image: /assets/img/integrations/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg

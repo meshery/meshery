@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Grafana Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
 image: /assets/img/integrations/grafana-operator/icons/color/grafana-operator-color.svg

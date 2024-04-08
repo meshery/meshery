@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Strimzi Registry Operator
 subtitle: Collaborative and visual infrastructure as code for Strimzi Registry Operator
 image: /assets/img/integrations/strimzi-registry-operator/icons/color/strimzi-registry-operator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Stackgres Operator
 subtitle: Collaborative and visual infrastructure as code for Stackgres Operator
 image: /assets/img/integrations/stackgres-operator/icons/color/stackgres-operator-color.svg

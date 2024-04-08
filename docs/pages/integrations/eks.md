@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
 image: /assets/img/integrations/eks/icons/color/eks-color.svg

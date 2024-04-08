@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Buildpacks
 subtitle: Collaborative and visual infrastructure as code for Buildpacks
 image: /assets/img/integrations/buildpacks/icons/color/buildpacks-color.svg

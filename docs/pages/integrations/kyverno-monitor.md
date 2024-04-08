@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kyverno Monitor
 subtitle: Collaborative and visual infrastructure as code for Kyverno Monitor
 image: /assets/img/integrations/kyverno-monitor/icons/color/kyverno-monitor-color.svg

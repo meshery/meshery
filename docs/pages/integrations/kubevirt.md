@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubevirt
 subtitle: Collaborative and visual infrastructure as code for Kubevirt
 image: /assets/img/integrations/kubevirt/icons/color/kubevirt-color.svg

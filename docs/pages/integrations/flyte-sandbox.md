@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Flyte Sandbox
 subtitle: Collaborative and visual infrastructure as code for Flyte Sandbox
 image: /assets/img/integrations/flyte-sandbox/icons/color/flyte-sandbox-color.svg

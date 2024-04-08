@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Epam Delivery Platform (EDP) Admin Console
 subtitle: Collaborative and visual infrastructure as code for Epam Delivery Platform (EDP) Admin Console
 image: /assets/img/integrations/admin-console-operator/icons/color/admin-console-operator-color.svg

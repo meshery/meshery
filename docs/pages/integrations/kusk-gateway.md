@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kusk Gateway
 subtitle: Collaborative and visual infrastructure as code for Kusk Gateway
 image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg

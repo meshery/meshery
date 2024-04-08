@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Contour
 subtitle: Collaborative and visual infrastructure as code for Contour
 image: /assets/img/integrations/contour-operator/icons/color/contour-operator-color.svg

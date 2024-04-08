@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Hybridnet
 subtitle: Collaborative and visual infrastructure as code for Hybridnet
 image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg

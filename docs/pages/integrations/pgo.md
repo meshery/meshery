@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: PGO (CrunchyData)
 subtitle: Collaborative and visual infrastructure as code for PGO (CrunchyData)
 image: /assets/img/integrations/pgo/icons/color/pgo-color.svg

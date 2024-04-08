@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS Route 53 Resolver
 subtitle: Collaborative and visual infrastructure as code for AWS Route 53 Resolver
 image: /assets/img/integrations/aws-route53resolver-controller/icons/color/aws-route53resolver-controller-color.svg

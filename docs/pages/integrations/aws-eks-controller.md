@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Collaborative and visual infrastructure as code for AWS Elastic Kubernetes Service
 image: /assets/img/integrations/aws-eks-controller/icons/color/aws-eks-controller-color.svg

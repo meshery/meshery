@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Jaeger
 subtitle: Collaborative and visual infrastructure as code for Jaeger
 image: /assets/img/integrations/jaeger/icons/color/jaeger-color.svg

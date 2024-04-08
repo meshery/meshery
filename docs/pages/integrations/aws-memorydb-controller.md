@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: AWS MemoryDB for Redis
 subtitle: Collaborative and visual infrastructure as code for AWS MemoryDB for Redis
 image: /assets/img/integrations/aws-memorydb-controller/icons/color/aws-memorydb-controller-color.svg

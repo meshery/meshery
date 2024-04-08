@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Meshery Core
 subtitle: Collaborative and visual infrastructure as code for Meshery Core
 image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg

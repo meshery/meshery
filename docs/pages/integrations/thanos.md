@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Thanos
 subtitle: Collaborative and visual infrastructure as code for Thanos
 image: /assets/img/integrations/thanos/icons/color/thanos-color.svg

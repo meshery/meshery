@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Trickster
 subtitle: Collaborative and visual infrastructure as code for Trickster
 image: /assets/img/integrations/trickster/icons/color/trickster-color.svg

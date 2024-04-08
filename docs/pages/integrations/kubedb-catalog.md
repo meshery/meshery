@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubedb Catalog
 subtitle: Collaborative and visual infrastructure as code for Kubedb Catalog
 image: /assets/img/integrations/kubedb-catalog/icons/color/kubedb-catalog-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Schemahero
 subtitle: Collaborative and visual infrastructure as code for Schemahero
 image: /assets/img/integrations/schemahero/icons/color/schemahero-color.svg

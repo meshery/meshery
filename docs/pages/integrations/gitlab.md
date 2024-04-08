@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: GitLab
 subtitle: Collaborative and visual infrastructure as code for GitLab
 image: /assets/img/integrations/gitlab/icons/color/gitlab-color.svg

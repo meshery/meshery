@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: K3s
 subtitle: Collaborative and visual infrastructure as code for K3s
 image: /assets/img/integrations/k3s/icons/color/k3s-color.svg

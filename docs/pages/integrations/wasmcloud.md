@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Wasmcloud
 subtitle: Collaborative and visual infrastructure as code for Wasmcloud
 image: /assets/img/integrations/wasmcloud/icons/color/wasmcloud-color.svg

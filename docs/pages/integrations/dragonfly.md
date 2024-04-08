@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Dragonfly
 subtitle: Collaborative and visual infrastructure as code for Dragonfly
 image: /assets/img/integrations/dragonfly/icons/color/dragonfly-color.svg

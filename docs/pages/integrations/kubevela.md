@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubevela
 subtitle: Collaborative and visual infrastructure as code for Kubevela
 image: /assets/img/integrations/kubevela/icons/color/kubevela-color.svg

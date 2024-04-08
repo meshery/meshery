@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: NATS Operator
 subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
 image: /assets/img/integrations/nats-operator/icons/color/nats-operator-color.svg

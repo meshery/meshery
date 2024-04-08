@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubeform Provider AWS
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg

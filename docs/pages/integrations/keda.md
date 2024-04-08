@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Keda
 subtitle: Collaborative and visual infrastructure as code for Keda
 image: /assets/img/integrations/keda/icons/color/keda-color.svg

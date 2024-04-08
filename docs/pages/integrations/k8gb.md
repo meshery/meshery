@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: K8GB
 subtitle: Collaborative and visual infrastructure as code for K8GB
 image: /assets/img/integrations/k8gb/icons/color/k8gb-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Couchbase Monitor Stack
 subtitle: Collaborative and visual infrastructure as code for Couchbase Monitor Stack
 image: /assets/img/integrations/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
