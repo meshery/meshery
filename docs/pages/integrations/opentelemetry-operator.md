@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: OpenTelemetry Operator
 subtitle: Collaborative and visual infrastructure as code for OpenTelemetry Operator
 image: /assets/img/integrations/opentelemetry-operator/icons/color/opentelemetry-operator-color.svg

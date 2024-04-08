@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubedb Ops Manager
 subtitle: Collaborative and visual infrastructure as code for Kubedb Ops Manager
 image: /assets/img/integrations/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg

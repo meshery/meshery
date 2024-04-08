@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kube Prometheus
 subtitle: Collaborative and visual infrastructure as code for Kube Prometheus
 image: /assets/img/integrations/kube-prometheus/icons/color/kube-prometheus-color.svg

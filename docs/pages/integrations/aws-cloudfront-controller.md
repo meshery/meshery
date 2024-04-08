@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS CloudFront
 subtitle: Collaborative and visual infrastructure as code for AWS CloudFront
 image: /assets/img/integrations/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg

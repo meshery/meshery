@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: MinIO Operator
 subtitle: Collaborative and visual infrastructure as code for MinIO Operator
 image: /assets/img/integrations/minio-operator/icons/color/minio-operator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubeslice Worker
 subtitle: Collaborative and visual infrastructure as code for Kubeslice Worker
 image: /assets/img/integrations/kubeslice-worker/icons/color/kubeslice-worker-color.svg

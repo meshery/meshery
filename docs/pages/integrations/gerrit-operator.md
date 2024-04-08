@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Gerrit Operator
 subtitle: Collaborative and visual infrastructure as code for Gerrit Operator
 image: /assets/img/integrations/gerrit-operator/icons/color/gerrit-operator-color.svg

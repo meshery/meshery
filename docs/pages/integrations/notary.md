@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Notary
 subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
 image: /assets/img/integrations/notary/icons/color/notary-color.svg

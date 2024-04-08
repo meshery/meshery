@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Vault Operator
 subtitle: Collaborative and visual infrastructure as code for Vault Operator
 image: /assets/img/integrations/vault-operator/icons/color/vault-operator-color.svg

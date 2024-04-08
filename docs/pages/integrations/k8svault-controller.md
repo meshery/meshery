@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: K8s Vault Controller
 subtitle: Collaborative and visual infrastructure as code for K8s Vault Controller
 image: /assets/img/integrations/k8svault-controller/icons/color/k8svault-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Jaeger Operator
 subtitle: Collaborative and visual infrastructure as code for Jaeger Operator
 image: /assets/img/integrations/jaeger-operator/icons/color/jaeger-operator-color.svg

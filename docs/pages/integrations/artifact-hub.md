@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Artifact Hub
 subtitle: Collaborative and visual infrastructure as code for Artifact Hub
 image: /assets/img/integrations/artifact-hub/icons/color/artifact-hub-color.svg

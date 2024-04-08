@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as code for Fluentd Operator
 image: /assets/img/integrations/fluentd-operator/icons/color/fluentd-operator-color.svg

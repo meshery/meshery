@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: APISIX Ingress Controller
 subtitle: Collaborative and visual infrastructure as code for APISIX Ingress Controller
 image: /assets/img/integrations/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg

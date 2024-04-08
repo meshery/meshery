@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Parsec
 subtitle: Collaborative and visual infrastructure as code for Parsec
 image: /assets/img/integrations/parsec/icons/color/parsec-color.svg

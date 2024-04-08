@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubevault Catalog
 subtitle: Collaborative and visual infrastructure as code for Kubevault Catalog
 image: /assets/img/integrations/kubevault-catalog/icons/color/kubevault-catalog-color.svg

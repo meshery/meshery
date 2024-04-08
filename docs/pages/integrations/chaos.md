@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Chaos
 subtitle: Collaborative and visual infrastructure as code for Chaos
 image: /assets/img/integrations/chaos/icons/color/chaos-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Jenkins Operator
 subtitle: Collaborative and visual infrastructure as code for Jenkins Operator
 image: /assets/img/integrations/jenkins-operator/icons/color/jenkins-operator-color.svg

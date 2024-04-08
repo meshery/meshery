@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Coredns
 subtitle: Collaborative and visual infrastructure as code for Coredns
 image: /assets/img/integrations/coredns/icons/color/coredns-color.svg

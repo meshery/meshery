@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Identity and Access Management
 subtitle: Collaborative and visual infrastructure as code for AWS Identity and Access Management
 image: /assets/img/integrations/aws-iam-controller/icons/color/aws-iam-controller-color.svg

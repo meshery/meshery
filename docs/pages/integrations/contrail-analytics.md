@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Contrail Analytics
 subtitle: Collaborative and visual infrastructure as code for Contrail Analytics
 image: /assets/img/integrations/contrail-analytics/icons/color/contrail-analytics-color.svg

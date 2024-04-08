@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Percona Server for MongoDB
 subtitle: Collaborative and visual infrastructure as code for Percona Server for MongoDB
 image: /assets/img/integrations/psmdb-db/icons/color/psmdb-db-color.svg

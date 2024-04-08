@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubevault Crds
 subtitle: Collaborative and visual infrastructure as code for Kubevault Crds
 image: /assets/img/integrations/kubevault-crds/icons/color/kubevault-crds-color.svg

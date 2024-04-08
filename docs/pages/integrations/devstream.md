@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Devstream
 subtitle: Collaborative and visual infrastructure as code for Devstream
 image: /assets/img/integrations/devstream/icons/color/devstream-color.svg

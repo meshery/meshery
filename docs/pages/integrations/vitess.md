@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Vitess
 subtitle: Collaborative and visual infrastructure as code for Vitess
 image: /assets/img/integrations/vitess/icons/color/vitess-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS SageMaker
 subtitle: Collaborative and visual infrastructure as code for AWS SageMaker
 image: /assets/img/integrations/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg

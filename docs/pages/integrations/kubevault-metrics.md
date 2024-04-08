@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubevault Metrics
 subtitle: Collaborative and visual infrastructure as code for Kubevault Metrics
 image: /assets/img/integrations/kubevault-metrics/icons/color/kubevault-metrics-color.svg

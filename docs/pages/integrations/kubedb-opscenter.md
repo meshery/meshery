@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubedb Opscenter
 subtitle: Collaborative and visual infrastructure as code for Kubedb Opscenter
 image: /assets/img/integrations/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg

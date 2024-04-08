@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Elastic File System
 subtitle: Collaborative and visual infrastructure as code for AWS Elastic File System
 image: /assets/img/integrations/aws-efs-controller/icons/color/aws-efs-controller-color.svg

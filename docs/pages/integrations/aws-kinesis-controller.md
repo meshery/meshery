@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Kinesis
 subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
 image: /assets/img/integrations/aws-kinesis-controller/icons/color/aws-kinesis-controller-color.svg

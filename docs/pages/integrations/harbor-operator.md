@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Harbor Operator
 subtitle: Collaborative and visual infrastructure as code for Harbor Operator
 image: /assets/img/integrations/harbor-operator/icons/color/harbor-operator-color.svg

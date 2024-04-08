@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Devfile
 subtitle: Collaborative and visual infrastructure as code for Devfile
 image: /assets/img/integrations/devfile/icons/color/devfile-color.svg

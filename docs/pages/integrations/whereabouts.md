@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Whereabouts
 subtitle: Collaborative and visual infrastructure as code for Whereabouts
 image: /assets/img/integrations/whereabouts/icons/color/whereabouts-color.svg

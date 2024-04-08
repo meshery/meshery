@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kong Mesh
 subtitle: Collaborative and visual infrastructure as code for Kong Mesh
 image: /assets/img/integrations/kong-mesh/icons/color/kong-mesh-color.svg

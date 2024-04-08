@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Keycloak Operator
 subtitle: Collaborative and visual infrastructure as code for Keycloak Operator
 image: /assets/img/integrations/keycloak-operator/icons/color/keycloak-operator-color.svg

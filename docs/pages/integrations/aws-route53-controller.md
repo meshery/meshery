@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Route 53
 subtitle: Collaborative and visual infrastructure as code for AWS Route 53
 image: /assets/img/integrations/aws-route53-controller/icons/color/aws-route53-controller-color.svg

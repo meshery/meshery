@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Volcano
 subtitle: Collaborative and visual infrastructure as code for Volcano
 image: /assets/img/integrations/volcano/icons/color/volcano-color.svg

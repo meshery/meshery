@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS EMR Containers
 subtitle: Collaborative and visual infrastructure as code for AWS EMR Containers
 image: /assets/img/integrations/aws-emrcontainers-controller/icons/color/aws-emrcontainers-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Aperture Agent
 subtitle: Collaborative and visual infrastructure as code for Aperture Agent
 image: /assets/img/integrations/aperture-agent/icons/color/aperture-agent-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: OPA Gatekeeper
 subtitle: Collaborative and visual infrastructure as code for Frinx Machine
 image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg

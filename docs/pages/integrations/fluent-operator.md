@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Fluent Operator
 subtitle: Collaborative and visual infrastructure as code for Fluent Operator
 image: /assets/img/integrations/fluent-operator/icons/color/fluent-operator-color.svg

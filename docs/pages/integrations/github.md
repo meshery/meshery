@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Github
 subtitle: Integrate GitOps into your cloud native management process
 image: /assets/img/integrations/github/icons/color/github-color.svg

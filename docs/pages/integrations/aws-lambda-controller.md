@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Lambda
 subtitle: Collaborative and visual infrastructure as code for AWS Lambda
 image: /assets/img/integrations/aws-lambda-controller/icons/color/aws-lambda-controller-color.svg

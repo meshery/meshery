@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS CloudWatch
 subtitle: Collaborative and visual infrastructure as code for AWS CloudWatch
 image: /assets/img/integrations/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg

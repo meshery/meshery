@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: CRI-O
 subtitle: Collaborative and visual infrastructure as code for CRI-O
 image: /assets/img/integrations/cri-o/icons/color/cri-o-color.svg

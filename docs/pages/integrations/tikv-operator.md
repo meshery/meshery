@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Tikv Operator
 subtitle: Collaborative and visual infrastructure as code for Tikv Operator
 image: /assets/img/integrations/tikv-operator/icons/color/tikv-operator-color.svg

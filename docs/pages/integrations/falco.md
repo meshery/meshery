@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Falco
 subtitle: Collaborative and visual infrastructure as code for Falco
 image: /assets/img/integrations/falco/icons/color/falco-color.svg

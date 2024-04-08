@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Cortex
 subtitle: Collaborative and visual infrastructure as code for Cortex
 image: /assets/img/integrations/cortex/icons/color/cortex-color.svg

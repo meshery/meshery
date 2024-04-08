@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: NGINX
 subtitle: Collaborative and visual infrastructure as code for NGINX
 image: /assets/img/integrations/nginx/icons/color/nginx-color.svg

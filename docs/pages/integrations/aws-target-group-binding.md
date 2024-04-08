@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Target Group Binding
 subtitle: Collaborative and visual infrastructure as code for AWS Target Group Binding
 image: /assets/img/integrations/aws-target-group-binding/icons/color/aws-target-group-binding-color.svg

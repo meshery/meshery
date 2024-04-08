@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Pixie
 subtitle: Collaborative and visual infrastructure as code for Pixie
 image: /assets/img/integrations/pixie/icons/color/pixie-color.svg

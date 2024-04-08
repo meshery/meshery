@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Postgres Operator
 subtitle: Collaborative and visual infrastructure as code for Postgres Operator
 image: /assets/img/integrations/postgres-operator/icons/color/postgres-operator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Couchbase Operator
 subtitle: Collaborative and visual infrastructure as code for Couchbase Operator
 image: /assets/img/integrations/couchbase-operator/icons/color/couchbase-operator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Terraform
 subtitle: Collaborative and visual infrastructure as code for Terraform
 image: /assets/img/integrations/terraform/icons/color/terraform-color.svg

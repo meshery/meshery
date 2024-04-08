@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Emissary Ingress
 subtitle: Collaborative and visual infrastructure as code for Emissary Ingress
 image: /assets/img/integrations/emissary-ingress/icons/color/emissary-ingress-color.svg

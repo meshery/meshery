@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS MQ
 subtitle: Collaborative and visual infrastructure as code for AWS MQ
 image: /assets/img/integrations/aws-mq-controller/icons/color/aws-mq-controller-color.svg

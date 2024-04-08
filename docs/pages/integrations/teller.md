@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Teller
 subtitle: Collaborative and visual infrastructure as code for Teller
 image: /assets/img/integrations/teller/icons/color/teller-color.svg

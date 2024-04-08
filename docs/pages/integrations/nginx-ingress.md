@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: NGINX Ingress Controller
 subtitle: Collaborative and visual infrastructure as code for NGINX Ingress Controller
 image: /assets/img/integrations/nginx-ingress/icons/color/nginx-ingress-color.svg

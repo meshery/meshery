@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Open Service Mesh
 subtitle: Access all that Open Service Mesh has to offer
 image: /assets/img/integrations/open-service-mesh/icons/color/open-service-mesh-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Solr Operator
 subtitle: Collaborative and visual infrastructure as code for Solr Operator
 image: /assets/img/integrations/solr-operator/icons/color/solr-operator-color.svg

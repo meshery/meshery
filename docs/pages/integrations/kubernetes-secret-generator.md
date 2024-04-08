@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kubernetes Secret Generator
 subtitle: Collaborative and visual infrastructure as code for Kubernetes Secret Generator
 image: /assets/img/integrations/kubernetes-secret-generator/icons/color/kubernetes-secret-generator-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Elastic Container Service
 subtitle: Collaborative and visual infrastructure as code for AWS Elastic Container Service
 image: /assets/img/integrations/aws-ecs-controller/icons/color/aws-ecs-controller-color.svg

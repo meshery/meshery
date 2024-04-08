@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Wordpress Operator
 subtitle: Collaborative and visual infrastructure as code for Wordpress Operator
 image: /assets/img/integrations/wordpress-operator/icons/color/wordpress-operator-color.svg

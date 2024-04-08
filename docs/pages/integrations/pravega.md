@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Pravega
 subtitle: Collaborative and visual infrastructure as code for Pravega
 image: /assets/img/integrations/pravega/icons/color/pravega-color.svg

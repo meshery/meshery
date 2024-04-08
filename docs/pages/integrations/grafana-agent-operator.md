@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Grafana Agent Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
 image: /assets/img/integrations/grafana-agent-operator/icons/color/grafana-agent-operator-color.svg
