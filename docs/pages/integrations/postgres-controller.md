@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Postgres Controller
 subtitle: Collaborative and visual infrastructure as code for Postgres Controller
 image: /assets/img/integrations/postgres-controller/icons/color/postgres-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Cert Manager Crds
 subtitle: Collaborative and visual infrastructure as code for Cert Manager Crds
 image: /assets/img/integrations/cert-manager-crds/icons/color/cert-manager-crds-color.svg

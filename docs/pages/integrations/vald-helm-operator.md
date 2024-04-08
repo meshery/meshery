@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Vald Helm Operator
 subtitle: Collaborative and visual infrastructure as code for Vald Helm Operator
 image: /assets/img/integrations/vald-helm-operator/icons/color/vald-helm-operator-color.svg

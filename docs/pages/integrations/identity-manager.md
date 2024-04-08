@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Identity Manager
 subtitle: Collaborative and visual infrastructure as code for Identity Manager
 image: /assets/img/integrations/identity-manager/icons/color/identity-manager-color.svg

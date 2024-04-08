@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Percona Operator for MySQL
 subtitle: Collaborative and visual infrastructure as code for Percona Operator for MySQL
 image: /assets/img/integrations/ps-operator/icons/color/ps-operator-color.svg

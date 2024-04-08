@@ -216,7 +216,7 @@ func websiteSystem() error {
 	if outputFormat == "js" {
 		docsJSON = strings.TrimSuffix(docsJSON, ",")
 		docsJSON += "]; export default data"
-		mOut, _ := filepath.Abs(filepath.Join("../", modelsOutputPath, "data.js"))
+		mOut, _ := filepath.Abs(filepath.Join(modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
 			utils.Log.Error(err)
 			return nil

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: AMD GPU
 subtitle: Collaborative and visual infrastructure as code for AMD GPU
 image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg

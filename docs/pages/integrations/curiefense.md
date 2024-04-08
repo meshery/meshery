@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Curiefense
 subtitle: Collaborative and visual infrastructure as code for Curiefense
 image: /assets/img/integrations/curiefense/icons/color/curiefense-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Jira Service Desk Operator
 subtitle: Collaborative and visual infrastructure as code for Jira Service Desk Operator
 image: /assets/img/integrations/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg

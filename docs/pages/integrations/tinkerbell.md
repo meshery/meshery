@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Tinkerbell
 subtitle: Collaborative and visual infrastructure as code for Tinkerbell
 image: /assets/img/integrations/tinkerbell/icons/color/tinkerbell-color.svg

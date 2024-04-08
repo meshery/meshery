@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: AWS API Gateway Operator
 subtitle: Collaborative and visual infrastructure as code for AWS API Gateway Operator
 image: /assets/img/integrations/aws-api-gateway-operator/icons/color/aws-api-gateway-operator-color.svg

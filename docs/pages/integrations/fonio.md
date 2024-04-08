@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Fonio
 subtitle: Collaborative and visual infrastructure as code for Fonio
 image: /assets/img/integrations/fonio/icons/color/fonio-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Apache Shardingsphere Operator Charts
 subtitle: Collaborative and visual infrastructure as code for Apache Shardingsphere Operator Charts
 image: /assets/img/integrations/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg

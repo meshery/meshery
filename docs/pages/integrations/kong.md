@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kong API Gateway
 subtitle: Collaborative and visual infrastructure as code for Kong API Gateway
 image: /assets/img/integrations/kong/icons/color/kong-color.svg
@@ -41,6 +41,10 @@ components:
 - name: kong-upstream-policy
   colorIcon: assets/img/integrations/kong/components/kong-upstream-policy/icons/color/kong-upstream-policy-color.svg
   whiteIcon: assets/img/integrations/kong/components/kong-upstream-policy/icons/white/kong-upstream-policy-white.svg
+  description: 
+- name: kong-consumer-group
+  colorIcon: assets/img/integrations/kong/components/kong-consumer-group/icons/color/kong-consumer-group-color.svg
+  whiteIcon: assets/img/integrations/kong/components/kong-consumer-group/icons/white/kong-consumer-group-white.svg
   description: 
 featureList: [
   "Advanced routing, load balancing, health checking - all configurable via a RESTful admin API or declarative configuration.",

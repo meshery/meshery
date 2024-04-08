@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kured
 subtitle: Collaborative and visual infrastructure as code for Kured
 image: /assets/img/integrations/kured/icons/color/kured-color.svg

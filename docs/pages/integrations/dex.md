@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Dex
 subtitle: Collaborative and visual infrastructure as code for Dex
 image: /assets/img/integrations/dex/icons/color/dex-color.svg

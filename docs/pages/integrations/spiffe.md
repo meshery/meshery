@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: SPIFFE
 subtitle: Collaborative and visual infrastructure as code for SPIFFE
 image: /assets/img/integrations/spiffe/icons/color/spiffe-color.svg
