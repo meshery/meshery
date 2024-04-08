@@ -37,6 +37,24 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
+type CustomValueRange struct {
+	Model                string `json:"Model"`
+	Version              string `json:"Version"`
+	Kind                 string `json:"kind"`
+	Type                 string `json:"type"`
+	SubType              string `json:"subType"`
+	MetadataDescription  string `json:"metadataDescription"`
+	Docs                 string `json:"docs"`
+	MetadataStyles       string `json:"metadataStyles"`
+	EvalPolicy           string `json:"evalPolicy"`
+	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
+	SelectorsDenyTo      string `json:"selectorsDenyTo"`
+	SelectorsAllowFrom   string `json:"selectorsAllwowFrom"`
+	SelectorsAllowTo     string `json:"selectorsAllowTo"`
+	CompleteDefinition   string `json:"CompleteDefinition"`
+	VisualizationExample string `json:"VisualizationExample"`
+}
+
 var (
 	componentSpredsheetGID         int64
 	outputLocation                 string
@@ -50,6 +68,10 @@ var (
 
 	registryLocation    string
 	totalAggregateModel int
+
+	// We will have 2 flags model and relationship if user invokes genarate command and specify model flag then only that model will be generated and if user specify relationship flag then only that relationship will be generated.
+	modelFlag        bool
+	relationshipFlag bool
 )
 
 var generateCmd = &cobra.Command{
@@ -81,15 +103,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var wg sync.WaitGroup
 
-		cwd, _ = os.Getwd()
-		registryLocation = filepath.Join(cwd, outputLocation)
-
-		if pathToRegistrantConnDefinition != "" {
-			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
-			return nil
-		}
 		var err error
 
 		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
@@ -98,25 +112,55 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			return err
 		}
 
-		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
-			return err
+		if modelFlag {
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
+			var wg sync.WaitGroup
+
+			cwd, _ = os.Getwd()
+			registryLocation = filepath.Join(cwd, outputLocation)
+
+			if pathToRegistrantConnDefinition != "" {
+				utils.Log.Info("Model generation from Registrant definitions not yet supported.")
+				return nil
+			}
+
+			// Collect list of Models by name from spreadsheet
+			sheetGID = GetSheetIDFromTitle(resp, "Models")
+			// Collect list of corresponding Components by name from spreadsheet
+			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+
+			err = InvokeGenerationFromSheet(&wg)
+			if err != nil {
+				// meshkit
+				utils.Log.Error(err)
+				return err
+			}
+			return nil
+		} else if relationshipFlag {
+			resp, err := srv.Spreadsheets.Values.Get(spreadsheeetID, "Relationships").Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
+
+			if len(resp.Values) == 0 {
+				utils.Log.Info("No data(relationships) found in the sheet")
+			}
+
+			// If no error, fetch the data from the sheet
+			err = createJsonFile(resp)
+			if err != nil {
+				utils.Log.Error(err)
+				return nil
+			}
+			utils.Log.Info("Relationships data generated successfully in docs/_data/RelationshipsData.json")
+			return nil
 		}
-
-		// Collect list of Models by name from spreadsheet
-		sheetGID = GetSheetIDFromTitle(resp, "Models")
-		// Collect list of corresponding Components by name from spreadsheet
-		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-
-		err = InvokeGenerationFromSheet(&wg)
-		if err != nil {
-			// meshkit
-			utils.Log.Error(err)
-			return err
-		}
-
-		return err
+		return nil
 	},
 }
 
@@ -390,7 +434,55 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 	utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
 
+func createJsonFile(resp *sheets.ValueRange) error {
+
+	var customResp []CustomValueRange
+
+	for _, row := range resp.Values[2:] {
+		if len(row) >= 15 && row[0] != "" {
+			customResp = append(customResp, CustomValueRange{
+				Model:                row[0].(string),
+				Version:              row[1].(string),
+				Kind:                 row[2].(string),
+				Type:                 row[3].(string),
+				SubType:              row[4].(string),
+				MetadataDescription:  row[5].(string),
+				Docs:                 row[6].(string),
+				MetadataStyles:       row[7].(string),
+				EvalPolicy:           row[8].(string),
+				SelectorsDenyFrom:    row[9].(string),
+				SelectorsDenyTo:      row[10].(string),
+				SelectorsAllowFrom:   row[11].(string),
+				SelectorsAllowTo:     row[12].(string),
+				CompleteDefinition:   row[13].(string),
+				VisualizationExample: row[14].(string),
+			})
+		}
+	}
+
+	jsonData, err := json.MarshalIndent(customResp, "", "    ")
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	jsonFile, err := os.Create("../docs/_data/RelationshipsData.json")
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+	defer jsonFile.Close()
+	_, err = jsonFile.Write(jsonData)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+	return nil
+}
+
 func init() {
+	generateCmd.Flags().BoolVar(&modelFlag, "model", false, "generate only model")
+	generateCmd.Flags().BoolVar(&relationshipFlag, "relationship", false, "generate only relationship")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
