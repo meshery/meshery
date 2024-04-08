@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform. A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
+Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform. 
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
    - [MeshMap]({{site.baseurl}}/extensions/meshmap) is an example of a feature to be delivered via Remote Provider.
@@ -44,9 +44,12 @@ There are two types of providers defined in Meshery, `local` and `remote`.
  - The **Local** provider is built-into Meshery. 
  - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
+
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. You should use a Remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people).
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+
+A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.  
 
 Name: **"Meshery"** (default)
 
