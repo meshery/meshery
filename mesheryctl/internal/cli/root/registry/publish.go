@@ -90,10 +90,6 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
 
-		if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
-			return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
-		}
-
 		// move to meshkit
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -146,6 +142,9 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		case "remote-provider":
 			err = remoteProviderSystem()
 		case "website":
+			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
+			}
 			err = websiteSystem()
 		default:
 			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
@@ -256,10 +255,6 @@ func init() {
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
-	err := publishCmd.MarkFlagRequired("output-format")
-	if err != nil {
-		utils.Log.Error(err)
-	}
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")
