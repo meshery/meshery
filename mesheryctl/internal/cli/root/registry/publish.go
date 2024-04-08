@@ -176,9 +176,13 @@ func mesherySystem() error {
 	return nil
 }
 
+// Create models definitions to remote provider path
+// and add models icons to image output path
 func remoteProviderSystem() error {
+	// Construct absolute path to store models
 	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
 	modelDir := filepath.Join(outputPath)
+	totalModelsPublished := 0
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
@@ -196,8 +200,9 @@ func remoteProviderSystem() error {
 		if err != nil {
 			return ErrGenerateModel(err, model.Model)
 		}
+		totalModelsPublished++
 	}
-
+	utils.Log.Info("Total model published: ", totalModelsPublished)
 	return nil
 }
 
