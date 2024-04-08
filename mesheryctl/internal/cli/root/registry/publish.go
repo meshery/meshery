@@ -192,7 +192,7 @@ func remoteProviderSystem() error {
 			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
 		}
 
-		_, _, err = WriteModelDefToFileSystem(&model, "", modalDir)
+		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
 		if err != nil {
 			return ErrGenerateModel(err, model.Model)
 		}
