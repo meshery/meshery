@@ -178,7 +178,7 @@ func mesherySystem() error {
 
 func remoteProviderSystem() error {
 	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
-	modalDir := filepath.Join(outputPath)
+	modelDir := filepath.Join(outputPath)
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
