@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS DynamoDB
 subtitle: Collaborative and visual infrastructure as code for AWS DynamoDB
 image: /assets/img/integrations/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS CloudTrail
 subtitle: Collaborative and visual infrastructure as code for AWS CloudTrail
 image: /assets/img/integrations/aws-cloudtrail-controller/icons/color/aws-cloudtrail-controller-color.svg

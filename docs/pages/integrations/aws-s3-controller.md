@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Simple Storage Service (S3)
 subtitle: Collaborative and visual infrastructure as code for AWS Simple Storage Service (S3)
 image: /assets/img/integrations/aws-s3-controller/icons/color/aws-s3-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS EC2
 subtitle: Collaborative and visual infrastructure as code for AWS EC2
 image: /assets/img/integrations/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Argo CD Operator
 subtitle: Collaborative and visual infrastructure as code for Argo CD Operator
 image: /assets/img/integrations/argocd-operator/icons/color/argocd-operator-color.svg

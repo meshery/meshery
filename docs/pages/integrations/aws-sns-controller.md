@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Simple Notification Service
 subtitle: Collaborative and visual infrastructure as code for AWS Simple Notification Service
 image: /assets/img/integrations/aws-sns-controller/icons/color/aws-sns-controller-color.svg

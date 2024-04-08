@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Applilcation Autoscaling
 subtitle: Collaborative and visual infrastructure as code for AWS Applilcation Autoscaling
 image: /assets/img/integrations/aws-applicationautoscaling-controller/icons/color/aws-applicationautoscaling-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Chaos Mesh
 subtitle: Collaborative and visual infrastructure as code for Chaos Mesh
 image: /assets/img/integrations/chaos-mesh/icons/color/chaos-mesh-color.svg

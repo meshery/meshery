@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Amazon Web Services
 subtitle: Collaborative and visual infrastructure as code for Amazon Web Services
 image: /assets/img/integrations/aws/icons/color/aws-color.svg

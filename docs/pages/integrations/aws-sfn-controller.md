@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Step Functions
 subtitle: Collaborative and visual infrastructure as code for AWS Step Functions
 image: /assets/img/integrations/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg

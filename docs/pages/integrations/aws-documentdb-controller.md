@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS DocumentDB
 subtitle: Collaborative and visual infrastructure as code for AWS DocumentDB
 image: /assets/img/integrations/aws-documentdb-controller/icons/color/aws-documentdb-controller-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Mattermost Operator
 subtitle: Collaborative and visual infrastructure as code for Mattermost Operator
 image: /assets/img/integrations/mattermost-operator/icons/color/mattermost-operator-color.svg

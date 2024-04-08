@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Grafana UI Server
 subtitle: Operational dashboards for your data with Grafana and Meshery
 image: /assets/img/integrations/grafana-ui-server/icons/color/grafana-ui-server-color.svg

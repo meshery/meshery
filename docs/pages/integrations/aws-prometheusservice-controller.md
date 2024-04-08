@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS Managed Service for Prometheus
 subtitle: Collaborative and visual infrastructure as code for AWS Managed Service for Prometheus
 image: /assets/img/integrations/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg

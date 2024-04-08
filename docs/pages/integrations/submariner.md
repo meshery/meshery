@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Submariner
 subtitle: Collaborative and visual infrastructure as code for Submariner
 image: /assets/img/integrations/submariner/icons/color/submariner-color.svg

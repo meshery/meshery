@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Tuf
 subtitle: Collaborative and visual infrastructure as code for Tuf
 image: /assets/img/integrations/tuf/icons/color/tuf-color.svg

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as code for AWX Operator
 image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg

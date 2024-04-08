@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Kube Rs
 subtitle: Collaborative and visual infrastructure as code for Kube Rs
 image: /assets/img/integrations/kube-rs/icons/color/kube-rs-color.svg

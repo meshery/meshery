@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: AWS ElastiCache
 subtitle: Collaborative and visual infrastructure as code for AWS ElastiCache
 image: /assets/img/integrations/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
