@@ -121,7 +121,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 1 : page.Models + 1,
-                pagesize: searchText || checked ? 'all' : rowsPerPage,
+                pagesize: 'all',
                 components: true,
                 relationships: true,
                 search: searchText || '',
