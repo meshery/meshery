@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: OPA Gatekeeper
 subtitle: Collaborative and visual infrastructure as code for Frinx Machine
 image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
@@ -45,6 +45,22 @@ components:
 - name: expansion-template-pod-status
   colorIcon: assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/color/expansion-template-pod-status-color.svg
   whiteIcon: assets/img/integrations/gatekeeper/components/expansion-template-pod-status/icons/white/expansion-template-pod-status-white.svg
+  description: 
+- name: config
+  colorIcon: assets/img/integrations/gatekeeper/components/config/icons/color/config-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/config/icons/white/config-white.svg
+  description: 
+- name: constraint-pod-status
+  colorIcon: assets/img/integrations/gatekeeper/components/constraint-pod-status/icons/color/constraint-pod-status-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/constraint-pod-status/icons/white/constraint-pod-status-white.svg
+  description: 
+- name: constraint-template-pod-status
+  colorIcon: assets/img/integrations/gatekeeper/components/constraint-template-pod-status/icons/color/constraint-template-pod-status-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/constraint-template-pod-status/icons/white/constraint-template-pod-status-white.svg
+  description: 
+- name: sync-set
+  colorIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/color/sync-set-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/white/sync-set-white.svg
   description: 
 featureList: [
   "Native Kubernetes CRDs for instantiating the policy library (aka constraints)",

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kuberhealthy
 subtitle: Collaborative and visual infrastructure as code for Kuberhealthy
 image: /assets/img/integrations/kuberhealthy/icons/color/kuberhealthy-color.svg

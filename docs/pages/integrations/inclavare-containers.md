@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Inclavare Containers
 subtitle: Collaborative and visual infrastructure as code for Inclavare Containers
 image: /assets/img/integrations/inclavare-containers/icons/color/inclavare-containers-color.svg

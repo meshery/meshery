@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Etcd Cluster Operator
 subtitle: Collaborative and visual infrastructure as code for Etcd Cluster Operator
 image: /assets/img/integrations/etcd-cluster-operator/icons/color/etcd-cluster-operator-color.svg

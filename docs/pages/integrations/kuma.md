@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kuma
 subtitle: Collaborative and visual infrastructure as code for Kuma
 image: /assets/img/integrations/kuma/icons/color/kuma-color.svg

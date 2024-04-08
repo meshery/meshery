@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Istio Rate Limit Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
 image: /assets/img/integrations/istio-ratelimit-operator/icons/color/istio-ratelimit-operator-color.svg

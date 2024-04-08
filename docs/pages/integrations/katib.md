@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Kubeflow Katib
 subtitle: Collaborative and visual infrastructure as code for Kubeflow Katib
 image: /assets/img/integrations/katib/icons/color/katib-color.svg

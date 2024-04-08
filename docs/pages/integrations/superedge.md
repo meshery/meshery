@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Superedge
 subtitle: Collaborative and visual infrastructure as code for Superedge
 image: /assets/img/integrations/superedge/icons/color/superedge-color.svg

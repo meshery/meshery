@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: AWS Route 53
 subtitle: Collaborative and visual infrastructure as code for AWS Route 53
 image: /assets/img/integrations/aws-route53-controller/icons/color/aws-route53-controller-color.svg
@@ -8,8 +8,24 @@ docURL: https://docs.meshery.io/extensibility/integrations/aws-route53-controlle
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Networking Content Delivery
-registrant: Github
+registrant: GitHub
 components: 
+- name: field-export
+  colorIcon: assets/img/integrations/aws-route53-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: assets/img/integrations/aws-route53-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: assets/img/integrations/aws-route53-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: assets/img/integrations/aws-route53-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: hosted-zone
+  colorIcon: assets/img/integrations/aws-route53-controller/components/hosted-zone/icons/color/hosted-zone-color.svg
+  whiteIcon: assets/img/integrations/aws-route53-controller/components/hosted-zone/icons/white/hosted-zone-white.svg
+  description: 
+- name: record-set
+  colorIcon: assets/img/integrations/aws-route53-controller/components/record-set/icons/color/record-set-color.svg
+  whiteIcon: assets/img/integrations/aws-route53-controller/components/record-set/icons/white/record-set-white.svg
+  description: 
 featureList: [
   "Route end users to your site reliably with globally-dispersed Domain Name System (DNS) servers and automatic scaling.",
   "Set up your DNS routing in minutes with domain name registration and straightforward visual traffic flow tools.",

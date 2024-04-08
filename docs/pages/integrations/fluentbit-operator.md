@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Fluentbit Operator
 subtitle: Collaborative and visual infrastructure as code for Fluentbit Operator
 image: /assets/img/integrations/fluentbit-operator/icons/color/fluentbit-operator-color.svg

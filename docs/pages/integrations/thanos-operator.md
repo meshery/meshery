@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Thanos Operator
 subtitle: Collaborative and visual infrastructure as code for Thanos Operator
 image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-color.svg

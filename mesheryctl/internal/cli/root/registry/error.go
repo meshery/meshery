@@ -12,10 +12,22 @@ var (
 	ErrUpdateModelCode       = "mesheryctl-1057"
 	ErrUpdateComponentCode   = "mesheryctl-1058"
 	ErrUpdateRegistryCode    = "mesheryctl-1059"
+	ErrGeneratingIconsCode   = "mesheryctl-1060"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
 	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
+}
+
+func ErrGeneratingIcons(err error, path string) error {
+	return errors.New(
+		ErrGeneratingIconsCode,
+		errors.Alert,
+		[]string{"error generating icons at ", path},
+		[]string{err.Error()},
+		[]string{"Model SVG data is missing", "Model name formatting issue"},
+		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
+	)
 }
 
 func ErrGenerateModel(err error, modelName string) error {

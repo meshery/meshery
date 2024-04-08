@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Porter
 subtitle: Collaborative and visual infrastructure as code for Porter
 image: /assets/img/integrations/porter/icons/color/porter-color.svg

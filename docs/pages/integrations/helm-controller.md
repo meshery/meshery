@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Helm Controller
 subtitle: Collaborative and visual infrastructure as code for Helm Controller
 image: /assets/img/integrations/helm-controller/icons/color/helm-controller-color.svg

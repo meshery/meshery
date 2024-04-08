@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Fluentbit Skt
 subtitle: Collaborative and visual infrastructure as code for Fluentbit Skt
 image: /assets/img/integrations/fluentbit-skt/icons/color/fluentbit-skt-color.svg

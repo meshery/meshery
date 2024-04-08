@@ -90,10 +90,6 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
 
-		if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
-			return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
-		}
-
 		// move to meshkit
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -146,6 +142,9 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		case "remote-provider":
 			err = remoteProviderSystem()
 		case "website":
+			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
+			}
 			err = websiteSystem()
 		default:
 			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
@@ -177,8 +176,33 @@ func mesherySystem() error {
 	return nil
 }
 
-// TODO
+// Create models definitions to remote provider path
+// and add models icons to image output path
 func remoteProviderSystem() error {
+	// Construct absolute path to store models
+	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
+	modelDir := filepath.Join(outputPath)
+	totalModelsPublished := 0
+	for _, model := range models {
+		comps, ok := components[model.Registrant][model.Model]
+		if !ok {
+			utils.Log.Debug("no components found for ", model.Model)
+			comps = []utils.ComponentCSV{}
+		}
+
+		err := utils.GenerateIcons(model, comps, imgsOutputPath)
+		if err != nil {
+			utils.Log.Debug(ErrGeneratingIcons(err, imgsOutputPath))
+			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
+		}
+
+		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
+		if err != nil {
+			return ErrGenerateModel(err, model.Model)
+		}
+		totalModelsPublished++
+	}
+	utils.Log.Info("Total model published: ", totalModelsPublished)
 	return nil
 }
 
@@ -216,7 +240,7 @@ func websiteSystem() error {
 	if outputFormat == "js" {
 		docsJSON = strings.TrimSuffix(docsJSON, ",")
 		docsJSON += "]; export default data"
-		mOut, _ := filepath.Abs(filepath.Join("../", modelsOutputPath, "data.js"))
+		mOut, _ := filepath.Abs(filepath.Join(modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -236,10 +260,6 @@ func init() {
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
-	err := publishCmd.MarkFlagRequired("output-format")
-	if err != nil {
-		utils.Log.Error(err)
-	}
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")

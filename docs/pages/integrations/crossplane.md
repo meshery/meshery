@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Crossplane
 subtitle: Collaborative and visual infrastructure as code for Crossplane
 image: /assets/img/integrations/crossplane/icons/color/crossplane-color.svg

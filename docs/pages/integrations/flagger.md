@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: Flagger
 subtitle: Collaborative and visual infrastructure as code for Flagger
 image: /assets/img/integrations/flagger/icons/color/flagger-color.svg

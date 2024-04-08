@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: MySQL Operator
 subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
 image: /assets/img/integrations/mysql-operator/icons/color/mysql-operator-color.svg

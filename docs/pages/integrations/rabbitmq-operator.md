@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: enhanced
 title: RabbitMQ Operator
 subtitle: Collaborative and visual infrastructure as code for RabbitMQ Operator
 image: /assets/img/integrations/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
