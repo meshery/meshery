@@ -280,6 +280,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
+            disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -297,6 +298,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
+            disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
