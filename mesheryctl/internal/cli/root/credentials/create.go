@@ -40,22 +40,7 @@ var createCredentialCmd = &cobra.Command{
 // Create a new credential
 mesheryctl exp credential create --name [credential-name] --user-id [user-id] --type [credential-type] --secret [credential-secret]
 `,
-
-	Args: func(cmd *cobra.Command, args []string) error {
-
-		// Check if all required flags are set
-		nameFlag, _ := cmd.Flags().GetString("name")
-		userIDFlag, _ := cmd.Flags().GetString("user-id")
-		typeFlag, _ := cmd.Flags().GetString("type")
-		secretFlag, _ := cmd.Flags().GetString("secret")
-
-		if nameFlag == "" || userIDFlag == "" || typeFlag == "" || secretFlag == "" {
-			return cmd.Usage()
-		}
-
-		return nil
-	},
-
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -63,8 +48,16 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
+		}
+
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
 		}
 
 		name, _ := cmd.Flags().GetString("name")
@@ -72,20 +65,8 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		credentialType, _ := cmd.Flags().GetString("type")
 		secrets, _ := cmd.Flags().GetString("secret")
 
-		if name == "" {
-			return utils.ErrInvalidArgument(errors.New("name is required"))
-		}
-
-		if user_id == "" {
-			return utils.ErrInvalidArgument(errors.New("user-id is required"))
-		}
-
-		if credentialType != "kubernetes" && credentialType != "prometheus" && credentialType != "grafana" {
-			return utils.ErrInvalidArgument(errors.New("type must be one of: kubernetes, prometheus, grafana"))
-		}
-
-		if secrets == "" {
-			return utils.ErrInvalidArgument(errors.New("secret is required"))
+		if name == "" || user_id == "" || credentialType == "" || secrets == "" {
+			return utils.ErrInvalidArgument(errors.New("name, user-id, type, and secret are required"))
 		}
 
 		baseURL := mctlCfg.GetBaseMesheryURL()
@@ -94,8 +75,7 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		// Generate a unique identifier for the credential
 		id, err := uuid.NewV4()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		id = uuid.UUID(id)
 
@@ -142,10 +122,17 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		}
 
 		if resp.StatusCode == http.StatusOK {
-			fmt.Println("Credential created successfully")
+			utils.Log.Info("Credential created successfully")
 			return nil
 		}
-		fmt.Println("Error creating credential")
+		utils.Log.Info("Error creating credential")
 		return nil
 	},
+}
+
+func init() {
+	createCredentialCmd.Flags().StringP("name", "n", "", "Name of the credential")
+	createCredentialCmd.Flags().StringP("user-id", "u", "", "User ID of the credential")
+	createCredentialCmd.Flags().StringP("type", "t", "", "Type of the credential")
+	createCredentialCmd.Flags().StringP("secret", "s", "", "Secret of the credential")
 }

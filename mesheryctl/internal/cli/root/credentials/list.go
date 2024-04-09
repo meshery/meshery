@@ -20,12 +20,21 @@ import (
 	"io"
 
 	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+var (
+	// Maximum number of rows to be displayed in a page
+	maxRowsPerPage = 25
+
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var listCredentialCmd = &cobra.Command{
@@ -46,13 +55,11 @@ mesheryctl exp credential list
 		}
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/integrations/credentials", nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
@@ -66,10 +73,11 @@ mesheryctl exp credential list
 			utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server"))
 			return nil
 		}
-		header := []string{"ID", "User-Id", "Name", "Type", "Created At", "Updated At"}
+		header := []string{"ID", "User-Id", "Name", "Type", "Secrets", "Created At", "Updated At"}
 		data := [][]string{}
 		for _, credential := range credentialResponse.Credentials {
-			data = append(data, []string{credential.ID.String(), credential.Name, credential.Type, credential.CreatedAt.String(), credential.UpdatedAt.String()})
+			secret := fmt.Sprintf("%v", credential.Secret)
+			data = append(data, []string{credential.ID.String(), credential.Name, credential.Type, secret, credential.CreatedAt.String(), credential.UpdatedAt.String()})
 		}
 		if len(data) == 0 {
 			utils.Log.Info("No credentials found")

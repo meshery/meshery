@@ -1,7 +1,6 @@
 package credentials
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -10,9 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-var update = flag.Bool("update", false, "update golden files")
-
-func TestCredentialCmd(t *testing.T) {
+func TestListCredentialCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -30,8 +27,8 @@ func TestCredentialCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	// test scenrios for fetching data
-	testcase := []struct {
+	// test scenarios for fetching data
+	tests := []struct {
 		Name             string
 		Args             []string
 		ExpectedResponse string
@@ -40,14 +37,14 @@ func TestCredentialCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "credential listcmd",
+			Name:             "Fetch Credentials List",
 			Args:             []string{"list"},
-			ExpectedResponse: "credential.list.output.golden",
+			ExpectedResponse: "list.credentials.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/integrations/credentials",
-					Response:     "credential.list.api.response.golden",
+					Response:     "list.credentials.api.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -55,29 +52,31 @@ func TestCredentialCmd(t *testing.T) {
 			ExpectError: false,
 		},
 	}
-	for _, test := range testcase {
-		t.Run(test.Name, func(t *testing.T) {
-			//set token
-			utils.TokenFlag = test.Token
 
-			for _, url := range test.URLs {
+	// Run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			for _, url := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 				httpmock.RegisterResponder(url.Method, url.URL,
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			// Expected output from golden files
+			// set token
+			utils.TokenFlag = tt.Token
+
+			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, test.ExpectedResponse, testdataDir)
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			CredentialCmd.SetOutput(buff)
-			CredentialCmd.SetArgs(test.Args)
-
-			err := CredentialCmd.Execute()
+			listCredentialCmd.SetArgs(tt.Args)
+			listCredentialCmd.SetOutput(buff)
+			err := listCredentialCmd.Execute()
 			if err != nil {
-				if test.ExpectError {
-
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
 					if *update {
 						golden.Write(err.Error())
 					}
@@ -86,19 +85,19 @@ func TestCredentialCmd(t *testing.T) {
 					utils.Equals(t, expectedResponse, err.Error())
 					return
 				}
-				t.Error(err)
+				t.Fatal(err)
 			}
-			//print response string to console
+			// response being printed in console
 			actualResponse := buff.String()
+
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("Credentials tests Passed")
+		t.Log("List Credentials test Passed")
 	}
 	// stop mock server
 	utils.StopMockery(t)
