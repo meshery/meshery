@@ -30,6 +30,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/manifoldco/promptui"
 )
 
 var createCredentialCmd = &cobra.Command{
@@ -38,7 +40,7 @@ var createCredentialCmd = &cobra.Command{
 	Long:  `Create a new credential by providing the name, user ID, type, and secret of the credential`,
 	Example: `
 // Create a new credential
-mesheryctl exp credential create --name [credential-name] --user-id [user-id] --type [credential-type] --secret [credential-secret]
+mesheryctl exp credential create
 `,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -60,12 +62,40 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 			return err
 		}
 
-		name, _ := cmd.Flags().GetString("name")
-		user_id, _ := cmd.Flags().GetString("user-id")
-		credentialType, _ := cmd.Flags().GetString("type")
-		secrets, _ := cmd.Flags().GetString("secret")
+		// Prompt for input
+		prompt := promptui.Prompt{
+			Label: "Name",
+		}
+		name, err := prompt.Run()
+		if err != nil {
+			return err
+		}
 
-		if name == "" || user_id == "" || credentialType == "" || secrets == "" {
+		prompt = promptui.Prompt{
+			Label: "User ID",
+		}
+		userID, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+
+		prompt = promptui.Prompt{
+			Label: "Type",
+		}
+		credentialType, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+
+		prompt = promptui.Prompt{
+			Label: "Secret",
+		}
+		secret, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+
+		if name == "" || userID == "" || credentialType == "" || secret == "" {
 			return utils.ErrInvalidArgument(errors.New("name, user-id, type, and secret are required"))
 		}
 
@@ -77,19 +107,15 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		if err != nil {
 			return err
 		}
-		id = uuid.UUID(id)
 
 		// Parse the user_id as UUID
-		parsedUserID, err := uuid.FromString(user_id)
+		parsedUserID, err := uuid.FromString(userID)
 		if err != nil {
 			return utils.ErrInvalidArgument(errors.New("invalid user_id format"))
 		}
 
-		secret := make(map[string]interface{})
-		if secrets != "" {
-			// Parse the secret flag and include it in the secret map
-			secret["key"] = secrets
-		}
+		secretMap := make(map[string]interface{})
+		secretMap["key"] = secret
 
 		// Construct the payload according to the schema
 		payload := &models.Credential{
@@ -97,7 +123,7 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 			UserID:    &parsedUserID,
 			Name:      name,
 			Type:      credentialType,
-			Secret:    secret,
+			Secret:    secretMap,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 			DeletedAt: sql.NullTime{}, // Set to zero value
@@ -128,11 +154,4 @@ mesheryctl exp credential create --name [credential-name] --user-id [user-id] --
 		utils.Log.Info("Error creating credential")
 		return nil
 	},
-}
-
-func init() {
-	createCredentialCmd.Flags().StringP("name", "n", "", "Name of the credential")
-	createCredentialCmd.Flags().StringP("user-id", "u", "", "User ID of the credential")
-	createCredentialCmd.Flags().StringP("type", "t", "", "Type of the credential")
-	createCredentialCmd.Flags().StringP("secret", "s", "", "Secret of the credential")
 }

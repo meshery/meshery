@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -64,14 +63,14 @@ mesheryctl exp credential list
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time"))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 		credentialResponse := models.CredentialsPage{}
 		err = json.Unmarshal(body, &credentialResponse)
 		if err != nil {
-			utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server"))
-			return nil
+			return utils.ErrUnmarshal(err)
+			
 		}
 		header := []string{"ID", "User-Id", "Name", "Type", "Secrets", "Created At", "Updated At"}
 		data := [][]string{}
