@@ -62,7 +62,7 @@ When defining relationships that involve a large number of combinations between 
 
 This arrangement enhances flexibility and reusability in the definition and configuration of relationships among components.
 
-***`Note:`*** When defining Hierarchical  relationships, remember that the `from` field represents the parent component, while the `to` field represents the child component.
+***`Note:`*** When defining Hierarchical  relationships, remember that the `from` field represents the child component, while the `to` field represents the parent component.
 
 <details close>
 <summary>Selector example</summary>
