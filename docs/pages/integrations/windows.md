@@ -22,6 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Run mesheryctl on your Windows host, string=<p>
-    Run Meshery on your Windows desktop. Use the Scoop package for Meshery's CLI or download `mesheryctl` directly. With `mesheryctl`, you can deploy Meshery locally on your desktop in Docker or in Kubernetes. Alternatively, you can deploy Meshery to a remote Kubernetes cluster. Design, test, and manage configuration of all your cloud infrastructure and containerized applications as a visual topology. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, create and deploy your own cloud native infrastructure designs.
-</p>)

@@ -34,12 +34,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=The Kubernetes Package Manager, string=<p>
-    The Kubernetes Package Manager
-</p>
-<p>
-    Selectively deploy Meshery components with Helm charts and sub-charts. Use parameter overrides to customize your Meshery deployment. Design, test, and manage configuration of all your cloud infrastructure and containerized applications as a visual topology. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, create and deploy your own cloud native infrastructure designs.
-</p>
-<p>
-    Import all of your existing Helm Chart into Meshery.
-</p>)

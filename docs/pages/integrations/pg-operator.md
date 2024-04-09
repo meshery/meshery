@@ -34,9 +34,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes., string=<p>
-    With Percona Operators, you can support your Cloud Native strategy with managing database workloads on any supported Kubernetes cluster running in private, public, hybrid, or multi-cloud environments.
-</p>
-<p>
-    Percona Operators are 100% open source, free from vendor lock-in, usage restrictions and expensive contracts, and include enterprise-ready features by default: backup/restore, high availability, replication, sharding, logging, and more.
-</p>)

@@ -22,9 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=, string=<p>
-    <code>mesheryctl</code> runs on Intel and ARM architectures for your Linux operating system. Use the Bash installer to download, deploy, and run Meshery with a single command on Kubernetes: <pre><code>curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</code></pre>
-</p>
-<p>
-    Use the Bash installer to download, deploy, and run Meshery with a single command on Docker: <pre><code>curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</code></pre>
-</p>)

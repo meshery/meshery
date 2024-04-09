@@ -34,9 +34,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Percona Operator for MySQL allows users to deploy and manage Percona Server for MySQL Clusters on Kubernetes, string=<p>
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-</p>
-<p>
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>)

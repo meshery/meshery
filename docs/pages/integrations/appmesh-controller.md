@@ -50,6 +50,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=AWS App Mesh is a service mesh that provides application-level networking to make it easy for your services to communicate with each other across multiple types of compute infrastructure. App Mesh standardizes how your services communicate, giving you end-to-end visibility and ensuring high-availability for your applications., string=<p>
-    Deploy and manage the configuration of your AWS App Mesh using the Meshery Adapter for App Mesh. Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>)

@@ -22,10 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Event-driven scripting for Kubernetes, string=<p>
-Brigade is a full-featured, event-driven scripting platform built on top of Kubernetes. It integrates with many different event sources, more are always being added, and it's easy to create your own if you need something specific. And the best part -- Kubernetes is well-abstracted so even team members without extensive Kubernetes experience or without direct access to a cluster can be productive.</p><p>
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-</p>
-<p>
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>)
