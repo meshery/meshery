@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Linux
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
 image: /assets/img/integrations/linux/icons/color/linux-color.svg
@@ -21,16 +21,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-
-</p>
-<p>
-    <code>mesheryctl</code> runs on Intel and ARM architectures for your Linux operating system. Use the Bash installer to download, deploy, and run Meshery with a single command on Kubernetes: <pre><code>curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</code></pre>
-</p>
-<p>
-    Use the Bash installer to download, deploy, and run Meshery with a single command on Docker: <pre><code>curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</code></pre>
-</p>

@@ -336,7 +336,7 @@ function MesheryPatterns({
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -1559,6 +1559,7 @@ function MesheryPatterns({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
     );
