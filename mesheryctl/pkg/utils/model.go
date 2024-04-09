@@ -315,8 +315,6 @@ category: integrations
 		m.Feature3,
 		m.HowItWorks,
 		m.HowItWorksDetails,
-		m.AboutProject,
-		m.StandardBlurb,
 	)
 
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
