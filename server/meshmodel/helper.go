@@ -373,8 +373,9 @@ func (erh *EntityRegistrationHelper) registryLog() {
 		log.Error(meshmodel.ErrMarshalingRegisteryAttempts(err))
 		return
 	}
+	jsonDataString := string(jsonData)
 
-	err = writeToFile(filePath, jsonData)
+	err = mutils.WriteToFile(filePath, jsonDataString)
 	if err != nil {
 		log.Error(meshmodel.ErrWritingRegisteryAttempts(err))
 		return
@@ -404,20 +405,4 @@ func FailedMsgCompute(failedMsg string, hostName string) (string, error) {
 		failedMsg = appendIfNonZero(failedMsg, nonImportModel.Policies, "policies")
 	}
 	return failedMsg, nil
-}
-
-// write the json file to SERVER_CONTENT_FOLDER
-func writeToFile(filePath string, data []byte) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(data)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
