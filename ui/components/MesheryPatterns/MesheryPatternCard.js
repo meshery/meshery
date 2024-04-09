@@ -223,7 +223,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   className={classes.testsButton}
-                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} // TODO: uncomment when key get seeded
+                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}> Clone </span>
