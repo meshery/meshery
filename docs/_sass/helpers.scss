@@ -1,22 +1,13 @@
 // FLEX /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .flex {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: auto auto;
   gap: var(--col-gap);
-  flex-wrap: wrap;
 
-  &.flex-col--2 {
-    & > * {
-      flex: 0 0 calc(50% - calc(var(--col-gap) / 2));
-    }
-  }
-
-  &.flex-col--3 {
-    & > * {
-      flex: 0 0 calc(33.33% - calc(var(--col-gap) / 3));
-    }
-  }
+  @media (max-width: 748px) {
+    grid-template-columns: auto;
+  }  
 }
 
 // BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -55,7 +55,7 @@ header {
 .navbar {
   width: 100%;
   height: var(--navbar-height);
-  padding: 0 2rem !important;
+  padding: 0 32px;
   background: var(--background-light-cards);
   box-shadow: var(--box-shadow-navbar);
   display: flex;
@@ -72,6 +72,12 @@ header {
   
   @media (max-width: 1200px) {
     justify-content: space-between;
+    padding: 0 28px;
+  }
+    
+  @media (max-width: 640px) {
+    padding: 20px;
+    height: auto;
   }
 
   & .icon-container {
@@ -175,7 +181,6 @@ header {
       & img,
       svg {
         display: inline-block;
-        margin: 0 10px;
         height: 45px;
         margin-right: 0.5rem;
         @media (max-width: 610px) {

@@ -68,7 +68,7 @@ ol {
 
 
 .main-container {
-  padding: 3.5rem 4.4rem;
+  padding: 36px 32px;
   overflow: hidden;
   width: 100%;
   flex-grow: 5;
@@ -77,6 +77,10 @@ ol {
     flex: 0 0 100%;
   }
 
+  @media (max-width: 75em) {
+    padding: 24px 20px;
+  }
+  
   & .breadcrumb {
     list-style: none;
   }

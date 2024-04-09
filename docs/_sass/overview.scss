@@ -47,8 +47,7 @@ div.wrapper {
 
 div.container {
   text-align: left;
-  padding: 1.6rem;
-  --col-gap: 1rem;
+  --col-gap: 24px;
 }
 
 div.section {
@@ -80,7 +79,7 @@ a > strong:hover {
     display: block;
   }
   div.container {
-    --col-gap: -40rem;
+    --col-gap: 20px;
   }
   div.overview {
     margin-left: 0px;
