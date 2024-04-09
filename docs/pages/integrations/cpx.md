@@ -22,11 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Unlock all of Citrix Service Mesh features with Meshery, string=<p>
-    Connect Citrix Service Mesh with any of your favorite apps in just a few
-    clicks. Design, build, and automate anything for your work by
-    integrating apps like Citrix Service Mesh to create visual automatedcl
-    workflows. Choose from hundreds of ready-made design patterns or use
-    our no-code designer, MeshMap to connect to apps not yet in our
-    library.
-</p>)

@@ -22,6 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Open Service Mesh (OSM) is a lightweight, extensible, cloud native service mesh that allows users to uniformly manage, secure, and get out-of-the-box observability features for highly dynamic microservice environments., string=<p>
-    Deploy the Meshery Adapter for Open Service Mesh and enable fine-grained lifecycle and configuration management over your Open Service Mesh-enabled Kubernetes clusters. Whether you are using Azuare Kubernetes Service (AKS), another managed Kubernetes serviced or are using a self-hosted Kubernetes distribution. Design, test, and manage configuration of all your cloud infrastructure and containerized applications as a visual topology. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, create and deploy your own cloud native infrastructure designs.
-</p>)

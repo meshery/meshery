@@ -22,10 +22,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Amazon Elastic Kubernetes Service (EKS) is a managed service and certified Kubernetes conformant to run Kubernetes on AWS and on-premises., string=<p>
-    Take advantage of Meshery's multi-cluster Kubernetes management features in your AKS environments. Design, build, and automate anything for your work by
-    integrating apps like AKS to create visual automatedcl
-    workflows. Choose from hundreds of ready-made design patterns or use
-    our no-code designer, MeshMap to connect to apps not yet in our
-    library.
-</p>)

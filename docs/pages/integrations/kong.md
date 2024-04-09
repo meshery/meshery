@@ -58,8 +58,3 @@ list: include
 type: extensibility
 category: integrations
 ---
-%!(EXTRA string=Kong API Gateway is a cloud-native, platform-agnostic, scalable API Gateway distinguished for its high performance and extensibility via plugins., string=<p>
-By providing functionality for proxying, routing, load balancing, health checking, authentication (and more), Kong serves as the central layer for orchestrating microservices or conventional API traffic with ease.
-</p>
-<p>
-Kong runs natively on Kubernetes thanks to its official Kubernetes Ingress Controller.</p>)
