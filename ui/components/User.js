@@ -22,6 +22,8 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { styled } from '@mui/material/styles';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -199,7 +201,12 @@ const User = (props) => {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
                     {account && account.length ? renderAccountExtension(account) : null}
-                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
+                    <MenuItem
+                      disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                      onClick={handleGetToken}
+                    >
+                      Get Token
+                    </MenuItem>
                     <MenuItem onClick={handlePreference}>Preferences</MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
