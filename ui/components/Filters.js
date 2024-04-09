@@ -188,6 +188,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Update"
             color="primary"
+            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -205,6 +206,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Delete"
             color="primary"
+            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
