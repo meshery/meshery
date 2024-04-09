@@ -28,6 +28,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import SpacesPreferences from './spaces-preferences';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CHARCOAL } from '@layer5/sistent';
+import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -47,14 +48,16 @@ const styles = (theme) => ({
     borderTopRightRadius: 3,
   },
   tabs: {
+    width: '100%',
     marginLeft: 0,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
   tab: {
-    maxWidth: 'min(33%, 200px)',
-    minWidth: '50px',
+    width: '42%',
+    // maxWidth: 'min(33%, 200px)',
+    // minWidth: '50px',
     margin: 0,
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
@@ -167,6 +170,7 @@ const UserPreference = (props) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  const { width } = useWindowDimensions();
 
   const { notify } = useNotification();
 
@@ -289,10 +293,13 @@ const UserPreference = (props) => {
         <Tabs
           value={tabVal}
           onChange={handleTabValChange}
-          variant="fullWidth"
+          variant={width < 600 ? 'scrollable' : 'fullWidth'}
+          scrollButtons="on"
+          allowScrollButtonsMobile={true}
           indicatorColor="primary"
           textColor="primary"
           className={props.classes.tabs}
+          centered
         >
           <CustomTextTooltip backgroundColor={CHARCOAL} title="General preferences" placement="top">
             <Tab
