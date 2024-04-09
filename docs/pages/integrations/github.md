@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Github
 subtitle: Integrate GitOps into your cloud native management process
 image: /assets/img/integrations/github/icons/color/github-color.svg
@@ -21,17 +21,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-GitOps your infrastructure with Meshery and GitHub
-</p>
-<p>
-    Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.
-    Save and share your design patterns to GitHub using either public or private repositories.
-</p>
-<p>
-    Learn more about <a href="/blog/service-mesh-specifications/pipelining-service-mesh-specifications">pipelining service mesh specifications</a> and using Service Mesh Interface and Service Mesh Performance specs on your CI/CD pipelines with Meshery's GitHub Actions.
-</p>

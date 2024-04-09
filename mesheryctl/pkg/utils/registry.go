@@ -212,3 +212,49 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 
 	return nil
 }
+
+func GenerateIcons(model ModelCSV, components []ComponentCSV, imgPath string) error {
+	modelName := utils.FormatName(model.Model)
+
+	// Dir for icons
+	imgsOutputPath, _ := filepath.Abs(filepath.Join("../", imgPath, modelName))
+	iconsDir := filepath.Join(imgsOutputPath)
+	err := os.MkdirAll(iconsDir, 0777)
+	if err != nil {
+		return err
+	}
+
+	// For color icons
+	colorIconsDir := filepath.Join(iconsDir, "icons", "color")
+	err = os.MkdirAll(colorIconsDir, 0777)
+	if err != nil {
+		return err
+	}
+
+	err = utils.WriteToFile(filepath.Join(colorIconsDir, modelName+"-color.svg"), model.SVGColor)
+	if err != nil {
+		return err
+	}
+
+	// For white icons
+	whiteIconsDir := filepath.Join(iconsDir, "icons", "white")
+	err = os.MkdirAll(whiteIconsDir, 0777)
+	if err != nil {
+		return err
+	}
+
+	err = utils.WriteToFile(filepath.Join(whiteIconsDir, modelName+"-white.svg"), model.SVGWhite)
+	if err != nil {
+		return err
+	}
+
+	// Generate components metadata and create SVG files
+	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components")
+	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
+	_, err = CreateComponentsMetadataAndCreateSVGsForMDStyle(components, _imgOutputPath, _iconsSubDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
