@@ -502,7 +502,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			mesheryPattern = &models.MesheryPattern{
-				Name:        parsedBody.PatternData.Name,
+				Name:        parsedBody.Name,
 				PatternFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HelmChart),
