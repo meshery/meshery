@@ -65,7 +65,9 @@ ol {
   @media (max-width: 1200px) {
     flex: 0 0 100%;
   }
-
+  @media (max-width: 600px) {
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+  }
   & .breadcrumb {
     list-style: none;
   }

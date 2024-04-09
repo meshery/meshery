@@ -50,6 +50,9 @@ header {
   @media (max-width: 75em) {
     flex: 0 0 100%;
   }
+  @media (max-width: 600px) {
+    height: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 .navbar {
@@ -61,7 +64,9 @@ header {
   display: flex;
   align-items: center;
   z-index: 10;
-
+  @media (max-width: 600px) {
+    height: calc(var(--navbar-height) - 2.5rem);
+  }
   & .nav-btn{
       background-color: var(--brand-color-secondary);
       color: var(--color-white);
