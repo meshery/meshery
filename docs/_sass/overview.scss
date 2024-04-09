@@ -88,6 +88,13 @@ a > strong:hover {
     overflow-x: hidden;
   }
 }
+@media (max-width: 600px) {
+  div.container {
+    --col-gap: -20rem;
+    padding: 0;
+  }
+}
+
 
 /*image align-right*/
 .image-right {
