@@ -26,14 +26,8 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-Couchbase is an award-winning distributed NoSQL cloud database.
-</p>
-<p>
+%!(EXTRA string=Couchbase is an award-winning distributed NoSQL cloud database., string=<p>
 Couchbase Autonomous Operator enables DevOps teams to run, auto-scale, and manage Couchbase as a stateful database application alongside their microservices applications on a Kubernetes platform.
 </p>
 <p>
@@ -41,4 +35,4 @@ Couchbase Autonomous Operator enables DevOps teams to run, auto-scale, and manag
 </p>
 <p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>
+</p>)

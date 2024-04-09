@@ -33,14 +33,8 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-The Kubernetes Package Manager
-</p>
-<p>
+%!(EXTRA string=The Kubernetes Package Manager, string=<p>
     The Kubernetes Package Manager
 </p>
 <p>
@@ -48,4 +42,4 @@ The Kubernetes Package Manager
 </p>
 <p>
     Import all of your existing Helm Chart into Meshery.
-</p>
+</p>)

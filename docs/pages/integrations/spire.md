@@ -33,14 +33,8 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-The SPIFFE Runtime Environment
-</p>
-<p>
+%!(EXTRA string=The SPIFFE Runtime Environment, string=<p>
     Meshery deploys and manages SPIRE (the SPIFFE Runtime Environment). SPIRE is a toolchain of APIs for establishing trust between software systems across a wide variety of hosting platforms. SPIRE exposes the SPIFFE Workload API, which can attest running software systems and issue SPIFFE IDs and SVIDs to them. 
 </p>
 <p>
@@ -48,4 +42,4 @@ The SPIFFE Runtime Environment
 </p>
 <p>
     Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>
+</p>)
