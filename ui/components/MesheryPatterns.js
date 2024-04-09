@@ -68,7 +68,7 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -978,6 +978,11 @@ function MesheryPatterns({
     );
   }
 
+  // this function returns fetchPattern function with latest values so that it can be used in child components
+  function fetchPatternsCaller() {
+    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  }
+
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
 
@@ -1419,7 +1424,6 @@ function MesheryPatterns({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,
@@ -1769,6 +1773,7 @@ function MesheryPatterns({
               selectedResource={infoModal.selectedResource}
               resourceOwnerID={infoModal.ownerID}
               currentUserID={user?.id}
+              patternFetcher={fetchPatternsCaller}
               formSchema={publishSchema}
               meshModels={meshModels}
             />

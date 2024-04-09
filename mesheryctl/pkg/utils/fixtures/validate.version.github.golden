@@ -1205,14 +1205,6 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/4a14eaee0cf84eb976c67be79aaf0916e5016589"
     },
     {
-      "path": "docs/_includes/doc.html",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "7ca21b622b06451df320a30173a7dbddf7f8a939",
-      "size": 136,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7ca21b622b06451df320a30173a7dbddf7f8a939"
-    },
-    {
       "path": "docs/_includes/editable.html",
       "mode": "100644",
       "type": "blob",
@@ -1237,7 +1229,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/cc6d83c2c0ab400b522d2eeeab4a03528143c3e6"
     },
     {
-      "path": "docs/_includes/google-analytics.html",
+      "path": "docs/_includes/scripts/google-analytics.html",
       "mode": "100644",
       "type": "blob",
       "sha": "96ac06245c1a02d1c4033945989c66ab00070e32",

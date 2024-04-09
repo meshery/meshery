@@ -379,6 +379,10 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern.Name = patternName
 			}
 
+			if parsedBody.PatternData.Visibility != "" {
+				mesheryPattern.Visibility = parsedBody.PatternData.Visibility
+			}
+
 			if parsedBody.Save {
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 				if err != nil {

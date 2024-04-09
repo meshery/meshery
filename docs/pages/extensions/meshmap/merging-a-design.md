@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 abstract: Import your existing designs into Meshery.
 title: Merging Designs
 abstract: Treat other designs as templates or building blocks and combine your designs with others and power-up your designs.

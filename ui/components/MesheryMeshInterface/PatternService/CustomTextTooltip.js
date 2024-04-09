@@ -29,7 +29,7 @@ export const RenderTooltipContent = ({ showPriortext, showAftertext, link }) => 
         target="_blank"
         rel="noopener noreferrer"
       >
-        Read docs
+        Learn more
       </a>
       <span style={{ marginLeft: '2px' }}>{showAftertext}</span>
     </div>

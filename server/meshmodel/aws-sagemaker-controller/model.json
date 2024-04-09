@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "aws-sagemaker-controller",
-  "version": "v1.2.7",
+  "version": "v1.2.10",
   "displayName": "AWS SageMaker",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

@@ -1,19 +1,18 @@
 name: Meshery Integrations Updater
 on:
   push:
-     branches:
-       - "master"
-     paths:
-       - ".github/workflows/integrations-updater.yml"
+    branches:
+      - "master"
+    paths:
+      - ".github/workflows/integrations-updater.yml"
   schedule:
-    - cron:  '0 0 * * *'  # Run the job every day at midnight
+    - cron: "0 0 * * *" # Run the job every day at midnight
   workflow_dispatch:
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
 # See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
 
 jobs:
-
   integrations:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -38,12 +37,32 @@ jobs:
           repository: meshery/meshery.io
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
-      - name: Run utility
-        env:
-          CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+      - name: Checkout cloud repo
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/meshery-cloud
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: meshery-cloud
+      - name: Build mesheryctl
+        working-directory: ./meshery/mesheryctl
         run: |
-            cd meshery/scripts/component_updater
-            go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --system docs layer5/src/collections/integrations meshery.io/integrations docs/
+          make;
+      - name: Pubish to meshery.io site
+        working-directory: ./meshery/mesheryctl
+        run: |
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery.io/integrations ../meshery.io/assets/images/integration -o js
+      - name: Pubish to layer5.io site
+        working-directory: ./meshery/mesheryctl
+        run: |
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../layer5/src/collections/integrations ../layer5/src/collections/integrations -o mdx
+      - name: Pubish to Meshery docs
+        working-directory: ./meshery/mesheryctl
+        run: |
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+      - name: Pubish to Meshery docs
+        working-directory: ./meshery/mesheryctl
+        run: |
+          ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery-cloud/meshmodels/models ../meshery-cloud/ui/public/img/meshmodels
       - name: Commit changes to Layer5.io repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -74,4 +93,28 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
-
+      - name: Commit changes to Cloud
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: l5io
+          repository: ./meshery-cloud
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "Models Updated"
+          branch: master
+      - name: Send Email on Model Publish Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Model Updater" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.

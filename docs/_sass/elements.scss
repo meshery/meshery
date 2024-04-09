@@ -5,8 +5,8 @@ a > * {
   color: var(--brand-color);
   text-decoration: none;
   background-color: transparent;
-}
 
+}
 img {
   max-width: 100%;
   border-style: none;
@@ -23,8 +23,8 @@ video.center {
 }
 
 p {
-  font-size: 1.5rem;
-  margin: 0.6rem 0 1.6rem 0;
+  font-size: 1rem;
+  margin: 0.6rem 0 0.6rem 0;
 
   & > a {
     color: var(--brand-color);
@@ -37,29 +37,35 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 1.6rem 0 1rem;
+  margin: 0.6rem 0 1rem;
   font-weight: 500;
+  > a {
+    color: var(--color-secondary-light);
+  }
 }
 h1 {
-  font-size: 3.6rem;
+  font-size: 2.4rem;
   font-weight: 700;
 }
 h2 {
-  font-size: 3.2rem;
+  font-size: 2.2rem;
+  font-weight: 600;
 }
 h3 {
-  font-size: 2.6rem;
+  font-size: 2rem;
+  font-weight: 500;
 }
 h4,
 .h4 {
-  font-size: 2.3rem;
+  font-size: 1.8rem;
+  font-weight: 400;
 }
 h5,
 .h5 {
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 h6 {
-  font-size: 1.7rem;
+  font-size: 1.4rem;
 }
 
 hr {
@@ -70,11 +76,11 @@ hr {
 }
 
 pre {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 label {
-  font-size: 1.4rem;
+  font-size: .9rem;
 }
 
 // LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +89,8 @@ ol {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 1.4rem;
-  padding-inline-start: 3rem;
+  font-size: 1rem;
+  padding-inline-start: 2rem;
 
   @media (max-width: 37.5em) {
     font-size: 1.8rem;
@@ -95,6 +101,7 @@ ol {
   }
 }
 ul {
+  font-size: 1rem;
   list-style: disc;
   > li {
     color: var(--color-secondary-medium)
@@ -108,6 +115,11 @@ li:has(> a[href*="/installation/quick-start"]){
   list-style-type: none;
   margin-left: -2rem;
 } 
+li:has(> a[href*="/guides/tutorials"]){
+  list-style-type: none;
+  margin-left: -2rem;
+} 
+
 li:has(> a[href*="/extensions"]){
   list-style-type: none;
   margin-left: -2rem;

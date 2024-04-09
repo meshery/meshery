@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: MeshMap Snapshot
 permalink: extensions/snapshot
 language: en
