@@ -114,7 +114,11 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet(true)
+				publishAllModels := false
+				if system == "remote-provider" {
+					publishAllModels = true
+				}
+				err := modelCSVHelper.ParseModelsSheet(publishAllModels)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
