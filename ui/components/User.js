@@ -84,7 +84,7 @@ const User = (props) => {
         exportToJsonFile(data, 'auth.json');
       });
   };
-  
+
   if (!userLoaded && isGetUserSuccess) {
     props.updateUser({ user: userData });
     setUserLoaded(true);
