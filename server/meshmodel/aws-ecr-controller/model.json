@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "aws-ecr-controller",
-  "version": "v1.0.13",
+  "version": "v1.0.14",
   "displayName": "AWS Elastic Container Registry",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

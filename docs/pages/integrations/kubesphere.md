@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Kubesphere
 subtitle: Collaborative and visual infrastructure as code for Kubesphere
 image: /assets/img/integrations/kubesphere/icons/color/kubesphere-color.svg
@@ -21,13 +21,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-The easiest way to get a production-grade Kubernetes cluster up and running
-</p>
-<p>
-    Use the Kubesphere application package for Meshery to install Meshery on your Kubesphere clusters. Design, test, and manage configuration of all your cloud infrastructure and containerized applications as a visual topology. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, create and deploy your own cloud native infrastructure designs.
-</p>

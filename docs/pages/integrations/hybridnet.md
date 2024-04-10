@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: integration
 title: Hybridnet
 subtitle: Collaborative and visual infrastructure as code for Hybridnet
 image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg
@@ -42,6 +42,38 @@ components:
   colorIcon: assets/img/integrations/hybridnet/components/subnet/icons/color/subnet-color.svg
   whiteIcon: assets/img/integrations/hybridnet/components/subnet/icons/white/subnet-white.svg
   description: 
+- name: bgp-configuration
+  colorIcon: assets/img/integrations/hybridnet/components/bgp-configuration/icons/color/bgp-configuration-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/bgp-configuration/icons/white/bgp-configuration-white.svg
+  description: 
+- name: cluster-information
+  colorIcon: assets/img/integrations/hybridnet/components/cluster-information/icons/color/cluster-information-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/cluster-information/icons/white/cluster-information-white.svg
+  description: 
+- name: felix-configuration
+  colorIcon: assets/img/integrations/hybridnet/components/felix-configuration/icons/color/felix-configuration-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/felix-configuration/icons/white/felix-configuration-white.svg
+  description: 
+- name: global-network-policy
+  colorIcon: assets/img/integrations/hybridnet/components/global-network-policy/icons/color/global-network-policy-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/global-network-policy/icons/white/global-network-policy-white.svg
+  description: 
+- name: global-network-set
+  colorIcon: assets/img/integrations/hybridnet/components/global-network-set/icons/color/global-network-set-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/global-network-set/icons/white/global-network-set-white.svg
+  description: 
+- name: host-endpoint
+  colorIcon: assets/img/integrations/hybridnet/components/host-endpoint/icons/color/host-endpoint-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/host-endpoint/icons/white/host-endpoint-white.svg
+  description: 
+- name: ip-pool
+  colorIcon: assets/img/integrations/hybridnet/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/ip-pool/icons/white/ip-pool-white.svg
+  description: 
+- name: network-policy
+  colorIcon: assets/img/integrations/hybridnet/components/network-policy/icons/color/network-policy-color.svg
+  whiteIcon: assets/img/integrations/hybridnet/components/network-policy/icons/white/network-policy-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -53,18 +85,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-hybridnet is an open source container networking solution designed for hybrid clouds.
-
-
-</p>
-<p>
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-</p>
-<p>
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Publishing a Design
 abstract: Publishing a design lets you make your content visible to any anonymous visitor with the link.
 permalink: extensions/publishing-a-design

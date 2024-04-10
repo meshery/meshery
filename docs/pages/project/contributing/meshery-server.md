@@ -82,8 +82,3 @@ The server log levels can be configured at runtime by changing the env variable 
 ```
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
-
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}

@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ProxySetting",
+  "apiVersion": "capsule.clastix.io/v1beta1",
+  "displayName": "Proxy Setting",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "capsule",
+   "version": "0.6.2",
+   "displayName": "Capsule",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"ProxySetting is the Schema for the proxysettings API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProxySettingSpec defines the additional Capsule Proxy settings for additional users of the Tenant. Resource is Namespace-scoped and applies the settings to the belonged Tenant.\",\n   \"properties\": {\n    \"subjects\": {\n     \"description\": \"Subjects that should receive additional permissions.\",\n     \"items\": {\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind of tenant owner. Possible values are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\"\",\n        \"enum\": [\n         \"User\",\n         \"Group\",\n         \"ServiceAccount\"\n        ],\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of tenant owner.\",\n        \"type\": \"string\"\n       },\n       \"proxySettings\": {\n        \"description\": \"Proxy settings for tenant owner.\",\n        \"items\": {\n         \"properties\": {\n          \"kind\": {\n           \"enum\": [\n            \"Nodes\",\n            \"StorageClasses\",\n            \"IngressClasses\",\n            \"PriorityClasses\",\n            \"RuntimeClasses\",\n            \"PersistentVolumes\"\n           ],\n           \"type\": \"string\"\n          },\n          \"operations\": {\n           \"items\": {\n            \"enum\": [\n             \"List\",\n             \"Update\",\n             \"Delete\"\n            ],\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"kind\",\n          \"operations\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"subjects\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Proxy Setting\",\n \"type\": \"object\"\n}"
+ }

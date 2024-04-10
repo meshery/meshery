@@ -9,8 +9,8 @@ div.overview {
   background: rgb(60, 73, 79);
   background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 87%);
   color: #fff;
-  font-size: 2rem;
-  padding: 1rem;
+  font-size: 1.4rem;
+  padding: .65rem auto;
   margin: 0.5rem;
   margin-right: 1rem;
   width: auto;
@@ -88,6 +88,13 @@ a > strong:hover {
     overflow-x: hidden;
   }
 }
+@media (max-width: 600px) {
+  div.container {
+    --col-gap: -30rem;
+    padding: 0;
+  }
+}
+
 
 /*image align-right*/
 .image-right {
