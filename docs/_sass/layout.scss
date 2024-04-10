@@ -56,8 +56,19 @@ ol {
   }
 }
 
+/* Hide the span initially */
+.social__link .footer-icons-text {
+  display: none;
+}
+
+/* Show the span when hovering over the link */
+.social__link:hover .footer-icons-text {
+  display: block;
+}
+
+
 .main-container {
-  padding: 3.5rem 4.4rem;
+  padding: 36px 32px;
   overflow: hidden;
   width: 100%;
   flex-grow: 5;
@@ -65,9 +76,11 @@ ol {
   @media (max-width: 1200px) {
     flex: 0 0 100%;
   }
-  @media (max-width: 600px) {
-    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+
+  @media (max-width: 75em) {
+    padding: 24px 20px;
   }
+  
   & .breadcrumb {
     list-style: none;
   }
@@ -90,10 +103,3 @@ ol {
   background-color: var(--color-primary-medium);
   padding: 15px 10px;
 }
-
-@media (max-width: 600px) {
-  .small-hide {
-    display: none;
-  }
-}
-
