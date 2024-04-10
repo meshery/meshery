@@ -119,7 +119,7 @@
         "allow": {
           "from": [
             {
-              "kind": "ConfigMap",
+              "kind": "Secret",
               "model": "kubernetes",
               "match": {
                 "self": [
