@@ -80,40 +80,40 @@
                 ]
               }
             }
-          ]
-        },
-        "to": [
-          {
-            "kind": "FileSystem",
-            "model": "aws-efs-controller",
-            "match": {
-              "self": [
-                [
-                    "name"
+          ],
+          "to": [
+            {
+              "kind": "FileSystem",
+              "model": "aws-efs-controller",
+              "match": {
+                "self": [
+                  [
+                      "name"
+                  ],
+                  [
+                      "namespace"
+                  ]
                 ],
-                [
-                    "namespace"
+                "FieldExport": [
+                  [
+                      "settings",
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "name"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "namespace"
+                  ]
                 ]
-              ],
-              "FieldExport": [
-                [
-                    "settings",
-                    "spec", 
-                    "from", 
-                    "resource", 
-                    "name"
-                ],
-                [
-                    "settings", 
-                    "spec", 
-                    "from", 
-                    "resource", 
-                    "namespace"
-                ]
-              ]
+              }
             }
-          }
-        ]
+          ]
+        }
       },
       {
         "allow": {
@@ -155,8 +155,7 @@
                   ]
                 }
               }
-            ]
-          },
+            ],
           "to": [
             {
               "kind": "FileSystem",
@@ -189,6 +188,7 @@
               }
             }
           ]
+        }
       }
     ]
 }
