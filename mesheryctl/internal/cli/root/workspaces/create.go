@@ -29,6 +29,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/manifoldco/promptui"
 )
 
 var CreateWorkspaceCmd = &cobra.Command{
@@ -37,7 +39,7 @@ var CreateWorkspaceCmd = &cobra.Command{
 	Long:  `Create a new workspaces by providing the name and description of the workspace`,
 	Example: `
 // Create a new workspace
-mesheryctl exp workspace create --orgId [orgId] --name [workspace-name] --description [workspace-description]
+mesheryctl exp workspace create [orgId]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
@@ -65,19 +67,12 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-
-		// Check if all three flags are set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
-		nameFlag, _ := cmd.Flags().GetString("name")
-		descriptionFlag, _ := cmd.Flags().GetString("description")
-
-		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
+		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("all three flags are required")
+			return errors.New(utils.WorkspaceSubError("Please provide a orgID", "create"))
 		}
-
 		return nil
 	},
 
@@ -85,12 +80,37 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/workspaces", baseUrl)
+
+		orgID := args[0]
+		// Prompt for input
+		prompt := promptui.Prompt{
+			Label: "Name",
+		}
+
+		name, err := prompt.Run()
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		prompt = promptui.Prompt{
+			Label: "Description",
+		}
+		description, err := prompt.Run()
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		if name == "" || description == "" {
+
+			return utils.ErrInvalidArgument(errors.New("invalid user_id format"))
+		}
 
 		payload := &models.WorkspacePayload{
 			Name:           name,

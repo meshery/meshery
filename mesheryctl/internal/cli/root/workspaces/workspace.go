@@ -44,10 +44,10 @@ var WorkSpaceCmd = &cobra.Command{
 	Example: `
 
 // To view a list workspaces
-mesheryctl exp workspace list --orgId [orgId]
+mesheryctl exp workspace list [orgId]
 
 // To create a workspace
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl exp workspace create [orgId]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
