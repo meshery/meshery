@@ -151,11 +151,6 @@ meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
 
-meshery-perf:
-  enabled: false
-  fullnameOverride: meshery-perf
-  serviceAccountNameOverride: meshery-server
-
 meshery-nighthawk:
   enabled: false
   fullnameOverride: meshery-nighthawk
