@@ -349,7 +349,6 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [setExtensionPreferences] = useState({});
   const router = useRouter();
-  const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
@@ -599,46 +598,21 @@ function MesheryPatterns({
     fetchUserPrefs();
   }, [catalogVisibility]);
 
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/design',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+  useEffect(async () => {
+    const { models } = await getMeshModels();
+    const modelNames = _.uniq(models?.map((model) => model.displayName));
+    modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          handleError(ACTION_TYPES.SCHEMA_FETCH);
-          setPublishSchema(result);
-        }
-      },
+    // Modify the schema using the utility function
+    const modifiedSchema = modifyRJSFSchema(
+      publishCatalogItemSchema,
+      'properties.compatibility.items.enum',
+      modelNames,
     );
+
+    setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+    setMeshModels(models);
+
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -1766,7 +1740,7 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importSchema}
+              importFormSchema={importDesignSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1822,14 +1796,14 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { handleClose, handleSubmit, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <>
       <Modal
         open={true}
-        schema={publishCatalogItemSchema}
-        uiSchema={publishCatalogItemUiSchema}
+        schema={publishFormSchema.rjsfSchema}
+        uiSchema={publishFormSchema.uiSchema}
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
