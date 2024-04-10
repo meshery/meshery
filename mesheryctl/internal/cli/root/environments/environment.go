@@ -47,9 +47,9 @@ var EnvironmentCmd = &cobra.Command{
 	Long:  "View list of environments and detailed information of a specific environments",
 	Example: `
 // To view a list environments
-mesheryctl exp environment list --orgId [orgId]
+mesheryctl exp environment list [orgId]
 // To create a environment
-mesheryctl exp environment create --orgId [orgId] --name [name] --description [description]
+mesheryctl exp environment create [orgId]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 	`,
@@ -79,7 +79,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide a subcommand")
+			return errors.New(utils.EnvironmentSubError("Please provide a orgID", "environment"))
 		}
 		return nil
 	},
@@ -100,12 +100,8 @@ https://docs.layer5.io/cloud/spaces/environments/
 }
 
 func init() {
-	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
 	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	CreateEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	CreateEnvironmentCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the environment")
-	CreateEnvironmentCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the environment")
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 

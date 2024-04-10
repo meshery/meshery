@@ -36,7 +36,7 @@ var listEnvironmentCmd = &cobra.Command{
 	Long:  `List name of all registered environments`,
 	Example: `
 // List all registered environment
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl exp environment list [orgId]
 
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
@@ -66,13 +66,11 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all flag is set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
-
-		if orgIdFlag == "" {
+		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide the orgID of the environment")
+			return errors.New(utils.EnvironmentSubError("Please provide a orgID", "list"))
 		}
 		return nil
 	},
