@@ -114,6 +114,81 @@
             }
           }
         ]
+      },
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "ConfigMap",
+              "model": "kubernetes",
+              "match": {
+                "self": [
+                  [
+                      "name"
+                  ],
+                  [
+                      "namespace"
+                  ],
+                  [
+                      "kind"
+                  ]
+                ],
+                "FieldExport": [
+                  [
+                      "settings",
+                      "spec", 
+                      "to",
+                      "name"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "to", 
+                      "namespace"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "to", 
+                      "kind"
+                  ]
+                  ]
+                }
+              }
+            ]
+          },
+          "to": [
+            {
+              "kind": "FileSystem",
+              "model": "aws-efs-controller",
+              "match": {
+                "self": [
+                  [
+                      "name"
+                  ],
+                  [
+                      "namespace"
+                  ]
+                ],
+                "FieldExport": [
+                  [
+                      "settings",
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "name"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "namespace"
+                  ]
+                ]
+              }
+            }
+          ]
       }
     ]
 }
