@@ -70,7 +70,7 @@ mesheryctl exp credential list
 		err = json.Unmarshal(body, &credentialResponse)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
-			
+
 		}
 		header := []string{"ID", "User-Id", "Name", "Type", "Secrets", "Created At", "Updated At"}
 		data := [][]string{}
