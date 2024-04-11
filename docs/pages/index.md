@@ -283,7 +283,7 @@ list: exclude
         </p>
       </summary>
       <ul class="section-title">
-        {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
+        {% assign sorted_ints = site.models | sort: "name" | alphabetical %}
         <ul><li>
         See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
         {% for item in sorted_ints %}
