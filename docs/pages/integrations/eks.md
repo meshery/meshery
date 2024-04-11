@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
 image: /assets/img/integrations/eks/icons/color/eks-color.svg
@@ -21,17 +21,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-Amazon Elastic Kubernetes Service (EKS) is a managed service and certified Kubernetes conformant to run Kubernetes on AWS and on-premises.
-</p>
-<p>
-    Take advantage of Meshery's multi-cluster Kubernetes management features in your AKS environments. Design, build, and automate anything for your work by
-    integrating apps like AKS to create visual automatedcl
-    workflows. Choose from hundreds of ready-made design patterns or use
-    our no-code designer, MeshMap to connect to apps not yet in our
-    library.
-</p>

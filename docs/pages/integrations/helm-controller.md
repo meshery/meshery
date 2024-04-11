@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Helm Controller
 subtitle: Collaborative and visual infrastructure as code for Helm Controller
 image: /assets/img/integrations/helm-controller/icons/color/helm-controller-color.svg
@@ -33,19 +33,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-The Kubernetes Package Manager
-</p>
-<p>
-    The Kubernetes Package Manager
-</p>
-<p>
-    Selectively deploy Meshery components with Helm charts and sub-charts. Use parameter overrides to customize your Meshery deployment. Design, test, and manage configuration of all your cloud infrastructure and containerized applications as a visual topology. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, create and deploy your own cloud native infrastructure designs.
-</p>
-<p>
-    Import all of your existing Helm Chart into Meshery.
-</p>

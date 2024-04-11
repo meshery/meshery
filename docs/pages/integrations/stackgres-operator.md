@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Stackgres Operator
 subtitle: Collaborative and visual infrastructure as code for Stackgres Operator
 image: /assets/img/integrations/stackgres-operator/icons/color/stackgres-operator-color.svg
@@ -77,18 +77,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-StackGres is a fully-featured platform for running PostgreSQL on Kubernetes.
-Deploy in minutes an Enterprise-Grade Postgres-as-a-Service, in your infrastructure.
-100% Open Source.
-</p>
-<p>
-    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
-</p>
-<p>
-    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
-</p>

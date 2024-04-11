@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: integration
 title: Kong API Gateway
 subtitle: Collaborative and visual infrastructure as code for Kong API Gateway
 image: /assets/img/integrations/kong/icons/color/kong-color.svg
@@ -42,6 +42,10 @@ components:
   colorIcon: assets/img/integrations/kong/components/kong-upstream-policy/icons/color/kong-upstream-policy-color.svg
   whiteIcon: assets/img/integrations/kong/components/kong-upstream-policy/icons/white/kong-upstream-policy-white.svg
   description: 
+- name: kong-consumer-group
+  colorIcon: assets/img/integrations/kong/components/kong-consumer-group/icons/color/kong-consumer-group-color.svg
+  whiteIcon: assets/img/integrations/kong/components/kong-consumer-group/icons/white/kong-consumer-group-white.svg
+  description: 
 featureList: [
   "Advanced routing, load balancing, health checking - all configurable via a RESTful admin API or declarative configuration.",
   "Authentication and authorization for APIs using methods like JWT, basic auth, OAuth, ACLs and more.",
@@ -53,15 +57,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-Kong API Gateway is a cloud-native, platform-agnostic, scalable API Gateway distinguished for its high performance and extensibility via plugins.
-</p>
-<p>
-By providing functionality for proxying, routing, load balancing, health checking, authentication (and more), Kong serves as the central layer for orchestrating microservices or conventional API traffic with ease.
-</p>
-<p>
-Kong runs natively on Kubernetes thanks to its official Kubernetes Ingress Controller.</p>

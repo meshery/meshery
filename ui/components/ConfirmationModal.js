@@ -349,10 +349,12 @@ function ConfirmationMsg(props) {
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
             value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
-            variant="fullWidth"
+            variant="scrollable"
+            scrollButtons="auto"
             indicatorColor="primary"
             textColor="primary"
             className={classes.tabs}
+            centered
           >
             {!!validationBody && (
               <Tab
