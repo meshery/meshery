@@ -2,13 +2,13 @@
 layout: default
 ---
 
-{{ page.subtitle}}
+{{ page.subtitle }}
 {{ content }}
 
 <!-- components -->
 <div>
     <section class="Compheading">
-        {% page.components.size != 0  %}
+        {% if page.components.size != 0  %}
         <h1>
             {{ page.title }} Components ( {{ page.components.size }} )
         </h1>
