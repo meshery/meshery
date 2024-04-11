@@ -9,9 +9,9 @@ layout: default
 <div>
     <section class="Compheading">
         {% if page.components.size != 0  %}
-        <h1>
-            {{ page.title }} Components ( {{ page.components.size }} )
-        </h1>
+        <h3>
+            Components ( {{ page.components.size }} )
+        </h3>
         {% endif %}
     </section>
 
@@ -20,7 +20,8 @@ layout: default
         {% if component.name %}
         <div class="maincontainer">
             <div class="componentimg">
-                <img src="/{{ component.colorIcon }}" alt="{{ component.name }}" />
+                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}"  data-logo-for-dark="/{{ component.whiteIcon }}"
+                data-logo-for-light="/{{ component.colorIcon }}" />
             </div>
             <p class="Compitems">{{ component.name }}</p>
         </div>
