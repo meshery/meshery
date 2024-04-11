@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import _ from 'lodash';
 import { PublishSchema, PublishUiSchema } from '@layer5/sistent';
 
 // This modal is used in MeshMap also
