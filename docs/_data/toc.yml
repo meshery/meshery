@@ -109,7 +109,7 @@
       - title: Managing Envoy Filters
         url: guides/infrastructure-management/filter-management
       - title: Managing Connections
-        url: guides/infrastructure-management/lifecycle-management
+        url: guides/infrastructure-management/managing-connections
         grandchildren:
         - title: Registering a Connection
           url: guides/infrastructure-management/registering-a-connection
