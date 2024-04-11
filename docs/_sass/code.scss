@@ -52,7 +52,8 @@ code::-webkit-scrollbar {
   margin: 0;
   font-size: 100%;
   word-break: normal;
-  white-space: pre;
+  text-wrap: wrap;
+  font-size: 0.9rem;
   border: 0;
   width: 100%;
   overflow: auto;
