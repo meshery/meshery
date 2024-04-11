@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: #f5f5f5;
+  background-color: var(--background-models);
   padding: 0.5rem 1rem;
   border-radius: 0.85rem;
   width: 100%;
@@ -13,8 +13,8 @@
   border-radius: 0.625rem;
   text-transform: uppercase;
   // color: var(--color-secondary-dark);
-  color: #212529;
-  font-size: 0.675rem;
+  color: var(--color-secondary-dark);
+  font-size: 0.875rem;
   transition: all .1s ease-in-out;
   line-height: 1.1875rem;
   width: 100%;
