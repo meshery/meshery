@@ -65,7 +65,7 @@ mesheryctl design delete [file | URL]
 				utils.Log.Error(err)
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
-			utils.Log.Info("Pattern ", args[0], " deleted successfully")
+			utils.Log.Info("Design ", args[0], " deleted successfully")
 			return nil
 		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"

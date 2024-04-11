@@ -54,7 +54,7 @@ var applyCmd = &cobra.Command{
 mesheryctl design apply -f [file | URL]
 
 // deploy a saved design
-mesheryctl design apply [pattern-name]
+mesheryctl design apply [design-name]
 	`,
 	Annotations: linkDocDesignApply,
 	Args:        cobra.MinimumNArgs(0),
@@ -212,7 +212,7 @@ mesheryctl design apply [pattern-name]
 					utils.Log.Error(err)
 					return nil
 				}
-				utils.Log.Debug("remote hosted pattern request success")
+				utils.Log.Debug("remote hosted design request success")
 				var response []*models.MesheryPattern
 				defer resp.Body.Close()
 

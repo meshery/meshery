@@ -6,7 +6,7 @@ location:
   path: ""
   type: local
 name: kumatest
-design_file: |
+pattern_file: |
   name: MesheryGeneratedPatternFile
   services:
     VirtualService-0.4157272729581598:

@@ -94,7 +94,7 @@ mesheryctl design list
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
 				}
-				utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+				utils.PrintToTableWithFooter([]string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 				return nil
 			}
 
@@ -111,7 +111,7 @@ mesheryctl design list
 				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 				data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+			utils.PrintToTableWithFooter([]string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 
 			return nil
 		}
@@ -125,7 +125,7 @@ mesheryctl design list
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+			utils.PrintToTableWithFooter([]string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 			return nil
 		}
 		for _, v := range response.Patterns {
@@ -141,7 +141,7 @@ mesheryctl design list
 			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 			data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
 		}
-		utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+		utils.PrintToTableWithFooter([]string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 
 		return nil
 

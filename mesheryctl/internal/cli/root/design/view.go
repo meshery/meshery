@@ -58,7 +58,7 @@ mesheryctl design view [design-name | ID]
 		// if pattern name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
+				return errors.New("-a cannot be used when [design-name|design-id] is specified")
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
@@ -71,7 +71,7 @@ mesheryctl design view [design-name | ID]
 			if viewAllFlag {
 				url += "/api/pattern?pagesize=10000"
 			} else {
-				return errors.New(utils.PatternViewError("Pattern name or ID is not specified. Use `-a` to view all patterns"))
+				return errors.New(utils.PatternViewError("Design name or ID is not specified. Use `-a` to view all designs"))
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern

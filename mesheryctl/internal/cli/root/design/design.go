@@ -27,23 +27,23 @@ var (
 	file                 string
 )
 
-// PatternCmd represents the root command for pattern commands
+// DesignCmd represents the root command for design commands
 var DesignCmd = &cobra.Command{
 	Use:   "design",
 	Short: "Cloud Native Designs Management",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Apply pattern file:
-mesheryctl design apply --file [path to pattern file | URL of the file]
+// Apply design file:
+mesheryctl design apply --file [path to design file | URL of the file]
 
-// Delete pattern file:
-mesheryctl design delete --file [path to pattern file]
+// Delete design file:
+mesheryctl design delete --file [path to design file]
 
-// View pattern file:
-mesheryctl design view [pattern name | ID]
+// View design file:
+mesheryctl design view [design name | ID]
 
-// List all patterns:
+// List all designs:
 mesheryctl design list
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {

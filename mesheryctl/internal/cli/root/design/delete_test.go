@@ -38,7 +38,7 @@ func TestDeleteCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Delete Design",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
