@@ -50,7 +50,7 @@ Depending upon the severity of the notification, many notifications are informat
 
 <details>
 <summary>
-<strong>Question: “Meshery is a collaboration platform. When I bring my infrastructure under Meshery's management, will my Kubernetes clusters be available to all other users? Can other people access my cluster?</strong>
+<strong>Question:</strong> “Meshery is a collaboration platform. When I bring my infrastructure under Meshery's management, will my Kubernetes clusters be available to all other users? Can other people access my cluster?
 </summary><strong>Answer:</strong> <p>Yes, they can, <i>IF</i> you explicitly allow them to do so. It's important to understand the following controls and system behavior:</p>
 <p><b>1. Ownership:</b> Every connection to a Kubernetes cluster is created by and owned by the individual that provided the Kubernetes context. That individual may elect to share the connection with others on their team (if you have invited anyone to your team(s)).</p>
 <p><b>2. Permission:</b> If you do grant other team members access, you do so by creating an environment, assigning that Kubernetes connection to the environment, then creating a workspace and assigning that environment to the workspace. Users of any of your teams to which you have shared access to the workspace will then have permission to access the cluster.</p>
