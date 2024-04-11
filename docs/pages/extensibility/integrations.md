@@ -11,7 +11,7 @@ suggested-reading: false
 
 Meshery provides 220+ built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery's approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.
 
-{% assign sorted_index = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
+{% assign sorted_index = site.models | sort: "name" | alphabetical %}
 {% assign total = sorted_index | size %}
 {% capture totalled %}
 
@@ -24,7 +24,10 @@ Optionally, you can [navigate all integrations visually](https://meshery.io/inte
 
 <!--
 UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
-### All Integrations by Name ({{ site.integrations.size }}) -->
+### All Integrations by Name ({{ site.integrations.size }}) 
+update: @vishalvivekm: integration collection is now models accessible via site.models and directory is docs/_models/
+total: {{ site.models.size }}
+-->
 
 <ul>
     {% for item in sorted_index %}
