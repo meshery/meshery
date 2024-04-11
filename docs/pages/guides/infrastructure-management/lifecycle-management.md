@@ -4,7 +4,7 @@ title: Managing Connections
 permalink: guides/infrastructure-management/lifecycle-management
 redirect_from: 
 - tasks/lifecycle-management
-- infrastructure-management/managing-connections
+- guides/infrastructure-management/managing-connections
 type: guides
 category: infrastructure
 language: en
