@@ -114,12 +114,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				// If system is remote-provider publishing of models should not consider publishedToSite spreadsheet column value.
-				publishAllModel := false
-				if system == "remote-provider" {
-					publishAllModel = true
-				}
-				err := modelCSVHelper.ParseModelsSheet(!publishAllModel)
+				err := modelCSVHelper.ParseModelsSheet(true)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
