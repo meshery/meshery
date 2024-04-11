@@ -192,7 +192,7 @@ func remoteProviderSystem() error {
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
-			utils.Log.Debug(ErrGeneratingIcons(err, imgsOutputPath))
+			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
 			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
 		}
 

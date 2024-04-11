@@ -2,7 +2,7 @@
 <h2>Suggested Reading</h2>
 {% endif %}
 
-{% assign sorted_reading = site.pages | sort: include.title %}
+{% assign sorted_reading = include.reading | default: site.pages | sort: include.title %}
 
 <ul>
   {% for item in sorted_reading %}

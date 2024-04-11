@@ -40,6 +40,7 @@ var (
 	ErrAppendToSheetCode      = "mesheryctl-1116"
 	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
+	ErrGeneratingIconsCode    = "mesheryctl-1119"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -538,4 +539,15 @@ func ErrInvalidArgument(err error) error {
 		[]string{err.Error()},
 		[]string{"Invalid Argument"},
 		[]string{"Please check the arguments passed"})
+}
+
+func ErrGeneratingIcons(err error, path string) error {
+	return errors.New(
+		ErrGeneratingIconsCode,
+		errors.Alert,
+		[]string{"error generating icons at ", path},
+		[]string{err.Error()},
+		[]string{"Model SVG data is missing", "Model name formatting issue"},
+		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
+	)
 }
