@@ -38,13 +38,10 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
-<<<<<<< HEAD
 	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
-=======
-	ErrClearLineCode          = "mesheryctl-1117"
->>>>>>> 864fe50e4e (Add proper meshkit sytle error logging for ClearLine function)
+	ErrClearLineCode          = "mesheryctl-1120"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
