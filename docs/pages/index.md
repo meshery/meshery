@@ -10,7 +10,7 @@ list: exclude
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div class="flex flex-col--1">
+<div style="display:grid; justify-items:center">
   <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
