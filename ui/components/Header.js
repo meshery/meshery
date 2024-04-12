@@ -492,16 +492,8 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      capabilityregistryObj,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } =
+      this.props;
     const loaderType = 'circular';
     return (
       <NoSsr>
@@ -552,7 +544,6 @@ class Header extends React.PureComponent {
                     <ExtensionSandbox
                       type="collaborator"
                       Extension={(url) => RemoteComponent({ url, loaderType })}
-                      capabilitiesRegistry={capabilityregistryObj}
                     />
                   )}
                   <div className={classes.userSpan} style={{ position: 'relative' }}>

@@ -38,6 +38,7 @@ const styles = (theme) => ({
     height: 'auto',
   },
   tab: {
+    width: '25%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
@@ -46,6 +47,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    width: '100%',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -325,9 +327,11 @@ class MesherySettings extends React.Component {
                 value={tabVal}
                 className={classes.tabs}
                 onChange={this.handleChange('tabVal')}
-                variant="fullWidth"
+                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
+                centered
               >
                 <Tooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
                   <Tab

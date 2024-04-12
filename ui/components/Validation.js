@@ -27,6 +27,9 @@ const styles = (theme) => ({
     marginTop: '1rem',
     display: 'flex',
     justifyContent: 'space-around',
+    '@media (max-width: 600px)': {
+      justifyContent: 'space-between',
+    },
   },
   error: {
     position: 'relative',
