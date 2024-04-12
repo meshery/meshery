@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { mesheryExtensionRoute } from '../pages/_app';
+import { Colors } from '@/themes/app';
 
 const styles = makeStyles((theme) => ({
   paper: {
@@ -66,6 +67,9 @@ const styles = makeStyles((theme) => ({
     marginBottom: 12,
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  popupPrimaryBtn: {
+    backgroundColor: Colors.keppelGreen,
   },
 }));
 
@@ -188,6 +192,7 @@ export function MeshMapEarlyAccessCard({
             fullWidth
             variant="contained"
             color="primary"
+            className={classes.popupPrimaryBtn}
             onClick={(e) => handleButtonClick(e)}
           >
             {buttonText}
