@@ -426,13 +426,6 @@ mesheryctl exp model list
 mesheryctl exp model view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			err := cmd.Help()
-			if err != nil {
-				return err
-			}
-			return nil
-		}
 		//Check prerequisite
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -450,6 +443,12 @@ mesheryctl exp model view [model-name]
 		err = ctx.ValidateVersion()
 		if err != nil {
 			return err
+		}
+		return nil
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
 		}
 		return nil
 	},
