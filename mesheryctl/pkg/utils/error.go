@@ -540,6 +540,6 @@ func ErrClearLine(err error) error {
 	return errors.New(ErrClearLineCode, errors.Alert,
 		[]string{"Failed to clear terminal"},
 		[]string{err.Error()},
-		[]string{"Error occurred while attempting to command-line interface"},
+		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
