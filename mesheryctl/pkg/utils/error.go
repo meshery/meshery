@@ -38,9 +38,13 @@ var (
 	ErrRequestResponseCode    = "mesheryctl-1114"
 	ErrMarshalStructToCSVCode = "mesheryctl-1115"
 	ErrAppendToSheetCode      = "mesheryctl-1116"
+<<<<<<< HEAD
 	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
+=======
+	ErrClearLineCode          = "mesheryctl-1117"
+>>>>>>> 864fe50e4e (Add proper meshkit sytle error logging for ClearLine function)
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -533,4 +537,12 @@ func ErrGeneratingIcons(err error, path string) error {
 		[]string{"Model SVG data is missing", "Model name formatting issue"},
 		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
 	)
+}
+
+func ErrClearLine(err error) error {
+	return errors.New(ErrClearLineCode, errors.Alert,
+		[]string{"Failed to clear terminal"},
+		[]string{err.Error()},
+		[]string{"Error occurred while attempting to command-line interface"},
+		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
