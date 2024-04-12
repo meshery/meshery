@@ -29,55 +29,56 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/manifoldco/promptui"
 )
 
 var CreateWorkspaceCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new workspaces",
-	Long:  `Create a new workspaces by providing the name and description of the workspace`,
+	Short: "Create a new workspace",
+	Long:  `Create a new workspace by providing the name, description, and organization ID.`,
 	Example: `
 // Create a new workspace
-mesheryctl exp workspace create [orgId]
+mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+		// Check prerequisites
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
 		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
+		if err := utils.IsServerRunning(mctlCfg.GetBaseMesheryURL()); err != nil {
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return system.ErrGetCurrentContext(err)
 		}
-		err = ctx.ValidateVersion()
-		if err != nil {
+		if err := ctx.ValidateVersion(); err != nil {
 			return err
 		}
 		return nil
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		// Check if all three flags are set
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		nameFlag, _ := cmd.Flags().GetString("name")
+		descriptionFlag, _ := cmd.Flags().GetString("description")
+
+		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New(utils.WorkspaceSubError("Please provide a orgID", "create"))
+			return errors.New("all three flags --orgId, --name, and --description are required")
 		}
+
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -86,57 +87,36 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/workspaces", baseUrl)
 
-		orgID := args[0]
-		// Prompt for input
-		prompt := promptui.Prompt{
-			Label: "Name",
-		}
-
-		name, err := prompt.Run()
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		prompt = promptui.Prompt{
-			Label: "Description",
-		}
-		description, err := prompt.Run()
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		if name == "" || description == "" {
-
-			return utils.ErrInvalidArgument(errors.New("invalid user_id format"))
-		}
+		nameFlag, _ := cmd.Flags().GetString("name")
+		descriptionFlag, _ := cmd.Flags().GetString("description")
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
 		payload := &models.WorkspacePayload{
-			Name:           name,
-			Description:    description,
-			OrganizationID: orgID,
+			Name:           nameFlag,
+			Description:    descriptionFlag,
+			OrganizationID: orgIdFlag,
 		}
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			fmt.Println("Failed to marshal payload")
+			return err
 		}
 
 		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			fmt.Println("Failed to create request")
+			return err
 		}
 
 		_, err = utils.MakeRequest(req)
+
 		if strings.Contains(err.Error(), "201") {
 			utils.Log.Info("Workspace created successfully")
 			return nil
 		}
 
-		utils.Log.Error(errors.New("Unable to create workspace. " + err.Error()))
+		utils.Log.Error(errors.New("Failed to create workspace"))
 		return nil
 	},
 }

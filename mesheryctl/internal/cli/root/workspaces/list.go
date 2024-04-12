@@ -36,7 +36,7 @@ var listWorkspaceCmd = &cobra.Command{
 	Long:  `List name of all registered workspaces`,
 	Example: `
 // List all registered workspace
-mesheryctl exp workspace list [orgId]
+mesheryctl exp workspace list --orgId [orgId]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
@@ -66,12 +66,14 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if the orgID is provided
-		if len(args) == 0 {
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		if orgIdFlag == "" {
 			if err := cmd.Usage(); err != nil {
-				return err
+				return nil
 			}
-			return errors.New(utils.WorkspaceSubError("Please provide a orgID", "list"))
+			return errors.New("all three flags --orgId is required")
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

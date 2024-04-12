@@ -47,7 +47,7 @@ var WorkSpaceCmd = &cobra.Command{
 mesheryctl exp workspace list [orgId]
 
 // To create a workspace
-mesheryctl exp workspace create [orgId]
+mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
@@ -76,7 +76,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
-				return err
+				return nil
 			}
 			return errors.New(utils.WorkspaceSubError("Please provide a subcommand", "workspace"))
 		}
