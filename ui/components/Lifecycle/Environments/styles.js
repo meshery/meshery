@@ -286,4 +286,13 @@ export const BulkActionWrapper = styled(`div`)({
   alignItems: 'center',
 });
 
+export const Statistic = styled(`div`)({
+  display: 'flex',
+  justifyContent: 'center',
+  paddingX: '5px',
+  fontWeight: '400',
+  fontSize: '16px',
+  textAlign: 'center',
+});
+
 export default styles;
