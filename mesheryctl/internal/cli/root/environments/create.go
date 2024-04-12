@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/manifoldco/promptui"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -37,7 +36,7 @@ var CreateEnvironmentCmd = &cobra.Command{
 	Long:  `Create a new environments by providing the name and description of the environment`,
 	Example: `
 // Create a new environment
-mesheryctl exp environment create [orgID] 
+mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 `,
@@ -64,11 +63,16 @@ https://docs.layer5.io/cloud/spaces/environments/
 	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		// Check if all three flags are set
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		nameFlag, _ := cmd.Flags().GetString("name")
+		descriptionFlag, _ := cmd.Flags().GetString("description")
+
+		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New(utils.EnvironmentSubError("Please provide a orgID", "create"))
+			return errors.New("please provide the orgID, name and description of the environment")
 		}
 		return nil
 	},
@@ -82,24 +86,6 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/environments", baseUrl)
-
-		orgID := args[0]
-
-		prompt := promptui.Prompt{
-			Label: "Enter the name of the environment",
-		}
-		name, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
-		prompt = promptui.Prompt{
-			Label: "Enter the description of the environment",
-		}
-		description, err := prompt.Run()
-		if err != nil {
-			return err
-		}
 
 		if name == "" || description == "" {
 			return utils.ErrInvalidArgument(errors.New("name is required"))

@@ -1,16 +1,17 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package environments
 
 import (
@@ -36,7 +37,7 @@ var listEnvironmentCmd = &cobra.Command{
 	Long:  `List name of all registered environments`,
 	Example: `
 // List all registered environment
-mesheryctl exp environment list [orgId]
+mesheryctl exp environment list --orgID [orgId]
 
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
@@ -66,11 +67,13 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all flag is set
-		if len(args) == 0 {
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+
+		if orgIdFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New(utils.EnvironmentSubError("Please provide a orgID", "list"))
+			return errors.New("please provide the orgID of the environment")
 		}
 		return nil
 	},

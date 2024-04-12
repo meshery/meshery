@@ -1,4 +1,4 @@
-// Copyright 2024 Meshery Authors
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/cli/root/components"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
@@ -40,7 +40,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Long:  "view a environments registered in Meshery Server",
 	Example: `
 // View details of a specific environment
-mesheryctl exp environment view [orgId]
+mesheryctl exp environment view --orgID [orgId]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -64,7 +64,9 @@ mesheryctl exp environment view [orgId]
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+
+		if orgIdFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
