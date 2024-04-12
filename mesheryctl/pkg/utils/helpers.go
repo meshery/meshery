@@ -90,7 +90,7 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
-    credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
+	credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -143,10 +143,9 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
-    cmdCredential               cmdType = "credential"
+	cmdCredential               cmdType = "credential"
 	cmdCredentialList           cmdType = "credential list"
 	cmdCredentialCreate         cmdType = "credential create"
-
 )
 
 const (

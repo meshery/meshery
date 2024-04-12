@@ -22,6 +22,7 @@ import (
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
@@ -45,6 +46,27 @@ var listCredentialCmd = &cobra.Command{
 // List all the credentials
 mesheryctl exp credential list
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return utils.ErrLoadConfig(err)
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return system.ErrGetCurrentContext(err)
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -72,11 +94,11 @@ mesheryctl exp credential list
 			return utils.ErrUnmarshal(err)
 
 		}
-		header := []string{"ID", "User-Id", "Name", "Type", "Secrets", "Created At", "Updated At"}
+		header := []string{"ID", "User-Id", "Name", "Type", "Created At", "Updated At"}
 		data := [][]string{}
 		for _, credential := range credentialResponse.Credentials {
-			secret := fmt.Sprintf("%v", credential.Secret)
-			data = append(data, []string{credential.ID.String(), credential.Name, credential.Type, secret, credential.CreatedAt.String(), credential.UpdatedAt.String()})
+			//secret := fmt.Sprintf("%v", credential.Secret)
+			data = append(data, []string{credential.ID.String(), credential.UserID.String(), credential.Name, credential.Type, credential.CreatedAt.String(), credential.UpdatedAt.String()})
 		}
 		if len(data) == 0 {
 			utils.Log.Info("No credentials found")

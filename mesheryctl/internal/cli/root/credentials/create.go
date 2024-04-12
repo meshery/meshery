@@ -24,6 +24,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 
@@ -42,8 +43,9 @@ var createCredentialCmd = &cobra.Command{
 // Create a new credential
 mesheryctl exp credential create
 `,
-	Args: cobra.MinimumNArgs(0),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -52,14 +54,23 @@ mesheryctl exp credential create
 		if err != nil {
 			return err
 		}
-
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			return err
+		}
+		return nil
+	},
+	// Since Using Promptui no arguments are expected
+	Args: cobra.MinimumNArgs(0),
+
+	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return utils.ErrLoadConfig(err)
 		}
 
 		// Prompt for input
