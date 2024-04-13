@@ -811,7 +811,7 @@
         "long_description": "",
         "short_description": "Error failed to import design",
         "probable_cause": "Cannot save the design due to wrong path or URL",
-        "suggested_remediation": "Check if the given path or URL of the design is correct"
+        "suggested_remediation": "Check if the provided path or URL of the design is correct. If you are providing a URL, it should be a direct URL to a downloadable file. For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'."
       },
       "1091": {
         "name": "ErrEncodePatternCode",
@@ -2862,6 +2862,15 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error performing a dry run on the design",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1319": {
+        "name": "ErrRegisterEntityCode",
+        "code": "1319",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       }

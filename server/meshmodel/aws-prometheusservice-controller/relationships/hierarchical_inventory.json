@@ -1,0 +1,69 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metdata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "name": "aws-prometheusservice-controller",
+    "version": "*",
+    "displayName": "AWS Managed Service for Prometheus",
+    "category": {
+      "name": "Observability and Analysis",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "heirarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Workspace",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["name"]],
+              "description": "The Workspace component's configuration is updated based on specifications from other components, like AlertManagerDefinition, ensuring alignment with connected systems."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "AlertManagerDefinition",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "description": "AlertManagerDefiniton component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the AlertManager system."
+            }
+          },
+          {
+            "kind": "LoggingConfiguration",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "description": "LoggingConfiguration component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the Logging system."
+            }
+          },
+          {
+            "kind": "RuleGroupsNamespace",
+            "model": "aws-prometheusservice-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "description": "RuleGroupsNamespace component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the RuleGroupsNamespace system."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

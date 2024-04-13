@@ -336,7 +336,7 @@ function MesheryPatterns({
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -978,6 +978,11 @@ function MesheryPatterns({
     );
   }
 
+  // this function returns fetchPattern function with latest values so that it can be used in child components
+  function fetchPatternsCaller() {
+    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  }
+
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
 
@@ -1554,6 +1559,7 @@ function MesheryPatterns({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
     );
@@ -1768,6 +1774,7 @@ function MesheryPatterns({
               selectedResource={infoModal.selectedResource}
               resourceOwnerID={infoModal.ownerID}
               currentUserID={user?.id}
+              patternFetcher={fetchPatternsCaller}
               formSchema={publishSchema}
               meshModels={meshModels}
             />

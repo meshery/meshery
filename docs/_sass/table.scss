@@ -1,6 +1,6 @@
 table {
   border-collapse: collapse;
-  font-size: 1.4rem;
+  font-size: 1rem;
 }
 .table,
 .td-box .row.section > table,
@@ -498,4 +498,9 @@ table.tablesorter th.headerSortUp {
 
 td.details, .hidden-details > td {
   background-color: var(--color-primary-dark) !important;
+}
+
+tr.test-details td:not(:first-child):hover{
+  background-color: var(--test-detail-data-color) !important;
+  cursor: pointer;
 }

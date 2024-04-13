@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "cd-pipeline-operator",
-  "version": "2.20.0-SNAPSHOT.2",
+  "version": "2.20.0-SNAPSHOT.5",
   "displayName": "CD Pipeline Operator",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
