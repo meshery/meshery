@@ -148,7 +148,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			}
 
 			if len(resp.Values) == 0 {
-				utils.Log.Info("No data(relationships) found in the sheet")
+				utils.Log.Info("No relationships found in the sheet")
 			}
 
 			// If no error, fetch the data from the sheet
@@ -480,8 +480,8 @@ func createJsonFile(resp *sheets.ValueRange) error {
 }
 
 func init() {
-	generateCmd.Flags().BoolVar(&modelFlag, "model", false, "generate only model")
-	generateCmd.Flags().BoolVar(&relationshipFlag, "relationship", false, "generate only relationship")
+	generateCmd.Flags().BoolVar(&modelFlag, "model", false, "only generate models")
+	generateCmd.Flags().BoolVar(&relationshipFlag, "relationship", false, "only generate relationships")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
