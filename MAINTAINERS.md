@@ -34,7 +34,6 @@
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | Ashish Tiwari         | revolyssup         | API7        |
-| Pranav Singh          | theBeginner86      | Layer5      |
 | Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers
@@ -44,7 +43,6 @@
 | Adithya Krishna   | adithyaakrishna | Red Hat     |
 | Lee Calcote       | leecalcote      | Layer5      |
 | Vishal Vivek      | vishalvivekm    | Layer5      |
-
 
 ### Site Maintainers
 
