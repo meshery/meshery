@@ -53,10 +53,6 @@ mesheryctl exp credential list
 		if err != nil {
 			return utils.ErrLoadConfig(err)
 		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return system.ErrGetCurrentContext(err)
