@@ -14,6 +14,8 @@ import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { iconLarge } from '../../css/icons.styles';
+import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -22,6 +24,7 @@ const styles = (theme) => ({
     height: 'auto',
   },
   tab: {
+    width: '20%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
@@ -33,12 +36,13 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
   },
   tabs: {
-    flexGrow: 1,
+    width: '100%',
+    // flexGrow: 1,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
     '& .MuiTab-fullWidth': {
-      flexBasis: 'unset', // Remove flex-basis
+      // flexBasis: 'unset', // Remove flex-basis
     },
   },
   icon: {
@@ -152,6 +156,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   const getResourceCategory = (index) => {
     return ResourceCategoryTabs[index];
   };
+  const { width } = useWindowDimensions();
 
   return (
     <>
@@ -164,10 +169,10 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant="fullWidth"
+            variant={width < 800 ? 'scrollable' : 'fullWidth'}
+            scrollButtons="on"
             textColor="primary"
-            allowScrollButtonsMobile
-            scrollButtons="auto"
+            centered
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
@@ -178,9 +183,9 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     className={classes.tab}
                     icon={
                       resource === 'Overview' ? (
-                        <MesheryIcon style={{ width: '28px', height: '28px' }} />
+                        <MesheryIcon style={iconLarge} />
                       ) : (
-                        <KubernetesIcon style={{ width: '28px', height: '28px' }} />
+                        <KubernetesIcon style={iconLarge} />
                       )
                     }
                     label={resource}

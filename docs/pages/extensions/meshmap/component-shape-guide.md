@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Component Shape Guide
 permalink: extensions/component-shape-guide
 language: en

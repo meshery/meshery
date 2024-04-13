@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
 component: Istio

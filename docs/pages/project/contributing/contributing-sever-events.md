@@ -110,7 +110,4 @@ If `provider.GetK8sContext` succeeds, an event with a [Success](https://github.c
 
 after constructing the Event object using the Build function, event is stored into database for records and subsequently published in a new goroutine through [EventBroadcaster](https://github.com/meshery/meshery/blob/995ab671a12013088f874430cfa2c0f025b073d2/server/models/handlers.go#L241) member variable of [HandlerConfig](https://github.com/meshery/meshery/blob/995ab671a12013088f874430cfa2c0f025b073d2/server/models/handlers.go#L206), which is part of [Handler](https://github.com/meshery/meshery/blob/995ab671a12013088f874430cfa2c0f025b073d2/server/handlers/handler_instance.go#L18) instance.
 
-
-## Suggested Reading
-
 To gain a deeper understanding and examine events more closely, you can explore the source code files [k8config_handler.go](https://github.com/meshery/meshery/blob/master/server/handlers/k8sconfig_handler.go) and [design_engine_handler.go](https://github.com/meshery/meshery/blob/master/server/handlers/design_engine_handler.go) within the Meshery project's codebase.

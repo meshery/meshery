@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS, ACTIONS } from '../../utils/Enum';
+import { EVENT_TYPES } from '../../lib/event-types';
 import ConfirmationMsg from '../ConfirmationModal';
 import { getComponentsinFile } from '../../utils/utils';
 import useStyles from './Grid.styles';
@@ -11,7 +12,14 @@ import Validation from '../Validation';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
 import DryRunComponent from '../DryRun/DryRunComponent';
+import { withSnackbar } from 'notistack';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateProgress } from '../../lib/store';
+import ExportModal from '../ExportModal';
+import downloadContent from '@/utils/fileDownloader';
+import { useNotification } from '@/utils/hooks/useNotification';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function PatternCardGridItem({
@@ -23,6 +31,7 @@ function PatternCardGridItem({
   handleUnDeploy,
   handleClone,
   handleSubmit,
+  handleDownload,
   setSelectedPatterns,
   canPublishPattern = false,
   user,
@@ -50,6 +59,7 @@ function PatternCardGridItem({
         handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
         handleInfoModal={handleInfoModal}
+        handleDownload={handleDownload}
         deleteHandler={() =>
           handleSubmit({
             data: yaml,
@@ -130,9 +140,11 @@ function MesheryPatternGrid({
   selectedK8sContexts,
   publishSchema,
   user,
+  updateProgress,
   handleInfoModal,
 }) {
   const classes = useStyles();
+  const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
@@ -159,6 +171,40 @@ function MesheryPatternGrid({
     count: 0,
     dryRunComponent: null,
   });
+
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+  const handleDownload = (e, design, source_type, params) => {
+    e.stopPropagation();
+    updateProgress({ showProgress: true });
+    try {
+      let id = design.id;
+      let name = design.name;
+      downloadContent({ id, name, type: 'pattern', source_type, params });
+      updateProgress({ showProgress: false });
+      notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const handleDownloadDialogClose = () => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: false,
+      content: null,
+    }));
+  };
+
+  const handleDesignDownloadModal = (e, pattern) => {
+    e.stopPropagation();
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: true,
+      content: pattern,
+    }));
+  };
 
   const handleModalClose = () => {
     setModalOpen({
@@ -227,6 +273,7 @@ function MesheryPatternGrid({
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
               handleInfoModal={() => handleInfoModal(pattern)}
               handleSubmit={handleSubmit}
+              handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
             />
           ))}
@@ -296,8 +343,18 @@ function MesheryPatternGrid({
           submitBtnIcon={<PublicIcon />}
         />
       )}
+      <ExportModal
+        downloadModal={downloadModal}
+        handleDownloadDialogClose={handleDownloadDialogClose}
+        handleDesignDownload={handleDownload}
+      />
     </div>
   );
 }
 
-export default MesheryPatternGrid;
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
+// @ts-ignore
+export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));

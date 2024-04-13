@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Extensions
 abstract: Extensions are additional plugins or add-ons that provide extra functionalities beyond the core features of the Meshery.
 permalink: extensions/

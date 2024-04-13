@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Extensibility
 permalink: extensibility
 type: Extensibility
@@ -22,19 +22,12 @@ Meshery has an extensible architecture with several extension points. Meshery pr
     {% if item.type=="Extensibility" and item.list!="exclude" and item.language !="es"  -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+              - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
     {% endfor %}
 </ul>
-
-**Guiding Principles for Extensibility**
-
-The following principles are upheld in the design of Meshery's extensibility.
-
-1. Recognize that different deployment environments have different systems to integrate with.
-1. Offer a default experience that provides the optimal user experience.
 
 ## Extension Points
 
@@ -43,6 +36,7 @@ Meshery is not just an application. It is a set of microservices where the centr
 ![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
 
 _Figure: Extension points available throughout Meshery_
+
 
 The following points of extension are currently incorporated into Meshery.
 
@@ -57,3 +51,9 @@ The following points of extension are currently incorporated into Meshery.
 1. [UI Plugins](extensibility/ui)
 1. [Integrations](/extensibility/integrations)
 
+### Guiding Principles for Extensibility
+
+The following principles are upheld in the design of Meshery's extensibility.
+
+1. Recognize that different deployment environments have different systems to integrate with.
+1. Offer a default experience that provides the optimal user experience.
