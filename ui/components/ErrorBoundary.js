@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import { Button } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 
 const ErrorBoundary = ({ children }) => {
@@ -10,14 +10,6 @@ const ErrorBoundary = ({ children }) => {
       setHasError(true);
       setError(error);
     };
-
-    const resetErrorBoundary = () => {
-      setHasError(false);
-      setError(null);
-    };
-
-    window.addEventListener('error', handleErrors);
-    return () => window.removeEventListener('error', handleErrors);
   }, []);
 
   const resetErrorBoundary = () => {
@@ -28,7 +20,7 @@ const ErrorBoundary = ({ children }) => {
   if (hasError) {
     return (
       <div className="alert alert-danger">
-        <p>Couldn't open form. Encountered the following error:</p>
+        <p>Couldn&apos;t open form. Encountered the following error:</p>
         <pre>{error.message}</pre>
         <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
           Refresh Form
