@@ -39,7 +39,7 @@ var importCmd = &cobra.Command{
 	Short: "Import pattern manifests",
 	Long:  `
 		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
-		remote URL or local file system path to the file. Source type and name must be provided.
+		remote URL or local file system path to the file. Source type must be provided.
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
@@ -94,6 +94,13 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	var req *http.Request
 	var pattern *models.MesheryPattern
 
+	// If design name is not provided
+	// use file name as default
+	patternName := path.Base(file)
+	if name != "" {
+		patternName = name
+	}
+
 	// Check if the pattern manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
@@ -103,7 +110,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
 			"pattern_data": map[string]interface{}{
-				"name":         name,
+				"name":         patternName,
 				"pattern_file": content,
 			},
 			"save": save,
@@ -142,7 +149,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		jsonValues, _ = json.Marshal(map[string]interface{}{
 			"url":  file,
 			"save": save,
-			"name": name,
+			"name": patternName,
 		})
 
 		req, err := utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
