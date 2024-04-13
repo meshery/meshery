@@ -4,7 +4,22 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel, FormGroup, FormControlLabel, Switch } from '@material-ui/core';
+import CopyIcon from '../../assets/icons/CopyIcon';
+import {
+  Typography,
+  Grid,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+  Tooltip,
+  IconButton,
+  Card,
+  CardContent,
+  CardHeader,
+  Box,
+} from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../../lib/data-fetch';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
@@ -27,7 +42,8 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import SpacesPreferences from './spaces-preferences';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent-components';
+import { CHARCOAL } from '@layer5/sistent';
+import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -47,14 +63,16 @@ const styles = (theme) => ({
     borderTopRightRadius: 3,
   },
   tabs: {
+    width: '100%',
     marginLeft: 0,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
   tab: {
-    maxWidth: 'min(33%, 200px)',
-    minWidth: '50px',
+    width: '42%',
+    // maxWidth: 'min(33%, 200px)',
+    // minWidth: '50px',
     margin: 0,
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
@@ -100,6 +118,50 @@ const styles = (theme) => ({
     [theme.breakpoints.between('xs', 'sm')]: {
       fontSize: '0.8em',
     },
+  },
+  hideScrollbar: {
+    overflowX: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '&::-moz-scrollbar': {
+      display: 'none',
+    },
+  },
+  card: {
+    border: '1px solid rgba(0,179,159,0.3)',
+    margin: '20px 0px',
+    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#C9DBE3',
+    // display: 'flex',
+    // flexWrap: 'wrap',
+  },
+  box: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    whiteSpace: 'nowrap',
+    paddingRight: '10px',
+  },
+  gridCapabilityHeader: {
+    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#7493A1',
+  },
+  gridExtensionHeader: {
+    backgroundColor: theme.palette.type === 'dark' ? '#293B43 ' : '#C9DBE3',
+  },
+  gridExtensionItem: {
+    backgroundColor: theme.palette.type === 'dark' ? '#3D4F57 ' : '#E7EFF3',
+  },
+  line: {
+    border: '1px solid rgba(116,147,161, 0.3)',
+    width: '100%',
+    margin: '30px 0',
+  },
+  root: {
+    width: '100%',
+    paddingLeft: theme.spacing(15),
+    paddingRight: theme.spacing(15),
+    paddingBottom: theme.spacing(10),
+    paddingTop: theme.spacing(5),
   },
 });
 
@@ -158,125 +220,6 @@ function ThemeToggler({ theme, themeSetter, classes }) {
   );
 }
 
-const RemoteProviderTab = () => {
-  const [providerInfo, setProviderInfo] = useState(null);
-
-  useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setProviderInfo(result);
-        }
-      },
-      (err) => console.error('Error fetching capabilities:', err),
-    );
-  }, []);
-
-  return (
-    <div>
-      {providerInfo && (
-        <div>
-          <p>
-            <strong>
-              <u>Provider Type:</u>
-            </strong>{' '}
-            {providerInfo.provider_type}
-          </p>
-          <p>
-            <strong>
-              <u>Name:</u>
-            </strong>{' '}
-            {providerInfo.provider_name}
-          </p>
-          <p>
-            <strong>
-              <u>Description:</u>
-            </strong>
-          </p>
-          <ul>
-            {providerInfo.provider_description.map((desc, index) => (
-              <li key={index}>{desc}</li>
-            ))}
-          </ul>
-          <p>
-            <strong>
-              <u>Package Version:</u>
-            </strong>{' '}
-            {providerInfo.package_version}
-          </p>
-          <p>
-            <strong>
-              <u>Provider URL:</u>
-            </strong>{' '}
-            <a
-              href={providerInfo.provider_url}
-              style={{ color: '#00b39f' }}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {providerInfo.provider_url}
-            </a>
-          </p>
-        </div>
-      )}
-      {providerInfo && (
-        <div>
-          <p>
-            <strong>
-              <u>Extensions:</u>
-            </strong>
-          </p>
-          {Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
-            <li key={index}>
-              <u>{extensionName}</u>
-              <ul>
-                <strong>component:</strong>{' '}
-                <a
-                  href={extension[0].component}
-                  style={{ color: '#00b39f' }}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {extension[0].component}
-                </a>
-              </ul>
-            </li>
-          ))}
-        </div>
-      )}
-      {providerInfo && (
-        <div>
-          <p>
-            <strong>
-              <u>Capabilities:</u>
-            </strong>
-          </p>
-          <ul>
-            {providerInfo.capabilities.map((capability, index) => (
-              <li key={index}>
-                <strong>{capability.feature}</strong>:{' '}
-                <a
-                  href={capability.endpoint}
-                  style={{ color: '#00b39f' }}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {capability.endpoint}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
@@ -286,8 +229,15 @@ const UserPreference = (props) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  const { width } = useWindowDimensions();
+  const [value, setValue] = useState(0);
+  const [providerInfo, setProviderInfo] = useState({});
 
   const { notify } = useNotification();
+
+  const handleValChange = (event, newVal) => {
+    setValue(newVal);
+  };
 
   const handleCatalogContentToggle = () => {
     props.toggleCatalogContent({ catalogVisibility: !catalogContent });
@@ -402,16 +352,309 @@ const UserPreference = (props) => {
     );
   }, []);
 
+  useEffect(() => {
+    dataFetch(
+      '/api/provider/capabilities',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          setProviderInfo(result);
+        }
+      },
+      (err) => console.error(err),
+    );
+  }, []);
+
+  function convertToTitleCase(str) {
+    const words = str.split('_');
+    for (let i = 0; i < words.length; i++) {
+      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+    }
+    return words.join(' ');
+  }
+
+  const RemoteProviderInfoTab = () => {
+    const [copied, setCopied] = useState(false);
+    const copyToClipboard = (text) => {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setCopied(true);
+
+          setTimeout(() => {
+            setCopied(false);
+          }, 2000);
+        })
+        .catch((error) => {
+          console.error('error copying to clipboard:', error);
+        });
+    };
+
+    return (
+      <NoSsr>
+        <div className={props.classes.root}>
+          <Typography variant="h5">Provider Information</Typography>
+          <Grid container spacing={2}>
+            {providerInfo &&
+              Object.entries(providerInfo).map(
+                ([providerName, provider], index) =>
+                  (index < 2 || index === 3) && (
+                    <Grid key={index} item md={4} xs={12}>
+                      <Card className={props.classes.card}>
+                        <CardHeader
+                          title={
+                            <Typography
+                              variant="h6"
+                              style={{
+                                textDecoration: 'underline',
+                                textDecorationColor: 'rgba(116,147,161,0.5)',
+                                textUnderlineOffset: 10,
+                              }}
+                            >
+                              {convertToTitleCase(providerName)}
+                            </Typography>
+                          }
+                        />
+                        <CardContent>
+                          {' '}
+                          <Box className={props.classes.box}>
+                            <Typography
+                              variant="body1"
+                              className={props.classes.hideScrollbar}
+                              style={{ marginRight: '20px' }}
+                            >
+                              {provider}
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ),
+              )}
+          </Grid>
+          {providerInfo &&
+            Object.entries(providerInfo).map(
+              ([providerName, provider], index) =>
+                (index === 2 || index === 5) && (
+                  <Card key={index} className={props.classes.card} sx={{ margin: '20px' }}>
+                    <CardHeader
+                      title={
+                        <Typography
+                          variant="h6"
+                          style={{
+                            textDecoration: 'underline',
+                            textDecorationColor: 'rgba(116,147,161,0.5)',
+                            textUnderlineOffset: 10,
+                          }}
+                        >
+                          {convertToTitleCase(providerName)}
+                        </Typography>
+                      }
+                    />
+                    <CardContent>
+                      {' '}
+                      <Box className={props.classes.box}>
+                        <Typography
+                          variant="body1"
+                          className={props.classes.hideScrollbar}
+                          style={{ marginRight: '20px' }}
+                        >
+                          {provider}
+                        </Typography>
+
+                        <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                          <IconButton
+                            onClick={() => copyToClipboard(provider)}
+                            style={{ padding: '0.25rem', float: 'right' }}
+                          >
+                            <CopyIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ),
+            )}
+
+          <Card className={props.classes.card}>
+            <CardHeader
+              title={
+                <Typography
+                  variant="h6"
+                  style={{
+                    textDecoration: 'underline',
+                    textDecorationColor: 'rgba(116,147,161,0.5)',
+                    textUnderlineOffset: 10,
+                  }}
+                >
+                  Description
+                </Typography>
+              }
+            />
+            <CardContent>
+              <Typography>
+                <ul>
+                  {providerInfo.provider_description &&
+                    providerInfo.provider_description.map((desc, index) => (
+                      <li key={index}>
+                        <Typography>{desc}</Typography>
+                      </li>
+                    ))}
+                </ul>
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <hr className={props.classes.line} />
+          <Typography variant="h5" style={{ margin: '20px 0' }}>
+            Capabilities
+          </Typography>
+
+          <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Grid
+              item
+              xs={6}
+              className={props.classes.gridCapabilityHeader}
+              style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
+            >
+              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                Feature
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              className={props.classes.gridCapabilityHeader}
+              style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
+            >
+              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                Endpoint
+              </Typography>
+            </Grid>
+            {providerInfo.capabilities &&
+              providerInfo.capabilities.map((capability, index) => (
+                <>
+                  <Grid
+                    item
+                    key={`${index}-${capability.feature}`}
+                    xs={6}
+                    style={{
+                      padding: '20px 20px',
+                      backgroundColor:
+                        props.theme === 'dark'
+                          ? index % 2 === 0
+                            ? '#3D4F57'
+                            : '#293B43'
+                          : index % 2 === 0
+                          ? '#E7EFF3'
+                          : '#C9DBE3',
+                    }}
+                  >
+                    <Typography variant="body1">{capability.feature}</Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    key={`${index}-${capability.endpoint}`}
+                    xs={6}
+                    style={{
+                      padding: '20px 20px',
+                      backgroundColor:
+                        props.theme === 'dark'
+                          ? index % 2 === 0
+                            ? '#3D4F57'
+                            : '#293B43'
+                          : index % 2 === 0
+                          ? '#E7EFF3'
+                          : '#C9DBE3',
+                    }}
+                  >
+                    <Typography variant="body1">{capability.endpoint}</Typography>
+                  </Grid>
+                </>
+              ))}
+          </Grid>
+          <hr className={props.classes.line} />
+          <Typography variant="h5" style={{ margin: '20px 0' }}>
+            Extensions
+          </Typography>
+          {providerInfo.extensions &&
+            Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
+              <div key={index} margin="20px 0px">
+                <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
+                <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
+                  <Grid
+                    item
+                    xs={6}
+                    className={props.classes.gridExtensionHeader}
+                    style={{
+                      borderRadius: '10px 0 0 0',
+                      padding: '10px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                      Component
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    className={props.classes.gridExtensionHeader}
+                    style={{
+                      borderRadius: '0 10px 0 0',
+                      padding: '10px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                      Type
+                    </Typography>
+                  </Grid>
+
+                  <Grid
+                    item
+                    xs={6}
+                    className={props.classes.gridExtensionItem}
+                    style={{
+                      borderRadius: '0 0 0 10px',
+                      padding: '20px 20px',
+                    }}
+                  >
+                    <Typography variant="body1">{extension[0].component}</Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    className={props.classes.gridExtensionItem}
+                    style={{
+                      borderRadius: '0 0 10px 0',
+                      padding: '20px 20px',
+                    }}
+                  >
+                    <Typography variant="body1">{convertToTitleCase(extension[0].type)}</Typography>
+                  </Grid>
+                </Grid>
+              </div>
+            ))}
+        </div>
+      </NoSsr>
+    );
+  };
+
   return (
     <NoSsr>
       <Paper square className={props.classes.paperRoot}>
         <Tabs
           value={tabVal}
           onChange={handleTabValChange}
-          variant="fullWidth"
+          variant={width < 600 ? 'scrollable' : 'fullWidth'}
+          scrollButtons="on"
+          allowScrollButtonsMobile={true}
           indicatorColor="primary"
           textColor="primary"
           className={props.classes.tabs}
+          centered
         >
           <CustomTextTooltip backgroundColor={CHARCOAL} title="General preferences" placement="top">
             <Tab
@@ -551,19 +794,37 @@ const UserPreference = (props) => {
         {tabVal === 1 && <MesherySettingsPerformanceComponent />}
         {tabVal === 2 && userPrefs && providerType !== 'local' && (
           <>
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
+            <Tabs
+              value={value}
+              onChange={handleValChange}
+              variant={width < 600 ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+              allowScrollButtonsMobile={true}
+              indicatorColor="primary"
+              textColor="primary"
+              className={props.classes.tabs}
+              centered
+            >
+              <CustomTextTooltip backgroundColor={CHARCOAL} title="Details" placement="top">
+                <Tab
+                  className={props.classes.tab}
+                  label={<span className={props.classes.tabLabel}>Details</span>}
+                />
+              </CustomTextTooltip>
+              <CustomTextTooltip backgroundColor={CHARCOAL} title="Plugins" placement="top">
+                <Tab
+                  className={props.classes.tab}
+                  label={<span className={props.classes.tabLabel}>Plugins</span>}
+                />
+              </CustomTextTooltip>
+            </Tabs>
+            <Paper className={props.classes.statsWrapper}>
+              {value === 0 && <RemoteProviderInfoTab />}
 
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Remote Provider Info
-                </FormLabel>
-
-                <FormGroup>
-                  <RemoteProviderTab />
-                </FormGroup>
-              </FormControl>
-            </div>
+              {value === 1 && (
+                <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
+              )}
+            </Paper>
           </>
         )}
       </Paper>
