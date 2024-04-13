@@ -16,6 +16,11 @@ func TestListCredentialCmd(t *testing.T) {
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
 
+	go func() {
+		if err := utils.StartMockMesheryServer(t); err != nil {
+			t.Error(err)
+		}
+	}()
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -32,7 +37,8 @@ func TestListCredentialCmd(t *testing.T) {
 		Name             string
 		Args             []string
 		ExpectedResponse string
-		URLs             []utils.MockURL
+		Response         string
+		URL              string
 		Token            string
 		ExpectError      bool
 	}{
@@ -40,30 +46,23 @@ func TestListCredentialCmd(t *testing.T) {
 			Name:             "Fetch Credentials List",
 			Args:             []string{"list"},
 			ExpectedResponse: "list.credentials.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/integrations/credentials",
-					Response:     "list.credentials.api.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
+			Response:         "list.credentials.api.response.golden",
+			URL:			  testContext.BaseURL + "/api/integrations/credentials",
+			Token:       	  filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:	  false,
 		},
 	}
 
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			for _, url := range tt.URLs {
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
+			apiResponse := utils.NewGoldenFile(t, tt.Response, fixturesDir).Load()
 
 			// set token
 			utils.TokenFlag = tt.Token
+
+			httpmock.RegisterResponder("GET", tt.URL,
+				httpmock.NewStringResponder(200, apiResponse))
 
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")

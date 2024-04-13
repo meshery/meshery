@@ -19,7 +19,13 @@ func TestCredentialCmd(t *testing.T) {
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
 
-	go utils.StartMockMesheryServer(t)
+	// initialize mock meshery backend
+    go func() {
+		if err := utils.StartMockMesheryServer(t); err != nil {
+			t.Error(err)
+		}
+	}()
+	
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
