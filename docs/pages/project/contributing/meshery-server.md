@@ -58,7 +58,7 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 
 #### Define and validate errors
 
-Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitly validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
+Every Golang-based component within the Meshery ecosystem incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitly validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
 
 {% capture code_content %}make error{% endcapture %}
 {% include code.html code=code_content %}

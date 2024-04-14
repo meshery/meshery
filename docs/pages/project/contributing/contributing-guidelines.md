@@ -99,6 +99,6 @@ If you are working on a new command or adding a new feature on an existing comma
 
 Broader features should have a design specification created in the form of a Google Doc. Refer to "[Process: Creating a Functional Specification or other Document](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing)", which has detailed information on creating a design specification.
 
-For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
+For small changes, communicating over the [issue tracker](https://github.com/meshery/meshery/issues) or the [discussions](https://github.com/meshery/meshery/discussions) will be helpful.
 
 

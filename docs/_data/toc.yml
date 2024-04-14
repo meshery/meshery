@@ -120,8 +120,8 @@
         url: guides/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
-      - title: Importing Applications
-        url: guides/configuration-management/importing-apps
+      - title: Importing Designs
+        url: guides/configuration-management/importing-designs
       - title: Working with design patterns
         url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center

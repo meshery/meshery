@@ -10,7 +10,7 @@ list: exclude
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div class="flex flex-col--1">
+<div style="display:grid; justify-items:center">
   <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
@@ -379,9 +379,3 @@ list: exclude
 </div>
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
-
-<!-- <div style="text-align:center;padding:0;margin:0;">
-<img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
-<h1>Documentation</h1>
-</div> -->
-
