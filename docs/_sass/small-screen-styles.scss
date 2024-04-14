@@ -8,9 +8,11 @@
   p {
     font-size: 1rem;
   }
-  // table {
-  //   font-size: 1.1rem !important;
-  // }
+  table { 
+    width:100%;
+    display:block;
+  }
+  
   .main-container #breadcrumbs {
     font-size: 1rem;
   }
@@ -23,12 +25,14 @@
   }
 }
 
-@media  (min-width: 400px) and (max-width: 600px) {
+@media  (min-width: 350px) and (max-width: 600px) {
   p {
     font-size: 1rem;
   }
   table {
     font-size: 1rem !important;
+    width:100%;
+    display:block;
   }
   .main-container #breadcrumbs {
     font-size: 1rem;

@@ -8,6 +8,7 @@ type: Reference
 language: en
 abstract: "Meshery Error Code Reference for all Meshery components so that you can troubleshoot issues."
 ---
+
 <style>
 
 .title {
@@ -24,6 +25,10 @@ p.error-details {
 }
 td {
   vertical-align: middle;
+}
+.tbl{
+  display:block;
+  width: 100%;
 }
 .tbl-head-row{
   background-color:#F2F2F2;
@@ -116,29 +121,28 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
   <hr>
   <br>
 
-  {% for files in site.data.errorref %}    
-  {% for eachFile in files %}
-    {% for component in eachFile %}
-      {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-      {% if thecycle == 'even' %}
-        {% if component[1].component_type == 'adapter' %}
-          {% capture heading %}
-            Meshery Adapter for {{ component[1].component_name }}
-          {% endcapture %}
-        {% elsif component[1].component_type == 'client' %}
-          {% capture heading %}
-            {{ component[1].component_name }} client
-          {% endcapture %}
-        {% elsif component[1].component_type == 'library' %}
-          {% capture heading %}
-            {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
-          {% endcapture %}
-        {% elsif component[1].component_name == 'meshery-server' %}
-          {% capture heading %}
-            Meshery Server
-          {% endcapture %}
-        {% endif %}
-
+{% for files in site.data.errorref %}  
+ {% for eachFile in files %}
+{% for component in eachFile %}
+{% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+{% if thecycle == 'even' %}
+{% if component[1].component_type == 'adapter' %}
+{% capture heading %}
+Meshery Adapter for {{ component[1].component_name }}
+{% endcapture %}
+{% elsif component[1].component_type == 'client' %}
+{% capture heading %}
+{{ component[1].component_name }} client
+{% endcapture %}
+{% elsif component[1].component_type == 'library' %}
+{% capture heading %}
+{{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+{% endcapture %}
+{% elsif component[1].component_name == 'meshery-server' %}
+{% capture heading %}
+Meshery Server
+{% endcapture %}
+{% endif %}
 
 <h2 class="title">{{ heading }}</h2>
 <table class="tbl">
@@ -187,6 +191,3 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
 {% endfor %}
 {% endfor %}
 {% endfor %}
-
-
-    

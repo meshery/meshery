@@ -46,6 +46,12 @@ h5 {
     apple color emoji, segoe ui emoji, segoe ui symbol;
   h2 {
     border-left: none;
+    @media (max-width: 1200px) {
+      display: flex;
+      flex-direction: column;    
+      overflow-y: auto; 
+      max-height: 100%;
+    } 
   }
 }
 
@@ -145,6 +151,9 @@ h5 {
     color: #666666;
     font-size: 1.1rem;
   }
+  @media (max-width:800px) {
+    padding:0rem;
+  }
 }
 
 .swagger-response {
@@ -238,6 +247,12 @@ h5 {
   }
   tr:nth-child(odd) {
     background: lighten($grey-color-light, 6%);
+  }
+  @media (max-width:768px) {
+    display:block;
+    overflow: auto;
+    max-width: 100%;
+    padding:0rem;
   }
 }
 
