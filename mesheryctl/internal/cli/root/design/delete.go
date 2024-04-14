@@ -63,7 +63,7 @@ mesheryctl design delete [file | URL]
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				utils.Log.Error(err)
-				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete design %s", args[0])))
+				return errors.Wrap(err, utils.DesignDeleteError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
 			utils.Log.Info("Design ", args[0], " deleted successfully")
 			return nil
@@ -75,8 +75,8 @@ mesheryctl design delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
-				return utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
+				utils.Log.Error(utils.ErrFileRead(errors.New(utils.DesignDeleteError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
+				return utils.ErrFileRead(errors.New(utils.DesignDeleteError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
 			}
 
 			patternFile = string(content)

@@ -25,6 +25,7 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
+	validSourceTypes     []string
 )
 
 // DesignCmd represents the root command for design commands
@@ -51,7 +52,7 @@ mesheryctl design list
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},
@@ -60,6 +61,6 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, onboardCmd, offboardCmd, importCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
 }

@@ -71,7 +71,7 @@ mesheryctl design view [design-name | ID]
 			if viewAllFlag {
 				url += "/api/pattern?pagesize=10000"
 			} else {
-				return errors.New(utils.PatternViewError("Design name or ID is not specified. Use `-a` to view all designs"))
+				return errors.New(utils.DesignViewError("Design name or ID is not specified. Use `-a` to view all designs"))
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern

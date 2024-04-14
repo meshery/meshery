@@ -93,7 +93,7 @@ mesheryctl design apply [design-name]
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PatternError("failed to read response body"))
+				return errors.Wrap(err, utils.DesignApplyError("failed to read response body"))
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
@@ -151,7 +151,7 @@ mesheryctl design apply [design-name]
 
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {
-						return errors.Wrap(err, utils.PatternError("failed to read response body"))
+						return errors.Wrap(err, utils.DesignApplyError("failed to read response body"))
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {

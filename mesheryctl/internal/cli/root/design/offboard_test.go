@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestDeleteCmd(t *testing.T) {
+func TestOffboardCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -37,14 +37,20 @@ func TestDeleteCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Delete Pattern",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
-			ExpectedResponse: "delete.output.golden",
+			Name:             "Offboard Application",
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "delete.response.golden",
+					Response:     "offboard.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -55,9 +61,9 @@ func TestDeleteCmd(t *testing.T) {
 
 	// Run tests
 	for _, tt := range tests {
+		// View api response from golden files
 		t.Run(tt.Name, func(t *testing.T) {
 			for _, url := range tt.URLs {
-				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 
 				// mock response
@@ -73,9 +79,9 @@ func TestDeleteCmd(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetOutput(b)
-			PatternCmd.SetArgs(tt.Args)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(tt.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -102,8 +108,8 @@ func TestDeleteCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("Delete Pattern test Passed")
 	}
+
 	// stop mock server
 	utils.StopMockery(t)
 }

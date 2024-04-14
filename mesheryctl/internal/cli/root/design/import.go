@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bytes"
@@ -33,17 +33,17 @@ import (
 
 var importCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import pattern manifests",
-	Long:  `Import the pattern manifest into Meshery`,
+	Short: "Import design manifests",
+	Long:  `Import the design manifest into Meshery`,
 	Example: `
-// Import pattern manifest
-mesheryctl pattern import -f [file/URL] -s [source-type]
+// Import design manifest
+mesheryctl design import -f [file/URL] -s [source-type]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
-			return ErrPatternManifest()
+			return ErrDesignManifest()
 		}
 
 		return nil
@@ -73,7 +73,7 @@ mesheryctl pattern import -f [file/URL] -s [source-type]
 			return nil
 		}
 
-		fmt.Printf("pattern file imported successfully. \nID of the pattern: %s \n", utils.TruncateID(pattern.ID.String()))
+		fmt.Printf("design file imported successfully. \nID of the pattern: %s \n", utils.TruncateID(pattern.ID.String()))
 
 		return nil
 	},
@@ -109,7 +109,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		if err != nil {
 			return nil, err
 		}
-		utils.Log.Debug("pattern file saved")
+		utils.Log.Debug("design file saved")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
@@ -181,6 +181,6 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
+	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }
