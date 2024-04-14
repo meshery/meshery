@@ -43,3 +43,44 @@ export const errorHandlerGenerator = (notify, msg, cb) => (err) => {
   err = typeof err !== 'string' ? err.toString() : err;
   notify({ message: `${msg}`, details: err, event_type: EVENT_TYPES.ERROR });
 };
+
+/**
+ * A function that generates a close button component for a snackbar.
+ * @param {function} closeSnackbar - A function to close the snackbar.
+ * @returns {function} - A function that generates a close button component.
+ */
+export const closeButtonForSnackbarActionNew = (closeSnackbar) => (key) => (
+  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+    <CloseIcon />
+  </IconButton>
+);
+
+/**
+ * A function that generates a success handler for notifying.
+ * @param {function} notify - A function to notify.
+ * @param {string} msg - The message to be displayed.
+ * @param {function} cb - An optional callback function.
+ * @returns {function} - A success handler function.
+ */
+export const successHandlerGeneratorPure = (notify, msg, cb) => (res) => {
+  if (res !== undefined) {
+    if (cb !== undefined) cb(res);
+    if (typeof res == 'object') {
+      res = JSON.stringify(res);
+    }
+    notify({ message: `${msg}`, details: `${res}`, event_type: EVENT_TYPES.SUCCESS });
+  }
+};
+
+/**
+ * A function that generates an error handler for notifying.
+ * @param {function} notify - A function to notify.
+ * @param {string} msg - The message to be displayed.
+ * @param {function} cb - An optional callback function.
+ * @returns {function} - An error handler function.
+ */
+export const errorHandlerGeneratorPure = (notify, msg, cb) => (err) => {
+  if (cb !== undefined) cb(err);
+  err = typeof err !== 'string' ? err.toString() : err;
+  notify({ message: `${msg}`, details: err, event_type: EVENT_TYPES.ERROR });
+};
