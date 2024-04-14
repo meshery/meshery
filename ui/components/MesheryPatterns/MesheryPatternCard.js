@@ -236,6 +236,7 @@ function MesheryPatternCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, editInConfigurator)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   className={classes.testsButton}
                 >
                   <Edit style={{ fill: '#fff' }} className={classes.iconPatt} />
