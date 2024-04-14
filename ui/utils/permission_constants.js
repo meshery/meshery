@@ -48,7 +48,6 @@ export const keys = {
     subject: 'Download Token',
     action: 'ee5fc23e-d629-4c7b-8169-27e526394e8b',
   },
-  // CONFIRM IF IT IS THE AUTH TOKEN THAT IS BEING TALKED ABOUT HERE
   CREATE_TOKEN: {
     subject: 'Create Token',
     action: '8aa0df56-57e8-44b7-9d6e-7df413048ed5',
@@ -90,12 +89,10 @@ export const keys = {
     action: 'c4ed82f5-783d-4451-9b34-44f50cae71df',
   },
   ASSIGN_ENVIRONMENT_TO_WORKSPACE: {
-    //LOOK FOR COMPONENT TO APPLY THIS PERMISSION
     subject: 'Assign environment to workspace',
     action: 'f421fc20-c14a-4282-b526-776c6cacfd99',
   },
   REMOVE_ENVIRONMENT_FROM_WORKSPACE: {
-    //LOOK FOR COMPONENT TO APPLY THIS PERMISSION
     subject: 'Remove environment from workspace',
     action: 'd0657715-80fb-4b00-af27-b78bb0fa56df',
   },
@@ -128,17 +125,14 @@ export const keys = {
     action: '70747966-dfad-4523-93ce-bd7421258955',
   },
   ASSIGN_CONNECTIONS_TO_ENVIRONMENT: {
-    // LOOK FOR COMPONENT TO APPLY THIS PERMISSION
     subject: 'Assign Connections To Environment',
     action: '52cbe0b8-9aa7-4605-8eed-aa37e595adbb',
   },
   REMOVE_CONNECTIONS_FROM_ENVIRONMENT: {
-    // LOOK FOR COMPONENT TO APPLY THIS PERMISSION
     subject: 'Remove Connections From Environment',
     action: '65648682-e47f-43d7-a5ad-dc042803f951',
   },
   VIEW_CATALOG: {
-    // MESHMAP (PERHAPS?)
     subject: 'View Catalog',
     action: '0cd05106-36b6-4393-a08e-4222fc10c8de',
   },
@@ -151,7 +145,6 @@ export const keys = {
     action: '3798736d-1f5d-41b3-876f-f3f01453dd15',
   },
   SHARE_DESIGN: {
-    // MESHMAP (PERHAPS?)
     subject: 'Share Design',
     action: 'd9ae2b08-762f-418f-916f-43de736b53e2',
   },
@@ -208,7 +201,6 @@ export const keys = {
     action: 'f024fcf7-3c3d-4521-b83e-6d659353ca0e',
   },
   EXPORT_DESIGN: {
-    // MESHMAP (PERHAPS?)
     subject: 'Export Design',
     action: '9a783f51-3b4a-47a6-a02e-b0db9e78cd85',
   },
@@ -293,7 +285,6 @@ export const keys = {
     subject: 'Connect adapter',
     action: 'c93bd211-1dac-42cc-9086-859288826d1b',
   },
-  // MAYBE NEED NEW KEYS FOR NAMESPACE AND VERSION DROPDOWNS?
   CONNECT_METRICS: {
     subject: 'Connect Metrics',
     action: 'b0aee906-c549-445f-be0c-b98b04d47d09',
@@ -310,7 +301,6 @@ export const keys = {
     subject: 'Add performace profile',
     action: 'b2861578-c573-45fe-a95e-0356d56e1d1b',
   },
-  // EDIT PERFORMANCE PROFILE
   RUN_TEST: {
     subject: 'Run test',
     action: '06de2b07-b4f4-4701-b87f-d92ebb66ba42',
@@ -323,7 +313,6 @@ export const keys = {
     subject: 'Edit performance test',
     action: '33aa5c47-a8aa-4ad5-9950-7c17042c001d',
   },
-  // MIGHT WANT TO ASK ABOUT RENAMING THIS KEY
   DELETE_PERFORMANCE_TEST: {
     subject: 'Delete performance test',
     action: '84aa9d3c-3d4b-4587-947d-ae17b2dcd5f5',
