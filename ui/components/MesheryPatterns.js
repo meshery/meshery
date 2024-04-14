@@ -64,8 +64,6 @@ import DryRunComponent from './DryRun/DryRunComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import _ from 'lodash';
-import { getMeshModels } from '../api/meshmodel';
-import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import { ResponsiveDataTable } from '@layer5/sistent';
@@ -81,6 +79,8 @@ import CAN, { ability } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
+import { importFormSchema, importFormUISchema } from '@layer5/sistent';
+import { publishFormSchema, publishFormUISchema } from '@layer5/sistent';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -343,14 +343,14 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [setExtensionPreferences] = useState({});
   const router = useRouter();
-  const [importSchema, setImportSchema] = useState({});
-  const [meshModels, setMeshModels] = useState([]);
+  const [importSchema] = useState({});
+  const [meshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
-  const [publishSchema, setPublishSchema] = useState({});
+  const [publishSchema] = useState({});
   const [infoModal, setInfoModal] = useState({
     open: false,
     ownerID: '',
@@ -594,45 +594,6 @@ function MesheryPatterns({
   }, [catalogVisibility]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/design',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
-
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          handleError(ACTION_TYPES.SCHEMA_FETCH);
-          setPublishSchema(result);
-        }
-      },
-    );
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -1789,7 +1750,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportDesign } = props;
+  const { handleClose, handleImportDesign } = props;
 
   const classes = useStyles();
 
@@ -1797,8 +1758,8 @@ const ImportModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
+        schema={importFormSchema}
+        uiSchema={importFormUISchema}
         handleClose={handleClose}
         handleSubmit={handleImportDesign}
         title="Import Design"
@@ -1817,14 +1778,14 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <>
       <Modal
         open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
+        schema={publishFormSchema}
+        uiSchema={publishFormUISchema}
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}

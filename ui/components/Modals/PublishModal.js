@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import { PublishSchema, PublishUiSchema } from '@layer5/sistent';
+import { publishSchema, publishUiSchema } from '@layer5/sistent';
 
 // This modal is used in MeshMap also
 export default function PublishModal(props) {
@@ -9,8 +9,8 @@ export default function PublishModal(props) {
   return (
     <Modal
       open={open}
-      schema={PublishSchema}
-      uiSchema={PublishUiSchema}
+      schema={publishSchema}
+      uiSchema={publishUiSchema}
       title={title}
       handleClose={handleClose}
       handleSubmit={handleSubmit}

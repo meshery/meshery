@@ -43,9 +43,8 @@ import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubs
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
 import Modal from './Modal';
-import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
+import { getUnit8ArrayDecodedFile } from '../utils/utils';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
-import { getMeshModels } from '../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -63,6 +62,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
+import { publishSchema, publishUiSchema } from '@layer5/sistent';
+import { importSchema, importUiSchema } from '@layer5/sistent';
 
 const styles = (theme) => ({
   grid: {
@@ -246,10 +247,10 @@ function MesheryFilters({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
-  const [publishSchema, setPublishSchema] = useState({});
+  const [importSchema] = useState({});
+  const [publishSchema] = useState({});
   const { width } = useWindowDimensions();
-  const [meshModels, setMeshModels] = useState([]);
+  const [meshModels] = useState([]);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -334,44 +335,6 @@ function MesheryFilters({
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
-
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -1442,15 +1405,15 @@ function MesheryFilters({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportFilter } = props;
+  const { handleClose, handleImportFilter } = props;
 
   const classes = useStyles();
 
   return (
     <Modal
       open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
+      schema={importSchema}
+      uiSchema={importUiSchema}
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"
@@ -1468,13 +1431,13 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { handleClose, handlePublish, title } = props;
 
   return (
     <Modal
       open={true}
-      schema={publishFormSchema.rjsfSchema}
-      uiSchema={publishFormSchema.uiSchema}
+      schema={publishSchema}
+      uiSchema={publishUiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}
