@@ -91,6 +91,9 @@ const (
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
 	credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
+	credentialListURL              = docsBaseURL + "reference/mesheryctl/exp/credential/list"
+	credentialCreateURL            = docsBaseURL + "reference/mesheryctl/exp/credential/create"
+	credentialDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/credential/delete"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -146,6 +149,7 @@ const (
 	cmdCredential               cmdType = "credential"
 	cmdCredentialList           cmdType = "credential list"
 	cmdCredentialCreate         cmdType = "credential create"
+	cmdCredentialDelete         cmdType = "credential delete"
 )
 
 const (

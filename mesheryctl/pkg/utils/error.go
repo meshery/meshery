@@ -172,6 +172,8 @@ func CredentialsError(msg string, cmd string) string {
 		return formatError(msg, cmdCredentialList)
 	case "create":
 		return formatError(msg, cmdCredentialCreate)
+	case "delete":
+		return formatError(msg, cmdCredentialDelete)
 	default:
 		return formatError(msg, cmdCredential)
 	}
@@ -305,6 +307,12 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
 	case cmdCredential:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, credentialUsageURL)
+	case cmdCredentialList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, credentialListURL)
+	case cmdCredentialCreate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, credentialCreateURL)
+	case cmdCredentialDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, credentialDeleteURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

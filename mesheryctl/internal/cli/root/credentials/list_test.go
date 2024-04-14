@@ -42,9 +42,9 @@ func TestListCredentialCmd(t *testing.T) {
 			Args:             []string{"list"},
 			ExpectedResponse: "list.credentials.output.golden",
 			Response:         "list.credentials.api.response.golden",
-			URL:			  testContext.BaseURL + "/api/integrations/credentials",
-			Token:       	  filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:	  false,
+			URL:              testContext.BaseURL + "/api/integrations/credentials",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
 		},
 	}
 

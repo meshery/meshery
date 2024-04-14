@@ -15,29 +15,24 @@
 package credentials
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	user_id              string
-	availableSubcommands []*cobra.Command
-)
-
-var CredentialCmd = &cobra.Command{
-	Use:   "credential",
-	Short: "Manage credentials",
-	Long: `View and manage list of credentials for Meshery Environment.
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+var DeleteCredenetialCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a credential",
+	Long:  `Delete a credential from list of Credentials by providing particular ID.`,
 	Example: `
-// Base command for credentials:
-mesheryctl exp credential [subcommands]
+// Delete a credential:
+mesheryctl exp credential delete [credential_ID]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -45,10 +40,6 @@ mesheryctl exp credential [subcommands]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -61,31 +52,37 @@ mesheryctl exp credential [subcommands]
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) != 1 {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
+			return errors.New("credential ID is required")
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.CredentialsError(fmt.Sprintf("invalid subcommand: %s. Please provide options from [view]. Use 'mesheryctl exp credential --help' to display usage guide.\n", args[0]), "credential"))
-		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
 		}
-		if err := cmd.Usage(); err != nil {
+
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		url := fmt.Sprintf("%s/api/integrations/credentials/%s", baseUrl, args[0])
+		req, err := utils.NewRequest(http.MethodDelete, url, nil)
+		if err != nil {
 			return err
 		}
-		return nil
-	},
-}
 
-func init() {
-	CredentialCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
-	createCredentialCmd.Flags().StringVarP(&user_id, "user-id", "u", "", "User ID")
-	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd}
-	CredentialCmd.AddCommand(availableSubcommands...)
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusOK {
+			utils.Log.Info("Credential deleted successfully")
+			return nil
+		}
+		return errors.New(utils.CredentialsError("failed to delete credential", "delete"))
+	},
 }

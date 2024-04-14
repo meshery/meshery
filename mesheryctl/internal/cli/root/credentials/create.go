@@ -41,7 +41,7 @@ var createCredentialCmd = &cobra.Command{
 	Long:  `Create a new credential by providing the name, user ID, type, and secret of the credential`,
 	Example: `
 // Create a new credential
-mesheryctl exp credential create
+mesheryctl exp credential create --user-id [user-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -49,10 +49,6 @@ mesheryctl exp credential create
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -64,8 +60,18 @@ mesheryctl exp credential create
 		}
 		return nil
 	},
-	// Since Using Promptui no arguments are expected
-	Args: cobra.MinimumNArgs(0),
+
+	Args: func(cmd *cobra.Command, args []string) error {
+		user_id, _ = cmd.Flags().GetString("user-id")
+
+		if user_id == "" {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return errors.New("user-id is required")
+		}
+		return nil
+	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -78,14 +84,6 @@ mesheryctl exp credential create
 			Label: "Name",
 		}
 		name, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
-		prompt = promptui.Prompt{
-			Label: "User ID",
-		}
-		userID, err := prompt.Run()
 		if err != nil {
 			return err
 		}
@@ -106,8 +104,8 @@ mesheryctl exp credential create
 			return err
 		}
 
-		if name == "" || userID == "" || credentialType == "" || secret == "" {
-			return utils.ErrInvalidArgument(errors.New("name, user-id, type, and secret are required"))
+		if name == "" || credentialType == "" || secret == "" {
+			return utils.ErrInvalidArgument(errors.New("name, type, and secret are required"))
 		}
 
 		baseURL := mctlCfg.GetBaseMesheryURL()
@@ -120,7 +118,7 @@ mesheryctl exp credential create
 		}
 
 		// Parse the user_id as UUID
-		parsedUserID, err := uuid.FromString(userID)
+		parsedUserID, err := uuid.FromString(user_id)
 		if err != nil {
 			return utils.ErrInvalidArgument(errors.New("invalid user_id format"))
 		}
@@ -146,7 +144,7 @@ mesheryctl exp credential create
 			return nil
 		}
 
-		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
+		req, err := utils.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
