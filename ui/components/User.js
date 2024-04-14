@@ -207,7 +207,17 @@ const User = (props) => {
                     >
                       Get Token
                     </MenuItem>
-                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    <MenuItem
+                      onClick={handlePreference}
+                      disabled={
+                        !CAN(
+                          keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                          keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                        )
+                      }
+                    >
+                      Preferences
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
