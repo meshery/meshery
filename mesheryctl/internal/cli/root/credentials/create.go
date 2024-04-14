@@ -31,8 +31,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/manifoldco/promptui"
 )
 
 var createCredentialCmd = &cobra.Command{
@@ -63,12 +61,15 @@ mesheryctl exp credential create --user-id [user-id]
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		user_id, _ = cmd.Flags().GetString("user-id")
+		name, _ = cmd.Flags().GetString("name")
+		credential_type, _ = cmd.Flags().GetString("type")
+		secret, _ = cmd.Flags().GetString("secret")
 
-		if user_id == "" {
+		if user_id == "" || name == "" || credential_type == "" || secret == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("user-id is required")
+			return errors.New("user-id, name, type, and secret are required")
 		}
 		return nil
 	},
@@ -77,35 +78,6 @@ mesheryctl exp credential create --user-id [user-id]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
-		}
-
-		// Prompt for input
-		prompt := promptui.Prompt{
-			Label: "Name",
-		}
-		name, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
-		prompt = promptui.Prompt{
-			Label: "Type",
-		}
-		credentialType, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
-		prompt = promptui.Prompt{
-			Label: "Secret",
-		}
-		secret, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
-		if name == "" || credentialType == "" || secret == "" {
-			return utils.ErrInvalidArgument(errors.New("name, type, and secret are required"))
 		}
 
 		baseURL := mctlCfg.GetBaseMesheryURL()
@@ -131,7 +103,7 @@ mesheryctl exp credential create --user-id [user-id]
 			ID:        id,
 			UserID:    &parsedUserID,
 			Name:      name,
-			Type:      credentialType,
+			Type:      credential_type,
 			Secret:    secretMap,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -144,7 +116,7 @@ mesheryctl exp credential create --user-id [user-id]
 			return nil
 		}
 
-		req, err := utils.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
+		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil

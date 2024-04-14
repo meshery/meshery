@@ -27,6 +27,9 @@ import (
 
 var (
 	user_id              string
+	name                 string
+	credential_type      string
+	secret               string
 	availableSubcommands []*cobra.Command
 )
 
@@ -86,6 +89,9 @@ mesheryctl exp credential [subcommands]
 func init() {
 	CredentialCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 	createCredentialCmd.Flags().StringVarP(&user_id, "user-id", "u", "", "User ID")
+	createCredentialCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the credential")
+	createCredentialCmd.Flags().StringVarP(&credential_type, "type", "y", "", "Type of the credential")
+	createCredentialCmd.Flags().StringVarP(&secret, "secret", "s", "", "Secret of the credential")
 	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd}
 	CredentialCmd.AddCommand(availableSubcommands...)
 }
