@@ -1565,7 +1565,9 @@ function MesheryPatterns({
                         // @ts-ignore
                         onClick={() => router.push('designs/configurator')}
                         style={{ display: 'flex', marginRight: '2rem' }}
-                        disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
+                        disabled={
+                          !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
+                        }
                       >
                         <AddIcon className={classes.addIcon} />
                         <span className={classes.btnText}> Create Design </span>
@@ -1578,9 +1580,7 @@ function MesheryPatterns({
                         // @ts-ignore
                         onClick={handleUploadImport}
                         style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                        disabled={
-                          !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
-                        }
+                        disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                       >
                         <PublishIcon className={classes.addIcon} />
                         <span className={classes.btnText}> Import Design </span>
