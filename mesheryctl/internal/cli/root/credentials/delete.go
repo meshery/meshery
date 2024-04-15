@@ -56,7 +56,7 @@ mesheryctl exp credential delete [credential_ID]
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("credential ID is required")
+			return utils.ErrInvalidArgument(errors.New("provide credential ID"))
 		}
 		return nil
 	},

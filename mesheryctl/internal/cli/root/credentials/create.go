@@ -69,7 +69,7 @@ mesheryctl exp credential create --user-id [user-id]
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("user-id, name, type, and secret are required")
+			return utils.ErrInvalidArgument(errors.New("user-id, name, type, and secret are required"))
 		}
 		return nil
 	},
