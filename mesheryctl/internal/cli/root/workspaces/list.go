@@ -88,14 +88,12 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		url := fmt.Sprintf("%s/api/workspaces?orgID=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -103,15 +101,13 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		workspaceResponse := &models.WorkspacePage{}
 		err = json.Unmarshal(data, workspaceResponse)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
 		rows := [][]string{}
