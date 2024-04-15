@@ -972,15 +972,100 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+	connection := connections.Connection{
+		ID:           conn.ID,
+		Name:         conn.Name,
+		Type:         conn.Type,
+		SubType:      conn.SubType,
+		Kind:         conn.Kind,
+		Metadata:     conn.MetaData,
+		Status:       conn.Status,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+		CredentialID: *conn.CredentialID,
+	}
+	err := l.DB.Model(&connection).Where("id = ?", conn.ID).First(&connection).Error
+	if err == gorm.ErrRecordNotFound {
+		err = l.DB.Model(&connection).Create(connection).Error
+		if err != nil {
+			return nil, ErrDBCreate(err)
+		}
+	}
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string, _ string, _ []string, _ []string) (*connections.ConnectionPage, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
+	connectionsList := []*connections.Connection{}
+	finder := l.DB.Model(connectionsList).Where("user_id = ?", userID).Where("deleted_at IS NULL")
+
+	if len(status) != 0 {
+		finder = finder.Where("status IN (?)", status)
+	}
+
+	if len(kind) != 0 {
+		finder = finder.Where("kind IN (?)", kind)
+	}
+
+	if filter != "" {
+		if filter != "" {
+			filterArr := strings.Split(filter, " ")
+			filterKey := filterArr[0]
+			filterVal := strings.Join(filterArr[1:], " ")
+
+			if filterKey == "deleted_at" {
+				// Handle deleted_at filter
+				if filterVal == "Deleted" {
+					finder = finder.Where("deleted_at IS NOT NULL")
+				} else {
+					finder = finder.Where("deleted_at IS NULL")
+				}
+			} else if filterKey == "type" || filterKey == "sub_type" {
+				finder = finder.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
+			}
+		}
+	}
+	finder = finder.Order(order)
+
+	var count int64
+	if err := finder.Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * pageSize
+
+	if count > 0 {
+		if err := finder.Offset(offset).Limit(pageSize).Find(&connectionsList).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, ErrDBRead(err)
+			}
+		}
+	}
+
+	return &connections.ConnectionPage{
+		Connections: connectionsList,
+		Page:        page,
+		PageSize:    pageSize,
+		TotalCount:  int(count),
+	}, nil
 }
+
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	result := connections.Connection{}
+	err := l.DB.Model(&result).Where("id = ?", connectionID).Where("kind = ?", kind).First(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, ErrResultNotFound(err)
+		}
+		return nil, http.StatusInternalServerError, ErrDBRead(err)
+	}
+	return &result, http.StatusOK, err
 }
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
@@ -991,24 +1076,68 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *connections.Connection) (*connections.Connection, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *connections.Connection) (*connections.Connection, error) {
+	err := l.DB.Save(connection).Error
+	if err != nil {
+		return nil, ErrDBPut(err)
+	}
+
+	updatedConnection := connections.Connection{}
+	err = l.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return connection, nil
 }
 
 func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	err := l.DB.Model(connections.Connection{}).UpdateColumn("status", connectionStatus).Error
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDBPut(err)
+	}
+	updatedConnection := connections.Connection{}
+	err = l.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDBRead(err)
+	}
+	return &updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*connections.Connection, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *ConnectionPayload, _ string) (*connections.Connection, error) {
+	connection := connections.Connection{
+		ID:           conn.ID,
+		Name:         conn.Name,
+		Type:         conn.Type,
+		SubType:      conn.SubType,
+		Kind:         conn.Kind,
+		Metadata:     conn.MetaData,
+		Status:       conn.Status,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+		CredentialID: *conn.CredentialID,
+	}
+	return l.UpdateConnection(req, &connection)
 }
 
-func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*connections.Connection, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
+	connection := connections.Connection{ID: connectionID}
+	err := l.DB.Model(&connection).Find(&connection).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+	}
+	err = l.DB.Delete(connection).Error
+	if err != nil {
+		return nil, ErrDBDelete(err, l.fetchUserDetails().UserID)
+	}
+	return &connection, nil
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
-	return ErrLocalProviderSupport
+	mesheryConnectionID := uuid.FromStringOrNil(viper.GetString("INSTANCE_ID"))
+	_, err := l.DeleteConnection(nil, mesheryConnectionID)
+	return err
 }
 
 // GetGenericPersister - to return persister
