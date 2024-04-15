@@ -61,7 +61,7 @@ mesheryctl exp credential view [credential_ID]
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return utils.ErrInvalidArgument(errors.New("credential ID"))
+			return utils.ErrInvalidArgument(errors.New("credential ID is required"))
 		}
 		return nil
 	},
