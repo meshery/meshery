@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ var WorkSpaceCmd = &cobra.Command{
 	Example: `
 
 // To view a list workspaces
-mesheryctl exp workspace list [orgId]
+mesheryctl exp workspace list --orgId [orgId]
 
 // To create a workspace
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
@@ -78,14 +78,14 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 			if err := cmd.Usage(); err != nil {
 				return nil
 			}
-			return errors.New(utils.WorkspaceSubError("Please provide a subcommand", "workspace"))
+			return utils.ErrInvalidArgument(errors.New("Please provide a subcommand"))
 		}
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.WorkspaceSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp workspace --help' to display usage guide.\n", args[0]), "workspace"))
+			return utils.ErrInvalidArgument(cmd.Usage())
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

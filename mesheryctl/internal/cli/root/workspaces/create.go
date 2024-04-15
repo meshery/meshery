@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("all three flags --orgId, --name, and --description are required")
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId, --name, and --description flag"))
 		}
 
 		return nil
@@ -99,13 +99,13 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			fmt.Println("Failed to marshal payload")
+			utils.Log.Info("Failed to marshal payload")
 			return err
 		}
 
 		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			fmt.Println("Failed to create request")
+			utils.Log.Info("Failed to create request")
 			return err
 		}
 

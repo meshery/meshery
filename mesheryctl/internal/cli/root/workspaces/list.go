@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 			if err := cmd.Usage(); err != nil {
 				return nil
 			}
-			return errors.New("all three flags --orgId is required")
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
 		}
 
 		return nil
