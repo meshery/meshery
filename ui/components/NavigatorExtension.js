@@ -17,7 +17,7 @@ import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironm
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
 import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
 import PublishModal from '../components/Modals/PublishModal';
@@ -107,6 +107,7 @@ function NavigatorExtension({
           },
         },
         ConfirmationModal,
+        SelectDeploymentTarget: SelectDeploymentTarget,
         getComponentsinFile,
         UploadImport,
         PublishModal,
