@@ -15,24 +15,29 @@
 package credentials
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var DeleteCredenetialCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete a credential",
-	Long:  `Delete a credential from list of Credentials by providing credential ID`,
+// viewCredentialCmd represents the view command by Credential ID
+var viewCredentialCmd = &cobra.Command{
+	Use:   "view",
+	Short: "View a credential",
+	Long:  `View a credential details from list of Credentials by providing credential ID`,
 	Example: `
-// Delete a credential:
-mesheryctl exp credential delete [credential_ID]
+// View a credential:
+mesheryctl exp credential view [credential_ID]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -65,10 +70,13 @@ mesheryctl exp credential delete [credential_ID]
 		if err != nil {
 			return utils.ErrLoadConfig(err)
 		}
-
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/integrations/credentials/%s", baseUrl, args[0])
-		req, err := utils.NewRequest(http.MethodDelete, url, nil)
+
+		credID := args[0]
+
+		url := fmt.Sprintf("%s/api/integrations/credentials/%s", baseUrl, credID)
+
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			return err
 		}
@@ -79,10 +87,47 @@ mesheryctl exp credential delete [credential_ID]
 		}
 		defer resp.Body.Close()
 
-		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Credential deleted successfully")
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
-		return errors.New(utils.CredentialsError("failed to delete credential", "delete"))
+
+		credentialResponse := models.Credential{}
+		err = json.Unmarshal(body, &credentialResponse)
+		if err != nil {
+			return utils.ErrUnmarshal(err)
+		}
+
+		if credentialResponse.ID.String() == "" {
+			utils.Log.Info("No credentials found for the given ID: ", credID)
+			return nil
+		}
+
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+
+		// To save the credential in a file as json format
+		credFile, err := os.Create(homedir + "/.meshery/credential.json")
+		if err != nil {
+			return err
+		}
+		defer credFile.Close()
+
+		credBytes, err := json.MarshalIndent(credentialResponse, "", "  ")
+		if err != nil {
+			return err
+		}
+
+		_, err = credFile.Write(credBytes)
+		if err != nil {
+			return err
+		}
+
+		utils.Log.Info("Credential saved to file: $/homedir/.meshery/credential.json")
+
+		return nil
 	},
 }

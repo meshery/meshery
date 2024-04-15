@@ -10,7 +10,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestDeleteCredentialCmd(t *testing.T) {
+func TestViewCredentialCmd(t *testing.T) {
 	// Setup current context
 	utils.SetupContextEnv(t)
 
@@ -35,7 +35,7 @@ func TestDeleteCredentialCmd(t *testing.T) {
 		t.Fatalf("Failed to generate UUID: %v", err)
 	}
 
-	// Test scenarios for deleting a credential
+	// Test scenarios for viewing a credential
 	tests := []struct {
 		Name             string
 		Args             []string
@@ -46,11 +46,11 @@ func TestDeleteCredentialCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Delete Credential",
-			Args:             []string{"delete", credentialID.String()},
+			Name:             "View Credential",
+			Args:             []string{"view", credentialID.String()},
 			URL:              testContext.BaseURL + "/api/integrations/credentials/" + credentialID.String(),
-			ExpectedResponse: "delete.credential.output.golden",
-			Response:         "delete.credential.api.response.golden",
+			ExpectedResponse: "view.credential.output.golden",
+			Response:         "view.credential.api.response.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -62,9 +62,8 @@ func TestDeleteCredentialCmd(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Response, fixturesDir).Load()
 			utils.TokenFlag = tt.Token
-
-			// Mock the HTTP response
-			httpmock.RegisterResponder("DELETE", tt.URL,
+			// Setup http mock
+			httpmock.RegisterResponder("GET", tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
 
 			// Expected response
@@ -107,6 +106,6 @@ func TestDeleteCredentialCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("Delete Credential test passed")
+		t.Log("View Credential test passed")
 	}
 }

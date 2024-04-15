@@ -92,6 +92,6 @@ func init() {
 	createCredentialCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the credential")
 	createCredentialCmd.Flags().StringVarP(&credential_type, "type", "y", "", "Type of the credential")
 	createCredentialCmd.Flags().StringVarP(&secret, "secret", "s", "", "Secret of the credential")
-	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd}
+	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd, viewCredentialCmd, viewCredentialCmd}
 	CredentialCmd.AddCommand(availableSubcommands...)
 }
