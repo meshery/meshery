@@ -149,10 +149,9 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTableWithFooter(header, data, footer)
-		} else {
-			handlePagination(data, header, footer)
+			return nil
 		}
-		return nil
+		return handlePagination(data, header, footer)
 	},
 }
 
