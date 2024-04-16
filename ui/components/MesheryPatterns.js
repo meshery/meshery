@@ -38,9 +38,8 @@ import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
-import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from './ConfirmationModal';
-import PublishIcon from '@material-ui/icons/Publish';
+// import PublishIcon from '@material-ui/icons/Publish';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { SchemaContext } from '../utils/context/schemaSet';
@@ -70,6 +69,7 @@ import {
   FullScreenIconExit,
   ResponsiveDataTable,
   SaveAsIcon,
+  PublishIcon,
 } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
@@ -149,7 +149,7 @@ const styles = (theme) => ({
   },
   addIcon: {
     paddingRight: '.35rem',
-    fill: theme.palette.secondary.iconMain,
+    fill: theme.palette.secondary.whiteIcon,
   },
   visibilityImg: {
     filter: theme.palette.secondary.img,
@@ -1336,7 +1336,7 @@ function MesheryPatterns({
                   disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
                   onClick={(ev) => handlePublishModal(ev, rowData)}
                 >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  <PublishIcon data-cy="publish-button" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -1344,7 +1344,7 @@ function MesheryPatterns({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   onClick={(ev) => handleUnpublishModal(ev, rowData)()}
                 >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                  <PublishIcon data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
             </Box>
@@ -1764,6 +1764,7 @@ function MesheryPatterns({
                 handleClose={handlePublishModalClose}
                 title={publishModal.pattern?.name}
                 handleSubmit={handlePublish}
+                classes={classes.addIcon}
               />
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
@@ -1824,7 +1825,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title, classes } = props;
 
   return (
     <>
@@ -1841,7 +1842,7 @@ const PublishModal = React.memo((props) => {
           link: 'https://docs.meshery.io/concepts/catalog',
         }}
         submitBtnText="Submit for Approval"
-        submitBtnIcon={<PublicIcon />}
+        submitBtnIcon={<PublishIcon className={classes} />}
       />
     </>
   );

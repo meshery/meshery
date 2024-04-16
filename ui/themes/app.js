@@ -247,6 +247,7 @@ darkTheme = {
       root: {
         padding: darkTheme.spacing(1),
         color: '#F6F8F8',
+        fill: '#F6F8F8',
         '&:hover': {
           color: '#00B39F',
           backgroundColor: 'none',
@@ -489,6 +490,7 @@ theme = {
           backgroundColor: 'none',
         },
         color: '#607d8b',
+        fill: '#607d8b',
       },
       colorPrimary: { color: '#607d8b' },
     },
