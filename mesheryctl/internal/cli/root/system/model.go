@@ -449,7 +449,7 @@ mesheryctl exp model view [model-name]
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
-				return nil
+				return err
 			}
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
