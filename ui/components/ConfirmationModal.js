@@ -613,8 +613,6 @@ export const SelectDeploymentTarget_ = ({
   // setSelectedContexts,
   selectedK8sContexts,
 }) => {
-  // console.log('Sel', selectedContexts, 'k8s');
-
   const [searchedContexts, setSearchedContexts] = useState(k8scontext);
 
   const selectedContexts = selectedK8sContexts;

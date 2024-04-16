@@ -16,10 +16,11 @@ import { SelectDeploymentTarget } from '../ConfirmationModal';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import { DryRunDesign } from './DryRunDesign';
-import { updateProgress } from 'lib/store';
+import { selectSelectedK8sClusters, updateProgress } from 'lib/store';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
+import { useSelector } from 'react-redux';
 
 const SelectTargetStep = () => {
   return (
@@ -77,19 +78,20 @@ export const UpdateDeploymentStepper = ({
   pattern_file,
   pattern_id,
   name,
-  selectedK8sContexts,
 }) => {
   const [dryRunErrors, setDryRunErrors] = useState([]);
   const [bypassDryRun, setBypassDryRun] = useState(false);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
+  const selectedK8sContexts = useSelector(selectSelectedK8sClusters);
+
   const { notify } = useNotification();
 
   const steps = [
     {
       component: <SelectTargetStep handleClose={handleClose} setDryRunErrors={setDryRunErrors} />,
       icon: DeploymentSelectorIcon,
-      label: 'Select Target',
+      label: 'Select Environment',
     },
     {
       component: (
@@ -213,21 +215,13 @@ export const UpdateDeploymentStepper = ({
   );
 };
 
-export const DeployStepper = ({
-  handleClose,
-  handleComplete,
-  pattern_file,
-  pattern_id,
-  name,
-  selectedK8sContexts,
-}) => (
+export const DeployStepper = ({ handleClose, handleComplete, pattern_file, pattern_id, name }) => (
   <UpdateDeploymentStepper
     handleClose={handleClose}
     handleComplete={handleComplete}
     pattern_file={pattern_file}
     pattern_id={pattern_id}
     name={name}
-    selectedK8sContexts={selectedK8sContexts}
     action={DEPLOYMENT_TYPE.DEPLOY}
   />
 );
@@ -238,7 +232,6 @@ export const UnDeployStepper = ({
   pattern_file,
   pattern_id,
   name,
-  selectedK8sContexts,
 }) => (
   <UpdateDeploymentStepper
     handleClose={handleClose}
@@ -246,7 +239,6 @@ export const UnDeployStepper = ({
     pattern_file={pattern_file}
     pattern_id={pattern_id}
     name={name}
-    selectedK8sContexts={selectedK8sContexts}
     action={DEPLOYMENT_TYPE.UNDEPLOY}
   />
 );

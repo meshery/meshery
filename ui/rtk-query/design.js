@@ -1,4 +1,3 @@
-import { method } from 'lodash';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
