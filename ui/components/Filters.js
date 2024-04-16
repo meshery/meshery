@@ -252,7 +252,6 @@ function MesheryFilters({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -339,45 +338,20 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+  useEffect(async () => {
+    const { models } = await getMeshModels();
+    const modelNames = _.uniq(models?.map((model) => model.displayName));
+    modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    // Modify the schema using the utility function
+    const modifiedSchema = modifyRJSFSchema(
+      publishCatalogItemSchema,
+      'properties.compatibility.items.enum',
+      modelNames,
     );
+    setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+    setMeshModels(models);
+
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -1385,7 +1359,7 @@ function MesheryFilters({
                 setSelectedFilter={setSelectedFilter}
                 selectedFilter={selectedFilter}
                 pages={Math.ceil(count / pageSize)}
-                importSchema={importSchema}
+                importSchema={importFilterSchema}
                 setPage={setPage}
                 selectedPage={page}
                 publishModal={publishModal}
@@ -1419,7 +1393,7 @@ function MesheryFilters({
               )}
             {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
               <ImportModal
-                importFormSchema={importSchema}
+                importFormSchema={importFilterSchema}
                 handleClose={handleUploadImportClose}
                 handleImportFilter={handleImportFilter}
               />
@@ -1474,13 +1448,13 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handlePublish, title } = props;
 
   return (
     <Modal
       open={true}
-      schema={publishCatalogItemSchema}
-      uiSchema={publishCatalogItemUiSchema}
+      schema={publishFormSchema.rjsfSchema}
+      uiSchema={publishFormSchema.uiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}
