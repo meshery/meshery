@@ -604,3 +604,142 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg));
+
+export const SelectDeploymentTarget_ = ({
+  k8scontext,
+  // selectedContexts,
+  classes,
+  setK8sContexts,
+  // setSelectedContexts,
+  selectedK8sContexts,
+}) => {
+  const [searchedContexts, setSearchedContexts] = useState(k8scontext);
+
+  const selectedContexts = selectedK8sContexts;
+
+  const { notify } = useNotification();
+  const searchContexts = (search) => {
+    if (search === '') {
+      setSearchedContexts(k8scontext);
+      return;
+    }
+    let matchedCtx = [];
+    k8scontext.forEach((ctx) => {
+      if (ctx.name.includes(search)) {
+        matchedCtx.push(ctx);
+      }
+    });
+    setSearchedContexts(matchedCtx);
+  };
+
+  const setContextViewer = (id) => {
+    if (id === 'all') {
+      if (selectedContexts?.includes('all')) {
+        // updateProgress({ showProgress : true })
+        setK8sContexts({ selectedK8sContexts: [] });
+      } else {
+        setK8sContexts({ selectedK8sContexts: ['all'] });
+      }
+      return;
+    }
+
+    if (selectedContexts?.includes(id)) {
+      const filteredContexts = selectedContexts.filter((cid) => cid !== id);
+      setK8sContexts({ selectedK8sContexts: filteredContexts });
+    } else if (selectedContexts[0] === 'all') {
+      const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
+      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+    } else {
+      if (selectedContexts.length === k8scontext.length - 1) {
+        setK8sContexts({ selectedK8sContexts: ['all'] });
+        return;
+      }
+      setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] });
+    }
+  };
+
+  const handleKubernetesClick = (ctxID) => {
+    updateProgress({ showProgress: true });
+    pingKubernetes(
+      successHandlerGenerator(notify, 'Kubernetes pinged', () =>
+        updateProgress({ showProgress: false }),
+      ),
+      errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
+        updateProgress({ showProgress: false }),
+      ),
+      ctxID,
+    );
+  };
+
+  return k8scontext.length > 0 ? (
+    <Typography variant="body1">
+      <TextField
+        id="search-ctx"
+        label="Search"
+        size="small"
+        variant="outlined"
+        onChange={(event) => searchContexts(event.target.value)}
+        style={{
+          width: '100%',
+          backgroundColor: 'rgba(102, 102, 102, 0.12)',
+          margin: '1px 1px 8px ',
+        }}
+        InputProps={{
+          endAdornment: <Search style={iconMedium} />,
+        }}
+        // margin="none"
+      />
+      {searchedContexts.length > 0 ? (
+        <div className={classes.all}>
+          <Checkbox
+            checked={selectedContexts?.includes('all')}
+            onChange={() => setContextViewer('all')}
+            color="primary"
+          />
+          <span style={{ fontWeight: 'bolder' }}>select all</span>
+        </div>
+      ) : (
+        <Typography variant="subtitle1">No Context found</Typography>
+      )}
+
+      <div className={classes.contexts}>
+        {searchedContexts.map((ctx) => (
+          <div id={ctx.id} className={classes.chip} key={ctx.id}>
+            <Tooltip title={`Server: ${ctx.server}`}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-wrap',
+                  alignItems: 'center',
+                }}
+              >
+                <Checkbox
+                  checked={
+                    selectedContexts?.includes(ctx.id) ||
+                    (selectedContexts?.length > 0 && selectedContexts[0] === 'all')
+                  }
+                  onChange={() => setContextViewer(ctx.id)}
+                  color="primary"
+                />
+                <Chip
+                  label={ctx.name}
+                  className={classes.ctxChip}
+                  onClick={() => handleKubernetesClick(ctx.connection_id)}
+                  icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                  variant="outlined"
+                  data-cy="chipContextName"
+                />
+              </div>
+            </Tooltip>
+          </div>
+        ))}
+      </div>
+    </Typography>
+  ) : (
+    <K8sEmptyState />
+  );
+};
+
+export const SelectDeploymentTarget = withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(SelectDeploymentTarget_),
+);
