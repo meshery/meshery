@@ -1210,6 +1210,10 @@ function MesheryFilters({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `${name} filter uploaded successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       },
       handleError(ACTION_TYPES.UPLOAD_FILTERS),
     );
