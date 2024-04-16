@@ -1211,7 +1211,7 @@ function MesheryFilters({
       () => {
         updateProgress({ showProgress: false });
         notify({
-          message: `${name} filter uploaded successfully`,
+          message: `${name} filter uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       },
