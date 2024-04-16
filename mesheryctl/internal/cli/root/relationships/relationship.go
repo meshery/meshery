@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/manifoldco/promptui"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -27,7 +29,9 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{GenerateRelationshipDocsCmd}
+	outFormatFlag string
+
+	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd}
 )
 
 var RelationshipCmd = &cobra.Command{
@@ -87,5 +91,35 @@ mesheryctl exp relationships view [model-name]
 }
 
 func init() {
+	ViewRelationshipsCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
+
 	RelationshipCmd.AddCommand(availableSubcommands...)
+}
+
+// selectModelPrompt lets user to select a relation if relations are more than one
+func selectRelationshipPrompt(relationship []v1alpha1.RelationshipDefinition) v1alpha1.RelationshipDefinition {
+	relationshipArray := []v1alpha1.RelationshipDefinition{}
+	relationshipNames := []string{}
+
+	relationshipArray = append(relationshipArray, relationship...)
+
+	for _, relationship := range relationshipArray {
+		// here display Kind and EvaluationQuery as relationship name
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", relationship.Kind, relationship.EvaluationQuery, relationship.SubType)
+		relationshipNames = append(relationshipNames, relationshipName)
+	}
+
+	prompt := promptui.Select{
+		Label: "Select a relationship:",
+		Items: relationshipNames,
+	}
+
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			continue
+		}
+
+		return relationshipArray[i]
+	}
 }

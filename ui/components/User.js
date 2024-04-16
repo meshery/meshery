@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -46,7 +46,7 @@ function exportToJsonFile(jsonData, filename) {
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
-  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
@@ -104,8 +104,8 @@ const User = (props) => {
     });
   }
 
-  if (!capabilitiesLoaded && capabilitiesRegistry) {
-    setCapabilitiesLoaded(true); // to prevent re-compute
+  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    capabilitiesLoadedRef.current = true;
     setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
   }
 
@@ -160,7 +160,6 @@ const User = (props) => {
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
   const open = Boolean(anchorEl);
-
   return (
     <div>
       <NoSsr>
@@ -199,7 +198,7 @@ const User = (props) => {
               <Paper className={classes.popover}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
-                    {account && account.length ? <>{renderAccountExtension(account)}</> : null}
+                    {account && account.length ? renderAccountExtension(account) : null}
                     <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
                     <MenuItem onClick={handlePreference}>Preferences</MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>

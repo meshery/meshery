@@ -47,8 +47,8 @@ div.wrapper {
 
 div.container {
   text-align: left;
-  padding: 1.6rem;
-  --col-gap: 1rem;
+  padding: 1rem;
+  gap: 1rem;
 }
 
 div.section {
@@ -88,6 +88,13 @@ a > strong:hover {
     overflow-x: hidden;
   }
 }
+@media (max-width: 600px) {
+  div.container {
+    --col-gap: -30rem;
+    padding: 0;
+  }
+}
+
 
 /*image align-right*/
 .image-right {
