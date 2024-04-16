@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   ModalBody,
@@ -41,12 +41,9 @@ const DryRunStep = ({
   dryRunType,
 }) => {
   const handleErrors = (errors) => {
-    console.log('handle errors', errors);
     setDryRunErrors(errors);
   };
-  const bypassValidation = bypassDryRun || false;
   const toggleBypassValidation = () => setBypassDryRun(!bypassDryRun);
-
   return (
     <Box>
       <DryRunDesign
@@ -59,7 +56,7 @@ const DryRunStep = ({
       />
       {dryRunErrors?.length > 0 && (
         <Stack spacing={2} direction="row" alignItems="center">
-          <Checkbox value={bypassValidation} onChange={toggleBypassValidation} />
+          <Checkbox value={bypassDryRun} onChange={toggleBypassValidation} />
           <Typography variant="body2">Bypass errors and initiate deployment</Typography>
         </Stack>
       )}
@@ -88,17 +85,14 @@ export const UpdateDeploymentStepper = ({
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const { notify } = useNotification();
 
-  useEffect(() => {
-    console.log('Mounting UpdateDeploymentStepper');
-  }, []);
   const steps = [
     {
-      component: (props) => <SelectTargetStep handleClose={handleClose} {...props} />,
+      component: <SelectTargetStep handleClose={handleClose} setDryRunErrors={setDryRunErrors} />,
       icon: DeploymentSelectorIcon,
       label: 'Select Target',
     },
     {
-      component: (props) => (
+      component: (
         <DryRunStep
           handleClose={handleClose}
           selectedK8sContexts={selectedK8sContexts}
@@ -108,7 +102,6 @@ export const UpdateDeploymentStepper = ({
           dryRunErrors={dryRunErrors}
           setDryRunErrors={setDryRunErrors}
           dryRunType={action}
-          {...props}
         />
       ),
       label: 'Dry Run',
@@ -162,7 +155,7 @@ export const UpdateDeploymentStepper = ({
       });
   };
 
-  const actionFunction = (sharedData) => {
+  const actionFunction = () => {
     const command = {
       [DEPLOYMENT_TYPE.DEPLOY]: handleDeploy,
       [DEPLOYMENT_TYPE.UNDEPLOY]: handleUndeploy,
@@ -170,7 +163,7 @@ export const UpdateDeploymentStepper = ({
 
     command[action]?.(pattern_file, pattern_id, name);
     handleClose?.();
-    handleComplete?.(sharedData);
+    handleComplete?.();
     // designMachineRef.current.send(command[action]);
   };
 
@@ -179,7 +172,7 @@ export const UpdateDeploymentStepper = ({
     if (deployStepper.canGoForward) {
       deployStepper.handleNext();
     } else {
-      actionFunction(deployStepper.sharedData);
+      actionFunction();
     }
   };
 
@@ -198,11 +191,11 @@ export const UpdateDeploymentStepper = ({
   const nextButtonText = deployStepper.canGoForward ? 'Next' : action;
 
   return (
-    <>
+    <div>
       <ModalBody>
         <Box style={{ width: '30rem' }}>
           <CustomizedStepper {...deployStepper}>
-            <deployStepper.activeStepComponent {...deployStepper} />
+            {deployStepper.activeStepComponent}
           </CustomizedStepper>
         </Box>
       </ModalBody>
@@ -216,7 +209,7 @@ export const UpdateDeploymentStepper = ({
           </ModalButtonPrimary>
         </Box>
       </ModalFooter>
-    </>
+    </div>
   );
 };
 
