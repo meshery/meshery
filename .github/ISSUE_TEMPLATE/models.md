@@ -1,7 +1,7 @@
 ---
 name: 🖥 💡 Models Update
 about: An update, addition, or removal of one or more of the models, components, relationships, workflows, or policies within Meshery Models.
-title: '[Models]: '
+title: '[Models] '
 labels: area/models
 assignees: ''
 ---
