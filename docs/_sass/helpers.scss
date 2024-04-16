@@ -1,34 +1,27 @@
 // FLEX /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .flex {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  // justify-content: space-evenly;
   gap: var(--col-gap);
-  flex-wrap: wrap;
+  grid-template-columns: 1fr 1fr;
 
-  &.flex-col--2 {
-    & > * {
-      flex: 0 0 calc(50% - calc(var(--col-gap) / 2));
-    }
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
-
-  &.flex-col--3 {
-    & > * {
-      flex: 0 0 calc(33.33% - calc(var(--col-gap) / 3));
-    }
-  }
+  
 }
 
 // BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .btn-primary {
-  padding: 1rem 2rem;
+  padding: .8rem 1.4rem;
   // background: var(--section-button);
   position: relative;
   border-radius: 11px;
   color: white;
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.4rem;
   -webkit-transition: background-color 0.9s ease-out;
   -moz-transition: background-color 0.9s ease-out;
   -o-transition: background-color 2.9s ease-out;
@@ -109,14 +102,14 @@ details {
   box-shadow: 0 .1rem 1rem -.5rem rgba(0,0,0,.4);
   border-radius: 5px;
   overflow: hidden;
-  font-size: 1.35rem;
+  font-size: 1rem;
   padding: 0rem 1.5rem 0rem 1.5rem;
   & > h6 { color: var(--color-primary-blonde)};
   & > p { color: var(--color-secondary-dark)};
 }
 
 summary {
-  padding: 1rem 0rem;
+  padding: .25rem 0rem;
   margin-right: -1.5rem;
   margin-left: -1.5rem;
   display: block;
@@ -125,7 +118,7 @@ summary {
   padding-left: 2.2rem;
   position: relative;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: normal;
 }
 
@@ -156,6 +149,6 @@ details summary::-webkit-details-marker {
 }
 
 details > ul {
-  padding-bottom: 1rem;
+  padding: 1rem auto;
   margin-bottom: 0;
 }

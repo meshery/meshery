@@ -3,8 +3,8 @@
 // }
 
 .breadcrumb {
-  font-size: 1.25rem;
-  line-height: 1.25rem;
+  font-size: 1.05rem;
+  line-height: .925rem;
   padding: 0;
 }
 
@@ -50,18 +50,23 @@ header {
   @media (max-width: 75em) {
     flex: 0 0 100%;
   }
+  @media (max-width: 600px) {
+    height: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 .navbar {
   width: 100%;
   height: var(--navbar-height);
-  padding: 0 2rem !important;
+  padding: 0 20px !important;
   background: var(--background-light-cards);
   box-shadow: var(--box-shadow-navbar);
   display: flex;
   align-items: center;
   z-index: 10;
-
+  @media (max-width: 600px) {
+    height: calc(var(--navbar-height) - 2.5rem);
+  }
   & .nav-btn{
       background-color: var(--brand-color-secondary);
       color: var(--color-white);
@@ -85,14 +90,14 @@ header {
       & > img {
         padding: 0 !important;
         margin-left: 10%;
-        width: 2.8rem;
-        height: 2.8rem;
+        width: 2.2rem;
+        height: 2.2rem;
         filter: var(--image-color);
         transition: filter 0.3s;
         cursor: pointer;
         @media (max-width: 600px) {
-          width: 3.4rem;
-          height: 3.4rem;
+          width: 1.8rem;
+          height: 1.8rem;
         }
       }
 
@@ -124,8 +129,8 @@ header {
       }
       @media (max-width: 600px) {
         & #menu-nav-toggle-btn {
-          width: 3.4rem;
-          height: 3.4rem;
+          width: 1.8rem;
+          height: 1.8rem;
         }
       }
 
@@ -143,15 +148,15 @@ header {
     }
 
     & #menu-nav-toggle-btn {
-      width: 2.8rem;
-      height: 2.8rem;
+      width: 2.2rem;
+      height: 2.2rem;
       stroke: var(--color-secondary-dark);
     }
   }
 
   & .navbar-brand {
     display: inline-block;
-    font-size: 3.2rem;
+    font-size: 2.2rem;
     line-height: inherit;
     white-space: nowrap;
 
@@ -175,7 +180,6 @@ header {
       & img,
       svg {
         display: inline-block;
-        margin: 0 10px;
         height: 45px;
         margin-right: 0.5rem;
         @media (max-width: 610px) {
@@ -215,7 +219,7 @@ header {
 
   & #main_navbar {
     overflow: hidden;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-left: auto !important;
 
     @media (max-width: 1200px) {

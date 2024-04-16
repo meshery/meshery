@@ -58,7 +58,7 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 
 #### Define and validate errors
 
-Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitly validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
+Every Golang-based component within the Meshery ecosystem incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitly validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
 
 {% capture code_content %}make error{% endcapture %}
 {% include code.html code=code_content %}
@@ -82,8 +82,3 @@ The server log levels can be configured at runtime by changing the env variable 
 ```
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
-
-
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}

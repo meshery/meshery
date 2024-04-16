@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
 
@@ -103,7 +104,10 @@ const meshModelApi = api
 export const {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
+  useGetComponentsQuery,
   useLazyGetRelationshipsQuery,
+  useGetRegistrantsQuery,
+  useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
@@ -111,5 +115,34 @@ export const {
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useGetMeshModelsQuery,
   useGetComponentByNameQuery,
+  useGetModelFromCategoryQuery,
 } = meshModelApi;
+
+export const useGetCategoriesSummary = () => {
+  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
+  const { data: categories } = useGetModelCategoriesQuery();
+  const [categoryMap, setCategoryMap] = useState({});
+
+  const fetchModelsForCategories = async () => {
+    const categoryMap = {};
+    if (!categories) return categoryMap;
+
+    const requests = categories.categories.map(async (category) => {
+      const { data } = await getModelFromCategory(
+        { category: category.name, params: { page: 1, pagesize: 1 } },
+        true,
+      );
+      categoryMap[category.name] = data?.total_count || 0;
+    });
+    await Promise.allSettled(requests);
+    return categoryMap;
+  };
+
+  useEffect(async () => {
+    const categoryMap = await fetchModelsForCategories();
+    setCategoryMap(categoryMap);
+  }, [categories]);
+  return categoryMap;
+};
