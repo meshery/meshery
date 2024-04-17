@@ -12,15 +12,15 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import { useEffect } from 'react';
-import { v4 } from 'uuid';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import { useState } from 'react';
 import ErrorIcon from '../../assets/icons/ErrorIcon';
-import { dryRunPattern } from '../../api/patterns';
 import { NOTIFICATIONCOLORS } from '../../themes';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import { getComponentsinFile } from '@/utils/utils';
+import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 
 const styles = (theme) => {
   const error_color = NOTIFICATIONCOLORS.ERROR_DARK;
@@ -120,10 +120,10 @@ const ExpandableComponentErrors = withStyles(styles)(({ errors, componentName, c
       >
         <List style={{ height: '100%' }}>
           {errors?.length > 0 &&
-            errors?.map((err, index) => (
+            errors?.map((err) => (
               <ListItem
                 disablePadding
-                key={index}
+                key={JSON.stringify(err)}
                 className={classes.singleErrorRoot}
                 style={{ cursor: 'pointer' }}
               >
@@ -169,7 +169,7 @@ const ExpandableComponentErrors = withStyles(styles)(({ errors, componentName, c
   );
 });
 
-export const dryRunAndFormatErrors = (design, selectedContexts) => {
+export const formatDryRunResponse = (dryRunResponse) => {
   function getErrors(error) {
     if (error?.Causes && error?.Causes.length > 0) {
       return error.Causes;
@@ -183,61 +183,74 @@ export const dryRunAndFormatErrors = (design, selectedContexts) => {
     return [];
   }
 
-  return new Promise((resolve, rej) => {
-    dryRunPattern(design, selectedContexts)
-      .then((res) => {
-        const dryRunResponse = res.data.dryRunResponse;
-        let errorList = [];
-        if (dryRunResponse) {
-          Object.keys(dryRunResponse).forEach((compName) => {
-            const contextsErrors = dryRunResponse?.[compName];
+  let errorList = [];
+  if (dryRunResponse) {
+    Object.keys(dryRunResponse).forEach((compName) => {
+      const contextsErrors = dryRunResponse?.[compName];
 
-            if (!contextsErrors) {
-              return;
-            }
+      if (!contextsErrors) {
+        return;
+      }
 
-            Object.keys(contextsErrors).forEach((contextKey) => {
-              const errorAndMeta = contextsErrors[contextKey];
+      Object.keys(contextsErrors).forEach((contextKey) => {
+        const errorAndMeta = contextsErrors[contextKey];
 
-              if (!errorAndMeta.success) {
-                errorList.push({
-                  compName,
-                  contextId: contextKey,
-                  errors: getErrors(errorAndMeta.error),
-                });
-              }
-            });
+        if (!errorAndMeta.success) {
+          errorList.push({
+            compName,
+            contextId: contextKey,
+            errors: getErrors(errorAndMeta.error),
           });
-          resolve(errorList);
-          return;
         }
-        resolve([]);
-      })
-      .catch(rej);
-  });
+      });
+    });
+  }
+  return errorList;
 };
 
 const DryRunComponent = (props) => {
-  const { design, classes, handleClose, numberOfElements, selectedContexts } = props;
+  const {
+    pattern_file,
+    pattern_id,
+    classes,
+    handleErrors,
+    handleClose,
+    selectedContexts,
+    dryRunType,
+  } = props;
+  const [isLoading, setIsLoading] = useState(false);
   const [deploymentErrors, setDeploymentErrors] = useState();
-  const [isLoading, setIsLoading] = useState(true);
   const { notify } = useNotification();
+  const numberOfElements = getComponentsinFile(pattern_file);
 
-  useEffect(() => {
-    dryRunAndFormatErrors(design, selectedContexts)
-      .then((errs) => {
-        setDeploymentErrors(errs);
-      })
-      .catch((e) => {
+  const useDryRunMutation =
+    dryRunType == 'deploy' ? useDeployPatternMutation : useUndeployPatternMutation;
+  const [dryRunMutation, { error: failedToPerformDryRun }] = useDryRunMutation();
+
+  useEffect(async () => {
+    setIsLoading(true);
+    try {
+      const dryRunResults = await dryRunMutation({
+        pattern_file,
+        pattern_id,
+        selectedK8sContexts: selectedContexts,
+        dryRun: true,
+        verify: false,
+      });
+
+      const errors = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
+      setDeploymentErrors(errors);
+      handleErrors?.(errors);
+
+      dryRunResults.error &&
         notify({
           message: 'error while doing a dry run',
           event_type: EVENT_TYPES.ERROR,
-          details: e.toString(),
+          details: dryRunResults.error.toString(),
         });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   if (isLoading) {
@@ -245,14 +258,22 @@ const DryRunComponent = (props) => {
       <div>
         <CircularProgress />
         <Typography variant="caption" style={{ display: 'block', marginBottom: 8 }}>
-          Checking for Deployment Errors
+          Performing dry run for {dryRunType}
         </Typography>
       </div>
     );
   }
 
-  const errorCount = deploymentErrors?.length;
-  if (!errorCount) return null;
+  if (failedToPerformDryRun) {
+    return (
+      <Typography variant="caption" style={{ display: 'block', marginBottom: 8 }}>
+        Failed to perform dry run
+      </Typography>
+    );
+  }
+
+  const errorCount = deploymentErrors?.length || 0;
+
   return (
     <List
       aria-labelledby="nested-list-subheader"
@@ -286,7 +307,7 @@ const DryRunComponent = (props) => {
       {errorCount > 0 ? (
         deploymentErrors?.map((err) => (
           <ExpandableComponentErrors
-            key={v4()}
+            key={err.compName}
             componentName={err.compName}
             errors={err.errors}
             handleModalClose={handleClose}
@@ -294,11 +315,11 @@ const DryRunComponent = (props) => {
         ))
       ) : (
         <Typography varaint="h6" align="center" disablePadding>
-          No deployment errors.
+          No dry run errors.
         </Typography>
       )}
     </List>
   );
 };
 
-export default withStyles(styles)(DryRunComponent);
+export const DryRunDesign = withStyles(styles)(DryRunComponent);
