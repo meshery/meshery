@@ -22,8 +22,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -36,8 +34,6 @@ var (
 	pageSize   = 25
 	pageNumber int
 	verbose    bool
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var listCmd = &cobra.Command{
@@ -151,56 +147,9 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			utils.PrintToTableWithFooter(header, data, footer)
 			return nil
 		}
-		return handlePagination(data, header, footer)
+		utils.HandlePagination(pageSize, data, header, footer)
+		return nil
 	},
-}
-
-func handlePagination(data [][]string, header, footer []string) error {
-
-	startIndex := 0
-	endIndex := min(len(data), startIndex+pageSize)
-	for {
-		// Clear the entire terminal screen
-		utils.ClearLine()
-
-		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of filter files: ", len(data))
-		fmt.Println()
-		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
-		fmt.Println()
-
-		whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
-		utils.PrintToTableWithFooter(header, data[startIndex:endIndex], footer)
-		keysEvents, err := keyboard.GetKeys(10)
-		if err != nil {
-			return err
-		}
-
-		defer func() {
-			_ = keyboard.Close()
-		}()
-
-		event := <-keysEvents
-		if event.Err != nil {
-			utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-			break
-		}
-
-		if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-			break
-		}
-
-		if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-			startIndex += pageSize
-			endIndex = min(len(data), startIndex+pageSize)
-		}
-
-		if startIndex >= len(data) {
-			break
-		}
-	}
-	return nil
 }
 
 // Pagination(making multiple requests) to retrieve filter Data in batches

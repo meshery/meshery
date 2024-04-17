@@ -20,8 +20,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -126,61 +124,7 @@ mesheryctl exp components list --page 2
 			utils.PrintToTable(header, rows)
 		} else {
 			maxRowsPerPage := 25
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			whiteBoardPrinter := color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of models and current page number
-				whiteBoardPrinter.Print("Total number of models: ", len(rows))
-				fmt.Println()
-				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
-				fmt.Println()
-				whiteBoardPrinter.Print("Total pages: ", len(rows)/maxRowsPerPage+1)
-				fmt.Println()
-				whiteBoardPrinter.Println("Press ↑/← or ↓/→ to navigate, Esc or Ctrl+C to exit")
-				fmt.Println()
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				// Navigate through the list of components
-				if event.Key == keyboard.KeyArrowRight || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if event.Key == keyboard.KeyArrowUp || event.Key == keyboard.KeyArrowLeft {
-					startIndex -= maxRowsPerPage
-					if startIndex < 0 {
-						startIndex = 0
-					}
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
-			}
+			return utils.HandlePagination(maxRowsPerPage, rows, header)
 		}
 		return nil
 	},

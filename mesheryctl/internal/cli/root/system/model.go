@@ -22,7 +22,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -151,61 +150,11 @@ mesheryctl exp model list --page 2
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of models and current page number
-				whiteBoardPrinter.Print("Total number of models: ", len(rows))
-				fmt.Println()
-				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
-				fmt.Println()
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
-			}
+			return utils.HandlePagination(maxRowsPerPage, rows, header)
 		}
 
 		return nil
 	},
-}
-
-// min returns the smaller of x or y.
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
 }
 
 // represents the mesheryctl exp model view [model-name] subcommand.
@@ -349,7 +298,7 @@ mesheryctl exp model search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+			return fmt.Errorf("search term is missing\n\n%v", errMsg)
 		}
 		return nil
 	},
