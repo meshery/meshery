@@ -391,7 +391,7 @@ function ConfirmationMsg(props) {
             <Tab
               disabled={
                 !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-                (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && !disabled)
+                (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
               }
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
@@ -409,7 +409,7 @@ function ConfirmationMsg(props) {
             <Tab
               disabled={
                 !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-                (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && !disabled)
+                (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
               }
               data-cy="deploy-btn-modal"
               className={classes.tab}
