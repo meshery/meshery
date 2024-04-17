@@ -147,8 +147,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			// fmt.Println("Total number of filters: ", len(rows))
-			whiteBoardPrinter.Println("Total number of filer: ", len(data))
+			whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}
 
