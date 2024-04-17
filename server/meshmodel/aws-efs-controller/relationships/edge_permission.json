@@ -116,6 +116,14 @@
         }
       },
       {
+        "deny": {
+          "from": [
+            {}
+          ],
+          "to": [
+            {}
+          ]
+        },
         "allow": {
           "from": [
             {
@@ -170,6 +178,89 @@
                   ]
                 ],
                 "FieldExport": [
+                  [
+                      "settings",
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "name"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "from", 
+                      "resource", 
+                      "namespace"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "deny": {
+          "from": [
+            {}
+          ],
+          "to": [
+            {}
+          ]
+        },
+        "allow": {
+          "from": [
+            {
+              "kind": "Pod",
+              "model": "kubernetes",
+              "match": {
+                "self": [
+                  [
+                      "name"
+                  ],
+                  [
+                      "namespace"
+                  ],
+                  [
+                      "kind"
+                  ]
+                ],
+                "MountTarget": [
+                  [
+                      "settings",
+                      "spec", 
+                      "to",
+                      "name"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "to", 
+                      "namespace"
+                  ],
+                  [
+                      "settings", 
+                      "spec", 
+                      "to", 
+                      "kind"
+                  ]
+                  ]
+                }
+              }
+            ],
+          "to": [
+            {
+              "kind": "FileSystem",
+              "model": "aws-efs-controller",
+              "match": {
+                "self": [
+                  [
+                      "name"
+                  ],
+                  [
+                      "namespace"
+                  ]
+                ],
+                "MountTarget": [
                   [
                       "settings",
                       "spec", 
