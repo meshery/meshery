@@ -40,7 +40,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [["type"], ["name"], ["namespace"]],
-              "description": "Within the AWS Controllers for Kubernetes (ACK) project, the `AdoptedResource` serves a specific purpose: integrating existing, non-ACK-managed AWS resources into your Kubernetes cluster. `AdoptedResource` bridges the gap between pre-existing AWS resources and your Kubernetes cluster, fostering a more unified management experience. \n\nThis relationship allows the `AdoptedResource` configuration to be inherited from existing Kubernetes Pods."
+              "description": "The pod, orchestrated by the AWS Prometheus Service Controller, efficiently manages adopted resources such as storage volumes and network configurations, ensuring seamless integration and optimal performance of Prometheus workloads within Kubernetes clusters on AWS."
             }
           }
         ]
