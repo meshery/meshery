@@ -31,7 +31,7 @@
               "kind": "FieldExport",
               "model": "aws-efs-controller",
               "patch": {
-                "mutatedRef": [
+                "mutatorRef": [
                   ["settings", "spec", "from", "resource", "name"],
                   ["settings", "spec", "from", "resource", "namespace"],
                   ["settings", "spec", "from", "resource", "type"]
@@ -45,7 +45,7 @@
               "kind": "*",
               "model": "kubernetes",
               "patch": {
-                "mutatorRef": [["name"], ["namespace"], ["type"]],
+                "mutatedRef": [["name"], ["namespace"], ["type"]],
                 "description": "Kubernetes components manage containerized applications, while Field export for EFS in Kubernetes specifies access control for specific paths within the EFS file system to enforce granular permissions for pods accessing different directories, enhancing security and management within the cluster."              
               }
             }
