@@ -28,16 +28,6 @@
         "allow": {
           "from": [
             {
-              "kind": "*",
-              "model": "Kubernetes",
-              "patch": {
-                "mutatorRef": [["name"], ["namespace"], ["type"]],
-                "description": "Kubernetes components manage containerized applications, while Field export for EFS in Kubernetes specifies access control for specific paths within the EFS file system to enforce granular permissions for pods accessing different directories, enhancing security and management within the cluster."
-              }
-            }
-          ],
-          "to": [
-            {
               "kind": "FieldExport",
               "model": "aws-efs-controller",
               "patch": {
@@ -46,7 +36,17 @@
                   ["settings", "spec", "from", "resource", "namespace"],
                   ["settings", "spec", "from", "resource", "type"]
                 ],
-                "description": "Field export in AWS Elastic File System defines access controls for Kubernetes resources allowing for fine-grained access management at the directory level."
+                "description": "Field export in AWS Elastic File System defines access controls for Kubernetes resources allowing for fine-grained access management at the directory level."  
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "*",
+              "model": "kubernetes",
+              "patch": {
+                "mutatorRef": [["name"], ["namespace"], ["type"]],
+                "description": "Kubernetes components manage containerized applications, while Field export for EFS in Kubernetes specifies access control for specific paths within the EFS file system to enforce granular permissions for pods accessing different directories, enhancing security and management within the cluster."              
               }
             }
           ]
