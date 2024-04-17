@@ -230,7 +230,7 @@ var (
 	TokenFlag = "Not Set"
 	// global logger variable
 	Log logger.Handler
-	// Add colored logger variable
+	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
@@ -1172,7 +1172,7 @@ func Contains(key string, col []string) int {
 // If no footer is provided, it will be omitted.
 // Pagination allows users to navigate through the data using Enter or ↓ to continue,
 // Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
-func HandlePagination(pageSize int, data [][]string, header []string, footer ...[]string) error {
+func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
 
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
@@ -1181,7 +1181,7 @@ func HandlePagination(pageSize int, data [][]string, header []string, footer ...
 		ClearLine()
 
 		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of filter files: ", len(data))
+		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
 		fmt.Println()
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()

@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -34,6 +35,8 @@ var (
 	pageSize   = 25
 	pageNumber int
 	verbose    bool
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var listCmd = &cobra.Command{
@@ -143,11 +146,17 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 
+		if cmd.Flag("count").Value.String() == "true" {
+			// fmt.Println("Total number of filters: ", len(rows))
+			whiteBoardPrinter.Println("Total number of filer: ", len(data))
+			return nil
+		}
+
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTableWithFooter(header, data, footer)
 			return nil
 		}
-		utils.HandlePagination(pageSize, data, header, footer)
+		utils.HandlePagination(pageSize, "filter files", data, header, footer)
 		return nil
 	},
 }
