@@ -48,7 +48,6 @@
             "match": {
               "self": [
                 [
-                  ""
                 ]
               ],
               "MountTarget": [
