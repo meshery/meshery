@@ -14,44 +14,48 @@ published: true
 abstract: "In this tutorial, we will explore how to effectively use Kubernetes ConfigMaps and Secrets for managing configuration data and sensitive information. Leveraging Meshery Playground, an interactive live cluster environment, we'll perform hands-on labs to understand the practical aspects of working with ConfigMaps and Secrets in Kubernetes."
 ---
 
-### Introduction
+## Introduction
 
-In this tutorial, we will delve into the realm of Kubernetes ConfigMaps and Secrets. ConfigMaps are used to manage configuration data, while Secrets handle sensitive information. Using Meshery Playground, an interactive live cluster environment, we'll perform hands-on labs to gain practical insights into working with ConfigMaps and Secrets in Kubernetes.
+In this tutorial, we will work with Kubernetes ConfigMaps and Secrets. _ConfigMaps_ are used to manage configuration data, while _Secrets_ are used for sensitive information such as passwords. Using Meshery Playground, an interactive live cluster environment, we'll perform hands-on exercises to gain practical knowledge into working with these Kubernetes objects.
 
-### Prerequisites
+> **_NOTE:_** If this your fist time working with Meshery Playground start with the [Kubernetes Pods with Meshery](./kubernetes-pods.md).
+
+## Prerequisites
 
 - Basic understanding of containerization and Kubernetes concepts.
 - Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
 
-### Lab Scenario
+## Lab Scenario
 
  - Start with an existing design of a simple MySQL pod. 
  - Add a _ConfigMap_ to set the database name to be created on MySQL pod deployment.
  - Use a _Secert_ to set the MySQL root password.
 
-### Objective
+## Objective
 
 Learn how to create and manage _Kubernetes ConfigMaps and Secrets_ within the context of a microservices architecture.
 
-### Steps
+## Steps
 
-#### Access Meshery Playground
+### Access Meshery Playground
 
 - Log in to the [Meshery Playground](http://playground.meshery.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 - Click **MeshMap** in the navigation menu to navigate to _MeshMap_.
 
 > **_NOTE:_** MeshMap is still in beta.
 
-#### Clone the starter design
+### Clone the starter design
 
 For this tutorial we will start with an existing design and later add _ConfigMap_ and _Secret_ components to it. The design is a simple MySQL pod.
 
-Select the **Catalog** tab and search for the word _'tutorial'_. Click on the **[Tutorial] Simple MySQL Pod** design and when prompted click **Clone**.
+Select the **Catalog** tab and search for the word _'tutorial'_ (1). Click on the **[Tutorial] Simple MySQL Pod** (2) design and when prompted click **Clone** (3).
+
+![Configure the ConfigMap](./screenshots/2024-04-17_20-01.png)
 
 Label the pod with a unique key-value pair for easier filtering later. For example, _user:johndoe_. Use the same key-value pair fot labelling all the other resources. The tutorial uses _environment:tutorial_, do not use the same.
 
 
-#### Create and configure a ConfigMap
+### Create and configure a ConfigMap
 
 Click Kubernetes from the dock and select Config Map from the list. This will put the ConfigMap component on the canvas.  
 
@@ -74,7 +78,7 @@ Click the _ConfigMap_ component to load the configuration window.
 Make a note of the ConfigMap component _name_ and _key_ for use later.
 
 
-#### Create and configure a Secret
+### Create and configure a Secret
 
  Before you proceed, choose a password and convert it into base64 format. Use an online tool to do so. For this example the password is **strongpassword** and the base64 of it is **c3Ryb25ncGFzc3dvcmQ=**
 
@@ -96,7 +100,7 @@ Click on the _Secret_ component to load the configuration window.
 
     ![Configure the ConfigMap](./screenshots/2024-04-16_18-26.png)
 
-#### 3. **Using the ConfigMap and the Secret values in the Pod**
+### Configure the Pod to use the ConfigMap and Secret
 
 Click on the _Pod_ component to load its configuration window. We will set the Secret first and then the ConfigMap. 
 
@@ -120,11 +124,11 @@ Click on the _Pod_ component to load its configuration window. We will set the S
     ![Configure the ConfigMap](./screenshots/2024-04-16_01-00.png)
 
 
-#### Validate and Deploy the Design
+### Validate and Deploy the Design
 
 Click **Actions** and then Select **Validate** to ensure there are no errors. Then, select the **Deploy** tab on the same window and click **Deploy**.
 
-#### Verify the Secret and the ConfigMap
+### Verify the Secret and the ConfigMap
 
 Move to the Visualize tab.
 
@@ -148,10 +152,10 @@ Run the following MySQL command to verify that the database set as a ConfigMap w
 
 ![Configure the ConfigMap](./screenshots/2024-04-16_01-29.png)
 
-#### Deleting the resources
+### Deleting the resources
 
 To delete the resources, use the **Undeploy** option from the _Design_ view.
 
 
-### Conclusion
+## Conclusion
 Congratulations! You've successfully completed a tutorial on Kubernetes ConfigMaps and Secrets using the Meshery Playground. This hands-on experience should have equipped you with practical knowledge on managing configuration data and sensitive information in Kubernetes. Continue exploring more such scenarios in the Meshery Playground to enhance your skills.
