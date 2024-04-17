@@ -10,7 +10,6 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import DoneIcon from '@material-ui/icons/Done';
 import useStyles from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@material-ui/icons/Public';
@@ -28,6 +27,7 @@ import { store } from '../../store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
+import DryRunIcon from '@/assets/icons/DryRunIcon';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -171,8 +171,8 @@ function MesheryPatternCard_({
                 defaultActionClick={(e) => genericClickHandler(e, handleVerify)}
                 options={[
                   {
-                    label: 'Validate',
-                    icon: <DoneIcon className={classes.iconPatt} />,
+                    label: 'Dry Run',
+                    icon: <DryRunIcon className={classes.iconPatt} />,
                     onClick: (e) => genericClickHandler(e, handleVerify),
                     disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
                   },
