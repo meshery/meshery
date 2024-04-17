@@ -2,7 +2,7 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Hierarchical",
   "metdata": {
-    "description": "Hierarchical"
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
   },
   "model": {
     "name": "aws-prometheusservice-controller",
@@ -20,19 +20,7 @@
     {
       "allow": {
         "from": [
-          {
-            "kind": "Pod",
-            "model": "Kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [["type"], ["name"], ["namespace"]],
-              "description": "Within the AWS Controllers for Kubernetes (ACK) project, the `AdoptedResource` serves a specific purpose: integrating existing, non-ACK-managed AWS resources into your Kubernetes cluster. `AdoptedResource` bridges the gap between pre-existing AWS resources and your Kubernetes cluster, fostering a more unified management experience. \n\nThis relationship allows the `AdoptedResource` configuration to be inherited from existing Kubernetes Pods."
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "AdoptedResource",
+          {"kind": "AdoptedResource",
             "model": "aws-prometheusservice-controller",
             "patch": {
               "patchStrategy": "replace",
@@ -41,6 +29,17 @@
                 ["settings", "spec", "kubernetes", "metadata", "name"],
                 ["settings", "spec", "kubernetes", "metadata", "namespace"]
               ],
+              "description": "Within the AWS Controllers for Kubernetes (ACK) project, the `AdoptedResource` serves a specific purpose: integrating existing, non-ACK-managed AWS resources into your Kubernetes cluster. `AdoptedResource` bridges the gap between pre-existing AWS resources and your Kubernetes cluster, fostering a more unified management experience. \n\nThis relationship allows the `AdoptedResource` configuration to be inherited from existing Kubernetes Pods."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "Kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["type"], ["name"], ["namespace"]],
               "description": "Within the AWS Controllers for Kubernetes (ACK) project, the `AdoptedResource` serves a specific purpose: integrating existing, non-ACK-managed AWS resources into your Kubernetes cluster. `AdoptedResource` bridges the gap between pre-existing AWS resources and your Kubernetes cluster, fostering a more unified management experience. \n\nThis relationship allows the `AdoptedResource` configuration to be inherited from existing Kubernetes Pods."
             }
           }
