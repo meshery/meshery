@@ -209,12 +209,12 @@ const User = (props) => {
                     </MenuItem>
                     <MenuItem
                       onClick={handlePreference}
-                      disabled={
-                        !CAN(
-                          keys.VIEW_MESHERY_USER_PREFERENCES.action,
-                          keys.VIEW_MESHERY_USER_PREFERENCES.subject,
-                        )
-                      }
+                      // disabled={
+                      //   !CAN(
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                      //   )
+                      // }
                     >
                       Preferences
                     </MenuItem>
