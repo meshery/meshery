@@ -274,6 +274,7 @@ const styles = (theme) => ({
   },
 });
 
+// TODO: replace above makestyles with below styled components in code
 export const BulkActionWrapper = styled(`div`)({
   width: '100%',
   padding: '0.8rem',
