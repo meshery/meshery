@@ -38,7 +38,9 @@ import {
   getComponentsinFile,
   getUnit8ArrayDecodedFile,
   getUnit8ArrayForDesign,
+  modifyRJSFSchema,
 } from '../utils/utils';
+import { getMeshModels } from '../../api/meshmodel';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -80,7 +82,7 @@ import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
 import { importFormSchema, importFormUISchema } from '@layer5/sistent';
-import { publishFormSchema, publishFormUISchema } from '@layer5/sistent';
+import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -350,7 +352,7 @@ function MesheryPatterns({
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
-  const [publishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState({});
   const [infoModal, setInfoModal] = useState({
     open: false,
     ownerID: '',
@@ -592,6 +594,30 @@ function MesheryPatterns({
   useEffect(() => {
     fetchUserPrefs();
   }, [catalogVisibility]);
+
+  useEffect(() => {
+    async function fetchMeshModels() {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = models?.map((model) => model.displayName) || [];
+        modelNames.sort(); // Sort model names
+
+        // Modify the schema to include mesh models
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema, // Use publishSchema as the base schema
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
+
+        // Set the modified schema and UI schema
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      } catch (error) {
+        console.error('Error fetching mesh models:', error);
+      }
+    }
+
+    fetchMeshModels();
+  }, []);
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
@@ -1520,6 +1546,10 @@ function MesheryPatterns({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `${name} Design Uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
         fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
@@ -1784,8 +1814,8 @@ const PublishModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={publishFormSchema}
-        uiSchema={publishFormUISchema}
+        schema={publishCatalogItemSchema}
+        uiSchema={publishCatalogItemUiSchema}
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}

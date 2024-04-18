@@ -43,7 +43,8 @@ import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubs
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
 import Modal from './Modal';
-import { getUnit8ArrayDecodedFile } from '../utils/utils';
+import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
+import { getMeshModels } from '../../api/meshmodel';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -62,7 +63,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
-import { publishSchema, publishUiSchema } from '@layer5/sistent';
+import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
 import { importSchema, importUiSchema } from '@layer5/sistent';
 
 const styles = (theme) => ({
@@ -248,7 +249,7 @@ function MesheryFilters({
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema] = useState({});
-  const [publishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels] = useState([]);
   const [viewType, setViewType] = useState(
@@ -334,6 +335,30 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
+  useEffect(() => {
+    async function fetchMeshModels() {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = models?.map((model) => model.displayName) || [];
+        modelNames.sort(); // Sort model names
+
+        // Modify the schema to include mesh models
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema, // Use publishSchema as the base schema
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
+
+        // Set the modified schema and UI schema
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      } catch (error) {
+        console.error('Error fetching mesh models:', error);
+      }
+    }
+
+    fetchMeshModels();
+  }, []);
+
   useEffect(() => {
     dataFetch(
       '/api/provider/capabilities',
@@ -1193,6 +1218,10 @@ function MesheryFilters({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `${name} filter uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       },
       handleError(ACTION_TYPES.UPLOAD_FILTERS),
     );
@@ -1436,8 +1465,8 @@ const PublishModal = React.memo((props) => {
   return (
     <Modal
       open={true}
-      schema={publishSchema}
-      uiSchema={publishUiSchema}
+      schema={publishCatalogItemSchema}
+      uiSchema={publishCatalogItemUiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}

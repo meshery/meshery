@@ -269,16 +269,18 @@ function Modal(props) {
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
-            <CustomTextTooltip
-              backgroundColor="#3C494F"
-              placement="top"
-              interactive={true}
-              title={renderTooltipContent()}
-            >
-              <IconButton className={classes.infoIcon} color="primary">
-                <InfoOutlinedIcon />
-              </IconButton>
-            </CustomTextTooltip>
+            <div onClick={(e) => e.stopPropagation()}>
+              <CustomTextTooltip
+                backgroundColor="#3C494F"
+                placement="top"
+                interactive={true}
+                title={renderTooltipContent()}
+              >
+                <IconButton className={classes.infoIcon} color="primary">
+                  <InfoOutlinedIcon />
+                </IconButton>
+              </CustomTextTooltip>
+            </div>
           )}
         </DialogActions>
         {snackbar && (
