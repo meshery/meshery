@@ -56,6 +56,17 @@ ol {
   }
 }
 
+// Hide the span initially
+.social__link .footer-icons-text {
+  display: none;
+}
+
+/* Show the span when hovering over the link */
+.social__link:hover .footer-icons-text {
+  display: block;
+}
+
+
 .main-container {
   padding: 3.5rem 4.4rem;
   overflow: hidden;
@@ -66,7 +77,7 @@ ol {
     flex: 0 0 100%;
   }
   @media (max-width: 600px) {
-    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+    padding: 28px 20px;
   }
   & .breadcrumb {
     list-style: none;

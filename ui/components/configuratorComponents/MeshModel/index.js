@@ -26,6 +26,8 @@ import { useRouter } from 'next/router';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -171,19 +173,34 @@ export default function DesignConfigurator() {
           />
 
           <Tooltip title="Save Design as New File">
-            <IconButton aria-label="Save" color="primary" onClick={designSave}>
+            <IconButton
+              aria-label="Save"
+              color="primary"
+              onClick={designSave}
+              disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
+            >
               <SaveAsIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           {designId && (
             <>
               <Tooltip title="Update Design">
-                <IconButton aria-label="Update" color="primary" onClick={designUpdate}>
+                <IconButton
+                  aria-label="Update"
+                  color="primary"
+                  onClick={designUpdate}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                >
                   <SaveIcon style={iconMedium} />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete Design">
-                <IconButton aria-label="Delete" color="primary" onClick={designDelete}>
+                <IconButton
+                  aria-label="Delete"
+                  color="primary"
+                  onClick={designDelete}
+                  disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                >
                   <DeleteIcon style={iconMedium} />
                 </IconButton>
               </Tooltip>
