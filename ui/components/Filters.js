@@ -44,7 +44,7 @@ import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
 import Modal from './Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
-import { getMeshModels } from '../../api/meshmodel';
+import { getMeshModels } from '../api/meshmodel';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';

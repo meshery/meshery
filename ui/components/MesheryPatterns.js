@@ -34,7 +34,7 @@ import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { ctxUrl } from '../utils/multi-ctx';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign, modifyRJSFSchema } from '../utils/utils';
-import { getMeshModels } from '../../api/meshmodel';
+import { getMeshModels } from '../api/meshmodel';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
