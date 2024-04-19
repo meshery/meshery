@@ -20,7 +20,7 @@ import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
 import Modal from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
-import { EmptyState, TransferList, GenericModal } from '../General';
+import { EmptyState } from '../General';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {
@@ -38,6 +38,15 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import {
+  ModalBody,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalFooter,
+  Modal as SistentModal,
+  TransferList,
+} from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -384,15 +393,7 @@ const Environments = ({ organization, classes }) => {
   const handleAssignConnectionData = (updatedAssignedData) => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(updatedAssignedData);
-    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0 &&
-    (CAN(
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-    ) ||
-      CAN(
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-      ))
+    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0
       ? setDisableTranferButton(false)
       : setDisableTranferButton(true);
 
@@ -572,46 +573,58 @@ const Environments = ({ organization, classes }) => {
                 initialData={initialData}
               />
             )}
-          <GenericModal
-            open={assignConnectionModal}
-            handleClose={handleonAssignConnectionModalClose}
-            title={`${connectionAssignEnv.name} Resources`}
-            body={
-              <TransferList
-                name="Connections"
-                assignableData={connectionsData}
-                assignedData={handleAssignConnectionData}
-                originalAssignedData={environmentConnectionsData}
-                emptyStateIconLeft={
-                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                }
-                emtyStateMessageLeft="No connections available"
-                emptyStateIconRight={
-                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                }
-                emtyStateMessageRight="No connections assigned"
-                transferComponentType={TRANSFER_COMPONENT.CHIP}
-                assignablePage={handleAssignablePage}
-                assignedPage={handleAssignedPage}
-                originalLeftCount={connections?.total_count}
-                originalRightCount={environmentConnections?.total_count}
-                leftPermission={CAN(
-                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-                )}
-                rightPermission={CAN(
-                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                )}
-              />
-            }
-            action={handleAssignConnection}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign connections to environment"
-            maxWidth="md"
-          />
+          <UsesSistent>
+            <SistentModal
+              open={assignConnectionModal}
+              closeModal={handleonAssignConnectionModalClose}
+              title={`${connectionAssignEnv.name} Resources`}
+              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            >
+              <ModalBody>
+                <TransferList
+                  name="Connections"
+                  assignableData={connectionsData}
+                  assignedData={handleAssignConnectionData}
+                  originalAssignedData={environmentConnectionsData}
+                  emptyStateIconLeft={
+                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  }
+                  emtyStateMessageLeft="No connections available"
+                  emptyStateIconRight={
+                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  }
+                  emtyStateMessageRight="No connections assigned"
+                  transferComponentType={TRANSFER_COMPONENT.CHIP}
+                  assignablePage={handleAssignablePage}
+                  assignedPage={handleAssignedPage}
+                  originalLeftCount={connections?.total_count}
+                  originalRightCount={environmentConnections?.total_count}
+                  leftPermission={CAN(
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
+                  )}
+                  rightPermission={CAN(
+                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                  )}
+                />
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign connections to environment">
+                <ModalButtonSecondary
+                  style={{ marginRight: '16PX' }}
+                  onClick={handleonAssignConnectionModalClose}
+                >
+                  Cancel
+                </ModalButtonSecondary>
+                <ModalButtonPrimary
+                  onClick={handleAssignConnection}
+                  disabled={disableTranferButton}
+                >
+                  Save
+                </ModalButtonPrimary>
+              </ModalFooter>
+            </SistentModal>
+          </UsesSistent>
           <PromptComponent ref={modalRef} />
         </>
       ) : (
