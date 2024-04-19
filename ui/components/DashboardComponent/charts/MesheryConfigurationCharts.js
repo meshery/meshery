@@ -15,6 +15,8 @@ import {
 import { InfoOutlined } from '@material-ui/icons';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export default function MesheryConfigurationChart({ classes }) {
   // const { notify } = useNotification();
@@ -75,7 +77,12 @@ export default function MesheryConfigurationChart({ classes }) {
   const url = `https://docs.meshery.io/concepts/logical/designs`;
 
   return (
-    <Link href="/configuration/designs">
+    <Link
+      href="/configuration/designs"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
+      }}
+    >
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>

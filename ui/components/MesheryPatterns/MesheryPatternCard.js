@@ -223,7 +223,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   className={classes.testsButton}
-                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} // TODO: uncomment when key get seeded
+                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}> Clone </span>
@@ -236,6 +236,7 @@ function MesheryPatternCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, editInConfigurator)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   className={classes.testsButton}
                 >
                   <Edit style={{ fill: '#fff' }} className={classes.iconPatt} />
