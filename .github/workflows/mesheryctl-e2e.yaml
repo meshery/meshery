@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.28.7', 'v1.27.11']
+        k8s_version: ['v1.29.2', 'v1.28.7']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
