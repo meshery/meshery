@@ -502,7 +502,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			mesheryPattern = &models.MesheryPattern{
-				Name:        parsedBody.PatternData.Name,
+				Name:        parsedBody.Name,
 				PatternFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HelmChart),
@@ -567,6 +567,7 @@ func (h *Handler) handlePatternPOST(
 				}
 
 				mesheryPattern = &pfs[0]
+				mesheryPattern.Name = parsedBody.Name
 			} else {
 				// Fallback to generic HTTP import
 				pfs, err := genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager)
@@ -583,6 +584,7 @@ func (h *Handler) handlePatternPOST(
 					return
 				}
 				mesheryPattern = &pfs[0]
+				mesheryPattern.Name = parsedBody.Name
 			}
 		} else {
 
