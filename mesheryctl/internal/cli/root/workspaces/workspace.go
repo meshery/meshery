@@ -91,8 +91,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 		err = cmd.Usage()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
@@ -103,5 +102,10 @@ func init() {
 	CreateWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
 	CreateWorkspaceCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace")
 	CreateWorkspaceCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the workspace")
+
+	listWorkspaceCmd.MarkFlagRequired("orgId")
+	CreateWorkspaceCmd.MarkFlagRequired("orgId")
+	CreateWorkspaceCmd.MarkFlagRequired("name")
+	CreateWorkspaceCmd.MarkFlagRequired("description")
 	WorkSpaceCmd.AddCommand(availableSubcommands...)
 }

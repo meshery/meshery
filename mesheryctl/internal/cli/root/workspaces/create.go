@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -109,14 +108,17 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 			return err
 		}
 
-		_, err = utils.MakeRequest(req)
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
 
-		if strings.Contains(err.Error(), "201") {
-			utils.Log.Info("Workspace created successfully")
+		if resp.StatusCode == http.StatusCreated {
+			utils.Log.Info("Workspace ",nameFlag," created successfully")
 			return nil
 		}
 
-		utils.Log.Error(errors.New("Failed to create workspace"))
+		utils.Log.Info("Failed to create ",nameFlag, " workspace")
 		return nil
 	},
 }
