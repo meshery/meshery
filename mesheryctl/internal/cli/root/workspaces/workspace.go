@@ -103,9 +103,21 @@ func init() {
 	CreateWorkspaceCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace")
 	CreateWorkspaceCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the workspace")
 
-	listWorkspaceCmd.MarkFlagRequired("orgId")
-	CreateWorkspaceCmd.MarkFlagRequired("orgId")
-	CreateWorkspaceCmd.MarkFlagRequired("name")
-	CreateWorkspaceCmd.MarkFlagRequired("description")
+	err := listWorkspaceCmd.MarkFlagRequired("orgId")
+	if err != nil {
+		utils.Log.Info(err)
+	}
+	err = CreateWorkspaceCmd.MarkFlagRequired("orgId")
+	if err != nil {
+		utils.Log.Info(err)
+	}
+	err = CreateWorkspaceCmd.MarkFlagRequired("name")
+	if err != nil {
+		utils.Log.Info(err)
+	}
+	err = CreateWorkspaceCmd.MarkFlagRequired("description")
+	if err != nil {
+		utils.Log.Info(err)
+	}
 	WorkSpaceCmd.AddCommand(availableSubcommands...)
 }
