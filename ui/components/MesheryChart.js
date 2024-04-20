@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Grid, NoSsr, Typography } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData,
   makeChart,
@@ -22,7 +22,7 @@ import Paper from '@material-ui/core/Paper';
 import { ClickAwayListener, Fade, Popper } from '@material-ui/core';
 import classNames from 'classnames';
 
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   title: {
     textAlign: 'center',
     fontSize: theme.spacing(1.75),
@@ -61,7 +61,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-});
+}));
 
 function NonRecursiveConstructDisplayCells(data) {
   return Object.keys(data).map((el) => {
@@ -75,45 +75,42 @@ function NonRecursiveConstructDisplayCells(data) {
   });
 }
 
-class MesheryChart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.chartRef = null;
-    this.chart = null;
-    this.percentileRef = null;
-    this.state = {
-      socialExpand: false,
-      anchorEl: null,
-      socialMessage: '',
-    };
-  }
+function MesheryChart(props) {
+  const classes = useStyles();
+  const chartRef = useRef(null);
+  const chart = useRef(null);
+  const percentileRef = useRef(null);
+  const titleRef = useRef(null);
 
-  getSocialMessageForPerformanceTest(rps, percentile) {
+  const [socialExpand, setSocialExpand] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [socialMessage, setSocialMessage] = useState('');
+
+  const getSocialMessageForPerformanceTest = (rps, percentile) => {
     return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
-  }
+  };
 
-  handleSocialExpandClick(e, chartData) {
-    this.setState({ anchorEl: e.currentTarget });
-    this.setState({
-      socialMessage: this.getSocialMessageForPerformanceTest(
+  const handleSocialExpandClick = (e, chartData) => {
+    setAnchorEl(e.currentTarget);
+    setSocialMessage(
+      getSocialMessageForPerformanceTest(
         chartData.options.metadata.qps.display.value.split(' ')[1],
         chartData.percentiles[4].Value,
       ),
-    });
+    );
     e.stopPropagation();
-    this.setState((state) => ({ socialExpand: !state.socialExpand }));
-  }
+    setSocialExpand((prevState) => !prevState);
+  };
 
-  singleChart = (rawdata, data) => {
+  const singleChart = (rawdata, data) => {
     if (typeof data === 'undefined' || typeof data.StartTime === 'undefined') {
       return {};
     }
     return makeChart(fortioResultToJsChartData(rawdata, data));
   };
 
-  processChartData(chartData) {
-    const self = this;
-    if (self.chartRef && self.chartRef !== null) {
+  const processChartData = (chartData) => {
+    if (chartRef.current && chartRef.current !== null) {
       if (chartData && chartData.data && chartData.options) {
         const xAxes = [];
         const yAxes = [];
@@ -202,7 +199,7 @@ class MesheryChart extends React.Component {
           // title: {
           //   text: chartData.options.title.text.join('\n'),
           // },
-          bindto: self.chartRef,
+          bindto: chartRef.current,
           type: line(),
           data: {
             // x: 'x',
@@ -222,36 +219,36 @@ class MesheryChart extends React.Component {
           point: { r: 0, focus: { expand: { r: 5 } } },
           tooltip: { show: true },
         };
-        if (!self.props.hideTitle) {
-          if (this.props.data.length == 4) {
-            self.titleRef.innerText =
+        if (!props.hideTitle) {
+          if (props.data.length == 4) {
+            titleRef.current.innerText =
               chartData.options.title.text.slice(0, 2).join('\n') +
               '\n' +
               chartData.options.title.text[2].split('\n')[0];
             if (chartData.options.title.text[2])
-              self.percentileRef.innerText = chartData.options.title.text[2]
+              percentileRef.current.innerText = chartData.options.title.text[2]
                 .split('\n')[1]
                 .split('|')
                 .join('\n');
           } else {
-            self.titleRef.innerText = chartData.options.title.text.join('\n');
+            titleRef.current.innerText = chartData.options.title.text.join('\n');
           }
         }
 
-        self.chart = bb.generate(chartConfig);
+        chart.current = bb.generate(chartConfig);
       } else {
-        self.chart = bb.generate({
+        chart.current = bb.generate({
           type: line(),
           data: { columns: [] },
-          bindto: self.chartRef,
+          bindto: chartRef.current,
         });
       }
     }
-  }
+  };
 
-  processMultiChartData(chartData) {
+  const processMultiChartData = (chartData) => {
     // >= 3 datasets
-    const self = this;
+
     if (chartData && chartData.data && chartData.options) {
       const xAxes = [];
       const categories = [];
@@ -313,9 +310,9 @@ class MesheryChart extends React.Component {
         });
       }
 
-      if (self.chartRef && self.chartRef !== null) {
+      if (chartRef.current && chartRef.current !== null) {
         const chartConfig = {
-          bindto: self.chartRef,
+          bindto: chartRef.current,
           data: {
             columns: [...xAxes, ...yAxes],
             colors,
@@ -326,143 +323,121 @@ class MesheryChart extends React.Component {
           point: { r: 0, focus: { expand: { r: 5 } } },
           tooltip: { show: true },
         };
-        if (!self.props.hideTitle) {
-          self.titleRef = chartData.options.title.text;
+        if (!props.hideTitle) {
+          titleRef.current = chartData.options.title.text;
         }
-        self.chart = bb.generate(chartConfig);
+        chart.current = bb.generate(chartConfig);
       }
+    }
+  };
+
+  let chartData;
+
+  if (typeof props.data !== 'undefined') {
+    const results = props.data;
+    if (results.length === 2) {
+      chartData = makeOverlayChart(
+        fortioResultToJsChartData(props.rawdata, results[0]),
+        fortioResultToJsChartData(props.rawdata, results[1]),
+      );
+    } else if (results.length > 2) {
+      chartData = makeMultiChart(props.rawdata, results);
     }
   }
 
-  render() {
-    let chartData;
+  if (typeof chartData === 'undefined') {
+    const tmpData =
+      typeof props.data !== 'undefined' ? (props.data.length === 1 ? props.data[0] : {}) : {};
+    chartData = singleChart(props.rawdata, tmpData);
+  }
 
-    if (typeof this.props.data !== 'undefined') {
-      const results = this.props.data;
-      if (results.length === 2) {
-        chartData = makeOverlayChart(
-          fortioResultToJsChartData(this.props.rawdata, results[0]),
-          fortioResultToJsChartData(this.props.rawdata, results[1]),
-        );
-      } else if (results.length > 2) {
-        chartData = makeMultiChart(this.props.rawdata, results);
-      }
-    }
-    const self = this;
-    if (typeof chartData === 'undefined') {
-      const tmpData =
-        typeof this.props.data !== 'undefined'
-          ? this.props.data.length === 1
-            ? this.props.data[0]
-            : {}
-          : {};
-      chartData = this.singleChart(this.props.rawdata, tmpData);
-    }
-
-    const { classes } = this.props;
-
-    return (
-      <NoSsr>
-        <div className={classes.shareIcon}>
-          <IconButton
-            aria-label="Share"
-            className={classes.expand}
-            onClick={(e) => this.handleSocialExpandClick(e, chartData)}
-          >
-            <ReplyIcon className={classNames(classes.share, classes.iconColor)} />
-          </IconButton>
-        </div>
-        <Popper
-          open={this.state.socialExpand}
-          anchorEl={this.state.anchorEl}
-          transition
-          style={{ zIndex: '1301' }}
+  return (
+    <NoSsr>
+      <div className={classes.shareIcon}>
+        <IconButton
+          aria-label="Share"
+          className={classes.expand}
+          onClick={(e) => handleSocialExpandClick(e, chartData)}
         >
-          {({ TransitionProps }) => (
-            <ClickAwayListener onClickAway={() => this.setState({ socialExpand: false })}>
-              <Fade {...TransitionProps} timeout={350}>
-                <Paper className={classes.paper}>
-                  <TwitterShareButton
-                    className={classes.socialIcon}
-                    url={'https://meshery.io'}
-                    title={this.state.socialMessage}
-                    hashtags={['opensource']}
-                  >
-                    <TwitterIcon size={32} />
-                  </TwitterShareButton>
-                  <LinkedinShareButton
-                    className={classes.socialIcon}
-                    url={'https://meshery.io'}
-                    summary={this.state.socialMessage}
-                  >
-                    <LinkedinIcon size={32} />
-                  </LinkedinShareButton>
-                  <FacebookShareButton
-                    className={classes.socialIcon}
-                    url={'https://meshery.io'}
-                    quote={this.state.socialMessage}
-                    hashtag={'#opensource'}
-                  >
-                    <FacebookIcon size={32} />
-                  </FacebookShareButton>
-                </Paper>
-              </Fade>
-            </ClickAwayListener>
-          )}
-        </Popper>
-        <div>
+          <ReplyIcon className={classNames(classes.share, classes.iconColor)} />
+        </IconButton>
+      </div>
+      <Popper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
+        {({ TransitionProps }) => (
+          <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
+            <Fade {...TransitionProps} timeout={350}>
+              <Paper className={classes.paper}>
+                <TwitterShareButton
+                  className={classes.socialIcon}
+                  url={'https://meshery.io'}
+                  title={socialMessage}
+                  hashtags={['opensource']}
+                >
+                  <TwitterIcon size={32} />
+                </TwitterShareButton>
+                <LinkedinShareButton
+                  className={classes.socialIcon}
+                  url={'https://meshery.io'}
+                  summary={socialMessage}
+                >
+                  <LinkedinIcon size={32} />
+                </LinkedinShareButton>
+                <FacebookShareButton
+                  className={classes.socialIcon}
+                  url={'https://meshery.io'}
+                  quote={socialMessage}
+                  hashtag={'#opensource'}
+                >
+                  <FacebookIcon size={32} />
+                </FacebookShareButton>
+              </Paper>
+            </Fade>
+          </ClickAwayListener>
+        )}
+      </Popper>
+      <div>
+        <div ref={titleRef} className={classes.title} style={{ display: 'none' }} />
+        <Grid container spacing={1} style={{ margin: '1rem' }} justifyContent="center">
+          {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
+            return (
+              <Grid item xs={4} key={`nri-${i}`}>
+                {el}
+              </Grid>
+            );
+          })}
+        </Grid>
+        <div className={classes.chartWrapper}>
+          <div className={classes.chart} ref={chartRef}></div>
           <div
-            ref={(ch) => (this.titleRef = ch)}
-            className={classes.title}
-            style={{ display: 'none' }}
-          />
-          <Grid container spacing={1} style={{ margin: '1rem' }} justifyContent="center">
-            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
-              return (
-                <Grid item xs={4} key={`nri-${i}`}>
-                  {el}
-                </Grid>
-              );
-            })}
-          </Grid>
-          <div className={classes.chartWrapper}>
-            <div
-              className={classes.chart}
-              ref={(ch) => {
-                this.chartRef = ch;
-              }}
-            ></div>
-            <div
-              className={classes.percentiles}
-              ref={(ch) => {
-                this.percentileRef = ch;
-                if (this.props.data.length > 2) {
-                  self.processMultiChartData(chartData);
-                } else {
-                  self.processChartData(chartData);
-                }
-              }}
-            >
-              {this.props.data.length === 1 ? (
-                <div style={{ margin: '1rem' }}>
-                  <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
-                    Percentile Summary
-                  </Typography>
-                  <div>
-                    {NonRecursiveConstructDisplayCells(
-                      chartData?.options?.metadata?.percentiles?.display?.value || {},
-                    ).map((el, i) => {
-                      return <div key={`percentile-${i}`}>{el}</div>;
-                    })}
-                  </div>
+            className={classes.percentiles}
+            ref={(ch) => {
+              percentileRef.current = ch;
+              if (props.data.length > 2) {
+                processMultiChartData(chartData);
+              } else {
+                processChartData(chartData);
+              }
+            }}
+          >
+            {props.data.length === 1 ? (
+              <div style={{ margin: '1rem' }}>
+                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
+                  Percentile Summary
+                </Typography>
+                <div>
+                  {NonRecursiveConstructDisplayCells(
+                    chartData?.options?.metadata?.percentiles?.display?.value || {},
+                  ).map((el, i) => {
+                    return <div key={`percentile-${i}`}>{el}</div>;
+                  })}
                 </div>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
           </div>
         </div>
-      </NoSsr>
-    );
-  }
+      </div>
+    </NoSsr>
+  );
 }
 
-export default withStyles(styles)(MesheryChart);
+export default MesheryChart;

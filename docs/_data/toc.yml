@@ -104,7 +104,7 @@
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
     - title: ⚙️ Infrastructure Management ↆ
-      url: guides/infrastructure-management/infrastructure-management/overview
+      url: guides/infrastructure-management/overview
       children:
       - title: Managing Envoy Filters
         url: guides/infrastructure-management/filter-management
@@ -120,8 +120,8 @@
         url: guides/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
-      - title: Importing Applications
-        url: guides/configuration-management/importing-apps
+      - title: Importing Designs
+        url: guides/configuration-management/importing-designs
       - title: Working with design patterns
         url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center
@@ -164,6 +164,8 @@
       children:
       - title: Exploring Kubernetes Pods
         url: guides/tutorials/kubernetes-pods
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
@@ -260,6 +262,9 @@
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
+          grandchildren:
+          - title: Notification Center
+            url: project/contributing/contributing-ui-notification-center
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Models ↆ

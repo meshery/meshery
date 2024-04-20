@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "clickhouse",
-  "version": "5.3.2",
+  "version": "6.0.2",
   "displayName": "Clickhouse",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
