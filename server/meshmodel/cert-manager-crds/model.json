@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "cert-manager-crds",
-  "version": "1.10.1",
+  "version": "1.14.4",
   "displayName": "Cert Manager Crds",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

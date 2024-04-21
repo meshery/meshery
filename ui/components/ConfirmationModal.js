@@ -36,6 +36,8 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -383,10 +385,14 @@ function ConfirmationMsg(props) {
                     )}
                   </div>
                 }
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
               />
             )}
             <Tab
-              disabled={disabled}
+              disabled={
+                !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
+                (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
+              }
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 1)}
@@ -401,7 +407,10 @@ function ConfirmationMsg(props) {
               }
             />
             <Tab
-              disabled={disabled}
+              disabled={
+                !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
+                (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
+              }
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}

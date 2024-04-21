@@ -40,6 +40,8 @@ function intersection(a, b) {
  * @param {Element} props.emptyStateIconRight - Icon for empty state of list right.
  * @param {String} props.emtyStateMessageRight - Message for the empty state of the list right.
  * @param {String} props.transferComponentType - Type of the component transfer (There is two types: chip and other).
+ * @param {Boolean} props.leftPermission - Permission to move data from left to right.
+ * @param {Boolean} props.rightPermission - Permission to move data from right to left.
  */
 
 export default function TransferList({
@@ -56,6 +58,8 @@ export default function TransferList({
   assignedPage,
   originalLeftCount,
   originalRightCount,
+  leftPermission,
+  rightPermission,
 }) {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = useState([]);
@@ -253,7 +257,10 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleAllRight}
-            disabled={left?.length === 0 || left.length < leftCount}
+            disabled={
+              !rightPermission ||
+              (rightPermission && (left?.length === 0 || left.length < leftCount))
+            }
             aria-label="move all right"
           >
             <RightArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
@@ -269,7 +276,7 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
+            disabled={!rightPermission || (rightPermission && leftChecked.length === 0)}
             aria-label="move selected right"
           >
             <RightArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
@@ -279,7 +286,7 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
+            disabled={!leftPermission || (leftPermission && rightChecked.length === 0)}
             aria-label="move selected left"
           >
             <LeftArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />
@@ -289,7 +296,10 @@ export default function TransferList({
             size="small"
             color="primary"
             onClick={handleAllLeft}
-            disabled={right.length === 0 || right.length < rightCount}
+            disabled={
+              !leftPermission ||
+              (leftPermission && (right?.length === 0 || right.length < rightCount))
+            }
             aria-label="move all left"
           >
             <LeftArrowIcon primaryFill={Colors.keppelGreen} width={18} height={18} />

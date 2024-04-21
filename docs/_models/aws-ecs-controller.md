@@ -30,10 +30,6 @@ components:
   colorIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
-- name: field-export
-  colorIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/white/field-export-white.svg
-  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
