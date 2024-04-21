@@ -88,10 +88,18 @@ mesheryctl exp credential [subcommands]
 
 func init() {
 	CredentialCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
+	/* err := CredentialCmd.MarkFlagRequired("token")
+	if err != nil {
+		utils.Log.Info(err)
+	} */
 	createCredentialCmd.Flags().StringVarP(&user_id, "user-id", "u", "", "User ID")
+	/* err = createCredentialCmd.MarkFlagRequired("user-id")
+	if err != nil {
+		utils.Log.Info(err)
+	} */
 	createCredentialCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the credential")
 	createCredentialCmd.Flags().StringVarP(&credential_type, "type", "y", "", "Type of the credential")
 	createCredentialCmd.Flags().StringVarP(&secret, "secret", "s", "", "Secret of the credential")
-	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd, viewCredentialCmd, viewCredentialCmd}
+	availableSubcommands = []*cobra.Command{listCredentialCmd, createCredentialCmd, DeleteCredenetialCmd, viewCredentialCmd}
 	CredentialCmd.AddCommand(availableSubcommands...)
 }

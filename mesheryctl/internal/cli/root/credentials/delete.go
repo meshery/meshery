@@ -83,6 +83,6 @@ mesheryctl exp credential delete [credential_ID]
 			utils.Log.Info("Credential deleted successfully")
 			return nil
 		}
-		return errors.New(utils.CredentialsError("failed to delete credential", "delete"))
+		return utils.ErrBadRequest(fmt.Errorf("failed to delete credential: %s", resp.Status))
 	},
 }

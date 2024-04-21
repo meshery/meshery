@@ -29,14 +29,13 @@ func TestViewCredentialCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
-	
+
 	// Create a mock credential file
-    mockCredentialFile := filepath.Join(fixturesDir, "credential.json")
+	mockCredentialFile := filepath.Join(fixturesDir, "credential.json")
 	err := os.WriteFile(mockCredentialFile, []byte(`{"token": "mockToken"}`), 0644)
-    if err != nil {
-        t.Fatalf("Failed to create mock credential file: %v", err)
-    }
-	// Ensure the mock credential file is removed after the test
+	if err != nil {
+		t.Fatalf("Failed to create mock credential file: %v", err)
+	}
 	// Ensure the mock credential file is removed after the test
 	defer func() {
 		err := os.Remove(mockCredentialFile)
@@ -44,8 +43,8 @@ func TestViewCredentialCmd(t *testing.T) {
 			t.Errorf("Failed to remove mock credential file: %v", err)
 		}
 	}()
-    // Point to the mock credential file
-    os.Setenv("MESHERY_CREDENTIAL_FILE", mockCredentialFile)
+	// Point to the mock credential file
+	os.Setenv("MESHERY_CREDENTIAL_FILE", mockCredentialFile)
 
 	// Generate a UUID for credential ID
 	credentialID, err := uuid.NewV4()

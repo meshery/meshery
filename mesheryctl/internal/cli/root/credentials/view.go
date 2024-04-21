@@ -20,6 +20,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -110,23 +111,18 @@ mesheryctl exp credential view [credential_ID]
 		}
 
 		// To save the credential in a file as json format
-		credFile, err := os.Create(homedir + "/.meshery/credential.json")
-		if err != nil {
-			return err
-		}
-		defer credFile.Close()
-
+		credFilePath := filepath.Join(homedir, "credential.json")
 		credBytes, err := json.MarshalIndent(credentialResponse, "", "  ")
 		if err != nil {
 			return err
 		}
 
-		_, err = credFile.Write(credBytes)
+		err = os.WriteFile(credFilePath, credBytes, 0644)
 		if err != nil {
 			return err
 		}
 
-		utils.Log.Info("Credential saved to file: $/homedir/.meshery/credential.json")
+		utils.Log.Info("Credential saved as a file named 'credential.json' in the home directory")
 
 		return nil
 	},

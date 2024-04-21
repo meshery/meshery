@@ -94,6 +94,7 @@ const (
 	credentialListURL              = docsBaseURL + "reference/mesheryctl/exp/credential/list"
 	credentialCreateURL            = docsBaseURL + "reference/mesheryctl/exp/credential/create"
 	credentialDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/credential/delete"
+	credentialViewURL              = docsBaseURL + "reference/mesheryctl/exp/credential/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -150,6 +151,7 @@ const (
 	cmdCredentialList           cmdType = "credential list"
 	cmdCredentialCreate         cmdType = "credential create"
 	cmdCredentialDelete         cmdType = "credential delete"
+	cmdCredentialView           cmdType = "credential view"
 )
 
 const (
