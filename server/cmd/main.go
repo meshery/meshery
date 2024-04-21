@@ -50,6 +50,21 @@ const (
 	RelationshipsPath  = "../meshmodel/kubernetes/relationships"
 )
 
+type Env struct {
+	LogLevel            string `mapstructure:"LOG_LEVEL"`
+	Port                int    `mapstructure:"PORT"`
+	AdapterUrls         string `mapstructure:"ADAPTER_URLS"`
+	BUILD               string `mapstructure:"BUILD"`
+	CommitSha           string `mapstructure:"COMMITSHA"`
+	ReleaseChannel      string `mapstructure:"RELEASE_CHANNEL"`
+	Provider            string `mapstructure:"PROVIDER"`
+	RegisterStaticK8s   string `mapstructure:"REGISTER_STATIC_K8S"`
+	SkipDownloadContent string `mapstructure:"SKIP_DOWNLOAD_CONTENT"`
+	SkipCompGen         string `mapstructure:"SKIP_COMP_GEN"`
+	PlayGround          string `mapstructure:"PLAYGROUND"`
+	UserDataFolder      string `mapstructure:"USER_DATA_FOLDER"`
+}
+
 func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
@@ -58,12 +73,18 @@ func main() {
 	viper.AutomaticEnv()
 
 	// Meshery Server configuration
-	viper.SetConfigFile("./server-config.env")
+	viper.SetConfigFile("./server/cmd/.env")
 	viper.WatchConfig()
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		logrus.Errorf("error reading config %v", err)
+		logrus.Errorf("Can't find the file .env : %v", err)
+	}
+
+	env := Env{}
+	err = viper.Unmarshal(&env)
+	if err != nil {
+		logrus.Errorf("Environment can't be loaded: %v", err)
 	}
 
 	logLevel := viper.GetInt("LOG_LEVEL")
@@ -100,18 +121,8 @@ func main() {
 
 	viper.AutomaticEnv()
 
-	viper.SetDefault("PORT", 8080)
-	viper.SetDefault("ADAPTER_URLS", "")
-	viper.SetDefault("BUILD", version)
 	viper.SetDefault("OS", "meshery")
-	viper.SetDefault("COMMITSHA", commitsha)
-	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
-	viper.SetDefault("PROVIDER", "")
-	viper.SetDefault("REGISTER_STATIC_K8S", true)
-	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
-	viper.SetDefault("SKIP_COMP_GEN", false)
-	viper.SetDefault("PLAYGROUND", false)
 	store.Initialize()
 
 	log.Info("Local Provider capabilities are: ", version)
