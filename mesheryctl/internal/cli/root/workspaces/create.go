@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CreateWorkspaceCmd = &cobra.Command{
+var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new workspace",
 	Long:  `Create a new workspace by providing the name, description, and organization ID.`,
