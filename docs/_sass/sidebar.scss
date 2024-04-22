@@ -32,6 +32,13 @@
   }
 }
 
+@media (max-width: 37.5em) {
+  .left-container {
+    top: calc(var(--navbar-height) - 0);
+    height: 100vh;
+  }
+}
+
 .nav-toggle-btn--document {
   background-color: var(--color-grey-medium);
   border-radius: 0 5px 5px 0;
@@ -52,7 +59,7 @@
 
 .sidebar-container {
   overscroll-behavior: contain;
-  padding: .25rem min(2vh, 2vw);
+  padding: 0.25rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
@@ -135,8 +142,8 @@
         // }
         &-title a {
           font-weight: bold;
-          margin-bottom: .5rem;
-          
+          margin-bottom: 0.5rem;
+
           &:hover {
             font-weight: normal;
           }
@@ -147,7 +154,7 @@
         & a {
           color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
-          
+
           &:hover {
             color: var(--sidenav-hover) !important;
           }
@@ -184,21 +191,21 @@
         }
 
         & > ul {
-          padding-inline-start: .1rem;
+          padding-inline-start: 0.1rem;
           list-style: none;
           margin-bottom: 0;
 
           & > ul {
-            padding-inline-start: .1rem;
+            padding-inline-start: 0.1rem;
             list-style: none;
             margin-bottom: 0;
 
-            & > li  {
+            & > li {
               list-style: none;
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
-              padding-inline-start: .1rem;
+              padding-inline-start: 0.1rem;
               margin-bottom: 0;
             }
           }
@@ -208,15 +215,15 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            padding-inline-start: .1rem;
+            padding-inline-start: 0.1rem;
             margin-bottom: 0;
 
             & > li ul {
-              display: flex;  
+              display: flex;
               list-style: none !important;
               flex-direction: column;
-              gap: .25rem;
-              padding-inline-start: .1rem;
+              gap: 0.25rem;
+              padding-inline-start: 0.1rem;
             }
             // & ul > li {
             //   & ::before {
@@ -230,7 +237,6 @@
   }
 }
 .collapse {
-
   &:not(.show) {
     display: none;
   }
@@ -239,7 +245,7 @@
 .collapsing {
   height: 0;
   overflow: hidden;
-  transition: all .4s ease-out;
+  transition: all 0.4s ease-out;
 
   &.collapse-horizontal {
     width: 0;
