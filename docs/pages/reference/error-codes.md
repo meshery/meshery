@@ -18,7 +18,7 @@ div.error-heading {
 }
 p.error-details {
     margin-left: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1rem;
     text-wrap: wrap;
     width:85%
 }
