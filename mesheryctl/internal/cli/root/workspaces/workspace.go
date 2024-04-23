@@ -32,7 +32,7 @@ var (
 
 	maxRowsPerPage       = 25
 	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, CreateWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd}
 )
 
 var WorkSpaceCmd = &cobra.Command{
