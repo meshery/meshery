@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "couchbase-operator",
-  "version": "2.61.0",
+  "version": "2.62.0",
   "displayName": "Couchbase Operator",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
