@@ -99,23 +99,23 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 func init() {
 	listWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	CreateWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	CreateWorkspaceCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace")
-	CreateWorkspaceCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the workspace")
+	createWorkspaceCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
+	createWorkspaceCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace")
+	createWorkspaceCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the workspace")
 
 	err := listWorkspaceCmd.MarkFlagRequired("orgId")
 	if err != nil {
 		utils.Log.Info(err)
 	}
-	err = CreateWorkspaceCmd.MarkFlagRequired("orgId")
+	err = createWorkspaceCmd.MarkFlagRequired("orgId")
 	if err != nil {
 		utils.Log.Info(err)
 	}
-	err = CreateWorkspaceCmd.MarkFlagRequired("name")
+	err = createWorkspaceCmd.MarkFlagRequired("name")
 	if err != nil {
 		utils.Log.Info(err)
 	}
-	err = CreateWorkspaceCmd.MarkFlagRequired("description")
+	err = createWorkspaceCmd.MarkFlagRequired("description")
 	if err != nil {
 		utils.Log.Info(err)
 	}
