@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Exploring Kubernetes CronJobs
-abstract: Learn Kubernetes CronJobs with Meshery Playground
 permalink: guides/tutorials/exploring-kubernetes-cronjobs
 model: kubernetes
 kind: cronjobs
