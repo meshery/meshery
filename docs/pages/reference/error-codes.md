@@ -18,7 +18,7 @@ div.error-heading {
 }
 p.error-details {
     margin-left: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1rem;
     text-wrap: wrap;
     width:85%
 }
@@ -27,9 +27,10 @@ td {
 }
 .tbl-head-row{
   background-color:#F2F2F2;
+  text-align: left
 }
 .tbl-head-row .error-name-code{
-  display:flex;
+  /* display:flex; */
   justify-content:space-between;
   align-items:flex-end;
   height:5rem;
@@ -45,7 +46,6 @@ td {
 }
 
 .tbl-body-row .error-name-code{
-  display:flex;
   justify-content:flex-start;
 }
 
