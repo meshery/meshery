@@ -1467,8 +1467,8 @@ const PublishModal = React.memo((props) => {
   return (
     <Modal
       open={true}
-      schema={publishCatalogItemSchema}
-      uiSchema={publishCatalogItemUiSchema}
+      schema={publishFormSchema.rjsfSchema}
+      uiSchema={publishFormSchema.uiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}
