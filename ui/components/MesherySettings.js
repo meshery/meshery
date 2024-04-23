@@ -31,6 +31,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
+import DefaultError from './General/error-404';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
@@ -320,7 +321,7 @@ class MesherySettings extends React.Component {
     }
     return (
       <>
-        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) && (
+        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
           <div className={classes.wrapperClss}>
             <Paper square className={classes.wrapperClss}>
               <Tabs
@@ -459,6 +460,8 @@ class MesherySettings extends React.Component {
             {backToPlay}
             <PromptComponent ref={this.systemResetPromptRef} />
           </div>
+        ) : (
+          <DefaultError />
         )}
       </>
     );

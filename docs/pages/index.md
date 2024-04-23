@@ -135,6 +135,25 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">Hands-on Labs using Meshery Playground</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_tutorials = site.pages | where: "type","guides" %}
+        {% for item in sorted_tutorials %}
+        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
         </p>
       </summary>
@@ -379,9 +398,3 @@ list: exclude
 </div>
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
-
-<!-- <div style="text-align:center;padding:0;margin:0;">
-<img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
-<h1>Documentation</h1>
-</div> -->
-
