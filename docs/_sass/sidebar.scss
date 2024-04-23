@@ -32,6 +32,13 @@
   }
 }
 
+@media (max-width: 37.5em) {
+  .left-container {
+    top: calc(var(--navbar-height) - 0);
+    height: 100vh;
+  }
+}
+
 .nav-toggle-btn--document {
   background-color: var(--color-grey-medium);
   border-radius: 0 5px 5px 0;
