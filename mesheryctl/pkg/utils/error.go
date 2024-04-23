@@ -41,6 +41,7 @@ var (
 	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
+	ErrClearLineCode          = "mesheryctl-1120"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -533,4 +534,12 @@ func ErrGeneratingIcons(err error, path string) error {
 		[]string{"Model SVG data is missing", "Model name formatting issue"},
 		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
 	)
+}
+
+func ErrClearLine(err error) error {
+	return errors.New(ErrClearLineCode, errors.Alert,
+		[]string{"Failed to clear terminal"},
+		[]string{err.Error()},
+		[]string{"Error occurred while attempting to clear the command-line interface"},
+		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
