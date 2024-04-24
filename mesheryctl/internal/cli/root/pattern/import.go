@@ -37,7 +37,15 @@ var (
 var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import pattern manifests",
-	Long:  `Import the pattern manifest into Meshery`,
+	Long:  `
+		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
+		remote URL or local file system path to the file. Source type and name must be provided.
+
+		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
+
+		If you are providing remote URL, it should be a direct URL to a downloadable file. 
+		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
+	`,
 	Example: `
 // Import pattern manifest
 mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
@@ -95,7 +103,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
 			"pattern_data": map[string]interface{}{
-				"name":         "name",
+				"name":         name,
 				"pattern_file": content,
 			},
 			"save": save,
@@ -170,6 +178,6 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
-	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the pattern file")
 }
