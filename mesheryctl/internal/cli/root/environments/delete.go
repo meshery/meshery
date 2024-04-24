@@ -27,7 +27,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var DeleteEnvironmentCmd = &cobra.Command{
+var deleteEnvironmentCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "delete a new environments",
 	Long:  `delete a new environments by providing the name and description of the environment`,
@@ -64,7 +64,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide the environment id")
+			return utils.ErrInvalidArgument(errors.New("Please provide a valid environment id as an argument with the command"))
 		}
 		return nil
 	},

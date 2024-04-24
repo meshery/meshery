@@ -38,8 +38,7 @@ var (
 
 	maxRowsPerPage    = 25
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-	// availableSubcommands = []*cobra.Command{listEnvironmentCmd, CreateEnvironmentCmd, DeleteEnvironmentCmd, viewEnvironmentCmd}
-	availableSubcommands = []*cobra.Command{listEnvironmentCmd, CreateEnvironmentCmd, DeleteEnvironmentCmd}
+	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
 )
 
 var EnvironmentCmd = &cobra.Command{
@@ -80,13 +79,13 @@ https://docs.layer5.io/cloud/spaces/environments/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New(utils.EnvironmentSubError("Please provide a orgID", "environment"))
+			return utils.ErrInvalidArgument(errors.New("Please provide a subcommand with the command"))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp environment --help' to display usage guide.'\n", args[0]), "environment"))
+			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp environment --help' to display usage guide.'\n", args[0]), "environment")))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -102,11 +101,11 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 func init() {
 	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	// viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	// viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	CreateEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	CreateEnvironmentCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the environment")
-	CreateEnvironmentCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the environment")
+	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	createEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
+	createEnvironmentCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the environment")
+	createEnvironmentCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the environment")
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 

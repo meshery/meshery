@@ -73,7 +73,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide the orgID of the environment")
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
 		}
 		return nil
 	},

@@ -70,7 +70,7 @@ mesheryctl exp environment view --orgID [orgId]
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide the orgID of the environment")
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
 		}
 		return nil
 	},
@@ -126,21 +126,21 @@ mesheryctl exp environment view --orgID [orgId]
 		outFormatFlag = strings.ToLower(outFormatFlag)
 
 		if outFormatFlag != "json" && outFormatFlag != "yaml" {
-			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
+			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 		// Get the home directory of the user to save the output file
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
-		if outFormatFlag == "yaml" {
+		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
 			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
-				return errors.Wrap(err, "failed to format output in YAML")
+				return utils.ErrMarshal(errors.Wrap(err, "failed to format output in YAML"))
 			}
 			if saveFlag {
 				utils.Log.Info("Saving output as YAML file")
 				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
 				if err != nil {
-					return errors.Wrap(err, "failed to save output as YAML file")
+					return utils.ErrMarshal(errors.Wrap(err, "failed to save output as YAML file"))
 				}
 				utils.Log.Info("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
 			} else {
@@ -151,18 +151,18 @@ mesheryctl exp environment view --orgID [orgId]
 				utils.Log.Info("Saving output as JSON file")
 				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
 				if err != nil {
-					return errors.Wrap(err, "failed to format output in JSON")
+					return utils.ErrMarshal(errors.Wrap(err, "failed to format output in JSON"))
 				}
 				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".json", output, 0666)
 				if err != nil {
-					return errors.Wrap(err, "failed to save output as JSON file")
+					return utils.ErrMarshal(errors.Wrap(err, "failed to save output as JSON file"))
 				}
 				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
 			return components.OutputJson(selectedEnvironment)
 		} else {
-			return errors.New("output-format choice invalid, use [json|yaml]")
+			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 
 		return nil

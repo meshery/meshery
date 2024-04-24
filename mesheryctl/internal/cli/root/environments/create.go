@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CreateEnvironmentCmd = &cobra.Command{
+var createEnvironmentCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environments",
 	Long:  `Create a new environments by providing the name and description of the environment`,
@@ -72,7 +72,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("please provide the orgID, name and description of the environment")
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId, --name, and --description flag"))
 		}
 		return nil
 	},
