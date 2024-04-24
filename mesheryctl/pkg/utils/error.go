@@ -40,6 +40,8 @@ var (
 	ErrAppendToSheetCode      = "mesheryctl-1116"
 	ErrBadRequestCode         = "mesheryctl-1117"
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
+	ErrGeneratingIconsCode    = "mesheryctl-1119"
+	ErrClearLineCode          = "mesheryctl-1120"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -157,6 +159,17 @@ func EnvironmentSubError(msg string, cmd string) string {
 		return formatError(msg, cmdEnvironmentView)
 	default:
 		return formatError(msg, cmdEnvironment)
+  }
+}
+
+func WorkspaceSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdWorkspaceList)
+	case "create":
+		return formatError(msg, cmdWorkspaceCreate)
+	default:
+		return formatError(msg, cmdWorkspace)
 	}
 }
 
@@ -166,6 +179,17 @@ func RegistryError(msg string, cmd string) string {
 		return formatError(msg, cmdRegistryPublish)
 	default:
 		return formatError(msg, cmdRegistry)
+	}
+}
+
+func RelationshipsError(msg string, cmd string) string {
+	switch cmd {
+	case "view":
+		return formatError(msg, cmdRelationshipView)
+	case "generate":
+		return formatError(msg, cmdRelationshipGenerateDocs)
+	default:
+		return formatError(msg, cmdRelationships)
 	}
 }
 
@@ -299,6 +323,18 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentListURL)
 	case cmdEnvironmentView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentViewURL)
+	case cmdWorkspace:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceUsageURL)
+	case cmdWorkspaceCreate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceCreateURL)
+	case cmdWorkspaceList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceListURL)
+	case cmdRelationshipView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipViewURL)
+	case cmdRelationships:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
+	case cmdRelationshipGenerateDocs:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -529,4 +565,23 @@ func ErrBadRequest(err error) error {
 
 func ErrInvalidArgument(err error) error {
 	return errors.New(ErrInvalidArgumentCode, errors.Alert, []string{"Invalid Argument"}, []string{err.Error()}, []string{"Invalid Argument"}, []string{"Please check the arguments passed"})
+}
+
+func ErrGeneratingIcons(err error, path string) error {
+	return errors.New(
+		ErrGeneratingIconsCode,
+		errors.Alert,
+		[]string{"error generating icons at ", path},
+		[]string{err.Error()},
+		[]string{"Model SVG data is missing", "Model name formatting issue"},
+		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
+	)
+}
+
+func ErrClearLine(err error) error {
+	return errors.New(ErrClearLineCode, errors.Alert,
+		[]string{"Failed to clear terminal"},
+		[]string{err.Error()},
+		[]string{"Error occurred while attempting to clear the command-line interface"},
+		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }

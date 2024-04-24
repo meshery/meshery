@@ -6,6 +6,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { clearResultsSelection } from '../../lib/store';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 const defaultToolbarSelectStyles = {
   iconButton: {},
   iconContainer: {
@@ -36,7 +38,11 @@ class CustomToolbarSelect extends React.Component {
     return (
       <div className={classes.iconContainer}>
         <Tooltip title={'Delete'}>
-          <IconButton className={classes.iconButton} onClick={this.handleClickDelete}>
+          <IconButton
+            className={classes.iconButton}
+            onClick={this.handleClickDelete}
+            disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+          >
             <DeleteIcon className={classes.icon} />
           </IconButton>
         </Tooltip>

@@ -1,4 +1,37 @@
 ---
 layout: default
 ---
+
+{{ page.subtitle }}
 {{ content }}
+
+<!-- components -->
+<div>
+    <section class="Compheading">
+        {% if page.components.size != 0  %}
+        <h3>
+            Components ( {{ page.components.size }} )
+        </h3>
+        {% endif %}
+    </section>
+
+    <section class="componentsSection">
+        {% for component in page.components %}
+        {% if component.name %}
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}"  data-logo-for-dark="/{{ component.whiteIcon }}"
+                data-logo-for-light="/{{ component.colorIcon }}" />
+            </div>
+            <p class="Compitems">{{ component.name }}</p>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </section>
+</div>
+<!-- components end -->
+
+{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+{% include_cached suggested-reading.html reading=site.models title=page.title type=page.type category=page.category
+url=page.url language="en" %}
+{% endif %}
