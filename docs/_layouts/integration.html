@@ -4,7 +4,8 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
-{% include models.html %}
+{% include_cached models.html %}
+{% include_cached meshery-registry.html %}
 <!-- components -->
 <div>
     <section class="Compheading">
