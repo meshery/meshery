@@ -19,9 +19,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/connections"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/relationships"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
