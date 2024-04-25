@@ -29,7 +29,6 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	_errors "github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
