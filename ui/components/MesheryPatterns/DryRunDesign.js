@@ -17,8 +17,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { useState } from 'react';
 import ErrorIcon from '../../assets/icons/ErrorIcon';
 import { NOTIFICATIONCOLORS } from '../../themes';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import { getComponentsinFile } from '@/utils/utils';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 
@@ -220,7 +218,6 @@ const DryRunComponent = (props) => {
   } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [deploymentErrors, setDeploymentErrors] = useState();
-  const { notify } = useNotification();
   const numberOfElements = getComponentsinFile(pattern_file);
 
   const useDryRunMutation =
@@ -241,13 +238,6 @@ const DryRunComponent = (props) => {
       const errors = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
       setDeploymentErrors(errors);
       handleErrors?.(errors);
-
-      dryRunResults.error &&
-        notify({
-          message: 'error while doing a dry run',
-          event_type: EVENT_TYPES.ERROR,
-          details: dryRunResults.error.toString(),
-        });
     } finally {
       setIsLoading(false);
     }

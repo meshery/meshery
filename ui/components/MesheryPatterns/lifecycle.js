@@ -129,11 +129,6 @@ export const UpdateDeploymentStepper = ({
         message: `"${name}" Design Deployed`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Deploy`,
-        event_type: EVENT_TYPES.ERROR,
-      });
   };
 
   const handleUndeploy = async (pattern_file, pattern_id, name) => {
@@ -149,11 +144,6 @@ export const UpdateDeploymentStepper = ({
       notify({
         message: `"${name}" Design Undeployed`,
         event_type: EVENT_TYPES.SUCCESS,
-      });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Undeploy`,
-        event_type: EVENT_TYPES.ERROR,
       });
   };
 
