@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -418,6 +419,11 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	}
 	logrus.Warnf("error while sending results: %s", bdr)
 	return "", nil
+}
+
+
+func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ *events.Event) error {
+	return nil
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
