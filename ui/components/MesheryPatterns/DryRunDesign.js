@@ -72,7 +72,7 @@ const styles = (theme) => {
 /**
  *
  * @param {Array} errors
- * @returns
+ * @returns {Number} Total count of errors in the deployment
  */
 function getTotalCountOfDeploymentErrors(errors) {
   if (!errors) {
@@ -82,6 +82,11 @@ function getTotalCountOfDeploymentErrors(errors) {
   return errors.reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
 }
 
+/**
+ * returns the field path string from the field path by removing the first two elements
+ * @param {String} fieldPath
+ * @returns {String} fieldPathString
+ */
 function getFieldPathString(fieldPath) {
   if (!fieldPath) {
     return '';
@@ -91,7 +96,7 @@ function getFieldPathString(fieldPath) {
 }
 
 // errors - [{type, fieldPath, message}]
-// 'component' refers to MeshModel Component
+// 'component' refers to Model Component
 // 'componentName' is assumed to be unique
 const ExpandableComponentErrors = withStyles(styles)(({ errors, componentName, classes }) => {
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(false);
