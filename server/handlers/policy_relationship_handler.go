@@ -91,6 +91,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	var evalResults interface{}
 
 	// evaluate specified relationship policies
+	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	verifiedEvaluationQueries := h.verifyEvaluationQueries(evaluationQueries)
 	if len(verifiedEvaluationQueries) == 0 {
 		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluationQueries": evaluationQueries}).Build()

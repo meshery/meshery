@@ -26,8 +26,10 @@ import (
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	_errors "github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
@@ -1223,6 +1225,37 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		return "", nil
 	}
 	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events.Event) error {
+	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+		logrus.Error("operation not available")
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
+
+	data, err := json.Marshal(event)
+	if err != nil {
+		return ErrMarshal(err, "meshery event")
+	}
+
+	logrus.Infof("attempting to publish event to remote provider, size: %d", len(data))
+	bf := bytes.NewBuffer(data)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+	fmt.Println("TEST RESPO", err, resp, event.Action)
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(_errors.Wrap(err, "unable to send event"))
+		return ErrPost(err, "event", resp.StatusCode)
+	}
+	return nil
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
