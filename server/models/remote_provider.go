@@ -1227,12 +1227,11 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) PublishEventToProvider(tokenString string, event *events.Event) error {
+func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events.Event) error {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
-
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
 
 	data, err := json.Marshal(event)
@@ -1250,6 +1249,7 @@ func (l *RemoteProvider) PublishEventToProvider(tokenString string, event *event
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	fmt.Println("TEST RESPO", err, resp, event.Action)
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(_errors.Wrap(err, "unable to send event"))

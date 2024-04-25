@@ -421,8 +421,7 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	return "", nil
 }
 
-
-func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ *events.Event) error {
+func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) error {
 	return nil
 }
 
