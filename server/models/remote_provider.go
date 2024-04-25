@@ -1249,7 +1249,6 @@ func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
-	fmt.Println("TEST RESPO", err, resp, event.Action)
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(_errors.Wrap(err, "unable to send event"))
