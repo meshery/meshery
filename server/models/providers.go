@@ -464,7 +464,7 @@ type Provider interface {
 
 	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error)
-	GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
+	GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)

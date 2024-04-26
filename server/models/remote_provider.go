@@ -3790,7 +3790,7 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 	return &res, nil
 }
 
-func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)

@@ -984,7 +984,7 @@ func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string, _ string, _ []string, _ []string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
-func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
