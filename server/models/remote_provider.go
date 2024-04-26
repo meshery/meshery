@@ -1409,7 +1409,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
-	logrus.Infof("attempting to fetch designs resource from cloud")
+	l.Log.Debug("attempting to fetch designs resource from cloud")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -1462,7 +1462,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 			return nil, ErrUnmarshal(err, "design Page Resource")
 		}
 
-		logrus.Infof("design resources successfully retrieved from remote provider")
+		l.Log.Debug("design resources successfully retrieved from remote provider")
 		return &pr, nil
 	}
 
