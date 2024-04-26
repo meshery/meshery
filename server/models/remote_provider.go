@@ -3830,6 +3830,44 @@ func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uui
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
+func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		l.Log.Error(ErrInvalidCapability("PersistConnection", l.ProviderName))
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		l.Log.Error(err)
+		statusCode := http.StatusInternalServerError
+		return nil, statusCode, ErrFetch(err, "connection", statusCode)
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+
+		bdr, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
+		}
+		var conn connections.Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			l.Log.Error(ErrUnmarshal(err, "connection"))
+			return nil, http.StatusInternalServerError, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
+		}
+		return &conn, resp.StatusCode, nil
+	}
+
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
+}
+
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
