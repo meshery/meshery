@@ -26,32 +26,73 @@
           >
         </li>
         {% endfor %}
-        
+
         <a href="https://play.meshery.io">
           <div class="nav-btn">Playground</div>
         </a>
         <!--Version Selector -->
-        <select
-          onchange="window.location=this.value"
-          class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
-          name="versioningSelection"
-          id="versioningSelection"
-        >
-          <!-- <option value="">Versions</option> -->
-          {% assign versions = site.data.versions %} {% for link in versions%} {%- capture linkUrl -%}/{{link.url}}/{%-
-          endcapture -%}
-          <!-- we get the version selected, and put it to the right option  -->
-          {%- if page.url==linkUrl or page.url contains linkUrl -%} {%- assign optionSelected = "selected" -%} {%-
-          assign linkUrlSelected = linkUrl -%} {%- else -%} {%- assign optionSelected = "" -%} {%- endif -%}
-          <option
-            {{optionSelected}}
-            value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+        <div class="custom-select">
+          <button
+            class="select-button"
+            role="combobox"
+            aria-labelledby="select button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="select-dropdown"
           >
-            <span>{{ link.version }}</span>
-          </option>
-          {% endfor %}
-        </select>
+            <span class="selected-value">Version</span>
+            <span class="arrow"></span>
+          </button>
+          <ul class="select-dropdown" role="listbox" id="select-dropdown">
+            {% assign versions = site.data.versions %}
+            {% for link in versions %}
+            {% capture linkUrl %}/{{ link.url }}/{% endcapture %}
+            {% if page.url == linkUrl or page.url contains linkUrl %}
+            {% assign optionSelected = "selected" %}
+            {% assign linkUrlSelected = linkUrl %}
+            {% else %}
+            {% assign optionSelected = "" %}
+            {% endif %}
+            <li role="option">
+              <a href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+                <span>{{ link.version }}</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+            const selectButton = document.querySelector(".select-button");
+            const selectDropdown = document.querySelector(".select-dropdown");
+
+            // Toggle dropdown when button is clicked
+            selectButton.addEventListener("click", function() {
+              const isExpanded = selectButton.getAttribute("aria-expanded") === "true";
+              selectButton.setAttribute("aria-expanded", !isExpanded);
+              selectDropdown.classList.toggle("expanded");
+            });
+
+            // Close dropdown when clicking outside of it
+            document.addEventListener("click", function(event) {
+              if (!selectButton.contains(event.target) && !selectDropdown.contains(event.target)) {
+                selectButton.setAttribute("aria-expanded", "false");
+                selectDropdown.classList.remove("expanded");
+              }
+            });
+
+            // Handle dropdown item click
+            selectDropdown.addEventListener("click", function(event) {
+              if (event.target.tagName === "LI") {
+                const url = event.target.dataset.url;
+                if (url) {
+                  window.location.href = url; // Redirect to the selected version
+                }
+              }
+            });
+          });
+        </script>
       </ul>
     </div>
 
