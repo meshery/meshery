@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -19,8 +18,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { setK8sContexts, updateProgress } from '../lib/store';
-import { errorHandlerGenerator, successHandlerGenerator } from './ConnectionWizard/helpers/common';
-import { pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
@@ -38,6 +35,8 @@ import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { ConnectionChip, CustomTooltip } from '@layer5/sistent';
+import useKubernetesHook from './hooks/useKubernetesHook';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -251,18 +250,9 @@ function ConfirmationMsg(props) {
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
   };
-
-  const handleKubernetesClick = (ctxID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, 'Kubernetes pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      ctxID,
-    );
+  const ping = useKubernetesHook();
+  const handleKubernetesClick = (ctx) => {
+    ping(ctx.name, ctx.server, ctx.connection_id);
   };
 
   const handleSubmit = () => {
@@ -499,10 +489,10 @@ function ConfirmationMsg(props) {
                                   onChange={() => setContextViewer(ctx.id)}
                                   color="primary"
                                 />
-                                <Chip
+                                <ConnectionChip
                                   label={ctx.name}
                                   className={classes.ctxChip}
-                                  onClick={() => handleKubernetesClick(ctx.connection_id)}
+                                  onClick={() => handleKubernetesClick(ctx)}
                                   icon={
                                     <img
                                       src="/static/img/kubernetes.svg"
@@ -625,8 +615,6 @@ export const SelectDeploymentTarget_ = ({
   const [searchedContexts, setSearchedContexts] = useState(k8scontext);
 
   const selectedContexts = selectedK8sContexts;
-
-  const { notify } = useNotification();
   const searchContexts = (search) => {
     if (search === '') {
       setSearchedContexts(k8scontext);
@@ -666,18 +654,9 @@ export const SelectDeploymentTarget_ = ({
       setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] });
     }
   };
-
-  const handleKubernetesClick = (ctxID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, 'Kubernetes pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      ctxID,
-    );
+  const ping = useKubernetesHook();
+  const handleKubernetesClick = (ctx) => {
+    ping(ctx.name, ctx.server, ctx.connection_id);
   };
 
   return k8scontext.length > 0 ? (
@@ -714,7 +693,7 @@ export const SelectDeploymentTarget_ = ({
       <div className={classes.contexts}>
         {searchedContexts.map((ctx) => (
           <div id={ctx.id} className={classes.chip} key={ctx.id}>
-            <Tooltip title={`Server: ${ctx.server}`}>
+            <CustomTooltip title={`Server: ${ctx.server}`} disableInteractive>
               <div
                 style={{
                   display: 'flex',
@@ -730,16 +709,16 @@ export const SelectDeploymentTarget_ = ({
                   onChange={() => setContextViewer(ctx.id)}
                   color="primary"
                 />
-                <Chip
+                <ConnectionChip
                   label={ctx.name}
                   className={classes.ctxChip}
-                  onClick={() => handleKubernetesClick(ctx.connection_id)}
+                  onClick={() => handleKubernetesClick(ctx)}
                   icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                   variant="outlined"
                   data-cy="chipContextName"
                 />
               </div>
-            </Tooltip>
+            </CustomTooltip>
           </div>
         ))}
       </div>

@@ -6,10 +6,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
 import classNames from 'classnames';
-
+import { TransferList as StyledTransferList } from '@layer5/sistent';
 import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState, GenericModal, TransferList } from '../General';
+import { EmptyState, GenericModal } from '../General';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
 import SearchBar from '../../../utils/custom-search';
@@ -41,6 +41,7 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -52,6 +53,7 @@ const Workspaces = ({ organization, classes }) => {
     open: false,
     schema: {},
   });
+
   const [page, setPage] = useState(0);
   const [pageSize /*setPageSize*/] = useState(10);
   const [sortOrder /*setSortOrder*/] = useState('');
@@ -692,74 +694,79 @@ const Workspaces = ({ organization, classes }) => {
                 initialData={initialData}
               />
             )}
-          <GenericModal
-            open={assignEnvironmentModal}
-            handleClose={handleAssignEnvironmentModalClose}
-            title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-            body={
-              <TransferList
-                name="Environments"
-                assignableData={environmentsData}
-                assignedData={handleAssignEnvironmentsData}
-                originalAssignedData={workspaceEnvironmentsData}
-                emptyStateIconLeft={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
+          {(CAN(
+            keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+            keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+          ) ||
+            CAN(
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+            )) && (
+            <GenericModal
+              open={assignEnvironmentModal}
+              handleClose={handleAssignEnvironmentModalClose}
+              title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+              body={
+                <UsesSistent>
+                  <StyledTransferList
+                    name="Environments"
+                    assignableData={environmentsData}
+                    assignedData={handleAssignEnvironmentsData}
+                    originalAssignedData={workspaceEnvironmentsData}
+                    emptyStateIconLeft={
+                      <EnvironmentIcon
+                        height="5rem"
+                        width="5rem"
+                        fill="#808080"
+                        secondaryFill="#979797"
+                      />
+                    }
+                    emtyStateMessageLeft="No environments available"
+                    emptyStateIconRight={
+                      <EnvironmentIcon
+                        height="5rem"
+                        width="5rem"
+                        fill="#808080"
+                        secondaryFill="#979797"
+                      />
+                    }
+                    emtyStateMessageRight="No environments assigned"
+                    assignablePage={handleAssignablePageEnvironment}
+                    assignedPage={handleAssignedPageEnvironment}
+                    originalLeftCount={environments?.total_count}
+                    originalRightCount={environmentsOfWorkspace?.total_count}
                   />
-                }
-                emtyStateMessageLeft="No environments available"
-                emptyStateIconRight={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
-                  />
-                }
-                emtyStateMessageRight="No environments assigned"
-                assignablePage={handleAssignablePageEnvironment}
-                assignedPage={handleAssignedPageEnvironment}
-                originalLeftCount={environments?.total_count}
-                originalRightCount={environmentsOfWorkspace?.total_count}
-                leftPermission={CAN(
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-                )}
-                rightPermission={CAN(
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-                )}
-              />
-            }
-            action={handleAssignEnvironments}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign environment to workspace"
-            maxWidth="md"
-          />
+                </UsesSistent>
+              }
+              action={handleAssignEnvironments}
+              buttonTitle="Save"
+              disabled={disableTranferButton}
+              leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              helpText="Assign environment to workspace"
+              maxWidth="md"
+            />
+          )}
           <GenericModal
             open={assignDesignModal}
             handleClose={handleAssignDesignModalClose}
             title={`Assign Designs to ${designAssignWorkspace.name}`}
             body={
-              <TransferList
-                name="Designs"
-                assignableData={designsData}
-                assignedData={handleAssignDesignsData}
-                originalAssignedData={workspaceDesignsData}
-                emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageLeft="No designs available"
-                emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageRight="No designs assigned"
-                assignablePage={handleAssignablePageDesign}
-                assignedPage={handleAssignedPageDesign}
-                originalLeftCount={designs?.total_count}
-                originalRightCount={designsOfWorkspace?.total_count}
-              />
+              <UsesSistent>
+                <StyledTransferList
+                  name="Designs"
+                  assignableData={designsData}
+                  assignedData={handleAssignDesignsData}
+                  originalAssignedData={workspaceDesignsData}
+                  emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
+                  emtyStateMessageLeft="No designs available"
+                  emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
+                  emtyStateMessageRight="No designs assigned"
+                  assignablePage={handleAssignablePageDesign}
+                  assignedPage={handleAssignedPageDesign}
+                  originalLeftCount={designs?.total_count}
+                  originalRightCount={designsOfWorkspace?.total_count}
+                />
+              </UsesSistent>
             }
             action={handleAssignDesigns}
             buttonTitle="Save"
