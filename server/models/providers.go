@@ -414,14 +414,14 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string, includeMetrics string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error)
-	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	GetMesheryPattern(req *http.Request, patternID string, includeMetrics string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
 	GetMesheryPatternResource(token, resourceID string) (*PatternResource, error)

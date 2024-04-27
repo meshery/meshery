@@ -590,7 +590,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -611,7 +611,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
@@ -626,7 +626,7 @@ func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *Meshe
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
