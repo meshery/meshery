@@ -947,7 +947,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?pagesize={pagesize}``` Default pagesize is 10.
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
-// 
+//
 // ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
 // responses:
 //

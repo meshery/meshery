@@ -96,14 +96,14 @@ type MesheryPattern struct {
 	Type          sql.NullString `json:"type"`
 	SourceContent []byte         `json:"source_content"`
 
-	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
-	CreatedAt       *time.Time `json:"created_at,omitempty"`
-	
-	ViewCount       int        `json:"view_count" db:"view_count"`
-	ShareCount      int        `json:"share_count" db:"share_count"`
-	DownloadCount   int        `json:"download_count" db:"download_count"`
-	CloneCount      int        `json:"clone_count" db:"clone_count"`
-	DeploymentCount int        `json:"deployment_count" db:"deployment_count"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	ViewCount       int `json:"view_count" db:"view_count"`
+	ShareCount      int `json:"share_count" db:"share_count"`
+	DownloadCount   int `json:"download_count" db:"download_count"`
+	CloneCount      int `json:"clone_count" db:"clone_count"`
+	DeploymentCount int `json:"deployment_count" db:"deployment_count"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
