@@ -159,7 +159,7 @@ func EnvironmentSubError(msg string, cmd string) string {
 		return formatError(msg, cmdEnvironmentView)
 	default:
 		return formatError(msg, cmdEnvironment)
-  }
+	}
 }
 
 func WorkspaceSubError(msg string, cmd string) string {

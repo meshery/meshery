@@ -1596,7 +1596,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string, includeMetrics string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1623,6 +1623,9 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	if updatedAfter != "" {
 		q.Set("updated_after", updatedAfter)
 	}
+
+	q.Set("metrics", includeMetrics)
+
 	if len(visibility) > 0 {
 		for _, v := range visibility {
 			logrus.Debugf("visibility: %s", v)
@@ -1659,7 +1662,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1671,6 +1674,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	q.Set("metrics", includeMetrics)
 	if page != "" {
 		q.Set("page", page)
 	}
@@ -1711,17 +1715,19 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, includeMetrics string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
-
 	logrus.Infof("attempting to fetch design from cloud for id: %s", patternID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
+	q := remoteProviderURL.Query()
+	q.Set("metrics", includeMetrics)
+
 	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
