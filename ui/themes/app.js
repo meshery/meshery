@@ -614,10 +614,18 @@ export const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    [theme.breakpoints.up('sm')]: {
+      width: `50%`,
+      overflowX: 'clip',
+    },
   },
   mainContent: {
     flex: 1,
     padding: '48px 36px 24px',
+    width: '100vw',
+    [theme.breakpoints.up('sm')]: {
+      width: `100%`,
+    },
   },
   footer: {
     backgroundColor: '#fff',

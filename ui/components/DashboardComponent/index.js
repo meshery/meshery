@@ -24,10 +24,17 @@ const styles = (theme) => ({
     height: 'auto',
   },
   tab: {
-    width: '20%',
+    width: '30%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
+    margin: '0 4px',
+    [theme.breakpoints.up('sm')]: {
+      width: '25%',
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '20%',
+    },
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -37,9 +44,13 @@ const styles = (theme) => ({
   },
   tabs: {
     width: '100%',
+    marginLeft: 0,
     // flexGrow: 1,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+    '& .MuiTabScrollButton-root': {
+      width: '32px',
     },
     '& .MuiTab-fullWidth': {
       // flexBasis: 'unset', // Remove flex-basis
@@ -169,7 +180,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 800 ? 'scrollable' : 'fullWidth'}
+            variant={width < 1024 ? 'scrollable' : 'fullWidth'}
             scrollButtons="on"
             textColor="primary"
             centered

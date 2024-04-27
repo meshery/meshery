@@ -104,7 +104,6 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   itemActiveItem: { fill: '#00B39F' },
   headerIcons: {
@@ -542,11 +541,7 @@ class Header extends React.PureComponent {
                     {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
                   </Typography>
                 </Grid>
-                <Grid
-                  item
-                  className={classes.userContainer}
-                  style={{ position: 'relative', right: '-27px' }}
-                >
+                <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
                     <ExtensionSandbox
