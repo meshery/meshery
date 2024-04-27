@@ -253,7 +253,7 @@ function MesheryFilters({
   const [importSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
-  const [meshModels] = useState([]);
+  const [meshModels, setMeshModels] = useState([]);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -353,6 +353,7 @@ function MesheryFilters({
 
         // Set the modified schema and UI schema
         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+        setMeshModels(models);
       } catch (error) {
         console.error('Error fetching mesh models:', error);
       }
@@ -1468,7 +1469,7 @@ const PublishModal = React.memo((props) => {
     <Modal
       open={true}
       schema={publishCatalogItemSchema}
-      uiSchema={publishCatalogItemUiSchema}
+      uiSchema={publishCatalogItemSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}

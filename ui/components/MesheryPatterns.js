@@ -33,8 +33,7 @@ import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { ctxUrl } from '../utils/multi-ctx';
-import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign, modifyRJSFSchema } from '../utils/utils';
-import { getMeshModels } from '../api/meshmodel';
+import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -54,6 +53,8 @@ import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import _ from 'lodash';
+import { getMeshModels } from '../api/meshmodel';
+import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import { ResponsiveDataTable } from '@layer5/sistent';
@@ -75,8 +76,7 @@ import { DeployStepper, UnDeployStepper } from './MesheryPatterns/lifecycle';
 import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DryRunDesign } from './MesheryPatterns/DryRunDesign';
-import { importFormSchema, importFormUISchema } from '@layer5/sistent';
-import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
+import { importDesignSchema, importDesignUiSchema } from '@layer5/sistent';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -341,8 +341,8 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [setExtensionPreferences] = useState({});
   const router = useRouter();
-  const [importSchema] = useState({});
-  const [meshModels] = useState([]);
+  const [setImportSchema] = useState({});
+  const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
@@ -579,30 +579,45 @@ function MesheryPatterns({
   }, [catalogVisibility]);
 
   useEffect(() => {
-    async function fetchMeshModels() {
-      try {
-        const { models } = await getMeshModels();
-        const modelNames = models?.map((model) => model.displayName) || [];
-        modelNames.sort(); // Sort model names
+    dataFetch(
+      '/api/schema/resource/design',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
+    dataFetch(
+      '/api/schema/resource/publish',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          modelNames.sort();
 
-        // Modify the schema to include mesh models
-        const modifiedSchema = modifyRJSFSchema(
-          publishCatalogItemSchema, // Use publishSchema as the base schema
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            'properties.compatibility.items.enum',
+            modelNames,
+          );
 
-        // Set the modified schema and UI schema
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-      } catch (error) {
-        console.error('Error fetching mesh models:', error);
-      }
-    }
-
-    fetchMeshModels();
-  }, []);
-
-  useEffect(() => {
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models);
+        } catch (err) {
+          console.error(err);
+          handleError(ACTION_TYPES.SCHEMA_FETCH);
+          setPublishSchema(result);
+        }
+      },
+    );
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -1702,7 +1717,7 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importSchema}
+              importFormSchema={importDesignSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1738,8 +1753,8 @@ const ImportModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={importFormSchema}
-        uiSchema={importFormUISchema}
+        schema={importDesignSchema}
+        uiSchema={importDesignUiSchema}
         handleClose={handleClose}
         handleSubmit={handleImportDesign}
         title="Import Design"
@@ -1758,14 +1773,14 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { handleClose, handleSubmit, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <>
       <Modal
         open={true}
-        schema={publishCatalogItemSchema}
-        uiSchema={publishCatalogItemUiSchema}
+        schema={publishFormSchema.rjsfSchema}
+        uiSchema={publishFormSchema.uiSchema}
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
