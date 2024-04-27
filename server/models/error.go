@@ -105,7 +105,7 @@ const (
 	ErrPrometheusScanCode                 = "meshery-server-1310"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
-	ErrDoRequestCode                      = ""
+	ErrDoRequestCode                      = "meshery-server-1321"
 )
 
 var (
