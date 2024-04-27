@@ -47,7 +47,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		if err != nil {
 			return nil, ErrTokenRefresh(err)
 		}
-		logrus.Info("token refresh successful")
+		l.Log.Info("token refresh successful")
 		resp, err := l.doRequestHelper(req, newToken)
 		if err != nil {
 			return nil, ErrDoRequest(err, req.Method, req.URL.String())

@@ -183,7 +183,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
-	fmt.Println("CONNECTION ID : ", connectionID)
+	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
@@ -198,7 +198,6 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
-	fmt.Println(apiKeyOrBasicAuth, "GRAFANA KEY", cred.Secret)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
 		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
