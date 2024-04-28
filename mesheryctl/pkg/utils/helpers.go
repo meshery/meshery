@@ -90,12 +90,20 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
-	credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
+	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
+  credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
 	credentialListURL              = docsBaseURL + "reference/mesheryctl/exp/credential/list"
 	credentialCreateURL            = docsBaseURL + "reference/mesheryctl/exp/credential/create"
 	credentialDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/credential/delete"
 	credentialViewURL              = docsBaseURL + "reference/mesheryctl/exp/credential/view"
-
+  
 	// Meshery Server Location
 	EndpointProtocol = "http"
 )
@@ -147,7 +155,15 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
-	cmdCredential               cmdType = "credential"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdEnvironment              cmdType = "environment"
+	cmdEnvironmentCreate        cmdType = "environment create"
+	cmdEnvironmentDelete        cmdType = "environment delete"
+	cmdEnvironmentList          cmdType = "environment list"
+	cmdEnvironmentView          cmdType = "environment view"
+  cmdCredential               cmdType = "credential"
 	cmdCredentialList           cmdType = "credential list"
 	cmdCredentialCreate         cmdType = "credential create"
 	cmdCredentialDelete         cmdType = "credential delete"
@@ -568,7 +584,8 @@ func ClearLine() {
 	clearCmd.Stdout = os.Stdout
 	err := clearCmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		Log.Error(ErrClearLine(err))
+		return
 	}
 }
 

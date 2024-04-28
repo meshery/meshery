@@ -129,11 +129,6 @@ export const UpdateDeploymentStepper = ({
         message: `"${name}" Design Deployed`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Deploy`,
-        event_type: EVENT_TYPES.ERROR,
-      });
   };
 
   const handleUndeploy = async (pattern_file, pattern_id, name) => {
@@ -150,11 +145,6 @@ export const UpdateDeploymentStepper = ({
         message: `"${name}" Design Undeployed`,
         event_type: EVENT_TYPES.SUCCESS,
       });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Undeploy`,
-        event_type: EVENT_TYPES.ERROR,
-      });
   };
 
   const actionFunction = () => {
@@ -166,11 +156,9 @@ export const UpdateDeploymentStepper = ({
     command[action]?.(pattern_file, pattern_id, name);
     handleClose?.();
     handleComplete?.();
-    // designMachineRef.current.send(command[action]);
   };
 
   const handleNext = () => {
-    console.log('deployStepper', deployStepper, deployStepper.canGoForward);
     if (deployStepper.canGoForward) {
       deployStepper.handleNext();
     } else {
