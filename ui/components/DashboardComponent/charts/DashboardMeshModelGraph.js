@@ -18,6 +18,8 @@ import {
   useGetMeshModelsQuery,
   useGetRelationshipsQuery,
 } from '@/rtk-query/meshModel';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 function MeshModelContructs({ classes }) {
   const params = {
@@ -65,7 +67,14 @@ function MeshModelContructs({ classes }) {
   const url = `https://docs.meshery.io/concepts/logical/registry`;
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models">
+    <Link
+      href="/settings?settingsCategory=Registry&tab=Models"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>

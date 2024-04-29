@@ -24,6 +24,7 @@ import (
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -50,7 +51,7 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	userID := uuid.FromStringOrNil(user.ID)
-
+	token, _ := r.Context().Value(models.TokenCtxKey).(string)
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
@@ -87,9 +88,9 @@ func (h *Handler) PatternFileHandler(
 
 	isDel := r.Method == http.MethodDelete
 	isDryRun := r.URL.Query().Get("dryRun") == "true"
-	action := "Deploy"
+	action := "deploy"
 	if isDel {
-		action = "Undeploy"
+		action = "undeploy"
 	}
 
 	patternFile, err := core.NewPatternFile(patternFileByte)
@@ -97,7 +98,7 @@ func (h *Handler) PatternFileHandler(
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {
-		action = "Dry Run"
+		action = "verify"
 		description = fmt.Sprintf("%s design '%s'", action, patternFile.Name)
 	}
 
@@ -117,7 +118,7 @@ func (h *Handler) PatternFileHandler(
 		r.URL.Query().Get("verify") == "true",
 		isDryRun,
 		r.URL.Query().Get("skipCRD") == "true",
-		false,
+		viper.GetBool("DEBUG"),
 		h.registryManager,
 		h.config.EventBroadcaster,
 		h.log,
@@ -147,7 +148,13 @@ func (h *Handler) PatternFileHandler(
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go func() {
+		h.config.EventBroadcaster.Publish(userID, event)
+		err = provider.PublishEventToProvider(token, *event)
+		if err != nil {
+			h.log.Warn(ErrPersistEventToRemoteProvider(err))
+		}
+	}()
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
@@ -171,7 +178,7 @@ func _processPattern(
 	prefObj *models.Preference,
 	userID string,
 	isDelete bool,
-	verify bool,
+	validate bool,
 	dryRun bool,
 	skipCrdAndOperator bool,
 	skipPrintLogs bool,
@@ -245,12 +252,12 @@ func _processPattern(
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
 			// subsequent stages depend on.
-			// We are skipping the `Validation` part in case of dryRun
-			Add(stages.Validator(sip, sap, dryRun))
+			// We are skipping the `Validation` based on "verify" query paramerter
+			Add(stages.Validator(sip, sap, validate))
 		if dryRun {
 			chain.Add(stages.DryRun(sip, sap))
 		}
-		if !verify && !dryRun {
+		if !dryRun {
 			chain.
 				Add(stages.Provision(sip, sap)).
 				Add(stages.Persist(sip, sap))
@@ -356,9 +363,9 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
 	for name, svc := range p.Services {
-		if svc.Type == "CustomResourceDefinition.K8s" {
+		if svc.Type == "CustomResourceDefinition" {
 			for _, svc := range p.Services {
-				if svc.Type != "CustomResourceDefinition.K8s" {
+				if svc.Type != "CustomResourceDefinition" {
 					svc.DependsOn = append(svc.DependsOn, name)
 				}
 			}

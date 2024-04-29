@@ -60,7 +60,7 @@ func formatValue(path string, val map[string]interface{}) error {
 	return nil
 }
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -83,7 +83,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
 			//Validate component definition
-			if !skipValidation {
+			if validate {
 				if err := validateWorkload(svc.Settings, wc); err != nil {
 					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
 					return

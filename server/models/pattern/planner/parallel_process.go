@@ -83,7 +83,7 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn) {
 func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn) {
 	defer wg.Done()
 
-	logrus.Debug("started with:", v.Name)
+	logrus.Debug("started with:", v.Name, v.DepCount)
 
 	if v.DepCount == 0 {
 		ok := fn(v.Name, v.Data.Data)
@@ -123,6 +123,9 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			// proceed to execute current node's function
 			// and upon completion send the appropriate signal
 			// to the dependent nodes
+
+			// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
+			// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
 			if depSuccessCount == v.DepCount {
 				logrus.Debug("Now deps 0 hence:", v.Name)
 				ok := fn(v.Name, v.Data.Data)

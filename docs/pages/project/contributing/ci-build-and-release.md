@@ -175,7 +175,7 @@ As a special case, the meshery repository contains an additional artifact produc
 
 ### Releasing `mesheryctl` to GitHub
 
-Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/layer5io/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
+Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/meshery/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
 - Darwin - i386, x86_64
 - Linux - i386, x86_64

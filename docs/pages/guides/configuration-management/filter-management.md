@@ -26,20 +26,20 @@ Meshery offers powerful features that simplify the management of Envoy WASM filt
 
 As of Meshery v0.7, the management of Envoy WASM filters includes:
 
-### Meshery Server Integration
+**Meshery Server Integration**
 
 - ✅ New WASM Filter Component: A new component is available in the Design Configurator to simplify filter management.
 - ✅ Improved Component Icon: Enhancements have been made to provide a more user-friendly experience.
 - ✅ Relationship Patch Policy: A new policy has been introduced to streamline the relationship between components.
 
-### Meshery CLI Command Line
+**Meshery CLI**
 
 - ✅ Import Filters: Use `mesheryctl filter import [URL | filepath]` to effortlessly import filters.
 - ✅ Delete Filters: Remove unwanted filters with `mesheryctl filter delete [filter-name | ID]`.
 - ✅ View Filters: Gain insights into your filters using `mesheryctl filter view [filter-name | ID]`.
 - ✅ List and Search Filters: Easily navigate filters with `mesheryctl filter list [filter-name | ID]`.
 
-### MeshMap Integration
+**MeshMap Integration**
 
 - ✅ Apply WASM Filters: Hierarchically apply filters to your Envoy configurations.
 - ✅ Deploy/Undeploy Filters: Streamline the deployment and removal of filters with custom configurations.
@@ -47,14 +47,14 @@ As of Meshery v0.7, the management of Envoy WASM filters includes:
 
 <img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/1e9c2e71-1b3e-a132-4766-8cefdc9861d2.png" width="50px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" />
 
-### Meshery UI Enhancements
+**Meshery UI Enhancements**
 
 - ✅ Import Filters: Import filters directly via URL or filesystem.
 - ✅ Improved Browsing: Browse, search, and view filters in both grid view and table view.
 - ✅ Streamlined Lists: Easily list and search filters in grid view or table view.
 - ✅ Download Filters: Download filters effortlessly from the UI.
 
-### Remote Provider and Meshery Catalog Integration
+**Remote Provider and Meshery Catalog Integration**
 
 - ✅ Permanent Storage and Artifact Dispersal: Ensure your filters are securely stored and widely accessible.
 - ✅ Catalog Features: Import, clone, download, publish, and unpublish filters within the Meshery Catalog.
@@ -65,22 +65,22 @@ As of Meshery v0.7, the management of Envoy WASM filters includes:
 
 In addition to Envoy WASM filter management, we've also introduced new performance management features:
 
-### Meshery Server
+**Meshery Server**
 
 - ✅ Performance Profiles: Tailor your performance profiles to match your specific needs.
 - ✅ SSL Certificate Support: Benefit from SSL certificate support for Fortio in the server.
 - ✅ Performance Analysis Comparison: Compare performance with and without filters.
 - ✅ GetNighthawk and Cloud Native Performance Releases: Access the latest releases of GetNighthawk and Cloud Native Performance.
 
-### Meshery CLI
+**Meshery CLI**
 
 - ✅ Performance Profile Flags: Specify additional load generator flags with performance profiles.
 
-### Meshery UI
+**Meshery UI**
 
 - ✅ Performance Profile Flags: Customize load generator flags directly in the UI.
 
-### Cloud Native Performance Project
+**Service Performance Project**
 
 - ✅ Define Performance Profiles: Clearly define your performance profiles.
 - ✅ Dashboard Integration: Display test results on the dashboard.
