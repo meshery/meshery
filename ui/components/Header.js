@@ -43,6 +43,8 @@ import { OutlinedSettingsIcon } from '@layer5/sistent';
 import { CHARCOAL } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -304,6 +306,12 @@ function K8sContextMenu({
         <IconButton
           aria-label="contexts"
           className="k8s-icon-button"
+          disabled={
+            !CAN(
+              keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
+              keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
+            )
+          }
           onClick={(e) => {
             e.preventDefault();
             setShowFullContextMenu((prev) => !prev);
@@ -492,16 +500,8 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      capabilityregistryObj,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } =
+      this.props;
     const loaderType = 'circular';
     return (
       <NoSsr>
@@ -552,7 +552,6 @@ class Header extends React.PureComponent {
                     <ExtensionSandbox
                       type="collaborator"
                       Extension={(url) => RemoteComponent({ url, loaderType })}
-                      capabilitiesRegistry={capabilityregistryObj}
                     />
                   )}
                   <div className={classes.userSpan} style={{ position: 'relative' }}>
@@ -588,6 +587,7 @@ class Header extends React.PureComponent {
                             : {}
                         }
                         color="inherit"
+                        disabled={!CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject)}
                       >
                         <OutlinedSettingsIcon
                           // fill={WHITE}

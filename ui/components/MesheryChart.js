@@ -193,24 +193,14 @@ function MesheryChart(props) {
         }
 
         const chartConfig = {
-          // oninit: function(args){
-          //   console.log(JSON.stringify(args));
-          // },
-          // title: {
-          //   text: chartData.options.title.text.join('\n'),
-          // },
           bindto: chartRef.current,
           type: line(),
           data: {
-            // x: 'x',
             xs: xAxisTracker,
-            // xFormat: self.bbTimeFormat,
             columns: [...xAxes, ...yAxes],
             colors: { ...colors, 'Cumulative %': 'rgb(71,126,150)' },
             axes,
             types,
-            // groups,
-            // type: 'area',
           },
           axis,
 

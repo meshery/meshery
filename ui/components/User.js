@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -22,6 +22,8 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { styled } from '@mui/material/styles';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -46,7 +48,7 @@ function exportToJsonFile(jsonData, filename) {
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
-  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
@@ -104,8 +106,8 @@ const User = (props) => {
     });
   }
 
-  if (!capabilitiesLoaded && capabilitiesRegistry) {
-    setCapabilitiesLoaded(true); // to prevent re-compute
+  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    capabilitiesLoadedRef.current = true;
     setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
   }
 
@@ -160,7 +162,6 @@ const User = (props) => {
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
   const open = Boolean(anchorEl);
-
   return (
     <div>
       <NoSsr>
@@ -199,9 +200,24 @@ const User = (props) => {
               <Paper className={classes.popover}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
-                    {account && account.length ? <>{renderAccountExtension(account)}</> : null}
-                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
-                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    {account && account.length ? renderAccountExtension(account) : null}
+                    <MenuItem
+                      disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                      onClick={handleGetToken}
+                    >
+                      Get Token
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handlePreference}
+                      // disabled={
+                      //   !CAN(
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                      //   )
+                      // }
+                    >
+                      Preferences
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>

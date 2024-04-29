@@ -19,19 +19,19 @@ jobs:
           script: |
             cd meshery/install/playground; ./playground-cleanup.sh
 
-  reboot:
-    name: Reboot Metal servers
-    needs: reset 
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest 
-    steps:
-        - name: Download and install Equinix Metal CLI
-          run: |
-            curl -L https://github.com/equinix/metal-cli/releases/latest/download/metal-linux-amd64 -o metal
-            chmod +x metal
-            sudo mv metal /usr/local/bin/metal
-        - name: Reboot both servers
-          env:
-            METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
-          run: |
-            METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 
+# reboot:
+#   name: Reboot Metal servers
+#   needs: reset 
+#   if: github.repository == 'meshery/meshery'
+#   runs-on: ubuntu-latest 
+#   steps:
+#       - name: Download and install Equinix Metal CLI
+#         run: |
+#           curl -L https://github.com/equinix/metal-cli/releases/latest/download/metal-linux-amd64 -o metal
+#           chmod +x metal
+#           sudo mv metal /usr/local/bin/metal
+#       - name: Reboot both servers
+#         env:
+#           METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
+#         run: |
+#           METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 

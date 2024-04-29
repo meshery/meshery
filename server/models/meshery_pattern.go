@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"database/sql"
+
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
@@ -97,6 +98,12 @@ type MesheryPattern struct {
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	ViewCount       int `json:"view_count" db:"view_count"`
+	ShareCount      int `json:"share_count" db:"share_count"`
+	DownloadCount   int `json:"download_count" db:"download_count"`
+	CloneCount      int `json:"clone_count" db:"clone_count"`
+	DeploymentCount int `json:"deployment_count" db:"deployment_count"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body

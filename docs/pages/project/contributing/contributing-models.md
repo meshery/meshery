@@ -67,7 +67,7 @@ The schema represents the skeletal structure of a construct and provides a logic
 .
 .
 
-</pre></details> See <a href="https://github.com/meshery/schema">github.com/meshery/schemas</a> for more details.' %}
+</pre></details> See <a href="https://github.com/meshery/schemas">github.com/meshery/schemas</a> for more details.' %}
 
 #### Definition
 
