@@ -36,8 +36,8 @@ var (
 	outFormatFlag string
 	saveFlag      bool
 
-	maxRowsPerPage    = 25
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	maxRowsPerPage       = 25
+	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
 )
 
