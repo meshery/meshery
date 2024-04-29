@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"time"
 
@@ -264,30 +265,17 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 // the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	totalComps := 0
-	version := "1.0.0"
+	var version string
 	defer func() {
 		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 			totalComps: totalComps,
 			version:    version,
 		})
 	}()
-	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
-	if err != nil {
-		err = ErrGenerateModel(err, model.Model)
-		return err
-	}
-	modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
-	if err != nil {
-		return ErrGenerateModel(err, model.Model)
-	}
-	isModelPublished, _ := modelDef.Metadata["published"].(bool)
-	if err != nil {
-		return ErrGenerateModel(err, model.Model)
-	}
 
 	path, err := url.Parse(model.SourceURL)
 	if err != nil {
-		err = ErrGenerateModel(err, modelDef.Name)
+		err = ErrGenerateModel(err, model.Model)
 		utils.Log.Error(err)
 		return nil
 	}
@@ -297,11 +285,12 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	}
 	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
 	if err != nil {
-		err = ErrGenerateModel(err, modelDef.Name)
+		err = ErrGenerateModel(err, model.Model)
 		utils.Log.Error(err)
 		return nil
 	}
 
+	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
 	//Initialize walker
 	gitWalker := walker.NewGit()
 	if isModelPublished {
@@ -320,7 +309,17 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
-
+				version = componentDef.Model.Model.Version
+				modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+				if err != nil {
+					err = ErrGenerateModel(err, model.Model)
+					return err
+				}
+				_, err = writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
+				if err != nil {
+					return ErrGenerateModel(err, model.Model)
+				}
+				
 				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
