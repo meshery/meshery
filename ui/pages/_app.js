@@ -410,6 +410,7 @@ class MesheryApp extends App {
       let org = JSON.parse(currentOrg);
       await this.loadAbility(org.id, reFetchKeys);
       this.setOrganization(org);
+      await this.loadWorkspace(org.id);
     }
 
     dataFetch(
@@ -428,24 +429,51 @@ class MesheryApp extends App {
             organizationToSet = result.organizations[0];
             reFetchKeys = true;
             await this.loadAbility(organizationToSet.id, reFetchKeys);
+            await this.loadWorkspace(organizationToSet.id);
             this.setOrganization(organizationToSet);
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
           await this.loadAbility(organizationToSet.id, reFetchKeys);
+          await this.loadWorkspace(organizationToSet.id);
           this.setOrganization(organizationToSet);
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
   };
-
+  loadWorkspace = async (orgId) => {
+    const currentWorkspace = sessionStorage.getItem('currentWorkspace');
+    if (currentWorkspace && currentWorkspace !== 'undefined') {
+      let workspace = JSON.parse(currentWorkspace);
+      this.setWorkspace(workspace);
+    } else {
+      dataFetch(
+        `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        async (result) => {
+          this.setWorkspace(result.workspaces[0]);
+        },
+        (err) => console.log('There was an error fetching workspaces:', err),
+      );
+    }
+  };
   setOrganization = (org) => {
     const { store } = this.props;
     store.dispatch({
       type: actionTypes.SET_ORGANIZATION,
       organization: org,
+    });
+  };
+  setWorkspace = (workspace) => {
+    const { store } = this.props;
+    store.dispatch({
+      type: actionTypes.SET_WORKSPACE,
+      workspace: workspace,
     });
   };
 

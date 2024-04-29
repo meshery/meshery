@@ -45,6 +45,7 @@ import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomT
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import OrganizationSwitcher from './OrganizationSwitcher';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -541,6 +542,7 @@ class Header extends React.PureComponent {
                     {title}
                     {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
                   </Typography>
+                  <OrganizationSwitcher />
                 </Grid>
                 <Grid
                   item
