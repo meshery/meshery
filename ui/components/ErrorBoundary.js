@@ -10,6 +10,10 @@ const ErrorBoundary = ({ children }) => {
       setHasError(true);
       setError(error);
     };
+    window.addEventListener('error', handleErrors);
+    return () => {
+      window.removeEventListener('error', handleErrors);
+    };
   }, []);
 
   const resetErrorBoundary = () => {
@@ -33,3 +37,4 @@ const ErrorBoundary = ({ children }) => {
 };
 
 export default ErrorBoundary;
+
