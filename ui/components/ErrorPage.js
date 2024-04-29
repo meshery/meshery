@@ -50,6 +50,10 @@ const customMessages = [
   'Yikes. Things are a mesh here.',
 ];
 
+/**
+ * CustomErrorMessage component is used to display a custom error message when a page is not found.
+ * @returns {JSX.Element} JSX.Element
+ */
 function CustomErrorMessage() {
   const classes = styles();
   const [customMessage, setCustomMessage] = useState(customMessages[0]);

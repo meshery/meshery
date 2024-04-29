@@ -14,7 +14,6 @@
 }
 
 .content-table {
-  max-height: calc(100vh - (calc(var(--navbar-height) + 30rem)));
   height: fit-content;
   padding: 1rem 1.25rem;
   transition: all 0.5s ease-in-out;

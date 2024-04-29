@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "kubearmor",
-  "version": "v1.3.3",
+  "version": "v1.3.5",
   "displayName": "KubeArmor",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

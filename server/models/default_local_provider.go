@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -420,6 +421,10 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	return "", nil
 }
 
+func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) error {
+	return nil
+}
+
 // PublishMetrics - publishes metrics to the provider backend asyncronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
@@ -585,7 +590,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -606,7 +611,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
@@ -621,7 +626,7 @@ func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *Meshe
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }

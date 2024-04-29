@@ -235,7 +235,7 @@ error: dep-check
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Runs meshkit error utility to update error codes for meshery server only.
-server-error-util:
+error-util:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.

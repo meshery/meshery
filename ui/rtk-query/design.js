@@ -51,10 +51,10 @@ const designs = api
           verify = false,
           dryRun = false,
         }) => ({
-          url: `${ctxUrl('pattern/undeploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
+          url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
             dryRun ? '&dryRun=true' : ''
           }`,
-          method: 'POST',
+          method: 'DELETE',
           body: {
             pattern_file,
             pattern_id,
