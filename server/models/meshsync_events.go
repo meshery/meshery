@@ -261,8 +261,8 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	var data map[string]interface{}
 	metadata := make(map[string]interface{})
 
-	result := mh.dbHandler.Model(v1beta1.ComponentDefinitionDB{}).Select("metadata").
-		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&data)
+	result := mh.dbHandler.Model(v1beta1.ComponentDefinition{}).Select("component").
+		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
