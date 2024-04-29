@@ -4,8 +4,6 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
-{% include_cached models.html %}
-{% include_cached meshery-registry.html %}
 <!-- components -->
 <div>
     <section class="Compheading">
@@ -31,6 +29,8 @@ layout: default
     </section>
 </div>
 <!-- components end -->
+{% include_cached models.html %}
+{% include_cached meshery-registry.html %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% include_cached suggested-reading.html reading=site.models title=page.title type=page.type category=page.category
