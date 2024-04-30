@@ -26,10 +26,10 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	sortOnCol = urlValues.Get("sort")
 	status = urlValues.Get("status")
 
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset = (page - 1) * limit
+	offset = page * limit
 
 	if sortOnCol == "" {
 		sortOnCol = "updated_at"
