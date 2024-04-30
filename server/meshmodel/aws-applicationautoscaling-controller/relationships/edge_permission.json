@@ -1,39 +1,23 @@
 {
-
   "apiVersion": "core.meshery.io/v1alpha1",
-
   "kind": "Edge",
-
   "metadata": {
-
     "description": ""
-
   },
-
   "model": {
-
     "name": "aws-applicationautoscaling-controller",
-
     "version": "1.0.13",
-
     "displayName": "AWS Applilcation Autoscaling ",
-
     "category": {
-
       "name": "Provisioning",
-
       "metadata": null
-
     },
 
     "metadata": {}
-
   },
-
   "subType": "Permission",
-
   "rego_query": "edge_binding_relationship",
-
+  
   "selectors": {
 
     "allow": {
@@ -41,31 +25,22 @@
       "from": [
 
         {
-
           "kind": "AdoptedResource",
-
           "model": "aws-applicationautoscaling-controller",
-
           "match": {
 
             "self": [],
 
             "domainIAMRoleName": []
-
           }
-
         }
-
       ],
 
       "to": [
 
         {
-
           "kind": "Role",
-
           "model": "aws-iam-controller ",
-
           "match": {
 
             "self": [],
@@ -73,13 +48,9 @@
             "properties.spec.properties.path": []
 
           }
-
         }
-
       ]
-
     }
-
   }
 
 }
