@@ -2,7 +2,7 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
-    "description": ""
+    "description": "AWS Application Auto Scaling allows you to automatically adjust the capacity of your AWS resources, such as EC2 instances, DynamoDB tables, and ECS services, in response to demand or defined schedules. When integrating AWS Application Auto Scaling with IAM roles, you empower your scalable resources to interact with other AWS services securely and efficiently.for example -Autoscaling of kind AdoptedResource needs  an edge premission to roll out instances"
   },
   "model": {
     "name": "aws-applicationautoscaling-controller",
