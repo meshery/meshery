@@ -131,11 +131,12 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 
 	var relationships []v1alpha2.RelationshipDefinition
 	for _, entity := range registeredRelationships {
-		relationship, err := utils.Cast[v1alpha2.RelationshipDefinition](entity)
+		relationship, err := utils.Cast[*v1alpha2.RelationshipDefinition](entity)
+		
 		if err != nil {
 			return
 		}
-		relationships = append(relationships, relationship)
+		relationships = append(relationships, *relationship)
 	}
 
 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {

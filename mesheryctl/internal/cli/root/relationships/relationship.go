@@ -20,7 +20,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/manifoldco/promptui"
 
 	"github.com/pkg/errors"
@@ -97,15 +99,18 @@ func init() {
 }
 
 // selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []v1alpha1.RelationshipDefinition) v1alpha1.RelationshipDefinition {
-	relationshipArray := []v1alpha1.RelationshipDefinition{}
+func selectRelationshipPrompt(relationship []entity.Entity) *v1alpha2.RelationshipDefinition {
+	relationshipArray := []v1alpha2.RelationshipDefinition{}
 	relationshipNames := []string{}
-
-	relationshipArray = append(relationshipArray, relationship...)
-
-	for _, relationship := range relationshipArray {
+	
+	for _, rel := range relationship {
+		_rel, err := mutils.Cast[*v1alpha2.RelationshipDefinition](rel)
+		if err != nil {
+			continue
+		}
+		
 		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", relationship.Kind, relationship.EvaluationQuery, relationship.SubType)
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, _rel.EvaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
@@ -120,6 +125,6 @@ func selectRelationshipPrompt(relationship []v1alpha1.RelationshipDefinition) v1
 			continue
 		}
 
-		return relationshipArray[i]
+		return &relationshipArray[i]
 	}
 }
