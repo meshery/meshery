@@ -16,11 +16,12 @@ import { SelectDeploymentTarget } from '../ConfirmationModal';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import { DryRunDesign } from './DryRunDesign';
-import { selectSelectedK8sClusters, updateProgress } from 'lib/store';
+import { selectK8sContexts, selectSelectedK8sClusters, updateProgress } from 'lib/store';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import { useSelector } from 'react-redux';
+import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
 
 const SelectTargetStep = () => {
   return (
@@ -83,7 +84,19 @@ export const UpdateDeploymentStepper = ({
   const [bypassDryRun, setBypassDryRun] = useState(false);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
+  const k8sContext = useSelector(selectK8sContexts);
   const selectedK8sContexts = useSelector(selectSelectedK8sClusters);
+
+  const selectedDeployableK8scontexts = useFilterK8sContexts(
+    k8sContext,
+    ({ context, operatorState }) => {
+      const isSelected =
+        selectedK8sContexts?.includes(context.id) || selectedK8sContexts?.includes('all');
+      return isSelected && operatorState !== 'DISABLED';
+    },
+  );
+
+  console.log('SelectedDeployableK8s', selectedDeployableK8scontexts);
 
   const { notify } = useNotification();
 
@@ -120,7 +133,7 @@ export const UpdateDeploymentStepper = ({
     const result = await deployPatternMutation({
       pattern_file,
       pattern_id,
-      selectedK8sContexts,
+      selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
 
     updateProgress({ showProgress: false });
@@ -136,7 +149,7 @@ export const UpdateDeploymentStepper = ({
     const result = await undeployPatternMutation({
       pattern_file,
       pattern_id,
-      selectedK8sContexts,
+      selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
 
     updateProgress({ showProgress: false });
@@ -170,7 +183,7 @@ export const UpdateDeploymentStepper = ({
     // transition map indicating if the next step (key) can be transitioned to
     // start from 1 because 0 is the first step
     const CanTransition = {
-      1: () => selectedK8sContexts?.length > 0,
+      1: () => selectedDeployableK8scontexts?.length > 0,
       2: () => dryRunErrors?.length === 0 || bypassDryRun,
     };
     return CanTransition[activeStep + 1](); // can transition to next step
