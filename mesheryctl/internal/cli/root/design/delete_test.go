@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -37,8 +37,8 @@ func TestDeleteCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Delete Pattern",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
+			Name:             "Delete Design",
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -73,9 +73,9 @@ func TestDeleteCmd(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetOutput(b)
-			PatternCmd.SetArgs(tt.Args)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(tt.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -102,7 +102,7 @@ func TestDeleteCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("Delete Pattern test Passed")
+		t.Log("Delete Design test Passed")
 	}
 	// stop mock server
 	utils.StopMockery(t)

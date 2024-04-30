@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"flag"
@@ -14,7 +14,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestPatternList(t *testing.T) {
+func TestDesignList(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -43,19 +43,19 @@ func TestPatternList(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Fetch Pattern List",
+			Name:             "Fetch Design List",
 			Args:             []string{"list"},
-			ExpectedResponse: "list.pattern.output.golden",
-			Fixture:          "list.pattern.api.response.golden",
+			ExpectedResponse: "list.design.output.golden",
+			Fixture:          "list.design.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
 		{
-			Name:             "Fetch Pattern List with Local provider",
+			Name:             "Fetch Design List with Local provider",
 			Args:             []string{"list"},
-			ExpectedResponse: "list.pattern.local.output.golden",
-			Fixture:          "list.pattern.local.api.response.golden",
+			ExpectedResponse: "list.design.local.output.golden",
+			Fixture:          "list.design.local.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "local.token.golden"),
 			ExpectError:      false,
@@ -84,9 +84,9 @@ func TestPatternList(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetArgs(tt.Args)
-			PatternCmd.SetOutput(rescueStdout)
-			err := PatternCmd.Execute()
+			DesignCmd.SetArgs(tt.Args)
+			DesignCmd.SetOutput(rescueStdout)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -117,7 +117,7 @@ func TestPatternList(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("List Pattern test Passed")
+		t.Log("List Design test Passed")
 	}
 
 	// stop mock server

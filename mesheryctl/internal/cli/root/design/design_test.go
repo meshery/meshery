@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestPatterncmd(t *testing.T) {
+func TestDesigncmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -37,20 +37,20 @@ func TestPatterncmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "pattern apply",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "pattern.golden")},
-			ExpectedResponse: "pattern.apply.output.golden",
+			Name:             "design apply",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "design.golden")},
+			ExpectedResponse: "design.apply.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "pattern.apply.save.golden",
+					Response:     "design.apply.save.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "pattern.apply.deploy.golden",
+					Response:     "design.apply.deploy.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -58,14 +58,14 @@ func TestPatterncmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "pattern delete",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "pattern.golden")},
-			ExpectedResponse: "pattern.delete.output.golden",
+			Name:             "design delete",
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "design.golden")},
+			ExpectedResponse: "design.delete.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "pattern.delete.golden",
+					Response:     "design.delete.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -74,14 +74,14 @@ func TestPatterncmd(t *testing.T) {
 		},
 		//commented to pass in workflow run
 		{
-			Name:             "pattern list",
+			Name:             "design list",
 			Args:             []string{"list"},
-			ExpectedResponse: "pattern.list.output.golden",
+			ExpectedResponse: "design.list.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "pattern.list.golden",
+					Response:     "design.list.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -89,14 +89,14 @@ func TestPatterncmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "pattern view",
+			Name:             "design view",
 			Args:             []string{"view", "kumatest"},
-			ExpectedResponse: "pattern.view.kuma.output.golden",
+			ExpectedResponse: "design.view.kuma.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?search=",
-					Response:     "pattern.view.kuma.golden",
+					Response:     "design.view.kuma.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -104,14 +104,14 @@ func TestPatterncmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "pattern view with ID",
+			Name:             "design view with ID",
 			Args:             []string{"view", "4o7fbc9b-708d-4396-84b8-e2ba37c1adcc"},
-			ExpectedResponse: "pattern.id.view.output.golden",
+			ExpectedResponse: "design.id.view.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "api/pattern/",
-					Response:     "pattern.id.view.golden",
+					Response:     "design.id.view.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -120,14 +120,14 @@ func TestPatterncmd(t *testing.T) {
 		},
 		//Invalid or Non-Existing
 		{
-			Name:             "pattern invalid view",
+			Name:             "design invalid view",
 			Args:             []string{"view", "kuma-test"},
-			ExpectedResponse: "pattern.view.invalid.output.golden",
+			ExpectedResponse: "design.view.invalid.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:   "GET",
 					URL:      testContext.BaseURL + "api/pattern",
-					Response: "pattern.view.invalid.golden",
+					Response: "design.view.invalid.golden",
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -150,9 +150,9 @@ func TestPatterncmd(t *testing.T) {
 
 			// setting up log to grab logs
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetOutput(b)
-			PatternCmd.SetArgs(test.Args)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(test.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if test.ExpectError {
@@ -181,5 +181,5 @@ func TestPatterncmd(t *testing.T) {
 		})
 	}
 	utils.StopMockery(t)
-	t.Log("Pattern tests Passed")
+	t.Log("Design tests Passed")
 }

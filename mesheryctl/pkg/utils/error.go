@@ -228,14 +228,29 @@ func FilterViewError(msg string) string {
 	return formatError(msg, cmdFilterView)
 }
 
-// PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
-func PatternError(msg string) string {
-	return formatError(msg, cmdPattern)
+// DesignError returns a formatted error message with a link to 'design' command usage page in addition to the error message
+func DesignError(msg string) string {
+	return formatError(msg, cmdDesign)
 }
 
-// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
-func PatternViewError(msg string) string {
-	return formatError(msg, cmdPatternView)
+// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+func DesignViewError(msg string) string {
+	return formatError(msg, cmdDesignView)
+}
+
+// DesignListError returns a formatted error message with a link to the 'design list' commad usage page in addition to the error message
+func DesignListError(msg string) string {
+	return formatError(msg, cmdDesignList)
+}
+
+// DesignDeleteError returns a formatted error message with a link to the 'design delete' commad usage page in addition to the error message
+func DesignDeleteError(msg string) string {
+	return formatError(msg, cmdDesignDelete)
+}
+
+// DesignApplyError returns a formatted error message with a link to the 'design apply' commad usage page in addition to the error message
+func DesignApplyError(msg string) string {
+	return formatError(msg, cmdDesignApply)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
@@ -271,10 +286,16 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterListURL)
 	case cmdFilterView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
-	case cmdPattern:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
-	case cmdPatternView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
+	case cmdDesign:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, designUsageURL)
+	case cmdDesignView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, designViewURL)
+	case cmdDesignApply:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, designApplyURL)
+	case cmdDesignList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, designListURL)
+	case cmdDesignDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, designDeleteURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
 	case cmdContextCreate:

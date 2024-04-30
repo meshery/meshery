@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bytes"
@@ -33,17 +33,17 @@ import (
 
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
-	Short: "Offboard pattern",
-	Long:  `Offboard pattern will trigger undeploy of pattern`,
+	Short: "Offboard design",
+	Long:  `Offboard design will trigger undeploy of design`,
 	Example: `
-// Offboard pattern by providing file path
-mesheryctl pattern offboard -f [filepath]
+// Offboard design by providing file path
+mesheryctl design offboard -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
-			errMsg := `Usage: mesheryctl pattern offboard -f [filepath]`
-			return ErrOffboardPattern(errors.New(errMsg))
+			errMsg := `Usage: mesheryctl design offboard -f [filepath]`
+			return ErrOffboardDesign(errors.New(errMsg))
 		}
 		return nil
 	},
@@ -72,9 +72,9 @@ mesheryctl pattern offboard -f [filepath]
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				utils.Log.Error(err)
-				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
+				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
-			utils.Log.Info("pattern ", args[0], " deleted successfully")
+			utils.Log.Info("design ", args[0], " deleted successfully")
 			return nil
 		}
 
@@ -150,7 +150,7 @@ mesheryctl pattern offboard -f [filepath]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("pattern successfully offboarded")
+			utils.Log.Info("design successfully offboarded")
 		}
 		utils.Log.Info(string(body))
 
@@ -159,5 +159,5 @@ mesheryctl pattern offboard -f [filepath]
 }
 
 func init() {
-	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }
