@@ -1,0 +1,58 @@
+{
+  "apiVersion": "vault.infra.doodle.com/v1beta1",
+  "kind": "Edge",
+  "metadata": {
+    "description": ""
+  "model": {
+    "name": "k8svault-controller",
+    "version": "0.1.2",
+    "displayName": "K8s Vault Controller",
+    "category": {
+      "name": "Security \u0026 Compliance",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+   "subType": "Mount",
+   "rego_query": "edge_binding_relationship",
+     "selectors": [{
+    "deny": {
+      "from": [],
+      "to": []
+    },
+
+     "allow": {
+        "from": [
+          {
+            "kind": "secret",
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                [ 
+                  ["Name"]
+                  ["Namespace" ] 
+                ]
+              ],
+            }
+          }
+        ],
+
+        "to": [
+          {
+            "kind": "VaultBinding",
+            "model": "k8svault-controller",
+            "match": {
+              "self": [
+                [
+                   [ "Spec.Secret.Name"]
+                   [ "Spec.Secret.Namespace"]
+                ]
+              ],
+            }
+          }
+        ]
+      }
+    }]
+  }
+    
+    
