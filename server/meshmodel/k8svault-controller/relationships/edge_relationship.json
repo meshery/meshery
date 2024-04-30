@@ -26,14 +26,15 @@
           {
             "kind": "secret",
             "model": "kubernetes",
-            "match": {
-              "self": [
-                [ 
-                  ["Name"]
-                  ["Namespace" ] 
+              "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name",
+                  "namespace"
                 ]
               ],
-            }
+           }
           }
         ],
 
@@ -41,14 +42,16 @@
           {
             "kind": "VaultBinding",
             "model": "k8svault-controller",
-            "match": {
-              "self": [
+             "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
-                   [ "Spec.Secret.Name"]
-                   [ "Spec.Secret.Namespace"]
+                  "Spec.Secret.Name",
+                  "Spec.Secret.Namespace"
                 ]
               ],
-            }
+             }  
+           
           }
         ]
       }
