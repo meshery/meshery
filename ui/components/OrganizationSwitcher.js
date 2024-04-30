@@ -13,7 +13,6 @@ import {
   Select,
   withStyles,
 } from '@material-ui/core';
-import theme from '@/themes/app';
 import { setKeys, setOrganization, setWorkspace } from '../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,6 +23,8 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
 import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlinedIcon';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
+import { useGetCurrentAbilities } from '@/rtk-query/ability';
+import theme from '@/themes/app';
 
 function OrgMenu(props) {
   const {
@@ -34,8 +35,9 @@ function OrgMenu(props) {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization, open } = props;
-
+  const [skip, setSkip] = React.useState(true);
   const { notify } = useNotification();
+  useGetCurrentAbilities(organization, props.setKeys, skip);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -49,13 +51,18 @@ function OrgMenu(props) {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
+    setSkip(false);
   };
 
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && (
         <div
-          style={{ width: open ? 'auto' : 0, overflow: 'hidden', transition: 'width 0.7s ease' }}
+          style={{
+            width: open ? 'auto' : 0,
+            overflow: open ? '' : 'hidden',
+            transition: 'width 0.7s ease',
+          }}
         >
           <FormControl component="fieldset">
             <FormGroup>
@@ -67,6 +74,7 @@ function OrgMenu(props) {
                       <Select
                         value={organization.id}
                         onChange={handleOrgSelect}
+                        style={{ color: theme.palette.secondary.contrastText }}
                         SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
                         MenuProps={{
                           anchorOrigin: {
@@ -137,7 +145,13 @@ function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
   return (
     <NoSsr>
       {!isWorkspacesError && workspace && (
-        <div style={{ display: open ? 'block' : 'none', transition: 'all 1s' }}>
+        <div
+          style={{
+            width: open ? 'auto' : 0,
+            overflow: open ? '' : 'hidden',
+            transition: 'all 1s',
+          }}
+        >
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
@@ -161,16 +175,9 @@ function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
                           getContentAnchorEl: null,
                         }}
                       >
-                        {workspacesData?.workspaces?.map((org) => (
-                          <MenuItem key={org.id} value={org.id}>
-                            <div>
-                              <WorkspaceOutlinedIcon
-                                width="24"
-                                height="24"
-                                secondaryFill={theme.palette.darkSlateGray}
-                              />
-                            </div>
-                            <span>{org.name}</span>
+                        {workspacesData?.workspaces?.map((works) => (
+                          <MenuItem key={works.id} value={works.id}>
+                            <span>{works.name}</span>
                           </MenuItem>
                         ))}
                       </Select>
@@ -193,20 +200,31 @@ function OrganizationSwitcher(props) {
   return (
     <NoSsr>
       <Provider store={store}>
-        <Button
-          onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '1.5rem',
+            userSelect: 'none',
+          }}
         >
-          <OrgOutlinedIcon {...iconXLarge} />
-        </Button>
-        <OrgMenu {...props} open={orgOpen} />
-        <Button
-          onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-        >
-          <WorkspaceOutlinedIcon {...iconXLarge} />
-        </Button>
-        <WorkspaceSwitcher {...props} open={workspaceOpen} />
+          <Button
+            onClick={() => setOrgOpen(!orgOpen)}
+            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          >
+            <OrgOutlinedIcon {...iconXLarge} />
+          </Button>
+          <OrgMenu {...props} open={orgOpen} />/
+          <Button
+            onClick={() => setWorkspaceOpen(!workspaceOpen)}
+            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          >
+            <WorkspaceOutlinedIcon {...iconXLarge} />
+          </Button>
+          <WorkspaceSwitcher {...props} open={workspaceOpen} />
+        </div>
       </Provider>
     </NoSsr>
   );
