@@ -96,8 +96,6 @@ export const UpdateDeploymentStepper = ({
     },
   );
 
-  console.log('SelectedDeployableK8s', selectedDeployableK8scontexts);
-
   const { notify } = useNotification();
 
   const steps = [
