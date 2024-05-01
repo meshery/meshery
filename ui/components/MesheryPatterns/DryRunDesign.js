@@ -259,6 +259,7 @@ const DryRunComponent = (props) => {
     );
   }
 
+  // If DryRun fails, show a message
   if (failedToPerformDryRun) {
     return (
       <Typography variant="caption" style={{ display: 'block', marginBottom: 8 }}>
