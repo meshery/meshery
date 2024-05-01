@@ -1503,6 +1503,10 @@ function MesheryPatterns({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `${name} Design Uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
         fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
