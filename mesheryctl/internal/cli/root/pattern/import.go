@@ -31,13 +31,25 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	name string
+)
+
 var importCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import pattern manifests",
-	Long:  `Import the pattern manifest into Meshery`,
+	Short: "Import a Meshery design",
+	Long:  `
+		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
+		remote URL or local file system path to the file. Source type must be provided.
+
+		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
+
+		If you are providing remote URL, it should be a direct URL to a downloadable file. 
+		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
+	`,
 	Example: `
 // Import pattern manifest
-mesheryctl pattern import -f [file/URL] -s [source-type]
+mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 
@@ -83,6 +95,13 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	var req *http.Request
 	var pattern *models.MesheryPattern
 
+	// If design name is not provided
+	// use file name as default
+	patternName := path.Base(file)
+	if name != "" {
+		patternName = name
+	}
+
 	// Check if the pattern manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
@@ -92,7 +111,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
 			"pattern_data": map[string]interface{}{
-				"name":         path.Base(file),
+				"name":         patternName,
 				"pattern_file": content,
 			},
 			"save": save,
@@ -127,29 +146,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		pattern = response[0]
 	} else {
 		var jsonValues []byte
-		url, path, err := utils.ParseURLGithub(file)
-		if err != nil {
-			return nil, utils.ErrParseGithubFile(err, file)
-		}
 
-		utils.Log.Debug(url)
-		utils.Log.Debug(path)
+		jsonValues, _ = json.Marshal(map[string]interface{}{
+			"url":  file,
+			"save": save,
+			"name": patternName,
+		})
 
-		// save the pattern with Github URL
-		if path != "" {
-			jsonValues, _ = json.Marshal(map[string]interface{}{
-				"url":  url,
-				"path": path,
-				"save": save,
-			})
-		} else {
-			jsonValues, _ = json.Marshal(map[string]interface{}{
-				"url":  url,
-				"save": save,
-			})
-		}
-
-		req, err = utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err := utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, utils.ErrCreatingRequest(err)
 		}
@@ -182,5 +186,6 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
-	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the pattern file")
 }
