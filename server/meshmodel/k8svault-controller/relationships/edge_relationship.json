@@ -46,8 +46,8 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "Spec.Secret.Name",
-                  "Spec.Secret.Namespace"
+                  "spec.secret.name",
+                  "spec.secret.namespace"
                 ]
               ],
              }  
