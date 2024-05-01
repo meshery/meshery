@@ -291,6 +291,7 @@ const DryRunComponent = (props) => {
               color: `${
                 errorCount > 0 ? NOTIFICATIONCOLORS.ERROR_DARK : NOTIFICATIONCOLORS.SUCCESS_V2
               }`,
+              fontWeight: '600',
             }}
           >
             {getTotalCountOfDeploymentErrors(deploymentErrors)} error
