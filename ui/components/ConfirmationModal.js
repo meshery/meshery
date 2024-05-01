@@ -696,7 +696,7 @@ export const SelectDeploymentTarget_ = ({
           <span style={{ fontWeight: 'bolder' }}>select all</span>
         </div>
       ) : (
-        <Typography variant="subtitle1">No Context found</Typography>
+        <K8sEmptyState message={'No active cluster found'} />
       )}
 
       <div className={classes.contexts}>

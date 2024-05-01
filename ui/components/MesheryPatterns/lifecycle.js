@@ -22,6 +22,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import { useSelector } from 'react-redux';
 import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
+import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const SelectTargetStep = () => {
   return (
@@ -97,12 +98,17 @@ export const UpdateDeploymentStepper = ({
   );
 
   const { notify } = useNotification();
-
   const steps = [
     {
       component: <SelectTargetStep handleClose={handleClose} setDryRunErrors={setDryRunErrors} />,
       icon: DeploymentSelectorIcon,
       label: 'Select Environment',
+      helpText: RenderTooltipContent({
+        showPriortext:
+          'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,',
+        link: 'https://docs.meshery.io/guides/infrastructure-management/overview',
+        showAftertext: ' about the environment selection.',
+      }),
     },
     {
       component: (
@@ -118,6 +124,12 @@ export const UpdateDeploymentStepper = ({
         />
       ),
       label: 'Dry Run',
+      helpText: RenderTooltipContent({
+        showPriortext:
+          'Dry Run is a simulation of the deployment process, it helps to identify potential errors before the actual deployment,',
+        showAftertext: ' to learn more about Dry Run.',
+        link: 'https://docs.meshery.io/guides/infrastructure-management/overview',
+      }),
       icon: DryRunIcon,
     },
   ];
@@ -200,7 +212,12 @@ export const UpdateDeploymentStepper = ({
           </CustomizedStepper>
         </Box>
       </ModalBody>
-      <ModalFooter variant="filled" helpText={`${action} the current design`}>
+      <ModalFooter
+        variant="filled"
+        helpText={
+          deployStepper.steps[deployStepper.activeStep]?.helpText || `${action} the current design`
+        }
+      >
         <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
           <ModalButtonSecondary onClick={deployStepper.goBack} disabled={!deployStepper.canGoBack}>
             Back
