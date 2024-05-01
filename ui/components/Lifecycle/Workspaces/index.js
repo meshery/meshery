@@ -759,6 +759,8 @@ const Workspaces = ({ organization, classes }) => {
                 assignedPage={handleAssignedPageDesign}
                 originalLeftCount={designs?.total_count}
                 originalRightCount={designsOfWorkspace?.total_count}
+                leftPermission={true}
+                rightPermission={true}
               />
             }
             action={handleAssignDesigns}
