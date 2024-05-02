@@ -1504,7 +1504,7 @@ function MesheryPatterns({
       () => {
         updateProgress({ showProgress: false });
         notify({
-          message: `${name} Design Uploaded`,
+          message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         fetchPatternsCaller()();
