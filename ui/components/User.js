@@ -201,12 +201,14 @@ const User = (props) => {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
                     {account && account.length ? renderAccountExtension(account) : null}
-                    <MenuItem
-                      disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
-                      onClick={handleGetToken}
-                    >
-                      Get Token
-                    </MenuItem>
+                    {!account?.length && (
+                      <MenuItem
+                        disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                        onClick={handleGetToken}
+                      >
+                        Get Token
+                      </MenuItem>
+                    )}
                     <MenuItem
                       onClick={handlePreference}
                       // disabled={
