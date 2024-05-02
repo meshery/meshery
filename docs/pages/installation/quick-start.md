@@ -34,7 +34,7 @@ To install and start Meshery, begin by installing `mesheryctl`. If you are on ma
  
 <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script>
 
-{% include alert.html type="info" title="Meshery CLI Package Managers" content="Meshery CLI can be installed in various ways (see <a href='{{ site.baseurl }}/installation/mesheryctl'>all options</a>). In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
+{% include alert.html type="info" title="Meshery CLI Package Managers" content="Meshery CLI can be installed in various ways (see <a href='/installation/mesheryctl'>all options</a>). In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
 ## Access Meshery
 
