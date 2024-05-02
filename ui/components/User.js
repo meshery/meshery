@@ -63,7 +63,19 @@ const User = (props) => {
 
   const { capabilitiesRegistry } = props;
 
-  const handleToggle = (event) => {
+  const getProfileUrl = () => {
+    return (account || [])?.find((item) => item.title === 'Profile')?.href;
+  };
+
+  const goToProfile = () => {
+    const profileUrl = getProfileUrl();
+    if (profileUrl) {
+      window.location = profileUrl;
+      return;
+    }
+  };
+
+  const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -165,14 +177,14 @@ const User = (props) => {
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button">
+        <div data-test="profile-button" onmouseover={handleOpen} onMouseOver={handleOpen}>
           <IconButton
             color={color}
             className={iconButtonClassName}
             ref={anchorEl}
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
-            onClick={handleToggle}
+            onClick={goToProfile}
           >
             <Avatar
               className={avatarClassName}
