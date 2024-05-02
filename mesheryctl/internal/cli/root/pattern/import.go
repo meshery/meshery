@@ -38,7 +38,7 @@ var (
 var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a Meshery design",
-	Long:  `
+	Long: `
 		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
 		remote URL or local file system path to the file. Source type must be provided.
 
