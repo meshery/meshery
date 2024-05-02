@@ -132,7 +132,7 @@ func TestModelViewCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view a requested model in yaml format",
-			Args:             []string{"view", "spire"},
+			Args:             []string{"model", "view", "spire"},
 			ExpectedResponse: "view.model.yaml.output.golden",
 			Fixture:          "view.model.api.response.golden",
 			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
@@ -141,7 +141,7 @@ func TestModelViewCmd(t *testing.T) {
 		},
 		{
 			Name:             "view a requested model in json format",
-			Args:             []string{"view", "spire", "-o", "json"},
+			Args:             []string{"model","view", "spire", "-o", "json"},
 			ExpectedResponse: "view.model.json.output.golden",
 			Fixture:          "view.model.api.response.golden",
 			URL:              testContext.BaseURL + "/api/meshmodels/models/spire?pagesize=all",
@@ -173,9 +173,9 @@ func TestModelViewCmd(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			ModelCmd.SetArgs(tt.Args)
-			ModelCmd.SetOutput(rescueStdout)
-			err = ModelCmd.Execute()
+			SystemCmd.SetArgs(tt.Args)
+			SystemCmd.SetOutput(rescueStdout)
+			err = SystemCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {

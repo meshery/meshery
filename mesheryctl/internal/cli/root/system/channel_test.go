@@ -28,6 +28,9 @@ func SetupContextEnv(t *testing.T) {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}
 
+	// Set the current-context to a valid context
+    viper.Set("current-context", "local")
+	
 	mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		t.Error("error processing config", err)
