@@ -139,7 +139,7 @@ const MesheryTreeViewItem = ({
       nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
       top
-      labelText={model.displayName}
+      labelText={model.displayName === '' ? model.name : model.displayName}
       onClick={() => {
         setShowDetailsData({
           type: MODELS,
