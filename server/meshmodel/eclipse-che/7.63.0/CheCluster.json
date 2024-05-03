@@ -32,6 +32,7 @@
    "name": "eclipse-che",
    "version": "7.63.0",
    "displayName": "eclipse-che",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

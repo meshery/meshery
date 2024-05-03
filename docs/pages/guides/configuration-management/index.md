@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Configuration Management Guides
 permalink: guides/configuration-management/
 category: configuration

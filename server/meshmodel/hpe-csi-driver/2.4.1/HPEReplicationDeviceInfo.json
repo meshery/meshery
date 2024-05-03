@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "HPEReplicationDeviceInfo",
+  "apiVersion": "storage.hpe.com/v1",
+  "displayName": "HPE Replication Device Info",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hpe-csi-driver",
+   "version": "2.4.1",
+   "displayName": "HPE CSI Driver",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"hpeReplicationDeviceInfos\": {\n   \"description\": \"List of HPE Replicated Device Information\",\n   \"items\": {\n    \"properties\": {\n     \"targets\": {\n      \"description\": \"List of Target Array Details\",\n      \"items\": {\n       \"description\": \"Target Array Details\",\n       \"properties\": {\n        \"targetCpg\": {\n         \"description\": \"Target CPG of the array\",\n         \"type\": \"string\"\n        },\n        \"targetMode\": {\n         \"description\": \"Replication Mode\",\n         \"type\": \"string\"\n        },\n        \"targetName\": {\n         \"description\": \"Target Name of the array\",\n         \"type\": \"string\"\n        },\n        \"targetSecret\": {\n         \"description\": \"Secret of the replicated array\",\n         \"type\": \"string\"\n        },\n        \"targetSecretNamespace\": {\n         \"description\": \"Namespace of secret\",\n         \"type\": \"string\"\n        },\n        \"targetSnapCpg\": {\n         \"description\": \"Target Snap CPG of the array\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"targetName\",\n        \"targetCpg\",\n        \"targetSecret\",\n        \"targetSecretNamespace\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Replication Device Info\",\n \"type\": \"object\"\n}"
+ }

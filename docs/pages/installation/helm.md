@@ -25,7 +25,7 @@ abstract: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes
 
 {% capture code_content %}helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace
-helm install meshery-operator meshery/meshery-operator{% endcapture %}
+{% endcapture %}
 {% include code.html code=code_content %}
 
 Optionally, Meshery Server supports customizing the callback URL for your remote provider, like so:
@@ -37,12 +37,12 @@ Optionally, Meshery Server supports customizing the callback URL for your remote
 
 Meshery's Helm chart supports a number of configuration options. Please refer to the [Meshery Helm chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery#readme) and [Meshery Operator Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#readme) for more information.
 
-### Accessing Meshery UI for Clusters
+## Post-Installation Steps
 
-To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+
+{% include_cached installation/accessing-meshery-ui.md %}
 
 {% include related-discussions.html tag="meshery" %}

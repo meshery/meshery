@@ -71,10 +71,11 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Page     string `json:"page"`
-	Pagesize string `json:"pagesize"`
-	Search   string `json:"search"`
-	Order    string `json:"order"`
+	Page     string  `json:"page"`
+	Pagesize string  `json:"pagesize"`
+	Search   string  `json:"search"`
+	Order    string  `json:"order"`
+	Metrics  *string `json:"metrics,omitempty"`
 }
 
 type ClusterResources struct {
@@ -226,16 +227,16 @@ type MeshModelSummarySelector struct {
 }
 
 type MeshSyncEvent struct {
-	Type      string      `json:"type"`
-	Object    interface{} `json:"object"`
-	ContextID string      `json:"contextId"`
+	Type         string      `json:"type"`
+	Object       interface{} `json:"object"`
+	ConnectionID string      `json:"connectionID"`
 }
 
 type MesheryControllersStatusListItem struct {
-	ContextID  string                  `json:"contextId"`
-	Controller MesheryController       `json:"controller"`
-	Status     MesheryControllerStatus `json:"status"`
-	Version    string                  `json:"version"`
+	ConnectionID string                  `json:"connectionID"`
+	Controller   MesheryController       `json:"controller"`
+	Status       MesheryControllerStatus `json:"status"`
+	Version      string                  `json:"version"`
 }
 
 type MesheryResult struct {
@@ -275,34 +276,16 @@ type OAMCapability struct {
 }
 
 type OperatorControllerStatus struct {
-	Name      string `json:"name"`
-	Version   string `json:"version"`
-	Status    Status `json:"status"`
-	Error     *Error `json:"error,omitempty"`
-	ContextID string `json:"contextID"`
-}
-
-type OperatorControllerStatusPerK8sContext struct {
-	ContextID                string                    `json:"contextID"`
-	OperatorControllerStatus *OperatorControllerStatus `json:"OperatorControllerStatus"`
-}
-
-type OperatorStatus struct {
-	Status      Status                      `json:"status"`
-	Version     string                      `json:"version"`
-	Controllers []*OperatorControllerStatus `json:"controllers"`
-	Error       *Error                      `json:"error,omitempty"`
-	ContextID   string                      `json:"contextID"`
+	Name         string `json:"name"`
+	Version      string `json:"version"`
+	Status       Status `json:"status"`
+	Error        *Error `json:"error,omitempty"`
+	ConnectionID string `json:"connectionID"`
 }
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
 	ContextID    string `json:"contextID"`
-}
-
-type OperatorStatusPerK8sContext struct {
-	ContextID      string          `json:"contextID"`
-	OperatorStatus *OperatorStatus `json:"operatorStatus"`
 }
 
 type PageFilter struct {
@@ -314,6 +297,7 @@ type PageFilter struct {
 	To           *string  `json:"to,omitempty"`
 	UpdatedAfter *string  `json:"updated_after,omitempty"`
 	Visibility   []string `json:"visibility,omitempty"`
+	Metrics      *string  `json:"metrics,omitempty"`
 }
 
 type PatternPageResult struct {

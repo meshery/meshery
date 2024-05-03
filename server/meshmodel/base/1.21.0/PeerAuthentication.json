@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "PeerAuthentication",
+  "apiVersion": "security.istio.io/v1beta1",
+  "displayName": "Peer Authentication",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "base",
+   "version": "1.21.0",
+   "displayName": "base",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 160 240\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Peer authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/peer_authentication.html\",\n   \"properties\": {\n    \"mtls\": {\n     \"description\": \"Mutual TLS settings for workload.\",\n     \"properties\": {\n      \"mode\": {\n       \"description\": \"Defines the mTLS mode used for peer authentication.\",\n       \"enum\": [\n        \"UNSET\",\n        \"DISABLE\",\n        \"PERMISSIVE\",\n        \"STRICT\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"portLevelMtls\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"mode\": {\n        \"description\": \"Defines the mTLS mode used for peer authentication.\",\n        \"enum\": [\n         \"UNSET\",\n         \"DISABLE\",\n         \"PERMISSIVE\",\n         \"STRICT\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Port specific mutual TLS settings.\",\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"description\": \"The selector determines the workloads to apply the PeerAuthentication on.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Peer Authentication\",\n \"type\": \"object\"\n}"
+ }

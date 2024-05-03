@@ -41,6 +41,10 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 	}
 }
 
+func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
+	return mh.broker
+}
+
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
@@ -254,19 +258,27 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
-	var metadata map[string]interface{}
+	var data map[string]interface{}
+	metadata := make(map[string]interface{})
 
 	result := mh.dbHandler.Model(v1alpha1.ComponentDefinitionDB{}).Select("metadata").
-		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
+		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&data)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
-			metadata = K8sMeshModelMetadata
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
-			metadata = K8sMeshModelMetadata
 		}
+		metadata = K8sMeshModelMetadata
+		return metadata
 	}
-
+	strMetadata, err := utils.Cast[string](data["metadata"])
+	if err != nil {
+		return K8sMeshModelMetadata
+	}
+	err = utils.Unmarshal(strMetadata, &metadata)
+	if err != nil {
+		return K8sMeshModelMetadata
+	}
 	return metadata
 }

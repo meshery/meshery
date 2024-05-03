@@ -18,7 +18,7 @@
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
-   "shape": "round-rectang",
+   "shape": "round-rectangle",
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "styles": "",
@@ -32,6 +32,7 @@
    "name": "datadog-operator",
    "version": "0.1.2",
    "displayName": "Datadog Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

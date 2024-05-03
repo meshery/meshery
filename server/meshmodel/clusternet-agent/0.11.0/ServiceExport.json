@@ -32,6 +32,7 @@
    "name": "clusternet-agent",
    "version": "0.11.0",
    "displayName": "Clusternet Agent",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

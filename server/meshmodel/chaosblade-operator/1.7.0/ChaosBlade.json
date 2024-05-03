@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": false,
-   "logoURL": "",
-   "model": "chaosblade-operator",
-   "modelDisplayName": "Chaosblade Operator",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "chaosblade-operator",
    "version": "1.7.0",
    "displayName": "Chaosblade Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
-    "name": "Uncategorized",
+    "name": "Observability and Analysis",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://oeular.github.io/chaosblade-operator/chaosblade-operator-1.7.0.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Chaos Engineering",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

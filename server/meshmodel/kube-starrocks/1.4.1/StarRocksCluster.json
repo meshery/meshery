@@ -32,6 +32,7 @@
    "name": "kube-starrocks",
    "version": "1.4.1",
    "displayName": "Kube Starrocks",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

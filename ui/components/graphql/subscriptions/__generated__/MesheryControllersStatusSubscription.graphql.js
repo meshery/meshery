@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0b864e564b4ac213932808374e940c88>>
+ * @generated SignedSource<<23f539688b80e52960ef747e8e37a964>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "k8scontextIDs"
+    "name": "connectionIDs"
   }
 ],
 v1 = [
@@ -22,8 +22,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "k8scontextIDs",
-        "variableName": "k8scontextIDs"
+        "name": "connectionIDs",
+        "variableName": "connectionIDs"
       }
     ],
     "concreteType": "MesheryControllersStatusListItem",
@@ -35,7 +35,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "contextId",
+        "name": "connectionID",
         "storageKey": null
       },
       {
@@ -81,16 +81,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d13cc9027c16da162d9414ab27148cf5",
+    "cacheID": "534d4b9391826e634ad2ab05b1a30e75",
     "id": null,
     "metadata": {},
     "name": "MesheryControllersStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription MesheryControllersStatusSubscription(\n  $k8scontextIDs: [String!]\n) {\n  subscribeMesheryControllersStatus(k8scontextIDs: $k8scontextIDs) {\n    contextId\n    controller\n    status\n    version\n  }\n}\n"
+    "text": "subscription MesheryControllersStatusSubscription(\n  $connectionIDs: [String!]\n) {\n  subscribeMesheryControllersStatus(connectionIDs: $connectionIDs) {\n    connectionID\n    controller\n    status\n    version\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "b5d4c39af94cb255a592948102c3abb5";
+node.hash = "57fdebbc7ad327ad4b1607c9fa7df9e2";
 
 module.exports = node;

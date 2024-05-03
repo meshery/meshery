@@ -101,6 +101,19 @@ build-server: dep-check
 	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
 
+## Build and run Meshery Server on your local machine
+## and point to Remote Provider in staging environment
+server-stg: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
+
 ## Build and run Meshery Server on your local machine.
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -222,7 +235,7 @@ error: dep-check
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Runs meshkit error utility to update error codes for meshery server only.
-server-error-util:
+error-util:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
@@ -273,7 +286,7 @@ ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
-ui-build:
+ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
@@ -313,7 +326,7 @@ docs-build:
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 ## Build Meshery CLI docs
 docs-mesheryctl:

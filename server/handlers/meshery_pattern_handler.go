@@ -108,6 +108,7 @@ func (h *Handler) handlePatternPOST(
 	}()
 
 	var err error
+	action := models.Create
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
@@ -128,6 +129,7 @@ func (h *Handler) handlePatternPOST(
 	actedUpon := &userID
 	if parsedBody.PatternData != nil && parsedBody.PatternData.ID != nil {
 		actedUpon = parsedBody.PatternData.ID
+		action = models.Update
 	}
 
 	eventBuilder.ActedUpon(*actedUpon)
@@ -221,7 +223,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
@@ -237,7 +239,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, action)
 
 		return
 	}
@@ -377,6 +379,10 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern.Name = patternName
 			}
 
+			if parsedBody.PatternData.Visibility != "" {
+				mesheryPattern.Visibility = parsedBody.PatternData.Visibility
+			}
+
 			if parsedBody.Save {
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 				if err != nil {
@@ -392,7 +398,7 @@ func (h *Handler) handlePatternPOST(
 					return
 				}
 
-				h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+				h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -408,7 +414,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
+			h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, action)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -496,7 +502,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			mesheryPattern = &models.MesheryPattern{
-				Name:        parsedBody.PatternData.Name,
+				Name:        parsedBody.Name,
 				PatternFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HelmChart),
@@ -561,6 +567,7 @@ func (h *Handler) handlePatternPOST(
 				}
 
 				mesheryPattern = &pfs[0]
+				mesheryPattern.Name = parsedBody.Name
 			} else {
 				// Fallback to generic HTTP import
 				pfs, err := genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager)
@@ -577,6 +584,7 @@ func (h *Handler) handlePatternPOST(
 					return
 				}
 				mesheryPattern = &pfs[0]
+				mesheryPattern.Name = parsedBody.Name
 			}
 		} else {
 
@@ -601,7 +609,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -631,7 +639,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
 
 			eventBuilder.WithSeverity(events.Informational)
 			event := eventBuilder.Build()
@@ -681,7 +689,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, action)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -869,6 +877,8 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 // ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
 // Eg: ```?visibility=["public", "published"]``` will return public and published designs
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
+//
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -882,7 +892,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-
+	includeMetrics := q.Get("metrics")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -903,7 +913,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -937,6 +947,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?pagesize={pagesize}``` Default pagesize is 10.
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
+//
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -950,7 +962,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -1033,7 +1045,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
@@ -1456,6 +1468,8 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 // swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
 // Handle GET for a Meshery Pattern
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+//
 // Fetches the pattern with the given id
 // responses:
 // 	200: mesheryPatternResponseWrapper
@@ -1470,7 +1484,7 @@ func (h *Handler) GetMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
@@ -1481,7 +1495,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format, sourcetype string, eventBuilder *events.EventBuilder, URL string) {
+func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format, sourcetype string, eventBuilder *events.EventBuilder, URL, action string) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
@@ -1533,7 +1547,11 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	}
 	var response string
 	if URL == "" {
-		response = fmt.Sprintf("%s \"%s\" uploaded.", sourcetype, strings.Join(names, ","))
+		actionDesc := "updated"
+		if action == models.Create {
+			actionDesc = "created"
+		}
+		response = fmt.Sprintf("%s \"%s\" %s.", sourcetype, strings.Join(names, ","), actionDesc)
 	} else {
 		response = fmt.Sprintf("%s \"%s\" imported from URL %s", sourcetype, strings.Join(names, ","), URL)
 	}
@@ -1715,7 +1733,7 @@ func (h *Handler) handlePatternUpdate(
 			eventBuilder.WithSeverity(events.Informational)
 
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
 			event := eventBuilder.Build()
 			// go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
@@ -1730,7 +1748,7 @@ func (h *Handler) handlePatternUpdate(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL)
+		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
 		return
 	}
 	mesheryPattern := parsedBody.PatternData
@@ -1758,7 +1776,7 @@ func (h *Handler) handlePatternUpdate(
 	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
-	h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL)
+	h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)

@@ -256,14 +256,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/4de0bbbcfddbc4fc00497bb5ed7330e5b41e1821"
 },
 {
-"path": ".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png",
-"mode": "100644",
-"type": "blob",
-"sha": "57d58300249e689337523b5163aa8cf4a2750b2b",
-"size": 12562,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/57d58300249e689337523b5163aa8cf4a2750b2b"
-},
-{
 "path": ".github/assets/images/meshery/meshery-logo-tag-light-text-side.png",
 "mode": "100644",
 "type": "blob",
@@ -2416,14 +2408,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/4a14eaee0cf84eb976c67be79aaf0916e5016589"
 },
 {
-"path": "docs/_includes/doc.html",
-"mode": "100644",
-"type": "blob",
-"sha": "7ca21b622b06451df320a30173a7dbddf7f8a939",
-"size": 136,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/7ca21b622b06451df320a30173a7dbddf7f8a939"
-},
-{
 "path": "docs/_includes/editable.html",
 "mode": "100644",
 "type": "blob",
@@ -2448,7 +2432,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/cc6d83c2c0ab400b522d2eeeab4a03528143c3e6"
 },
 {
-"path": "docs/_includes/google-analytics.html",
+"path": "docs/_includes/scripts/google-analytics.html",
 "mode": "100644",
 "type": "blob",
 "sha": "96ac06245c1a02d1c4033945989c66ab00070e32",
@@ -4652,14 +4636,6 @@
 "type": "tree",
 "sha": "59a8053cf608fbccd60fe24bd5c1349ca9ac5e83",
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/59a8053cf608fbccd60fe24bd5c1349ca9ac5e83"
-},
-{
-"path": "docs/assets/img/readme/Layer5-MeshMentors.png",
-"mode": "100644",
-"type": "blob",
-"sha": "2d0e63a95e4221af502a50a31574af5bc737e67d",
-"size": 26329,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/2d0e63a95e4221af502a50a31574af5bc737e67d"
 },
 {
 "path": "docs/assets/img/readme/Meshery-Grafana-Charts.png",

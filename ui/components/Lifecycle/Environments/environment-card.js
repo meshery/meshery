@@ -17,9 +17,15 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, classes }) => {
+export const TransferButton = ({ title, count, onAssign, classes, disabled }) => {
   return (
-    <Button variant="contained" color="primary" className={classes.popupButton} onClick={onAssign}>
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={disabled}
+      className={classes.popupButton}
+      onClick={onAssign}
+    >
       <Grid>
         <Typography className={classes.tabCount}>{count}</Typography>
         <Typography className={classes.tabTitle}>{title}</Typography>
@@ -81,7 +87,7 @@ const EnvironmentCard = ({
         >
           <Grid style={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
             <Typography
-              className={classes.listItem}
+              className={classes.name}
               variant="body2"
               onClick={(e) => e.stopPropagation()}
             >
@@ -130,6 +136,7 @@ const EnvironmentCard = ({
                   count={environmentConnectionsCount}
                   onAssign={onAssignConnection}
                   classes={classes}
+                  disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
                 />
               </Box>
               {/* temporary disable workspace allocation button  */}
@@ -142,6 +149,7 @@ const EnvironmentCard = ({
                     }
                     onAssign={onAssignConnection}
                     classes={classes}
+                    disabled={!CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject)}
                   />
                 </Box>
               )}

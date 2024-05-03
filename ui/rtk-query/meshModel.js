@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
 
@@ -61,6 +62,14 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      updateEntityStatus: builder.mutation({
+        query: (queryArgs) => ({
+          url: `meshmodels/${queryArgs.entityType}/status`,
+          method: 'POST',
+          body: queryArgs.body,
+        }),
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
       getModelCategories: builder.query({
         query: () => ({
           url: `meshmodels/categories`,
@@ -75,16 +84,65 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getModelByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/models/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
+      getComponentByName: builder.query({
+        query: (queryArgs) => ({
+          url: `meshmodels/components/${queryArgs.name}`,
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
     }),
   });
 
 export const {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
+  useGetComponentsQuery,
   useLazyGetRelationshipsQuery,
+  useGetRegistrantsQuery,
+  useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
+  useUpdateEntityStatusMutation,
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
+  useGetModelByNameQuery,
+  useGetMeshModelsQuery,
+  useGetComponentByNameQuery,
+  useGetModelFromCategoryQuery,
 } = meshModelApi;
+
+export const useGetCategoriesSummary = () => {
+  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
+  const { data: categories } = useGetModelCategoriesQuery();
+  const [categoryMap, setCategoryMap] = useState({});
+
+  const fetchModelsForCategories = async () => {
+    const categoryMap = {};
+    if (!categories) return categoryMap;
+
+    const requests = categories.categories.map(async (category) => {
+      const { data } = await getModelFromCategory(
+        { category: category.name, params: { page: 1, pagesize: 1 } },
+        true,
+      );
+      categoryMap[category.name] = data?.total_count || 0;
+    });
+    await Promise.allSettled(requests);
+    return categoryMap;
+  };
+
+  useEffect(async () => {
+    const categoryMap = await fetchModelsForCategories();
+    setCategoryMap(categoryMap);
+  }, [categories]);
+  return categoryMap;
+};

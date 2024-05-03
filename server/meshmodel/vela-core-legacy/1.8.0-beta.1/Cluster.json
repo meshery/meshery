@@ -32,6 +32,7 @@
    "name": "vela-core-legacy",
    "version": "1.8.0-beta.1",
    "displayName": "Vela Core Legacy",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",

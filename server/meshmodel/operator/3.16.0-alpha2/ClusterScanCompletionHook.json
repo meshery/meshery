@@ -32,6 +32,7 @@
    "name": "operator",
    "version": "3.16.0-alpha2",
    "displayName": "Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

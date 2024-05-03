@@ -32,6 +32,7 @@
    "name": "vald-helm-operator",
    "version": "1.7.3",
    "displayName": "Vald Helm Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Provisioning",

@@ -4,6 +4,7 @@
   // Colors that will not change in the dark mode.
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
+  --brand-color-secondary-50: rbga(0, 179, 159, .5);
   --color-white: #fff;
   // #EBC017;
   // ////////////////////////////////////////////
@@ -58,6 +59,11 @@
   --background-grey: linear-gradient(to right top, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
   --background-grey-secondary: linear-gradient(to right top, #868e96, #767e86, #676e76, #585f66, #495057);
   --background-neumorphic: #ecf0f3;
+  --background-models: #f5f5f5;
+
+  // table color
+  --test-detail-data-color: #ccfff9;
+  --hidden-details-data-color: #ccfff9;
 
   // Gradients
   --section-button: linear-gradient(315deg, #3C494F 0%, rgba(70, 86, 93, 1) 87%);
@@ -86,6 +92,10 @@
   --color-summary-background:#333;
   --color-summary-background-hover:#666666;
   --color-details-background:#282828;
+
+  // table color
+  --test-detail-data-color: #495057;
+  --hidden-details-data-color: #00B39F;
 
   --box-shadow-primary: 4px 4px 8px rgba(0, 0, 0, 1);
   --box-shadow-primary-light: 2px 2px 8px rgb(0 0 0 / 70%);
@@ -141,6 +151,7 @@
     #252525
   );
   --background-neumorphic: #212529;
+  --background-models: rgb(33, 33, 33);
 
   --image-color: brightness(0) invert(1);
   --image-filter-light: brightness(40) invert(1);
@@ -156,7 +167,7 @@
 
 @media (max-width: 600px) {
   :root {
-    --navbar-height: 9.5rem;
+    --navbar-height: 7.5rem;
   }
 }
 

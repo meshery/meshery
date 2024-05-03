@@ -5,6 +5,8 @@ import AddIcon from '@material-ui/icons/AddCircleOutline';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../css/icons.styles';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const useStyles = makeStyles(() => ({
   addIcon: {
@@ -58,6 +60,7 @@ function MesheryMetrics({
         color="primary"
         size="large"
         onClick={() => handleGrafanaChartAddition()}
+        disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
       >
         <AddIcon className={classes.addIcon} style={iconMedium} />
         Configure Metrics

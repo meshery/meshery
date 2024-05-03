@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Using Meshery CLI
 abstract: How to use mesheryctl
 permalink: guides/mesheryctl/working-with-mesheryctl
@@ -112,10 +112,6 @@ Guides to using Meshery's various features and components.
 
 {% endcapture %}
 
-{% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %}
-{% endif %}
-
 {% include related-discussions.html tag="mesheryctl" %}
 
 <!-- ## Related Guides
@@ -202,7 +198,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ### Installing the `mesheryctl` binary
 
-Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
+Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/meshery/meshery/releases/) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

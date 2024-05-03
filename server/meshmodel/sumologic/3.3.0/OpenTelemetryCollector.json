@@ -32,6 +32,7 @@
    "name": "sumologic",
    "version": "3.3.0",
    "displayName": "Sumologic",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Observability and Analysis",

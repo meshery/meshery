@@ -32,6 +32,7 @@
    "name": "rate-limit-operator",
    "version": "1.1.0",
    "displayName": "rate-limit-operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -16,7 +16,7 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 
 ## Install Meshery
 
-To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }}/installation/mesheryctl). If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server with the command shown in the figure.
+To install and start Meshery, begin by installing `mesheryctl`. If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server with the command shown in the figure.
 
  <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
  <div class="clipboardjs" stytle="padding: 0">
@@ -30,18 +30,11 @@ To install and start Meshery, begin by [installing mesheryctl]({{ site.baseurl }
             <span data-ty="input">mesheryctl system dashboard</span>
   </div>
   </div>
-
  </pre> 
+ 
+<script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script>
 
- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script>
-
-{% include alert.html type="info" title="Meshery CLI Package Managers" content="In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
-
-## Install using Docker Meshery Extension
-
-You can find the [Docker Meshery Extension in Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace or use the Extensions browser in Docker Desktop to install the Docker Meshery Extension.
-
-[![Docker Meshery Extension]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension.png)
+{% include alert.html type="info" title="Meshery CLI Package Managers" content="Meshery CLI can be installed in various ways (see <a href='{{ site.baseurl }}/installation/mesheryctl'>all options</a>). In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
 ## Access Meshery
 
@@ -71,7 +64,7 @@ If your config has not been autodetected, you can manually upload your kubeconfi
 
 ### Verify Deployment
 
-Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters)) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad-hoc connectivity test.
+Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters)) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
 
 <a href="{{site.baseurl}}/assets/img/platforms/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
   <img class="center" style="width:min(100%,350px);" src="{{site.baseurl}}/assets/img/platforms/k8s-context-switcher.png" />

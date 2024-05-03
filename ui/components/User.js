@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { List, ListItem } from '@material-ui/core';
-import { Avatar } from '@layer5/sistent-components';
+import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,11 +13,17 @@ import Popper from '@material-ui/core/Popper';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import dataFetch from '../lib/data-fetch';
+import { Provider, connect } from 'react-redux';
+import { store } from '../store';
+import { bindActionCreators } from 'redux';
+import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { styled } from '@mui/material/styles';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -40,15 +46,22 @@ function exportToJsonFile(jsonData, filename) {
 }
 
 const User = (props) => {
-  const [user, setUser] = useState(null);
+  const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
-  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  // const anchorEl = useRef(null);
+  const capabilitiesLoadedRef = useRef(false);
+  const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
-  const dispatch = useDispatch();
   const router = useRouter();
 
-  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+  const {
+    data: userData,
+    isSuccess: isGetUserSuccess,
+    isError: isGetUserError,
+    error: getUserError,
+  } = useGetLoggedInUserQuery();
+  const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
+
+  const { capabilitiesRegistry } = props;
 
   const handleToggle = (event) => {
     setAnchorEl(event.currentTarget);
@@ -67,41 +80,36 @@ const User = (props) => {
   };
 
   const handleGetToken = () => {
-    dataFetch(
-      '/api/token',
-      { credentials: 'same-origin' },
-      (data) => {
+    triggerGetToken()
+      .unwrap()
+      .then((data) => {
         exportToJsonFile(data, 'auth.json');
-      },
-      (error) => ({ error }),
-    );
+      });
   };
 
-  useEffect(() => {
-    dataFetch(
-      '/api/user',
-      {
-        credentials: 'same-origin',
-      },
-      (userData) => {
-        setUser(userData);
-        dispatch(updateUser({ user: userData }));
-      },
-      (error) => ({
-        error,
-      }),
-    );
-  }, [dispatch]);
+  if (!userLoaded && isGetUserSuccess) {
+    props.updateUser({ user: userData });
+    setUserLoaded(true);
+  } else if (isGetUserError) {
+    notify({
+      message: 'Error fetching user',
+      event_type: EVENT_TYPES.ERROR,
+      details: getUserError?.data,
+    });
+  }
 
-  useEffect(() => {
-    const { capabilitiesRegistry } = props;
-    if (!capabilitiesLoaded && capabilitiesRegistry) {
-      setCapabilitiesLoaded(true); // to prevent re-compute
-      setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
-      );
-    }
-  }, [capabilitiesRegistry, capabilitiesLoaded]);
+  if (isTokenError) {
+    notify({
+      message: 'Error fetching token',
+      event_type: EVENT_TYPES.ERROR,
+      details: tokenError?.data,
+    });
+  }
+
+  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    capabilitiesLoadedRef.current = true;
+    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
+  }
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
@@ -152,13 +160,8 @@ const User = (props) => {
   }
 
   const { color, iconButtonClassName, avatarClassName, classes } = props;
-  let avatar_url;
-  if (user && user !== null) {
-    avatar_url = user.avatar_url;
-  }
 
   const open = Boolean(anchorEl);
-
   return (
     <div>
       <NoSsr>
@@ -173,7 +176,7 @@ const User = (props) => {
           >
             <Avatar
               className={avatarClassName}
-              src={avatar_url}
+              src={isGetUserSuccess ? userData?.avatar_url : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
           </IconButton>
@@ -197,9 +200,24 @@ const User = (props) => {
               <Paper className={classes.popover}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
-                    {account && account.length ? <>{renderAccountExtension(account)}</> : null}
-                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
-                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    {account && account.length ? renderAccountExtension(account) : null}
+                    <MenuItem
+                      disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                      onClick={handleGetToken}
+                    >
+                      Get Token
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handlePreference}
+                      // disabled={
+                      //   !CAN(
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                      //   )
+                      // }
+                    >
+                      Preferences
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -212,4 +230,20 @@ const User = (props) => {
   );
 };
 
-export default User;
+const UserProvider = (props) => {
+  return (
+    <Provider store={store}>
+      <User {...props} />
+    </Provider>
+  );
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: bindActionCreators(updateUser, dispatch),
+});
+
+const mapStateToProps = (state) => ({
+  capabilitiesRegistry: state.get('capabilitiesRegistry'),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProvider);

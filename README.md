@@ -1,11 +1,11 @@
 
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture>
+<p style="text-align:center;" align="center"><a href="https://meshery.io"><picture>
  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
 <img src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg"
 alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
 <p align="center">
-<a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
+<a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
   <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+org%3A+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
@@ -43,14 +43,14 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </div>
 <br />
 <p align="center">
-A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, is the open source, cloud native manager that enables the design and management of all Kubernetes-based infrastructure and applications. Among other features,  As an extensible platform, Meshery offers visual and collaborative GitOps, freeing you from the chains of YAML while managing Kubernetes multi-cluster deployments.
+A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, is the open source, cloud native manager that enables the design and management of all Kubernetes-based infrastructure and applications (multi-cloud). Among other features,  As an extensible platform, Meshery offers visual and collaborative GitOps, freeing you from the chains of YAML while managing Kubernetes multi-cluster deployments.
 </p>
 <br />
 
 <!-- [Meshery](https://meshery.io) is the cloud native management plane offering lifecycle, configuration, and performance management of Kubernetes, service meshes, and your workloads. -->
 <div align="center" width="100%">
-<a href="https://youtu.be/Do7htKrRzDA"><img src="https://play.meshery.io/static/media/meshery-playground-meshmap.5242722a8cd9c3855f42.png" width="800px" /></a>
- <br />Try Meshery in the <a href="https://play.meshery.io">CNCF Playground</a> (<a href="https://youtu.be/Do7htKrRzDA">teaser video</a>)
+<!-- <a href="https://youtu.be/Do7htKrRzDA"><img src="https://play.meshery.io/static/media/meshery-playground-meshmap.5242722a8cd9c3855f42.png" width="800px" /></a> -->
+ <br />Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://youtu.be/Do7htKrRzDA">teaser video</a>)
 </div>
 
 <br />
@@ -82,7 +82,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <h2>Cloud Native Lifecycle Management</h2>
 Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
-Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, and gRPC.
+Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL. 
 
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />
@@ -90,8 +90,8 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 <p style="clear:both;">
  
-<h2>Multi-Cluster Kubernetes and Cloud Native Configuration Management</h2>
-<p>Meshery supports <a href="https://meshery.io/integrations">220+ cloud native integrations</a>.</p>
+<h2>Multi-Cluster Kubernetes, Multi-Cloud, and Cloud Native Configuration Management</h2>
+<p>Meshery supports <a href="https://meshery.io/integrations">250+ integrations</a>.</p>
 
 <!-- 
 <h3><a name="iac"></a>Supported Cloud Native Infrastructure and Applications</h3>

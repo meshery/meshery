@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": false,
-   "logoURL": "",
-   "model": "cloudcore",
-   "modelDisplayName": "Cloudcore",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "cloudcore",
    "version": "0.1.1",
    "displayName": "Cloudcore",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Cloud Native Network",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://github.com/web-seven/kubeedge/releases/download/cloudcore-0.1.1/cloudcore-0.1.1.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Cloud Native Network",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

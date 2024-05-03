@@ -32,6 +32,7 @@
    "name": "k8soauth2-proxy-controller",
    "version": "0.1.5",
    "displayName": "K8s Keycloak Controller",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -26,13 +26,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.27.3', 'v1.26.6', 'v1.25.11']
+        k8s_version: ['v1.29.2', 'v1.28.7']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.7.2
+        uses: manusa/actions-setup-minikube@v2.10.0
         with:
-          minikube version: 'v1.30.1'
+          minikube version: 'v1.32.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 
@@ -80,13 +80,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.27.3', 'v1.26.6', 'v1.25.11']
+        k8s_version: ['v1.29.2', 'v1.28.7']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.7.2
+        uses: manusa/actions-setup-minikube@v2.10.0
         with:
-          minikube version: 'v1.30.1'
+          minikube version: 'v1.32.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 
@@ -118,23 +118,23 @@ jobs:
           sleep 50
         shell: '/bin/bash {0}'
 
-      - name: Apply BookInfo Pattern
-        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
+      # - name: Apply BookInfo Pattern
+      #   uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+      #   with:
+      #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
+      #     platform: ${{ matrix.platform }}
+      #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
 
-      - name: Apply Circuit Breaker Pattern
+      - name: Apply Kubernetes Metrics Service Pattern
         uses: layer5io/mesheryctl-service-mesh-patterns-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/servicemeshcon-na-2021/circuitbreaker.yaml
+          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
 
-      - name: Apply Retries Pattern
+      - name: Load "Serve An LLM With Multiple GPUs In GKE" design
         uses: layer5io/mesheryctl-service-mesh-patterns-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/servicemeshcon-na-2021/retries.yaml
+          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml 

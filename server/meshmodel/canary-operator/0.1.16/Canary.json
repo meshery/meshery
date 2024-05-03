@@ -10,11 +10,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "canary-operator",
-   "modelDisplayName": "Canary Operator",
    "primaryColor": "#00B39F",
    "published": false,
    "secondaryColor": "#00D3A9",
@@ -32,13 +28,19 @@
    "name": "canary-operator",
    "version": "0.1.16",
    "displayName": "Canary Operator",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "App Definition and Development",
     "metadata": null
    },
    "metadata": {
-    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/canary-operator-0.1.16.tgz"
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Application Definition \u0026 Image Build",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "components": null,
    "relationships": null

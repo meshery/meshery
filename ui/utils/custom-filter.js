@@ -11,7 +11,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { FilterIcon } from '@layer5/sistent-svg';
+import { FilterIcon } from '@layer5/sistent';
 
 const styles = (theme) => ({
   epaper: {

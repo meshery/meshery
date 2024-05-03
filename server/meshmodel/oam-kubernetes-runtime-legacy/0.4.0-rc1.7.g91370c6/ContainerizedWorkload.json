@@ -32,6 +32,7 @@
    "name": "oam-kubernetes-runtime-legacy",
    "version": "0.4.0-rc1.7.g91370c6",
    "displayName": "Oam Kubernetes Runtime Legacy",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

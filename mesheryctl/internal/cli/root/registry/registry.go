@@ -18,12 +18,13 @@ import (
 	"fmt"
 
 	"errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
-	availableSubcommands = []*cobra.Command{importCmd, publishCmd, updateCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd}
 
 	spreadsheeetID   string
 	spreadsheeetCred string
@@ -33,7 +34,7 @@ var (
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Meshery Registry Management",
-	Long:  `Manage the state and configuration of Meshery Registry.`,
+	Long:  `Manage the state and contents of Meshery's internal registry of capabilities.`,
 	Example: `
 	mesheryctl registry [subcommand]
 	`,
@@ -43,7 +44,7 @@ var RegistryCmd = &cobra.Command{
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl registry --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.RegistryError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl registry --help' to display usage guide.\n", args[0]), "registry"))
 		}
 		return nil
 	},

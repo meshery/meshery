@@ -60,7 +60,7 @@ func formatValue(path string, val map[string]interface{}) error {
 	return nil
 }
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -83,7 +83,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
 			//Validate component definition
-			if !skipValidation {
+			if validate {
 				if err := validateWorkload(svc.Settings, wc); err != nil {
 					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
 					return
@@ -129,6 +129,11 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 }
 
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
+	// skip the validation if the component does not have a schema and has isAnnotation set to true.
+	isAnnotation, _ := wc.Metadata["isAnnotation"].(bool)
+	if wc.Schema == "" && isAnnotation {
+		return nil
+	}
 	schemaByt := []byte(wc.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()

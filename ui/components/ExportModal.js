@@ -9,14 +9,14 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import PatternIcon from '@/assets/icons/Pattern';
-import { CloseIcon } from '@layer5/sistent-svg';
+import { CloseIcon } from '@layer5/sistent';
 import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DialogActions } from '@layer5/sistent-components';
+import { DialogActions } from '@layer5/sistent';
 import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 import { Colors } from '@/themes/app';
 
@@ -166,8 +166,8 @@ const ExportModal = (props) => {
       <DialogContent
         style={{
           display: 'inline-table',
-          maxWidth: '688px',
-          padding: '5rem',
+          maxWidth: '50rem',
+          padding: '3rem',
           margin: '0 auto',
         }}
       >
@@ -178,13 +178,15 @@ const ExportModal = (props) => {
             width: 'auto',
             textAlign: 'center',
             alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
           }}
         >
           {downloadModal?.content?.type?.String && (
             <div>
               <Typography
                 component={'h4'}
-                style={{ paddingBottom: '1.5rem' }}
+                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
                 className={classes.text}
               >
                 Original ({downloadModal?.content?.type?.String})

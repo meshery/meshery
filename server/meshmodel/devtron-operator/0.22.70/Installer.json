@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Installer",
+  "apiVersion": "installer.devtron.ai/v1alpha1",
+  "displayName": "Installer",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "devtron-operator",
+   "version": "0.22.70",
+   "displayName": "Devtron Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Installer is the Schema for the installers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstallerSpec defines the desired state of Installer\",\n   \"properties\": {\n    \"reSync\": {\n     \"description\": \"Rerun the installation script\",\n     \"type\": \"boolean\"\n    },\n    \"url\": {\n     \"description\": \"URL of the BOM version to be installed\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Installer\",\n \"type\": \"object\"\n}"
+ }

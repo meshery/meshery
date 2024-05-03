@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Binding",
+  "apiVersion": "rabbitmq.com/v1beta1",
+  "displayName": "Binding",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800px\" height=\"800px\" viewBox=\"-7.5 0 271 271\" preserveAspectRatio=\"xMidYMid\"\u003e\u003cpath d=\"M245.44 108.308h-85.09a7.738 7.738 0 0 1-7.735-7.734v-88.68C152.615 5.327 147.29 0 140.726 0h-30.375c-6.568 0-11.89 5.327-11.89 11.894v88.143c0 4.573-3.697 8.29-8.27 8.31l-27.885.133c-4.612.025-8.359-3.717-8.35-8.325l.173-88.241C54.144 5.337 48.817 0 42.24 0H11.89C5.321 0 0 5.327 0 11.894V260.21c0 5.834 4.726 10.56 10.555 10.56H245.44c5.834 0 10.56-4.726 10.56-10.56V118.868c0-5.834-4.726-10.56-10.56-10.56zm-39.902 93.233c0 7.645-6.198 13.844-13.843 13.844H167.69c-7.646 0-13.844-6.199-13.844-13.844v-24.005c0-7.646 6.198-13.844 13.844-13.844h24.005c7.645 0 13.843 6.198 13.843 13.844v24.005z\" fill=\"#F60\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "rabbitmq-cluster-operator",
+   "version": "3.17.1",
+   "displayName": "rabbitmq-cluster-operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/rabbitmq-cluster-operator-3.17.1.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Binding is the Schema for the bindings API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BindingSpec defines the desired state of Binding\",\n   \"properties\": {\n    \"arguments\": {\n     \"description\": \"Cannot be updated\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"destination\": {\n     \"description\": \"Cannot be updated\",\n     \"type\": \"string\"\n    },\n    \"destinationType\": {\n     \"description\": \"Cannot be updated\",\n     \"enum\": [\n      \"exchange\",\n      \"queue\"\n     ],\n     \"type\": \"string\"\n    },\n    \"rabbitmqClusterReference\": {\n     \"description\": \"Reference to the RabbitmqCluster that the binding will be created in.\\nRequired property.\",\n     \"properties\": {\n      \"connectionSecret\": {\n       \"description\": \"Secret contains the http management uri for the RabbitMQ cluster.\\nThe Secret must contain the key `uri`, `username` and `password` or operator will error.\\nHave to set either name or connectionSecret, but not both.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"name\": {\n       \"description\": \"The name of the RabbitMQ cluster to reference.\\nHave to set either name or connectionSecret, but not both.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of the RabbitMQ cluster to reference.\\nDefaults to the namespace of the requested resource if omitted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"routingKey\": {\n     \"description\": \"Cannot be updated\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Cannot be updated\",\n     \"type\": \"string\"\n    },\n    \"vhost\": {\n     \"default\": \"/\",\n     \"description\": \"Default to vhost '/'; cannot be updated\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"rabbitmqClusterReference\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Binding\",\n \"type\": \"object\"\n}"
+ }

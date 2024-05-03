@@ -21,7 +21,7 @@ import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
 import {
   getComponentsDetail,
-  getModelsDetail,
+  getMeshModels,
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../api/meshmodel';
@@ -30,7 +30,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
-
+import { removeDuplicateVersions } from './MeshModelRegistry/helper';
+import DefaultError from './General/error-404';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
@@ -38,6 +39,7 @@ const styles = (theme) => ({
     height: 'auto',
   },
   tab: {
+    width: '25%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
@@ -46,6 +48,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    width: '100%',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -246,12 +249,12 @@ class MesherySettings extends React.Component {
 
   async componentDidMount() {
     try {
-      const modelsResponse = await getModelsDetail();
+      const modelsResponse = await getMeshModels();
       const componentsResponse = await getComponentsDetail();
       const relationshipsResponse = await getRelationshipsDetail();
       const registrantResponce = await getMeshModelRegistrants();
 
-      const modelsCount = modelsResponse.total_count;
+      const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
       const componentsCount = componentsResponse.total_count;
       const relationshipsCount = relationshipsResponse.total_count;
       const registrantCount = registrantResponce.total_count;
@@ -318,16 +321,18 @@ class MesherySettings extends React.Component {
     }
     return (
       <>
-        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) && (
+        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
           <div className={classes.wrapperClss}>
             <Paper square className={classes.wrapperClss}>
               <Tabs
                 value={tabVal}
                 className={classes.tabs}
                 onChange={this.handleChange('tabVal')}
-                variant="fullWidth"
+                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
+                centered
               >
                 <Tooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
                   <Tab
@@ -455,6 +460,8 @@ class MesherySettings extends React.Component {
             {backToPlay}
             <PromptComponent ref={this.systemResetPromptRef} />
           </div>
+        ) : (
+          <DefaultError />
         )}
       </>
     );

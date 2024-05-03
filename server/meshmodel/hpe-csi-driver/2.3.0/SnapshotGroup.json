@@ -32,6 +32,7 @@
    "name": "hpe-csi-driver",
    "version": "2.3.0",
    "displayName": "HPE CSI Driver",
+   "status": "",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "category": {
     "name": "Uncategorized",

@@ -6,19 +6,22 @@
   font-weight: 500;
   color: inherit;
   border-radius: 0;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading {
     color: inherit;
     margin: 0;
     margin-bottom: 1rem;
   }
 }
+.alert-heading {
+  font-size: 1.6rem;
+}
 .alert-info {
   border-style: solid;
   border-color: #479de7;
   background-color: #479de722;
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: #479de7;
@@ -31,7 +34,7 @@
   border-color: #f7820a;
   background-color:#f7820a22; 
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: #f7820a;
@@ -44,7 +47,7 @@
   border-color: #CC0000;
   background-color: #ea9999; 
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: #CC0000;
@@ -57,7 +60,7 @@
   border-color: #22bb33;
   background-color:#90dd99; 
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: #22bb33;
@@ -70,7 +73,7 @@
   border-color:  #1976d2;
   background-color: #a3c8ed;
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color:  #1976d2;
@@ -83,7 +86,7 @@
   border-color: #9FA6B2;
   background-color: #d8dbe0;
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: #9FA6B2;
@@ -96,7 +99,7 @@
   border-color: var(--color-secondary-light);
   background-color: var(--color-primary-dark);
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: var(--color-secondary-light);
@@ -109,7 +112,7 @@
   border-color: var(--color-grey-dark);
   background-color: var(--color-grey-dark-alpha);
   border-width: 0 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
     color: var(--color-secondary-medium);
@@ -119,8 +122,8 @@
 }
 
 .td-content .alert:not(:first-child) {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 @media (min-width: 992px) {

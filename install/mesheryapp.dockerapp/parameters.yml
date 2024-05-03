@@ -17,5 +17,9 @@ nsm:
   port: 10004
   enabled: false
 
+nighthawk:
+  port: 10013
+  enabled: false
+
 labels:
   watchtower: "com.centurylinklabs.watchtower.enable=true"

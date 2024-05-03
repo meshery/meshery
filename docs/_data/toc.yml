@@ -1,7 +1,7 @@
-- title: 🗺 Overview
+- title: 🗺 Overview & Installation
   url: project/overview
   links:
-  - title: FAQ
+  - title: FAQs
     url: project/faq
   - title: 🚀 Quick Start
     url: installation/quick-start
@@ -43,7 +43,11 @@
         url: installation/windows 
         grandchildren: 
           - title: "Scoop"
-            url: installation/windows/scoop 
+            url: installation/windows/scoop
+      - title: Using Multiple Meshery Adapters
+        url: guides/multiple-adapters
+      - title: Meshery Playground
+        url: installation/playground
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -81,18 +85,16 @@
             url: concepts/logical/connections
           - title: "Credentials"
             url: concepts/logical/credentials
+        - title: "Registry"
+          url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
-#    - title: Meshery and SMI Management
-#      url: tasks/service-mesh-interface  
 # - title: 📑 Features
 #   url: features
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-    # - title: Service Mesh Interface (SMI) Conformance
-    #   url: tasks/service-mesh-interface
-- title: 📚 Guides (all)
+- title: 📚 Guides
   url: guides
   links:
     # - title: Deploying Designs
@@ -101,24 +103,36 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: ⚙️ Infrastructure Management ↆ
+      url: guides/infrastructure-management/overview
+      children:
+      - title: Managing Envoy Filters
+        url: guides/infrastructure-management/filter-management
+      - title: Managing Connections
+        url: guides/infrastructure-management/lifecycle-management
+        grandchildren:
+        - title: Registering a Connection
+          url: guides/infrastructure-management/registering-a-connection
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
       - title: Creating a Meshery Design
-        url: guides/configuration-management/creating-a-meshery-design
+        url: guides/creating-a-meshery-design
       - title: Working with Designs
         url: guides/configuration-management/working-with-designs
-      - title: Importing Applications
-        url: guides/configuration-management/importing-apps
+      - title: Importing Designs
+        url: guides/configuration-management/importing-designs
+      - title: Working with design patterns
+        url: guides/configuration-management/pattern-management
     - title: Managing Events with Notification Center
       url: guides/events-management
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
     - title: GitOps with Meshery
       url: guides/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
+        - title: Performance Management
+          url: guides/performance/managing-performance
         - title: Integrating Prometheus and Grafana
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
@@ -143,30 +157,26 @@
           url: guides/troubleshooting/installation
         - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Meshery Server 
+        - title: Meshery Server
           url: guides/troubleshooting/meshery-server
+    - title: 🧑‍🔬 Tutorials ↆ
+      url: guides/tutorials
+      children:
+      - title: Exploring Kubernetes Pods
+        url: guides/tutorials/kubernetes-pods
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
+      - title: Understanding Kubernetes ConfigMaps and Secrets
+        url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
         - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
-- title: ⚙️ Tasks (all)
-  url: tasks
-  links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Managing Connections
-      url: tasks/lifecycle-management
-      children:
-      - title: Registering a Connection
-        url: guides/infrastructure-management/registering-a-connection
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance/managing-performance
-- title: 🛠 Integrations and Extensions
+# - title: ⚙️ Tasks
+#   url: tasks
+#   links:
+- title: 🛠 Integrations & Extensions
   url: extensibility
   links:
     - title: "APIs"
@@ -192,6 +202,8 @@
           url: extensibility/adapters/nsm
         - title: NGINX Service Mesh
           url: extensibility/adapters/nginx-sm
+        - title: Nighthawk
+          url: extensibility/adapters/nighthawk
         - title: Tanzu
           url: extensibility/adapters/tanzu-sm
         - title: Traefik Mesh
@@ -250,10 +262,16 @@
             url: project/contributing/contributing-error
         - title: UI
           url: project/contributing/contributing-ui
+          grandchildren:
+          - title: Notification Center
+            url: project/contributing/contributing-ui-notification-center
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        - title: Models
+        - title: Models ↆ
           url: project/contributing/contributing-models
+          grandchildren:
+          - title: Relationships
+            url: project/contributing/contributing-relationships
 - title: 📖 Reference
   url: reference
   links:

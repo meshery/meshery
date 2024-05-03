@@ -51,7 +51,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -188,6 +188,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Update"
             color="primary"
+            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -205,6 +206,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Delete"
             color="primary"
+            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -240,7 +242,7 @@ function MesheryFilters({
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -988,7 +990,7 @@ function MesheryFilters({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  // disabled={!CAN(keys.CLONE_FILTERS.action, keys.CLONE_FILTERS.subject)} // TODO: uncomment when seeded
+                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
                   <CloneIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
@@ -1093,7 +1095,6 @@ function MesheryFilters({
     serverSide: true,
     count,
     rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 100],
     fixedHeader: true,
     page,
     print: false,
@@ -1231,6 +1232,10 @@ function MesheryFilters({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" filter uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       },
       handleError(ACTION_TYPES.UPLOAD_FILTERS),
     );

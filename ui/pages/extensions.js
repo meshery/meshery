@@ -71,7 +71,7 @@ const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
 
 const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   const handleEnable = (e) => {
-    window.open('https://cloud.meshery.io/connect/github/new/', '_blank');
+    window.open('https://meshery.layer5.io/connect/github/new/', '_blank');
     e.stopPropagation();
   };
 
@@ -105,8 +105,62 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   );
 };
 
+const MesheryPerformacneLogoStyles = () => ({
+  img: {
+    paddingRight: '1rem',
+    height: 'auto',
+    width: 'auto',
+    maxWidth: '120px',
+    maxHeight: '75px',
+  },
+});
+
+const MesheryPerformanceActionLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
+  return <img className={classes.img} src="/static/img/smp-dark.svg" />;
+});
+
+const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
+  const handleEnable = (e) => {
+    window.open(
+      'https://github.com/marketplace/actions/performance-testing-with-meshery',
+      '_blank',
+    );
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+          GitHub Action: Performance Analysis
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <MesheryPerformanceActionLogo />
+          Characterize the performance of your services using Meshery&apos;s performance analysis
+          GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
+        </Typography>
+        {
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={githubActionEnabled}
+              className={classes.button}
+              onClick={(e) => handleEnable(e)}
+            >
+              {githubActionEnabled ? 'Remove' : 'Enable'}
+            </Button>
+          </div>
+        }
+      </div>
+    </Grid>
+  );
+};
+
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
+export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
 
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
@@ -173,8 +227,9 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid container spacing={1}>
-          <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
+          <WrappedMesheryPerformanceAction githubActionEnabled={false} />
+          <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
               <Typography className={classes.frontContent} variant="h5" component="div">
@@ -189,15 +244,8 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                     position: 'relative',
                   }}
                 >
-                  Enable access to the cloud native catalog, supporting{' '}
-                  <a
-                    href="https://service-mesh-patterns.github.io/service-mesh-patterns"
-                    className={classes.link}
-                  >
-                    Service Mesh Patterns
-                  </a>
-                  , WebAssembly filters, eBPF programs (
-                  <span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
+                  Enable access to the cloud native catalog, supporting design patterns, WebAssembly
+                  filters (<span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
                   <span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog item and
                   customize.
                 </div>

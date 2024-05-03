@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -52,12 +55,12 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
+	offset := page * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	offset := (page - 1) * limit
 	filter := &v1alpha1.ModelFilter{
 		Category:    cat,
 		Version:     queryParams.Get("version"),
@@ -132,10 +135,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
@@ -205,10 +208,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &v1alpha1.ModelFilter{
@@ -222,6 +225,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
+		Status:        queryParams.Get("status"),
 	}
 	if queryParams.Get("search") != "" {
 		filter.DisplayName = queryParams.Get("search")
@@ -290,10 +294,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:        name,
@@ -357,10 +361,10 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	filter := &v1alpha1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
@@ -428,10 +432,10 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	categories, count := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
@@ -508,10 +512,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
@@ -606,10 +610,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
@@ -704,10 +708,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
@@ -802,10 +806,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:        name,
@@ -894,10 +898,10 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		ModelName:   typ,
@@ -991,10 +995,10 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
@@ -1087,10 +1091,10 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
@@ -1182,10 +1186,10 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
 		Version:     v,
@@ -1309,11 +1313,11 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 
-	offset := (page - 1) * limit
+	offset := (page ) * limit
 	filter := &v1alpha1.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
@@ -1349,4 +1353,53 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
+}
+
+// swagger:route POST /api/meshmodel/update/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
+// Handle POST request for updating the ignore status of a model.
+//
+// Update the ignore status of a model based on the provided parameters.
+//
+// responses:
+// 	200: NoContent
+
+// request body should be json
+// request body should be of struct containing ID and Status fields
+func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	dec := json.NewDecoder(r.Body)
+	userID := uuid.FromStringOrNil(user.ID)
+	entityType := mux.Vars(r)["entityType"]
+	var updateData struct {
+		ID          string `json:"id"`
+		Status      string `json:"status"`
+		DisplayName string `json:"displayname"`
+	}
+	err := dec.Decode(&updateData)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
+	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update '%s' status to %s", updateData.DisplayName, updateData.Status)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	// Respond with success status
+	rw.WriteHeader(http.StatusNoContent)
 }

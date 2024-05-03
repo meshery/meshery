@@ -31,7 +31,7 @@ describe('Lifecycle Service Mesh', () => {
         cy.get('[data-cy="btnSubmitMeshAdapter"]').click();
         cy.contains('Adapter was configured!', { timeout: 10_000 }).should('exist');
       } else {
-        // TODO: Implement test code for Deploying from Settings > Adapters Page's "Available Mesh Adapter" Dropdown
+        // TODO: Implement test code for Deploying from Settings > Adapters Page's "Available Adapter" Dropdown
       }
 
       // Lifecycle > Service Mesh Page
