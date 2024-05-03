@@ -25,9 +25,24 @@ To install and start Meshery, begin by installing `mesheryctl`. If you are on ma
  <div class="window-buttons"></div>
   <div id="termynal0" style="width:100%; height:150px; max-width:100%;" data-termynal="">
             <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
-            <span data-ty="progress"></span>
+            <!-- <span data-ty="progress"></span> -->
+            <span data-ty="">Downloading mesheryctl-v0.7.52 for Darwin...
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 25.1M  100 25.1M    0     0  8907k      0  0:00:02  0:00:02 --:--:-- 9955k
+
+            <span data-ty="">Extracting mesheryctl-v0.7.52 to temporary folder temp_extract_dir...</span>
+            <span data-ty="">Installing mesheryctl in /usr/local/bin.</span>
+            <span data-ty="">mesheryctl installed.</span>
+            <span data-ty="">Removing installation files</span>
+            <span data-ty="">Deploying Meshery...</span>
+            <span data-ty="asdf">⣾ Deploying Meshery on Kubernetes</span>
+            <span data-ty="">Meshery deployed on Kubernetes.</span>
+            <span data-ty="input">Opening Meshery (http://localhost:9081) in browser.</span>
             <span data-ty="">Successfully installed Meshery</span>
-            <span data-ty="input">mesheryctl system dashboard</span>
+            
   </div>
   </div>
  </pre> 
