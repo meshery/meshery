@@ -24,7 +24,7 @@
      "allow": {
         "from": [
           {
-            "kind": "secret",
+            "kind": "Secret",
             "model": "kubernetes",
               "patch": {
               "patchStrategy": "replace",
