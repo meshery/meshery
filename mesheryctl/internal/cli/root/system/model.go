@@ -56,10 +56,10 @@ var listModelCmd = &cobra.Command{
 	Long:  "list name of all registered models",
 	Example: `
 // View list of models
-mesheryctl exp model list
+mesheryctl system model list
 
 // View list of models with specified page number (25 models per page)
-mesheryctl exp model list --page 2
+mesheryctl system model list --page 2
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -215,7 +215,7 @@ var viewModelCmd = &cobra.Command{
 	Long:  "view a model queried by its name",
 	Example: `
 // View current provider
-mesheryctl exp model view [model-name]
+mesheryctl system model view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -224,10 +224,10 @@ mesheryctl exp model view [model-name]
 		if err != nil {
 			return err
 		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		/* err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
 			return err
-		}
+		} */
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
@@ -323,7 +323,7 @@ var searchModelCmd = &cobra.Command{
 	Long:  "search a models by search string",
 	Example: `
 // View current provider
-mesheryctl exp model search [query-text]
+mesheryctl system model search [query-text]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -420,10 +420,10 @@ var ModelCmd = &cobra.Command{
 	Long:  "View list of models and detailed information of a specific model",
 	Example: `
 // To view list of components
-mesheryctl exp model list
+mesheryctl system model list
 
 // To view a specific model
-mesheryctl exp model view [model-name]
+mesheryctl system model view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite

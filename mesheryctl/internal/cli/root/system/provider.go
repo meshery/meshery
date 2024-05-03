@@ -380,20 +380,19 @@ mesheryctl system provider switch [provider]
 // To reset provider to default
 mesheryctl system provider reset
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return errors.New(utils.SystemProviderSubError("please specify a flag or subcommand. Use 'mesheryctl system provider --help' to display user guide.\n", "provider"))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemProviderSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system provider --help' to display usage guide.\n", args[0]), "provider"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-		}
-		err = viewProviderCmd.RunE(cmd, args)
-		if err != nil {
-			return err
 		}
 		err = cmd.Usage()
 		if err != nil {

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"bytes"
 	"testing"
 )
 
@@ -41,6 +42,10 @@ func TestViewProviderCmd(t *testing.T) {
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	SetupFunc()
 	SystemCmd.SetArgs([]string{"provider"})
+	// Create a buffer to capture the error stream
+	b := &bytes.Buffer{}
+	SystemCmd.SetErr(b)
+
 	err = SystemCmd.Execute()
 
 	actualResponse := err.Error()
