@@ -25,7 +25,7 @@ abstract: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes
 
 {% capture code_content %}helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace
-helm install meshery-operator meshery/meshery-operator{% endcapture %}
+{% endcapture %}
 {% include code.html code=code_content %}
 
 Optionally, Meshery Server supports customizing the callback URL for your remote provider, like so:
