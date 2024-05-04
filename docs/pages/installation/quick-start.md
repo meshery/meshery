@@ -45,9 +45,9 @@ The script above downloads Meshery's command line interface, <code>mesheryctl</c
 
 Your default browser will be opened and directed to Meshery's web-based user interface typically found at `http://localhost:9081`.
 
-{% include alert.html type="info" title="Accessing Meshery Server with Meshery UI" content="Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See <a href='/installation/accessing-meshery-ui'>accessing Meshery UI</a> for deployment-specific details." %}
+{% include alert.html type="light" title="Accessing Meshery Server with Meshery UI" content="Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See <a href='/installation/accessing-meshery-ui'>accessing Meshery UI</a> for deployment-specific details." %}
 
-{% include alert.html type="info" title="Accessing Meshery Server with Meshery CLI" content="Meshery's command line interface is a client of Meshery Server's REST API (just as Meshery UI is). Choose to use <code>mesheryctl</code> as an alternative client as it suits your needs." %}
+{% include alert.html type="light" title="Accessing Meshery Server with Meshery CLI" content="Meshery's command line interface is a client of Meshery Server's REST API (just as Meshery UI is). Choose to use <code>mesheryctl</code> as an alternative client as it suits your needs." %}
 
 ### 3. Select a Provider
 
