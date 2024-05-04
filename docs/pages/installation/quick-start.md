@@ -94,5 +94,3 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>
-<!-- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0|#termynal1|#termynal2"></script> -->
-
