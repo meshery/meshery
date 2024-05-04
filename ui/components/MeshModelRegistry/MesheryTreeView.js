@@ -16,7 +16,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
-import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
@@ -140,7 +139,7 @@ const MesheryTreeViewItem = ({
       nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
       top
-      labelText={model.displayName}
+      labelText={model.displayName === '' ? model.name : model.displayName}
       onClick={() => {
         setShowDetailsData({
           type: MODELS,
@@ -291,12 +290,7 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={
-            <TootltipWrappedConnectionChip
-              title={registrant.hostname}
-              iconSrc="/static/img/artifact-hub-color.svg" //TODO: remove this hardcoded iconSrc for artifact hub as we will get from API
-            />
-          }
+          labelText={registrant?.hostname}
           newParentId={registrant.id}
           onClick={() => {
             setShowDetailsData({
