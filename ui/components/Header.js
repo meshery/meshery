@@ -519,8 +519,16 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, abilityUpdated } =
-      this.props;
+    const {
+      classes,
+      title,
+      onDrawerToggle,
+      isBeta,
+      theme,
+      themeSetter,
+      onDrawerCollapse,
+      abilityUpdated,
+    } = this.props;
     const loaderType = 'circular';
     return (
       <NoSsr>
