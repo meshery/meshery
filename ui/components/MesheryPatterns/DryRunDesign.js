@@ -17,8 +17,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { useState } from 'react';
 import ErrorIcon from '../../assets/icons/ErrorIcon';
 import { NOTIFICATIONCOLORS } from '../../themes';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import { getComponentsinFile } from '@/utils/utils';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 
@@ -74,7 +72,7 @@ const styles = (theme) => {
 /**
  *
  * @param {Array} errors
- * @returns
+ * @returns {Number} Total count of errors in the deployment
  */
 function getTotalCountOfDeploymentErrors(errors) {
   if (!errors) {
@@ -84,6 +82,11 @@ function getTotalCountOfDeploymentErrors(errors) {
   return errors.reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
 }
 
+/**
+ * returns the field path string from the field path by removing the first two elements
+ * @param {String} fieldPath
+ * @returns {String} fieldPathString
+ */
 function getFieldPathString(fieldPath) {
   if (!fieldPath) {
     return '';
@@ -93,7 +96,7 @@ function getFieldPathString(fieldPath) {
 }
 
 // errors - [{type, fieldPath, message}]
-// 'component' refers to MeshModel Component
+// 'component' refers to Model Component
 // 'componentName' is assumed to be unique
 const ExpandableComponentErrors = withStyles(styles)(({ errors, componentName, classes }) => {
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(false);
@@ -220,7 +223,6 @@ const DryRunComponent = (props) => {
   } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [deploymentErrors, setDeploymentErrors] = useState();
-  const { notify } = useNotification();
   const numberOfElements = getComponentsinFile(pattern_file);
 
   const useDryRunMutation =
@@ -241,13 +243,6 @@ const DryRunComponent = (props) => {
       const errors = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
       setDeploymentErrors(errors);
       handleErrors?.(errors);
-
-      dryRunResults.error &&
-        notify({
-          message: 'error while doing a dry run',
-          event_type: EVENT_TYPES.ERROR,
-          details: dryRunResults.error.toString(),
-        });
     } finally {
       setIsLoading(false);
     }
@@ -264,6 +259,7 @@ const DryRunComponent = (props) => {
     );
   }
 
+  // If DryRun fails, show a message
   if (failedToPerformDryRun) {
     return (
       <Typography variant="caption" style={{ display: 'block', marginBottom: 8 }}>
@@ -295,6 +291,7 @@ const DryRunComponent = (props) => {
               color: `${
                 errorCount > 0 ? NOTIFICATIONCOLORS.ERROR_DARK : NOTIFICATIONCOLORS.SUCCESS_V2
               }`,
+              fontWeight: '600',
             }}
           >
             {getTotalCountOfDeploymentErrors(deploymentErrors)} error

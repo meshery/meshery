@@ -76,7 +76,6 @@ const Environments = ({ organization, classes }) => {
 
   const {
     data: environmentsData,
-    // isLoading: isEnvironmentsLoading,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(

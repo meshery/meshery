@@ -135,6 +135,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode       = "meshery-server-1135"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
 	ErrInvalidUUIDCode                     = "meshery-server-1137"
+	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
 )
 
 var (
@@ -595,4 +596,8 @@ func ErrConvertingHelmChartToDesign(err error) error {
 
 func ErrInvalidUUID(err error) error {
 	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
+}
+
+func ErrPersistEventToRemoteProvider(err error) error {
+	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
 }
