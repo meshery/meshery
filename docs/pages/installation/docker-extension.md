@@ -15,29 +15,27 @@ abstract: Install Docker Extension for Meshery
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-## Docker Extension for Meshery
-
 The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
+
+## Install the Docker Meshery Extension
+
+Select one of the following three options to install the Docker Meshery Extension:
+
+- [Install the Docker Meshery Extension](#install-the-docker-meshery-extension)
+  - [Using Docker Desktop](#using-docker-desktop)
+  - [Using Docker Hub](#using-docker-hub)
+  - [Using Docker CLI](#using-docker-cli)
+- [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
 
 ### Using Docker Desktop
 
-1. Navigate to the Extensions Marketplace of Docker Desktop.
+Navigate to the Extensions Marketplace of Docker Desktop. From the Dashboard, select Add Extensions in the menu bar or open the Extensions Marketplace from the menu options.
 
-2. From the Dashboard, select Add Extensions in the menu bar or open the Extensions Marketplace from the menu options.
+[![Docker Meshery Extension]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension.png)
 
-<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
-  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
-</a>
+### Using Docker Hub
 
-3. Navigate to Meshery in the Marketplace and press install.
-
-<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
-  <img style="width:90%" src="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
-</a>
-
-OR
-
-You can visit the [Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to directly install Meshery extension in your Docker Desktop.
+You can find the [Docker Meshery Extension in Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to install the Docker Meshery Extension.
 
 ### Using Docker CLI
 
@@ -62,6 +60,7 @@ Meshery runs as a set of one or more containers inside your Docker Desktop virtu
     </div>
   </div>
 </pre>
+
 
 
 ## Remove Meshery as a Docker Extension
