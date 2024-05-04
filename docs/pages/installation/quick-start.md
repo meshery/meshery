@@ -18,16 +18,30 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 
 To install and start Meshery, begin by installing `mesheryctl`. If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server with the command shown in the figure.
 
- <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs" stytle="padding: 0">
- <span style="font-size: 0;">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
- </div>
- <div class="window-buttons"></div>
-  <div id="termynal0" style="width:100%; height:150px; max-width:100%;" data-termynal="">
-            <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
-            <span data-ty="progress"></span>
-            <span data-ty="">Successfully installed Meshery</span>
-            <span data-ty="input">mesheryctl system dashboard</span>
+ <pre class="codeblock-pre" style="padding: 0; font-size:0px;">
+  <div class="codeblock" style="display: block;">
+    <div class="clipboardjs" stytle="padding: 0">
+      <span style="font-size: 0;">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
+    </div>
+    <div class="window-buttons"></div>
+    <div id="termynal0" style="width:100%; height:150px; max-width:100%;" data-termynal="">
+      <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
+      <!-- <span data-ty="progress"></span> -->
+      <span data-ty="">Downloading mesheryctl-v0.7.52 for Darwin...
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 25.1M  100 25.1M    0     0  8907k      0  0:00:02  0:00:02 --:--:-- 9955k
+
+  Extracting mesheryctl-v0.7.52 to temporary folder temp_extract_dir...
+  Installing mesheryctl in /usr/local/bin.
+  mesheryctl installed.
+  Removing installation files
+  Deploying Meshery...</span>
+  <span data-ty="">⣾ Deploying Meshery on Kubernetes</span>
+  <span data-ty="">Meshery deployed on Kubernetes.</span>
+  <span data-ty="">Opening Meshery (http://localhost:9081) in browser.</span>
   </div>
   </div>
  </pre> 
