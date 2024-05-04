@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "grafana-agent-operator",
-  "version": "1.8.5",
+  "version": "1.8.7",
   "displayName": "Grafana Agent Operator",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",

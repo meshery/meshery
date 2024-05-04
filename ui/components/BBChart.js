@@ -15,4 +15,5 @@ const BBChart = ({ options }) => {
   return <div ref={chartRef}></div>;
 };
 
+// Memoize the component to prevent unnecessary re-renders
 export default memo(BBChart);
