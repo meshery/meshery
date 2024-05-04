@@ -131,7 +131,6 @@ function MesheryPatternGrid({
   setPublishModal,
   publishSchema,
   user,
-  updateProgress,
   handleInfoModal,
   openDeployModal,
   openUndeployModal,
@@ -162,12 +161,10 @@ function MesheryPatternGrid({
   });
   const handleDownload = (e, design, source_type, params) => {
     e.stopPropagation();
-    updateProgress({ showProgress: true });
     try {
       let id = design.id;
       let name = design.name;
       downloadContent({ id, name, type: 'pattern', source_type, params });
-      updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
       console.error(e);

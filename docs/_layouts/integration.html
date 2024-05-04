@@ -32,6 +32,7 @@ layout: default
 <!-- components end -->
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% include_cached suggested-reading.html reading=site.models title=page.title type=page.type category=page.category
+{% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}
+{% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
