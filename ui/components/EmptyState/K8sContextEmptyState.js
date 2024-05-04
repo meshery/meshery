@@ -27,7 +27,7 @@ export const K8sEmptyState = ({ message }) => {
       {theme.palette.type == 'dark' ? <OperatorLight /> : <Operator />}
       <Typography variant="h5">{message || 'No cluster connected yet'}</Typography>
 
-      <Link href="/settings">
+      <Link href="/management/connections">
         <Button
           type="submit"
           variant="contained"
