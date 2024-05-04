@@ -519,7 +519,7 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } =
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, abilityUpdated } =
       this.props;
     const loaderType = 'circular';
     return (
@@ -592,6 +592,7 @@ class Header extends React.PureComponent {
 
                   <div
                     data-test="settings-button"
+                    aria-describedby={abilityUpdated}
                     style={
                       !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
                         ? cursorNotAllowed
