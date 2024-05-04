@@ -56,12 +56,12 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
+	offset := page * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	offset := (page - 1) * limit
 	filter := &regv1beta1.ModelFilter{
 		Category:    cat,
 		Version:     queryParams.Get("version"),
@@ -143,10 +143,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
@@ -224,10 +224,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
@@ -316,10 +316,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Name:        name,
@@ -391,10 +391,10 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	filter := &regv1beta1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
@@ -462,10 +462,10 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	categories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
@@ -542,10 +542,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
@@ -630,10 +630,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
@@ -717,10 +717,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
@@ -804,10 +804,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
@@ -886,10 +886,10 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		ModelName:   typ,
@@ -972,10 +972,10 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -1057,10 +1057,10 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -1141,10 +1141,10 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		Version:     v,
@@ -1253,11 +1253,11 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	filter := &v1beta1.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
