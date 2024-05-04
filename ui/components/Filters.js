@@ -188,6 +188,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Update"
             color="primary"
+            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -205,6 +206,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           <IconButton
             aria-label="Delete"
             color="primary"
+            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -988,7 +990,7 @@ function MesheryFilters({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  // disabled={!CAN(keys.CLONE_FILTERS.action, keys.CLONE_FILTERS.subject)} // TODO: uncomment when seeded
+                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
                   <CloneIcon fill="currentColor" className={classes.iconPatt} />
                 </TooltipIcon>
@@ -1230,6 +1232,10 @@ function MesheryFilters({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" filter uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       },
       handleError(ACTION_TYPES.UPLOAD_FILTERS),
     );

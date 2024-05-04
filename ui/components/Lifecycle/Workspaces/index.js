@@ -614,8 +614,9 @@ const Workspaces = ({ organization, classes }) => {
                   fill={theme.palette.secondary.error}
                   onClick={handleDeleteWorkspacesModalOpen}
                   disabled={
+                    CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
                     selectedWorkspaces.length > 0
-                      ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
+                      ? false
                       : true
                   }
                 />
@@ -723,6 +724,14 @@ const Workspaces = ({ organization, classes }) => {
                 assignedPage={handleAssignedPageEnvironment}
                 originalLeftCount={environments?.total_count}
                 originalRightCount={environmentsOfWorkspace?.total_count}
+                leftPermission={CAN(
+                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+                )}
+                rightPermission={CAN(
+                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+                )}
               />
             }
             action={handleAssignEnvironments}
@@ -750,6 +759,8 @@ const Workspaces = ({ organization, classes }) => {
                 assignedPage={handleAssignedPageDesign}
                 originalLeftCount={designs?.total_count}
                 originalRightCount={designsOfWorkspace?.total_count}
+                leftPermission={true}
+                rightPermission={true}
               />
             }
             action={handleAssignDesigns}

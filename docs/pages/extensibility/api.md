@@ -16,10 +16,10 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 <main>
   
-<input id="tab1" type="radio" name="tabs" checked>
+<input id="tab1" type="radio" name="tabs" checked hidden>
 <label for="tab1">REST API</label>
 
-<input id="tab2" type="radio" name="tabs">
+<input id="tab2" type="radio" name="tabs" hidden>
 <label for="tab2">GraphQL API</label>
 
 <section class="tabbed" id="content1">
@@ -79,7 +79,7 @@ token: your token"%}
 
 ### Endpoints
 
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
 
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 

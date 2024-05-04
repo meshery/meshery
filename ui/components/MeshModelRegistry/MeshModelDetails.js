@@ -273,8 +273,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationship.subType} />
-        <Description description={metadata.description} />
+        <Title title={relationship?.subType} />
+        <Description description={metadata?.description} />
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -295,7 +295,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant.summary?.models?.toString(),
+    models: registrant?.models?.length.toString(),
     components: registrant.summary?.components?.toString(),
   };
 

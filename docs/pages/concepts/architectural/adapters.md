@@ -30,11 +30,11 @@ Meshery has lifecycle adapters for managing the following cloud native infrastru
 
 ## Meshery Adapters for Performance Management
 
-_v0.8.0 Roadmap:_ The `meshery-perf` adapter externalizes Nighthawk as an Meshery component.
+_v0.8.0 Roadmap:_ The `meshery-nighthawk` adapter externalizes Nighthawk as an Meshery component.
 
-Meshery Server allows users to generate traffic load tests using Nighthawk, fortio, and wrk2. Using the `meshery-perf` adapter, you can schedule, control, and execute performance tests.
+Meshery Server allows users to generate traffic load tests using Nighthawk, fortio, and wrk2. Using the `meshery-nigthhawk` adapter, you can schedule, control, and execute performance tests.
 
-Run the `meshery-perf` adapter as an externalized load generator when you: 
+Run the `meshery-nighthawk` adapter as an externalized load generator when you: 
 
 1. Need a smaller sized container image for Meshery. Nighthawk binaries are dynamically linked (C++) and they need other dependencies to work. This causes bloat in Meshery Server’s image which doesn’t need them.
 1. Need *adaptive load control* of your performance tests, controlling the variability by which the system under test receives load. Use Meshery Server to run adaptive load tests.

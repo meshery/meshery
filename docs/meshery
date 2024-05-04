@@ -1,4 +1,4 @@
-# Copyright 2019 Layer5 Authors
+# Copyright Meshery Authors
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -255,5 +255,5 @@ if [ ! -z "$ADAPTERS" ]; then
     mesheryctl system context create custom -s $adapterString --yes
 fi
 
-printf "\nStarting Meshery...\n"
+printf "\nDeploying Meshery...\n"
 mesheryctl system start --yes --platform $PLATFORM

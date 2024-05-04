@@ -141,6 +141,9 @@ const components = {
   ValueContainer,
 };
 
+// NOTE: This is a wrapper for react-select
+// It is used to customize the look and feel of the react-select component
+// NOTE: Migrate to functional component and move to sistent
 class ReactSelectWrapper extends React.Component {
   render() {
     const {
