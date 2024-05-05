@@ -7,6 +7,8 @@
   },
   "model": {
     "name": "aws-prometheusservice-controller",
+    "schemaVersion": "core.meshery.io/v1beta1",
+    "version": "v1.0.0",
     "model": {
       "version": "*"
     },
@@ -28,7 +30,11 @@
             "model": "aws-prometheusservice-controller",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["name"]],
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
               "description": "The Workspace component's configuration is updated based on specifications from other components, like AlertManagerDefinition, ensuring alignment with connected systems."
             }
           }
@@ -39,7 +45,15 @@
             "model": "aws-prometheusservice-controller",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "mutatorRef": [
+                [
+                  "settings",
+                  "spec",
+                  "workspaceRef",
+                  "from",
+                  "name"
+                ]
+              ],
               "description": "AlertManagerDefiniton component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the AlertManager system."
             }
           },
@@ -48,7 +62,15 @@
             "model": "aws-prometheusservice-controller",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "mutatorRef": [
+                [
+                  "settings",
+                  "spec",
+                  "workspaceRef",
+                  "from",
+                  "name"
+                ]
+              ],
               "description": "LoggingConfiguration component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the Logging system."
             }
           },
@@ -57,7 +79,15 @@
             "model": "aws-prometheusservice-controller",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "spec", "workspaceRef", "from", "name"]],
+              "mutatorRef": [
+                [
+                  "settings",
+                  "spec",
+                  "workspaceRef",
+                  "from",
+                  "name"
+                ]
+              ],
               "description": "RuleGroupsNamespace component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the RuleGroupsNamespace system."
             }
           }

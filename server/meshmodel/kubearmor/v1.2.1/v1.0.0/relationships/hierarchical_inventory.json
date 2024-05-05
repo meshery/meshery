@@ -6,8 +6,12 @@
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
   },
   "model": {
+    "schemaVersion": "core.meshery.io/v1lpha2",
+    "version": "v1.0.0",
     "name": "kubearmor",
-    "version": "*",
+    "model": {
+      "version": "*"
+    },
     "displayName": "KubeArmor",
     "category": {
       "name": "Provisioning",
