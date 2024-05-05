@@ -101,19 +101,19 @@ To add or update a model, follow these steps:
 1. **Create a Model Definition.** Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
 2. **Generate Components.** Once you have entered values into the required columns, execute the following command to generate components for your model.
 
-{% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED }}"{% endcapture %}
+{% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
  {% include code.html code=code_content %}
 
-3. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
+1. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
   1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes. 
-  1. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
-  1. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
+  2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
+  3. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
 
 {% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %} 
 
 ### Instructions for Relationships
 
-See the [Contributing to Relationships]({{site.baseurl/project/contributing/contributing-relationships) page.
+See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) page.
 
 1. Identify the relationship and any specific constraints to be enforced between one or more specific components within the same or different models.
 1. Propose a specific visual representation for the relationship. See list of visualizations on [Visualizing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships#relationship-visualizations)
