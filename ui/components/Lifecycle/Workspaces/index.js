@@ -9,7 +9,8 @@ import classNames from 'classnames';
 
 import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState, GenericModal, TransferList } from '../General';
+import { EmptyState, GenericModal } from '../General';
+import { TransferList } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
 import SearchBar from '../../../utils/custom-search';
@@ -41,6 +42,7 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -697,42 +699,44 @@ const Workspaces = ({ organization, classes }) => {
             handleClose={handleAssignEnvironmentModalClose}
             title={`Assign Environments to ${environmentAssignWorkspace.name}`}
             body={
-              <TransferList
-                name="Environments"
-                assignableData={environmentsData}
-                assignedData={handleAssignEnvironmentsData}
-                originalAssignedData={workspaceEnvironmentsData}
-                emptyStateIconLeft={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
-                  />
-                }
-                emtyStateMessageLeft="No environments available"
-                emptyStateIconRight={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
-                  />
-                }
-                emtyStateMessageRight="No environments assigned"
-                assignablePage={handleAssignablePageEnvironment}
-                assignedPage={handleAssignedPageEnvironment}
-                originalLeftCount={environments?.total_count}
-                originalRightCount={environmentsOfWorkspace?.total_count}
-                leftPermission={CAN(
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-                )}
-                rightPermission={CAN(
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-                )}
-              />
+              <UsesSistent>
+                <TransferList
+                  name="Environments"
+                  assignableData={environmentsData}
+                  assignedData={handleAssignEnvironmentsData}
+                  originalAssignedData={workspaceEnvironmentsData}
+                  emptyStateIconLeft={
+                    <EnvironmentIcon
+                      height="5rem"
+                      width="5rem"
+                      fill="#808080"
+                      secondaryFill="#979797"
+                    />
+                  }
+                  emtyStateMessageLeft="No environments available"
+                  emptyStateIconRight={
+                    <EnvironmentIcon
+                      height="5rem"
+                      width="5rem"
+                      fill="#808080"
+                      secondaryFill="#979797"
+                    />
+                  }
+                  emtyStateMessageRight="No environments assigned"
+                  assignablePage={handleAssignablePageEnvironment}
+                  assignedPage={handleAssignedPageEnvironment}
+                  originalLeftCount={environments?.total_count}
+                  originalRightCount={environmentsOfWorkspace?.total_count}
+                  leftPermission={CAN(
+                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+                  )}
+                  rightPermission={CAN(
+                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+                  )}
+                />
+              </UsesSistent>
             }
             action={handleAssignEnvironments}
             buttonTitle="Save"
@@ -746,20 +750,24 @@ const Workspaces = ({ organization, classes }) => {
             handleClose={handleAssignDesignModalClose}
             title={`Assign Designs to ${designAssignWorkspace.name}`}
             body={
-              <TransferList
-                name="Designs"
-                assignableData={designsData}
-                assignedData={handleAssignDesignsData}
-                originalAssignedData={workspaceDesignsData}
-                emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageLeft="No designs available"
-                emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageRight="No designs assigned"
-                assignablePage={handleAssignablePageDesign}
-                assignedPage={handleAssignedPageDesign}
-                originalLeftCount={designs?.total_count}
-                originalRightCount={designsOfWorkspace?.total_count}
-              />
+              <UsesSistent>
+                <TransferList
+                  name="Designs"
+                  assignableData={designsData}
+                  assignedData={handleAssignDesignsData}
+                  originalAssignedData={workspaceDesignsData}
+                  emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
+                  emtyStateMessageLeft="No designs available"
+                  emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
+                  emtyStateMessageRight="No designs assigned"
+                  assignablePage={handleAssignablePageDesign}
+                  assignedPage={handleAssignedPageDesign}
+                  originalLeftCount={designs?.total_count}
+                  originalRightCount={designsOfWorkspace?.total_count}
+                  leftPermission={true}
+                  rightPermission={true}
+                />
+              </UsesSistent>
             }
             action={handleAssignDesigns}
             buttonTitle="Save"
