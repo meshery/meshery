@@ -5,6 +5,7 @@ import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
+import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 export default function useDesignLifecycle() {
   const [designName, setDesignName] = useState('Unitled Design');
@@ -65,7 +66,7 @@ export default function useDesignLifecycle() {
       body: JSON.stringify({
         pattern_data: {
           name: designName,
-          pattern_file: designYaml,
+          pattern_file: getUnit8ArrayForDesign(designYaml),
         },
         save: true,
       }),
@@ -90,7 +91,7 @@ export default function useDesignLifecycle() {
         body: JSON.stringify({
           pattern_data: {
             name: designName,
-            pattern_file: designYaml,
+            pattern_file: getUnit8ArrayForDesign(designYaml),
             id: designId,
           },
         }),

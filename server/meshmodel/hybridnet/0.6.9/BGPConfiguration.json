@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "BGPConfiguration",
+  "apiVersion": "crd.projectcalico.org/v1",
+  "displayName": "BGP Configuration",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "published": true,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FF6A00;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n\th17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n\tc0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"/\u003e\n\u003cpath class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\n        h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\n        c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "hybridnet",
+   "version": "0.6.9",
+   "displayName": "Hybridnet",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Cloud Native Network",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": true,
+    "subCategory": "Uncategorized",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FF6A00;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\u0026#xA;\u0026#x9;h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\u0026#xA;\u0026#x9;c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 77.7 48.5\" style=\"enable-background:new 0 0 77.7 48.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M25.9,21.2h25.9V27H25.9V21.2z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M64.8,0H47.6l4.1,5.8l12.5,3.8c2.3,0.7,3.8,2.8,3.8,5.2l0,0v18.7c0,2.4-1.5,4.5-3.8,5.2l-12.5,3.8l-4.1,5.9\u0026#xA;        h17.1c7.1,0,12.9-5.8,12.9-12.9V12.9C77.7,5.8,71.9,0,64.8,0L64.8,0z M12.9,0h17.1l-4.1,5.8L13.4,9.7c-2.3,0.7-3.8,2.8-3.8,5.2v18.7\u0026#xA;        c0,2.4,1.5,4.5,3.8,5.2l12.5,3.8l4.1,5.9H12.9C5.8,48.5,0,42.7,0,35.5l0,0V12.9C0,5.8,5.8,0,12.9,0C12.9,0,12.9,0,12.9,0L12.9,0z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"BGPConfiguration contains the configuration for any BGP routing.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BGPConfigurationSpec contains the values of the BGP configuration.\",\n   \"properties\": {\n    \"asNumber\": {\n     \"description\": \"ASNumber is the default AS number used by a node. [Default: 64512]\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"communities\": {\n     \"description\": \"Communities is a list of BGP community values and their arbitrary names for tagging routes.\",\n     \"items\": {\n      \"description\": \"Community contains standard or large community value and its name.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name given to community value.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value must be of format `aa:nn` or `aa:nn:mm`. For standard community use `aa:nn` format, where `aa` and `nn` are 16 bit number. For large community use `aa:nn:mm` format, where `aa`, `nn` and `mm` are 32 bit number. Where, `aa` is an AS Number, `nn` and `mm` are per-AS identifier.\",\n        \"pattern\": \"^(\\\\d+):(\\\\d+)$|^(\\\\d+):(\\\\d+):(\\\\d+)$\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"listenPort\": {\n     \"description\": \"ListenPort is the port where BGP protocol should listen. Defaults to 179\",\n     \"maximum\": 65535,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"logSeverityScreen\": {\n     \"description\": \"LogSeverityScreen is the log severity above which logs are sent to the stdout. [Default: INFO]\",\n     \"type\": \"string\"\n    },\n    \"nodeToNodeMeshEnabled\": {\n     \"description\": \"NodeToNodeMeshEnabled sets whether full node to node BGP mesh is enabled. [Default: true]\",\n     \"type\": \"boolean\"\n    },\n    \"prefixAdvertisements\": {\n     \"description\": \"PrefixAdvertisements contains per-prefix advertisement configuration.\",\n     \"items\": {\n      \"description\": \"PrefixAdvertisement configures advertisement properties for the specified CIDR.\",\n      \"properties\": {\n       \"cidr\": {\n        \"description\": \"CIDR for which properties should be advertised.\",\n        \"type\": \"string\"\n       },\n       \"communities\": {\n        \"description\": \"Communities can be list of either community names already defined in `Specs.Communities` or community value of format `aa:nn` or `aa:nn:mm`. For standard community use `aa:nn` format, where `aa` and `nn` are 16 bit number. For large community use `aa:nn:mm` format, where `aa`, `nn` and `mm` are 32 bit number. Where,`aa` is an AS Number, `nn` and `mm` are per-AS identifier.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceClusterIPs\": {\n     \"description\": \"ServiceClusterIPs are the CIDR blocks from which service cluster IPs are allocated. If specified, Calico will advertise these blocks, as well as any cluster IPs within them.\",\n     \"items\": {\n      \"description\": \"ServiceClusterIPBlock represents a single allowed ClusterIP CIDR block.\",\n      \"properties\": {\n       \"cidr\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceExternalIPs\": {\n     \"description\": \"ServiceExternalIPs are the CIDR blocks for Kubernetes Service External IPs. Kubernetes Service ExternalIPs will only be advertised if they are within one of these blocks.\",\n     \"items\": {\n      \"description\": \"ServiceExternalIPBlock represents a single allowed External IP CIDR block.\",\n      \"properties\": {\n       \"cidr\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceLoadBalancerIPs\": {\n     \"description\": \"ServiceLoadBalancerIPs are the CIDR blocks for Kubernetes Service LoadBalancer IPs. Kubernetes Service status.LoadBalancer.Ingress IPs will only be advertised if they are within one of these blocks.\",\n     \"items\": {\n      \"description\": \"ServiceLoadBalancerIPBlock represents a single allowed LoadBalancer IP CIDR block.\",\n      \"properties\": {\n       \"cidr\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BGP Configuration\",\n \"type\": \"object\"\n}"
+ }

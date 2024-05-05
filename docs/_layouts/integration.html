@@ -4,7 +4,6 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
-
 <!-- components -->
 <div>
     <section class="Compheading">
@@ -30,6 +29,8 @@ layout: default
     </section>
 </div>
 <!-- components end -->
+{% include_cached models.html %}
+{% include_cached meshery-registry.html %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}

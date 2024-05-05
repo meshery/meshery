@@ -34,7 +34,7 @@ func SafeClose(co io.Closer) {
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if err != nil {
-		return nil, ErrTokenRefresh(err)
+		return nil, ErrDoRequest(err, req.Method, req.URL.String())
 	}
 
 	if resp.StatusCode == 401 {
@@ -44,11 +44,15 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		resp.Body.Close()
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
-		logrus.Info("token refresh successful")
 		if err != nil {
 			return nil, ErrTokenRefresh(err)
 		}
-		return l.doRequestHelper(req, newToken)
+		l.Log.Info("token refresh successful")
+		resp, err := l.doRequestHelper(req, newToken)
+		if err != nil {
+			return nil, ErrDoRequest(err, req.Method, req.URL.String())
+		}
+		return resp, nil
 	}
 	return resp, err
 }

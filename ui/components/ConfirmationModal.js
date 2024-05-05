@@ -38,6 +38,8 @@ import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { K8sContextConnectionChip } from './Header';
+import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -616,17 +618,16 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(C
 
 export const SelectDeploymentTarget_ = ({
   k8scontext,
-  // selectedContexts,
   classes,
   setK8sContexts,
-  // setSelectedContexts,
   selectedK8sContexts,
 }) => {
-  const [searchedContexts, setSearchedContexts] = useState(k8scontext);
-
+  const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
+    return operatorState !== 'DISABLED';
+  });
+  const [searchedContexts, setSearchedContexts] = useState(deployableK8scontexts);
   const selectedContexts = selectedK8sContexts;
 
-  const { notify } = useNotification();
   const searchContexts = (search) => {
     if (search === '') {
       setSearchedContexts(k8scontext);
@@ -667,19 +668,6 @@ export const SelectDeploymentTarget_ = ({
     }
   };
 
-  const handleKubernetesClick = (ctxID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, 'Kubernetes pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      ctxID,
-    );
-  };
-
   return k8scontext.length > 0 ? (
     <Typography variant="body1">
       <TextField
@@ -708,44 +696,27 @@ export const SelectDeploymentTarget_ = ({
           <span style={{ fontWeight: 'bolder' }}>select all</span>
         </div>
       ) : (
-        <Typography variant="subtitle1">No Context found</Typography>
+        <K8sEmptyState message={'No active cluster found'} />
       )}
 
       <div className={classes.contexts}>
-        {searchedContexts.map((ctx) => (
-          <div id={ctx.id} className={classes.chip} key={ctx.id}>
-            <Tooltip title={`Server: ${ctx.server}`}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-wrap',
-                  alignItems: 'center',
-                }}
-              >
-                <Checkbox
-                  checked={
-                    selectedContexts?.includes(ctx.id) ||
-                    (selectedContexts?.length > 0 && selectedContexts[0] === 'all')
-                  }
-                  onChange={() => setContextViewer(ctx.id)}
-                  color="primary"
-                />
-                <Chip
-                  label={ctx.name}
-                  className={classes.ctxChip}
-                  onClick={() => handleKubernetesClick(ctx.connection_id)}
-                  icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                  variant="outlined"
-                  data-cy="chipContextName"
-                />
-              </div>
-            </Tooltip>
-          </div>
+        {deployableK8scontexts.map((ctx) => (
+          <K8sContextConnectionChip
+            classes={classes}
+            ctx={ctx}
+            key={ctx.id}
+            selectable
+            selected={
+              selectedContexts.includes(ctx.id) ||
+              (selectedContexts?.length > 0 && selectedContexts[0] === 'all')
+            }
+            onSelectChange={() => setContextViewer(ctx.id)}
+          />
         ))}
       </div>
     </Typography>
   ) : (
-    <K8sEmptyState />
+    <K8sEmptyState message={'No active cluster found'} />
   );
 };
 
