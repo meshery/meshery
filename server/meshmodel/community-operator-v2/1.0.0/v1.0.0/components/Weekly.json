@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Weekly",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "community-operator-v2",
+   "displayName": "Community Operator V2",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.0.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Weekly",
+   "version": "community.zufardhiyaulhaq.com/v1alpha1",
+   "schema": "{\n \"description\": \"Weekly is the Schema for the weeklies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WeeklySpec defines the desired state of Weekly\",\n   \"properties\": {\n    \"community\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"spec\": {\n     \"properties\": {\n      \"articles\": {\n       \"items\": {\n        \"properties\": {\n         \"title\": {\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"title\",\n         \"type\",\n         \"url\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"date\": {\n       \"type\": \"string\"\n      },\n      \"imageUrl\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"articles\",\n      \"date\",\n      \"imageUrl\",\n      \"name\",\n      \"tags\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"community\",\n    \"spec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Weekly\",\n \"type\": \"object\"\n}"
+  }
+ }

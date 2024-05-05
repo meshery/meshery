@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Datadog Metric",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "datadog-operator",
+   "displayName": "Datadog Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Observability and Analysis",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://raw.githubusercontent.com/Aevin1387/helm-charts/aevin/apiversion/datadog-operator-0.1.2.tgz"
+   },
+   "model": {
+    "version": "0.1.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "datadog-operator",
+   "modelDisplayName": "Datadog Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "DatadogMetric",
+   "version": "datadoghq.com/v1alpha1",
+   "schema": "{\n \"description\": \"DatadogMetric is the Schema for the datadogmetrics API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatadogMetricSpec defines the desired state of DatadogMetric\",\n   \"properties\": {\n    \"externalMetricName\": {\n     \"description\": \"ExternalMetricName is reversed for internal use\",\n     \"type\": \"string\"\n    },\n    \"query\": {\n     \"description\": \"Query is the raw datadog query\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Datadog Metric\",\n \"type\": \"object\"\n}"
+  }
+ }

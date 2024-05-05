@@ -1,0 +1,31 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "datarepomonitoring",
+  "displayName": "Datarepomonitoring",
+  "description": "",
+  "status": "ignored",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+   "hostname": "artifacthub"
+  },
+  "category": {
+   "name": "Observability and Analysis",
+   "metadata": null
+  },
+  "subCategory": "Monitoring",
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Monitoring",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "version": "model.json"
+  },
+  "components": null,
+  "relationships": null
+ }

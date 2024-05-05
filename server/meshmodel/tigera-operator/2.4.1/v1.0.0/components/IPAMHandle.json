@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "IPAM Handle",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "tigera-operator",
+   "displayName": "Tigera Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Runtime",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz"
+   },
+   "model": {
+    "version": "2.4.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "tigera-operator",
+   "modelDisplayName": "Tigera Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "IPAMHandle",
+   "version": "crd.projectcalico.org/v1",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPAMHandleSpec contains the specification for an IPAMHandle resource.\",\n   \"properties\": {\n    \"block\": {\n     \"additionalProperties\": {\n      \"type\": \"integer\"\n     },\n     \"type\": \"object\"\n    },\n    \"deleted\": {\n     \"type\": \"boolean\"\n    },\n    \"handleID\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"block\",\n    \"handleID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IPAM Handle\",\n \"type\": \"object\"\n}"
+  }
+ }

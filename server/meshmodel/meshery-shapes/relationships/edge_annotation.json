@@ -1,5 +1,6 @@
 {
-    "apiVersion": "core.meshery.io/v1alpha1",
+    "schemaVersion": "core.meshery.io/v1lpha2",
+    "version": "v1.0.0",
     "kind": "Edge",
     "metadata": {
         "description": "A relationship that defines annotation edges between components",
@@ -20,8 +21,12 @@
         }
     },
     "model": {
+        "schemaVersion": "core.meshery.io/v1beta1",
+        "version": "v1.0.0",
         "name": "meshery-shapes",
-        "version": "v1.0,0",
+        "model": {
+            "version": "0.7.1"
+        },
         "displayName": "Meshery Shapes",
         "category": {
             "name": "Orchestration \u0026 Management",

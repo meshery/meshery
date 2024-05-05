@@ -1,0 +1,62 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Metadata",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "backyards-operator",
+   "displayName": "Backyards Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/backyards-operator-1.5.5.tgz"
+   },
+   "model": {
+    "version": "1.5.5"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "backyards-operator",
+   "modelDisplayName": "Backyards Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Metadata",
+   "version": "extensions.banzaicloud.io/v1alpha1",
+   "schema": "{\n \"description\": \"Metadata contains extra information about a kubernetes resource\",\n \"properties\": {\n  \"data\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"object\"\n  },\n  \"raw\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"object\"\n  },\n  \"summary\": {\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"data\"\n ],\n \"title\": \"Metadata\",\n \"type\": \"object\"\n}"
+  }
+ }

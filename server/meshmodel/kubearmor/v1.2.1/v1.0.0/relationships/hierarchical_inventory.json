@@ -1,5 +1,6 @@
 {
-  "apiVersion": "core.meshery.io/v1alpha1",
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
@@ -189,8 +190,8 @@
         ]
       },
       "deny": {
-      "from": [],
-      "to": []
+        "from": [],
+        "to": []
       }
     }
   ]

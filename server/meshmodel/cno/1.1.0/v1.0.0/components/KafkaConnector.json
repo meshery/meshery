@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kafka Connector",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "cno",
+   "displayName": "CNO",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.1.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "KafkaConnector",
+   "version": "kafka.strimzi.io/v1beta2",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Kafka Connector.\",\n   \"properties\": {\n    \"class\": {\n     \"description\": \"The Class for the Kafka Connector.\",\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"The Kafka Connector configuration. The following properties cannot be set: connector.class, tasks.max.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"pause\": {\n     \"description\": \"Whether the connector should be paused. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"tasksMax\": {\n     \"description\": \"The maximum number of tasks for the Kafka Connector.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Connector\",\n \"type\": \"object\"\n}"
+  }
+ }
