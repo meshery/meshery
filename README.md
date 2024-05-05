@@ -9,9 +9,9 @@
   <br/>
 </p>
 
-<h5 align="center" ><i>Meshery proudly stands as a project under the Cloud Native Computing Foundation (CNCF)</i></h5>
-
+<h5 align="center" ><i>Meshery is a Cloud Native Computing Foundation Project</i></h5>
 <hr>
+
 
 <p align="center">
   <a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
@@ -57,255 +57,82 @@
 </h5>
 
 <h4><p align="center"><i>Give us a star <a href="https://github.com/meshery/meshery/stargazers">⭐️</a> to show your support!</i></p></h4>
-<!-- <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
-  <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>   -->
 <hr>
 
 ## What is Meshery?
 
-*<a href="https://meshery.io/" style="text-decoration: none;"><strong>Meshery</strong></a> is your one-stop solution for Kubernetes and service mesh management. Developed by the <a href="https://github.com/layer5io" style="text-decoration: none;"><strong>Layer5</strong></a> community and now a part of **CNCF**, Meshery simplifies deployment, management, and comparison of Kubernetes setups and service meshes. It ensures smooth operation and performance monitoring, giving you confidence in your setup. With support for multi-cluster environments and tailored components, Meshery offers flexibility and ease of use.*
+*<a href="https://meshery.io/" style="text-decoration: none;"><strong>Meshery</strong></a>, the open-source, cloud-native platform, simplifies Kubernetes and service mesh management. Developed by the <a href="https://github.com/layer5io" style="text-decoration: none;"><strong>Layer5</strong></a> community and now a part of **CNCF**, Meshery enables the design and management of Kubernetes-based infrastructure and applications across multi-cloud environments. With visual and collaborative GitOps, it frees users from YAML constraints, offering smooth, extensible management of multi-cluster deployments.*
 
 
 <div align="center" width="100%">
  <p style="clear:both;">&nbsp;</p>
 <h4>Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a></h4>
-  <a href="https://youtu.be/Do7htKrRzDA?si=vJHtlO2ZB_Niv68I">
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-  </a>
+
+[videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
+
+
 </div>
 
-<!-- <p style="clear:both;">&nbsp;</p>
-<a href="https://meshery.io"><picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
-  <img alt="Meshery - the Cloud Native Manager" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg" align="left" width="45%">
-  </picture></a>
-<a href="https://meshery.io">
-<h3 style="margin:auto;"><br /><br />
-  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
-  <br /><br /><br />
-</h3> -->
+
 
 <p style="clear:both;">&nbsp;</p>
 <hr>
 
-## Key Features of Meshery
+## Features of Meshery
+### Configuration Management
 
-<h4>
+*As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds. Meshery's configuration management is based on designs, which are documents that describe the desired state of an environment. Users can create designs using the design configurator in Meshery's UI or extensions like MeshMap, or they can hand code their designs using the mesh model spec. Meshery also offers a catalog of design templates that include configuration best practices.*
+
+***Meshery's configuration management features include:***
+<ul>
+
+<li>
 <details>
-  <summary>Multi-cluster management for Kubernetes and Clouds</summary>
+  <summary><a href="https://docs.meshery.io/concepts/logical/policies"><strong>Context-Aware Policies For Applications</strong></a></summary>
  <hr>
-  <p style="clear:both;">&nbsp;</p>
 
-*<p>Guides for understanding Meshery’s ability to configure infrastructure and applications.</p>*
-   <ul>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/">Configuring your Cloud Native Infrastructure and Applications</a></li>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/creating-a-meshery-design">Creating a Meshery Design</a></li>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/filter-management">Envoy WASM Filter Management</a></li>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/importing-designs">Importing Designs</a></li>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/pattern-management">Cloud Native Design Patterns</a></li>
-    <li><a href="https://docs.meshery.io/guides/configuration-management/push-pull-model-image#use-mesheryctl-to-push-or-pull-a-model-image">Push or Pull a Model Image</a></li>
-  </ul>
-    <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/screens/multi-cluster-management.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-      <p style="clear:both;">&nbsp;</p>
-
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Manage the performance of your infrastructure and its workloads</summary>
- <hr>
- <p style="clear:both;">&nbsp;</p>
-
- *Baseline and track your cloud native performance from release to release*
-   <ul>
-    <li>Use performance profiles to track the historical performance of your workloads</li>
-    <li>Track your application performance from version to version</li>
-    <li>Understand behavioral differences between cloud native network functions</li>
-    <li>Compare performance across infrastructure deployments</li>
-  </ul>
- <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/screens/service-mesh-performance-example.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-    <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Manage your connections with Environments</summary>
- <hr>
-      <p style="clear:both;">&nbsp;</p>
-
- *[Meshery Environments](https://docs.meshery.io/concepts/logical/environments) allow you to logically group related Connections and their associated Credentials. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.*
+ *Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language. Policies offer an evaluation algorithm to ensure desired behavior enforcement. Policies can be applied to components and relationships, defining rules and actions based on predefined conditions.*
      <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/features/environments.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-      <p style="clear:both;">&nbsp;</p>
-
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Organize project-based work with Workspaces</summary>
- <hr>
+    <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/concepts/meshery-models-policy-evaluation.svg" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
      <p style="clear:both;">&nbsp;</p>
-
- *[Meshery Workspaces](https://docs.meshery.io/concepts/logical/workspaces) serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources*
-
-*You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity*
-    <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/features/workspace.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-     <p style="clear:both;">&nbsp;</p>
+     To know more about it read [docs](https://docs.meshery.io/concepts/logical/policies)
+     <hr>
 </details>
-</h4>
 
-
-<h4>
-<details>
-  <summary>Manage infra performance with Performance Profiles</summary>
- <hr>
-    <p style="clear:both;">&nbsp;</p>
-
- *[Performance Profile](https://docs.meshery.io/guides/performance-management/managing-performance) is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:*
- <ol>
-  <li>Saving Test Configurations</li>
-  <li>Create schedules for running tests automatically</li>
-  <li>Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!</li>
-  <li>All the tests performed are under Profiles which has multiple advantages like:<ul>
-   <li>Access test results ran under a certain profiles at one place</li>
-   <li>If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use</li>
-  </ul></li>
-
- </ol>
-    <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/features/performance-metrics.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-    <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Access the Cloud Native Patterns for Kubernetes</summary>
- <hr>
-   <p style="clear:both;">&nbsp;</p>
-
- *Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the [catalog](https://meshery.io/catalog)*
-   <p style="clear:both;">&nbsp;</p>
- <a href="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/patterns/service-mesh-patterns-clip.mov"><img alt="Deploying Linkerd with Meshery" src="https://meshery.io/assets/images/patterns/smp-video-poster-play.png" width="100%" align="c
-  <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Operate with configuration best practices</summary>
- <hr>
-  <p style="clear:both;">&nbsp;</p>
-
-
-  *Access your configurations against deployment and operational best practices with Meshery's configuration validator*
-    <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/screens/configuration-best-practices.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-      <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Manage data plane intelligence with WebAssembly filters</summary>
- <hr>
- <p style="clear:both;">&nbsp;</p>
-
-  *Dynamically load and manage your own WebAssembly filters using Meshery*
-
-  <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master//assets/images/meshery-wasm.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-
- *<a href="https://github.com/layer5io/image-hub">Image Hub</a> is a sample application for exploring WebAssembly modules used as Envoy filters*
-    <p style="clear:both;">&nbsp;</p>
-
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Retrieves and presents the contents of a designated filter through identification by name or ID</summary>
- <hr>
-      <p style="clear:both;">&nbsp;</p>
-
- *[mesheryctl filter](https://docs.meshery.io/reference/mesheryctl/filter/view)*
-
- <h5>Displays the contents of a specific filter based on name or id
-</h5>
-
- ```bash
-  mesheryctl filter view [filter-name | ID]
- ```
- <h5>View all filter files
-</h5>
-
- ```bash
-  mesheryctl filter view --all
- ```
-<p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/filter-view.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-
-##### Go back to [command reference index](https://docs.meshery.io/reference/mesheryctl), if you want to add content manually to the CLI documentation, please refer to the [instruction](https://docs.meshery.io/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance</h5>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Context-Aware Policies For Applications</summary>
- <hr>
-     <p style="clear:both;">&nbsp;</p>
-
- *Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language*
-     <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://meshery.io/images/meshery/meshery-policies.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-     <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Simplify the process of Infrastructure Managment with GitOps Snapshots</summary><br/>
- <hr>
-      <p style="clear:both;">&nbsp;</p>
-
- *Streamlining Platform Engineering with GitOps and Meshery. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting MeshMap to your GitHub repositories*
-
-   <ul>
-    <li>See your deployment before you merge</li>
-    <li>Connect MeshMap to your GitHub repo and see changes pull request-to-pull request</li>
-    <li>Get snapshots of your infrastructure directly in your PRs</li>
-  </ul>
-      <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<h4>
-<details>
-  <summary>Platform Engineering with Meshery's Extension Points</summary>
- <hr>
-       <p style="clear:both;">&nbsp;</p>
-
- *Meshery includes both REST APIs and GraphQL APIs, pluggable adapters via gRPCs, hot-loadable ReactJS and hot-loadable Golang binaries. The great number of [extension points](https://docs.meshery.io/extensibility) in Meshery make it ideal as the foundation of your internal developer platform*
-      <p style="clear:both;">&nbsp;</p>
-    <img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/filter-view.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
-       <p style="clear:both;">&nbsp;</p>
-</details>
-</h4>
-
-<p style="clear:both;">&nbsp;</p>
-
+</li>
+    <li>
+<details><summary><a href="https://docs.meshery.io/guides/configuration-management/"><strong>Multi-cluster management for Kubernetes and Clouds</strong></a></summary>
 <hr>
 
-## Performance Management
+*Meshery empowers seamless multi-cluster Kubernetes management, simplifying operations across diverse environments. With effortless task execution spanning clusters, intuitive contextual navigation, and precision configuration options, Meshery ensures optimized performance tailored to your needs. Its automated deployment mechanism, powered by Meshery's operator, guarantees synchronized operations and resource management efficiency across managed clusters. Ready for the future, Meshery's extensible architecture accommodates multi-cluster-specific components, promising streamlined operations and scalability. Experience enhanced productivity and control over your cloud-native infrastructure with Meshery's comprehensive multi-cluster management features.*
+<br/><br/>
+        <img alt="Wasm" src="https://meshery.io/assets/images/screens/multi-cluster-management.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+       <hr>
+</details>
+  </li>
+<li>
+<details><summary><a href="https://docs.meshery.io/guides/configuration-management/creating-a-meshery-design"><strong>Cloud Native Design Patterns</strong></a></summary>
+  <hr>
 
-### [Service Mesh Performance](https://smp-spec.io/)
+  *Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure. Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the [catalog](https://meshery.io/catalog).* <br/>
+
+  [videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
+  <hr/>
+  </details>
+</li>
+
+</ul>
+
+
+
+### Performance Management
+
+*Meshery helps users weigh the value of their cloud native deployments against the overhead incurred in running different deployment scenarios and different configruations. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and infrastructure configuration. In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Establish a performance benchmark and track performance against this baseline as your environment changes over time.*
+
+***Meshery's performance management features include:***
+<ul>
+<li>
+<details><summary><a href="https://smp-spec.io/"><strong>Service Mesh Performance</strong></a></summary><hr>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
@@ -316,18 +143,162 @@
 <br /><br />
 <p style="clear:both;">
 
-### Standardized Cloud Native Value Management
+### Standardized Cloud Native Performance Management
 
-*Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ***[(SMP)](https://smp-spec.io/)***, Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred*
+*Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ***[(SMP)](https://github.com/service-mesh-performance/service-mesh-performance/issues)***, Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred*
 
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="100%" align="center" /></a>
-<br /><br />
-</p>
+<ul>
+<li>See your performance regressions before you merge
+</li>
+  <li>Connect Performance Management to your GitHub repo and see changes pull request-to-pull request
+</li>
+    <li>Red light performance regressions</li>
+      <li>Baseline and analyze the performance of your services is key to efficient operation of any application</li>
+    <li>Meshery is the canonical implementation of the Cloud Native Performance specification</li>
+    <li>Define your performance profiles upfront. See statistcal analysis with microservice latency and throughput quartiles</li>
+    <li>Meshery packages all these features into an easy-to-use GitHub Action</li>
+    <li>Meshery includes your choice of load generator, so that you can meausure your way
+</li>
+
+</ul>
+<hr>
+  </details>
+</li>
+
+  <li>
+<details>
+  <summary><a href="https://docs.meshery.io/guides/performance-management/managing-performance"><strong>Manage infra performance with Performance Profiles</strong></a></summary>
+ <hr>
+
+ ***[Performance Profile](https://docs.meshery.io/guides/performance-management/managing-performance)** is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:*
+ <ul>
+  <li>Saving Test Configurations</li>
+  <li>Create schedules for running tests automatically</li>
+  <li>Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!</li>
+  <li>All the tests performed are under Profiles which has multiple advantages like:<ul>
+   <li>Access test results ran under a certain profiles at one place</li>
+   <li>If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use</li>
+  </ul></li>
+
+ </ul>
+    <p style="clear:both;">&nbsp;</p>
+    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/features/performance-metrics.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+    <p style="clear:both;">&nbsp;</p>
+    <hr>
+</details>
+  </li>
 
 
+  </ul>
+
+
+### Lifecycle Management
+
+*Meshery simplifies the lifecycle management of your Kubernetes clusters and cloud-native infrastructure, offering robust provisioning, configuration, and operational capabilities. With support for a wide array of cloud-native integrations, Meshery ensures seamless compatibility across diverse environments.*
+
+***Meshery's Lifecycle management features include:***
+<ul>
+
+  <li>
+<details><summary><a href="https://docs.meshery.io/guides/configuration-management/filter-management"><strong>WASM Envoy Filter Management</strong></a></summary>
+<hr>
+
+*Meshery offers WebAssembly-based network traffic management filters in Envoy, bringing a new level of flexibility and control to your Istio deployments. Allows users to manage WASM filters for data plane proxies to improve agility, maintainability, and more.*
+<br/><br/>
+        <img alt="Wasm" src="https://meshery.io/assets/images/meshery-wasm.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+
+
+ <h5>Retrieves and presents the contents of a designated filter through identification by name or ID</h5><br/>
+<ul><li>Displays the contents of a specific filter based on name or id</li>
+
+ ```bash
+  mesheryctl filter view [filter-name | ID]
+ ```
+ <li>View all filter files
+ </li>
+
+ ```bash
+  mesheryctl filter view --all
+ ```
+</ul>
+
+*You can read ***[docs](https://docs.meshery.io/guides/configuration-management/filter-management)*** to know more about it*
+ <hr>
+</details>
+
+
+  </li>
+
+ <li>
+<details>
+  <summary><a href="https://docs.meshery.io/concepts/logical/environments"><strong>Operation and Monitoring</strong></a></summary>
+ <hr>
+
+
+  *Elevate your infrastructure's performance with Meshery. Ensure smooth operations by checking your configurations with the validator, keep an eye on performance metrics, and optimize resource usage effortlessly. Meshery makes it easy to manage and enhance your system's performance.*
+    <p style="clear:both;">&nbsp;</p>
+    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/screens/configuration-best-practices.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+      <p style="clear:both;">&nbsp;</p>
+      <hr>
+</details>
+
+</li>
+
+<li>
+<details><summary><a href="https://docs.meshery.io/guides/configuration-management/creating-a-meshery-design"><strong>Infrastructure Managment with GitOps Snapshots</strong></a></summary>
+<hr>
+
+  *Streamlining Platform Engineering with GitOps and Meshery. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting MeshMap to your GitHub repositories.*
+  <ul>
+    <li>See your deployment before you merge</li>
+    <li>Connect MeshMap to your GitHub repo and see changes pull request-to-pull request</li>
+    <li>Get snapshots of your infrastructure directly in your PRs</li>
+
+  </ul>
 
 <p style="clear:both;">&nbsp;</p>
+    <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/meshmap/meshmap-snapshot.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+     <p style="clear:both;">&nbsp;</p>
+
+  See ***[Extension: MeshMap Snapshot](https://docs.meshery.io/extensions/snapshot)*** for more details.
+  <hr>
+  </details>
+</li>
+
+
+<li>
+<details>
+  <summary><a href="https://docs.meshery.io/concepts/logical/environments"><strong>Manage your connections with Environments</strong></a></summary>
+ <hr>
+
+ ***[Meshery Environments](https://docs.meshery.io/concepts/logical/environments)** allow you to logically group related Connections and their associated Credentials. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.*
+     <p style="clear:both;">&nbsp;</p>
+    <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/features/environments.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+    <p style="clear:both;">&nbsp;</p>
+</details>
+
+</li>
+</ul>
 <hr>
+
+## Collaboration
+
+ ***[Meshery Workspaces](https://docs.meshery.io/concepts/logical/workspaces)** serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources*
+
+*You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity*
+
+<img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/layer5io/meshery.io/master/assets/images/features/workspace.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+     <p style="clear:both;">&nbsp;</p>
+
+<hr>
+
+## Extension Points
+
+ *Extend Meshery's functionality to suit your unique requirements with its vast set of extensibility features. Leverage gRPC adapters, hot-loadable ReactJS packages, Golang plugins, and more to customize and enhance Meshery's capabilities. With consumable and extendable API interfaces via REST and GraphQL, Meshery serves as your ultimate self-service engineering platform, adaptable to your evolving needs.The great number of **[extension points](https://docs.meshery.io/extensibility)** in Meshery make it ideal as the foundation of your internal developer platform*
+    <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/architecture/meshery_extension_points.svg" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+        <p style="clear:both;">&nbsp;</p>
+   <hr>
+
 
 ## Meshery Architecture
 
@@ -363,21 +334,28 @@ curl -L https://meshery.io/install | PLATFORM=docker bash -
 ### Access Meshery
 *Your default browser will be opened and directed to Meshery’s web-based user interface typically found at http://localhost:9081*
 
+
+
+
 ### Select a Provider
-*Select from the list of Providers in order to login to Meshery. Authenticate with your chosen Provider*
-<p style="clear:both;">&nbsp;</p>
-<img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/meshery-server-page.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+
+  *Select from the list of Providers in order to login to Meshery. Authenticate with your chosen Provider*
 
 ### Configure Connections to your Kubernetes Clusters
-*If you have deployed Meshery out-of-cluster, Meshery will automatically connect to any available Kubernetes clusters found in your kubeconfig (under $HOME/.kube/config). If you have deployed Meshery out-of-cluster, Meshery will automatically connect to the Kubernetes API Server availabe in the control plane. Ensure that Meshery is connected to one or more of your Kubernetes clusters*
+
+  *If you have deployed Meshery out-of-cluster, Meshery will automatically connect to any available Kubernetes clusters found in your kubeconfig (under $HOME/.kube/config). If you have deployed Meshery out-of-cluster, Meshery will automatically connect to the Kubernetes API Server availabe in the control plane. Ensure that Meshery is connected to one or more of your Kubernetes clusters*
 <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/platforms/meshery-settings.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
+
 *If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See Managing Kubernetes Clusters for more information*
 
 ### Verify Deployment
-*Run connectivity tests and verify the health of your Meshery system. Verify Meshery’s connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery’s ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like **<a href="https://docs.meshery.io/concepts/architecture/adapters">Meshery Adapters</a>**) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test*
+
+  *Run connectivity tests and verify the health of your Meshery system. Verify Meshery’s connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery’s ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like **<a href="https://docs.meshery.io/concepts/architecture/adapters">Meshery Adapters</a>**) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test*
+
 
 ### Design and operate Kubernetes clusters and their workloads
-*You may now proceed to managed any cloud native infrastructure supported by Meshery. See all integrations for a complete list of supported infrastructure*
+
+  *You may now proceed to managed any cloud native infrastructure supported by Meshery. See all integrations for a complete list of supported infrastructure*
 <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/platforms/meshery-designs.png" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
 
 ### Additional Guides
@@ -394,6 +372,8 @@ curl -L https://meshery.io/install | PLATFORM=docker bash -
 Our projects are all about teamwork and we're eager to collaborate! 🚀 Explore our ***<a href="https://layer5.io/community/newcomers">Contributor's Journey Map</a>*** and ***<a href="https://layer5.io/community/handbook">Community Handbook</a>*** for a guided tour of resources available to you. Want a sneak peek at each repository? Check out the ***<a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a>***, categorized by technology and programming language. Ready to dive in? Join our ***<a href="https://slack.meshery.io">community Slack</a>*** Or ***<a href="http://discuss.meshery.io"> discussion forum</a>*** and start participating! 💬
 
 <p style="clear:both;">&nbsp;</p>
+
+
 
 <a href ="https://layer5.io/community/meshmates"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
 ***<h3>Find your MeshMate</h3>***
@@ -437,24 +417,23 @@ Layer5 MeshMates are committed to helping community members be successful contri
 
 ## :handshake: Contributing
 
-Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the **[General Contribution Flow](https://docs.meshery.io/project/contributing#general-contribution-flow)** for a tour of resources available to you and how to get started.
+Please do! We're a warm and welcoming community of open source contributors. Whether you're a seasoned developer or just starting out, your contributions are invaluable to us. Be sure to read the **[Contribution Guides](https://docs.meshery.io/project/contributing#general-contribution-flow)** for a tour of resources available to you and how to get started.
 
-*Not sure where to start?*
 <h4>
 <details>
-  <summary>Follow these steps and you’ll be right at home</summary>
+  <summary>Follow these steps to start your contributing journey</summary>
  <hr>
  <ol>
-  <li>See the <a href="https://layer5.io/community/newcomers"><strong>Newcomers Guide</strong></a> for how, where, and why to contribute</li>
-  <li>Sign up for a <a href="https://layer5.io/community/meshmates"><strong> MeshMate</strong></a> to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
-  <ul>
-   <li><strong>Familiarize </strong>yourself with the broader set of community projects (take a look at the<a href="https://layer5.io/community/handbook/repository-overview"><strong>Repository Overview:</strong></a> Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate</li>
-   <li><strong>Identify your area of interest:</strong> Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop</li>
-   <li><strong>Run Meshery: </strong>Put on your user hat and walk-through all of Meshery’s features and functions as a user</li>
-   <li><strong>Build Meshery: </strong>Confirm that you have a usable development environment</li>
-   <li><strong>Discuss </strong>with the community by engaging in the <a href="http://discuss.meshery.io/"><strong>discussion forum</strong></a></li>
-   <li><strong>Contribute </strong>by grabbing any open issue with the <a href="https://github.com/meshery/meshery/issues/"><strong>help-wanted label </strong></a>and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose"><strong>new issue </strong></a>All <a href="https://github.com/meshery/meshery/pulls"><strong>pull requests </strong></a>should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords"><strong></strong>automatically close issues in GitHub</strong></a></li>
-   <li><strong>Fill-in </strong>a <a href="https://layer5.io/newcomers"><strong>community member form </strong></a>to gain access to community resources</li>
+  <li>See the <a href="https://layer5.io/community/newcomers"><strong>Newcomers Guide</strong></a> for how, where, and why to contribute</li><br/>
+  <li>Sign up for a <a href="https://layer5.io/community/meshmates"><strong> MeshMate</strong></a> to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community :
+  <ul><br/>
+   <li><strong>Familiarize </strong>yourself with the broader set of community projects (take a look at the<a href="https://layer5.io/community/handbook/repository-overview"><strong>Repository Overview:</strong></a> Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate</li><br/>
+   <li><strong>Identify your area of interest:</strong> Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop</li><br/>
+   <li><strong>Run Meshery: </strong>Put on your user hat and walk-through all of Meshery’s features and functions as a user</li><br/>
+   <li><strong>Build Meshery: </strong>Confirm that you have a usable development environment</li><br/>
+   <li><strong>Discuss </strong>with the community by engaging in the <a href="http://discuss.meshery.io/"><strong>discussion forum</strong></a></li><br/>
+   <li><strong>Contribute </strong>by grabbing any open issue with the <a href="https://github.com/meshery/meshery/issues/"><strong>help-wanted label </strong></a>and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose"><strong>new issue </strong></a>All <a href="https://github.com/meshery/meshery/pulls"><strong>pull requests </strong></a>should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords"><strong></strong>automatically close issues in GitHub</strong></a></li><br/>
+   <li><strong>Fill-in </strong>a <a href="https://layer5.io/newcomers"><strong>community member form </strong></a>to gain access to community resources</li><br/>
 
   </ul>
   </li>
@@ -465,7 +444,7 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 </details>
 </h4>
 
-*If you have any doubt, then Ask it **[here](http://discuss.meshery.io/)** 📩*
+*Didn't find an answer to your question? **[Just Ask](http://discuss.meshery.io/)** 💬*
 ### Contributors:
 
 <p Style="align:center"><i>🙌 We are deeply grateful to all our amazing contributors! 🌟</i></p>
