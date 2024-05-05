@@ -61,11 +61,12 @@ export default function useDesignLifecycle() {
   function onDelete() {}
 
   function designSave() {
+    const designYamlBytes = new TextEncoder().encode(designYaml);
     promisifiedDataFetch('/api/pattern', {
       body: JSON.stringify({
         pattern_data: {
           name: designName,
-          pattern_file: designYaml,
+          pattern_file: Array.from(designYamlBytes),
         },
         save: true,
       }),
@@ -85,12 +86,13 @@ export default function useDesignLifecycle() {
   }
 
   async function designUpdate() {
+    const designYamlBytes = new TextEncoder().encode(designYaml);
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
           pattern_data: {
             name: designName,
-            pattern_file: designYaml,
+            pattern_file: Array.from(designYamlBytes),
             id: designId,
           },
         }),
