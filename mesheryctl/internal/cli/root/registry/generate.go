@@ -319,7 +319,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				if err != nil {
 					return ErrGenerateModel(err, model.Model)
 				}
-				
+
 				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)

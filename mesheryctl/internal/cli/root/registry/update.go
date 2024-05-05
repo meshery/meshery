@@ -163,7 +163,7 @@ func InvokeCompUpdate() error {
 					}
 
 					// A model can have components with multiple versions
-					versionPath := filepath.Join(modelPath, content.Name())
+					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
 					entries, _ := os.ReadDir(versionPath)
 					availableComponentsPerModelPerVersion += len(entries)
 
@@ -171,7 +171,7 @@ func InvokeCompUpdate() error {
 
 					for _, component := range components {
 						utils.Log.Info("Updating ", component.Component)
-						compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
+						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
