@@ -177,7 +177,7 @@ const User = (props) => {
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button"  onMouseOver={handleOpen}>
+        <div data-test="profile-button" onMouseOver={handleOpen}>
           <IconButton
             color={color}
             className={iconButtonClassName}
