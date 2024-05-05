@@ -255,5 +255,5 @@ if [ ! -z "$ADAPTERS" ]; then
     mesheryctl system context create custom -s $adapterString --yes
 fi
 
-printf "\nStarting Meshery...\n"
+printf "\nDeploying Meshery...\n"
 mesheryctl system start --yes --platform $PLATFORM

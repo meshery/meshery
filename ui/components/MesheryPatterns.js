@@ -987,7 +987,11 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
+            pattern_data: {
+              id,
+              pattern_file: getUnit8ArrayForDesign(data),
+              catalog_data,
+            },
             save: true,
           }),
         },
