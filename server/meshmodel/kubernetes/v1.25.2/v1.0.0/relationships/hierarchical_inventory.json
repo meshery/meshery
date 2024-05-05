@@ -20,7 +20,7 @@
     "metadata": {}
   },
   "subType": "Inventory",
-  "evaluationQuery": "heirarchical_inventory_relationship",
+  "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {
       "allow": {
