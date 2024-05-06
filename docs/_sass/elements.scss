@@ -64,7 +64,7 @@ h5,
 .h5 {
   font-size: 1.4rem;
   font-weight: 400;
-}
+} 
 h6 {
   font-size: 1.2rem;
   font-weight: 300;
@@ -127,7 +127,11 @@ li:has(> a[href*="/extensions"]){
   margin-left: -2rem;
 } 
 
-.terminal {
+dt {
+  font-weight: bold;
+}
+dd {
+  margin-left: 1.5rem;
 }
 
 pre,
