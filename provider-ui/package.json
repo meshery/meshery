@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.26",
-    "cypress": "^13.7.1",
+    "cypress": "^13.8.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.4",
     "eslint-plugin-cypress": "^2.15.1",
