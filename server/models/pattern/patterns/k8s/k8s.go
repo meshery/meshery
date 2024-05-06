@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"gopkg.in/yaml.v2"
@@ -14,7 +15,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, comp v1alpha1.Component, _ v1alpha1.Configuration, isDel bool) error {
+func Deploy(kubeClient *meshkube.Client, comp v1beta1.Component, _ v1alpha1.Configuration, isDel bool) error {
 	resource := createK8sResourceStructure(comp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
@@ -36,7 +37,7 @@ func Deploy(kubeClient *meshkube.Client, comp v1alpha1.Component, _ v1alpha1.Con
 	return nil
 }
 
-func DryRunHelper(client *meshkube.Client, comp v1alpha1.Component) (st map[string]interface{}, success bool, err error) {
+func DryRunHelper(client *meshkube.Client, comp v1beta1.Component) (st map[string]interface{}, success bool, err error) {
 	resource := createK8sResourceStructure(comp)
 	return dryRun(client.KubeClient.RESTClient(), resource, comp.Namespace)
 }
@@ -90,9 +91,9 @@ func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
 }
 
-func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
-	apiVersion := v1alpha1.GetAPIVersionFromComponent(comp)
-	kind := v1alpha1.GetKindFromComponent(comp)
+func createK8sResourceStructure(comp v1beta1.Component) map[string]interface{} {
+	apiVersion := v1beta1.GetAPIVersionFromComponent(comp)
+	kind := v1beta1.GetKindFromComponent(comp)
 
 	component := map[string]interface{}{
 		"apiVersion": apiVersion,

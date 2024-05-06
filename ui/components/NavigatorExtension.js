@@ -30,10 +30,10 @@ import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
+import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-
 function NavigatorExtension({
   grafana,
   prometheus,
@@ -119,6 +119,9 @@ function NavigatorExtension({
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
         StructuredDataFormatter: FormatStructuredData,
+        hooks: {
+          useFilterK8sContexts,
+        },
       }}
     />
   );
