@@ -70,7 +70,7 @@
 <h4>Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a></h4>
 
 
-  [videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
+  [playground.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
 
 
 </div>
@@ -118,7 +118,7 @@
 
   *Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure. Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the [catalog](https://meshery.io/catalog).* <br/>
 
-  [videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
+[patern.webm](https://github.com/praduman8435/.../assets/118579284/dfacae10-2728-4071-a7e8-d5472012fb57)
   <hr/>
   </details>
 </li>
@@ -163,6 +163,9 @@
 </li>
 
 </ul>
+      <p style="clear:both;">&nbsp;</p>
+
+  [SMP.webm](https://github.com/praduman8435/.../assets/118579284/8a1449c2-70a3-493b-a302-09c94157ebd9)
 <hr>
   </details>
 </li>
@@ -186,7 +189,12 @@
     <p style="clear:both;">&nbsp;</p>
     <img alt="Meshery cloud native management" src="https://meshery.io/assets/images/features/performance-metrics.gif" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
     <p style="clear:both;">&nbsp;</p>
-    <hr>
+
+
+
+  <hr>
+
+    
 </details>
   </li>
 
@@ -297,6 +305,7 @@
 ## Extension Points
 
  *Extend Meshery's functionality to suit your unique requirements with its vast set of extensibility features. Leverage gRPC adapters, hot-loadable ReactJS packages, Golang plugins, and more to customize and enhance Meshery's capabilities. With consumable and extendable API interfaces via REST and GraphQL, Meshery serves as your ultimate self-service engineering platform, adaptable to your evolving needs.The great number of **[extension points](https://docs.meshery.io/extensibility)** in Meshery make it ideal as the foundation of your internal developer platform*
+ <br><br>
     <img alt="Meshery cloud native management" src="https://docs.meshery.io/assets/img/architecture/meshery_extension_points.svg" style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" />
         <p style="clear:both;">&nbsp;</p>
    <hr>
