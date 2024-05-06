@@ -69,7 +69,8 @@
  <p style="clear:both;">&nbsp;</p>
 <h4>Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a></h4>
 
-[videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
+
+  [videoplayback.webm](https://github.com/praduman8435/JAVA-DSA/assets/118579284/80f786fb-a3d2-41f5-8373-db58f7c0f48e)
 
 
 </div>
