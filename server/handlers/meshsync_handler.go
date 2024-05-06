@@ -57,11 +57,11 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
 
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 
-	offset := (page - 1) * limit
+	offset := page * limit
 	order := r.URL.Query().Get("order")
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
