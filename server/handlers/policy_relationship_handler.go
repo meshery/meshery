@@ -132,7 +132,7 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 	var relationships []v1alpha2.RelationshipDefinition
 	for _, entity := range registeredRelationships {
 		relationship, err := utils.Cast[*v1alpha2.RelationshipDefinition](entity)
-		
+
 		if err != nil {
 			return
 		}

@@ -73,7 +73,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 		for _, version := range modelVersionsDir {
 			modelDefVersionsDirPath := filepath.Join(modelVersionsDirPath, version.Name())
-		
+
 			// contains all def versions for a particular version of a model.
 			modelDefVersionsDir, err := os.ReadDir(modelDefVersionsDirPath)
 			if err != nil {
@@ -81,7 +81,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 			}
 			for _, defVersion := range modelDefVersionsDir {
 				defPath := filepath.Join(modelDefVersionsDirPath, defVersion.Name())
-			
+
 				entities, err := os.ReadDir(defPath)
 				if err != nil {
 					erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)

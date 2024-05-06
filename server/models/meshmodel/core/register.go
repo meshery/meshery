@@ -15,8 +15,8 @@ import (
 
 	"github.com/layer5io/meshery/server/models"
 
-	"github.com/layer5io/meshkit/utils"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
@@ -135,7 +135,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			// 	Category: v1beta1.Category{
 			// 		Name: "Orchestration & Management",
 			// 	},
-			},
+		},
 		)
 	}
 }
