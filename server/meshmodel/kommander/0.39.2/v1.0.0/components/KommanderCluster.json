@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kommander Cluster",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "kommander",
+   "displayName": "Kommander",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://mesosphere.github.io/charts/stable/kommander-0.39.2.tgz"
+   },
+   "model": {
+    "version": "0.39.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "kommander",
+   "modelDisplayName": "Kommander",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "KommanderCluster",
+   "version": "kommander.mesosphere.io/v1beta1",
+   "schema": "{\n \"description\": \"KommanderCluster is the Schema for the kommander clusters API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KommanderClusterSpec defines the desired state of Cluster.\",\n   \"properties\": {\n    \"clusterRef\": {\n     \"description\": \"ClusterReference holds a single reference to clusters provisioned via Kommander. Only one field is allowed to be set. Currently, only Konvoy clusters are creatable, but this is left extensible for other provider types in the future.\",\n     \"properties\": {\n      \"konvoyCluster\": {\n       \"description\": \"LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"clusterTunnelConnectorRef\": {\n     \"description\": \"ClusterTunnelConnectorRef is a reference to TunnelConnector that should be used for connecting to cluster.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubeconfigRef\": {\n     \"description\": \"LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kommander Cluster\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -132,7 +132,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			for _, f := range regFunc {
 				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, ctxName)
 				if err != nil {
-					cg.log.Error(err)
+					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
 					return
 				}
 			}

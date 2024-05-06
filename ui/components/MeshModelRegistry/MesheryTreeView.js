@@ -125,7 +125,7 @@ const RelationshipTree = ({
 };
 
 const MesheryTreeViewItem = ({
-  model,
+  modelDef,
   registrantID,
   setShowDetailsData,
   handleToggle,
@@ -135,77 +135,84 @@ const MesheryTreeViewItem = ({
 }) => {
   return (
     <StyledTreeItem
-      key={model.id}
-      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
-      data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}`}
+      key={modelDef.id}
+      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
+      data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       top
-      labelText={model.displayName === '' ? model.name : model.displayName}
+      labelText={modelDef.displayName}
       onClick={() => {
         setShowDetailsData({
           type: MODELS,
-          data: model,
+          data: modelDef,
         });
       }}
     >
-      {model.versionBasedData &&
-        model.versionBasedData.map((versionedModel) => (
+      {modelDef.versionBasedData &&
+        modelDef.versionBasedData.map((versionedModelDef) => (
           <StyledTreeItem
-            key={versionedModel.id}
-            nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
-            data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${versionedModel.id}`}
+            key={versionedModelDef.id}
+            nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+              versionedModelDef.id
+            }`}
+            data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+              versionedModelDef.id
+            }`}
             labelText={
-              versionedModel.version[0] == 'v'
-                ? versionedModel.version
-                : `v${versionedModel.version}`
+              versionedModelDef.model.version[0] == 'v'
+                ? versionedModelDef.model.version
+                : `v${versionedModelDef.model.version}`
             }
             check={true}
             onClick={() => {
               setShowDetailsData({
                 type: MODELS,
-                data: versionedModel,
+                data: versionedModelDef,
               });
             }}
           >
             <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                versionedModel.id
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                versionedModelDef.id
               }.1`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                versionedModel.id
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                versionedModelDef.id
               }.1`}
               labelText={`Components (${
-                versionedModel.components ? versionedModel.components.length : 0
+                versionedModelDef.components ? versionedModelDef.components.length : 0
               })`}
             >
-              {versionedModel.components &&
-                versionedModel.components.map((component, subIndex) => (
-                  <StyledTreeItem
-                    key={subIndex}
-                    nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.1.${component.id}`}
-                    data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                      versionedModel.id
-                    }.1.${component.id}`}
-                    labelText={component.displayName}
-                    onClick={() => {
-                      setShowDetailsData({
-                        type: COMPONENTS,
-                        data: component,
-                      });
-                    }}
-                  />
-                ))}
+              {versionedModelDef.components &&
+                versionedModelDef.components.map((component, subIndex) => {
+                  // console.log("component", component);
+                  return (
+                    <StyledTreeItem
+                      key={subIndex}
+                      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                        versionedModelDef.id
+                      }.1.${component.id}`}
+                      data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                        versionedModelDef.id
+                      }.1.${component.id}`}
+                      labelText={component.displayName}
+                      onClick={() => {
+                        setShowDetailsData({
+                          type: COMPONENTS,
+                          data: component,
+                        });
+                      }}
+                    />
+                  );
+                })}
             </StyledTreeItem>
             <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                versionedModel.id
+              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                versionedModelDef.id
               }.2`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                versionedModel.id
+              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                versionedModelDef.id
               }.2`}
               labelText={`Relationships (${
-                versionedModel.relationships ? versionedModel.relationships.length : 0
+                versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
               })`}
             >
               <RelationshipTree
@@ -213,11 +220,11 @@ const MesheryTreeViewItem = ({
                 handleSelect={handleSelect}
                 expanded={expanded}
                 selected={selected}
-                data={versionedModel.relationships}
+                data={versionedModelDef.relationships}
                 view={MODELS}
                 setShowDetailsData={setShowDetailsData}
-                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${model.id}.${
-                  versionedModel.id
+                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                  versionedModelDef.id
                 }.2`}
               />
             </StyledTreeItem>
@@ -247,10 +254,10 @@ const MesheryTreeViewModel = ({
       expanded={expanded}
       selected={selected}
     >
-      {data.map((model, index) => (
+      {data.map((modelDef, index) => (
         <MesheryTreeViewItem
           key={index}
-          model={model}
+          modelDef={modelDef}
           handleToggle={handleToggle}
           handleSelect={handleSelect}
           expanded={expanded}
@@ -305,10 +312,10 @@ const MesheryTreeViewRegistrants = ({
               data-id={`${registrant.id}.1`}
               labelText={`Models (${registrant?.models.length})`}
             >
-              {registrant?.models.map((model, index) => (
+              {registrant?.models.map((modelDef, index) => (
                 <MesheryTreeViewItem
                   key={index}
-                  model={model}
+                  modelDef={modelDef}
                   handleToggle={handleToggle}
                   handleSelect={handleSelect}
                   expanded={expanded}

@@ -27,7 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -285,7 +285,7 @@ mesheryctl exp model view [model-name]
 			return err
 		}
 
-		var selectedModel v1alpha1.Model
+		var selectedModel v1beta1.Model
 
 		if modelsResponse.Count == 0 {
 			fmt.Println("No model(s) found for the given name ", model)
@@ -484,8 +484,8 @@ func init() {
 }
 
 // selectModelPrompt lets user to select a model if models are more than one
-func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
-	modelArray := []v1alpha1.Model{}
+func selectModelPrompt(models []v1beta1.Model) v1beta1.Model {
+	modelArray := []v1beta1.Model{}
 	modelNames := []string{}
 
 	modelArray = append(modelArray, models...)
@@ -510,7 +510,7 @@ func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
 	}
 }
 
-func outputJson(model v1alpha1.Model) error {
+func outputJson(model v1beta1.Model) error {
 	if err = prettifyJson(model); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
@@ -524,9 +524,9 @@ func outputJson(model v1alpha1.Model) error {
 	return nil
 }
 
-// prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyJson(model v1alpha1.Model) error {
+func prettifyJson(model v1beta1.Model) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.
