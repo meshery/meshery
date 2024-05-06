@@ -1,0 +1,48 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "TunnelGateway",
+  "apiVersion": "kubetunnel.d2iq.io/v1alpha1",
+  "displayName": "Tunnel Gateway",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "kommander",
+   "modelDisplayName": "Kommander",
+   "primaryColor": "#31006f",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 145 145\"\u003e\n        \u003cpath fill=\"#31006f\" d=\"M94 86.2c-4.3 0-7.8 3.5-7.8 7.8v15.7c0 4.3 3.5 7.8 7.8 7.8 1.6 0 3.1-.5 4.4-1.4l-7.3-7.3 5.5-5.5 5.2 5.2V94.1c0-4.4-3.5-7.9-7.8-7.9zM51 27.4h-7.9v31.3H51c4.3 0 7.7-3.5 7.8-7.8V35.3c0-4.3-3.5-7.8-7.8-7.9z\"\u003e\u003c/path\u003e\n        \u003cpath fill=\"#31006f\" d=\"M0 0v145h145V0H0zm66.6 86.2H54.9v31.3h11.8v7.8H35.3v-7.8H47V86.2H35.3v-7.8h31.4v7.8zm0-35.2c0 8.6-7 15.6-15.6 15.7H35.3v-47H51c8.6 0 15.6 7 15.6 15.6V51zm11.8 2c0-7.6 6.1-13.7 13.7-13.8H96c3.2 0 5.9-2.6 5.9-5.9 0-3.2-2.6-5.9-5.9-5.9H78.4v-7.8H96c7.6.4 13.4 6.8 13.1 14.3-.3 7.1-6 12.7-13.1 13.1h-3.9c-3.2 0-5.9 2.6-5.9 5.9v5.9h23.5v7.8H78.3l.1-13.6zm31.5 74.8l-5.9-5.9c-6.7 5.5-16.6 4.6-22.1-2.1-2.3-2.8-3.6-6.3-3.6-10V94.1c.2-8.7 7.4-15.5 16.1-15.3 8.3.2 15.1 6.9 15.3 15.3v15.7c0 1.9-.3 3.8-1 5.6l6.8 6.8-5.6 5.6z\"\u003e\u003c/path\u003e\n    \u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 145 145\"\u003e\n        \u003cpath fill=\"#fff\" d=\"M94 86.2c-4.3 0-7.8 3.5-7.8 7.8v15.7c0 4.3 3.5 7.8 7.8 7.8 1.6 0 3.1-.5 4.4-1.4l-7.3-7.3 5.5-5.5 5.2 5.2V94.1c0-4.4-3.5-7.9-7.8-7.9zM51 27.4h-7.9v31.3H51c4.3 0 7.7-3.5 7.8-7.8V35.3c0-4.3-3.5-7.8-7.8-7.9z\"\u003e\u003c/path\u003e\n        \u003cpath fill=\"#fff\" d=\"M0 0v145h145V0H0zm66.6 86.2H54.9v31.3h11.8v7.8H35.3v-7.8H47V86.2H35.3v-7.8h31.4v7.8zm0-35.2c0 8.6-7 15.6-15.6 15.7H35.3v-47H51c8.6 0 15.6 7 15.6 15.6V51zm11.8 2c0-7.6 6.1-13.7 13.7-13.8H96c3.2 0 5.9-2.6 5.9-5.9 0-3.2-2.6-5.9-5.9-5.9H78.4v-7.8H96c7.6.4 13.4 6.8 13.1 14.3-.3 7.1-6 12.7-13.1 13.1h-3.9c-3.2 0-5.9 2.6-5.9 5.9v5.9h23.5v7.8H78.3l.1-13.6zm31.5 74.8l-5.9-5.9c-6.7 5.5-16.6 4.6-22.1-2.1-2.3-2.8-3.6-6.3-3.6-10V94.1c.2-8.7 7.4-15.5 16.1-15.3 8.3.2 15.1 6.9 15.3 15.3v15.7c0 1.9-.3 3.8-1 5.6l6.8 6.8-5.6 5.6z\"\u003e\u003c/path\u003e\n    \u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "kommander",
+   "version": "0.39.2",
+   "displayName": "Kommander",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "source_uri": "https://mesosphere.github.io/charts/stable/kommander-0.39.2.tgz"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Describes how various services (e.g., tunner server) would be exposed outside the current cluster.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ingress\": {\n     \"description\": \"If specified, services will be exposed using Ingress.\",\n     \"properties\": {\n      \"caSecretRef\": {\n       \"description\": \"A secret reference to the root CA that will be used to validate the ingress endpoints. The secret should have type \\\"Opaque\\\" and contain the key \\\"tls.crt\\\". If not specified, the default host root CA will be used to validate the endpoints.\",\n       \"properties\": {\n        \"apiVersion\": {\n         \"description\": \"API version of the referent.\",\n         \"type\": \"string\"\n        },\n        \"fieldPath\": {\n         \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        },\n        \"resourceVersion\": {\n         \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n         \"type\": \"string\"\n        },\n        \"uid\": {\n         \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"extraAnnotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Extra annotations to set on the Ingress object.\",\n       \"type\": \"object\"\n      },\n      \"host\": {\n       \"description\": \"Host in the Ingress record.\",\n       \"type\": \"string\"\n      },\n      \"loadBalancer\": {\n       \"description\": \"Ingress points for the load-balancer. Traffic intended for the service should be sent to these ingress points. If not specified, the controller will try to derive that from the Ingress record status field.\",\n       \"properties\": {\n        \"hostname\": {\n         \"description\": \"Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)\",\n         \"type\": \"string\"\n        },\n        \"ip\": {\n         \"description\": \"IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)\",\n         \"type\": \"string\"\n        },\n        \"ports\": {\n         \"description\": \"Ports is a list of records of service ports If used, every port defined in the service should have an entry in it\",\n         \"items\": {\n          \"properties\": {\n           \"error\": {\n            \"description\": \"Error is to record the problem with the service port The format of the error shall comply with the following rules: - built-in error values shall be specified in this file and those shall use   CamelCase names - cloud provider specific error values must have names that comply with the   format foo.example.com/CamelCase. --- The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)\",\n            \"maxLength\": 316,\n            \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\",\n            \"type\": \"string\"\n           },\n           \"port\": {\n            \"description\": \"Port is the port number of the service port of which status is recorded here\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"protocol\": {\n            \"description\": \"Protocol is the protocol of the service port of which status is recorded here The supported values are: \\\"TCP\\\", \\\"UDP\\\", \\\"SCTP\\\"\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"port\",\n           \"protocol\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"urlPathPrefix\": {\n       \"description\": \"URL path prefix to be append to all Ingresses. For example, if this field is set to \\\"/ops/portal/kt\\\", the ingresses created will have URL paths like the following:   \\\"/ops/portal/kt/default/cluster1/tunnel-server\\\"   \\\"/ops/portal/kt/default/cluster1/kubeconfig\\\" If not specified, default to root path (i.e., \\\"/\\\").\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tunnel Gateway\",\n \"type\": \"object\"\n}"
+ }

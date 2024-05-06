@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "NodeFeature",
+  "apiVersion": "nfd.k8s-sigs.io/v1alpha1",
+  "displayName": "Node Feature",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "gpu-operator",
+   "version": "23.9.2",
+   "displayName": "Gpu Operator",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"NodeFeature resource holds the features discovered for one node in the cluster.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeFeatureSpec describes a NodeFeature object.\",\n   \"properties\": {\n    \"features\": {\n     \"description\": \"Features is the full \\\"raw\\\" features data that has been discovered.\",\n     \"properties\": {\n      \"attributes\": {\n       \"additionalProperties\": {\n        \"description\": \"AttributeFeatureSet is a set of features having string value.\",\n        \"properties\": {\n         \"elements\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"elements\"\n        ],\n        \"type\": \"object\"\n       },\n       \"description\": \"Attributes contains all the attribute-type features of the node.\",\n       \"type\": \"object\"\n      },\n      \"flags\": {\n       \"additionalProperties\": {\n        \"description\": \"FlagFeatureSet is a set of simple features only containing names without values.\",\n        \"properties\": {\n         \"elements\": {\n          \"additionalProperties\": {\n           \"description\": \"Nil is a dummy empty struct for protobuf compatibility\",\n           \"type\": \"object\"\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"elements\"\n        ],\n        \"type\": \"object\"\n       },\n       \"description\": \"Flags contains all the flag-type features of the node.\",\n       \"type\": \"object\"\n      },\n      \"instances\": {\n       \"additionalProperties\": {\n        \"description\": \"InstanceFeatureSet is a set of features each of which is an instance having multiple attributes.\",\n        \"properties\": {\n         \"elements\": {\n          \"items\": {\n           \"description\": \"InstanceFeature represents one instance of a complex features, e.g. a device.\",\n           \"properties\": {\n            \"attributes\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"attributes\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"elements\"\n        ],\n        \"type\": \"object\"\n       },\n       \"description\": \"Instances contains all the instance-type features of the node.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels is the set of node labels that are requested to be created.\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Node Feature\",\n \"type\": \"object\"\n}"
+ }
