@@ -119,8 +119,8 @@ See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/co
 1. Propose a specific visual representation for the relationship. See list of visualizations on [Visualizing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships#relationship-visualizations)
 1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 1. Create a Relationship Definition (yaml).
-1. (Typically not necessary) create a policy for evaluation of the relationship (rego).
-1. Review a prior pull request as an example of how to define a Relationships: https://github.com/meshery/meshery/pull/9880/files
+1. (Rarely necessary) Create a policy for evaluation of the relationship (rego). _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
+1. Review a prior pull request as an example of how to define a Relationships. For example, see [PR #9880](https://github.com/meshery/meshery/pull/9880/files)
 
 ### Generating Models does not require Meshery Server
 
