@@ -80,7 +80,7 @@ Optionally, you can verify the health of your Meshery deployment, using <a href=
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-{% include_cached installation/accessing-meshery-ui.md %}
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 # Out-of-cluster Installation
 
