@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Role",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "openfaas",
+   "displayName": "OpenFaaS",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Serverless",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://openfaas.github.io/faas-netes/openfaas-14.2.10.tgz"
+   },
+   "model": {
+    "version": "12.0.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "https://layer5.io/company/brand",
+   "model": "openfaas",
+   "modelDisplayName": "OpenFaaS",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Role",
+   "version": "iam.openfaas.com/v1",
+   "schema": "{\n \"description\": \"Role is used to define a role for a function\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RoleSpec maps a number of principals or attributes within a JWT to a set of policies.\",\n   \"properties\": {\n    \"condition\": {\n     \"additionalProperties\": {\n      \"additionalProperties\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Condition is a set of conditions that can be used instead of a principal to match against claims within a JWT { \\\"StringLike\\\": { \\\"jwt:https://my-identity-provider.com#sub-id\\\": [ \\\"1234567890\\\", \\\"0987654321\\\" ], } }\",\n     \"type\": \"object\"\n    },\n    \"policy\": {\n     \"description\": \"Policy is a list of named policies which apply to this role\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"principal\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"Principal is the principal that the role applies to i.e. { \\\"jwt:sub\\\":[\\\"repo:alexellis/minty:ref:refs/heads/master\\\"] }\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role\",\n \"type\": \"object\"\n}"
+  }
+ }

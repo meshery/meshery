@@ -7,9 +7,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/types"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -56,7 +57,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
 		ModelName: typ,
@@ -66,17 +67,10 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range entities {
-		rel, ok := r.(v1alpha1.RelationshipDefinition)
-		if ok {
-			rels = append(rels, rel)
-		}
-	}
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -84,8 +78,8 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         *count,
-		Relationships: rels,
+		Count:         count,
+		Relationships: entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -148,7 +142,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,
@@ -156,21 +150,10 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	var rels []v1alpha1.RelationshipDefinition
-	for _, entity := range entities {
-		host := h.registryManager.GetRegistrant(entity)
-		rel, ok := entity.(v1alpha1.RelationshipDefinition)
-		if ok {
-			rel.HostID = host.ID
-			rel.HostName = host.Hostname
-			rel.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-			rels = append(rels, rel)
-		}
-	}
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -178,8 +161,8 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         *count,
-		Relationships: rels,
+		Count:         count,
+		Relationships: entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -197,14 +180,14 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		return
 	}
 	switch cc.EntityType {
-	case types.RelationshipDefinition:
-		var r v1alpha1.RelationshipDefinition
+	case entity.RelationshipDefinition:
+		var r v1alpha2.RelationshipDefinition
 		err = json.Unmarshal(cc.Entity, &r)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = h.registryManager.RegisterEntity(cc.Host, r)
+		err = h.registryManager.RegisterEntity(cc.Host, &r)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)

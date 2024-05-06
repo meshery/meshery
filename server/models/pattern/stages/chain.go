@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 )
 
 // Data is the struct that will be passed on each stage

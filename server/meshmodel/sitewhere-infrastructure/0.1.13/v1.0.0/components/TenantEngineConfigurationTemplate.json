@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Tenant Engine Configuration Template",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "sitewhere-infrastructure",
+   "displayName": "Sitewhere Infrastructure",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
+   },
+   "model": {
+    "version": "0.1.13"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "sitewhere-infrastructure",
+   "modelDisplayName": "Sitewhere Infrastructure",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "TenantEngineConfigurationTemplate",
+   "version": "templates.sitewhere.io/v1alpha4",
+   "schema": "{\n \"description\": \"TenantEngineConfigurationTemplate is the Schema for the tenantengineconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantEngineConfigurationTemplateSpec defines the desired state of TenantEngineConfigurationTemplate\",\n   \"properties\": {\n    \"configuration\": {\n     \"description\": \"Configuration is the configuration for the tenant\",\n     \"format\": \"textarea\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Engine Configuration Template\",\n \"type\": \"object\"\n}"
+  }
+ }
