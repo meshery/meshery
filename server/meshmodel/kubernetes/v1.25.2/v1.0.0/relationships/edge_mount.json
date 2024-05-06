@@ -1,9 +1,10 @@
 {
   "schemaVersion": "core.meshery.io/v1alpha2",
   "version": "v1.0.0",
+  "kind": "Edge",
   "metadata": {
     "description": "A relationship that represents volume mounts between components",
-    "capabilities":{
+    "capabilities": {
       "designer": {
         "edit": {
           "style": true,
@@ -11,7 +12,8 @@
           "label": false
         }
       }
-    }},
+    }
+  },
   "model": {
     "schemaVersion": "core.meshery.io/v1beta1",
     "version": "v1.0.0",
@@ -28,74 +30,76 @@
   },
   "subType": "Mount",
   "evaluationQuery": "edge_binding_relationship",
-  "selectors": [{
-    "deny": {
-      "from": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        }
-      ],
-      "to": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        }
-      ]
-    },
-    "allow": {
-      "from": [
-        {
-          "kind": "Pod",
-          "model": "kubernetes",
-          "match": {
-            "self": [
-              [
-                "settings",
-                "spec",
-                "volumes",
-                "_",
-                "persistentVolumeClaim",
-                "claimName"
-              ]
-            ],
-            "PersistentVolumeClaim": [
-              [
-                "name"
-              ]
-            ]
+  "selectors": [
+    {
+      "deny": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
           }
-        }
-      ],
-      "to": [
-        {
-          "kind": "PersistentVolume",
-          "model": "kubernetes",
-          "match": {
-            "self": [
-              [
-                "name"
-              ],
-              [
-                "labels"
-              ]
-            ],
-            "PersistentVolumeClaim": [
-              [
-                "settings",
-                "spec",
-                "volumeName"
-              ],
-              [
-                "settings",
-                "spec",
-                "selector",
-                "matchLabels"
-              ]
-            ]
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
           }
-        }
-      ]
+        ]
+      },
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                [
+                  "settings",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "persistentVolumeClaim",
+                  "claimName"
+                ]
+              ],
+              "PersistentVolumeClaim": [
+                [
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "PersistentVolume",
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                [
+                  "name"
+                ],
+                [
+                  "labels"
+                ]
+              ],
+              "PersistentVolumeClaim": [
+                [
+                  "settings",
+                  "spec",
+                  "volumeName"
+                ],
+                [
+                  "settings",
+                  "spec",
+                  "selector",
+                  "matchLabels"
+                ]
+              ]
+            }
+          }
+        ]
+      }
     }
-  }]
+  ]
 }

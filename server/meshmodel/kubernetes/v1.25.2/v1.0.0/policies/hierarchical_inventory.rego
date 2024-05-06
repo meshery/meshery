@@ -8,7 +8,7 @@ import data.path_builder.ensureParentPathsExist
 import future.keywords.every
 import future.keywords.in
 
-heirarchical_inventory_relationship[updated_comps] {
+hierarchical_inventory_relationship[updated_comps] {
 	relationship := data.relationships[_]
 	relationship.subType in {"Inventory"}
 		

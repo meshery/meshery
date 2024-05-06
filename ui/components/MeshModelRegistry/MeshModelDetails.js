@@ -237,12 +237,12 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
   );
 });
 
-const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }) => {
+const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef, view }) => {
   let metadata = {};
   if (view !== RELATIONSHIPS) {
-    metadata = JSON.parse(atob(relationship.metadata));
+    metadata = JSON.parse(atob(relationshipDef.metadata));
   } else {
-    metadata = relationship.metadata;
+    metadata = relationshipDef.metadata;
   }
 
   const PropertyFormattersLeft = {
@@ -252,8 +252,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   };
 
   const metaDataLeft = {
-    version: relationship.schemaVersion,
-    modelName: relationship.model?.displayName,
+    version: relationshipDef.schemaVersion,
+    modelName: relationshipDef.model?.displayName,
   };
 
   const orderLeft = ['version', 'modelName'];
@@ -265,8 +265,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   };
 
   const metaDataRight = {
-    registrant: relationship.displayhostname,
-    subType: relationship.subType,
+    registrant: relationshipDef.model.registrant.hostname,
+    subType: relationshipDef.subType,
   };
 
   const orderRight = ['subType', 'registrant'];
@@ -275,7 +275,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationship?.subType} />
+        <Title title={relationshipDef?.subType} />
         <Description description={metadata?.description} />
       </div>
       <RenderContents
