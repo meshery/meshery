@@ -11,7 +11,7 @@ redirect_from:
 ---
 Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment. 
 
-{% include alert.html type="info" title="Connections as resources in Environments" content="Meshery Environments allow you to logically group related [Connections](#connections) and their associated [Credentials](#credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis." %}
+{% include alert.html type="info" title="Connections as resources in Environments" content="Meshery Environments allow you to logically group related <a href='/concepts/logical/connections'>Connections</a> and their associated <a href='/concepts/logical/credentials'>Credentials</a>. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis." %}
 
 {% include alert.html type="dark" title="Managed vs Unmanaged Connections" content="Managed Connections are those that are discovered by MeshSync and are managed by Meshery. Unmanaged Connections are those that are manually added by the user and are not managed by Meshery." %}
 
@@ -25,20 +25,20 @@ Meshery tracks the status of each connections throughout the connection's lifecy
 
 All resources discovered by [MeshSync's](meshsync.md) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
 
-When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](state-registered) / [Ignore](state-ignored) state.
+When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](#state-registered) / [Ignore](#state-ignored) state.
 
-> Example: MeshSync discovers Prometheus components and inform Meshery Server about available Prometheus connection, but Meshery is yet to [connect](state-connected) and start scraping metrics.
+> Example: MeshSync discovers Prometheus components and inform Meshery Server about available Prometheus connection, but Meshery is yet to [connect](#state-connected) and start scraping metrics.
 
 ### State: Registered
 
-The connection in this state have been verified for its use and reachability but not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](state-discovered) state and it is upto the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](state-connected), [Maintenance](state-maintenance) and [Not Found](state-not-found).
+The connection in this state have been verified for its use and reachability but not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](#state-discovered) state and it is upto the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](#state-connected), [Maintenance](#state-maintenance) and [Not Found](#state-not-found).
 
-> EExampleg: User manually selects the registered Prometheus connection and transition to the [connected](state-connected) state (i.e. User administratively processes the connection).
+> EExampleg: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
 
 ### State: Connected
 
 The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.</br>
-From this state the transition can happen to either [Maintenance](state-maintenance) or [Ignore](state-ignored) state. </br> Auto transition to [Disconnected](state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
+From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state. </br> Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
 
 > Example: Meshery is communicating with Prometheus APIs to scrape metrics and present it in the UI.
 
@@ -54,11 +54,11 @@ The connection is administratively processed to be ignored from Meshery's view o
 
 ### State: Maintenance
 
-The connection is administratively processed to be offline for maintenance tasks. This is different from being [Disconnected](state-disconnected)/[Ignored](state-ignored).
+The connection is administratively processed to be offline for maintenance tasks. This is different from being [Disconnected](#state-disconnected)/[Ignored](#state-ignored).
 
 ### State: Disconnected
 
-The connection was previously [discovered](state-discovered)/[registered](state-registered)/[connected](state-connected) but is not available currently. This could happen due to connectivity issue/AuthN-AuthZ/connection was deleted outside meshery/administratively disconnected.
+The connection was previously [discovered](#state-discovered)/[registered](#state-registered)/[connected](#state-connected) but is not available currently. This could happen due to connectivity issue/AuthN-AuthZ/connection was deleted outside meshery/administratively disconnected.
 
 > Example: Prometheus crashed/API token provided at time of registration is revoked.
 
