@@ -105,6 +105,7 @@ const (
 	ErrPrometheusScanCode                 = "meshery-server-1310"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
+	ErrDoRequestCode                      = "meshery-server-1321"
 )
 
 var (
@@ -405,4 +406,8 @@ func ErrPrometheusScan(err error) error {
 
 func ErrDBCreate(err error) error {
 	return errors.New(ErrDBCreateCode, errors.Alert, []string{"Unable to create record"}, []string{err.Error()}, []string{"Record already exist", "Database connection is not reachable"}, []string{"Delete the record or try updating the record instead of recreating", "Rest the database connection"})
+}
+
+func ErrDoRequest(err error, method, endpoint string) error {
+	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
 }

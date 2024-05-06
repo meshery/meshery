@@ -147,6 +147,21 @@ func SystemModelSubError(msg string, cmd string) string {
 	}
 }
 
+func EnvironmentSubError(msg string, cmd string) string {
+	switch cmd {
+	case "create":
+		return formatError(msg, cmdEnvironmentCreate)
+	case "delete":
+		return formatError(msg, cmdEnvironmentDelete)
+	case "list":
+		return formatError(msg, cmdEnvironmentList)
+	case "view":
+		return formatError(msg, cmdEnvironmentView)
+	default:
+		return formatError(msg, cmdEnvironment)
+	}
+}
+
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
@@ -298,6 +313,16 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
 	case cmdRegistry:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+	case cmdEnvironment:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentUsageURL)
+	case cmdEnvironmentCreate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentCreateURL)
+	case cmdEnvironmentDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentDeleteURL)
+	case cmdEnvironmentList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentListURL)
+	case cmdEnvironmentView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentViewURL)
 	case cmdWorkspace:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceUsageURL)
 	case cmdWorkspaceCreate:

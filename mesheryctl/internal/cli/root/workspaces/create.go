@@ -114,11 +114,11 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 
 		if resp.StatusCode == http.StatusCreated {
-			utils.Log.Info("Workspace ",nameFlag," created successfully")
+			utils.Log.Info("Workspace ", nameFlag, " created successfully")
 			return nil
 		}
 
-		utils.Log.Info("Failed to create ",nameFlag, " workspace")
+		utils.Log.Info("Failed to create ", nameFlag, " workspace")
 		return nil
 	},
 }

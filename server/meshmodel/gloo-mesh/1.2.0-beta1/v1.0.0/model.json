@@ -1,0 +1,31 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "gloo-mesh",
+  "displayName": "Gloo Mesh",
+  "description": "",
+  "status": "ignored",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+   "hostname": "artifacthub"
+  },
+  "category": {
+   "name": "Cloud Native Network",
+   "metadata": null
+  },
+  "subCategory": "Service Mesh",
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Service Mesh",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "version": "1.2.0-beta1"
+  },
+  "components": null,
+  "relationships": null
+ }

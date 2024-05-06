@@ -877,6 +877,8 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 // ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
 // Eg: ```?visibility=["public", "published"]``` will return public and published designs
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
+//
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -890,7 +892,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-
+	includeMetrics := q.Get("metrics")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -911,7 +913,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -945,6 +947,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?pagesize={pagesize}``` Default pagesize is 10.
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
+//
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -958,7 +962,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -1041,7 +1045,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
@@ -1464,6 +1468,8 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 // swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
 // Handle GET for a Meshery Pattern
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+//
 // Fetches the pattern with the given id
 // responses:
 // 	200: mesheryPatternResponseWrapper
@@ -1478,7 +1484,7 @@ func (h *Handler) GetMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)

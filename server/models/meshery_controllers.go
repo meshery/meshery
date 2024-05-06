@@ -67,10 +67,10 @@ func (mch *MesheryControllersHelper) GetOperatorsStatusMap() controllers.Meshery
 
 func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controllers.OperatorDeploymentConfig, dbHandler *database.Handler) *MesheryControllersHelper {
 	return &MesheryControllersHelper{
-		ctxControllerHandlers:  make(map[MesheryController]controllers.IMesheryController),
-		log:                    log,
-		oprDepConfig:           operatorDepConfig,
-		ctxOperatorStatus:      controllers.Unknown,
+		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+		log:                   log,
+		oprDepConfig:          operatorDepConfig,
+		ctxOperatorStatus:     controllers.Unknown,
 		// The nil check is performed for the ctxMeshsyncDataHandler and if it is nil, then a new dataHandler for the context is assigned.
 		// The presence of a handler for a context in a map indicate that the meshsync data for that context is properly being handled.
 		// Resetting this value results in again subscribing to the Broker.
@@ -86,7 +86,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID uuid.UUID, provider Provider) *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
 	// go func(mch *MesheryControllersHelper) {
-	
+
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
 		controllerHandlers := mch.ctxControllerHandlers
@@ -135,7 +135,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	
+
 	mch.ctxMeshsyncDataHandler = nil
 }
 
@@ -144,7 +144,7 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	
+
 	// resetting this value as a specific controller handler instance does not have any significance opposed to
 	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 
@@ -174,7 +174,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	
+
 	if ot.IsUndeployed(mch.contextID) {
 		mch.ctxOperatorStatus = controllers.Undeployed
 	} else {
@@ -232,7 +232,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		return mch
 	}
 	// go func(mch *MesheryControllersHelper) {
-	
+
 	if mch.ctxOperatorStatus == controllers.NotDeployed {
 		if mch.ctxControllerHandlers != nil {
 			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]

@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "HPE Volume Info",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "hpe-csi-driver",
+   "displayName": "HPE CSI Driver",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.4.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "HPEVolumeInfo",
+   "version": "storage.hpe.com/v1",
+   "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}"
+  }
+ }
