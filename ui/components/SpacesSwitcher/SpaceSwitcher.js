@@ -72,13 +72,14 @@ function OrgMenu(props) {
                       <Select
                         value={organization.id}
                         onChange={handleOrgSelect}
-                        style={{ color: theme.palette.secondary.contrastText }}
                         SelectDisplayProps={{
                           style: {
                             display: 'flex',
                             flexDirection: 'row',
                             fill: '#eee',
+                            color: theme.palette.secondary.white,
                           },
+                          className: `MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiInputBase-input MuiInput-input ${classes.selectedItem}`,
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -90,29 +91,19 @@ function OrgMenu(props) {
                             horizontal: 'left',
                           },
                           getContentAnchorEl: null,
+                          style: {
+                            fill: theme.palette.secondary.text,
+                          },
                         }}
                       >
                         {orgs?.map((org) => (
-                          <MenuItem
-                            key={org.id}
-                            value={org.id}
-                            style={{
-                              fill: theme.palette.secondary.number,
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                            >
-                              <div style={{ marginRight: '1rem' }}>
-                                <OrgOutlinedIcon width="24" height="24" fill={'inherit'} />
-                              </div>
-                              <span>{org.name}</span>
-                            </div>
+                          <MenuItem key={org.id} value={org.id} className={classes.menuItem}>
+                            <OrgOutlinedIcon
+                              width="24"
+                              height="24"
+                              style={{ marginRight: '1rem' }}
+                            />
+                            <span>{org.name}</span>
                           </MenuItem>
                         ))}
                       </Select>
@@ -214,6 +205,20 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(2),
     fontSize: '1.25rem',
     [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  },
+  selectedItem: {
+    paddingTop: '0.5rem',
+    backgroundColor: 'transparent',
+    '& svg': {
+      display: 'none',
+    },
+  },
+  menuItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'center',
+    fill: theme.palette.secondary.text,
   },
   titleBar: {
     width: '40%',
