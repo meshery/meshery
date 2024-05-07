@@ -4,13 +4,13 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
-      <img src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg" alt="Meshery Logo" width="70%" />
+      <img src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg" alt="Meshery Logo" width="80%" />
     </picture>
   </a>
   <br/>
 </p>
 
-<h5 align="center" ><i>Meshery is a Cloud Native Computing Foundation Project</i></h5>
+<h5 align="center" ><i>A Cloud Native Computing Foundation Project</i></h5>
 <hr>
 
 
@@ -430,21 +430,21 @@ Layer5 MeshMates are committed to helping community members be successful contri
 
 Please do! We're a warm and welcoming community of open source contributors. Whether you're a seasoned developer or just starting out, your contributions are invaluable to us. Be sure to read the **[Contribution Guides](https://docs.meshery.io/project/contributing#general-contribution-flow)** for a tour of resources available to you and how to get started.
 
-<h4>
+
 <details>
-  <summary>Follow these steps to start your contributing journey</summary>
+  <summary><strong>Follow these steps to start your contributing journey</strong></summary>
  <hr>
  <ol>
   <li>See the <a href="https://layer5.io/community/newcomers"><strong>Newcomers Guide</strong></a> for how, where, and why to contribute</li><br/>
   <li>Sign up for a <a href="https://layer5.io/community/meshmates"><strong> MeshMate</strong></a> to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community :
   <ul><br/>
-   <li><strong>Familiarize </strong>yourself with the broader set of community projects (take a look at the<a href="https://layer5.io/community/handbook/repository-overview"><strong>Repository Overview:</strong></a> Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate</li><br/>
+   <li><strong>Familiarize </strong>yourself with the broader set of community projects take a look at the<a href="https://layer5.io/community/handbook/repository-overview"><strong> Repository Overview </strong></a> Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate</li><br/>
    <li><strong>Identify your area of interest:</strong> Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop</li><br/>
    <li><strong>Run Meshery: </strong>Put on your user hat and walk-through all of Meshery’s features and functions as a user</li><br/>
    <li><strong>Build Meshery: </strong>Confirm that you have a usable development environment</li><br/>
    <li><strong>Discuss </strong>with the community by engaging in the <a href="http://discuss.meshery.io/"><strong>discussion forum</strong></a></li><br/>
-   <li><strong>Contribute </strong>by grabbing any open issue with the <a href="https://github.com/meshery/meshery/issues/"><strong>help-wanted label </strong></a>and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose"><strong>new issue </strong></a>All <a href="https://github.com/meshery/meshery/pulls"><strong>pull requests </strong></a>should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords"><strong></strong>automatically close issues in GitHub</strong></a></li><br/>
-   <li><strong>Fill-in </strong>a <a href="https://layer5.io/newcomers"><strong>community member form </strong></a>to gain access to community resources</li><br/>
+   <li><strong>Contribute </strong>by grabbing any open issue with the <a href="https://github.com/meshery/meshery/issues/"><strong>help-wanted label </strong></a>and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose"><strong>new issue </strong></a>All <a href="https://github.com/meshery/meshery/pulls"><strong>pull requests </strong></a>should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords"><strong>automatically close issues in GitHub</strong></strong></a></li><br/>
+   <li><strong>Fill-in </strong><a href="https://layer5.io/newcomers"><strong>community member form </strong></a>to gain access to community resources</li><br/>
 
   </ul>
   </li>
@@ -453,7 +453,6 @@ Please do! We're a warm and welcoming community of open source contributors. Whe
  <p style="clear:both;">&nbsp;</p>
 
 </details>
-</h4>
 
 *Didn't find an answer to your question? **[Just Ask](http://discuss.meshery.io/)** 💬*
 ### Contributors:
