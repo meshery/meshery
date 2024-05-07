@@ -57,17 +57,11 @@ function OrgMenu(props) {
     setOrganization({ organization: selected });
     setSkip(false);
   };
-
+  const classes = useStyles();
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && (
-        <div
-          style={{
-            width: open ? 'auto' : 0,
-            overflow: open ? '' : 'hidden',
-            transition: 'width 0.7s ease',
-          }}
-        >
+        <div className={`${classes.slideInMenu} ${open ? classes.slideInMenuOpen : ''}`}>
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
@@ -79,7 +73,13 @@ function OrgMenu(props) {
                         value={organization.id}
                         onChange={handleOrgSelect}
                         style={{ color: theme.palette.secondary.contrastText }}
-                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
+                        SelectDisplayProps={{
+                          style: {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fill: '#eee',
+                          },
+                        }}
                         MenuProps={{
                           anchorOrigin: {
                             vertical: 'bottom',
@@ -93,15 +93,26 @@ function OrgMenu(props) {
                         }}
                       >
                         {orgs?.map((org) => (
-                          <MenuItem key={org.id} value={org.id}>
-                            <div>
-                              <OrgOutlinedIcon
-                                width="24"
-                                height="24"
-                                secondaryFill={theme.palette.darkSlateGray}
-                              />
+                          <MenuItem
+                            key={org.id}
+                            value={org.id}
+                            style={{
+                              fill: theme.palette.secondary.number,
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <div style={{ marginRight: '1rem' }}>
+                                <OrgOutlinedIcon width="24" height="24" fill={'inherit'} />
+                              </div>
+                              <span>{org.name}</span>
                             </div>
-                            <span>{org.name}</span>
                           </MenuItem>
                         ))}
                       </Select>
@@ -214,6 +225,15 @@ const useStyles = makeStyles((theme) => ({
       borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
     },
   },
+  slideInMenu: {
+    width: 0 /* Initial hidden state */,
+    overflow: 'hidden',
+    transition: 'width 2s ease-in' /* Set transition properties */,
+  },
+  slideInMenuOpen: {
+    width: 'auto',
+    overflow: 'visible',
+  },
   versionInput: {
     fontFamily: 'Qanelas Soft, sans-serif',
   },
@@ -246,6 +266,7 @@ export const FileNameInput = ({
     />
   );
 };
+
 function DefaultHeader({ title, isBeta }) {
   const classes = useStyles();
   return (
@@ -260,11 +281,11 @@ function DefaultHeader({ title, isBeta }) {
     </Typography>
   );
 }
+
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
   // const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
-  console.log('here', DynamicComponent);
   return (
     <NoSsr>
       <Provider store={store}>
@@ -276,13 +297,14 @@ function SpaceSwitcher(props) {
             alignItems: 'center',
             fontSize: '1.5rem',
             userSelect: 'none',
+            transition: 'width 2s ease-in',
           }}
         >
           <Button
             onClick={() => setOrgOpen(!orgOpen)}
             style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} />
+            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
           {/* /
