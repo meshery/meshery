@@ -1,29 +1,55 @@
 area/docs:
-  - "docs/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "docs/**/*"
 area/ci:
-  - ".github/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - ".github/**/*"
 component/ui:
-  - "ui/**/*"
-  - "provider-ui/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "ui/**/*"
+    - "provider-ui/**/*"
 component/server:
-  - "server/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "server/**/*"
 area/models:
-  - "server/meshmodel/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "server/meshmodel/**/*"
 component/mesheryctl:
-  - "mesheryctl/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "mesheryctl/**/*"
 component/extensions:
-  - "install/docker-extension/**/*"
-  - "ui/components/ExtensionSandbox.js"
-  - "ui/remote-component.config.js"
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/docker-extension/**/*"
+    - "ui/components/ExtensionSandbox.js"
+    - "ui/remote-component.config.js"
 area/lifecycle:
-  - "install/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/*"
 kubernetes:
-  - "install/deployment_yamls/*"  
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/deployment_yamls/*"
 framework/helm:
-  - "install/kubernetes/helm/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/kubernetes/helm/**/*"
 framework/graphql:
-  - "server/internal/graphql/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "server/internal/graphql/*"
 component/database:
-  - "server/internal/sql/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "server/internal/sql/*"
 playground:
-  - "install/playground/**/*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/playground/**/*"

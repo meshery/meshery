@@ -132,6 +132,7 @@ function AccountExtensionSchemaDecoder(content) {
         show: !!item.show,
         children: AccountExtensionSchemaDecoder(item.children),
         full_page: item.full_page,
+        isHtmlLink: item.link,
       };
     });
   }

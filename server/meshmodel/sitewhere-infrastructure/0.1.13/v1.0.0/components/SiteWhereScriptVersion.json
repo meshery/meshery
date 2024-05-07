@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Site Where Script Version",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "sitewhere-infrastructure",
+   "displayName": "Sitewhere Infrastructure",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
+   },
+   "model": {
+    "version": "0.1.13"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "sitewhere-infrastructure",
+   "modelDisplayName": "Sitewhere Infrastructure",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "SiteWhereScriptVersion",
+   "version": "scripting.sitewhere.io/v1alpha4",
+   "schema": "{\n \"description\": \"SiteWhereScriptVersion is the Schema for the scriptversions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteWhereScriptVersionSpec defines the desired state of SiteWhereScriptVersion\",\n   \"properties\": {\n    \"comment\": {\n     \"description\": \"Comment is the comment on this version\",\n     \"type\": \"string\"\n    },\n    \"content\": {\n     \"description\": \"Content is the comment on this version\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Where Script Version\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -1,0 +1,31 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "aranya",
+  "displayName": "Aranya",
+  "description": "",
+  "status": "ignored",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+   "hostname": "artifacthub"
+  },
+  "category": {
+   "name": "App Definition and Development",
+   "metadata": null
+  },
+  "subCategory": "Continuous Integration \u0026 Delivery",
+  "metadata": {
+   "isAnnotation": false,
+   "published": false,
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "version": "0.1.14"
+  },
+  "components": null,
+  "relationships": null
+ }
