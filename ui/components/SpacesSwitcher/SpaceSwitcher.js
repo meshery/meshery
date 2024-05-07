@@ -27,7 +27,7 @@ import { iconXLarge } from 'css/icons.styles';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import theme from '@/themes/app';
-import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
+// import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 
 function OrgMenu(props) {
@@ -117,7 +117,7 @@ function OrgMenu(props) {
   );
 }
 
-function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
+export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
   const [orgId, setOrgId] = useState('');
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
@@ -262,7 +262,7 @@ function DefaultHeader({ title, isBeta }) {
 }
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
-  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  // const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   console.log('here', DynamicComponent);
   return (
@@ -285,13 +285,14 @@ function SpaceSwitcher(props) {
             <OrgOutlinedIcon {...iconXLarge} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
+          {/* /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
           >
             <WorkspaceOutlinedIcon {...iconXLarge} />
           </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/
+          <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
           {DynamicComponent ? (
             <FileNameInput {...DynamicComponent} />
           ) : (
