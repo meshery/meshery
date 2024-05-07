@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "FieldExport",
+  "apiVersion": "services.k8s.aws/v1alpha1",
+  "displayName": "Field Export",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#E7157B",
+   "published": false,
+   "secondaryColor": "",
+   "shape": "rectangle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "aws-opensearchservice-controller",
+   "version": "v0.0.24",
+   "displayName": "AWS OpenSearch Service",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Observability and Analysis",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Logging",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+ }

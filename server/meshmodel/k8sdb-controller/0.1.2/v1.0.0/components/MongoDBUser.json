@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Mongo DB User",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "k8sdb-controller",
+   "displayName": "K8sDB Controller",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/DoodleScheduling/k8sdb-controller/releases/download/k8sdb-controller-0.1.2/k8sdb-controller-0.1.2.tgz"
+   },
+   "model": {
+    "version": "0.1.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "k8sdb-controller",
+   "modelDisplayName": "K8sDB Controller",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "MongoDBUser",
+   "version": "dbprovisioning.infra.doodle.com/v1beta1",
+   "schema": "{\n \"description\": \"MongoDBUser is the Schema for the mongodbs API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"credentials\": {\n     \"description\": \"SecretReference is a named reference to a secret which contains user credentials\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name referrs to the name of the secret, must be located whithin the same namespace\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace, by default the same namespace is used.\",\n       \"type\": \"string\"\n      },\n      \"passwordField\": {\n       \"default\": \"password\",\n       \"type\": \"string\"\n      },\n      \"userField\": {\n       \"default\": \"username\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"database\": {\n     \"description\": \"DatabaseReference is a named reference to a database kind\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name referrs to the name of the database kind, mist be located within the same namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"roles\": {\n     \"default\": [\n      {\n       \"name\": \"readWrite\"\n      }\n     ],\n     \"items\": {\n      \"properties\": {\n       \"db\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"credentials\",\n    \"database\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mongo DB User\",\n \"type\": \"object\"\n}"
+  }
+ }

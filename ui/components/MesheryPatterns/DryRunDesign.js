@@ -259,6 +259,7 @@ const DryRunComponent = (props) => {
     );
   }
 
+  // If DryRun fails, show a message
   if (failedToPerformDryRun) {
     return (
       <Typography variant="caption" style={{ display: 'block', marginBottom: 8 }}>
@@ -290,6 +291,7 @@ const DryRunComponent = (props) => {
               color: `${
                 errorCount > 0 ? NOTIFICATIONCOLORS.ERROR_DARK : NOTIFICATIONCOLORS.SUCCESS_V2
               }`,
+              fontWeight: '600',
             }}
           >
             {getTotalCountOfDeploymentErrors(deploymentErrors)} error

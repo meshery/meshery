@@ -16,7 +16,8 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -624,24 +625,24 @@ func (h *Handler) FilterFileHandler(
 }
 
 func (h *Handler) generateFilterComponent(config string) (string, error) {
-	res, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       "WASMFilter",
 		Trim:       false,
-		APIVersion: "core.meshery.io/v1alpha1",
+		APIVersion: v1beta1.SchemaVersion,
 		Version:    "v1.0.0",
 		Limit:      1,
 	})
 
 	if len(res) > 0 {
 		filterEntity := res[0]
-		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
+		filterCompDef, ok := filterEntity.(*v1beta1.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := core.Service{
 				ID:           &filterID,
-				Name:         strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
-				Type:         filterCompDef.Kind,
-				APIVersion:   filterCompDef.APIVersion,
+				Name:         strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Type:         filterCompDef.Component.Kind,
+				APIVersion:   filterCompDef.Component.Version,
 				Version:      filterCompDef.Model.Version,
 				Model:        filterCompDef.Model.Name,
 				IsAnnotation: true,
