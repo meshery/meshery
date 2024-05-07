@@ -224,7 +224,7 @@ header {
 
     @media (max-width: 1200px) {
       position: fixed;
-      top: var(--navbar-height);
+      top: calc(var(--navbar-height) - 2.5rem);
       right: 0;
       width: max(20vh, 25vw);
       height: calc(100vh - var(--navbar-height));

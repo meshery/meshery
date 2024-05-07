@@ -12,7 +12,6 @@
   }
   & .icon-container {
     height: fit-content;
-    margin-top: 3rem;
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
@@ -29,6 +28,13 @@
     & .nav-toggle-btn--document svg {
       transform: rotate(180deg);
     }
+  }
+}
+
+@media (max-width: 37.5em) {
+  .left-container {
+    top: calc(var(--navbar-height) - 0);
+    height: 100vh;
   }
 }
 
