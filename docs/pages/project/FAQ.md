@@ -5,6 +5,7 @@ permalink: project/faq
 abstract: General commonly asked questions and answers about Meshery.
 language: en
 type: project
+category: project
 ---
 
 ## General FAQs

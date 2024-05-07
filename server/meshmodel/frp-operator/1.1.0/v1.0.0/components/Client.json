@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Client",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "frp-operator",
+   "displayName": "Frp Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.1.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Client",
+   "version": "frp.zufardhiyaulhaq.com/v1alpha1",
+   "schema": "{\n \"description\": \"Client is the Schema for the clients API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClientSpec defines the desired state of Client\",\n   \"properties\": {\n    \"server\": {\n     \"properties\": {\n      \"authentication\": {\n       \"properties\": {\n        \"token\": {\n         \"properties\": {\n          \"secret\": {\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"secret\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"token\"\n       ],\n       \"type\": \"object\"\n      },\n      \"host\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"authentication\",\n      \"host\",\n      \"port\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"server\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Client\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
 )
 
@@ -266,4 +267,15 @@ func init() {
 	// publishCmd.MarkFlagRequired("sheet-id")
 	// publishCmd.MarkFlagRequired("models-output-path")
 	// publishCmd.MarkFlagRequired("imgs-output-path")
+}
+
+func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
+	modelDef := model.CreateModelDefinition(version, defVersion)
+	modelDefPath := filepath.Join(location, modelDef.Name)
+	err := modelDef.WriteModelDefinition(modelDefPath)
+	if err != nil {
+		return "", nil, err
+	}
+
+	return modelDefPath, &modelDef, nil
 }

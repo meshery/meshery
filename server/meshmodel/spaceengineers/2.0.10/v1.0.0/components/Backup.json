@@ -1,0 +1,62 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Backup",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "spaceengineers",
+   "displayName": "spaceengineers",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/spaceengineers-2.0.10/spaceengineers-2.0.10.tgz"
+   },
+   "model": {
+    "version": "2.0.10"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "https://layer5.io/company/brand",
+   "model": "spaceengineers",
+   "modelDisplayName": "spaceengineers",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Backup",
+   "version": "postgresql.cnpg.io/v1",
+   "schema": "{\n \"description\": \"Backup is the Schema for the backups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the backup. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"cluster\": {\n     \"description\": \"The cluster to backup\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup\",\n \"type\": \"object\"\n}"
+  }
+ }
