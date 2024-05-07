@@ -12,14 +12,14 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/patterns/application"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
-	var comps []v1alpha1.Component
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname v1beta1.IHost, skipCrdAndOperator bool) (string, error) {
+	var comps []v1beta1.Component
 	var config v1alpha1.Configuration
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	userUUID, _ := uuid.FromString(userID)
@@ -28,7 +28,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		action = "undeploy"
 	}
 	for _, oamComp := range oamComps {
-		var comp v1alpha1.Component
+		var comp v1beta1.Component
 		if err := json.Unmarshal([]byte(oamComp), &comp); err != nil {
 			return "", err
 		}
@@ -97,7 +97,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					}
 					continue
 				}
-				if !skipCrdAndOperator && hostname != nil && comp.Spec.Model != (registry.Kubernetes{}).String() {
+				if !skipCrdAndOperator && hostname != nil && comp.Spec.Model != (v1beta1.Kubernetes{}).String() {
 					var description string
 					severity := events.Informational
 					if !isDel {

@@ -6,7 +6,7 @@ abstract: Meshery's open source, cloud native community
 # redirect_from: project/community/
 language: en
 type: project
-category: none
+category: community
 list: include
 ---
 
