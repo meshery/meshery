@@ -1,18 +1,24 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "name": "spire",
   "version": "0.12.2",
+  "name": "spire",
   "displayName": "SPIRE",
+  "description": "",
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+    "hostname": ""
+  },
   "category": {
     "name": "Security & Compliance",
     "metadata": null
   },
+  "subCategory": "",
   "metadata": {
     "svgColor": "ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg",
     "svgWhite": "ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg"
   },
+  "model": {},
   "components": null,
   "relationships": null
 }
