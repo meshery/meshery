@@ -45,6 +45,7 @@ Here is a list of the different types of relationships that Meshery supports:
    1. Parent
 
 {% include relationships.html %}
+
 ## The Meaning of Relationships
 
 Meshery supports a variety of relationships between components. These relationships are categorized into two types: Semantic and Non-Semantic. Relationships are categorized by whether they are meaningful in terms of how Meshery manages entities - a Semantic relationship - or are simply annotations to aid in the comprehension of you as the designer of the relationship - a Non-Semantic relationship.
@@ -52,10 +53,6 @@ Meshery supports a variety of relationships between components. These relationsh
 ### Semantic Relationships
 
 Semantic relationships are those that are meaningful in the context of the application or infrastructure. For example, a `Service` in Kubernetes is semantically related to a `Deployment` or a `Pod`. These relationships are meaningful and are managed by Meshery.
-
-<!-- @iArchitSharma, help, if you would please.
-
-_[TODO: a visual example is needed here]_ -->
 
 ### Non-Semantic Relationships
 
@@ -202,8 +199,9 @@ Selectors can be applied to various components, enabling a wide range of relatio
 </table>
 
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
-
-```json
+<details>
+<summary>Example Relationship Selector</summary>
+<code><pre>
 "selector": {
     "allow": {
         "from": [
@@ -245,7 +243,9 @@ The above relationships pairs have hierarchical inventory relationships, and vis
         ]
     }
 }
-```
+</pre></code>
+
+</details>
 
 The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
 
@@ -257,15 +257,15 @@ The above snippet defines a selector configuration for allowing relationships be
 
 ### How Relationships are formed?
 
-1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies)'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
 {% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
-When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
+When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies).
 
-Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships
+Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluationof relationships on -->
@@ -275,6 +275,10 @@ Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/p
 ### Patch Strategies
 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
+
+### Cavets and Considerations
+1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically. 
+If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment
 
