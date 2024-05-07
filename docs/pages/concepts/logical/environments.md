@@ -24,17 +24,13 @@ Environments can share resources. For example, you might create an environment n
 
 Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. Learn more about the behavior of [lifecycle of connections]({{site.baseurl}}/concepts/logical/connections).
 
-## Summary
-
-Environments represent a collection of resources in the form of Connections - both of managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to Workspaces.
-
 ## Key Features
 
 - **Logical Grouping** Environments allow you to logically group related connections and their associated credentials. This makes it easier to manage, share, and work with a subset of resources instead of dealing with all your connections individually.
 
 - **Resource Sharing** Environments can be seamlessly assigned to [Workspaces](/concepts/logical/workspaces), another essential concept in Meshery. When you assign an Environment to a Workspace, you enable resource sharing among team members. This collaborative approach simplifies the sharing of connections and resources, making it easier to work together in cloud-native environments.
 
-## Key Components
+## Connections and Credentials as Resources
 
 ### Connections <a id="connections"></a>
 
@@ -48,3 +44,6 @@ Credentials in an Environment are the keys to securely authenticate and access m
 
 See "[Credentials](/concepts/logical/credentials)" section for more information.
 
+## Summary
+
+Environments represent a collection of resources in the form of Connections - both of managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to [Workspaces](/concepts/logical/workspaces).
