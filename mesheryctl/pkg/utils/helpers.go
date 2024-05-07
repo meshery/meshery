@@ -98,12 +98,12 @@ const (
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
 	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
 	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
-  credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
+	credentialUsageURL             = docsBaseURL + "reference/mesheryctl/exp/credential"
 	credentialListURL              = docsBaseURL + "reference/mesheryctl/exp/credential/list"
 	credentialCreateURL            = docsBaseURL + "reference/mesheryctl/exp/credential/create"
 	credentialDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/credential/delete"
 	credentialViewURL              = docsBaseURL + "reference/mesheryctl/exp/credential/view"
-  
+
 	// Meshery Server Location
 	EndpointProtocol = "http"
 )
@@ -163,7 +163,7 @@ const (
 	cmdEnvironmentDelete        cmdType = "environment delete"
 	cmdEnvironmentList          cmdType = "environment list"
 	cmdEnvironmentView          cmdType = "environment view"
-  cmdCredential               cmdType = "credential"
+	cmdCredential               cmdType = "credential"
 	cmdCredentialList           cmdType = "credential list"
 	cmdCredentialCreate         cmdType = "credential create"
 	cmdCredentialDelete         cmdType = "credential delete"

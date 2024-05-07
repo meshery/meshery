@@ -68,6 +68,7 @@ mesheryctl exp credential [subcommands]
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
+			return utils.ErrInvalidArgument(errors.New("Please provide a subcommand with the command"))
 		}
 		return nil
 	},
@@ -88,15 +89,7 @@ mesheryctl exp credential [subcommands]
 
 func init() {
 	CredentialCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
-	/* err := CredentialCmd.MarkFlagRequired("token")
-	if err != nil {
-		utils.Log.Info(err)
-	} */
 	createCredentialCmd.Flags().StringVarP(&user_id, "user-id", "u", "", "User ID")
-	/* err = createCredentialCmd.MarkFlagRequired("user-id")
-	if err != nil {
-		utils.Log.Info(err)
-	} */
 	createCredentialCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the credential")
 	createCredentialCmd.Flags().StringVarP(&credential_type, "type", "y", "", "Type of the credential")
 	createCredentialCmd.Flags().StringVarP(&secret, "secret", "s", "", "Secret of the credential")
