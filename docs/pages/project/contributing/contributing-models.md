@@ -45,8 +45,8 @@ The schema represents the skeletal structure of a construct and provides a logic
 
 {% include alert.html type="info" title="Schema example" content='<details><summary>Component schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/component.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-"description": "Components are the atomic units for designing infrastructure. Learn more at https://docs.meshery.io/concepts/components",
+  "$schema": "<http://json-schema.org/draft-07/schema#>",
+"description": "Components are the atomic units for designing infrastructure. Learn more at <https://docs.meshery.io/concepts/components>",
 "required": [
 "apiVersion",
 "kind",
@@ -93,8 +93,8 @@ An _instance_ represents a realized construct. An _instance_ is a dynamic repres
 
 # Instructions for Creating a New Model
 
-All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is 
-{% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %} 
+All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is
+{% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
 
 To add or update a model, follow these steps:
 
@@ -105,11 +105,11 @@ To add or update a model, follow these steps:
  {% include code.html code=code_content %}
 
 1. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
-  1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes. 
-  2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
-  3. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
+1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes.
+2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
+3. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
 
-{% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %} 
+{% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %}
 
 ### Instructions for Relationships
 
@@ -122,6 +122,13 @@ See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/co
 1. (Rarely necessary) Create a policy for evaluation of the relationship (rego). _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
 1. Review a prior pull request as an example of how to define a Relationships. For example, see [PR #9880](https://github.com/meshery/meshery/pull/9880/files)
 
-### Generating Models does not require Meshery Server
+{% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
 
-Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components. For adding a model, the link to the CRDs for the specific model needs to be added to the Meshery Integration Spreadsheet. On adding the link to the Meshery Integration Spreadsheet, the model generator automatically registers the specific model with Meshery.
+### Managed and Unmanaged Connections
+
+Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
+
+Connections can be:
+
+1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/) with hand-curated Connection attributes.
+2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
