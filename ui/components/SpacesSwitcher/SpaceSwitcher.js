@@ -196,8 +196,9 @@ function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
     </NoSsr>
   );
 }
+
 const useStyles = makeStyles((theme) => ({
-  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
+  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '0.8125rem' }, // 13px converted to rem
   pageTitle: {
     paddingLeft: theme.spacing(2),
     fontSize: '1.25rem',
@@ -206,9 +207,9 @@ const useStyles = makeStyles((theme) => ({
   titleBar: {
     width: '40%',
     display: 'flex',
-    marginBottom: '18px',
-    marginRight: '1rem',
-    marginTop: '8px',
+    marginBottom: '1.125rem', // 18px converted to rem
+    marginRight: '0.625rem', // 10px converted to rem
+    marginTop: '0.5rem', // 8px converted to rem
     '& .MuiInput-underline:after': {
       borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
     },
@@ -217,6 +218,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Qanelas Soft, sans-serif',
   },
 }));
+
 export const FileNameInput = ({
   fileName,
   handleFileNameChange,
