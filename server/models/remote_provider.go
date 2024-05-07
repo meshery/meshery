@@ -466,7 +466,7 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(nil, "Users keys", http.StatusUnauthorized)
+		return nil, ErrFetch(fmt.Errorf("unable to fetch keys for the org id %s", orgID), "Users keys", http.StatusUnauthorized)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -479,7 +479,7 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		logrus.Infof("user keys successfully retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(nil, "Users Keys", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("unable to fetch keys for the org id %s", orgID), "Users Keys", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
