@@ -6,7 +6,6 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -45,6 +44,7 @@ import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomT
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -71,12 +71,6 @@ const styles = (theme) => ({
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
-  },
-  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
-  pageTitle: {
-    paddingLeft: theme.spacing(2),
-    fontSize: '1.25rem',
-    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -559,15 +553,7 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                  <Typography
-                    color="inherit"
-                    variant="h5"
-                    className={classes.pageTitle}
-                    data-cy="headerPageTitle"
-                  >
-                    {title}
-                    {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
-                  </Typography>
+                  <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
                 <Grid
                   item
