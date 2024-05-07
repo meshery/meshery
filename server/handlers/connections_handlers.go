@@ -16,7 +16,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
@@ -91,19 +91,19 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 }
 
 func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
-	compFilter := &v1alpha1.ComponentFilter{
+	compFilter := &regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sConnection", payload.Kind),
 		Limit: 1,
 	}
 	schema := make(map[string]interface{}, 1)
-	connectionComponent, _, _ := h.registryManager.GetEntities(compFilter)
+	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
 	if len(connectionComponent) == 0 {
 		http.Error(w, "Unable to register resource as connection. No matching connection definition found in the registry", http.StatusInternalServerError)
 		return
 	}
 
 	schema["connection"] = connectionComponent[0]
-	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	credential, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sCredential", payload.Kind),
 		Limit: 1,
 	})

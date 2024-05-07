@@ -1,0 +1,62 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Sonar User",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "sonar-operator",
+   "displayName": "Sonar Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "isAnnotation": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/sonar-operator-2.15.0-SNAPSHOT.14.tgz"
+   },
+   "model": {
+    "version": "2.14.0-SNAPSHOT.9"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "sonar-operator",
+   "modelDisplayName": "Sonar Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "SonarUser",
+   "version": "edp.epam.com/v1alpha1",
+   "schema": "{\n \"description\": \"SonarUser is the Schema for the sonarusers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SonarUserSpec defines the desired state of SonarUser\",\n   \"properties\": {\n    \"email\": {\n     \"description\": \"Email is a user email.\",\n     \"example\": \"myname@email.com\",\n     \"maxLength\": 100,\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"description\": \"Groups is a list of groups assigned to user.\",\n     \"example\": [\n      \"sonar-administrators\",\n      \"developers\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"login\": {\n     \"description\": \"Login is a user login. Do not edit this field after creation. Otherwise, the user will be recreated.\",\n     \"example\": \"myuser\",\n     \"maxLength\": 255,\n     \"minLength\": 2,\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is a username.\",\n     \"example\": \"My Name\",\n     \"maxLength\": 200,\n     \"type\": \"string\"\n    },\n    \"permissions\": {\n     \"description\": \"Permissions is a list of permissions assigned to user.\",\n     \"example\": [\n      \"admin\",\n      \"provisioning\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"secret\": {\n     \"description\": \"Secret is the name of the secret with the user password. It should contain a password field with a user password. User password can't be updated.\",\n     \"example\": \"sonar-user-password\",\n     \"type\": \"string\"\n    },\n    \"sonarRef\": {\n     \"description\": \"SonarRef is a reference to Sonar custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Sonar\",\n       \"description\": \"Kind specifies the kind of the Sonar resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Sonar resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"login\",\n    \"name\",\n    \"secret\",\n    \"sonarRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sonar User\",\n \"type\": \"object\"\n}"
+  }
+ }

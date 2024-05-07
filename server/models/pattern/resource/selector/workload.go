@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
-func (s *Selector) Workload(name string, version string, model string, apiVersion string) (v1alpha1.ComponentDefinition, error) {
-	var comp v1alpha1.ComponentDefinition
+func (s *Selector) Workload(name string, version string, model string, apiVersion string) (v1beta1.ComponentDefinition, error) {
+	var comp *v1beta1.ComponentDefinition
 	name = strings.Split(name, ".")[0]
 	fmt.Println(name, model, version)
 	if model == "" && name == "Application" { //If model is not passed, default to core
@@ -17,7 +18,7 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibility with older designs which were created using OAM
 		apiVersion = ""
 	}
-	entities, _, _ := s.registry.GetEntities(&v1alpha1.ComponentFilter{
+	entities, _, _, _ := s.registry.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       name,
 		ModelName:  model,
 		APIVersion: apiVersion,
@@ -26,7 +27,7 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 	for _, en := range entities {
 		if en != nil {
 			var ok bool
-			comp, ok = en.(v1alpha1.ComponentDefinition)
+			comp, ok = en.(*v1beta1.ComponentDefinition)
 			if ok {
 				found = true
 			}
@@ -36,9 +37,9 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 		}
 	}
 	if !found {
-		return comp, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
+		return *comp, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
 	}
-	return comp, nil
+	return *comp, nil
 }
 
 func getResourceType(metadata map[string]string) string {
