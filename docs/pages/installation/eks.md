@@ -32,7 +32,6 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 - [In-cluster Installation](#in-cluster-installation)
   - [Preflight Checks](#preflight-checks)
     - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
@@ -59,17 +58,6 @@ Read through the following considerations prior to deploying Meshery on EKS.
 {% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
-### Preflight: Plan your access to Meshery UI
-
-1. If you are using port-forwarding, please refer to the [port-forwarding](/tasks/accessing-meshery-ui) guide for detailed instructions.
-2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{ site.baseurl }}/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
-3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
-
-{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
-{% include code.html code=code_content %}
-
-Meshery should now be running in your EKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
-
 ## Installation: Using `mesheryctl`
 
 Use Meshery's CLI to streamline your connection to your EKS cluster. Configure Meshery to connect to your EKS cluster by executing:
@@ -82,8 +70,6 @@ Once configured, execute the following command to start Meshery.
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
-
 ## Installation: Using Helm
 
 For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
@@ -94,7 +80,7 @@ Optionally, you can verify the health of your Meshery deployment, using <a href=
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-{% include_cached installation/accessing-meshery-ui.md %}
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 # Out-of-cluster Installation
 

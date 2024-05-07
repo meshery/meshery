@@ -20,8 +20,8 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
 	events "github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -376,7 +376,7 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []v1beta1.Component) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -399,7 +399,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmp v1alpha1.Component) (core.DryRunResponseWrapper, error) {
+func dryRunComponent(cl *meshkube.Client, cmp v1beta1.Component) (core.DryRunResponseWrapper, error) {
 	st, ok, err := k8s.DryRunHelper(cl, cmp)
 	dResp := core.DryRunResponseWrapper{Success: ok, Component: &core.Service{
 		Name:        cmp.Name,

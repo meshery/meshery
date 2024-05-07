@@ -7,13 +7,13 @@ import (
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
 	"github.com/gocarina/gocsv"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"google.golang.org/api/sheets/v4"
 )
 
 type SpreadsheetData struct {
 	Model      *ModelCSV
-	Components []v1alpha1.ComponentDefinition
+	Components []v1beta1.ComponentDefinition
 }
 
 var (
@@ -50,7 +50,7 @@ func ProcessModelToComponentsMap(existingComponents map[string]map[string][]Comp
 	}
 }
 
-func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1alpha1.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
+func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1beta1.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
 	registrant := modelEntry.Registrant
 	model := modelEntry.Model
 
@@ -59,8 +59,8 @@ func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1alpha1.Com
 	}
 
 	for _, comp := range compEntries {
-		if !RegistrantToModelsToComponentsMap[registrant][model][comp.Kind] {
-			RegistrantToModelsToComponentsMap[registrant][model][comp.Kind] = true
+		if !RegistrantToModelsToComponentsMap[registrant][model][comp.Component.Kind] {
+			RegistrantToModelsToComponentsMap[registrant][model][comp.Component.Kind] = true
 			compList = append(compList, ConvertCompDefToCompCSV(modelEntry, comp))
 			compBatchSize--
 		}
@@ -101,12 +101,12 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 				existingComps, ok := existingModels[data.Model.Model]
 
 				if ok {
-					entryExist := existingComps[comp.Kind]
+					entryExist := existingComps[comp.Component.Kind]
 
 					if !entryExist {
 						entriesToBeAddedInCompSheet = append(entriesToBeAddedInCompSheet, ConvertCompDefToCompCSV(data.Model, comp))
 						compBatchSize--
-						RegistrantToModelsToComponentsMap[data.Model.Registrant][data.Model.Model][comp.Kind] = true
+						RegistrantToModelsToComponentsMap[data.Model.Registrant][data.Model.Model][comp.Component.Kind] = true
 					}
 				} else {
 					entriesToBeAddedInCompSheet = addEntriesInCompUpdateList(data.Model, data.Components, entriesToBeAddedInCompSheet)

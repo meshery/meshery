@@ -25,7 +25,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -110,7 +110,7 @@ mesheryctl exp components view [component-name]
 			return err
 		}
 
-		var selectedComponent v1alpha1.ComponentDefinition
+		var selectedComponent v1beta1.ComponentDefinition
 
 		if componentResponse.Count == 0 {
 			fmt.Println("No component(s) found for the given name: ", component)

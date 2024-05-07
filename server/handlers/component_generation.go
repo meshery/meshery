@@ -8,9 +8,8 @@ import (
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	meshkitmodels "github.com/layer5io/meshkit/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	meshkitmodels "github.com/layer5io/meshkit/generators/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 )
 
 type generationPayloadItem struct {
@@ -23,9 +22,9 @@ type componentGenerationPayload struct {
 }
 
 type componentGenerationResponseDataItem struct {
-	Name       string                         `json:"name"`
-	Components []v1alpha1.ComponentDefinition `json:"components"`
-	Errors     []string                       `json:"errors"`
+	Name       string                        `json:"name"`
+	Components []v1beta1.ComponentDefinition `json:"components"`
+	Errors     []string                      `json:"errors"`
 }
 
 // swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
@@ -72,11 +71,11 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 			for _, comp := range comps {
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				err = h.registryManager.RegisterEntity(meshmodel.Host{
-					IHost:    meshmodel.ArtifactHub{},
-					Hostname: meshmodel.ArtifactHub{}.String(),
+				err = h.registryManager.RegisterEntity(v1beta1.Host{
+					IHost:    v1beta1.ArtifactHub{},
+					Hostname: v1beta1.ArtifactHub{}.String(),
 					Metadata: host,
-				}, comp)
+				}, &comp)
 				if err != nil {
 					h.log.Error(ErrGenerateComponents(err))
 				}
@@ -97,8 +96,8 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	}
 }
 
-func generateComponents(pm meshkitmodels.PackageManager) ([]v1alpha1.ComponentDefinition, error) {
-	components := make([]v1alpha1.ComponentDefinition, 0)
+func generateComponents(pm meshkitmodels.PackageManager) ([]v1beta1.ComponentDefinition, error) {
+	components := make([]v1beta1.ComponentDefinition, 0)
 	pkg, err := pm.GetPackage()
 	if err != nil {
 		return components, ErrGenerateComponents(err)

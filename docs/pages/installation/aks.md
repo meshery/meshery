@@ -33,7 +33,6 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 - [In-cluster Installation](#in-cluster-installation)
     - [Preflight Checks](#preflight-checks)
     - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
     - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
     - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
@@ -55,15 +54,6 @@ Read through the following considerations prior to deploying Meshery on AKS.
 {% include code.html code=code_content %}
 1. After setting the subscription, set the cluster context.
 {% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
-{% include code.html code=code_content %}
-
-### Preflight: Plan your access to Meshery UI
-
-1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
-2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{ site.baseurl }}/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
-3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
-
-{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Installation: Using `mesheryctl`
@@ -90,6 +80,6 @@ Optionally, you can verify the health of your Meshery deployment, using <a href=
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-{% include_cached installation/accessing-meshery-ui.md %}
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 {% include related-discussions.html tag="meshery" %}
