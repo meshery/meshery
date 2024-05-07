@@ -24,7 +24,7 @@
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.3",
     "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.11",
     "babel-plugin-istanbul": "^6.1.1",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.26",
-    "cypress": "^13.7.1",
+    "cypress": "^13.8.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.4",
     "eslint-plugin-cypress": "^2.15.1",

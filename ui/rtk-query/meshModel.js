@@ -10,7 +10,7 @@ const defaultOptions = {
   trim: false,
   // annotations: false,
   search: '',
-  page: 1,
+  page: 0,
   pagesize: 'all',
 };
 
