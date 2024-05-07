@@ -277,7 +277,7 @@ Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/p
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
 ### Cavets and Considerations
-1. If user creates a hierarchical-inventory relationship between `pod` and any other high level kubenetes resources like `deployment` or `statefulset`, then users deployed design will have 1 Pod and 1 Deployment/StatefulSet in the design, not just one deployment/statefulset.
+1. If user creates a hierarchical-inventory relationship between `pod` and any other high level kubenetes resources like `deployment` or `statefulset`. After the relationship is established. Unfortunately, there’s no system to remove the extra pod configuration automatically in this situation. This can result in duplication, where both the pod and deployment have similar configurations. It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment
 
