@@ -5,7 +5,7 @@
     "description": ""
   "model": {
     "name": "k8svault-controller",
-    "version": "0.1.2",
+    "version": "*",
     "displayName": "K8s Vault Controller",
     "category": {
       "name": "Security \u0026 Compliance",
@@ -30,8 +30,8 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name",
-                  "namespace"
+                  ["name"]
+                  ["namespace"]
                 ]
               ],
            }
@@ -46,8 +46,8 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "spec.secret.name",
-                  "spec.secret.namespace"
+                  ["settings" ,"spec", "secret", "name"]
+                  ["settings" ,"spec", "secret", "namespace"]
                 ]
               ],
              }  
