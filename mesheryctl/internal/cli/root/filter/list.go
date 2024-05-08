@@ -155,7 +155,11 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			utils.PrintToTableWithFooter(header, data, footer)
 			return nil
 		}
-		utils.HandlePagination(pageSize, "filter files", data, header, footer)
+		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 		return nil
 	},
 }

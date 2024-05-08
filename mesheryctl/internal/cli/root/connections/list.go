@@ -119,7 +119,11 @@ mesheryctl exp connections list --page 2
 			utils.PrintToTable(header, rows)
 		} else {
 			maxRowsPerPage := 25
-			return utils.HandlePagination(maxRowsPerPage, "connections", rows, header)
+			err := utils.HandlePagination(maxRowsPerPage, "connections", rows, header)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
 		}
 
 		return nil

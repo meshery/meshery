@@ -150,7 +150,11 @@ mesheryctl exp model list --page 2
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
-			return utils.HandlePagination(maxRowsPerPage, "models", rows, header)
+			err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
 		}
 
 		return nil
