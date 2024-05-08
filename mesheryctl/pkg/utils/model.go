@@ -7,7 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -54,10 +55,11 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
-func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
-	var isModelPublished, isAnnotation bool
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.Model {
+	var isAnnotation bool
+	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
-		isModelPublished = true
+		status = entity.Enabled
 	}
 	if strings.ToLower(mcv.IsAnnotation) == "true" {
 		isAnnotation = true
@@ -73,20 +75,29 @@ func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
 		svgColor = mcv.SVGWhite
 	}
 
-	model := v1alpha1.Model{
+	model := v1beta1.Model{
+		VersionMeta: v1beta1.VersionMeta{
+			Version:       defVersion,
+			SchemaVersion: v1beta1.SchemaVersion,
+		},
 		Name:        mcv.Model,
-		Version:     version,
 		DisplayName: mcv.ModelDisplayName,
+		Status:      status,
+		Registrant: v1beta1.Host{
+			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+		},
+		Category: v1beta1.Category{
+			Name: mcv.Category,
+		},
+		SubCategory: mcv.SubCategory,
 		Metadata: map[string]interface{}{
 			"isAnnotation": isAnnotation,
 			"svgColor":     svgColor,
 			"svgWhite":     svgWhite,
 			"svgComplete":  mcv.SVGComplete,
-			"subCategory":  mcv.SubCategory, // move as first class attribute
-			"published":    isModelPublished,
 		},
-		Category: v1alpha1.Category{
-			Name: mcv.Category,
+		Model: v1beta1.ModelEntity{
+			Version: version,
 		},
 	}
 	return model
@@ -274,7 +285,7 @@ func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata string) string {
 	formattedName := utils.FormatName(m.Model)
 
 	var template string = `---
-layout: enhanced
+layout: integration
 title: %s
 subtitle: %s
 image: /assets/img/integrations/%s/icons/color/%s-color.svg
@@ -296,14 +307,7 @@ language: en
 list: include
 type: extensibility
 category: integrations
-display-title: "false"
 ---
-<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
-
-<p>
-%s
-</p>
-%s
 `
 	markdown := fmt.Sprintf(template,
 		m.ModelDisplayName,
@@ -322,8 +326,6 @@ display-title: "false"
 		m.Feature3,
 		m.HowItWorks,
 		m.HowItWorksDetails,
-		m.AboutProject,
-		m.StandardBlurb,
 	)
 
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")

@@ -45,8 +45,8 @@ The schema represents the skeletal structure of a construct and provides a logic
 
 {% include alert.html type="info" title="Schema example" content='<details><summary>Component schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/component.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-"description": "Components are the atomic units for designing infrastructure. Learn more at https://docs.meshery.io/concepts/components",
+  "$schema": "<http://json-schema.org/draft-07/schema#>",
+"description": "Components are the atomic units for designing infrastructure. Learn more at <https://docs.meshery.io/concepts/components>",
 "required": [
 "apiVersion",
 "kind",
@@ -67,7 +67,7 @@ The schema represents the skeletal structure of a construct and provides a logic
 .
 .
 
-</pre></details> See <a href="https://github.com/meshery/schema">github.com/meshery/schemas</a> for more details.' %}
+</pre></details> See <a href="https://github.com/meshery/schemas">github.com/meshery/schemas</a> for more details.' %}
 
 #### Definition
 
@@ -91,6 +91,44 @@ An _instance_ represents a realized construct. An _instance_ is a dynamic repres
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-### Generating Models does not require Meshery Server
+# Instructions for Creating a New Model
 
-Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components. For adding a model, the link to the CRDs for the specific model needs to be added to the Meshery Integration Spreadsheet. On adding the link to the Meshery Integration Spreadsheet, the model generator automatically registers the specific model with Meshery.
+All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is
+{% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
+
+To add or update a model, follow these steps:
+
+1. **Create a Model Definition.** Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
+2. **Generate Components.** Once you have entered values into the required columns, execute the following command to generate components for your model.
+
+{% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
+ {% include code.html code=code_content %}
+
+1. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
+1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes.
+2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
+3. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
+
+{% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %}
+
+### Instructions for Relationships
+
+See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) page.
+
+1. Identify the relationship and any specific constraints to be enforced between one or more specific components within the same or different models.
+1. Propose a specific visual representation for the relationship. See list of visualizations on [Visualizing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships#relationship-visualizations)
+1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
+1. Create a Relationship Definition (yaml).
+1. (Rarely necessary) Create a policy for evaluation of the relationship (rego). _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
+1. Review a prior pull request as an example of how to define a Relationships. For example, see [PR #9880](https://github.com/meshery/meshery/pull/9880/files)
+
+{% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
+
+### Managed and Unmanaged Connections
+
+Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
+
+Connections can be:
+
+1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/) with hand-curated Connection attributes.
+2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.

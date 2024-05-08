@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -107,7 +107,7 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		var selectedModel v1alpha1.RelationshipDefinition
+		var selectedModel entity.Entity
 
 		if relationshipsResponse.Count == 0 {
 			utils.Log.Info("No relationship(s) found for the given name ", model)

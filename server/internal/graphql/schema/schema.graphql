@@ -497,6 +497,7 @@ input PageFilter {
   to: String
   updated_after: String
   visibility: [String!]
+  metrics: String
 }
 
 # ============== CATALOG =============================
@@ -506,6 +507,7 @@ input CatalogSelector {
   pagesize: String!
   search: String!
   order: String!
+  metrics: String
 }
 
 # ================ TELEMETRY ==================== 

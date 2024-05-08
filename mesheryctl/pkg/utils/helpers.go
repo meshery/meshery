@@ -90,6 +90,14 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
+	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -142,6 +150,14 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdEnvironment              cmdType = "environment"
+	cmdEnvironmentCreate        cmdType = "environment create"
+	cmdEnvironmentDelete        cmdType = "environment delete"
+	cmdEnvironmentList          cmdType = "environment list"
+	cmdEnvironmentView          cmdType = "environment view"
 )
 
 const (
@@ -174,10 +190,10 @@ var (
 	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
 	MesheryNamespace = "meshery"
 	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryDeployment = "meshery-deployment.yaml"
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
 	//MesheryOperator is the file for default Meshery operator
 	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
@@ -189,7 +205,7 @@ var (
 	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
 	// To upload with param name
 	ParamName = "k8sfile"
@@ -558,7 +574,8 @@ func ClearLine() {
 	clearCmd.Stdout = os.Stdout
 	err := clearCmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		Log.Error(ErrClearLine(err))
+		return
 	}
 }
 
@@ -737,7 +754,7 @@ func AskForInput(prompt string, allowed []string) string {
 // ParseURLGithub checks URL and returns raw repo, path, error
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
-	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
+	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {

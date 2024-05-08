@@ -5,7 +5,7 @@ import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter'
 import { FormControl, Select, MenuItem, Chip, CircularProgress, useTheme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import styles from '../connections/styles';
-import { CONNECTION_STATES, CONNECTION_STATE_TO_TRANSITION_MAP } from '../../utils/Enum';
+import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
 import classNames from 'classnames';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -93,7 +93,7 @@ const RenderContents = ({
   );
 };
 
-const ModelContents = withSuppressedErrorBoundary(({ model }) => {
+const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -104,16 +104,18 @@ const ModelContents = withSuppressedErrorBoundary(({ model }) => {
   const getCompRelValue = () => {
     let components = 0;
     let relationships = 0;
-
-    if (model.versionBasedData) {
-      model?.versionBasedData.forEach((model) => {
-        components = components + (model?.components === null ? 0 : model.components.length);
+    if (modelDef?.versionBasedData) {
+      modelDef?.versionBasedData.forEach((modelDefVersion) => {
+        components =
+          components +
+          (modelDefVersion?.components === null ? 0 : modelDefVersion.components.length);
         relationships =
-          relationships + (model?.relationships === null ? 0 : model.relationships.length);
+          relationships +
+          (modelDefVersion?.relationships === null ? 0 : modelDefVersion.relationships.length);
       });
     } else {
-      components = model?.components === null ? 0 : model?.components?.length;
-      relationships = model?.relationships === null ? 0 : model?.relationships?.length;
+      components = modelDef?.components === null ? 0 : modelDef?.components?.length;
+      relationships = modelDef?.relationships === null ? 0 : modelDef?.relationships?.length;
     }
     return {
       components,
@@ -122,10 +124,10 @@ const ModelContents = withSuppressedErrorBoundary(({ model }) => {
   };
 
   const metaDataLeft = {
-    version: model?.version,
-    hostname: model?.hostname,
+    version: modelDef?.model?.version,
+    hostname: modelDef?.registrant?.hostname,
     components: getCompRelValue()?.components?.toString(),
-    subCategory: model?.subCategory,
+    subCategory: modelDef?.model?.subCategory,
   };
 
   const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
@@ -138,20 +140,20 @@ const ModelContents = withSuppressedErrorBoundary(({ model }) => {
   };
 
   const metaDataRight = {
-    category: model?.category?.name,
-    duplicates: model?.duplicates?.toString(),
+    category: modelDef?.category?.name,
+    duplicates: modelDef?.duplicates?.toString(),
     relationships: getCompRelValue().relationships.toString(),
   };
 
   const orderRight = ['category', 'duplicates', 'relationships'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
-  const isShowStatusSelector = !Array.isArray(model.version);
+  const isShowStatusSelector = !Array.isArray(modelDef?.model.version);
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <TitleWithImg displayName={model.displayName} iconSrc={model?.metadata?.svgColor} />
-        {isShowStatusSelector && <StatusChip entityData={model} entityType="models" />}
+        <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -165,15 +167,15 @@ const ModelContents = withSuppressedErrorBoundary(({ model }) => {
   );
 });
 
-const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
+const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
   const { data, isSuccess } = useGetComponentByNameQuery({
-    name: component.kind,
+    name: componentDef.component.kind,
     params: {
-      apiVersion: component.apiVersion,
+      apiVersion: componentDef.component.version,
       trim: false,
     },
   });
-  const componentData = data?.components?.find((comp) => comp.id === component.id);
+  const componentData = data?.components?.find((comp) => comp.id === componentDef.id);
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -182,10 +184,10 @@ const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
   };
 
   const metaDataLeft = {
-    version: componentData?.apiVersion,
-    modelName: componentData?.metadata?.modelDisplayName,
-    kind: componentData?.kind,
-    subCategory: componentData?.metadata?.subCategory,
+    version: componentData?.component?.version,
+    modelName: componentData?.model?.displayName,
+    kind: componentData?.component.kind,
+    subCategory: componentData?.model?.subCategory,
   };
 
   const orderLeft = ['version', 'modelName', 'kind'];
@@ -198,7 +200,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
   };
 
   const metaDataRight = {
-    registrant: component?.hostname,
+    registrant: componentData?.registrant?.hostname,
     duplicates: componentData?.duplicates?.toString(),
     category: componentData?.model?.category?.name,
   };
@@ -216,7 +218,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
               iconSrc={componentData?.metadata?.svgColor}
             />
           </div>
-          <Description description={JSON.parse(componentData?.schema)?.description} />
+          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
           <RenderContents
             metaDataLeft={metaDataLeft}
             metaDataRight={metaDataRight}
@@ -235,12 +237,12 @@ const ComponentContents = withSuppressedErrorBoundary(({ component }) => {
   );
 });
 
-const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }) => {
+const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef, view }) => {
   let metadata = {};
   if (view !== RELATIONSHIPS) {
-    metadata = JSON.parse(atob(relationship.metadata));
+    metadata = JSON.parse(atob(relationshipDef.metadata));
   } else {
-    metadata = relationship.metadata;
+    metadata = relationshipDef.metadata;
   }
 
   const PropertyFormattersLeft = {
@@ -250,8 +252,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   };
 
   const metaDataLeft = {
-    version: relationship.apiVersion,
-    modelName: relationship.model?.displayName,
+    version: relationshipDef.schemaVersion,
+    modelName: relationshipDef.model?.displayName,
   };
 
   const orderLeft = ['version', 'modelName'];
@@ -263,8 +265,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   };
 
   const metaDataRight = {
-    registrant: relationship.displayhostname,
-    subType: relationship.subType,
+    registrant: relationshipDef.model.registrant.hostname,
+    subType: relationshipDef.subType,
   };
 
   const orderRight = ['subType', 'registrant'];
@@ -273,8 +275,8 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationship, view }
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationship.subType} />
-        <Description description={metadata.description} />
+        <Title title={relationshipDef?.subType} />
+        <Description description={metadata?.description} />
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -295,7 +297,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant.summary?.models?.toString(),
+    models: registrant?.models?.length.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
@@ -348,17 +350,16 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 // TODO: remove with styles and use either makestyle or styled component
 const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
-    const nextStatus = ['registered', 'ignored'];
+    const nextStatus = Object.values(REGISTRY_ITEM_STATES);
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
     const { data: modelData, isSuccess } = useGetModelByNameQuery({
       name: entityData.name,
       params: {
-        version: entityData.version,
+        version: entityData.model.version,
       },
     });
 
     const data = modelData?.models?.find((model) => model.id === entityData.id);
-
     const handleStatusChange = (e) => {
       updateEntityStatus({
         entityType: _.toLower(entityType),
@@ -371,8 +372,8 @@ const StatusChip = withSuppressedErrorBoundary(
     };
 
     const icons = {
-      [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
-      [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
     };
 
     return (
@@ -419,7 +420,7 @@ const StatusChip = withSuppressedErrorBoundary(
                   label={
                     status === data?.status
                       ? status
-                      : CONNECTION_STATE_TO_TRANSITION_MAP?.[status] || status
+                      : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
                   }
                 />
               </MenuItem>
@@ -448,11 +449,11 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   const getContent = (type) => {
     switch (type) {
       case MODELS:
-        return <ModelContents model={showDetailsData.data} />;
+        return <ModelContents modelDef={showDetailsData.data} />;
       case RELATIONSHIPS:
-        return <RelationshipContents relationship={showDetailsData.data} view={view} />;
+        return <RelationshipContents relationshipDef={showDetailsData.data} view={view} />;
       case COMPONENTS:
-        return <ComponentContents component={showDetailsData.data} />;
+        return <ComponentContents componentDef={showDetailsData.data} />;
       case REGISTRANTS:
         return <RegistrantContent registrant={showDetailsData.data} />;
       default:

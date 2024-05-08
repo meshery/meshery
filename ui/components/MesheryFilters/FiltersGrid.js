@@ -10,6 +10,8 @@ import PublishIcon from '@material-ui/icons/Publish';
 import useStyles from '../MesheryPatterns/Grid.styles';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -219,6 +221,7 @@ function FiltersGrid({
                 aria-label="Add Application"
                 variant="contained"
                 color="primary"
+                disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}

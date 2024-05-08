@@ -36,6 +36,10 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { K8sContextConnectionChip } from './Header';
+import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -349,10 +353,12 @@ function ConfirmationMsg(props) {
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
             value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
-            variant="fullWidth"
+            variant="scrollable"
+            scrollButtons="auto"
             indicatorColor="primary"
             textColor="primary"
             className={classes.tabs}
+            centered
           >
             {!!validationBody && (
               <Tab
@@ -381,10 +387,14 @@ function ConfirmationMsg(props) {
                     )}
                   </div>
                 }
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
               />
             )}
             <Tab
-              disabled={disabled}
+              disabled={
+                !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
+                (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
+              }
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 1)}
@@ -399,7 +409,10 @@ function ConfirmationMsg(props) {
               }
             />
             <Tab
-              disabled={disabled}
+              disabled={
+                !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
+                (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
+              }
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
@@ -602,3 +615,111 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg));
+
+export const SelectDeploymentTarget_ = ({
+  k8scontext,
+  classes,
+  setK8sContexts,
+  selectedK8sContexts,
+}) => {
+  const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
+    return operatorState !== 'DISABLED';
+  });
+  const [searchedContexts, setSearchedContexts] = useState(deployableK8scontexts);
+  const selectedContexts = selectedK8sContexts;
+
+  const searchContexts = (search) => {
+    if (search === '') {
+      setSearchedContexts(k8scontext);
+      return;
+    }
+    let matchedCtx = [];
+    k8scontext.forEach((ctx) => {
+      if (ctx.name.includes(search)) {
+        matchedCtx.push(ctx);
+      }
+    });
+    setSearchedContexts(matchedCtx);
+  };
+
+  const setContextViewer = (id) => {
+    if (id === 'all') {
+      if (selectedContexts?.includes('all')) {
+        // updateProgress({ showProgress : true })
+        setK8sContexts({ selectedK8sContexts: [] });
+      } else {
+        setK8sContexts({ selectedK8sContexts: ['all'] });
+      }
+      return;
+    }
+
+    if (selectedContexts?.includes(id)) {
+      const filteredContexts = selectedContexts.filter((cid) => cid !== id);
+      setK8sContexts({ selectedK8sContexts: filteredContexts });
+    } else if (selectedContexts[0] === 'all') {
+      const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
+      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+    } else {
+      if (selectedContexts.length === k8scontext.length - 1) {
+        setK8sContexts({ selectedK8sContexts: ['all'] });
+        return;
+      }
+      setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] });
+    }
+  };
+
+  return k8scontext.length > 0 ? (
+    <Typography variant="body1">
+      <TextField
+        id="search-ctx"
+        label="Search"
+        size="small"
+        variant="outlined"
+        onChange={(event) => searchContexts(event.target.value)}
+        style={{
+          width: '100%',
+          backgroundColor: 'rgba(102, 102, 102, 0.12)',
+          margin: '1px 1px 8px ',
+        }}
+        InputProps={{
+          endAdornment: <Search style={iconMedium} />,
+        }}
+        // margin="none"
+      />
+      {searchedContexts.length > 0 ? (
+        <div className={classes.all}>
+          <Checkbox
+            checked={selectedContexts?.includes('all')}
+            onChange={() => setContextViewer('all')}
+            color="primary"
+          />
+          <span style={{ fontWeight: 'bolder' }}>select all</span>
+        </div>
+      ) : (
+        <K8sEmptyState message={'No active cluster found'} />
+      )}
+
+      <div className={classes.contexts}>
+        {deployableK8scontexts.map((ctx) => (
+          <K8sContextConnectionChip
+            classes={classes}
+            ctx={ctx}
+            key={ctx.id}
+            selectable
+            selected={
+              selectedContexts.includes(ctx.id) ||
+              (selectedContexts?.length > 0 && selectedContexts[0] === 'all')
+            }
+            onSelectChange={() => setContextViewer(ctx.id)}
+          />
+        ))}
+      </div>
+    </Typography>
+  ) : (
+    <K8sEmptyState message={'No active cluster found'} />
+  );
+};
+
+export const SelectDeploymentTarget = withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(SelectDeploymentTarget_),
+);

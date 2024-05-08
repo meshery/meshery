@@ -17,13 +17,12 @@ import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironm
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
 import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
 import PublishModal from '../components/Modals/PublishModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import PromptComponent from './PromptComponent';
-import Validation from './Validation';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -31,10 +30,10 @@ import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
+import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-
 function NavigatorExtension({
   grafana,
   prometheus,
@@ -107,6 +106,7 @@ function NavigatorExtension({
           },
         },
         ConfirmationModal,
+        SelectDeploymentTarget: SelectDeploymentTarget,
         getComponentsinFile,
         UploadImport,
         PublishModal,
@@ -114,12 +114,14 @@ function NavigatorExtension({
         GenericRJSFModal: Modal,
         PromptComponent,
         generateValidatePayload,
-        Validation,
         capabilitiesRegistry,
         CapabilitiesRegistryClass: CapabilitiesRegistry,
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
         StructuredDataFormatter: FormatStructuredData,
+        hooks: {
+          useFilterK8sContexts,
+        },
       }}
     />
   );

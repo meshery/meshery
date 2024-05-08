@@ -811,7 +811,7 @@
         "long_description": "",
         "short_description": "Error failed to import design",
         "probable_cause": "Cannot save the design due to wrong path or URL",
-        "suggested_remediation": "Check if the given path or URL of the design is correct"
+        "suggested_remediation": "Check if the provided path or URL of the design is correct. If you are providing a URL, it should be a direct URL to a downloadable file. For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'."
       },
       "1091": {
         "name": "ErrEncodePatternCode",
@@ -2873,6 +2873,24 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1320": {
+        "name": "ErrPersistEventToRemoteProviderCode",
+        "code": "1320",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to persist event to remote provider",
+        "probable_cause": "token is expired/revoked\nRemote Provider is not reachable or unavailable",
+        "suggested_remediation": "Try re-authenticating with the remote provider\nVerify remote provider for its reachability or availability."
+      },
+      "1321": {
+        "name": "ErrDoRequestCode",
+        "code": "1321",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Requested resource is not reachable.\nUnable to instantiate TCP connection",
+        "suggested_remediation": "Ensure correct URL is specified\nEnsure network connectivity to the resource from your network"
       }
     }
   }
