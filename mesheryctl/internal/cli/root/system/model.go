@@ -302,7 +302,7 @@ mesheryctl exp model search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("search term is missing\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
 		}
 		return nil
 	},
