@@ -207,9 +207,8 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"Unable to Create Component Configuration.", err.Error()}, []string{("An error occurred while trying to create Component Configuration."), err.Error()}, []string{"Missing or invalid user token, invalid Kubernetes handler or serviceActionProvider error."}, []string{"Ensure the user token, Kubernetes handler, and serviceActionProvider are valid."})
 }
-
 func ErrRequestBody(err error) error {
 	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
 }
