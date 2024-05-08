@@ -1159,9 +1159,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			Description: "This is default organization",
 			Owner:       uuid.Nil,
 		}
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
+		count, _ := l.OrganizationPersister.GetOrganizationsCount()
+		if count > 0 {
+			_, err := l.OrganizationPersister.SaveOrganization(org)
+			if err != nil {
+				log.Error(ErrGettingSeededComponents(err, "organization"))
+			}
 		}
 	}()
 }
