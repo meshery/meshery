@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "ProviderConfig",
+  "apiVersion": "openstack.crossplane.io/v1beta1",
+  "displayName": "Provider Config",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#DA1A32",
+   "published": true,
+   "secondaryColor": "",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "\u003csvg width=\"800px\" height=\"800px\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg\u003e\n        \u003cpath d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#DA1A32\"\u003e\n\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg width=\"800px\" height=\"800px\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg\u003e\n        \u003cpath d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#fff\"\u003e\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "crossplane-provider-openstack",
+   "version": "v0.3.0",
+   "displayName": "OpenStack (Crossplane)",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": true,
+    "subCategory": "OpenStack",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#DA1A32\"\u003e\n\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#fff\"\u003e\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"A ProviderConfig configures a OpenStack provider.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A ProviderConfigSpec defines the desired state of a ProviderConfig.\",\n   \"properties\": {\n    \"credentials\": {\n     \"description\": \"Credentials required to authenticate to this provider.\",\n     \"properties\": {\n      \"env\": {\n       \"description\": \"Env is a reference to an environment variable that contains credentials that must be used to connect to the provider.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name is the name of an environment variable.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"fs\": {\n       \"description\": \"Fs is a reference to a filesystem location that contains credentials that must be used to connect to the provider.\",\n       \"properties\": {\n        \"path\": {\n         \"description\": \"Path is a filesystem path.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"path\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secretRef\": {\n       \"description\": \"A SecretRef is a reference to a secret key that contains the credentials that must be used to connect to the provider.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key to select.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the secret.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the secret.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\",\n        \"namespace\"\n       ],\n       \"type\": \"object\"\n      },\n      \"source\": {\n       \"description\": \"Source of the provider credentials.\",\n       \"enum\": [\n        \"None\",\n        \"Secret\",\n        \"InjectedIdentity\",\n        \"Environment\",\n        \"Filesystem\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"source\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"credentials\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Provider Config\",\n \"type\": \"object\"\n}"
+ }

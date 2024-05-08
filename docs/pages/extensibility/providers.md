@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform. 
+Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
    - [MeshMap]({{site.baseurl}}/extensions/meshmap) is an example of a feature to be delivered via Remote Provider.
@@ -37,13 +37,12 @@ Some examples include:
 
   <figcaption>Figure: Selecting a provider in Meshery</figcaption>
 
-
 ## Types of providers
 
-There are two types of providers defined in Meshery, `local` and `remote`. 
- - The **Local** provider is built-into Meshery. 
- - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
+There are two types of providers defined in Meshery, `local` and `remote`.
 
+- The **Local** provider is built-into Meshery.
+- **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
 ### Remote Providers
 
@@ -105,7 +104,6 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 |collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
   |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
 
-
 Remote Providers must fulfill the following endpoints:
 
 1. `/login` - return valid token
@@ -127,7 +125,8 @@ The Navigator extension point loads a set of menu items to be displayed in the m
 ## Capabilities Endpoint Example
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the _**capabilities**_ section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
-
+<details>
+<summary>Capabilities Endpoint Example</summary>
 {% capture code_content %}{
   "provider_type": "remote",
   "package_version": "v0.1.0",
@@ -295,6 +294,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
   ]
 }{% endcapture %}
 {% include code.html code=code_content %}
+</details>
 
 #### Meshery Server Registration
 
@@ -328,7 +328,7 @@ You can define a custom callback URL by setting up the `MESHERY_SERVER_CALLBACK_
 
 **Example using Helm**
 
-First, construct the URL in the format 
+First, construct the URL in the format
 ```https://[CUSTOM_URL]/api/user/token```
 
 - Where `[CUSTOM_URL]` is the URL where **Meshery server** will be or is installed. For example, `https://k8s-staging.test.io/`.
@@ -341,14 +341,13 @@ So, the final URL would look similar to
 
 Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
 
-{% capture code_content %}helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
+{% capture code_content %}helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=<https://k8s-staging.test.io/api/user/token>
 {% endcapture %}
 {% include code.html code=code_content %}
 
 **NOTE**
 
 If Meshery server is accessible in a path of the URL such as `https://k8s-staging.test.io/meshery`, then the callback URL will be `https://k8s-staging.test.io/meshery/api/user/token`.
-
 
 ## Managing your Remote Provider Extension Code
 
