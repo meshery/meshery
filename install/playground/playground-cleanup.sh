@@ -10,7 +10,15 @@ do
         echo "Deleting all resources in namespace $ns"
         kubectl delete all --all -n $ns
         echo "Deleting namespace $ns"
-        kubectl delete ns $ns --wait=false
+        timeout 1m kubectl delete ns $ns
+
+        ns_status=$(kubectl get namespace $ns -o jsonpath='{.status.phase}')
+        # Check if the namespace is in the "Terminating" state
+        if [ "$ns_status" == "Terminating" ]; then
+            echo "Namespace $ns is stuck in 'Terminating' state. Patching finalizers field..."
+            # Patch finalizers field
+            kubectl get namespace $ns -o json | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" | kubectl replace --raw /api/v1/namespaces/$ns/finalize -f -
+        fi
     fi
 done
 
