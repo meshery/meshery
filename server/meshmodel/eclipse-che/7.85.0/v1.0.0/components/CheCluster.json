@@ -24,7 +24,6 @@
    "subCategory": "Application Definition \u0026 Image Build",
    "metadata": {
     "isAnnotation": false,
-    "subCategory": "Application Definition \u0026 Image Build",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -36,22 +35,8 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
    "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shape": "circle"
   },
   "component": {
    "kind": "CheCluster",

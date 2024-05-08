@@ -24,7 +24,6 @@
    "subCategory": "Scheduling \u0026 Orchestration",
    "metadata": {
     "isAnnotation": false,
-    "subCategory": "Scheduling \u0026 Orchestration",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -36,22 +35,8 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
    "isNamespaced": false,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shape": "circle"
   },
   "component": {
    "kind": "CapsuleConfiguration",

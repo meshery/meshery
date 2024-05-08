@@ -24,7 +24,6 @@
    "subCategory": "Scheduling \u0026 Orchestration",
    "metadata": {
     "isAnnotation": false,
-    "subCategory": "Scheduling \u0026 Orchestration",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -36,22 +35,8 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
    "isNamespaced": true,
-   "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shape": "circle"
   },
   "component": {
    "kind": "ProxySetting",
