@@ -416,3 +416,8 @@ export const selectSelectedK8sClusters = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
   return selectedK8sContexts?.toJS?.() || selectedK8sContexts;
 };
+
+export const selectK8sContexts = (state) => {
+  const k8scontext = state.get('k8sConfig');
+  return k8scontext?.toJS?.() || k8scontext;
+};

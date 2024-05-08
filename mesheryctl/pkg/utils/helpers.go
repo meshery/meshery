@@ -90,6 +90,14 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
+	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -142,6 +150,14 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdEnvironment              cmdType = "environment"
+	cmdEnvironmentCreate        cmdType = "environment create"
+	cmdEnvironmentDelete        cmdType = "environment delete"
+	cmdEnvironmentList          cmdType = "environment list"
+	cmdEnvironmentView          cmdType = "environment view"
 )
 
 const (
@@ -558,7 +574,8 @@ func ClearLine() {
 	clearCmd.Stdout = os.Stdout
 	err := clearCmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		Log.Error(ErrClearLine(err))
+		return
 	}
 }
 
