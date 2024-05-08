@@ -44,7 +44,7 @@ mesheryctl exp model pull --username [username] --password [password] --registry
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return errors.New("all flags are required")
+			return utils.ErrInvalidArgument(errors.New("Please provide username, password, registry, tag, repository flags."))
 		}
 
 		return nil
