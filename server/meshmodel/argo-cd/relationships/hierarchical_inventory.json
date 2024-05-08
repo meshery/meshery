@@ -6,7 +6,7 @@
   },
   "model": {
     "name": "argo-cd",
-    "version": "v1.25.2",
+    "version": "2.9",
     "displayName": "argo-cd",
     "category": {
       "name": "Orchestration \u0026 Management",
