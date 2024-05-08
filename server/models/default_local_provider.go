@@ -1160,7 +1160,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			Owner:       uuid.Nil,
 		}
 		count, _ := l.OrganizationPersister.GetOrganizationsCount()
-		if count > 0 {
+		if count == 0 {
 			_, err := l.OrganizationPersister.SaveOrganization(org)
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, "organization"))
