@@ -60,7 +60,7 @@ import {
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
-import theme from '../../themes/app';
+import theme, { Colors } from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
@@ -85,9 +85,13 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import {
+  CustomTextTooltip,
+  RenderTooltipContent,
+} from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
+import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -322,6 +326,11 @@ function Connections(props) {
       });
   };
 
+  const renderTooltipContent = () => {
+    return getHyperLinkDiv(
+      'Learn more about [kubernetes connection](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)',
+    );
+  };
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
@@ -440,30 +449,45 @@ function Connections(props) {
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
+          const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
           return (
-            <TootltipWrappedConnectionChip
-              tooltip={'Server: ' + server}
-              title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
-              status={getColumnValue(tableMeta.rowData, 'status', columns)}
-              onDelete={() =>
-                handleDeleteConnection(
-                  getColumnValue(tableMeta.rowData, 'id', columns),
-                  getColumnValue(tableMeta.rowData, 'kind', columns),
-                )
-              }
-              handlePing={(e) => {
-                e.stopPropagation();
-                if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
-                  ping(
-                    getColumnValue(tableMeta.rowData, 'metadata.name', columns),
-                    getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+            <>
+              <TootltipWrappedConnectionChip
+                tooltip={'Server: ' + server}
+                title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
+                status={getColumnValue(tableMeta.rowData, 'status', columns)}
+                onDelete={() =>
+                  handleDeleteConnection(
                     getColumnValue(tableMeta.rowData, 'id', columns),
-                  );
+                    getColumnValue(tableMeta.rowData, 'kind', columns),
+                  )
                 }
-              }}
-              iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
-              width="12rem"
-            />
+                handlePing={(e) => {
+                  e.stopPropagation();
+                  if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                    ping(
+                      getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                      getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                    );
+                  }
+                }}
+                iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
+                width="12rem"
+              />
+              {kind == 'kubernetes' && (
+                <CustomTextTooltip
+                  backgroundColor={Colors.charcoal}
+                  placement="top"
+                  interactive={true}
+                  title={renderTooltipContent()}
+                >
+                  <IconButton className={classes.infoIconButton} color="primary">
+                    <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
+                  </IconButton>
+                </CustomTextTooltip>
+              )}
+            </>
           );
         },
       },
