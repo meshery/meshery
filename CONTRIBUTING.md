@@ -385,7 +385,7 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 
 `mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer to it for lint checks.
 
-All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
+All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Meshery components.
 
 # <a name="maintaining"> Reviews</a>
 

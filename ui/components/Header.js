@@ -43,6 +43,8 @@ import { OutlinedSettingsIcon } from '@layer5/sistent';
 import { CHARCOAL } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -233,6 +235,58 @@ function LoadTheme({ themeSetter }) {
   return <></>;
 }
 
+export const K8sContextConnectionChip = ({
+  ctx,
+  classes,
+  selectable = false,
+  onSelectChange,
+  selected,
+  onDelete,
+}) => {
+  const ping = useKubernetesHook();
+  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
+
+  const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
+    ctx.connection_id,
+  );
+
+  return (
+    <div id={ctx.id} className={classes.chip}>
+      <CustomTextTooltip
+        backgroundColor={CHARCOAL}
+        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+          operatorState,
+        )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}
+        >
+          {selectable && (
+            <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} color="primary" />
+          )}
+          <_ConnectionChip
+            title={ctx?.name}
+            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
+            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+            iconSrc={
+              connectionMetadataState
+                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                : ''
+            } // chnage to use connection def
+            status={operatorState}
+          />
+        </div>
+      </CustomTextTooltip>
+    </div>
+  );
+};
+
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -247,11 +301,8 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const ping = useKubernetesHook();
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
 
-  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
@@ -265,7 +316,7 @@ function K8sContextMenu({
     marginRight: '0.5rem',
   };
 
-  const handleKubernetesDelete = (name, connectionID) => async () => {
+  const handleKubernetesDelete = async (name, connectionID) => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete ${name} context ?`,
       subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
@@ -304,6 +355,12 @@ function K8sContextMenu({
         <IconButton
           aria-label="contexts"
           className="k8s-icon-button"
+          disabled={
+            !CAN(
+              keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
+              keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
+            )
+          }
           onClick={(e) => {
             e.preventDefault();
             setShowFullContextMenu((prev) => !prev);
@@ -401,46 +458,16 @@ function K8sContextMenu({
                     </Button>
                   </Link>
                 )}
-                {contexts?.contexts?.map((ctx, idx) => {
-                  const { operatorState, meshSyncState, natsState } =
-                    getControllerStatesByConnectionID(ctx.connection_id);
-
+                {contexts?.contexts?.map((ctx) => {
                   return (
-                    <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
-                      <CustomTextTooltip
-                        backgroundColor={CHARCOAL}
-                        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
-                          operatorState,
-                        )}, MeshSync: ${formatToTitleCase(
-                          meshSyncState,
-                        )}, Broker: ${formatToTitleCase(natsState)}`}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Checkbox
-                            checked={activeContexts.includes(ctx.id)}
-                            onChange={() => setActiveContexts(ctx.id)}
-                            color="primary"
-                          />
-                          <_ConnectionChip
-                            title={ctx?.name}
-                            onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
-                            iconSrc={
-                              connectionMetadataState
-                                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                                : ''
-                            } // chnage to use connection def
-                            status={operatorState}
-                          />
-                        </div>
-                      </CustomTextTooltip>
-                    </div>
+                    <K8sContextConnectionChip
+                      classes={classes}
+                      ctx={ctx}
+                      selectable
+                      onDelete={handleKubernetesDelete}
+                      selected={activeContexts.includes(ctx.id)}
+                      onSelectChange={() => setActiveContexts(ctx.id)}
+                    />
                   );
                 })}
               </div>
@@ -492,16 +519,8 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      capabilityregistryObj,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } =
+      this.props;
     const loaderType = 'circular';
     return (
       <NoSsr>
@@ -552,7 +571,6 @@ class Header extends React.PureComponent {
                     <ExtensionSandbox
                       type="collaborator"
                       Extension={(url) => RemoteComponent({ url, loaderType })}
-                      capabilitiesRegistry={capabilityregistryObj}
                     />
                   )}
                   <div className={classes.userSpan} style={{ position: 'relative' }}>
@@ -588,6 +606,7 @@ class Header extends React.PureComponent {
                             : {}
                         }
                         color="inherit"
+                        disabled={!CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject)}
                       >
                         <OutlinedSettingsIcon
                           // fill={WHITE}
@@ -653,10 +672,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));
-
-// const withControllerStates = (Component) => {
-//   return function WrappedWithControllerStates(props) {
-//     const { getControllerStatesByContexID } = useControllerStatus();
-//     return <Component {...props} getControllerStatesByContexID={getControllerStatesByContexID} />;
-//   };
-// };

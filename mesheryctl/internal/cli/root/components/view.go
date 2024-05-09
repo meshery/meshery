@@ -162,7 +162,7 @@ mesheryctl exp components view [component-name]
 				fmt.Println("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return outputComponentJson(selectedComponent)
+			return OutputJson(selectedComponent)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}

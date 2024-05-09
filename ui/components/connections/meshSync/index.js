@@ -55,9 +55,10 @@ export default function MeshSyncTable(props) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
-  const [setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [rowsExpanded, setRowsExpanded] = useState([]);
+  const [selectedKind, setSelectedKind] = useState('');
+
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
   const [registerConnection, setRegisterConnection] = useState({
@@ -78,7 +79,11 @@ export default function MeshSyncTable(props) {
     setRegistrationModal(false);
   };
 
-  const { data: meshSyncData, error: meshSyncError } = useGetMeshSyncResourcesQuery({
+  const {
+    data: meshSyncData,
+    isError: isError,
+    error: meshSyncError,
+  } = useGetMeshSyncResourcesQuery({
     page: page,
     pagesize: pageSize,
     search: search,
@@ -86,23 +91,25 @@ export default function MeshSyncTable(props) {
     kind: selectedKind,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
   });
-
+  if (isError) {
+    if (isError) {
+      notify({
+        message: 'Error fetching MeshSync Resources',
+        event_type: EVENT_TYPES.ERROR,
+        details: meshSyncError?.data,
+      });
+    }
+  }
   const { data: allKinds } = useGetMeshSyncResourceKindsQuery({
     page: page,
-    pagesize: pageSize,
+    pagesize: 'all',
     search: search,
     order: sortOrder,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
   });
-  const kindoptions = allKinds?.kinds || [];
+  const availableKinds = allKinds?.kinds || [];
 
   const meshSyncResources = meshSyncData?.resources || [];
-  const filteredData = meshSyncResources?.filter((item) => {
-    if (selectedFilters.kind === 'All') {
-      return true;
-    }
-    return item.kind === selectedFilters.kind;
-  });
 
   let colViews = [
     ['metadata.name', 'xs'],
@@ -487,8 +494,6 @@ export default function MeshSyncTable(props) {
     },
   };
 
-  const [selectedKind, setSelectedKind] = useState('');
-
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
     notify({
@@ -508,7 +513,7 @@ export default function MeshSyncTable(props) {
     kind: {
       name: 'Kind',
       options: [
-        ...kindoptions.map((kind) => ({
+        ...availableKinds.map((kind) => ({
           value: kind,
           label: kind,
         })),
@@ -522,14 +527,7 @@ export default function MeshSyncTable(props) {
 
     // Check if the selected value is "All"
     const newSelectedKind = columnValue === 'All' ? '' : columnValue;
-
-    const filter = {
-      [columnName]: columnValue === 'All' ? null : [columnValue],
-    };
-
-    setFilter(filter);
-    setSelectedKind(newSelectedKind); // Update the selected kind
-    // getMeshsyncResources(page, pageSize, search, sortOrder, newSelectedKind);
+    setSelectedKind(newSelectedKind);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -584,7 +582,7 @@ export default function MeshSyncTable(props) {
         </div>
       </div>
       <ResponsiveDataTable
-        data={filteredData}
+        data={meshSyncResources}
         columns={columns}
         options={options}
         className={classes.muiRow}

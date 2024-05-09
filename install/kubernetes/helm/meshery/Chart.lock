@@ -26,11 +26,8 @@ dependencies:
 - name: meshery-cilium
   repository: ""
   version: 0.7.0
-- name: meshery-perf
-  repository: ""
-  version: 0.7.0
 - name: meshery-nighthawk
   repository: ""
   version: 0.7.0
-digest: sha256:708de427642dd871cd0b9c64908b44a4b38824202d0f6d3af73c0cbc7047de5c
-generated: "2024-03-15T21:46:41.997501683-04:00"
+digest: sha256:2b66c37daa14297875735cc974409d2d1c58685eb9f6d48f81ef3b7e8939375d
+generated: "2024-03-29T21:54:28.552689051-04:00"

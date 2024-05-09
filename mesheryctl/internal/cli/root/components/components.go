@@ -146,8 +146,8 @@ func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.C
 	}
 }
 
-func outputComponentJson(component v1alpha1.ComponentDefinition) error {
-	if err := prettifyComponentJson(component); err != nil {
+func OutputJson(component interface{}) error {
+	if err := prettifyJson(component); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
 		// e.g unicode representation of '&' will be printed as '\u0026'
@@ -162,7 +162,7 @@ func outputComponentJson(component v1alpha1.ComponentDefinition) error {
 
 // prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyComponentJson(component v1alpha1.ComponentDefinition) error {
+func prettifyJson(component interface{}) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.
