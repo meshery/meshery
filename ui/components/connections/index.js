@@ -328,7 +328,7 @@ function Connections(props) {
 
   const renderTooltipContent = () => {
     return getHyperLinkDiv(
-      'Learn more about [kubernetes connection](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)',
+      'Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)',
     );
   };
   const open = Boolean(anchorEl);
@@ -454,7 +454,7 @@ function Connections(props) {
             <>
               <TootltipWrappedConnectionChip
                 tooltip={'Server: ' + server}
-                title={tableMeta.rowData[5] === CONNECTION_KINDS.KUBERNETES ? name : value}
+                title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
                 status={getColumnValue(tableMeta.rowData, 'status', columns)}
                 onDelete={() =>
                   handleDeleteConnection(
