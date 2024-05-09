@@ -44,8 +44,8 @@ import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
 import Modal from './Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
-import { getMeshModels } from '../api/meshmodel';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
+import { getMeshModels } from '../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -63,8 +63,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
-import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
-import { importSchema, importUiSchema } from '@layer5/sistent';
 
 const styles = (theme) => ({
   grid: {
@@ -250,7 +248,7 @@ function MesheryFilters({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema] = useState({});
+  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -338,31 +336,44 @@ function MesheryFilters({
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    async function fetchMeshModels() {
-      try {
-        const { models } = await getMeshModels();
-        const modelNames = models?.map((model) => model.displayName) || [];
-        modelNames.sort(); // Sort model names
+    dataFetch(
+      '/api/schema/resource/filter',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
+    dataFetch(
+      '/api/schema/resource/publish',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          modelNames.sort();
 
-        // Modify the schema to include mesh models
-        const modifiedSchema = modifyRJSFSchema(
-          publishCatalogItemSchema, // Use publishSchema as the base schema
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
-
-        // Set the modified schema and UI schema
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-        setMeshModels(models);
-      } catch (error) {
-        console.error('Error fetching mesh models:', error);
-      }
-    }
-
-    fetchMeshModels();
-  }, []);
-
-  useEffect(() => {
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            'properties.compatibility.items.enum',
+            modelNames,
+          );
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models);
+        } catch (err) {
+          console.error(err);
+          setPublishSchema(result);
+        }
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -1222,7 +1233,7 @@ function MesheryFilters({
       () => {
         updateProgress({ showProgress: false });
         notify({
-          message: `${name} filter uploaded`,
+          message: `"${name}" filter uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       },
@@ -1437,15 +1448,15 @@ function MesheryFilters({
 }
 
 const ImportModal = React.memo((props) => {
-  const { handleClose, handleImportFilter } = props;
+  const { importFormSchema, handleClose, handleImportFilter } = props;
 
   const classes = useStyles();
 
   return (
     <Modal
       open={true}
-      schema={importSchema}
-      uiSchema={importUiSchema}
+      schema={importFormSchema.rjsfSchema}
+      uiSchema={importFormSchema.uiSchema}
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"
@@ -1463,13 +1474,13 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handlePublish, title } = props;
 
   return (
     <Modal
       open={true}
-      schema={publishCatalogItemSchema}
-      uiSchema={publishCatalogItemSchema}
+      schema={publishFormSchema.rjsfSchema}
+      uiSchema={publishFormSchema.uiSchema}
       handleClose={handleClose}
       aria-label="catalog publish"
       title={title}

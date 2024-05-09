@@ -39,7 +39,7 @@
         "@fortawesome/free-regular-svg-icons": "^6.1.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
-        "@layer5/sistent": "^0.14.24",
+        "@layer5/sistent": "^0.14.33",
         "@layer5/sistent-components": "^0.13.0",
         "@layer5/sistent-svg": "^0.14.4",
         "@material-ui/core": "^4.12.4",
@@ -115,11 +115,11 @@
         "set-value": "^4.0.1",
         "styled-jsx": "^5.1.2",
         "tar": "^6.2.1",
-        "universal-cookie": "^4.0.4",
+        "universal-cookie": "^7.1.4",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
-        "@4tw/cypress-drag-drop": "^2.2.3",
+        "@4tw/cypress-drag-drop": "^2.2.5",
         "@babel/core": "^7.21.3",
         "@babel/eslint-parser": "^7.22.11",
         "@babel/traverse": "^7.24.1",

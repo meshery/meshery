@@ -76,7 +76,6 @@ import { DeployStepper, UnDeployStepper } from './MesheryPatterns/lifecycle';
 import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DryRunDesign } from './MesheryPatterns/DryRunDesign';
-import { importDesignSchema, importDesignUiSchema } from '@layer5/sistent';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -341,7 +340,7 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [setExtensionPreferences] = useState({});
   const router = useRouter();
-  const [setImportSchema] = useState({});
+  const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
@@ -988,7 +987,11 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
+            pattern_data: {
+              id,
+              pattern_file: getUnit8ArrayForDesign(data),
+              catalog_data,
+            },
             save: true,
           }),
         },
@@ -1505,7 +1508,7 @@ function MesheryPatterns({
       () => {
         updateProgress({ showProgress: false });
         notify({
-          message: `${name} Design Uploaded`,
+          message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         fetchPatternsCaller()();
@@ -1717,7 +1720,7 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importDesignSchema}
+              importFormSchema={importSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1745,7 +1748,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { handleClose, handleImportDesign } = props;
+  const { importFormSchema, handleClose, handleImportDesign } = props;
 
   const classes = useStyles();
 
@@ -1753,8 +1756,8 @@ const ImportModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={importDesignSchema}
-        uiSchema={importDesignUiSchema}
+        schema={importFormSchema.rjsfSchema}
+        uiSchema={importFormSchema.uiSchema}
         handleClose={handleClose}
         handleSubmit={handleImportDesign}
         title="Import Design"

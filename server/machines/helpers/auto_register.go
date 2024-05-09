@@ -14,7 +14,8 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -89,7 +90,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 					var capabilities map[string]interface{}
 					err = utils.Unmarshal(connCapabilities, &capabilities)
 					if err != nil {
-						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Kind)))
+						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Component.Kind)))
 						continue
 					}
 					autoRegister, ok := capabilities["autoRegister"].(bool)
@@ -146,7 +147,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1alpha1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1beta1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -166,14 +167,21 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 	}, id
 }
 
-func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v1alpha1.ComponentDefinition {
-	connectionCompFilter := &v1alpha1.ComponentFilter{
+func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v1beta1.ComponentDefinition {
+	connectionCompFilter := &regv1beta1.ComponentFilter{
 		Name:       fmt.Sprintf("%sConnection", connType),
-		APIVersion: "meshery.layer5.io/v1alpha1",
+		APIVersion: "meshery.layer5.io/v1beta1",
 		Greedy:     true,
 	}
 
-	connectionDefs, _, _ := v1alpha1.GetMeshModelComponents(arh.dbHandler, *connectionCompFilter)
+	connectionEntities, _, _, _ := connectionCompFilter.Get(arh.dbHandler)
+	connectionDefs := make([]v1beta1.ComponentDefinition, len(connectionEntities))
+	for _, connectionEntity := range connectionEntities {
+		def, ok := connectionEntity.(*v1beta1.ComponentDefinition)
+		if ok {
+			connectionDefs = append(connectionDefs, *def)
+		}
+	}
 	return connectionDefs
 }
 

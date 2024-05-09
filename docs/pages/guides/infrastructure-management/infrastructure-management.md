@@ -50,7 +50,7 @@ See [Importing Applications]({{site.baseurl}}guides/configuration-management/imp
 
 <h3>Auto-Deployment of CRDs and Operators</h3>
 
-Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. Currently, all components are sourced from the ArtifactHub repository, and the auto-deployment strategy utilizes HelmCharts. (_Support for OCI registries is expected in the near future._)
+Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. Currently, by default Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts). (_Support for OCI registries is expected in the near future._)
 
 {% include alert.html title="Upcoming Features" type="info" content="<p>Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility. Support for OCI registries is expected in the near future.</p>
 <p>1. <b>Custom Models and Components:</b>
