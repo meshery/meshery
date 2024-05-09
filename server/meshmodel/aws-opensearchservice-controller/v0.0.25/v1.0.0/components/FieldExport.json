@@ -35,8 +35,21 @@
    "relationships": null
   },
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
    "isNamespaced": true,
-   "shape": "rectangle"
+   "primaryColor": "#E7157B",
+   "secondaryColor": "",
+   "shape": "rectangle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
   },
   "component": {
    "kind": "FieldExport",
