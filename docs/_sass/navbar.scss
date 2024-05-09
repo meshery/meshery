@@ -292,60 +292,76 @@ header {
     }
   }
 }
- .select-dropdown {
-    display: none;
-    position: absolute;
-    top: calc(75% + 5px);
-    width: 83px;
-    background-color: #fff;
-    border: 1px solid #caced1;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    padding: 0.5rem 0;
-    z-index: 999;
-  }
+.select-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(75% + 0.3125rem);
+  width: 5.1875rem;
+  background-color: #fff;
+  border: 0.0625rem solid #caced1;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
+  padding: 0.3125rem 0;
+  z-index: 999;
+  font-family: "Qanelas Soft";
+  font-size: 1rem;
+}
 
-  .select-button {
-    padding: 9px 26px 9px 10px;
-  }
+.select-button {
+  padding: 0.5625rem 1.625rem 0.5625rem 0.625rem;
+  font-family: "Qanelas Soft";
+  font-size: 1rem;
+}
 
-  .arrow {
-    position: absolute;
-    top: calc(48%);
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #000;
-    margin-left: 6px;
-  }
+.arrow {
+  position: absolute;
+  top: calc(48%);
+  border-left: 0.375rem solid transparent;
+  border-right: 0.375rem solid transparent;
+  border-top: 0.375rem solid;
+  margin-left: 0.375rem;
+}
 
-  .select-dropdown.expanded {
-    display: block;
-  }
+body.light-mode .arrow {
+  border-top-color: #000;
+}
 
-  .select-dropdown li {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
+body.dark-mode .arrow {
+  border-top-color: #fff;
+}
 
-  .select-dropdown li:hover {
-    background-color: #f2f2f2;
-  }
-  body.light-mode .select-button {
-    background-color: #fff;
-    color: #333;
-  }
+.select-dropdown.expanded {
+  display: block;
+}
 
-  body.light-mode .select-dropdown {
-    background-color: #fff;
-    color: #333;
-  }
+.select-dropdown li {
+  list-style-type: none;
+  padding: 0.3125rem 1rem;
+  font-family: "Qanelas Soft";
+  font-size: 1rem;
+  cursor: pointer;
+}
 
-  body.dark-mode .select-button {
-    background-color: #333;
-    color: #fff;
-  }
+.select-dropdown li:hover {
+  background-color: #f2f2f2;
+}
 
-  body.dark-mode .select-dropdown {
-    background-color: #333;
-    color: #fff;
-  }
+body.light-mode .select-button {
+  background-color: #fff;
+  color: #333;
+}
+
+body.light-mode .select-dropdown {
+  background-color: #fff;
+  color: #333;
+}
+
+body.dark-mode .select-button {
+  background-color: #333;
+  color: #fff;
+}
+
+body.dark-mode .select-dropdown {
+  background-color: #333;
+  color: #fff;
+}
