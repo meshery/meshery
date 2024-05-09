@@ -461,7 +461,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     responsive: 'standard',
     resizableColumns: true,
     serverSide: true,
-    selectableRows: true,
+    selectableRows: 'multiple',
     count,
     rowsPerPage: pageSize,
     fixedHeader: true,
