@@ -1,6 +1,6 @@
 // Our variables
 $base-font-family: Helvetica, Arial, sans-serif;
-$base-font-size: 1.5rem;
+$base-font-size: 1rem;
 $small-font-size: $base-font-size * 0.875;
 $base-line-height: 1.5;
 
@@ -38,12 +38,13 @@ h5 {
 
 .swagger-path {
   font-weight: bold;
-  font-size: $base-font-size * 1.2;
-  margin: 5.5rem 0 1rem 0;
+  font-size: $base-font-size * 1.3;
+  margin: 3rem 0 1rem 0;
   padding-left:.5rem;
   border-left: 2px solid #444;
   font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
     apple color emoji, segoe ui emoji, segoe ui symbol;
+  overflow-wrap: break-word;
   h2 {
     border-left: none;
   }
