@@ -6,7 +6,7 @@
   },
   "model": {
     "name": "argo-cd",
-    "version": "2.9",
+    "version": "2.10",
     "displayName": "argo-cd",
     "category": {
       "name": "Orchestration \u0026 Management",
@@ -49,6 +49,46 @@
                 ]
               ],
               "description": "Application can reference Repository to specify the location of the Git repository where the application manifests are stored."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "AppProject",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "In Argo CD, The AppProject CRD is the Kubernetes resource object representing a logical grouping of applications. It can be referenced by Application resource to specify the project where the application belongs."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Application",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "project"
+                ]
+              ],
+              "description": "Application can reference AppProject to specify the project it belongs to."
             }
           }
         ]
