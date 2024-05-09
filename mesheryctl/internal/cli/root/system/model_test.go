@@ -108,9 +108,10 @@ func TestListModelCmd(t *testing.T) {
 }
 
 func TestModelViewCmd(t *testing.T) {
-	SetupContextEnv(t)
 	// initialize mock meshery backend
 	go utils.StartMockMesheryServer(t) // nolint
+
+	SetupContextEnv(t)
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

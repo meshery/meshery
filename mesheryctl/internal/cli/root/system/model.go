@@ -224,6 +224,10 @@ mesheryctl system model view [model-name]
 		if err != nil {
 			return err
 		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
