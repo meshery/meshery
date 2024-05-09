@@ -8,10 +8,10 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
-  makeStyles,
   MenuItem,
   NoSsr,
   Select,
+  styled,
   TextField,
   Typography,
   withStyles,
@@ -29,6 +29,57 @@ import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import theme from '@/themes/app';
 // import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
+export const SlideInMenu = styled('div')(() => ({
+  width: 0,
+  overflow: 'hidden',
+  transition: 'width 2s ease-in' /* Set transition properties */,
+}));
+
+export const SlideInMenuOpen = styled('div')(() => ({
+  width: `${(props) => (props.open ? 'auto' : '0')}`,
+  overflow: 'visible',
+  transition: ' width 1s ease',
+}));
+
+export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  textAlign: 'center',
+  fill: theme.palette.secondary.text,
+}));
+export const StyledSelect = styled(Select)(() => ({
+  paddingTop: '0.5rem',
+  backgroundColor: 'transparent',
+  '& .OrgClass': {
+    display: 'none',
+  },
+}));
+
+export const StyledTextField = styled(TextField)(({ theme }) => ({
+  width: '40%',
+  display: 'flex',
+  marginBottom: '1.125rem', // 18px converted to rem
+  marginRight: '0.625rem', // 10px converted to rem
+  marginTop: '0.5rem', // 8px converted to rem
+  '& .MuiInput-underline:after': {
+    borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
+  },
+  '& .MuiInput': {
+    fontFamily: 'Qanelas Soft, sans-serif',
+  },
+}));
+
+export const StyledHeader = styled(Typography)(({ theme }) => ({
+  paddingLeft: theme.spacing(2),
+  fontSize: '1.25rem',
+  [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+}));
+export const StyledBetaHeader = styled('sup')(() => ({
+  color: '#EEEEEE',
+  fontWeight: '300',
+  fontSize: '0.8125rem',
+}));
 
 function OrgMenu(props) {
   const {
@@ -57,11 +108,10 @@ function OrgMenu(props) {
     setOrganization({ organization: selected });
     setSkip(false);
   };
-  const classes = useStyles();
   return (
     <NoSsr>
-      {isOrgsSuccess && orgs && (
-        <div className={`${classes.slideInMenu} ${open ? classes.slideInMenuOpen : ''}`}>
+      {isOrgsSuccess && orgs && open && (
+        <SlideInMenuOpen>
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
@@ -69,7 +119,7 @@ function OrgMenu(props) {
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={12} data-cy="mesh-adapter-url">
-                      <Select
+                      <StyledSelect
                         value={organization.id}
                         onChange={handleOrgSelect}
                         SelectDisplayProps={{
@@ -79,7 +129,6 @@ function OrgMenu(props) {
                             fill: '#eee',
                             color: theme.palette.secondary.white,
                           },
-                          className: `MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiInputBase-input MuiInput-input ${classes.selectedItem}`,
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -97,23 +146,24 @@ function OrgMenu(props) {
                         }}
                       >
                         {orgs?.map((org) => (
-                          <MenuItem key={org.id} value={org.id} className={classes.menuItem}>
+                          <StyledMenuItem key={org.id} value={org.id}>
                             <OrgOutlinedIcon
                               width="24"
                               height="24"
+                              className="OrgClass"
                               style={{ marginRight: '1rem' }}
                             />
                             <span>{org.name}</span>
-                          </MenuItem>
+                          </StyledMenuItem>
                         ))}
-                      </Select>
+                      </StyledSelect>
                     </Grid>
                   </Grid>
                 }
               />
             </FormGroup>
           </FormControl>
-        </div>
+        </SlideInMenuOpen>
       )}
     </NoSsr>
   );
@@ -199,60 +249,14 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
   );
 }
 
-const useStyles = makeStyles((theme) => ({
-  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '0.8125rem' }, // 13px converted to rem
-  pageTitle: {
-    paddingLeft: theme.spacing(2),
-    fontSize: '1.25rem',
-    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
-  },
-  selectedItem: {
-    paddingTop: '0.5rem',
-    backgroundColor: 'transparent',
-    '& svg': {
-      display: 'none',
-    },
-  },
-  menuItem: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    textAlign: 'center',
-    fill: theme.palette.secondary.text,
-  },
-  titleBar: {
-    width: '40%',
-    display: 'flex',
-    marginBottom: '1.125rem', // 18px converted to rem
-    marginRight: '0.625rem', // 10px converted to rem
-    marginTop: '0.5rem', // 8px converted to rem
-    '& .MuiInput-underline:after': {
-      borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
-    },
-  },
-  slideInMenu: {
-    width: 0 /* Initial hidden state */,
-    overflow: 'hidden',
-    transition: 'width 2s ease-in' /* Set transition properties */,
-  },
-  slideInMenuOpen: {
-    width: 'auto',
-    overflow: 'visible',
-  },
-  versionInput: {
-    fontFamily: 'Qanelas Soft, sans-serif',
-  },
-}));
-
 export const FileNameInput = ({
   fileName,
   handleFileNameChange,
   handleFocus,
   activateWalkthrough,
 }) => {
-  const classes = useStyles();
   return (
-    <TextField
+    <StyledTextField
       id="design-name-textfield"
       onChange={handleFileNameChange}
       label="Name"
@@ -260,30 +264,18 @@ export const FileNameInput = ({
       autoComplete="off"
       size="small"
       variant="standard"
-      className={classes.titleBar}
       onFocus={handleFocus}
-      InputProps={{
-        classes: {
-          input: classes.versionInput,
-        },
-      }}
       onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
     />
   );
 };
 
 function DefaultHeader({ title, isBeta }) {
-  const classes = useStyles();
   return (
-    <Typography
-      color="inherit"
-      variant="h5"
-      className={classes.pageTitle}
-      data-cy="headerPageTitle"
-    >
+    <StyledHeader color="inherit" variant="h5" data-cy="headerPageTitle">
       {title}
-      {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
-    </Typography>
+      {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
+    </StyledHeader>
   );
 }
 
