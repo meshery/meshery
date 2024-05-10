@@ -42,6 +42,9 @@ var (
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
 	ErrClearLineCode          = "mesheryctl-1120"
+	ErrExtractFileCode        = "mesheryctl-1122"
+	ErrDirReadCode            = "mesheryctl-1123"
+	ErrImportingModelCode     = "mesheryctl-1125"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -338,6 +341,30 @@ func formatError(msg string, cmd cmdType) string {
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
+}
+
+func ErrExtractFile(err error, msg string) error {
+	return errors.New(ErrExtractFileCode, errors.Alert,
+		[]string{"Failed to extract " + msg + " file"},
+		[]string{err.Error()},
+		[]string{"Error occurred while extracting the file"},
+		[]string{"Check the file path and ensure it is a valid " + msg + " file."})
+}
+
+func ErrDirRead(err error, path string) error {
+	return errors.New(ErrDirReadCode, errors.Alert,
+		[]string{"Directory read error. Path: " + path},
+		[]string{err.Error()},
+		[]string{"The provided directory is not present or has an invalid path."},
+		[]string{"To proceed, provide a valid directory path."})
+}
+
+func ErrImportingModel(err error) error {
+	return errors.New(ErrImportingModelCode, errors.Alert,
+		[]string{"Error importing model"},
+		[]string{err.Error()},
+		[]string{"Error occurred while importing the model"},
+		[]string{"Check the model file path and ensure it is a valid model file."})
 }
 
 func ErrFailRequest(err error) error {
