@@ -1,0 +1,77 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "name": "argo-cd",
+    "version": "2.10",
+    "displayName": "argo-cd",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {} 
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "hierarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "AppProject",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "In Argo CD, The AppProject CRD is the Kubernetes resource object representing a logical grouping of applications. It can be referenced by Application resource to specify the project where the application belongs."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Application",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "project"
+                ]
+              ],
+              "description": "Application can reference AppProject to specify the project it belongs to."
+            }
+          },
+          {
+            "kind": "ApplicationSet",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "project"
+                ]
+              ],
+              "description": "ApplicationSet can reference AppProject to specify the project where generated Applications belong."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
