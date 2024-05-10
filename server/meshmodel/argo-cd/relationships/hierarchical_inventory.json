@@ -90,6 +90,22 @@
               ],
               "description": "Application can reference AppProject to specify the project it belongs to."
             }
+          },
+          {
+            "kind": "ApplicationSet",
+            "model": "argo-cd",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "template",
+                  "project"
+                ]
+              ],
+              "description": "ApplicationSet can reference AppProject to specify the project where generated Applications belong."
+            }
           }
         ]
       },
