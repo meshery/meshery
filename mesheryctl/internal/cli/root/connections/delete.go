@@ -20,7 +20,7 @@ a connection`,
 
 	Example: `
 // Delete a connection
-mesheryctl exp connections delete [connection_id]
+mesheryctl exp connections delete [connection-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
