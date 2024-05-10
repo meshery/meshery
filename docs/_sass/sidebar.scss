@@ -15,6 +15,7 @@
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
+      margin-top: 3rem;
       display: block;
     }
   }
