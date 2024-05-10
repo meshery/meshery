@@ -131,6 +131,10 @@ function FiltersGrid({
   setPublishModal,
   publishSchema,
   handleInfoModal,
+  selectedK8sContexts,
+  k8scontext,
+  updateProgress,
+  setK8sContexts,
 }) {
   const classes = useStyles();
 
@@ -185,6 +189,13 @@ function FiltersGrid({
     }
 
     return '';
+  };
+
+  const confirmationMsgProps = {
+    selectedK8sContexts,
+    k8scontext,
+    updateProgress,
+    setK8sContexts,
   };
 
   return (
@@ -254,6 +265,7 @@ function FiltersGrid({
         title={modalOpen.name}
         componentCount={modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
+        {...confirmationMsgProps}
       />
       {canPublishFilter && publishModal.open && (
         <Modal

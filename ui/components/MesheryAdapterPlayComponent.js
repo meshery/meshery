@@ -1301,6 +1301,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       filteredOps.sort();
     }
 
+    const confirmationMsgProps = {
+      selectedK8sContexts: this.props.selectedK8sContexts,
+      k8scontext: this.props.k8scontext,
+      updateProgress: this.props.updateProgress,
+      setK8sContexts: this.props.setK8sContexts,
+    };
+
     return (
       <NoSsr>
         {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 && (
@@ -1390,6 +1397,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             isDelete={this.state.isDeleteOp}
             title={this.state.operationName}
             tab={this.state.isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY}
+            {...confirmationMsgProps}
           />
         </React.Fragment>
       </NoSsr>
