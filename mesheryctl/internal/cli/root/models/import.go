@@ -19,7 +19,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -142,7 +141,7 @@ func processTarGz(tarGzFilePath string) error {
 }
 
 func processDirectory(dirPath string) error {
-	entries, err := ioutil.ReadDir(dirPath)
+	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return utils.ErrDirRead(err, dirPath)
 	}
@@ -155,7 +154,7 @@ func processDirectory(dirPath string) error {
 				continue
 			}
 		} else {
-			fileContent, err := ioutil.ReadFile(filepath.Join(dirPath, entry.Name()))
+			fileContent, err := os.ReadFile(filepath.Join(dirPath, entry.Name()))
 			if err != nil {
 				continue
 			}
@@ -215,7 +214,7 @@ func processZipFromGithub(zipContent []byte) error {
 	defer os.RemoveAll(tmpDir)
 
 	zipFilePath := filepath.Join(tmpDir, "temp.zip")
-	if err := ioutil.WriteFile(zipFilePath, zipContent, 0644); err != nil {
+	if err := os.WriteFile(zipFilePath, zipContent, 0644); err != nil {
 		return err
 	}
 
