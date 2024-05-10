@@ -114,7 +114,7 @@ export default function Provider() {
 
   return (
     <ProviderLayout>
-      <MesheryLogo src="/provider/static/img/meshery-logo/meshery-logo-light-text.png"
+      <MesheryLogo src="/static/img/meshery-logo/meshery-logo-light-text.png"
         alt="logo"
       />
       <CustomDiv>
@@ -262,8 +262,10 @@ export default function Provider() {
         </DialogContent>
         <CustomDialogActions>
           <div className="learnmore">
-            <a href="https://docs.meshery.io/extensibility/providers">Providers in Meshery Docs</a><img src={externalLinkIcon} width="16px" />
+            <a href="https://docs.meshery.io/extensibility/providers">Providers in Meshery Docs<img src="/static/img/external-link.svg" width="16px" />
+            </a>
           </div>
+
           <Button
             onClick={handleModalClose}
             color="primary"
