@@ -22,8 +22,14 @@ var ConnectionsCmd = &cobra.Command{
 	Short: "Manage connections",
 	Long:  `Manage connections`,
 	Example: `
-// List all the connections
+// Entry point to manage connections
+mesheryctl exp connections
+// To search for a specific connection
+mesheryctl exp components delete [connection-id]
+// To view list of connections
 mesheryctl exp connections list
+// To view a specific connections
+mesheryctl exp connections view [connection-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -34,15 +40,18 @@ mesheryctl exp connections list
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return system.ErrGetCurrentContext(err)
+			utils.Log.Error(system.ErrGetCurrentContext(err))
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		return nil
 	},
