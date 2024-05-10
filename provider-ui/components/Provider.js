@@ -19,7 +19,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import CloseIcon from "@mui/icons-material/Close"
 import ClickAwayListener from '@mui/material/ClickAwayListener'
-import externalLinkIcon from '../public/static/img/external-link.svg';
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
