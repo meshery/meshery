@@ -173,6 +173,19 @@ func WorkspaceSubError(msg string, cmd string) string {
 	}
 }
 
+func ConnectionsSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdConnectionList)
+	case "delete":
+		return formatError(msg, cmdConnectionDelete)
+	case "view":
+		return formatError(msg, cmdConnectionView)
+	default:
+		return formatError(msg, cmdConnections)
+	}
+}
+
 func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
@@ -311,6 +324,14 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	case cmdModelView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+	case cmdConnections:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionsUsageURL)
+	case cmdConnectionDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionDeleteURL)
+	case cmdConnectionList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionListURL)
+	case cmdConnectionView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionViewURL)
 	case cmdRegistry:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
 	case cmdEnvironment:

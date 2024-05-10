@@ -1,11 +1,23 @@
+// Copyright 2024 Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package connections
 
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -13,18 +25,19 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"io"
+	"net/http"
 )
 
-var listConnectionsCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all the connections",
-	Long:  `List all the connections`,
-	Example: `
-// List all the connections
-mesheryctl exp connections list
+var viewConnectionCmd = &cobra.Command{
+	Use:   "view",
+	Short: "View a connection id",
+	Long: `View
+a connection detail by id`,
 
-// List all the connections with page number
-mesheryctl exp connections list --page 2
+	Example: `
+// View a connection detail
+mesheryctl exp connections view [connection-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -48,9 +61,12 @@ mesheryctl exp connections list --page 2
 		return nil
 	},
 
-	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
-		if len(args) != 0 {
+	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp connections view \nRun 'mesheryctl exp connections view --help' to see detailed help message"
+		if len(args) != 1 {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
@@ -63,22 +79,17 @@ mesheryctl exp connections list --page 2
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/integrations/connections?page=%d", baseUrl, pageNumberFlag)
-		} else {
-			url = fmt.Sprintf("%s/api/integrations/connections?pagesize=all", baseUrl)
-		}
+		url := fmt.Sprintf("%s/api/integrations/connections/?id=%s", baseUrl, args[0])
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return utils.ErrFailRequest(err)
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -87,42 +98,16 @@ mesheryctl exp connections list --page 2
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return utils.ErrReadResponseBody(err)
 		}
 
-		connectionsResponse := &connections.ConnectionPage{}
-		err = json.Unmarshal(data, connectionsResponse)
+		connection := &connections.Connection{}
+		err = json.Unmarshal(data, connection)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return utils.ErrUnmarshal(err)
 		}
 
-		header := []string{"id", "Name", "Type", "Status"}
-		rows := [][]string{}
-
-		for _, connection := range connectionsResponse.Connections {
-			if len(connection.Name) > 0 {
-				rows = append(rows, []string{connection.ID.String(), connection.Name, connection.Type, string(connection.Status)})
-			}
-		}
-
-		if len(rows) == 0 {
-			// if no connection is found
-			fmt.Println("No connection(s) found")
-			return nil
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			maxRowsPerPage := 25
-			err := utils.HandlePagination(maxRowsPerPage, "connections", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-
-		return nil
+		return components.OutputJson(connection)
 	},
 }

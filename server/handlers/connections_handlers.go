@@ -194,6 +194,35 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 // 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
+
+	id := q.Get("id")
+	if id != "" {
+		connectionId, err := uuid.FromString(q.Get("id"))
+
+		if err != nil {
+			h.log.Error(ErrInvalidUUID(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusBadRequest)
+			return
+		}
+
+		h.log.Debug("connection id : ", id)
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		connection, statusCode, err := provider.GetConnectionByID(token, connectionId)
+
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), statusCode)
+			return
+		}
+
+		if err := json.NewEncoder(w).Encode(connection); err != nil {
+			h.log.Error(models.ErrEncoding(err, "connection"))
+			http.Error(w, models.ErrEncoding(err, "connection").Error(), http.StatusInternalServerError)
+			return
+		}
+
+	}
+
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
