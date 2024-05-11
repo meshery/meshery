@@ -24,7 +24,6 @@
    "subCategory": "Service Mesh",
    "metadata": {
     "isAnnotation": false,
-    "subCategory": "Service Mesh",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -45,7 +44,6 @@
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

@@ -386,7 +386,7 @@ export default function MeshSyncTable(props) {
     responsive: 'standard',
     // resizableColumns: true,
     serverSide: true,
-    selectableRows: false,
+    selectableRows: 'none',
     count: meshSyncData?.total_count,
     rowsPerPage: pageSize,
     fixedHeader: true,
