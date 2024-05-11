@@ -22,17 +22,20 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	name string
+	name       string
+	sourceType string // source type of the design file
 )
 
 var importCmd = &cobra.Command{
@@ -193,4 +196,65 @@ func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the pattern file")
+}
+
+// getSourceTypes retrieves the list of valid source types from the Meshery server.
+// It makes a GET request to the "/api/pattern/types" endpoint of the Meshery server
+// and populates the `validSourceTypes` slice with the design types received in the response.
+// If any error occurs during the process, it logs the error and returns nil.
+func getSourceTypes() error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
+	req, err := utils.NewRequest("GET", validTypesURL, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	defer resp.Body.Close()
+
+	var response []*models.PatternSourceTypesAPIResponse
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
+		return nil
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
+		return nil
+	}
+
+	for _, apiResponse := range response {
+		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
+	}
+
+	return nil
+}
+
+// returns full source name e.g. helm -> `Helm Chart`
+// user passes only helm, compose or manifest but server accepts full source type
+// e.g `Heml Chart`, `Docker Compose`, `Kubernetes Manifest`
+func getFullSourceType(sType string) (string, error) {
+	for _, validType := range validSourceTypes {
+		lowerType := strings.ToLower(validType)
+		// user may pass Pascal Case source e.g Helm
+		sType = strings.ToLower(sType)
+		if strings.Contains(lowerType, sType) {
+			return validType, nil
+		}
+	}
+
+	return sType, fmt.Errorf("no matching source type found")
 }
