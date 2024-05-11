@@ -1,0 +1,46 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Prometheus Rule",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "hivemq-swarm",
+   "displayName": "Hivemq Swarm",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.2.33"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "isNamespaced": true,
+   "shape": "circle"
+  },
+  "component": {
+   "kind": "PrometheusRule",
+   "version": "monitoring.coreos.com/v1",
+   "schema": "{\n \"description\": \"PrometheusRule defines recording and alerting rules for a Prometheus instance\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of desired alerting rule definitions for Prometheus.\",\n   \"properties\": {\n    \"groups\": {\n     \"description\": \"Content of Prometheus rule file\",\n     \"items\": {\n      \"description\": \"RuleGroup is a list of sequentially evaluated recording and alerting rules. Note: PartialResponseStrategy is only used by ThanosRuler and will be ignored by Prometheus instances.  Valid values for this field are 'warn' or 'abort'.  More info: https://github.com/thanos-io/thanos/blob/master/docs/components/rule.md#partial-response\",\n      \"properties\": {\n       \"interval\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"partial_response_strategy\": {\n        \"type\": \"string\"\n       },\n       \"rules\": {\n        \"items\": {\n         \"description\": \"Rule describes an alerting or recording rule.\",\n         \"properties\": {\n          \"alert\": {\n           \"type\": \"string\"\n          },\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"expr\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"for\": {\n           \"type\": \"string\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"record\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"expr\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"rules\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Prometheus Rule\",\n \"type\": \"object\"\n}"
+  }
+ }
