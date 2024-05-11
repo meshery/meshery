@@ -2,69 +2,37 @@
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+    "description": "A parent-child relationship implies the requirement of the parent component before the child component can be created"
   },
   "model": {
     "name": "argo-cd",
     "version": "2.10",
     "displayName": "argo-cd",
     "category": {
-      "name": "Orchestration \u0026 Management",
+      "name": "App Definition and Development",
       "metadata": null
     },
     "metadata": {} 
   },
-  "subType": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
+  "subType": "Parent",
+  "evaluationQuery": "hierarchical_parent_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "AppProject",
-            "model": "argo-cd",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "name"
-                ]
-              ],
-              "description": "In Argo CD, The AppProject CRD is the Kubernetes resource object representing a logical grouping of applications. It can be referenced by Application resource to specify the project where the application belongs."
-            }
+            "model": "argo-cd"
           }
         ],
         "to": [
           {
             "kind": "Application",
-            "model": "argo-cd",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "project"
-                ]
-              ],
-              "description": "Application can reference AppProject to specify the project it belongs to."
-            }
+            "model": "argo-cd"
           },
           {
             "kind": "ApplicationSet",
-            "model": "argo-cd",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "template",
-                  "project"
-                ]
-              ],
-              "description": "ApplicationSet can reference AppProject to specify the project where generated Applications belong."
-            }
+            "model": "argo-cd"
           }
         ]
       },
