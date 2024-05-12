@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -46,20 +45,8 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = defaultPageSize
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := page * limit
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
@@ -67,13 +54,13 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		Version:     queryParams.Get("version"),
 		Limit:       limit,
 		Offset:      offset,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	}
-	if queryParams.Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = queryParams.Get("search")
+		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	var modelDefs []v1beta1.Model
@@ -85,6 +72,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -130,23 +118,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	model := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
 	var greedy bool
-	if queryParams.Get("search") == "true" {
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
@@ -156,8 +132,8 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Limit:       limit,
 		Offset:      offset,
 		Greedy:      greedy,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	})
 
@@ -170,6 +146,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -214,20 +191,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(rw)
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
@@ -235,16 +200,16 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Version:     v,
 		Limit:       limit,
 		Offset:      offset,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
 		Status:        queryParams.Get("status"),
 	}
-	if queryParams.Get("search") != "" {
-		filter.DisplayName = queryParams.Get("search")
+	if search != "" {
+		filter.DisplayName = search
 		filter.Greedy = true
 	}
 
@@ -257,6 +222,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -301,25 +267,13 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	var greedy bool
-	if queryParams.Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Name:        name,
@@ -327,8 +281,8 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Limit:       limit,
 		Offset:      offset,
 		Greedy:      greedy,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 
 		Components:    queryParams.Get("components") == "true",
@@ -344,6 +298,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -381,35 +336,23 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	filter := &regv1beta1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		OrderOn: order,
+		Sort:    sortOnCol,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.Name = search
 	}
 
 	categories, count, _, _ := h.registryManager.GetEntities(filter)
 
 	var pgSize int64
-
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -449,34 +392,23 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["category"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	categories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
 		Greedy:  greedy,
 		Offset:  offset,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		OrderOn: order,
+		Sort:    sortOnCol,
 	})
 
 	var pgSize int64
 
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -526,26 +458,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 
 	queryParams := r.URL.Query()
 	var greedy bool
-	if queryParams.Get("search") == "true" {
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
@@ -556,14 +476,15 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Offset:       offset,
 		Greedy:       greedy,
 		Limit:        limit,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		OrderOn:      order,
+		Sort:         sortOnCol,
 		Annotations:  returnAnnotationComp,
 	})
 
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -615,25 +536,13 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
-	if queryParams.Get("search") == "true" {
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
@@ -645,13 +554,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Offset:       offset,
 		Limit:        limit,
 		Greedy:       greedy,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		OrderOn:      order,
+		Sort:         sortOnCol,
 		Annotations:  returnAnnotationComp,
 	})
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -701,26 +611,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 
-	if queryParams.Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
@@ -731,13 +629,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Offset:      offset,
 		Greedy:      greedy,
 		Limit:       limit,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	})
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -790,24 +689,12 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
-	if queryParams.Get("search") == "true" {
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
@@ -818,14 +705,15 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Offset:      offset,
 		Limit:       limit,
 		Greedy:      greedy,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	})
 
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -875,21 +763,9 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		ModelName:   typ,
@@ -898,18 +774,19 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		APIVersion:  queryParams.Get("apiVersion"),
 		Limit:       limit,
 		Offset:      offset,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	}
-	if queryParams.Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = queryParams.Get("search")
+		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -961,21 +838,9 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -985,18 +850,19 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		OrderOn:      order,
+		Sort:         sortOnCol,
 		Annotations:  returnAnnotationComp,
 	}
-	if queryParams.Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = queryParams.Get("search")
+		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -1046,21 +912,9 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -1069,18 +923,19 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		OrderOn:      order,
+		Sort:         sortOnCol,
 		Annotations:  returnAnnotationComp,
 	}
-	if queryParams.Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = queryParams.Get("search")
+		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -1129,22 +984,9 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	queryParams := r.URL.Query()
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
-	limitstr := queryParams.Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-
-	pagestr := queryParams.Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		Version:     v,
@@ -1152,19 +994,19 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		APIVersion:  queryParams.Get("apiVersion"),
 		Limit:       limit,
 		Offset:      offset,
-		OrderOn:     queryParams.Get("order"),
-		Sort:        queryParams.Get("sort"),
+		OrderOn:     order,
+		Sort:        sortOnCol,
 		Annotations: returnAnnotationComp,
 	}
-	if queryParams.Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = queryParams.Get("search")
+		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
-
+	limitstr := queryParams.Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -1241,32 +1083,17 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
-	limitstr := r.URL.Query().Get("pagesize")
-	pagestr := r.URL.Query().Get("page")
-
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-
-	page, _ := strconv.Atoi(pagestr)
-	if page < 0 {
-		page = 0
-	}
-
-	offset := (page) * limit
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 	filter := &v1beta1.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
-		Sort:    r.URL.Query().Get("sort"),
-		OrderOn: r.URL.Query().Get("order"),
+		Sort:    sortOnCol,
+		OrderOn: order,
 	}
-	if r.URL.Query().Get("search") != "" {
+	if search != "" {
 		filter.Greedy = true
-		filter.DisplayName = r.URL.Query().Get("search")
+		filter.DisplayName = search
 	}
 	hosts, count, err := h.registryManager.GetRegistrants(filter)
 	if err != nil {
@@ -1276,7 +1103,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	var pgSize int64
-
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {

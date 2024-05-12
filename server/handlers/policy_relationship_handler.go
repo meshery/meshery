@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -181,19 +180,12 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+
+	page, _, limit,
+		search, order, sort, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
@@ -203,11 +195,12 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = 0
 	} else {
@@ -250,33 +243,27 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+
+	page, _, limit,
+		search, order, sort, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	offset := (page - 1) * limit
 	if page <= 0 {
 		page = 1
 	}
+	offset := (page - 1) * limit
 	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
 
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = 0
 	} else {
