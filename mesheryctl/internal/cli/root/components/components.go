@@ -174,14 +174,6 @@ func prettifyJson(component interface{}) error {
 	return enc.Encode(component)
 }
 
-// Common function to get the min of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func init() {
 	ComponentsCmd.AddCommand(availableSubcommands...)
 	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "c", false, "(optional) Get the number of components in total")
