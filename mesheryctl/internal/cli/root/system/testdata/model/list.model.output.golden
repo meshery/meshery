@@ -1,0 +1,108 @@
+MODEL                                	CATEGORY                      	VERSION            
+admin-console-operator               	Provisioning                  	2.14.0-SNAPSHOT.4 	
+aks-appgw-fe                         	Cloud Native Network          	1.0.0-rc1         	
+ambassador                           	Cloud Native Network          	6.9.5             	
+apache-shardingsphere-operator-charts	App Definition and Development	0.2.0             	
+aperture-agent                       	Orchestration & Management    	1.0.0             	
+aperture-controller                  	Orchestration & Management    	1.0.0             	
+apisix-ingress-controller            	Cloud Native Network          	0.11.3            	
+apisix-ingress-controller            	Cloud Native Network          	0.8.0             	
+appmesh-controller                   	Cloud Native Network          	1.11.0            	
+argo-cd                              	App Definition and Development	3.3.5             	
+argo-cd                              	App Definition and Development	4.5.1             	
+argo-workflows                       	App Definition and Development	5.1.12            	
+argocd-operator                      	App Definition and Development	0.4.1             	
+armory-spinnaker-operator            	App Definition and Development	1.8.4             	
+aws-api-gateway-operator             	Cloud Native Network          	0.1.2             	
+aws-load-balancer-controller         	Cloud Native Network          	1.4.8             	
+aws-node-termination-handler-2       	Provisioning                  	0.2.0             	
+aws-target-group-binding             	Cloud Native Network          	0.1.0             	
+aws-vpc-cni                          	Cloud Native Network          	1.2.8             	
+awx-operator                         	Orchestration & Management    	1.3.0             	
+camel-k                              	App Definition and Development	0.13.0            	
+capsule-proxy                        	Provisioning                  	0.4.3             	
+cd-pipeline-operator                 	App Definition and Development	2.14.0-SNAPSHOT.32	
+cert-manager-csi-driver-cacerts      	Security & Compliance         	2022.6.14         	
+chaos-mesh                           	Observability and Analysis    	2.5.1             	
+contour-operator                     	Cloud Native Network          	4.0.2             	
+dapr                                 	Serverless                    	1.10.4            	
+elasticsearch-operator               	Observability and Analysis    	1.0.3             	
+etcd-cluster-operator                	Orchestration & Management    	0.1.6             	
+external-secrets-operator            	Provisioning                  	0.0.15            	
+flagger                              	App Definition and Development	1.29.0            	
+fluent-operator                      	Observability and Analysis    	0.1.0             	
+fluent-operator                      	Observability and Analysis    	2.0.2             	
+fluentbit-operator                   	Observability and Analysis    	1.3.0             	
+fluentd-operator                     	Observability and Analysis    	0.5.1             	
+gatekeeper                           	Provisioning                  	0.6.10            	
+gatekeeper                           	Provisioning                  	3.12.0-beta.0     	
+github-actions-runner-operator       	App Definition and Development	2.8.0             	
+github-actions-runners               	App Definition and Development	0.1.2             	
+gitlab-runner-operator               	App Definition and Development	1.5.0             	
+grafana-agent                        	Observability and Analysis    	0.10.0            	
+grafana-operator                     	Observability and Analysis    	2.7.24            	
+grafana-operator                     	Observability and Analysis    	2.7.9             	
+harbor-operator                      	Provisioning                  	1.5.4             	
+helm-controller                      	App Definition and Development	0.1.1             	
+identity-manager                     	Provisioning                  	1.0.0             	
+istio-base                           	Cloud Native Network          	1.16.0            	
+istio-operator                       	Cloud Native Network          	2.1.2             	
+istio-ratelimit-operator             	Cloud Native Network          	2.9.0             	
+jenkins-operator                     	App Definition and Development	0.6.2             	
+jira-service-desk-operator           	Tools                         	0.0.50            	
+karpenter                            	Provisioning                  	0.16.3            	
+katib                                	Machine Learning              	2.4.2             	
+keycloak-operator                    	Security & Compliance         	0.1.0             	
+keycloak-operator                    	Security & Compliance         	0.1.5             	
+keycloak-operator                    	Security & Compliance         	1.15.0-SNAPSHOT.19	
+kiali-operator                       	Observability and Analysis    	1.65.0            	
+knative                              	Serverless                    	0.5.1             	
+knative-serving                      	Serverless                    	1.0.1             	
+knative-serving                      	Serverless                    	3.0.0             	
+kong                                 	Cloud Native Network          	4.6.0             	
+kong-mesh                            	Cloud Native Network          	2.1.1             	
+kube-prometheus-stack                	Observability and Analysis    	45.7.1            	
+kube-ui-server                       	Provisioning                  	2022.6.14         	
+kubedb-catalog                       	App Definition and Development	2023.2.28         	
+kubedb-crds                          	App Definition and Development	2023.2.28         	
+kubedb-opscenter                     	App Definition and Development	2023.2.28         	
+kubedb-ui-server                     	App Definition and Development	2021.12.21        	
+kubeflow                             	Machine Learning              	1.6.1             	
+kubernetes                           	Orchestration & Management    	v1.25.4           	
+kubernetes                           	Orchestration & Management    	v1.25.2           	
+kubevault                            	Security & Compliance         	2023.3.3          	
+kubevault-catalog                    	Security & Compliance         	2023.3.3          	
+kubevault-operator                   	Security & Compliance         	0.14.0            	
+kuma                                 	Cloud Native Network          	2.1.1             	
+kusk-gateway                         	Orchestration & Management    	0.0.65            	
+kyverno-monitor                      	Provisioning                  	0.1.2             	
+litmus-core                          	Observability and Analysis    	2.14.0            	
+mattermost-operator                  	Tools                         	0.3.3             	
+meshery                              	Uncategorized                 	v1.0.0            	
+meshery                              	Orchestration & Management    	0.6.66            	
+minio-operator                       	App Definition and Development	4.3.7             	
+mpi-operator                         	Machine Learning              	1.2.2             	
+mysql-operator                       	App Definition and Development	2.0.8             	
+nats-operator                        	App Definition and Development	0.8.3             	
+newrelic-operator                    	Observability and Analysis    	0.3.4+f2ca803     	
+nginx-ingress                        	Cloud Native Network          	0.16.2            	
+nginx-service-mesh                   	Cloud Native Network          	0.7.0             	
+openebs                              	Cloud Native Storage          	3.5.0             	
+pg-db                                	App Definition and Development	1.1.0             	
+pg-operator                          	App Definition and Development	1.3.1             	
+pgo                                  	App Definition and Development	5.3.1             	
+porter                               	App Definition and Development	0.2.2             	
+postgres-controller                  	App Definition and Development	1.3.6             	
+postgres-operator                    	App Definition and Development	1.7.1             	
+postgres-with-operator               	App Definition and Development	0.1.0             	
+ps-operator                          	App Definition and Development	0.4.0             	
+psmdb-operator                       	App Definition and Development	1.14.1            	
+pulsar-operator                      	App Definition and Development	0.15.0            	
+pulsar-resources-operator            	App Definition and Development	0.2.1             	
+rabbitmq-cluster-operator            	App Definition and Development	3.2.7             	
+rabbitmq-operator                    	App Definition and Development	0.0.3             	
+spire                                	Security & Compliance         	0.12.2            	
+terraform                            	Provisioning                  	1.1.2             	
+trickster                            	Observability and Analysis    	2022.6.14         	
+kubernetes                           	Orchestration & Management    	v1.25.2           	
+kubernetes                           	Orchestration & Management    	v1.27.3           	
