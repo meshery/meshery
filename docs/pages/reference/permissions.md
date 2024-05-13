@@ -2,9 +2,8 @@
 layout: default
 title: Permissions
 permalink: reference/permissions
-redirect_from: reference/permissions
 language: en
-list: exclude
+type: Reference
 abstract: List of default permissions.
 ---
 
