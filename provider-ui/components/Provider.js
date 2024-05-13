@@ -30,17 +30,17 @@ function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+    <DialogTitle sx={{ m : 0, p : 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: "1rem",
-            top: "1rem",
-            color: (theme) => theme.palette.grey[500],
+            position : "absolute",
+            right : "1rem",
+            top : "1rem",
+            color : (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
@@ -51,8 +51,8 @@ function CustomDialogTitle(props) {
 }
 
 CustomDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
+  children : PropTypes.node,
+  onClose : PropTypes.func.isRequired,
 };
 
 export default function Provider() {
@@ -83,8 +83,8 @@ export default function Provider() {
     dataFetch(
       "/api/providers",
       {
-        method: "GET",
-        credentials: "include",
+        method : "GET",
+        credentials : "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -134,7 +134,7 @@ export default function Provider() {
                 data-cy="select_provider"
                 disableElevation
               >
-                {isLoading && <CircularProgress size={20} sx={{ color: "white", marginRight: 8 }} />}
+                {isLoading && <CircularProgress size={20} sx={{ color : "white", marginRight : 8 }} />}
                 {selectedProvider !== "" ? selectedProvider : "Select your provider"}
                 <ArrowDropDownIcon />
               </Button>
@@ -145,12 +145,12 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
+                vertical : "bottom",
+                horizontal : "center",
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
+                vertical : "top",
+                horizontal : "center",
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
@@ -160,7 +160,7 @@ export default function Provider() {
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my: 0.5 }} />
+                  <Divider sx={{ my : 0.5 }} />
                   <MenuProviderDisabled disabled={true} key="CNCF Labs">
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
@@ -188,24 +188,24 @@ export default function Provider() {
         )}
       </CustomDiv>
       <LearnMore>
-        <Typography variant="h6" sx={{ fontWeight: 500 }} gutterBottom>
+        <Typography variant="h6" sx={{ fontWeight : 500 }} gutterBottom>
           Learn more about
           <Tooltip
             title="Learn more about providers"
             placement="bottom"
             data-cy="providers-tooltip"
             sx={{
-              color: "#00B39F",
-              cursor: "pointer",
-              fontWeight: 700,
+              color : "#00B39F",
+              cursor : "pointer",
+              fontWeight : 700,
             }}
           >
             <a
               onClick={handleModalOpen}
               style={{
-                color: "#00B39F",
-                cursor: "pointer",
-                fontWeight: 700,
+                color : "#00B39F",
+                cursor : "pointer",
+                fontWeight : 700,
               }}
             >
               {" "}
@@ -221,7 +221,7 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background: "#eee" }}>
+        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
           <b>Choosing a Provider</b>
         </CustomDialogTitle>
         <DialogContent dividers>
@@ -233,7 +233,7 @@ export default function Provider() {
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight: 700 }}>{availableProviders[key].provider_name}</p>
+                  <p style={{ fontWeight : 700 }}>{availableProviders[key].provider_name}</p>
                   <ul>
                     {availableProviders[key].provider_description?.map((desc, i) => (
                       <li key={`desc-${i}`}>{desc}</li>
@@ -242,27 +242,27 @@ export default function Provider() {
                 </React.Fragment>
               );
             })}
-            <p style={{ fontWeight: 700 }}>MIT</p>
+            <p style={{ fontWeight : 700 }}>MIT</p>
             <ul>
               <li>Remote provider for performance testing</li>
               <li>Provides provenence of test results and their persistence</li>
               <li>Adaptive performance analysis - predictive optimization</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
+            <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
             <ul>
               <li>Academic research and advanced studies by Ph.D. researchers</li>
               <li>Used by school of Electrical and Computer Engineering (ECE)</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
+            <p style={{ fontWeight : 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
             <ul>
               <li>Performance and compatibility-centric research and validation</li>
               <li>Used by various service meshes and by the Service Mesh Performance project</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>HPE Security</p>
+            <p style={{ fontWeight : 700 }}>HPE Security</p>
             <ul>
               <li>Istio, SPIRE, and SPIFEE integration</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>Equinix</p>
+            <p style={{ fontWeight : 700 }}>Equinix</p>
             <ul>
               <li>Identity services</li>
               <li>Bare-metal Kubernetes configuration</li>
