@@ -20,6 +20,8 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
@@ -228,6 +230,8 @@ var (
 	TokenFlag = "Not Set"
 	// global logger variable
 	Log logger.Handler
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var CfgFile string
@@ -1161,4 +1165,61 @@ func Contains(key string, col []string) int {
 		}
 	}
 	return -1
+}
+
+// HandlePagination handles interactive pagination and prints the content in the terminal.
+// It takes the page size, data to paginate, header for the data table, and an optional footer.
+// If no footer is provided, it will be omitted.
+// Pagination allows users to navigate through the data using Enter or ↓ to continue,
+// Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
+func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
+
+	startIndex := 0
+	endIndex := min(len(data), startIndex+pageSize)
+	for {
+		// Clear the entire terminal screen
+		ClearLine()
+
+		// Print number of filter files and current page number
+		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		fmt.Println()
+		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
+		fmt.Println()
+
+		whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+
+		if len(footer) > 0 {
+			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+		} else {
+			PrintToTable(header, data[startIndex:endIndex])
+		}
+		keysEvents, err := keyboard.GetKeys(10)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			_ = keyboard.Close()
+		}()
+
+		event := <-keysEvents
+		if event.Err != nil {
+			Log.Error(fmt.Errorf("unable to capture keyboard events"))
+			break
+		}
+
+		if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+			break
+		}
+
+		if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+			startIndex += pageSize
+			endIndex = min(len(data), startIndex+pageSize)
+		}
+
+		if startIndex >= len(data) {
+			break
+		}
+	}
+	return nil
 }

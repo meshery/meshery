@@ -15,7 +15,6 @@ var (
 	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd}
 
 	pageNumberFlag int
-	maxRowsPerPage = 25
 )
 
 var ConnectionsCmd = &cobra.Command{

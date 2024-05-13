@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -22,7 +21,7 @@ var listConnectionsCmd = &cobra.Command{
 	Long:  `List all the connections`,
 	Example: `
 // List all the connections
-mesheryctl exp connections list 
+mesheryctl exp connections list
 
 // List all the connections with page number
 mesheryctl exp connections list --page 2
@@ -119,48 +118,11 @@ mesheryctl exp connections list --page 2
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of connections and current page number
-				fmt.Print("Total number of connections: ", len(rows))
-				fmt.Println()
-				fmt.Print("Page: ", startIndex/maxRowsPerPage+1)
-				fmt.Println()
-
-				fmt.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
+			maxRowsPerPage := 25
+			err := utils.HandlePagination(maxRowsPerPage, "connections", rows, header)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
 			}
 		}
 
