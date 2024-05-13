@@ -115,7 +115,7 @@ const ResourcesTable = (props) => {
       search: false,
       responsive: 'standard',
       serverSide: true,
-      selectableRows: false,
+      selectableRows: 'none',
       count,
       rowsPerPage: pageSize,
       fixedHeader: true,

@@ -179,7 +179,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
     download: false,
     print: false,
     filter: false,
-    selectableRows: false,
+    selectableRows: 'none',
     serverSide: true,
     onChangePage: debounce((p) => setPage(p), 200),
     onSearchChange: debounce((searchText) => setSearchText(searchText)),
