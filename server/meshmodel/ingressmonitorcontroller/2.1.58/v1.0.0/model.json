@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "core.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "imagepullsecrets",
-  "displayName": "Imagepullsecrets",
+  "name": "ingressmonitorcontroller",
+  "displayName": "Ingressmonitorcontroller",
   "description": "",
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
@@ -22,7 +22,7 @@
    "svgWhite": ""
   },
   "model": {
-   "version": "1.4.3"
+   "version": "2.1.58"
   },
   "components": null,
   "relationships": null
