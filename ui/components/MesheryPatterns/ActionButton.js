@@ -10,7 +10,13 @@ import {
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-export default function ActionButton({ defaultActionClick, options }) {
+export default function ActionButton({
+  defaultActionClick,
+  options,
+  label = 'Action',
+  DefaultIcon,
+  disabledDefault,
+}) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -39,10 +45,16 @@ export default function ActionButton({ defaultActionClick, options }) {
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button onClick={defaultActionClick} variant="contained">
-          Action
+        <Button
+          onClick={defaultActionClick}
+          color="primary"
+          variant="contained"
+          disabled={disabledDefault}
+        >
+          {DefaultIcon}
+          {label}
         </Button>
-        <Button size="small" onClick={handleToggle} variant="contained">
+        <Button color="primary" size="small" onClick={handleToggle} variant="contained">
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
