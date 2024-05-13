@@ -119,6 +119,7 @@ class MesheryApp extends App {
       connectionMetadata: {},
       keys: [],
       abilities: [],
+      abilityUpdated: false,
     };
   }
 
@@ -275,7 +276,7 @@ class MesheryApp extends App {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].model.metadata.transitions,
+          transitions: res?.components[0].metadata.transitions,
           icon: res?.components[0].metadata.svgColor,
         };
       }
@@ -479,6 +480,7 @@ class MesheryApp extends App {
 
   updateAbility = () => {
     ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
+    this.setState({ abilityUpdated: true });
   };
 
   async loadConfigFromServer() {
@@ -642,6 +644,7 @@ class MesheryApp extends App {
                           updateExtensionType={this.updateExtensionType}
                           theme={this.state.theme}
                           themeSetter={this.themeSetter}
+                          abilityUpdated={this.state.abilityUpdated}
                         />
                       )}
                     </NotificationCenterProvider>

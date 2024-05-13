@@ -1,0 +1,57 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Repo",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "ks-core",
+   "displayName": "ks-core",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://charts.kubesphere.io/test/ks-core-0.5.3.tgz"
+   },
+   "model": {
+    "version": "0.2.3"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Repo",
+   "version": "application.kubesphere.io/v2",
+   "schema": "{\n \"description\": \"Repo is the Schema for the repoes API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RepoSpec defines the desired state of Repo\",\n   \"properties\": {\n    \"credential\": {\n     \"description\": \"repo credential\",\n     \"properties\": {\n      \"caFile\": {\n       \"description\": \"verify certificates of HTTPS-enabled servers using this CA bundle\",\n       \"type\": \"string\"\n      },\n      \"certFile\": {\n       \"description\": \"identify HTTPS client using this SSL certificate file\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipTLSVerify\": {\n       \"description\": \"skip tls certificate checks for the repository, default is ture\",\n       \"type\": \"boolean\"\n      },\n      \"keyFile\": {\n       \"description\": \"identify HTTPS client using this SSL key file\",\n       \"type\": \"string\"\n      },\n      \"password\": {\n       \"description\": \"chart repository password\",\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"description\": \"chart repository username\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"chart repo description from frontend\",\n     \"type\": \"string\"\n    },\n    \"syncPeriod\": {\n     \"description\": \"sync period in seconds, no sync when SyncPeriod=0, the minimum SyncPeriod is 180s\",\n     \"type\": \"integer\"\n    },\n    \"url\": {\n     \"description\": \"repo url\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Repo\",\n \"type\": \"object\"\n}"
+  }
+ }

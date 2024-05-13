@@ -39,7 +39,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.7.0
-	github.com/layer5io/meshkit v0.7.25
+	github.com/layer5io/meshkit v0.7.26
 	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
@@ -62,7 +62,7 @@ require (
 	golang.org/x/oauth2 v0.16.0
 	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
-	gonum.org/v1/gonum v0.14.0
+	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.152.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0

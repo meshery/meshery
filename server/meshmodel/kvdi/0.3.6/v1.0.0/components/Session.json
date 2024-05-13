@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Session",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "kvdi",
+   "displayName": "Kvdi",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://kvdi.github.io/helm-charts/charts/kvdi-v0.3.6.tgz"
+   },
+   "model": {
+    "version": "0.3.6"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "kvdi",
+   "modelDisplayName": "Kvdi",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Session",
+   "version": "desktops.kvdi.io/v1",
+   "schema": "{\n \"description\": \"Session is the Schema for the sessions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SessionSpec defines the desired state of Session\",\n   \"properties\": {\n    \"serviceAccount\": {\n     \"description\": \"A service account to tie to the pod for this instance.\",\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"description\": \"The DesktopTemplate for booting this instance.\",\n     \"type\": \"string\"\n    },\n    \"user\": {\n     \"description\": \"The username to use inside the instance, defaults to `anonymous`.\",\n     \"type\": \"string\"\n    },\n    \"vdiCluster\": {\n     \"description\": \"The VDICluster this Desktop belongs to. This helps to determine which app instance certificates need to be created for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"template\",\n    \"vdiCluster\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Session\",\n \"type\": \"object\"\n}"
+  }
+ }
