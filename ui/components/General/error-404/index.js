@@ -1,15 +1,20 @@
-import { Typography } from '@material-ui/core';
 import { ErrorTypes } from '@/constants/common';
 import { useTheme } from '@material-ui/core/styles';
-// import InstallMeshery, { MesheryAction } from "../../dashboard/install-meshery-card";
 import Socials from './socials';
 import {
-  ErrorComponent,
+  ErrorSection,
+  ErrorSectionContainer,
   ErrorContainer,
   ErrorContentContainer,
-  // ErrorLink,
   ErrorMain,
+  ErrorSectionContent,
+  StyledButton,
 } from './styles';
+import { Typography, Divider, InfoCircleIcon } from '@layer5/sistent';
+import OrgSwitcher from './OrgSwitcher';
+import RequestForm from './RequestForm';
+import CurrentSessionInfo from './CurrentSession';
+import { Tooltip } from '@mui/material';
 
 //TODO: Add component for meshery version compatiblity error
 // const MesheryVersionCompatiblity = () => {
@@ -37,6 +42,7 @@ const UnknownServerSideError = (props) => {
 
 const DefaultError = (props) => {
   const { errorTitle, errorContent, errorType } = props;
+  // const { roles } = useGetUserRolesQuery({});
   const theme = useTheme();
 
   return (
@@ -68,8 +74,46 @@ const DefaultError = (props) => {
         ) : null}
       </div>
       <ErrorContainer>
-        <ErrorComponent></ErrorComponent>
+        <ErrorSectionContainer>
+          <ErrorSection>
+            <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+              YOUR CURRENT SESSION
+            </Typography>
+            <CurrentSessionInfo />
+          </ErrorSection>
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{
+              display: {
+                xs: 'none',
+                lg: 'block',
+              },
+            }}
+          />
+          <ErrorSection>
+            <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+              YOUR OPTIONS
+            </Typography>
+            <ErrorSectionContent>
+              <OrgSwitcher />
+              <Divider />
+              <RequestForm />
+            </ErrorSectionContent>
+          </ErrorSection>
+        </ErrorSectionContainer>
+        <Tooltip title="This is a tooltip">
+          <InfoCircleIcon
+            height={32}
+            width={32}
+            style={{
+              alignSelf: 'flex-end',
+              marginInline: '2rem',
+            }}
+          />
+        </Tooltip>
       </ErrorContainer>
+      <StyledButton variant="contained">Return to Dashboard</StyledButton>
       <Socials />
     </ErrorMain>
   );
