@@ -37,6 +37,7 @@ kubernetes:
 - changed-files:
   - any-glob-to-any-file:
     - "install/deployment_yamls/*"
+    - "install/kubernetes/**/*"
 framework/helm:
 - changed-files:
   - any-glob-to-any-file:
