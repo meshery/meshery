@@ -207,7 +207,7 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"Unable to Create Component Configuration.", err.Error()}, []string{("An error occurred while trying to create Component Configuration."), err.Error()}, []string{"Missing or invalid user token, or an issue with Meshery's interactions with Kubernetes."}, []string{"For help understanding these concepts and troubleshooting, refer to https://docs.meshery.io/guides/troubleshooting and https://docs.meshery.io/installation/kubernetes"})
+	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"Unable to Create Component Configuration.", err.Error()}, []string{("An error occurred while trying to create Component Configuration."), err.Error()}, []string{"Missing or invalid user token, or an issue with Meshery's interactions with Kubernetes."}, []string{"For understanding and troubleshooting, refer to https://docs.meshery.io/guides/troubleshooting and https://docs.meshery.io/installation/kubernetes"})
 }
 func ErrRequestBody(err error) error {
 	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
