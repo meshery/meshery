@@ -1,9 +1,10 @@
 import { Grid, Typography, Button, Switch } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { toggleCatalogContent } from '../lib/store';
+import { toggleCatalogContent, updateProgress } from '../lib/store';
+import { store } from '../store';
 import Head from 'next/head';
 import dataFetch from '../lib/data-fetch';
 import { EXTENSIONS } from '../utils/Enum';
@@ -162,7 +163,7 @@ export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
 export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
 
-const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
+const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry, updateProgress }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
@@ -293,12 +294,20 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
               </Grid>
             </div>
           </Grid>
-          <Adapters />
+          <Adapters updateProgress={updateProgress} />
         </Grid>
       ) : (
         <DefaultError />
       )}
     </React.Fragment>
+  );
+};
+
+const ExtensionsProvider = (props) => {
+  return (
+    <Provider store={store}>
+      <Extensions {...props} />
+    </Provider>
   );
 };
 
@@ -309,6 +318,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ExtensionsProvider));
