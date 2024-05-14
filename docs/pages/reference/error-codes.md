@@ -77,8 +77,16 @@ td {
 
 Meshery and its components use a common framework (defined within MeshKit) to generate and document an error with a unique error code identifier: the combination of Meshery component moniker and numberic code - `[component-moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
-{% include alert.html type="info" title="Error codes are combination of component moniker and numberic code" content="
-Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
+{% include alert.html type="info" title="Error codes are combination of component type, component name, moniker and numberic code" content="
+Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component type]-[component name]-[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
+
+- **Component Type** (string): The type of the component that emits this error event; e.g. adapter
+- **Component Name** (string): The name of the component that emits this error event; e.g. meshery-istio
+- **Error Moniker** (string): A semi-human readable short key used in descriptive reference to the specific event at-hand; e.g. ErrClosingDatabaseInstanceCode
+- **Numberic Code** (number): Unique number identifying a specific error as scoped by a specific component; e.g. 1000
+
+
+
 
 ## Error Code Categories by Component
 
