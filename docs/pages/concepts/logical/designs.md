@@ -26,8 +26,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
   - Snapshots can be exported or embedded.
 - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
-- Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user.
-  - The user who creates a Pattern is called the **pattern owner**.
+  - The user who creates a Design is called the **owner**.
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
 - Designs can be deleted.
   - Designs can be archived and restored (depending upon Remote Provider)
@@ -42,6 +41,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 - Designs can be grouped into Workspaces and shared among teams and deployed to Environment(s).
 - Designs can be grouped by Technology and/or by Type (e.g. Deployment, Security, Resiliency, Observability, etc.)
 <!-- - While there cannot be two components with the same name within a Design, however, there can be two components with the same name in different Designs. -->
+- _[Coming in v0.9]_ Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user. Patterns can be shared with other users or teams.
 
 ### Controlling Access to Designs
 
