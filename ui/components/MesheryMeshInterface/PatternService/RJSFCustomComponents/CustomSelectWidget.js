@@ -13,14 +13,13 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import theme from '../../../../themes/app';
-import { CustomTextTooltip } from '../CustomTextTooltip';
-import { getHyperLinkDiv } from '../helper';
 import {
   ariaDescribedByIds,
   enumOptionsIndexForValue,
   enumOptionsValueForIndex,
   labelValue,
 } from '@rjsf/utils';
+import { CustomTooltip } from '@layer5/sistent';
 
 export default function CustomSelectWidget({
   schema,
@@ -88,7 +87,7 @@ export default function CustomSelectWidget({
           endAdornment: (
             <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
               {rawErrors?.length > 0 && (
-                <CustomTextTooltip
+                <CustomTooltip
                   backgroundColor={ERROR_COLOR}
                   flag={formContext?.overrideFlag}
                   title={
@@ -108,13 +107,12 @@ export default function CustomSelectWidget({
                       style={{ verticalAlign: 'middle', ...iconSmall }}
                     />
                   </IconButton>
-                </CustomTextTooltip>
+                </CustomTooltip>
               )}
               {schema?.description && (
-                <CustomTextTooltip
-                  backgroundColor="#3C494F"
+                <CustomTooltip
                   flag={formContext?.overrideFlag}
-                  title={getHyperLinkDiv(schema?.description)}
+                  title={schema?.description}
                   interactive={true}
                 >
                   <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
@@ -125,7 +123,7 @@ export default function CustomSelectWidget({
                       style={{ verticalAlign: 'middle', ...iconSmall }}
                     />
                   </IconButton>
-                </CustomTextTooltip>
+                </CustomTooltip>
               )}
             </InputAdornment>
           ),

@@ -39,9 +39,8 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent';
+import { CustomTooltip, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CHARCOAL } from '@layer5/sistent';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -254,7 +253,7 @@ export const K8sContextConnectionChip = ({
 
   return (
     <div id={ctx.id} className={classes.chip}>
-      <CustomTextTooltip
+      <CustomTooltip
         backgroundColor={CHARCOAL}
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
@@ -282,7 +281,7 @@ export const K8sContextConnectionChip = ({
             status={operatorState}
           />
         </div>
-      </CustomTextTooltip>
+      </CustomTooltip>
     </div>
   );
 };

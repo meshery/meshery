@@ -5,7 +5,6 @@ import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
-import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
@@ -19,6 +18,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
+import { CustomTooltip } from '@layer5/sistent';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -81,7 +81,7 @@ function RJSFForm({
             WrapIfAdditionalTemplate,
             FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
           }}
-          formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
+          formContext={{ overrideFlag: override, CustomTextTooltip: CustomTooltip }}
           uiSchema={_.merge(schema.uiSchema, uiSchema)}
           widgets={{
             // Custom components to be added here

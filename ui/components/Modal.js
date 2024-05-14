@@ -9,7 +9,6 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import CloseIcon from '@material-ui/icons/Close';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
@@ -18,6 +17,7 @@ import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import Link from 'next/link';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { CustomTooltip } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({
   '@keyframes rotateCloseIcon': {
@@ -269,7 +269,7 @@ function Modal(props) {
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
-            <CustomTextTooltip
+            <CustomTooltip
               backgroundColor="#3C494F"
               placement="top"
               interactive={true}
@@ -278,7 +278,7 @@ function Modal(props) {
               <IconButton className={classes.infoIcon} color="primary">
                 <InfoOutlinedIcon />
               </IconButton>
-            </CustomTextTooltip>
+            </CustomTooltip>
           )}
         </DialogActions>
         {snackbar && (
