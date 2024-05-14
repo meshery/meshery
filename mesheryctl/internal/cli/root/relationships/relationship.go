@@ -31,10 +31,17 @@ import (
 )
 
 var (
-	outFormatFlag string
-
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd}
+	outFormatFlag        string
+	maxRowsPerPage       = 25
+	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd, SearchComponentsCmd}
 )
+
+type MeshmodelRelationshipsAPIResponse struct {
+	Page          int                               `json:"page"`
+	PageSize      int                               `json:"page_size"`
+	Count         int64                             `json:"total_count"`
+	Relationships []v1alpha2.RelationshipDefinition `json:"relationships"`
+}
 
 var RelationshipCmd = &cobra.Command{
 	Use:   "relationship",
@@ -46,6 +53,10 @@ mesheryctl exp relationships list
 
 // To view a specific relationship
 mesheryctl exp relationships view [model-name]
+
+//To search a specific relationship
+mesheryctl exp relationships search --[flag] [query-text]
+
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -94,7 +105,6 @@ mesheryctl exp relationships view [model-name]
 
 func init() {
 	ViewRelationshipsCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
-
 	RelationshipCmd.AddCommand(availableSubcommands...)
 }
 
