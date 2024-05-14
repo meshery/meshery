@@ -152,6 +152,7 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdWorkspace                cmdType = "workspace"
 	cmdWorkspaceList            cmdType = "workspace list"
 	cmdWorkspaceCreate          cmdType = "workspace create"
