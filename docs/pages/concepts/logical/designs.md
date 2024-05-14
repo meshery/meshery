@@ -10,12 +10,11 @@ redirect_from:
 - concepts/designs
 ---
 
-Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
+Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
 <!-- ### Using Designs -->
 
-A Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and [Relationships]]({{site.baseurl}}/concepts/logical/relationships) A Design is the deployable unit in Meshery. Designs are how the users can describe the desired infrastructure state.
-There cannot be two components with the same name within a Design. However, there can be two components with the same name in different Designs.
+As the deployable unit in Meshery, a Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and [Relationships]({{site.baseurl}}/concepts/logical/relationships). Designs are how you can describe your desired infrastructure state.
 
 ### Design Relationships and Restrictions
 
@@ -28,13 +27,12 @@ There cannot be two components with the same name within a Design. However, ther
 - Designs can be cloned.
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
   - Snapshots can be exported or embedded.
-- Designs can be embedded.
+- Designs can be embedded in web pages either as a bundle of HTML or as a React component using the NPM package.
 - Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user.
   - The user who creates a Pattern is called the **pattern owner**.
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
 - Designs can be deleted.
-  - Designs can be archived (depending upon Remote Provider)
-  - Designs can be restored (depending upon Remote Provider).
+  - Designs can be archived and restored (depending upon Remote Provider)
 - Designs can be compared.
 - Designs can be validated. Validation involves checking the syntax of the Design and ensuring that all the components and patterns referenced in the Design are available.
 - Designs can be dry-run deployed.
@@ -45,6 +43,7 @@ There cannot be two components with the same name within a Design. However, ther
 - Designs can be sorted.
 - Designs can be grouped into Workspaces and shared among teams and deployed to Environment(s).
 - Designs can be grouped by Technology and/or by Type (e.g. Deployment, Security, Resiliency, Observability, etc.)
+<!-- - While there cannot be two components with the same name within a Design, however, there can be two components with the same name in different Designs. -->
 
 ### Controlling Access to Designs
 
