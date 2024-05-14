@@ -57,7 +57,15 @@ When creating a new design by default it's visibility level will be set to **pub
 
 ## Meshery Designs and Models Explained
 
-In Meshery, the deployable unit is the Meshery Design. The Meshery Models are not directly deployed; instead, they are imported by the Meshery Server to provide the necessary understanding for deployment.
+Designs are the deployable unit in Meshery. [Models]({{site.baseurl}}/concepts/logical/models) are the unit of packaging for Components. Components are described in Designs. Models are not directly deployed. Designs and their Components are.
+
+### Meshery Models
+
+Meshery Models represent the fundamental building blocks of your infrastructure. Think of them as blueprints or templates that define the structure, components, and configurations of your deployments. These models encapsulate everything from network configurations to service definitions, making them essential for consistent and scalable deployments across environments.
+
+### Meshery Designs
+
+On the other hand, Meshery Designs are the practical implementations based on Meshery Models. They represent declarations of your infrastructure deployments, customized according to specific use cases, environments, and requirements. Meshery Designs allow you to create, manage, and deploy complex architectures seamlessly, leveraging the power and flexibility of Meshery Models as their foundation.
 
 Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.
 
