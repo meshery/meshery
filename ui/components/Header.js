@@ -455,6 +455,7 @@ function K8sContextMenu({
                 {contexts?.contexts?.map((ctx) => {
                   return (
                     <K8sContextConnectionChip
+                      key={ctx.id}
                       classes={classes}
                       ctx={ctx}
                       selectable

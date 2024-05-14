@@ -10,11 +10,11 @@ import {
   Grid,
   MenuItem,
   NoSsr,
-  Select,
   styled,
   TextField,
   Typography,
   withStyles,
+  Select,
 } from '@material-ui/core';
 import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
@@ -29,6 +29,8 @@ import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import theme from '@/themes/app';
 // import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
+import { UsesSistent } from '../SistentWrapper';
+import _ from 'lodash';
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
   overflow: 'hidden',
@@ -53,6 +55,9 @@ export const StyledSelect = styled(Select)(() => ({
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
+  },
+  '& svg': {
+    fill: '#eee',
   },
 }));
 
@@ -89,6 +94,7 @@ function OrgMenu(props) {
     error: orgsError,
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
+  let uniqueOrgs = _.uniqBy(orgs, 'id');
   const { organization, setOrganization, open } = props;
   const [skip, setSkip] = React.useState(true);
   const { notify } = useNotification();
@@ -145,7 +151,7 @@ function OrgMenu(props) {
                           },
                         }}
                       >
-                        {orgs?.map((org) => (
+                        {uniqueOrgs?.map((org) => (
                           <StyledMenuItem key={org.id} value={org.id}>
                             <OrgOutlinedIcon
                               width="24"
@@ -215,7 +221,7 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={12} data-cy="mesh-adapter-url">
-                      <Select
+                      <StyledSelect
                         value={workspace.id}
                         onChange={handleWorkspaceSelect}
                         SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
@@ -236,7 +242,7 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
                             <span>{works.name}</span>
                           </MenuItem>
                         ))}
-                      </Select>
+                      </StyledSelect>
                     </Grid>
                   </Grid>
                 }
@@ -286,25 +292,26 @@ function SpaceSwitcher(props) {
   return (
     <NoSsr>
       <Provider store={store}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            fontSize: '1.5rem',
-            userSelect: 'none',
-            transition: 'width 2s ease-in',
-          }}
-        >
-          <Button
-            onClick={() => setOrgOpen(!orgOpen)}
-            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+        <UsesSistent>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontSize: '1.5rem',
+              userSelect: 'none',
+              transition: 'width 2s ease-in',
+            }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-          </Button>
-          <OrgMenu {...props} open={orgOpen} />/
-          {/* /
+            <Button
+              onClick={() => setOrgOpen(!orgOpen)}
+              style={{ marginRight: orgOpen ? '1rem' : '0' }}
+            >
+              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+            </Button>
+            <OrgMenu {...props} open={orgOpen} />/
+            {/* /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
@@ -312,9 +319,13 @@ function SpaceSwitcher(props) {
             <WorkspaceOutlinedIcon {...iconXLarge} />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
-          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-        </div>
+            <div
+              id="meshery-dynamic-header"
+              style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
+            />
+            {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
+          </div>
+        </UsesSistent>
       </Provider>
     </NoSsr>
   );
