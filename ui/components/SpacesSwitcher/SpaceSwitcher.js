@@ -312,11 +312,8 @@ function SpaceSwitcher(props) {
             <WorkspaceOutlinedIcon {...iconXLarge} />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-          {DynamicComponent ? (
-            <FileNameInput {...DynamicComponent} />
-          ) : (
-            <DefaultHeader title={props.title} isBeta={props.isBeta} />
-          )}
+          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
         </div>
       </Provider>
     </NoSsr>
