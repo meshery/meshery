@@ -10,9 +10,7 @@ redirect_from:
 - concepts/designs
 ---
 
-Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment written in YAML based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
-
-<!-- ### Using Designs -->
+Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
 As the deployable unit in Meshery, a Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and [Relationships]({{site.baseurl}}/concepts/logical/relationships). Designs are how you can describe your desired infrastructure state.
 
@@ -27,7 +25,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 - Designs can be cloned.
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
   - Snapshots can be exported or embedded.
-- Designs can be embedded in web pages either as a bundle of HTML or as a React component using the NPM package.
+- Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
 - Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user.
   - The user who creates a Pattern is called the **pattern owner**.
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
@@ -53,4 +51,30 @@ When creating a new design by default it's visibility level will be set to **pub
 
 In Meshery, the deployable unit is the Meshery Design. The Meshery Models are not directly deployed; instead, they are imported by the Meshery Server to provide the necessary understanding for deployment.
 
- Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.
+Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.
+
+### Using Designs
+
+See the following tutorials on how to use Meshery Designs for collaboratively managing infrastructure.
+
+  <details>
+  <summary>
+    <p style="display:inline">
+      <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">🧑‍🔬 Tutorials</a>
+    </p>
+  </summary>
+  <ul class="section-title">
+      {% assign tutorials = site.pages | where: "category","tutorials" %}
+      {% for item in tutorials %}
+      {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        {% if item.abstract != " " %}
+          -  {{ item.abstract }}
+        {% endif %}
+        </li>
+        {% endif %}
+      {% endfor %}
+  </ul>
+</details>
+
+Try the [Meshery Playground](/installation/playground) for a hands-on experience with Meshery Designs.
