@@ -17,8 +17,6 @@ import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import { DryRunDesign } from './DryRunDesign';
 import { selectK8sContexts, selectSelectedK8sClusters, updateProgress } from 'lib/store';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import { useSelector } from 'react-redux';
 import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
@@ -97,7 +95,6 @@ export const UpdateDeploymentStepper = ({
     },
   );
 
-  const { notify } = useNotification();
   const steps = [
     {
       component: <SelectTargetStep handleClose={handleClose} setDryRunErrors={setDryRunErrors} />,
@@ -138,36 +135,25 @@ export const UpdateDeploymentStepper = ({
     steps,
   });
 
-  const handleDeploy = async (pattern_file, pattern_id, name) => {
+  const handleDeploy = async (pattern_file, pattern_id) => {
     updateProgress({ showProgress: true });
-    const result = await deployPatternMutation({
+    await deployPatternMutation({
       pattern_file,
       pattern_id,
       selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
-
     updateProgress({ showProgress: false });
-    result.data &&
-      notify({
-        message: `"${name}" Design Deployed`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
   };
 
-  const handleUndeploy = async (pattern_file, pattern_id, name) => {
+  const handleUndeploy = async (pattern_file, pattern_id) => {
     updateProgress({ showProgress: true });
-    const result = await undeployPatternMutation({
+    await undeployPatternMutation({
       pattern_file,
       pattern_id,
       selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
 
     updateProgress({ showProgress: false });
-    result.data &&
-      notify({
-        message: `"${name}" Design Undeployed`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
   };
 
   const actionFunction = () => {
