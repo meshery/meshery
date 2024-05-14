@@ -1,5 +1,5 @@
 {
-  "apiVersion": "core.meshery.io/v1alpha1",
+  "apiVersion": "core.meshery.io/v1alpha2",
   "kind": "Hierarchical",
   "metadata": {
     "description": "A parent-child relationship implies the requirement of the parent component before the child component can be created"
