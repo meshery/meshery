@@ -14,34 +14,42 @@ Like a Google Doc, Designs are your primary tool for collaborative authorship of
 
 As the deployable unit in Meshery, a Design consists of [Components]({{site.baseurl}}/concepts/logical/components) and [Relationships]({{site.baseurl}}/concepts/logical/relationships). Designs are how you can describe your desired infrastructure state.
 
-### Design Relationships and Restrictions
+### Constraints on Designs
 
 - Designs belong to only one Workspace at any given time. Designs can be transferred between Workspaces.
 - Designs can be shared with other users or teams.
-- Designs can be cloned or merged.
-- Designs can be exported or imported.
-- Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the Meshery Catalog. Unpublished Designs can still be available to other users if that Design is made public.
-- Designs can be versioned.
-- Designs can be cloned.
+- The user who creates a Design is the Design **Owner**. The Design Owner can grant other users *read* or *write* access to the Design and can *delete* the Design.
+  
+### Features of Designs
+
+- Designs can be **cloned**. Cloning a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who cloned it.
+- Designs can be **merged**. Merging a Design combines two Designs into a single Design. 
+  <!-- - Designs can be forked. Forking a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who forked it. -->
+- Designs can be exported as JSON files or OCI images.
+- Designs can be listed in Artifact Hub repos.
+- Designs can be imported:
+  - as Kubernetes Manifests, Docker Compose, Helm Charts, or Meshery Designs.
+  - from individual YAML files, remote HTTP location, local filesystem, or OCI images.
+- Designs can be exported or embedded.
+  - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
-  - Snapshots can be exported or embedded.
-- Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
-  - The user who creates a Design is called the **owner**.
+- Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the Meshery Catalog. Unpublished Designs can still be available to other users if that Design is made public.
+- Designs are versioned. Each time a Design is saved, a new version is created.
+  <!-- - You can revert to any previous version of a Design. -->
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
 - Designs can be deleted.
   - Designs can be archived and restored (depending upon Remote Provider)
 - Designs can be compared.
 - Designs can be validated. Validation involves checking the syntax of the Design and ensuring that all the components and patterns referenced in the Design are available.
-- Designs can be dry-run deployed.
-- Designs can be audited.
-- Designs can be tagged.
+- Designs can be dry-run deployed. Use dry-runs (or practice run) to ensure that your design works correctly and will not result in undesired changes.
+- Designs can be audited. Auditing a Design involves checking the Design for security vulnerabilities, compliance with best practices, and adherence to the organization's policies.
 - Designs can be searched.
-- Designs can be filtered.
-- Designs can be sorted.
+- Designs can be filtered and viewed as a live-running deployment in your Environments.
+- Designs can be sorted by name, date created, date modified, or by the visibility level (public or private) or Catalog published status.
 - Designs can be grouped into Workspaces and shared among teams and deployed to Environment(s).
-- Designs can be grouped by Technology and/or by Type (e.g. Deployment, Security, Resiliency, Observability, etc.)
+- Designs can be tagged by Technology and/or by Type (e.g. Deployment, Security, Resiliency, Observability, etc.)
 <!-- - While there cannot be two components with the same name within a Design, however, there can be two components with the same name in different Designs. -->
-- _[Coming in v0.9]_ Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user. Patterns can be shared with other users or teams.
+- _(Coming in v0.9)_ Designs can be converted into reusable Patterns. Creating a Pattern involves replacing the values of the variables in the design with the values provided by another user. Patterns can be shared with other users or teams.
 
 ### Controlling Access to Designs
 
