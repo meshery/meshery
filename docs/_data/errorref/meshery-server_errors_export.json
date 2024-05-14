@@ -657,8 +657,8 @@
         "severity": "Alert",
         "long_description": "An error occurred while trying to create Component Configuration.",
         "short_description": "Unable to Create Component Configuration.",
-        "probable_cause": "Missing or invalid user token, invalid Kubernetes handler or serviceActionProvider error.",
-        "suggested_remediation": "Ensure the user token, Kubernetes handler, and serviceActionProvider are valid."
+        "probable_cause": "Missing or invalid user token, or an issue with Meshery's interactions with Kubernetes.",
+        "suggested_remediation": "For understanding and troubleshooting, refer to https://docs.meshery.io/guides/troubleshooting and https://docs.meshery.io/installation/kubernetes"
       },
       "1074": {
         "name": "ErrCreateDirCode",
