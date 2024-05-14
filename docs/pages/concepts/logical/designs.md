@@ -26,14 +26,14 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 - Designs can be **merged**. Merging a Design combines two Designs into a single Design. 
   <!-- - Designs can be forked. Forking a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who forked it. -->
 - Designs can be exported as JSON files or OCI images.
-- Designs can be listed in Artifact Hub repos.
+- [Designs can be listed in Artifact Hub](https://artifacthub.io/packages/search?kind=24&sort=relevance&page=1) repos.
 - Designs can be imported:
   - as Kubernetes Manifests, Docker Compose, Helm Charts, or Meshery Designs.
   - from individual YAML files, remote HTTP location, local filesystem, or OCI images.
 - Designs can be exported or embedded.
   - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
-- Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
-- Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the Meshery Catalog. Unpublished Designs can still be available to other users if that Design is made public.
+- Designs can be [snapshotted](https://docs.meshery.io/extensions/snapshot). Snapshots are immutable. Snapshots can be compared for differences between Design versions.
+- Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the [Catalog]({{site.baseurl}}/concepts/catalog). Unpublished Designs can still be available to other users if that Design is made public.
 - Designs are versioned. Each time a Design is saved, a new version is created.
   <!-- - You can revert to any previous version of a Design. -->
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
