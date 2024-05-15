@@ -72,6 +72,9 @@ mesheryctl system dashboard
 // Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 mesheryctl system dashboard --port-forward
 
+// Open Meshery UI in browser and use port-forwarding, listen on port 30000 locally, forwarding traffic to meshery server in the pod
+mesheryctl system dashboard --port-forward -p 30000
+
 // (optional) skip opening of MesheryUI in browser.
 mesheryctl system dashboard --skip-browser
 	`,
