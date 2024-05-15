@@ -104,6 +104,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	evalresults := make(map[string]interface{}, 0)
 	for _, query := range verifiedEvaluationQueries {
+		fmt.Println("TEST LINE 107 : ", query)
 		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
 		if err != nil {
 			h.log.Debug(err)
@@ -141,6 +142,7 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 
 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
 		for _, relationship := range relationships {
+			fmt.Println("TEST LINE 145 : ", relationship.EvaluationQuery)
 			if relationship.EvaluationQuery != "" {
 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
 			}
