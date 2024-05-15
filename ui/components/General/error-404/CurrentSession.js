@@ -38,7 +38,7 @@ const CurrentSessionInfo = (props) => {
     <ErrorSectionContent>
       <div>
         <StyledTypographyDisabled variant="h6" component="h6">
-          Your Organization
+          Organization
         </StyledTypographyDisabled>
         <StyledBox>
           <OrgIcon width="24" height="24" secondaryFill={theme.palette.darkSlateGray} />
@@ -50,9 +50,9 @@ const CurrentSessionInfo = (props) => {
           Organization Role(s)
         </StyledTypographyDisabled>
         <StyledBox>
-          {rolesRes?.roles.map((role) => (
-            <StyledChip key={role.id} label={role.role_name} />
-          ))}
+          {rolesRes
+            ? rolesRes?.roles.map((role) => <StyledChip key={role.id} label={role.role_name} />)
+            : 'No roles found'}
         </StyledBox>
       </div>
       <div>
@@ -60,9 +60,11 @@ const CurrentSessionInfo = (props) => {
           Provider Role(s)
         </StyledTypographyDisabled>
         <StyledBox>
-          {providerRolesRes?.role_names.map((role, index) => (
-            <StyledChip key={index} label={role} />
-          ))}
+          {providerRolesRes
+            ? providerRolesRes?.role_names.map((role, index) => (
+                <StyledChip key={index} label={role} />
+              ))
+            : 'No roles found'}
         </StyledBox>
       </div>
     </ErrorSectionContent>
