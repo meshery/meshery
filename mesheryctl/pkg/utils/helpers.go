@@ -23,6 +23,7 @@ import (
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
@@ -1130,13 +1131,13 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL str
 	// set the provider
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			"PROVIDER": ctx.GetProvider(),
+			constants.ProviderENV: ctx.GetProvider(),
 		}
 	}
 
 	if callbackURL != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			"MESHERY_SERVER_CALLBACK_URL": callbackURL,
+			constants.CallbackURLENV: callbackURL,
 		}
 	}
 
