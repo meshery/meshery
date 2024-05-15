@@ -11,11 +11,10 @@ import OrgIcon from 'assets/icons/OrgIcon';
 import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import { FormControl, FormGroup } from '@layer5/sistent';
+import { FormControl, FormGroup, MenuItem } from '@layer5/sistent';
 import {
   OrgName,
   StyledSelect,
-  SelectItem,
   StyledFormControlLabel,
   StyledTextField,
   ErrorSectionContent,
@@ -78,20 +77,22 @@ const RequestForm = (props) => {
                     fullWidth
                     value={organization?.id ? organization.id : ''}
                     onChange={handleOrgSelect}
-                    SelectDisplayProps={{ style: { display: 'flex' } }}
+                    SelectDisplayProps={{
+                      style: { display: 'flex' },
+                    }}
                   >
                     {isOrgsSuccess &&
                       orgs &&
                       orgs?.map((org) => {
                         return (
-                          <SelectItem key={org.id} value={org.id}>
+                          <MenuItem key={org.id} value={org.id}>
                             <OrgIcon
                               width="24"
                               height="24"
                               secondaryFill={theme.palette.darkSlateGray}
                             />
                             <OrgName>{org.name}</OrgName>
-                          </SelectItem>
+                          </MenuItem>
                         );
                       })}
                   </StyledSelect>
@@ -99,11 +100,7 @@ const RequestForm = (props) => {
               />
             </FormGroup>
           </FormControl>
-          <StyledFormButton variant="text">
-            <StyledTypography variant="h6" component="h6">
-              Request Role(s)
-            </StyledTypography>
-          </StyledFormButton>
+          <StyledFormButton variant="outlined">Request Role(s)</StyledFormButton>
         </ErrorSectionContent>
       </form>
     </NoSsr>
