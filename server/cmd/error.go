@@ -6,19 +6,19 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrCreatingUUIDInstanceCode                   = "meshery-server-1001(ErrCreatingUUIDInstanceCode)"
-	ErrRegisteringMesheryOAMTraitsCode            = "meshery-server-1002(ErrRegisteringMesheryOAMTraitsCode)"
-	ErrRegisteringMesheryOAMWorkloadsCode         = "meshery-server-1003(ErrRegisteringMesheryOAMWorkloadsCode)"
-	ErrRetrievingUserHomeDirectoryCode            = "meshery-server-1004(ErrRetrievingUserHomeDirectoryCode)"
-	ErrCreatingUserDataDirectoryCode              = "meshery-server-1005(ErrCreatingUserDataDirectoryCode)"
-	ErrCreatingMapPreferencePersisterInstanceCode = "meshery-server-1006(ErrCreatingMapPreferencePersisterInstanceCode)"
-	ErrDatabaseAutoMigrationCode                  = "meshery-server-1007(ErrDatabaseAutoMigrationCode)"
-	ErrInvalidURLSkippingProviderCode             = "meshery-server-1008(ErrInvalidURLSkippingProviderCode)"
-	ErrListenAndServeCode                         = "meshery-server-1009(ErrListenAndServeCode)"
-	ErrCleaningUpLocalProviderCode                = "meshery-server-1010(ErrCleaningUpLocalProviderCode)"
-	ErrClosingDatabaseInstanceCode                = "meshery-server-1011(ErrClosingDatabaseInstanceCode)"
-	ErrInitializingRegistryManagerCode            = "meshery-server-1012(ErrInitializingRegistryManagerCode)"
-	ErrInitializingKeysRegistrationCode           = "meshery-server-1013(ErrInitializingKeysRegistrationCode)"
+	ErrCreatingUUIDInstanceCode                   = "component-meshery-server-ErrCreatingUUIDInstanceCode-1001"
+	ErrRegisteringMesheryOAMTraitsCode            = "component-meshery-server-ErrRegisteringMesheryOAMTraitsCode-1002"
+	ErrRegisteringMesheryOAMWorkloadsCode         = "component-meshery-server-ErrRegisteringMesheryOAMWorkloadsCode-1003"
+	ErrRetrievingUserHomeDirectoryCode            = "component-meshery-server-ErrRetrievingUserHomeDirectoryCode-1004"
+	ErrCreatingUserDataDirectoryCode              = "component-meshery-server-ErrCreatingUserDataDirectoryCode-1005"
+	ErrCreatingMapPreferencePersisterInstanceCode = "component-meshery-server-ErrCreatingMapPreferencePersisterInstanceCode-1006"
+	ErrDatabaseAutoMigrationCode                  = "component-meshery-server-ErrDatabaseAutoMigrationCode-1007"
+	ErrInvalidURLSkippingProviderCode             = "component-meshery-server-ErrInvalidURLSkippingProviderCode-1008"
+	ErrListenAndServeCode                         = "component-meshery-server-ErrListenAndServeCode-1009"
+	ErrCleaningUpLocalProviderCode                = "component-meshery-server-ErrCleaningUpLocalProviderCode-1010"
+	ErrClosingDatabaseInstanceCode                = "component-meshery-server-ErrClosingDatabaseInstanceCode-1011"
+	ErrInitializingRegistryManagerCode            = "component-meshery-server-ErrInitializingRegistryManagerCode-1012"
+	ErrInitializingKeysRegistrationCode           = "component-meshery-server-ErrInitializingKeysRegistrationCode-1013"
 )
 
 func ErrInitializingRegistryManager(err error) error {

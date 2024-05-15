@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	ErrInvalidTransitionCode      = "meshery-server-1214(ErrInvalidTransitionCode)"
-	ErrInvalidTransitionEventCode = "meshery-server-1215(ErrInvalidTransitionEventCode)"
-	ErrInititalizeK8sMachineCode  = "meshery-server-1216(ErrInititalizeK8sMachineCode)"
-	ErrAssetMachineCtxCode        = "meshery-server-1217(ErrAssetMachineCtxCode)"
-	ErrInvalidTypeCode            = "meshery-server-1218(ErrInvalidTypeCode)"
+	ErrInvalidTransitionCode      = "component-meshery-server-ErrInvalidTransitionCode-1214"
+	ErrInvalidTransitionEventCode = "component-meshery-server-ErrInvalidTransitionEventCode-1215"
+	ErrInititalizeK8sMachineCode  = "component-meshery-server-ErrInititalizeK8sMachineCode-1216"
+	ErrAssetMachineCtxCode        = "component-meshery-server-ErrAssetMachineCtxCode-1217"
+	ErrInvalidTypeCode            = "component-meshery-server-ErrInvalidTypeCode-1218"
 )
 
 func ErrInvalidTransition(from, to StateType) error {
