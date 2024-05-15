@@ -280,7 +280,7 @@ darkTheme = {
     MuiCssBaseline: {
       '@global': {
         body: {
-          backgroundColor: '#303030',
+          backgroundColor: '#303030 !important',
           // scrollbarColor : "#6b6b6b #263238",
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
             backgroundColor: '#1A1A1A',
@@ -536,7 +536,7 @@ theme = {
     MuiCssBaseline: {
       '@global': {
         body: {
-          backgroundColor: '#e9eff1',
+          backgroundColor: '#e9eff1 !important',
           // scrollbarColor : "#6b6b6b #263238",
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
             backgroundColor: '#d7d7d7',

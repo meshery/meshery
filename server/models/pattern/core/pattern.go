@@ -155,7 +155,7 @@ type Pattern struct {
 	// PatternID is the moniker use to uniquely identify any given pattern
 	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
-	Services  map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
+	Services  map[string]*Service `yaml:"services" json:"services"`
 }
 
 // Service represents the services defined within the appfile
