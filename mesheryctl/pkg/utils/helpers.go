@@ -1080,7 +1080,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1131,6 +1131,12 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
 			"PROVIDER": ctx.GetProvider(),
+		}
+	}
+
+	if callbackURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			"MESHERY_SERVER_CALLBACK_URL": callbackURL,
 		}
 	}
 
@@ -1222,4 +1228,13 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		}
 	}
 	return nil
+}
+
+func FindInSlice(key string, items []string) (int, bool) {
+	for idx, item := range items {
+		if item == key {
+			return idx, true
+		}
+	}
+	return -1, false
 }

@@ -166,12 +166,6 @@ func start() error {
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
-
-			// update the context to config
-			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
-			if err != nil {
-				return err
-			}
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
@@ -179,6 +173,12 @@ func start() error {
 
 	if providerFlag != "" {
 		currCtx.SetProvider(providerFlag)
+	}
+
+	// update the context to config
+	err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
+	if err != nil {
+		return err
 	}
 
 	// Reset Meshery config file to default settings
@@ -189,6 +189,7 @@ func start() error {
 		}
 	}
 
+	callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
@@ -259,7 +260,12 @@ func start() error {
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
 				if !utils.ContainsStringPrefix(temp.Environment, "MESHERY_SERVER_CALLBACK_URL") {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", callbackURL))
+				} else if callbackURL != "" {
+					idx, ok := utils.FindInSlice("MESHERY_SERVER_CALLBACK_URL", temp.Environment)
+					if ok {
+						temp.Environment[idx] = fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", callbackURL)
+					}
 				}
 
 				providerEnvVar := currCtx.GetProvider()
@@ -421,7 +427,7 @@ func start() error {
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL); err != nil {
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL); err != nil {
 			return err
 		}
 
@@ -458,9 +464,9 @@ func init() {
 }
 
 // Apply Meshery helm charts
-func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction) error {
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL string) error {
 	// get value overrides to install the helm chart
-	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL)
 
 	// install the helm charts with specified override values
 	var chartVersion string
