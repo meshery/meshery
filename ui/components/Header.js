@@ -377,7 +377,7 @@ function K8sContextMenu({
               src={
                 connectionMetadataState
                   ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                  : ''
+                  : '/static/img/kubernetes.svg'
               }
               width="24px"
               height="24px"
