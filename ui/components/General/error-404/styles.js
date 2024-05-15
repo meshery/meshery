@@ -14,7 +14,7 @@ export const ErrorMain = styled('main')(({ theme }) => ({
   padding: '4rem 8rem',
   minHeight: '100vh',
   [theme.breakpoints.down('sm')]: {
-    padding: '4rem 2rem',
+    padding: '4rem 0rem',
   },
   display: 'flex',
   flexDirection: 'column',
@@ -32,11 +32,14 @@ export const ErrorContainer = styled('div')(({ theme }) => ({
   flexWrap: 'wrap',
 }));
 
-export const ImageContainer = styled('div')(() => ({
+export const ImageContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '2rem',
   marginBottom: '1rem',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+  },
 }));
 
 export const ErrorSectionContainer = styled('div')(() => ({
