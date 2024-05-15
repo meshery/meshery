@@ -36,14 +36,15 @@ import (
 var (
 	// runPortForward is used for port-forwarding Meshery UI via `system dashboard`
 	runPortForward bool
+	localPort      int
 )
 
 // dashboardOptions holds values for command line flags that apply to the dashboard
 // command.
 type dashboardOptions struct {
-	host    string
-	port    int
-	podPort int
+	host    string // Host on which server is running inside the pod
+	port    int    // The default port on which Meshery service is listening
+	podPort int    // Port on which server is running inside the pod
 }
 
 // newDashboardOptions initializes dashboard options with default
@@ -123,20 +124,13 @@ mesheryctl system dashboard --skip-browser
 				signal.Notify(signals, os.Interrupt)
 				defer signal.Stop(signals)
 
-				// get a free port number to bind port-forwarding
-				port, err := utils.GetEphemeralPort()
-				if err != nil {
-					utils.Log.Error(ErrFailedGetEphemeralPort(err))
-					return nil
-				}
-
 				portforward, err := utils.NewPortForward(
 					cmd.Context(),
 					client,
 					utils.MesheryNamespace,
 					"meshery",
 					options.host,
-					port,
+					localPort,
 					options.podPort,
 					false,
 				)
@@ -168,7 +162,7 @@ mesheryctl system dashboard --skip-browser
 						}
 					}
 				}()
-				log.Info(fmt.Sprintf("Forwarding ports %v -> %v", options.podPort, port))
+				log.Info(fmt.Sprintf("Forwarding ports %v -> %v", options.podPort, localPort))
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in the default browser.")
 				err = utils.NavigateToBrowser(mesheryURL)
@@ -251,5 +245,7 @@ func keepConnectionAlive(url string) {
 
 func init() {
 	dashboardCmd.Flags().BoolVarP(&runPortForward, "port-forward", "", false, "(optional) Use port forwarding to access Meshery UI")
+	dashboardCmd.Flags().IntVarP(&localPort, "port", "p", 0, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
+
 	dashboardCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }
