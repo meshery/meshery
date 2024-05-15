@@ -20,9 +20,9 @@ var (
 var ConnectionsCmd = &cobra.Command{
 	Use:   "connections",
 	Short: "Manage connections",
-	Long:  `Manage connections`,
+	Long:  `List, delete and view available connections`,
 	Example: `
-// Entry point to manage connections
+// Entry point to manage available connections
 mesheryctl exp connections
 // To search for a specific connection
 mesheryctl exp components delete [connection-id]

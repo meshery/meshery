@@ -17,8 +17,8 @@ import (
 
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all the connections",
-	Long:  `List all the connections`,
+	Short: "List connections",
+	Long:  `List all available connections`,
 	Example: `
 // List all the connections
 mesheryctl exp connections list

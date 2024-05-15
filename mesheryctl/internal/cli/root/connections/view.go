@@ -31,9 +31,11 @@ import (
 
 var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View a connection id",
+	Short: "View a connection by id",
 	Long: `View
-a connection detail by id`,
+a connection details by id
+
+Display the details of a specific connection based on id provided`,
 
 	Example: `
 // View a connection detail

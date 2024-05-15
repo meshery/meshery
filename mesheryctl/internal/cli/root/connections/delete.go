@@ -16,7 +16,7 @@ var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
 	Long: `Delete
-a connection`,
+a connection will trigger a connection deletion`,
 
 	Example: `
 // Delete a connection
