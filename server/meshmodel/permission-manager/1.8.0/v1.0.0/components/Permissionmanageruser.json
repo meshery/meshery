@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Permissionmanageruser",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "permission-manager",
+   "displayName": "Permission Manager",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Security \u0026 Compliance",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://devopstales.github.io/helm-charts/permission-manager-1.8.0.tgz"
+   },
+   "model": {
+    "version": "1.8.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "permission-manager",
+   "modelDisplayName": "Permission Manager",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Permissionmanageruser",
+   "version": "permissionmanager.user/v1alpha1",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"name\": {\n     \"minLength\": 2,\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Permissionmanageruser\",\n \"type\": \"object\"\n}"
+  }
+ }

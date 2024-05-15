@@ -29,7 +29,7 @@ mesheryctl exp connections list [flags]
 List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connections list 
+mesheryctl exp connections list
 
 </div>
 </pre> 

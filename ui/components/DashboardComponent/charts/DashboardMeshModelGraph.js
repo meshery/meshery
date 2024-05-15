@@ -23,7 +23,7 @@ import { keys } from '@/utils/permission_constants';
 
 function MeshModelContructs({ classes }) {
   const params = {
-    page: 1,
+    page: 0,
     pagesize: '1',
   };
   const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;

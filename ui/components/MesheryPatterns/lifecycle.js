@@ -16,11 +16,11 @@ import { SelectDeploymentTarget } from '../ConfirmationModal';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import { DryRunDesign } from './DryRunDesign';
-import { selectSelectedK8sClusters, updateProgress } from 'lib/store';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
+import { selectK8sContexts, selectSelectedK8sClusters, updateProgress } from 'lib/store';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import { useSelector } from 'react-redux';
+import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
+import { RenderTooltipContent } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 const SelectTargetStep = () => {
   return (
@@ -83,15 +83,29 @@ export const UpdateDeploymentStepper = ({
   const [bypassDryRun, setBypassDryRun] = useState(false);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
+  const k8sContext = useSelector(selectK8sContexts);
   const selectedK8sContexts = useSelector(selectSelectedK8sClusters);
 
-  const { notify } = useNotification();
+  const selectedDeployableK8scontexts = useFilterK8sContexts(
+    k8sContext,
+    ({ context, operatorState }) => {
+      const isSelected =
+        selectedK8sContexts?.includes(context.id) || selectedK8sContexts?.includes('all');
+      return isSelected && operatorState !== 'DISABLED';
+    },
+  );
 
   const steps = [
     {
       component: <SelectTargetStep handleClose={handleClose} setDryRunErrors={setDryRunErrors} />,
       icon: DeploymentSelectorIcon,
       label: 'Select Environment',
+      helpText: RenderTooltipContent({
+        showPriortext:
+          'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,',
+        link: 'https://docs.meshery.io/guides/infrastructure-management/overview',
+        showAftertext: ' about the environment selection.',
+      }),
     },
     {
       component: (
@@ -107,6 +121,12 @@ export const UpdateDeploymentStepper = ({
         />
       ),
       label: 'Dry Run',
+      helpText: RenderTooltipContent({
+        showPriortext:
+          'Dry Run is a simulation of the deployment process, it helps to identify potential errors before the actual deployment,',
+        showAftertext: ' to learn more about Dry Run.',
+        link: 'https://docs.meshery.io/guides/infrastructure-management/overview',
+      }),
       icon: DryRunIcon,
     },
   ];
@@ -115,46 +135,25 @@ export const UpdateDeploymentStepper = ({
     steps,
   });
 
-  const handleDeploy = async (pattern_file, pattern_id, name) => {
+  const handleDeploy = async (pattern_file, pattern_id) => {
     updateProgress({ showProgress: true });
-    const result = await deployPatternMutation({
+    await deployPatternMutation({
       pattern_file,
       pattern_id,
-      selectedK8sContexts,
+      selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
-
     updateProgress({ showProgress: false });
-    result.data &&
-      notify({
-        message: `"${name}" Design Deployed`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Deploy`,
-        event_type: EVENT_TYPES.ERROR,
-      });
   };
 
-  const handleUndeploy = async (pattern_file, pattern_id, name) => {
+  const handleUndeploy = async (pattern_file, pattern_id) => {
     updateProgress({ showProgress: true });
-    const result = await undeployPatternMutation({
+    await undeployPatternMutation({
       pattern_file,
       pattern_id,
-      selectedK8sContexts,
+      selectedK8sContexts: selectedDeployableK8scontexts.map((ctx) => ctx.id),
     });
 
     updateProgress({ showProgress: false });
-    result.data &&
-      notify({
-        message: `"${name}" Design Undeployed`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-    result.error &&
-      notify({
-        message: `"${name}" Design Failed To Undeploy`,
-        event_type: EVENT_TYPES.ERROR,
-      });
   };
 
   const actionFunction = () => {
@@ -166,11 +165,9 @@ export const UpdateDeploymentStepper = ({
     command[action]?.(pattern_file, pattern_id, name);
     handleClose?.();
     handleComplete?.();
-    // designMachineRef.current.send(command[action]);
   };
 
   const handleNext = () => {
-    console.log('deployStepper', deployStepper, deployStepper.canGoForward);
     if (deployStepper.canGoForward) {
       deployStepper.handleNext();
     } else {
@@ -182,7 +179,7 @@ export const UpdateDeploymentStepper = ({
     // transition map indicating if the next step (key) can be transitioned to
     // start from 1 because 0 is the first step
     const CanTransition = {
-      1: () => selectedK8sContexts?.length > 0,
+      1: () => selectedDeployableK8scontexts?.length > 0,
       2: () => dryRunErrors?.length === 0 || bypassDryRun,
     };
     return CanTransition[activeStep + 1](); // can transition to next step
@@ -197,11 +194,16 @@ export const UpdateDeploymentStepper = ({
       <ModalBody>
         <Box style={{ width: '30rem' }}>
           <CustomizedStepper {...deployStepper}>
-            {deployStepper.activeStepComponent}
+            <Box style={{ overflowY: 'auto' }}>{deployStepper.activeStepComponent}</Box>
           </CustomizedStepper>
         </Box>
       </ModalBody>
-      <ModalFooter variant="filled" helpText={`${action} the current design`}>
+      <ModalFooter
+        variant="filled"
+        helpText={
+          deployStepper.steps[deployStepper.activeStep]?.helpText || `${action} the current design`
+        }
+      >
         <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
           <ModalButtonSecondary onClick={deployStepper.goBack} disabled={!deployStepper.canGoBack}>
             Back

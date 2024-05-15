@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
@@ -288,4 +288,14 @@ export const useControllerStatus = (controllerState) => {
   return {
     getControllerStatesByConnectionID: getContextStatus,
   };
+};
+
+export const useFilterK8sContexts = (k8sContexts, predicate) => {
+  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
+
+  return k8sContexts.filter((ctx) => {
+    const operatorsStatus = getControllerStatesByConnectionID(ctx.connection_id);
+    return predicate({ ...operatorsStatus, context: ctx });
+  });
 };

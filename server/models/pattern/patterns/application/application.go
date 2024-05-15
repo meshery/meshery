@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
@@ -41,7 +42,7 @@ type PatternConfigurationRolloutStrategy struct {
 // Deploy will deploy the application
 func Deploy(
 	kubeClient *meshkube.Client,
-	oamComp v1alpha1.Component,
+	oamComp v1beta1.Component,
 	oamConfig v1alpha1.Configuration,
 	isDel bool,
 ) error {
@@ -104,7 +105,7 @@ func Deploy(
 	return fmt.Errorf("%s is not an application pattern", oamComp.Spec.Type)
 }
 
-func getApplicationPatternSettings(oamComp v1alpha1.Component) (PatternSetting, error) {
+func getApplicationPatternSettings(oamComp v1beta1.Component) (PatternSetting, error) {
 	var settings PatternSetting
 
 	jsonByt, err := json.Marshal(oamComp.Spec.Settings)

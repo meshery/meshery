@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Link",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "netris-operator",
+   "displayName": "Netris Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz"
+   },
+   "model": {
+    "version": "1.1.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": true,
+   "logoURL": "",
+   "model": "netris-operator",
+   "modelDisplayName": "Netris Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Link",
+   "version": "k8s.netris.ai/v1alpha1",
+   "schema": "{\n \"description\": \"Link is the Schema for the links API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LinkSpec defines the desired state of Link\",\n   \"properties\": {\n    \"ports\": {\n     \"items\": {\n      \"description\": \"LinkSpecPort .\",\n      \"type\": \"string\"\n     },\n     \"maxItems\": 2,\n     \"minItems\": 2,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"ports\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Link\",\n \"type\": \"object\"\n}"
+  }
+ }
