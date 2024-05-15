@@ -11,14 +11,8 @@ import OrgIcon from 'assets/icons/OrgIcon';
 import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import { FormControl, FormGroup } from '@layer5/sistent';
-import {
-  OrgName,
-  StyledSelect,
-  SelectItem,
-  StyledFormControlLabel,
-  StyledTypography,
-} from './styles';
+import { FormControl, FormGroup, MenuItem } from '@layer5/sistent';
+import { OrgName, StyledSelect, StyledFormControlLabel, StyledTypography } from './styles';
 import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 
@@ -51,6 +45,10 @@ const OrgSwitcher = (props) => {
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
     setSkip(false);
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
   };
 
   return (
@@ -74,14 +72,14 @@ const OrgSwitcher = (props) => {
                     orgs &&
                     orgs?.map((org) => {
                       return (
-                        <SelectItem key={org.id} value={org.id}>
+                        <MenuItem key={org.id} value={org.id}>
                           <OrgIcon
                             width="24"
                             height="24"
                             secondaryFill={theme.palette.darkSlateGray}
                           />
                           <OrgName>{org.name}</OrgName>
-                        </SelectItem>
+                        </MenuItem>
                       );
                     })}
                 </StyledSelect>
