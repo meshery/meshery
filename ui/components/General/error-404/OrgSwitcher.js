@@ -12,7 +12,13 @@ import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { FormControl, FormGroup, MenuItem } from '@layer5/sistent';
-import { OrgName, StyledSelect, StyledFormControlLabel, StyledTypography } from './styles';
+import {
+  OrgName,
+  StyledSelect,
+  StyledFormControlLabel,
+  StyledTypography,
+  CustomDownIcon,
+} from './styles';
 import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 
@@ -67,6 +73,7 @@ const OrgSwitcher = (props) => {
                   value={organization?.id ? organization.id : ''}
                   onChange={handleOrgSelect}
                   SelectDisplayProps={{ style: { display: 'flex' } }}
+                  IconComponent={CustomDownIcon}
                 >
                   {isOrgsSuccess &&
                     orgs &&

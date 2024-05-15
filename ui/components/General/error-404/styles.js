@@ -7,6 +7,7 @@ import {
   Chip,
   Button,
   Divider,
+  LeftArrowIcon,
 } from '@layer5/sistent';
 import { styled } from '@material-ui/core';
 
@@ -111,12 +112,10 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: theme.palette.primary.main,
   },
-  '& .MuiSvgIcon-root': {
-    color: theme.palette.primary.main,
-  },
   '&.MuiInputBase-root': {
     borderRadius: '10px',
     paddingBlock: '5px',
+    paddingInline: '10px',
   },
   '@media (max-width: 368px)': {
     width: '180px',
@@ -192,10 +191,11 @@ export const StyledButton = styled(Button)(() => ({
   },
 }));
 
-export const IconWrapper = styled('div')(() => ({
+export const IconWrapper = styled('div')(({ theme }) => ({
   paddingInline: '2rem',
   paddingTop: '1rem',
   alignSelf: 'flex-end',
+  color: theme.palette.info.main,
 }));
 
 export const Logo = styled('img')(() => ({
@@ -207,7 +207,16 @@ export const LogoText = styled('img')(() => ({
 }));
 
 export const StyledDivider = styled(Divider)(({ theme }) => ({
+  backgroundColor: theme.palette.action.disabled,
   [theme.breakpoints.down('md')]: {
     display: 'none',
+  },
+}));
+
+export const CustomDownIcon = styled(LeftArrowIcon)(({ theme }) => ({
+  rotate: '-90deg',
+  marginInline: '1rem',
+  '&.MuiSelect-icon': {
+    fill: theme.palette.primary.main,
   },
 }));
