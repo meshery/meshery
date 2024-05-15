@@ -14,6 +14,7 @@ import {
   Logo,
   LogoText,
   StyledDivider,
+  ErrorLink,
 } from './styles';
 import { Typography, InfoCircleIcon, CustomTooltip } from '@layer5/sistent';
 import OrgSwitcher from './OrgSwitcher';
@@ -47,7 +48,6 @@ const UnknownServerSideError = (props) => {
 
 const DefaultError = (props) => {
   const { errorTitle, errorContent, errorType } = props;
-  // const { roles } = useGetUserRolesQuery({});
   const theme = useTheme();
 
   return (
@@ -116,6 +116,11 @@ const DefaultError = (props) => {
         <StyledButton href="/" variant="contained">
           Return to Dashboard
         </StyledButton>
+        <Typography variant="textB1Regular" component="p" align="center">
+          For more help, please inquire on the
+          <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
+          <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+        </Typography>
         <Socials />
       </ErrorMain>
     </UsesSistent>

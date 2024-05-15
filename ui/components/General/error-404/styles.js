@@ -77,7 +77,6 @@ export const ErrorContentContainer = styled('div')(() => ({
 
 export const ErrorLink = styled('a')(({ theme }) => ({
   color: theme.palette.secondary.focused,
-  textDecoration: 'none',
 }));
 
 export const ErrorMsg = styled('errormsg')(() => ({
