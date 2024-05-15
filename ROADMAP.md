@@ -181,7 +181,7 @@ connection, credential
 
 **Catalog**
 
-- [Catalog] Support to sell published designs.
-- [UI/Server] Improved performance and stability in catalog interactions.
+- [Catalog] Support for selling published designs.
+- [UI/Server] Improved performance and stability in catalog interactions to facilitate payment processing.
 
 Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
