@@ -1,5 +1,6 @@
 {
-  "apiVersion": "vault.infra.doodle.com/v1beta1",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
   "kind": "Edge",
   "metadata": {
     "description": ""
