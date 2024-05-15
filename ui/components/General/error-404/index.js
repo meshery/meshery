@@ -1,6 +1,5 @@
 import { ErrorTypes } from '@/constants/common';
 import { useTheme } from '@material-ui/core/styles';
-import Socials from './socials';
 import {
   ErrorSection,
   ErrorSectionContainer,
@@ -121,7 +120,6 @@ const DefaultError = (props) => {
           <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
           <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
         </Typography>
-        <Socials />
       </ErrorMain>
     </UsesSistent>
   );
