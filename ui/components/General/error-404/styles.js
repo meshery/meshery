@@ -1,5 +1,4 @@
 import {
-  MenuItem,
   Typography,
   Select,
   FormControlLabel,
@@ -7,12 +6,11 @@ import {
   TextField,
   Chip,
   Button,
-  keppel,
+  Divider,
 } from '@layer5/sistent';
 import { styled } from '@material-ui/core';
 
 export const ErrorMain = styled('main')(({ theme }) => ({
-  background: theme.palette.aliceBlue,
   padding: '4rem 8rem',
   minHeight: '100vh',
   [theme.breakpoints.down('sm')]: {
@@ -24,7 +22,7 @@ export const ErrorMain = styled('main')(({ theme }) => ({
 }));
 
 export const ErrorContainer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.white,
+  backgroundColor: theme.palette.background.paper,
   boxShadow:
     '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 1px rgb(0 0 0 / 12%)',
   borderRadius: '8px',
@@ -34,8 +32,16 @@ export const ErrorContainer = styled('div')(({ theme }) => ({
   flexWrap: 'wrap',
 }));
 
+export const ImageContainer = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2rem',
+  marginBottom: '1rem',
+}));
+
 export const ErrorSectionContainer = styled('div')(() => ({
   display: 'flex',
+  flexWrap: 'wrap',
 }));
 
 export const ErrorSection = styled('div')(() => ({
@@ -99,11 +105,6 @@ export const OrgNameDisabled = styled('span')(({ theme }) => ({
   fontSize: '1.1rem',
 }));
 
-export const SelectItem = styled(MenuItem)(() => ({
-  width: '100%',
-  padding: '20px',
-}));
-
 export const StyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: theme.palette.primary.main,
@@ -114,7 +115,6 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   '&.MuiInputBase-root': {
     borderRadius: '10px',
     paddingBlock: '5px',
-    color: theme.palette.text.primary,
   },
   '@media (max-width: 368px)': {
     width: '180px',
@@ -126,9 +126,10 @@ export const StyledBox = styled(Box)(({ theme }) => ({
   gap: '10px',
   alignItems: 'center',
   borderRadius: '10px',
-  fontSize: '1rem',
+  fontSize: '1.1rem',
   padding: '1.3rem',
   border: `1px solid ${theme.palette.action.disabled}`,
+  color: theme.palette.text.secondary,
 }));
 
 export const FormField = styled('div')(() => ({
@@ -167,30 +168,44 @@ export const StyledTypographyDisabled = styled(Typography)(({ theme }) => ({
   marginBlock: '0.5rem',
 }));
 
-export const StyledChip = styled(Chip)(({ theme }) => ({
+export const StyledChip = styled(Chip)(() => ({
   '&.MuiChip-root': {
-    backgroundColor: theme.palette.action.disabled,
     fontSize: '1rem',
     textTransform: 'capitalize',
   },
 }));
 
-export const StyledFormButton = styled(Button)(({ theme }) => ({
+export const StyledFormButton = styled(Button)(() => ({
   '&.MuiButton-root': {
     borderRadius: '10px',
     padding: '10px',
-    color: theme.palette.text.primary,
   },
 }));
 
-export const StyledButton = styled(Button)(({ theme }) => ({
+export const StyledButton = styled(Button)(() => ({
   '&.MuiButton-root': {
     borderRadius: '10px',
     padding: '1rem 2rem',
-    color: theme.palette.text.primary,
-    textTransform: 'capitalize',
-    backgroundColor: keppel[40],
     alignSelf: 'center',
-    fontSize: '1rem',
+  },
+}));
+
+export const IconWrapper = styled('div')(() => ({
+  paddingInline: '2rem',
+  paddingTop: '1rem',
+  alignSelf: 'flex-end',
+}));
+
+export const Logo = styled('img')(() => ({
+  height: 'clamp(100px, 20vw, 150px)',
+}));
+
+export const LogoText = styled('img')(() => ({
+  height: 'clamp(30px, 5vw, 100px)',
+}));
+
+export const StyledDivider = styled(Divider)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
   },
 }));
