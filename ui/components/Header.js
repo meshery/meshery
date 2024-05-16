@@ -77,10 +77,12 @@ const styles = (theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
     [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
+    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
     zIndex: theme.zIndex.drawer + 1,
+    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -88,7 +90,6 @@ const styles = (theme) => ({
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
@@ -97,7 +98,6 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   itemActiveItem: { fill: '#00B39F' },
   headerIcons: {

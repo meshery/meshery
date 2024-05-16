@@ -19,15 +19,20 @@ import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
   wrapperClss: {
-    flexGrow: 1,
     maxWidth: '100%',
     height: 'auto',
   },
   tab: {
-    width: '20%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
+    margin: 0,
+    [theme.breakpoints.down('md')]: {
+      width: 100,
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '20%',
+    },
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -37,7 +42,7 @@ const styles = (theme) => ({
   },
   tabs: {
     width: '100%',
-    // flexGrow: 1,
+    margin: 0,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -169,7 +174,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 800 ? 'scrollable' : 'fullWidth'}
+            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
             scrollButtons="on"
             textColor="primary"
             centered
