@@ -12,12 +12,6 @@ abstract: List of default permissions.
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reference Permissions</title>
-<style>
-  .header {
-    background-color:#000;
-    text-align: left
-  }
-</style>
 </head>
 <body>
 Permissions are represented as <b>keys</b>, each serving as a unique identifier for a specific permission. One or more keys can be grouped together and assigned to a <b>keychain</b>.<br>
@@ -48,16 +42,13 @@ window.onload = function() {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const htmlTable = XLSX.utils.sheet_to_html(sheet);
 
-      // Remove the first row from the HTML table
+      // Remove the first, second row
       const tableElement = document.createElement('div');
       tableElement.innerHTML = htmlTable;
       tableElement.querySelector('table').deleteRow(0);
       tableElement.querySelector('table').deleteRow(0);
 
-      // Designate the new first row as the header row
-      tableElement.querySelector('tr').classList.add('header');
-
-      // Remove the second, fourth column from the HTML table
+      // Remove the columns
       const rows = tableElement.querySelectorAll('tr');
       rows.forEach(row => {
         row.deleteCell(3);
@@ -73,7 +64,6 @@ window.onload = function() {
         row.deleteCell(6);
       });
       
-      // Append the modified table to the existing table
       document.getElementById('excelTable').innerHTML += tableElement.innerHTML;
     } else {
       console.error('Failed to load Excel file! Status code: ' + xhr.status);
