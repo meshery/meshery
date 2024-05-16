@@ -11,16 +11,31 @@ abstract: List of default permissions.
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Excel to HTML Table</title>
+<title>Reference Permissions</title>
+<style>
+  .header {
+    background-color:#000;
+    text-align: left
+  }
+</style>
 </head>
 <body>
+Permissions are represented as <b>keys</b>, each serving as a unique identifier for a specific permission. One or more keys can be grouped together and assigned to a <b>keychain</b>.<br>
 
-<table id="excelTable" border="1">
-  
+<table style="margin:auto;padding-right:25%; padding-left:20%;" id="excelTable" border="1">
+  <thead>
+  <tr>
+    <th style="text-align:left">Category</th>
+    <th style="text-align:left">Function</th>
+    <th style="text-align:left">Feature</th>
+    <th style="text-align:left">Keychain ID</th>
+    <th style="text-align:left">Key ID</th>
+    <th style="text-align:left">Inserted</th>
+  </tr>
+</thead>
 </table>
 
 <script>
-
 window.onload = function() {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', '../../assets/excel/keys.csv', true);
@@ -37,15 +52,29 @@ window.onload = function() {
       const tableElement = document.createElement('div');
       tableElement.innerHTML = htmlTable;
       tableElement.querySelector('table').deleteRow(0);
+      tableElement.querySelector('table').deleteRow(0);
+
+      // Designate the new first row as the header row
+      tableElement.querySelector('tr').classList.add('header');
+
       // Remove the second, fourth column from the HTML table
       const rows = tableElement.querySelectorAll('tr');
       rows.forEach(row => {
-        row.deleteCell(1);
-        row.deleteCell(2);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(3);
+        row.deleteCell(4);
+        row.deleteCell(5);
+        row.deleteCell(6);
       });
-      const modifiedHtmlTable = tableElement.innerHTML;
-
-      document.getElementById('excelTable').innerHTML = modifiedHtmlTable;
+      
+      // Append the modified table to the existing table
+      document.getElementById('excelTable').innerHTML += tableElement.innerHTML;
     } else {
       console.error('Failed to load Excel file! Status code: ' + xhr.status);
     }
@@ -58,6 +87,7 @@ window.onload = function() {
   xhr.send();
 };
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
 </body>
 </html>
