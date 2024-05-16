@@ -1,3 +1,13 @@
+# <a name="contributing">Contributing Overview</a>
+
+Please do! Thank you for your help in improving Meshery! :balloon:
+
+---
+
+<details>
+
+  <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3></summary>
+
 # Contributor Guide for UI component
 
 This guide is specific to the Meshery UI component and involves steps/methods one need to follow while working on issues related to Meshery UI.
@@ -70,3 +80,5 @@ npm run test:e2e:chromium
 npm run test:e2e:fast
 
 ```
+
+</details>
