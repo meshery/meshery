@@ -16,7 +16,7 @@ import { updateProgress } from '../../lib/store';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+const INITIAL_GRID_SIZE = { xl: 4, md: 4, xs: 12 };
 
 function PatternCardGridItem({
   pattern,
@@ -35,7 +35,6 @@ function PatternCardGridItem({
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
-
   return (
     <Grid item {...gridProps}>
       <MesheryPatternCard
