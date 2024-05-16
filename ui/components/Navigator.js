@@ -104,8 +104,8 @@ const styles = (theme) => ({
   itemCategory: {
     backgroundColor: '#263238',
     boxShadow: '0 -1px 0 #404854 inset',
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingTop: 21,
+    paddingBottom: 21,
   },
   firebase: {
     top: 0,
