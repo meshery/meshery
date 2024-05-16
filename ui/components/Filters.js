@@ -44,8 +44,8 @@ import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
 import Modal from './Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
-import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import { getMeshModels } from '../api/meshmodel';
+import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -63,6 +63,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
+import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
+import { importFilterSchema, importFilterUiSchema } from '@layer5/sistent';
 
 const styles = (theme) => ({
   grid: {
@@ -248,7 +250,6 @@ function MesheryFilters({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -336,44 +337,31 @@ function MesheryFilters({
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+    async function fetchMeshModels() {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = models?.map((model) => model.displayName) || [];
+        modelNames.sort(); // Sort model names
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
+        // Modify the schema to include mesh models
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema, // Use publishSchema as the base schema
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
+
+        // Set the modified schema and UI schema
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+        setMeshModels(models);
+      } catch (error) {
+        console.error('Error fetching mesh models:', error);
+      }
+    }
+
+    fetchMeshModels();
+  }, []);
+
+  useEffect(() => {
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -1233,7 +1221,7 @@ function MesheryFilters({
       () => {
         updateProgress({ showProgress: false });
         notify({
-          message: `"${name}" filter uploaded`,
+          message: `${name} filter uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       },
@@ -1385,7 +1373,7 @@ function MesheryFilters({
                 setSelectedFilter={setSelectedFilter}
                 selectedFilter={selectedFilter}
                 pages={Math.ceil(count / pageSize)}
-                importSchema={importSchema}
+                importSchema={importFilterSchema}
                 setPage={setPage}
                 selectedPage={page}
                 publishModal={publishModal}
@@ -1411,7 +1399,7 @@ function MesheryFilters({
               publishModal.open &&
               CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
                 <PublishModal
-                  publishFormSchema={publishSchema}
+                  publishFormSchema={publishCatalogItemSchema}
                   handleClose={handlePublishModalClose}
                   title={publishModal.filter?.name}
                   handleSubmit={handlePublish}
@@ -1419,7 +1407,7 @@ function MesheryFilters({
               )}
             {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
               <ImportModal
-                importFormSchema={importSchema}
+                importFormSchema={importFilterSchema}
                 handleClose={handleUploadImportClose}
                 handleImportFilter={handleImportFilter}
               />
@@ -1448,15 +1436,15 @@ function MesheryFilters({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportFilter } = props;
+  const { handleClose, handleImportFilter } = props;
 
   const classes = useStyles();
 
   return (
     <Modal
       open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
+      schema={importFilterSchema}
+      uiSchema={importFilterUiSchema}
       handleClose={handleClose}
       handleSubmit={handleImportFilter}
       title="Import Design"

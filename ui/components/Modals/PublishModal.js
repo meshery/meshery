@@ -37,8 +37,8 @@ export default function PublishModal(props) {
   return (
     <Modal
       open={open}
-      schema={publishSchema}
-      uiSchema={publishUiSchema}
+      schema={publishSchema.rjsfSchema}
+      uiSchema={publishSchema.uiSchema}
       title={title}
       handleClose={handleClose}
       handleSubmit={handleSubmit}

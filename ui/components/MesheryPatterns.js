@@ -57,7 +57,13 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  ResponsiveDataTable,
+  importDesignSchema,
+  importDesignUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -340,7 +346,6 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [setExtensionPreferences] = useState({});
   const router = useRouter();
-  const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
 
@@ -578,45 +583,28 @@ function MesheryPatterns({
   }, [catalogVisibility]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/design',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+    async function fetchMeshModels() {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = models?.map((model) => model.displayName) || [];
+        modelNames.sort(); // Sort model names
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
+        // Modify the schema to include mesh models
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema, // Use publishSchema as the base schema
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
 
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          handleError(ACTION_TYPES.SCHEMA_FETCH);
-          setPublishSchema(result);
-        }
-      },
-    );
+        // Set the modified schema and UI schema
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+        setMeshModels(models);
+      } catch (error) {
+        console.error('Error fetching mesh models:', error);
+      }
+    }
+
+    fetchMeshModels();
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -1720,7 +1708,7 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importSchema}
+              importFormSchema={importDesignSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1748,7 +1736,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportDesign } = props;
+  const { handleClose, handleImportDesign } = props;
 
   const classes = useStyles();
 
@@ -1756,8 +1744,8 @@ const ImportModal = React.memo((props) => {
     <>
       <Modal
         open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
+        schema={importDesignSchema}
+        uiSchema={importDesignUiSchema}
         handleClose={handleClose}
         handleSubmit={handleImportDesign}
         title="Import Design"
