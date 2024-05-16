@@ -59,16 +59,26 @@ Verify your kubeconfig's current context.
 
 ### Installation: Using `mesheryctl`
 
+<details>
+<summary>Verify your Meshery context</summary>
+<p>
 Verify that your current Meshery context is set for an in-cluster deployment (`platform: kubernetes`) by executing:
-`mesheryctl system context view`.
+</p>
+
 {% capture code_content %}$ mesheryctl system context view{% endcapture %}
 {% include code.html code=code_content %}
-If the context is not set to `platform: kubernetes`, you can create a new context with Kubernetes as the platform using the following command.
+<p>
+If the context is not set to <code>platform: kubernetes</code>, you can create a new context with Kubernetes as the platform using the following command.
+</p>
+
 {% capture code_content %}$ mesheryctl system context create context-name --platform kubernetes --url http://localhost:9081 --set --yes{% endcapture %}
 {% include code.html code=code_content %}
+<br/>
+</details>
 
-With your KinD cluster configured your `current-context`, start Meshery.
-{% capture code_content %}$ mesheryctl system start{% endcapture %}
+With your KIND cluster configured your `current-context`, start Meshery.
+
+{% capture code_content %}$ mesheryctl system start -p kubernetes{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Alternative Installation: Using Helm

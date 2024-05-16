@@ -25,12 +25,12 @@ export default function MesheryConfigurationChart({ classes }) {
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
     page: 0,
-    pagesize: 25,
+    pagesize: 1,
   });
 
   const { data: filtersData, error: filtersError } = useGetFiltersQuery({
     page: 0,
-    pagesize: 25,
+    pagesize: 1,
   });
 
   useEffect(() => {

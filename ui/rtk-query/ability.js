@@ -11,7 +11,7 @@ export const useGetUserAbilities = (org, skip) => {
   const [getUserQuery] = useLazyGetUserKeysQuery();
 
   useEffect(() => {
-    getUserQuery({ orgId: org.id }, { skip })
+    getUserQuery({ orgId: org?.id }, { skip })
       .unwrap()
       .then((res) => {
         const abilities = res.keys?.map((key) => ({
@@ -27,7 +27,7 @@ export const useGetUserAbilities = (org, skip) => {
       .catch((error) => {
         console.error('Error when fetching keys in useGetUserAbilities custom hook', error);
       });
-  }, [org.id, getUserQuery, skip]);
+  }, [org?.id, getUserQuery, skip]);
 
   return data;
 };

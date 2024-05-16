@@ -308,7 +308,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
     viewColumns: false,
     download: false,
     selectToolbarPlacement: 'none',
-    selectableRows: false,
+    selectableRows: 'none',
     elevation: 0,
     draggableColumns: {
       enabled: true,
