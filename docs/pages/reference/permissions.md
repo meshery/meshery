@@ -24,6 +24,7 @@ Permissions are represented as <b>keys</b>, each serving as a unique identifier 
     <th style="text-align:left">Feature</th>
     <th style="text-align:left">Keychain ID</th>
     <th style="text-align:left">Key ID</th>
+    <th style="text-align:left">Inserted</th>
   </tr>
 </thead>
 </table>
@@ -61,7 +62,6 @@ window.onload = function() {
         row.deleteCell(4);
         row.deleteCell(5);
         row.deleteCell(6);
-        row.deleteCell(5);
       });
       
       document.getElementById('excelTable').innerHTML += tableElement.innerHTML;
