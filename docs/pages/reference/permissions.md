@@ -22,7 +22,7 @@ abstract: List of default permissions.
 <body>
 Permissions are represented as <b>keys</b>, each serving as a unique identifier for a specific permission. One or more keys can be grouped together and assigned to a <b>keychain</b>.<br>
 
-<table style="margin:auto;padding-right:25%; padding-left:20%;" id="excelTable" border="1">
+<table style="margin:auto;padding-right:25%; padding-left:20%; margin-top:3rem;" id="excelTable" border="1">
   <thead>
   <tr>
     <th style="text-align:left">Category</th>
