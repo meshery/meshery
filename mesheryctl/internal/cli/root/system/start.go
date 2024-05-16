@@ -71,6 +71,9 @@ mesheryctl system start --reset
 
 // Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
+
+// Specify Provider to use.
+mesheryctl system start --provider Meshery
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -174,6 +177,10 @@ func start() error {
 		}
 	}
 
+	if providerFlag != "" {
+		currCtx.SetProvider(providerFlag)
+	}
+
 	// Reset Meshery config file to default settings
 	if utils.ResetFlag {
 		err := resetMesheryConfig()
@@ -255,8 +262,13 @@ func start() error {
 					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				}
 
+				providerEnvVar := currCtx.GetProvider()
+				// If user has specified provider using --provider flag use that.
+				if providerFlag != "" {
+					providerEnvVar = providerFlag
+				}
 				if currCtx.GetProvider() != "" {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "PROVIDER", currCtx.GetProvider()))
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "PROVIDER", providerEnvVar))
 				}
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
@@ -442,6 +454,7 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
 // Apply Meshery helm charts

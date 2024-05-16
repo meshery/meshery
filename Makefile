@@ -26,7 +26,7 @@ docker-build:
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
-## Build Meshery Server and UI container in Playground mode. 
+## Build Meshery Server and UI container in Playground mode.
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
@@ -152,7 +152,7 @@ server-skip-compgen:
  	SKIP_COMP_GEN=true \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
-	
+
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
 server-without-k8s: dep-check
@@ -288,7 +288,7 @@ ui-provider-test:
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm lint:fix && npm run build && npm run export; cd ..
+	cd provider-ui; npm run lint:fix && npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
