@@ -591,6 +591,7 @@ export const styles = (theme) => ({
   root: {
     display: 'flex',
     minHeight: '100vh',
+    height: '100vh',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -601,6 +602,10 @@ export const styles = (theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    '& > div:first-child': {
+      height: 'inherit',
+      width: 'inherit',
+    },
   },
   drawerCollapsed: {
     [theme.breakpoints.up('sm')]: { width: theme.spacing(8.4) + 1 },
@@ -608,7 +613,10 @@ export const styles = (theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: 'hidden',
+    '& > div:first-child': {
+      height: 'inherit',
+      width: 'inherit',
+    },
   },
   appContent: {
     flex: 1,
