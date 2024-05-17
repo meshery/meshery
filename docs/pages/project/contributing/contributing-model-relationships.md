@@ -235,8 +235,7 @@ Scope is defined and controlled via the `selectors` [Selectors](#structure-of-se
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
 
-<details>
-<summary>Frequently Asked Questions (FAQ)</summary>
+### Frequently Asked Questions (FAQ)
 
 ## How can I validate that my new or updated relationships are syntactically valid?
  -To validate new relationships, you can use the [Schemas](https://github.com/meshery/schemas/tree/849c40f5766be18d36a7e250334d43e085b103a0/schemas/meshmodel/schemas). Since the relationship definitions are 
@@ -259,4 +258,4 @@ For more information refer - [Model - Construct Models in Meshery](https://docs.
 ## How do I know what selector to choose and what to fill inside MutatorRef or MutatedRef?
 -This solely depends on what relationship you're working on , generally you may use helm charts of the components  determine what should be filled in the mutator and mutated ref , you can always refer existing 
  relationship definations for better understanding.
-</details>
+
