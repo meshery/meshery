@@ -72,8 +72,8 @@ mesheryctl system dashboard
 // Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 mesheryctl system dashboard --port-forward
 
-// Open Meshery UI in browser and use port-forwarding, listen on port 30000 locally, forwarding traffic to meshery server in the pod
-mesheryctl system dashboard --port-forward -p 30000
+// Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
+mesheryctl system dashboard --port-forward -p 9081
 
 // (optional) skip opening of MesheryUI in browser.
 mesheryctl system dashboard --skip-browser
@@ -248,7 +248,7 @@ func keepConnectionAlive(url string) {
 
 func init() {
 	dashboardCmd.Flags().BoolVarP(&runPortForward, "port-forward", "", false, "(optional) Use port forwarding to access Meshery UI")
-	dashboardCmd.Flags().IntVarP(&localPort, "port", "p", 0, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
+	dashboardCmd.Flags().IntVarP(&localPort, "port", "p", 9081, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
 
 	dashboardCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }
