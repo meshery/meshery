@@ -6,7 +6,9 @@
   },
   "model": {
     "name": "argo-cd",
-    "version": "2.10",
+"model" : {
+    "version": "2.10"
+    },
     "displayName": "argo-cd",
     "category": {
       "name": "App Definition and Development",
