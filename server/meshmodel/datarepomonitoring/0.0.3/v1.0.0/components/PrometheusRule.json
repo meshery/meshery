@@ -35,8 +35,21 @@
    "relationships": null
   },
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
    "isNamespaced": true,
-   "shape": "circle"
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
   },
   "component": {
    "kind": "PrometheusRule",
