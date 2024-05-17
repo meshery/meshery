@@ -227,6 +227,7 @@ mesheryctl system dashboard --skip-browser
 		}
 
 		if !skipBrowserFlag {
+			log.Warn("This flag is intended for use when Meshery is deployed on a Kubernetes platform.")
 			log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
