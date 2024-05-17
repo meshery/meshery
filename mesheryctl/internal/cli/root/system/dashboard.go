@@ -165,7 +165,7 @@ mesheryctl system dashboard --skip-browser
 						}
 					}
 				}()
-				log.Info(fmt.Sprintf("Forwarding ports %v -> %v", options.podPort, localPort))
+				log.Info(fmt.Sprintf("Forwarding port %v -> %v", options.podPort, localPort))
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in the default browser.")
 				err = utils.NavigateToBrowser(mesheryURL)
