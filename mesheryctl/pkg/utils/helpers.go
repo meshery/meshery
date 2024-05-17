@@ -23,7 +23,6 @@ import (
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
@@ -1081,7 +1080,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1131,13 +1130,7 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL str
 	// set the provider
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderENV: ctx.GetProvider(),
-		}
-	}
-
-	if callbackURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.CallbackURLENV: callbackURL,
+			"PROVIDER": ctx.GetProvider(),
 		}
 	}
 
@@ -1229,13 +1222,4 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		}
 	}
 	return nil
-}
-
-func FindInSlice(key string, items []string) (int, bool) {
-	for idx, item := range items {
-		if item == key {
-			return idx, true
-		}
-	}
-	return -1, false
 }

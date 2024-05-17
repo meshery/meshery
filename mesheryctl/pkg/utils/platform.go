@@ -452,8 +452,8 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 
 		return append(envVarI, map[string]interface{}{
-			"name":  constants.CallbackURLENV,
-			"value": viper.GetString(constants.CallbackURLENV),
+			"name":  "MESHERY_SERVER_CALLBACK_URL",
+			"value": viper.GetString("MESHERY_SERVER_CALLBACK_URL"),
 		}), nil
 	}, "spec", "template", "spec", "containers", "0", "env")
 	if err != nil {
