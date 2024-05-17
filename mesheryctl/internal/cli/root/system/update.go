@@ -65,7 +65,6 @@ mesheryctl system update --skip-reset
 		if len(args) != 0 {
 			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
 		}
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -134,7 +133,7 @@ mesheryctl system update --skip-reset
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, ""); err != nil {
+				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}

@@ -578,7 +578,7 @@ func TestSetOverrideValues(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion, "")
+		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion)
 		eq := reflect.DeepEqual(got, tt.want)
 		if !eq {
 			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)

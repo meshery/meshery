@@ -12,7 +12,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -108,7 +107,7 @@ func main() {
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
-	viper.SetDefault(constants.ProviderENV, "")
+	viper.SetDefault("PROVIDER", "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
@@ -305,7 +304,7 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, constants.ProviderENV, &rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), &rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
