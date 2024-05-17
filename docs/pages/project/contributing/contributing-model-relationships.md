@@ -234,3 +234,25 @@ Scope is defined and controlled via the `selectors` [Selectors](#structure-of-se
      of conflict
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
+
+<details>
+<summary>Frequently Asked Questions (FAQ)</summary>
+
+## How can I validate that my new or updated relationships are syntactically valid?
+To validate new relationships, you can use the [Schemas](https://github.com/meshery/schemas/tree/849c40f5766be18d36a7e250334d43e085b103a0/schemas/meshmodel/schemas). Since the relationship definitions are written in JSON, JSON validators and formatters can be used to ensure they are correctly formatted.
+
+## How do I test relationships that I have defined and verify that they are working as expected?
+You can test the relationships by running the Meshery server locally using `make`. As you update the relationship files locally, restart the server. The updates will be registered in the registry automatically. Proceed to test the relationships from MeshMap.
+
+## Can I do this with the command line?
+Yes, you can develop relationships through the CLI.
+
+## Can I do this visually?
+At present, there is no feature to develop relationships visually, but it is on the future roadmap.
+
+## Relationship scope: How can I avoid conflicting or overlapping evaluation of this relationship with existing relationships? How can I tell if there is a conflict and how can I control which policy will "win"?
+To avoid conflicts or overlapping evaluations of relationships, carefully define the scope and selectors. Currently, there is no automated conflict detection, so manual review of the relationships is necessary to ensure there are no conflicts. Control over which policy will "win" can be managed by prioritizing or explicitly defining policy precedence.
+
+## How do I know what selector to choose and what to fill inside MutatorRef or MutatedRef?
+This solely depends on what relationship you're working on , generally you may use helm charts of the components  determine what should be filled in the mutator and mutated ref , you can always refer existing relationship definations for better understanding.
+</details>
