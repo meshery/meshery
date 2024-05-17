@@ -1,3 +1,13 @@
+# <a name="contributing">Contributing Overview</a>
+
+Please do! Thank you for your help in improving Meshery! :balloon:
+
+---
+
+<details>
+
+  <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3></summary>
+
 # Contributor Guide for UI component
 
 This guide is specific to the Meshery UI component and involves steps/methods one need to follow while working on issues related to Meshery UI.
@@ -41,3 +51,34 @@ For reference and easy code search, the components are named accordingly followi
 involved in rendering the Results page of Meshery UI are named as 'MesheryResults.js', 'MesheryResultDialog.js', 'MesherySMIResults.js'. Please follow this convention if you are creating a new component.
 
 <p style="text-align: center"><em>If you'll like to go to the main Meshery Contributor guide <a href="../CONTRIBUTING.md">click here</a></em></p>
+
+## Testing
+
+- Meshery UI uses Playwright for end-to-end testing. The tests are written in JavaScript and are located in the `ui/tests` directory.
+
+- Install the dependencies by running the following command:
+
+```bash
+
+npm install
+
+npm playwright install --with-deps
+
+```
+
+- To run the tests, you can use the following command:
+
+```bash
+
+// for running the whole test suite with all browsers
+npm run test:e2e
+
+// for running only on chromium
+npm run test:e2e:chromium
+
+// for only running fast tests
+npm run test:e2e:fast
+
+```
+
+</details>
