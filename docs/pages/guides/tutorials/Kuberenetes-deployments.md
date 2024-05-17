@@ -17,25 +17,6 @@ In this tutorial, we will delve into the world of Kubernetes Deployments, a key 
 - Basic understanding of Kubernetes concepts.
 - Meshery Playground access. If you don't have an account, sign up at [Meshery Playground](https://meshery.layer5.io/play).
 
-## Lab Scenario: Deploying and Scaling a Microservices Application
-
-### Objective
-Learn how to use Kubernetes Deployments to deploy and scale a microservices-based application.
-
-### Steps:
-
-#### 1. Accessing Meshery Playground:
-   - Log in to the [Meshery Playground](https://meshery.layer5.io/play) using your credentials.
-   - Navigate to the Meshery Playground dashboard.
-
-#### 2. Deploying a Microservices Application:
-   - Deploy a sample microservices application with multiple components using Meshery UI and MeshMap in Meshery Playground.
-     - Reference: [Meshery Design - Microservices App](https://meshery.layer5.io/catalog/microservices-app)
-
-
-```bash
-mesheryctl pattern apply -f https://raw.githubusercontent.com/example/microservices-app-deployment.yaml
-```
 
 #### creating a standalone deployment
  Here is the deployment.yaml we are going use for this tutorial 
