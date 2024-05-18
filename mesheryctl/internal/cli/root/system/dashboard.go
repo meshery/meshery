@@ -105,9 +105,10 @@ mesheryctl system dashboard --skip-browser
 			return nil
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
-
+		log.Warn("The current flag is intended for use exclusively when Meshery is deployed on a Kubernetes platform.")
 		switch currCtx.GetPlatform() {
 		case "docker":
+			utils.Log.Error(errors.New("Platform mismatch: Docker is currently in use. This flag is specifically designed for the Kubernetes platform."))
 			break
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
