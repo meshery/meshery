@@ -93,7 +93,10 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
     capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
   );
 }
-
+export const isMeshmapPath = (path = '') => {
+  console.log('here', path);
+  return path.endsWith(mesheryExtensionRoute);
+};
 export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
@@ -600,8 +603,7 @@ class MesheryApp extends App {
     this.setState({ theme: thememode });
   };
   render() {
-    const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
-
+    const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment, path } = this.props;
     return (
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
@@ -678,7 +680,12 @@ class MesheryApp extends App {
                           />
                         )}
                       </NotificationCenterProvider>
-                      <main className={classes.mainContent}>
+                      <main
+                        className={classes.mainContent}
+                        style={{
+                          padding: isMeshmapPath(path) && '0px',
+                        }}
+                      >
                         <MuiPickersUtilsProvider utils={MomentUtils}>
                           <ErrorBoundary>
                             <Component
@@ -696,6 +703,9 @@ class MesheryApp extends App {
                       </main>
                     </SnackbarProvider>
                     <footer
+                      style={{
+                        display: isMeshmapPath(path) && 'none',
+                      }}
                       className={
                         this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
                           ? classes.playgroundFooter
@@ -757,6 +767,7 @@ MesheryApp.propTypes = { classes: PropTypes.object.isRequired };
 
 const mapStateToProps = (state) => ({
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
+  path: state.get('page').get('path'),
   k8sConfig: state.get('k8sConfig'),
   operatorSubscription: state.get('operatorSubscription'),
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
