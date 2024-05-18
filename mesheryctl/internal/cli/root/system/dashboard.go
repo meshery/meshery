@@ -109,7 +109,6 @@ mesheryctl system dashboard --skip-browser
 		switch currCtx.GetPlatform() {
 		case "docker":
 			utils.Log.Error(errors.New("Platform mismatch: Docker is currently in use. This flag is specifically designed for the Kubernetes platform."))
-			break
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {
