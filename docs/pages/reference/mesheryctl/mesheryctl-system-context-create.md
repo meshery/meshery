@@ -49,6 +49,7 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
   -a, --components stringArray   List of components
   -h, --help                     help for create
   -p, --platform string          Platform to deploy Meshery
+      --provider string          Provider to use with the Meshery server
   -s, --set                      Set as current context
   -u, --url string               Meshery Server URL with Port
 

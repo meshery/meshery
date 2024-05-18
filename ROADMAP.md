@@ -179,4 +179,9 @@ connection, credential
 - [CLI] Colorizing output
 - [CLI] Mesheryctl Code coverage goal: 40%
 
+**Catalog**
+
+- [Catalog] Intellectual property protections for user-produced content
+- [UI/Server] Improved performance and stability in catalog interactions to facilitate payment processing
+
 Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.

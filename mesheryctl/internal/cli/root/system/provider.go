@@ -30,6 +30,8 @@ import (
 var (
 	showProviderForAllContext bool
 	forceSetProvider          bool
+	MesheryProvider           = "Meshery"
+	NoneProvider              = "None"
 )
 
 // PrintProviderToStdout to return provider details for a context
@@ -348,7 +350,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		currCtx.Provider = "Meshery"
+		currCtx.Provider = MesheryProvider
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)
