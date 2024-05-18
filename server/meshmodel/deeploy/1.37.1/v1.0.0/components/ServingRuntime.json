@@ -35,21 +35,8 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
    "isNamespaced": true,
-   "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shape": "circle"
   },
   "component": {
    "kind": "ServingRuntime",
