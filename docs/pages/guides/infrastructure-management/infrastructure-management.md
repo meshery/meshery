@@ -43,14 +43,13 @@ See [Importing Applications]({{site.baseurl}}guides/configuration-management/imp
 <h4>3. Validation</h4>
 <p>Components in the design are validated against the schema, ensuring consistency, similar to Kubernetes object validation but tailored for Designs.</p>
 <h4>4. Dependency Detection and Resolution</h4>
-<p>Meshery identifies and resolves dependencies among components. The order of provisioning is critical for successful deployment, and circular dependencies result in the termination of the request.</p>
+<p>Meshery uses <a href="https://github.com/meshery/meshkit/blob/bd00372a4645ff28abe11dae2442f6a627f8c3f9/models/meshmodel/core/v1beta1/host.go">Meshkit</a> to efficiently manage and resolve component dependencies. By utilizing the Helm Go client, it ensures that the provisioning sequence is maintained for successful deployment as a Helm chart. Circular dependencies are promptly detected, resulting in the termination of the request to prevent deployment issues.</p>
 <h4>5. Provisioning</h4>
 <p>A Directed Acyclic Graph (DAG) generated in the previous step is processed. Dependent components are processed sequentially, while others are processed in parallel. Meshery intelligently handles the deployment order to ensure successful deployment.</p>
 </details>
 
 <h3>Auto-Deployment of CRDs and Operators</h3>
-
-Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. Currently, by default Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts). (_Support for OCI registries is expected in the near future._)
+Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. When a deployment request is made for a HelmChart without the upgrade flag, Meshery does not check for the existence of the HelmChart and always tries to install it. In cases where the chart/release already exists, the installation fails (from the Helm side), and Meshery errors out. Currently, by default, Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts). (_Support for OCI registries is expected in the near future._)
 
 {% include alert.html title="Upcoming Features" type="info" content="<p>Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility. Support for OCI registries is expected in the near future.</p>
 <p>1. <b>Custom Models and Components:</b>
