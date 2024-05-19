@@ -37,6 +37,8 @@ The difficulty with Minikube and Kind clusters is that they typically don't supp
 
    `kubectl port-forward service/meshery 9081:9081 -n meshery`
 
+   {% include mesheryctl/system-dashboard %}
+
 3. For `kind`, you can prefer installing MetalLB with a custom configmap.
 
    Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
