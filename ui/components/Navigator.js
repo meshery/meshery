@@ -1397,7 +1397,7 @@ class Navigator extends React.Component {
           classes={{
             paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
           }}
-          style={{ width: 'inherit' }}
+          style={{ height: '100%' }}
         >
           {Title}
           {Menu}

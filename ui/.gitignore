@@ -7,3 +7,31 @@ coverage
 
 # Locally registered MeshModel packages
 public/static/img/meshmodels/
+
+#playwright test setup artifacts
+/playwright/.auth/*.json
+
+#playwright test results
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests/samples/seededDesigns.js
+
+
+#env vars
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.test.cloud
+.env.production.local
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -31,6 +31,7 @@ import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
+import { useDynamicComponent } from '@/utils/context/dynamicContext';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -46,7 +47,6 @@ function NavigatorExtension({
 }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   console.log(err);
-
   if (loading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
   }
@@ -121,6 +121,7 @@ function NavigatorExtension({
         StructuredDataFormatter: FormatStructuredData,
         hooks: {
           useFilterK8sContexts,
+          useDynamicComponent,
         },
       }}
     />
