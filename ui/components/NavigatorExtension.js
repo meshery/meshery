@@ -20,7 +20,7 @@ import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
-import PublishModal from '../components/Modals/PublishModal';
+import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -113,7 +113,7 @@ function NavigatorExtension({
         SelectDeploymentTarget: SelectDeploymentTarget,
         getComponentsinFile,
         UploadImport,
-        PublishModal,
+        InfoModal,
         ExportModal,
         GenericRJSFModal: Modal,
         PromptComponent,
