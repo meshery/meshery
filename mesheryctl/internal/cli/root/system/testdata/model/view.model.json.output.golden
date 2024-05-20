@@ -1,17 +1,28 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "bda7b409-8025-5428-8274-0c1399d20069",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
   "name": "spire",
-  "version": "0.12.2",
   "displayName": "SPIRE",
-  "status": "",
-  "hostID": "00000000-0000-0000-0000-000000000000",
+  "description": "",
+  "status": "enabled",
+  "hostID": "26e64aa8-2d86-57bd-92b3-2a73160d27b4",
+  "registrant": {
+    "hostname": "artifacthub"
+  },
   "category": {
     "name": "Security & Compliance",
     "metadata": null
   },
+  "subCategory": "",
   "metadata": {
-    "svgColor": "ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg",
-    "svgWhite": "ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg"
+    "isAnnotation": false,
+    "source_uri": "https://github.com/philips-labs/helm-charts/releases/download/spire-0.12.2/spire-0.12.2.tgz",
+    "svgColor": "ui/public/static/img/meshmodels/spire/color/spire-color.svg",
+    "svgWhite": "ui/public/static/img/meshmodels/spire/white/spire-white.svg"
+  },
+  "model": {
+    "version": "0.12.2"
   },
   "components": null,
   "relationships": null
