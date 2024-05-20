@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -52,7 +51,6 @@ func TestListModelCmd(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		fmt.Println(tt)
 		t.Run(tt.Name, func(t *testing.T) {
 			// View api response from golden files
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
