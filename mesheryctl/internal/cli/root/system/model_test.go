@@ -20,7 +20,7 @@ func TestListModelCmd(t *testing.T) {
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
 	// initialize mock meshery backend
-	go utils.StartMockMesheryServer(t) // nolint
+	utils.StartMockMesheryServer(t) // nolint
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -116,7 +116,7 @@ func TestListModelCmd(t *testing.T) {
 func TestModelViewCmd(t *testing.T) {
 	SetupContextEnv(t)
 	// initialize mock meshery backend
-	go utils.StartMockMesheryServer(t) // nolint
+	utils.StartMockMesheryServer(t) // nolint
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
