@@ -94,7 +94,6 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
   );
 }
 export const isMeshmapPath = (path = '') => {
-  console.log('here', path);
   return path.endsWith(mesheryExtensionRoute);
 };
 export function isExtensionOpen() {
