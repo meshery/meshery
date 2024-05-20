@@ -1,7 +1,9 @@
 package system
 
 import (
+	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -13,6 +15,7 @@ import (
 
 // This is an Integration test
 func TestListModelCmd(t *testing.T) {
+
 	SetupContextEnv(t)
 	// initialize mock server for handling requests
 	utils.StartMockery(t)
@@ -39,20 +42,20 @@ func TestListModelCmd(t *testing.T) {
 	}{
 		{
 			Name:             "view list of models",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.model.output.golden",
 			Fixture:          "list.model.api.response.golden",
-			URL:              testContext.BaseURL + "/api/meshmodels/models?pagesize=all",
+			URL:              testContext.BaseURL + "/api/meshmodels/models?page=1",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
 	}
 
 	for _, tt := range tests {
+		fmt.Println(tt)
 		t.Run(tt.Name, func(t *testing.T) {
 			// View api response from golden files
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
 			// set token
 			utils.TokenFlag = tt.Token
 
@@ -65,7 +68,10 @@ func TestListModelCmd(t *testing.T) {
 
 			// Grab console prints
 			rescueStdout := os.Stdout
-			r, w, _ := os.Pipe()
+			r, w, err := os.Pipe()
+			if err != nil {
+				log.Fatal(err)
+			}
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			ModelCmd.SetArgs(tt.Args)
