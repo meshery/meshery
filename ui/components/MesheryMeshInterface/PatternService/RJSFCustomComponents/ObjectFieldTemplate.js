@@ -4,7 +4,6 @@ import { canExpand } from '@rjsf/utils';
 import { CssBaseline, useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
-import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
@@ -12,6 +11,7 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid, getHyperLinkDiv } from '../helper';
+import { CustomTooltip } from '@layer5/sistent';
 
 const styles = (theme) => ({
   objectFieldGrid: {
@@ -121,7 +121,7 @@ const ObjectFieldTemplate = ({
               {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
             </Typography>
             {description && (
-              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
+              <CustomTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -135,10 +135,10 @@ const ObjectFieldTemplate = ({
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
-              </CustomTextTooltip>
+              </CustomTooltip>
             )}
             {rawErrors.length !== 0 && (
-              <CustomTextTooltip
+              <CustomTooltip
                 backgroundColor={ERROR_COLOR}
                 title={rawErrors?.map((error, index) => (
                   <div key={index}>{error}</div>
@@ -157,7 +157,7 @@ const ObjectFieldTemplate = ({
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
-              </CustomTextTooltip>
+              </CustomTooltip>
             )}
           </Grid>
         </Grid>

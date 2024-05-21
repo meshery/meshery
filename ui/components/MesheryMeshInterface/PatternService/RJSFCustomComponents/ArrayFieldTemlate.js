@@ -6,14 +6,14 @@ import Paper from '@material-ui/core/Paper';
 import { Button, IconButton, Typography, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SimpleAccordion from './Accordion';
-import { CustomTextTooltip } from '../CustomTextTooltip';
+// import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 import pluralize from 'pluralize';
+import { CustomTooltip } from '@layer5/sistent';
 const styles = (theme) => ({
   typography: {
     fontSize: '0.8rem',
@@ -183,10 +183,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             />
 
             {(props.uiSchema['ui:description'] || props.schema.description) && (
-              <CustomTextTooltip
-                backgroundColor="#3C494F"
-                title={getHyperLinkDiv(props.schema.description)}
-              >
+              <CustomTooltip backgroundColor="#3C494F" title={props.schema.description}>
                 <IconButton disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon
                     width="14px"
@@ -195,10 +192,10 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                     style={{ marginLeft: '4px', ...iconSmall }}
                   />
                 </IconButton>
-              </CustomTextTooltip>
+              </CustomTooltip>
             )}
             {props.rawErrors?.length > 0 && (
-              <CustomTextTooltip
+              <CustomTooltip
                 backgroundColor={ERROR_COLOR}
                 interactive={true}
                 title={props.rawErrors?.map((error, index) => (
@@ -218,7 +215,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
-              </CustomTextTooltip>
+              </CustomTooltip>
             )}
           </Grid>
           <Grid item xs={4}>

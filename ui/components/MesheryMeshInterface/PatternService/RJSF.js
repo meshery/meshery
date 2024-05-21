@@ -5,7 +5,7 @@ import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
-import { CustomTextTooltip } from './CustomTextTooltip';
+// import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
@@ -19,6 +19,8 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
+import { CustomTooltip } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -56,7 +58,7 @@ function RJSFForm({
     if (extensionTooltipPortal) {
       rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
     }
-    rjsfTheme.zIndex.modal = 99999;
+    // rjsfTheme.zIndex.modal = 99999;
   }, []);
 
   if (isLoading && LoadingComponent) {
@@ -81,7 +83,14 @@ function RJSFForm({
             WrapIfAdditionalTemplate,
             FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
           }}
-          formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
+          formContext={{
+            overrideFlag: override,
+            CustomTextTooltip: (
+              <UsesSistent>
+                <CustomTooltip />
+              </UsesSistent>
+            ),
+          }}
           uiSchema={_.merge(schema.uiSchema, uiSchema)}
           widgets={{
             // Custom components to be added here

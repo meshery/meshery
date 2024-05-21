@@ -218,7 +218,7 @@ function Modal(props) {
 
   return (
     <>
-      <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose}>
         <div className={classes.modalHeader}>
           <Typography className={classes.leftHeaderIcon}>
             {leftHeaderIcon ? leftHeaderIcon : null}

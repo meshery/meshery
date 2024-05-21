@@ -1,10 +1,9 @@
 import { Checkbox, FormControlLabel, IconButton, useTheme } from '@material-ui/core';
 import { labelValue, schemaRequiresTrueValue } from '@rjsf/utils';
 import React from 'react';
-import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
+import { CustomTooltip } from '@layer5/sistent';
 
 export const CustomCheckboxWidget = (props) => {
   const {
@@ -42,10 +41,10 @@ export const CustomCheckboxWidget = (props) => {
           <>
             {labelValue(label, hideLabel, required)}
             {schema.description && (
-              <CustomTextTooltip
+              <CustomTooltip
                 backgroundColor="#3C494F"
                 flag={props?.formContext?.overrideFlag}
-                title={getHyperLinkDiv(schema?.description)}
+                title={schema?.description}
                 interactive={true}
               >
                 <IconButton component="span" size="small">
@@ -56,7 +55,7 @@ export const CustomCheckboxWidget = (props) => {
                     style={{ verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
-              </CustomTextTooltip>
+              </CustomTooltip>
             )}
           </>
         }

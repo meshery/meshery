@@ -1,12 +1,11 @@
 import React from 'react';
 import { IconButton, InputAdornment, TextField, useTheme, InputLabel } from '@material-ui/core';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 import { makeStyles } from '@material-ui/styles';
+import { CustomTooltip } from '@layer5/sistent';
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -87,7 +86,7 @@ const BaseInput = (props) => {
             endAdornment: (
               <InputAdornment position="start">
                 {props.rawErrors?.length > 0 && (
-                  <CustomTextTooltip
+                  <CustomTooltip
                     backgroundColor={ERROR_COLOR}
                     flag={props?.formContext?.overrideFlag}
                     title={
@@ -107,13 +106,13 @@ const BaseInput = (props) => {
                         style={{ verticalAlign: 'middle', ...iconSmall }}
                       />
                     </IconButton>
-                  </CustomTextTooltip>
+                  </CustomTooltip>
                 )}
                 {props.schema?.description && (
-                  <CustomTextTooltip
+                  <CustomTooltip
                     backgroundColor="#3C494F"
                     flag={props?.formContext?.overrideFlag}
-                    title={getHyperLinkDiv(props.schema?.description)}
+                    title={props.schema?.description}
                     interactive={true}
                   >
                     <IconButton component="span" size="small">
@@ -124,7 +123,7 @@ const BaseInput = (props) => {
                         style={{ verticalAlign: 'middle', ...iconSmall }}
                       />
                     </IconButton>
-                  </CustomTextTooltip>
+                  </CustomTooltip>
                 )}
               </InputAdornment>
             ),
