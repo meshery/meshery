@@ -20,6 +20,17 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	// Stores meshery provider related info.
+	ProviderCookieName = "meshery-provider"
+
+	// Stores the JWT issued by the remote provider to provide secure access to its API
+	TokenCookieName = "token"
+
+	// Stores the remote provider session cookie (identity cookie) to facilitate logout from remote provider as user logs out of Meshery
+	ProviderSessionCookieName = "session_cookie"
+)
+
 // JWK - a type respresting the JSON web Key
 type JWK map[string]string
 
@@ -66,7 +77,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return newTokenString, nil
 	}
 	bd := map[string]string{
-		tokenName: tokenString,
+		TokenCookieName: tokenString,
 	}
 	jsonString, err := json.Marshal(bd)
 	if err != nil {
@@ -86,12 +97,12 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	l.TokenStore[tokenString] = target[tokenName]
+	l.TokenStore[tokenString] = target[TokenCookieName]
 	time.AfterFunc(1*time.Hour, func() {
 		logrus.Infof("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
-	return target[tokenName], nil
+	return target[TokenCookieName], nil
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
@@ -111,7 +122,7 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) 
 
 // GetToken - extracts token form a request
 func (l *RemoteProvider) GetToken(req *http.Request) (string, error) {
-	ck, err := req.Cookie(tokenName)
+	ck, err := req.Cookie(TokenCookieName)
 	if err != nil {
 		return "", ErrGetToken(err)
 	}
@@ -344,4 +355,45 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func setCookie(w http.ResponseWriter, name, value string, duration time.Duration) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  time.Now().Add(duration),
+	})
+}
+
+func unsetCookie(w http.ResponseWriter, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   name,
+		MaxAge: -1,
+	})
+}
+
+func (l *RemoteProvider) SetProviderCookie(w http.ResponseWriter, provider string) {
+	setCookie(w, ProviderCookieName, provider, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetProviderCookie(w http.ResponseWriter) {
+	unsetCookie(w, ProviderCookieName)
+}
+
+func (l *RemoteProvider) SetJWTCookie(w http.ResponseWriter, token string) {
+	setCookie(w, TokenCookieName, token, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetJWTCookie(w http.ResponseWriter) {
+	unsetCookie(w, TokenCookieName)
+}
+
+func (l *RemoteProvider) SetProviderSessionCookie(w http.ResponseWriter, sessionCookie string) {
+	setCookie(w, ProviderSessionCookieName, sessionCookie, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetProviderSessionCookie(w http.ResponseWriter) {
+	unsetCookie(w, ProviderSessionCookieName)
 }
