@@ -3,29 +3,30 @@ import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { publishSchema, publishUiSchema } from '@layer5/sistent';
+import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
 
 // This modal is used in MeshMap also
 export default function PublishModal(props) {
   const { open, title, handleClose, handleSubmit } = props;
-  const [setPublishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState({});
 
   useEffect(() => {
     async function fetchMeshModels() {
       try {
         const { models } = await getMeshModels();
-        const modelNames = models?.map((model) => model.displayName) || [];
+        let modelNames = models?.map((model) => model.displayName) || [];
         modelNames.sort(); // Sort model names
+        modelNames = Array.from(new Set(modelNames)); // Remove duplicates
 
         // Modify the schema to include mesh models
         const modifiedSchema = modifyRJSFSchema(
-          publishSchema, // Use publishSchema as the base schema
+          publishCatalogItemSchema, // Use publishSchema as the base schema
           'properties.compatibility.items.enum',
           modelNames,
         );
 
         // Set the modified schema and UI schema
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishUiSchema });
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
       } catch (error) {
         console.error('Error fetching mesh models:', error);
       }

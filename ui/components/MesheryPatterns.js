@@ -586,8 +586,9 @@ function MesheryPatterns({
     async function fetchMeshModels() {
       try {
         const { models } = await getMeshModels();
-        const modelNames = models?.map((model) => model.displayName) || [];
+        let modelNames = models?.map((model) => model.displayName) || [];
         modelNames.sort(); // Sort model names
+        modelNames = Array.from(new Set(modelNames)); // Remove duplicates
 
         // Modify the schema to include mesh models
         const modifiedSchema = modifyRJSFSchema(
