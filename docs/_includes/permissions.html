@@ -1,0 +1,80 @@
+<style>
+  tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+td {
+    padding: 1rem;
+    border-top: 2px solid var(--color-primary-dark);
+}
+
+#excelTable tbody tr:nth-of-type(odd) {
+  background-color: var(--color-primary-medium) !important;
+}
+
+</style>
+<table style="margin:auto;padding-right:25%; padding-left:20%; margin-top:3rem;" id="excelTable" border="1">
+    <thead>
+    <tr>
+      <th style="text-align:left; padding:1rem;">Category</th>
+      <th style="text-align:left; padding:1rem;">Function</th>
+      <th style="text-align:left; padding:1rem;">Feature</th>
+      <th style="text-align:left; padding:1rem;">Keychain ID</th>
+      <th style="text-align:left; padding:1rem;">Key ID</th>
+    </tr>
+  </thead>
+  </table>
+  <script>
+  window.onload = function() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '../../assets/excel/keys.csv', true);
+    xhr.responseType = 'arraybuffer';
+  
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const data = new Uint8Array(xhr.response);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const htmlTable = XLSX.utils.sheet_to_html(sheet);
+  
+        // Remove the first, second row
+        const tableElement = document.createElement('div');
+        tableElement.innerHTML = htmlTable;
+        tableElement.querySelector('table').deleteRow(0);
+        tableElement.querySelector('table').deleteRow(0);
+  
+        // Remove the columns
+        const rows = tableElement.querySelectorAll('tr');
+        rows.forEach(row => {
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(3);
+          row.deleteCell(4);
+          row.deleteCell(5);
+          row.deleteCell(6);
+          row.deleteCell(5);
+        });
+        
+        document.getElementById('excelTable').innerHTML += tableElement.innerHTML;
+      } else {
+        console.error('Failed to load Excel file! Status code: ' + xhr.status);
+      }
+    };
+  
+    xhr.onerror = function() {
+      console.error('Failed to load Excel file!');
+    };
+  
+    xhr.send();
+  };
+  </script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
