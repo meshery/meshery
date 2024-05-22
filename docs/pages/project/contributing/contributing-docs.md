@@ -9,7 +9,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
+{% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
 
 Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 

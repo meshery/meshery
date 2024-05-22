@@ -120,7 +120,7 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 1 : page.Models + 1,
+                page: searchText ? 0 : page.Models,
                 pagesize: 'all',
                 components: true,
                 relationships: true,
@@ -134,11 +134,10 @@ const MeshModelComponent_ = ({
           response = await getComponentsData(
             {
               params: {
-                page: searchText ? 1 : page.Components + 1,
+                page: searchText ? 0 : page.Components,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
-                annotations: false,
               },
             },
             true,
@@ -149,7 +148,7 @@ const MeshModelComponent_ = ({
           response = await getRelationshipsData(
             {
               params: {
-                page: 1,
+                page: 0,
                 pagesize: 'all',
                 paginated: true,
                 search: searchText || '',
@@ -211,7 +210,7 @@ const MeshModelComponent_ = ({
     registrantResponse = await getRegistrantsData(
       {
         params: {
-          page: searchText ? 1 : page.Registrants + 1,
+          page: searchText ? 0 : page.Registrants,
           pagesize: searchText ? 'all' : rowsPerPage,
           search: searchText || '',
         },
@@ -227,7 +226,7 @@ const MeshModelComponent_ = ({
         const { data: modelRes } = await getMeshModelsData(
           {
             params: {
-              page: page?.Models + 1,
+              page: page?.Models,
               pagesize: 'all',
               registrant: hostname,
               components: true,

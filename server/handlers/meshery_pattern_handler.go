@@ -697,6 +697,147 @@ func (h *Handler) handlePatternPOST(
 
 }
 
+func (h *Handler) HandleConversionToDesign(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	userUUID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("pattern").WithAction("convert").ActedUpon(userUUID)
+
+	sourcetype := mux.Vars(r)["sourcetype"]
+	parsedBody := &MesheryPatternPOSTRequestBody{}
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+	}
+
+	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+
+	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
+	if parsedBody.PatternData == nil {
+		err := ErrRequestBody(fmt.Errorf("pattern_data cannot be empty, provide a valid pattern id for conversion"))
+
+		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+	}
+
+	mesheryPattern.Name = parsedBody.PatternData.Name
+	mesheryPattern.ID = parsedBody.PatternData.ID
+
+	eventBuilder.ActedUpon(*mesheryPattern.ID)
+
+	if parsedBody.PatternData.Location == nil {
+		parsedBody.PatternData.Location = map[string]interface{}{
+			"host":   "",
+			"path":   "",
+			"type":   "local",
+			"branch": "",
+		}
+	}
+
+	sourceContent, err := provider.GetDesignSourceContent(r, mesheryPattern.ID.String())
+	if err != nil {
+		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	mesheryPattern.SourceContent = sourceContent
+
+	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
+		var k8sres string
+		if sourcetype == string(models.DockerCompose) {
+			k8sres, err = kompose.Convert(sourceContent) // convert the docker compose file into kubernetes manifest
+			if err != nil {
+				err = ErrConvertingDockerComposeToDesign(err)
+				event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			mesheryPattern.Type = sql.NullString{
+				String: string(models.DockerCompose),
+				Valid:  true,
+			}
+		} else if sourcetype == string(models.K8sManifest) {
+			k8sres = string(sourceContent)
+			mesheryPattern.Type = sql.NullString{
+				String: string(models.K8sManifest),
+				Valid:  true,
+			}
+		}
+		pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+		if err != nil {
+			err = ErrConvertingK8sManifestToDesign(err)
+			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		response, err := yaml.Marshal(pattern)
+		if err != nil {
+			err = ErrMarshallingDesignIntoYAML(err)
+			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+
+			h.log.Error((err))
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+
+			return
+		}
+		mesheryPattern.PatternFile = string(response)
+	}
+
+	resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
+	if err != nil {
+		obj := "save"
+		saveErr := ErrApplicationFailure(err, obj)
+		h.log.Error(saveErr)
+		http.Error(rw, saveErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
+
+	if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
+		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(contentMesheryPatternSlice) > 0 {
+		event := eventBuilder.WithDescription(fmt.Sprintf("Converted %s \"%s\" to Design format", sourcetype, contentMesheryPatternSlice[0].Name)).WithSeverity(events.Success).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
 
 	// Assume design is in OCI Tarball Format
@@ -877,6 +1018,8 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 // ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
 // Eg: ```?visibility=["public", "published"]``` will return public and published designs
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
+//
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -890,7 +1033,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-
+	includeMetrics := q.Get("metrics")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -911,7 +1054,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -945,6 +1088,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?pagesize={pagesize}``` Default pagesize is 10.
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
+//
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -958,7 +1103,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -1041,7 +1186,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
@@ -1464,6 +1609,8 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 // swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
 // Handle GET for a Meshery Pattern
 //
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+//
 // Fetches the pattern with the given id
 // responses:
 // 	200: mesheryPatternResponseWrapper
@@ -1478,7 +1625,7 @@ func (h *Handler) GetMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 
-	resp, err := provider.GetMesheryPattern(r, patternID)
+	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)

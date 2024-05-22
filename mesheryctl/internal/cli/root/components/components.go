@@ -24,7 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -120,14 +120,14 @@ mesheryctl exp components search [component-name]
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []v1alpha1.ComponentDefinition) v1alpha1.ComponentDefinition {
+func selectComponentPrompt(components []v1beta1.ComponentDefinition) v1beta1.ComponentDefinition {
 	componentNames := []string{}
-	componentArray := []v1alpha1.ComponentDefinition{}
+	componentArray := []v1beta1.ComponentDefinition{}
 
 	componentArray = append(componentArray, components...)
 
 	for _, component := range componentArray {
-		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.TypeMeta.APIVersion)
+		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
 		componentNames = append(componentNames, componentName)
 	}
 
@@ -160,7 +160,7 @@ func OutputJson(component interface{}) error {
 	return nil
 }
 
-// prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
 func prettifyJson(component interface{}) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
@@ -172,14 +172,6 @@ func prettifyJson(component interface{}) error {
 
 	// Any errors during the encoding process will be returned as an error.
 	return enc.Encode(component)
-}
-
-// Common function to get the min of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
 
 func init() {

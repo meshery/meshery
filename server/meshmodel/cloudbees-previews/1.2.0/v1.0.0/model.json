@@ -1,0 +1,29 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "cloudbees-previews",
+  "displayName": "Cloudbees Previews",
+  "description": "",
+  "status": "ignored",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+   "hostname": "artifacthub"
+  },
+  "category": {
+   "name": "App Definition and Development",
+   "metadata": null
+  },
+  "subCategory": "Continuous Integration \u0026 Delivery",
+  "metadata": {
+   "isAnnotation": false,
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "version": "1.2.0"
+  },
+  "components": null,
+  "relationships": null
+ }

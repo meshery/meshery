@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"gopkg.in/yaml.v2"
 )
 
@@ -60,7 +60,7 @@ func formatValue(path string, val map[string]interface{}) error {
 	return nil
 }
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -78,12 +78,12 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 				act.Terminate(err)
 				return
 			}
-			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
 			if core.Format {
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
 			//Validate component definition
-			if !skipValidation {
+			if validate {
 				if err := validateWorkload(svc.Settings, wc); err != nil {
 					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
 					return
@@ -131,10 +131,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.
 	isAnnotation, _ := wc.Metadata["isAnnotation"].(bool)
-	if wc.Schema == "" && isAnnotation {
+	if wc.Component.Schema == "" && isAnnotation {
 		return nil
 	}
-	schemaByt := []byte(wc.Schema)
+	schemaByt := []byte(wc.Component.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
 	if err := json.Unmarshal(schemaByt, rs); err != nil {

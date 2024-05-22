@@ -25,7 +25,7 @@ abstract: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes
 
 {% capture code_content %}helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace
-helm install meshery-operator meshery/meshery-operator{% endcapture %}
+{% endcapture %}
 {% include code.html code=code_content %}
 
 Optionally, Meshery Server supports customizing the callback URL for your remote provider, like so:
@@ -43,6 +43,6 @@ Optionally, you can verify the health of your Meshery deployment, using <a href=
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-{% include_cached installation/accessing-meshery-ui.md %}
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 {% include related-discussions.html tag="meshery" %}

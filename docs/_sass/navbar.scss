@@ -58,7 +58,7 @@ header {
 .navbar {
   width: 100%;
   height: var(--navbar-height);
-  padding: 0 2rem !important;
+  padding: 0 20px !important;
   background: var(--background-light-cards);
   box-shadow: var(--box-shadow-navbar);
   display: flex;
@@ -180,7 +180,6 @@ header {
       & img,
       svg {
         display: inline-block;
-        margin: 0 10px;
         height: 45px;
         margin-right: 0.5rem;
         @media (max-width: 610px) {
@@ -225,7 +224,7 @@ header {
 
     @media (max-width: 1200px) {
       position: fixed;
-      top: var(--navbar-height);
+      top: calc(var(--navbar-height) - 2.5rem);
       right: 0;
       width: max(20vh, 25vw);
       height: calc(100vh - var(--navbar-height));

@@ -211,7 +211,7 @@ class MesherySMIResults extends Component {
       search: !(user && user.user_id === 'meshery'),
       filter: false,
       expandableRows: true,
-      selectableRows: false,
+      selectableRows: 'none',
       serverSide: true,
       count,
       rowsPerPage: smi_pageSize,

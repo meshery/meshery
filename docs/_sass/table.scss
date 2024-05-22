@@ -20,7 +20,7 @@ table th {
 .td-box .row.section > table td,
 .td-content > table td {
   padding: 1rem;
-  vertical-align: top;
+  // vertical-align: top;
   border-top: 2px solid var(--color-primary-dark);
 }
 
@@ -39,7 +39,7 @@ table th {
 .table thead th,
 .td-box .row.section > table thead th,
 .td-content > table thead th {
-  vertical-align: bottom;
+  // vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
 }
 

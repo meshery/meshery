@@ -22,6 +22,8 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { styled } from '@mui/material/styles';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -61,7 +63,19 @@ const User = (props) => {
 
   const { capabilitiesRegistry } = props;
 
-  const handleToggle = (event) => {
+  const getProfileUrl = () => {
+    return (account || [])?.find((item) => item.title === 'Profile')?.href;
+  };
+
+  const goToProfile = () => {
+    const profileUrl = getProfileUrl();
+    if (profileUrl) {
+      window.location = profileUrl;
+      return;
+    }
+  };
+
+  const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -163,14 +177,14 @@ const User = (props) => {
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button">
+        <div data-test="profile-button" onMouseOver={handleOpen}>
           <IconButton
             color={color}
             className={iconButtonClassName}
             ref={anchorEl}
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
-            onClick={handleToggle}
+            onClick={goToProfile}
           >
             <Avatar
               className={avatarClassName}
@@ -199,8 +213,25 @@ const User = (props) => {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
                     {account && account.length ? renderAccountExtension(account) : null}
-                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
-                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    {!account?.length && (
+                      <MenuItem
+                        disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                        onClick={handleGetToken}
+                      >
+                        Get Token
+                      </MenuItem>
+                    )}
+                    <MenuItem
+                      onClick={handlePreference}
+                      // disabled={
+                      //   !CAN(
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                      //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                      //   )
+                      // }
+                    >
+                      Preferences
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>

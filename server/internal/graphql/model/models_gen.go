@@ -71,10 +71,11 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Page     string `json:"page"`
-	Pagesize string `json:"pagesize"`
-	Search   string `json:"search"`
-	Order    string `json:"order"`
+	Page     string  `json:"page"`
+	Pagesize string  `json:"pagesize"`
+	Search   string  `json:"search"`
+	Order    string  `json:"order"`
+	Metrics  *string `json:"metrics,omitempty"`
 }
 
 type ClusterResources struct {
@@ -296,6 +297,7 @@ type PageFilter struct {
 	To           *string  `json:"to,omitempty"`
 	UpdatedAfter *string  `json:"updated_after,omitempty"`
 	Visibility   []string `json:"visibility,omitempty"`
+	Metrics      *string  `json:"metrics,omitempty"`
 }
 
 type PatternPageResult struct {
