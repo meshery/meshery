@@ -15,7 +15,9 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 
 	"github.com/sirupsen/logrus"
@@ -91,6 +93,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	var evalResults interface{}
 
 	// evaluate specified relationship policies
+	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	verifiedEvaluationQueries := h.verifyEvaluationQueries(evaluationQueries)
 	if len(verifiedEvaluationQueries) == 0 {
 		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluationQueries": evaluationQueries}).Build()
@@ -124,15 +127,16 @@ func (h *Handler) EvaluateRelationshipPolicy(
 }
 
 func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{})
+	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{})
 
-	var relationships []v1alpha1.RelationshipDefinition
+	var relationships []v1alpha2.RelationshipDefinition
 	for _, entity := range registeredRelationships {
-		relationship, err := utils.Cast[v1alpha1.RelationshipDefinition](entity)
+		relationship, err := utils.Cast[*v1alpha2.RelationshipDefinition](entity)
+
 		if err != nil {
 			return
 		}
-		relationships = append(relationships, relationship)
+		relationships = append(relationships, *relationship)
 	}
 
 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
@@ -194,7 +198,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, _, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
@@ -202,13 +206,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	var policies []v1alpha1.PolicyDefinition
-	for _, p := range entities {
-		policy, ok := p.(v1alpha1.PolicyDefinition)
-		if ok {
-			policies = append(policies, policy)
-		}
-	}
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -221,7 +218,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    0,
-		Policies: policies,
+		Policies: entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -270,20 +267,14 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	if page <= 0 {
 		page = 1
 	}
-	entities, _, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	var policies []v1alpha1.PolicyDefinition
-	for _, p := range entities {
-		policy, ok := p.(v1alpha1.PolicyDefinition)
-		if ok {
-			policies = append(policies, policy)
-		}
-	}
+
 	var pgSize int64
 
 	if limitstr == "all" {
@@ -296,7 +287,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    0,
-		Policies: policies,
+		Policies: entities,
 	}
 
 	if err := enc.Encode(response); err != nil {

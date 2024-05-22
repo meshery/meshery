@@ -217,6 +217,7 @@ const CardFront = ({
               count={environmentsCount}
               onAssign={onAssignEnvironment}
               classes={classes}
+              disabled={!CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject)}
             />
           </Box>
           <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
@@ -225,6 +226,7 @@ const CardFront = ({
               count={designsCount}
               onAssign={onAssignDesign}
               classes={classes}
+              disabled={!CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject)}
             />
           </Box>
         </Grid>

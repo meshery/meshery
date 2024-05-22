@@ -56,10 +56,10 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 	runFunction := symRun.(func(*extensions.ExtensionInput) (*extensions.ExtensionOutput, error))
 
 	output, err := runFunction(&extensions.ExtensionInput{
-		DBHandler:       provider.GetGenericPersister(),
-		MeshSyncChannel: h.MeshsyncChannel,
-		BrokerConn:      h.brokerConn,
-		Logger:          h.log,
+		DBHandler:            provider.GetGenericPersister(),
+		MeshSyncChannel:      h.MeshsyncChannel,
+		BrokerConn:           h.brokerConn,
+		Logger:               h.log,
 		K8sConnectionTracker: h.ConnectionToStateMachineInstanceTracker,
 	})
 	if err != nil {

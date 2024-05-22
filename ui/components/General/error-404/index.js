@@ -1,15 +1,25 @@
-import { Typography } from '@material-ui/core';
 import { ErrorTypes } from '@/constants/common';
 import { useTheme } from '@material-ui/core/styles';
-// import InstallMeshery, { MesheryAction } from "../../dashboard/install-meshery-card";
-import Socials from './socials';
 import {
-  ErrorComponent,
+  ErrorSection,
+  ErrorSectionContainer,
   ErrorContainer,
   ErrorContentContainer,
-  ErrorLink,
   ErrorMain,
+  ErrorSectionContent,
+  StyledButton,
+  ImageContainer,
+  IconWrapper,
+  Logo,
+  LogoText,
+  StyledDivider,
+  ErrorLink,
 } from './styles';
+import { Typography, InfoCircleIcon, CustomTooltip } from '@layer5/sistent';
+import OrgSwitcher from './OrgSwitcher';
+// import RequestForm from './RequestForm';
+import CurrentSessionInfo from './CurrentSession';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 //TODO: Add component for meshery version compatiblity error
 // const MesheryVersionCompatiblity = () => {
@@ -40,66 +50,78 @@ const DefaultError = (props) => {
   const theme = useTheme();
 
   return (
-    <ErrorMain>
-      <ErrorContainer>
-        <img
-          width="400px"
-          height="300px"
-          src={
-            theme.palette.type === 'dark'
-              ? '/static/img/meshery-logo/meshery-logo-white-text.png'
-              : '/static/img/meshery-logo/meshery-logo-light-text.png'
-          }
-          alt="Meshery logo"
-        />
-        <ErrorComponent>
+    <UsesSistent>
+      <ErrorMain>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <ImageContainer>
+            <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
+            <LogoText
+              src={
+                theme.palette.type === 'dark'
+                  ? '/static/img/meshery-logo/meshery-white.svg'
+                  : '/static/img/meshery-logo/meshery-black.svg'
+              }
+              alt="Meshery logo text"
+            />
+          </ImageContainer>
           <Typography variant="h4" component="h4" align="center" className="errormsg">
             {errorTitle
               ? errorTitle
               : "Oops! It seems like you don't have the necessary permissions to view this page."}
           </Typography>
-          <Typography
-            variant="body1"
-            component="p"
-            align="left"
-            style={{ paddingLeft: '1.25rem', paddingTop: '1rem' }}
-          >
-            Possible reasons:
-          </Typography>
-          <ol style={{ textAlign: 'left', fontSize: '1rem' }}>
-            <li>
-              <strong>Insufficient Permissions:</strong> Your account may lack the required
-              permissions to access this page. To resolve this, please reach out to your
-              administrator and request the necessary access.
-            </li>
-            <li>
-              <strong>Check Selected Organization:</strong> Ensure you are in the correct
-              organization in which you have access to view this page. You can verify your
-              organization settings <ErrorLink href="/user/preferences">here</ErrorLink>. If needed,
-              switch to an organization where you have the required permissions.
-            </li>
-          </ol>
           {errorType === ErrorTypes.UNKNOWN ? (
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}
-          <div style={{ marginTop: '3rem' }}>
-            <div>
-              <Typography variant="p" component="p" align="center">
-                Navigate to <ErrorLink href="/">Dashboard</ErrorLink>
+        </div>
+        <ErrorContainer>
+          <ErrorSectionContainer>
+            <ErrorSection>
+              <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+                YOUR CURRENT SESSION
               </Typography>
-            </div>
-            <div style={{ marginTop: '0.8rem' }}>
-              <Typography variant="p" component="p" align="center">
-                For help, please inquire on the
-                <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
-                <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+              <CurrentSessionInfo />
+            </ErrorSection>
+            <StyledDivider orientation="vertical" flexItem />
+            <ErrorSection>
+              <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+                YOUR OPTIONS
               </Typography>
-            </div>
-          </div>
-        </ErrorComponent>
-        <Socials />
-      </ErrorContainer>
-    </ErrorMain>
+              {/* this is left intentionally inline for now since this is a one off till we implement
+               the request form*/}
+              <ErrorSectionContent
+                style={{
+                  flex: '1',
+                  justifyContent: 'center',
+                }}
+              >
+                <OrgSwitcher />
+                {/*<Divider />
+                <RequestForm />*/}
+              </ErrorSectionContent>
+            </ErrorSection>
+          </ErrorSectionContainer>
+          <CustomTooltip title="To view the content of this page, switch to an organization where you have more roles using the 'Switch Organization' field.">
+            <IconWrapper>
+              <InfoCircleIcon height={32} width={32} />
+            </IconWrapper>
+          </CustomTooltip>
+        </ErrorContainer>
+        <StyledButton href="/" variant="contained">
+          Return to Dashboard
+        </StyledButton>
+        <Typography variant="textB1Regular" component="p" align="center">
+          For more help, please inquire on the
+          <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
+          <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+        </Typography>
+      </ErrorMain>
+    </UsesSistent>
   );
 };
 

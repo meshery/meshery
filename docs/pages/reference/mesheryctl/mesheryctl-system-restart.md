@@ -46,8 +46,9 @@ mesheryctl system restart --skip-update
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help          help for restart
-      --skip-update   (optional) skip checking for new Meshery's container images.
+  -h, --help              help for restart
+      --provider string   Provider to use with the Meshery server
+      --skip-update       (optional) skip checking for new Meshery's container images.
 
 </div>
 </pre>

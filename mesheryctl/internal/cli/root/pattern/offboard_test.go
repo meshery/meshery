@@ -38,7 +38,7 @@ func TestOffboardCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Offboard Application",
-			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden")},
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
 			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{

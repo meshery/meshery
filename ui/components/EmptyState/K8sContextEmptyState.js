@@ -20,14 +20,14 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-export const K8sEmptyState = () => {
+export const K8sEmptyState = ({ message }) => {
   const classes = styles();
   return (
     <div className={classes.textContent}>
       {theme.palette.type == 'dark' ? <OperatorLight /> : <Operator />}
-      <Typography variant="h5">No cluster connected yet</Typography>
+      <Typography variant="h5">{message || 'No cluster connected yet'}</Typography>
 
-      <Link href="/settings">
+      <Link href="/management/connections">
         <Button
           type="submit"
           variant="contained"

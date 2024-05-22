@@ -6,8 +6,11 @@ import (
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -71,11 +74,11 @@ type MeshModelRelationshipResponse struct {
 }
 
 func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship {
-	res, _, _ := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
+	res, _, _, _ := regManager.GetEntities(&regv1alpha2.RelationshipFilter{})
 	relationships := make([]*model.MeshModelRelationship, 0)
 	var relmap = make(map[string]*MeshModelRelationshipResponse)
 	for _, r := range res {
-		def, _ := r.(v1alpha1.RelationshipDefinition)
+		def, _ := r.(*v1alpha2.RelationshipDefinition)
 		if relmap[def.Kind] == nil {
 			relmap[def.Kind] = &MeshModelRelationshipResponse{
 				Name:    def.Kind,
@@ -98,11 +101,11 @@ func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.M
 }
 
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
-	res, _, _ := regManager.GetEntities(&v1alpha1.ComponentFilter{})
+	res, _, _, _ := regManager.GetEntities(&regv1beta1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {
-		def, _ := r.(v1alpha1.ComponentDefinition)
+		def, _ := r.(*v1beta1.ComponentDefinition)
 		if response[def.Model.Name] == nil {
 			response[def.Model.Name] = &MeshModelComponentResponse{
 				Name:     def.Model.Name,
