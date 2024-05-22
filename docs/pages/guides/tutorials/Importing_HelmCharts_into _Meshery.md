@@ -2,8 +2,8 @@
 layout: tutorials
 title: Understanding How to Import Helm Charts into Meshery
 abstract: In this tutorial, we will explore how to import  Helm charts using Meshery. Helm charts simplify the deployment and management of Kubernetes applications.
-permalink: guides/tutorials/Importing HelmCharts to Meshery/
-redirect_from: guides/tutorial/Importing HelmCharts to Meshery/
+permalink: guides/tutorials/Importing_HelmCharts_into_Meshery/
+redirect_from: guides/tutorial/Importing_HelmCharts_into _Meshery/
 model: kubernetes
 kind: helm-charts
 type: guides
@@ -44,10 +44,13 @@ Learn to efficiently import, configure, and deploy Helm charts within Meshery Pl
 #### Choosing Correct Dapr Helm charts
 
 - Navigate to the Dapr Helm charts repository on GitHub or any other trusted source. Here is the one of the source from which you can pick [helm charts](https://github.com/jangocheng/dapr-helm-charts/tree/master).
+- ![](./screenshots/H1.png)
 - Ensure you select the appropriate chart version compatible with your Kubernetes cluster and Dapr runtime.
+- ![](./screenshots/H2.png)
 - Copy the repository URL for later use in Meshery.
+- ![](./screenshots/H3.png)
 
-#### Converting GitHub Links to GitHub Raw Links as Mes
+#### Converting GitHub Links to GitHub Raw Links as Meshmery compatible
 
 When importing Helm Charts into MeshMap, it's essential to have GitHub raw links. Here's how you can convert regular GitHub links to GitHub raw links effortlessly:
 
@@ -61,6 +64,7 @@ When importing Helm Charts into MeshMap, it's essential to have GitHub raw links
 3. **Use Git-Rawify Tool**:
    - Access the [Git-Rawify tool](https://git-rawify.vercel.app/#convert).
    - Paste the copied GitHub link into the provided input field.
+   - ![](./screenshots/H4.png)
 
 4. **Convert to GitHub Raw Link**:
    - The tool automatically converts the GitHub link to a GitHub raw link.
@@ -69,21 +73,32 @@ When importing Helm Charts into MeshMap, it's essential to have GitHub raw links
 By following these simple steps and utilizing the Git-Rawify tool, you can seamlessly convert GitHub links to GitHub raw links, ensuring compatibility with MeshMap and other platforms requiring raw links for file access.
 
 #### Importing DAPR Helm Chart to MeshMap
-- Now you can open Meshery playground
+- Now you can open Meshery playground.
 - On the Right side ,Click on that Down arrow Symbol to import designs into meshery.
+- ![](./screenshots/H5.png)
 - After Click that , name This design as DAPR Helm design.
+- ![](./screenshots/H6.png)
 - At the dropdown in the left side select as helm chart
+- ![](./screenshots/H7.png)
 - In the url section , paste the existing github raw url lin kwhich is of helm charts.
+- ![](./screenshots/H8.png)
+- Click on Import to import the helm chart.
 - waiting for some time to load the helm into meshery.
+- ![](./screenshots/H9.png)
+- Succesfully DAPR helm chart is imported into meshery .
+- ![](./screenshots/H10.png)
   
 
-#### Deploy/Undeploy DAPR helm chart into meshery 
-- After completing import of Dapr Helm Chart into Meshery
-- On that left click on validate , if no errors proceed to Deploy.
-- After deployment the helm chart is deployed into cluster.
-- you can always undeploy as u want .
+### Deploy/Undeploy Dapr Helm Chart in Meshery
+1. Import the Dapr Helm Chart into Meshery.
+2. Once the import is completed, click on "Validate" on the left. If no errors are found, proceed to deploy.
+   ![Validation](./screenshots/H11.png)
+   ![Deployment](./screenshots/H12.png)
+4. After validating the helm chart with no errors, proceed to deployment with your preferred environment.
+   ![Deploy](./screenshots/H13.png)
+5. Click on "Deploy".
+   ![Deploy](./screenshots/H14.png)
 
-  
 
   
 
