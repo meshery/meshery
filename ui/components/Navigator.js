@@ -104,8 +104,8 @@ const styles = (theme) => ({
   itemCategory: {
     backgroundColor: '#263238',
     boxShadow: '0 -1px 0 #404854 inset',
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingTop: '1.325rem',
+    paddingBottom: '1.325rem',
   },
   firebase: {
     top: 0,
@@ -1397,7 +1397,7 @@ class Navigator extends React.Component {
           classes={{
             paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
           }}
-          style={{ width: 'inherit' }}
+          style={{ height: '100%' }}
         >
           {Title}
           {Menu}

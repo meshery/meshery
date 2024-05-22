@@ -1,12 +1,20 @@
 import React from 'react';
-import { SistentThemeProvider } from '@layer5/sistent';
 import { useTheme } from '@material-ui/core/styles';
+import { SistentThemeProviderWithoutBaseLine } from '@layer5/sistent';
 
 export const UsesSistent = ({ children }) => {
   const theme = useTheme();
   const mode = theme.palette.type;
   if (mode === 'dark') {
-    return <SistentThemeProvider initialMode={mode}> {children} </SistentThemeProvider>;
+    return (
+      <SistentThemeProviderWithoutBaseLine initialMode={mode}>
+        {children}
+      </SistentThemeProviderWithoutBaseLine>
+    );
   }
-  return <SistentThemeProvider initialMode={mode}> {children} </SistentThemeProvider>;
+  return (
+    <SistentThemeProviderWithoutBaseLine initialMode={mode}>
+      {children}
+    </SistentThemeProviderWithoutBaseLine>
+  );
 };
