@@ -31,13 +31,13 @@ It also supports a collaborative environment, where DevOps engineers can share t
 
 1. Ensure that you have [Meshery CLI](https://docs.meshery.io/installation/mesheryctl) installed on your machine and it is configured to connect to your desired Meshery instance.
 2. Open a terminal or command prompt.
-3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl pattern`
+3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl design`
 4. Follow the prompts or instructions provided by the Meshery CLI help.
-* Apply [pattern file](https://docs.meshery.io/guides/configuration-management):  `mesheryctl pattern apply --file [path to pattern file | URL of the file]`
-* Delete pattern file:  `mesheryctl pattern delete --file [path to pattern file]`
-* View pattern file:  `mesheryctl pattern view [pattern name | ID]`
-* List all patterns: `mesheryctl pattern list`
-5. [Onboarding](managing-applications-through-meshery-cli) an application. `mesheryctl app onboard -f [file-path]`
+* Apply [design file](https://docs.meshery.io/guides/configuration-management):  `mesheryctl design apply --file [path to design file | URL of the file]`
+* Delete design file:  `mesheryctl design delete --file [path to design file]`
+* View design file:  `mesheryctl design view [design name | ID]`
+* List all designs: `mesheryctl design list`
+5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) an application. `mesheryctl design import -f [file-path]`
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl exp filter apply --file [GitHub Link]`
 
 ### FAQ

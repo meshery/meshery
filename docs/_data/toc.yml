@@ -243,7 +243,7 @@
           url: project/contributing/build-and-release
           grandchildren:
           - title: "End-to-End Testing"
-            url: project/contributing/contributing-cypress
+            url: project/contributing/contributing-ui-tests
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
