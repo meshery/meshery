@@ -5,25 +5,16 @@ import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../D
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { TextWithLinks } from '../DataFormatter';
+import { FormatDryRunResponse } from '../MesheryPatterns/DryRunDesign';
 
 const DryRunResponse = ({ response }) => {
-  const cleanedResponse = {};
-  Object.entries(response).forEach(([componentKind, components]) => {
-    Object.entries(components).forEach(([, data]) => {
-      cleanedResponse[`Component: ${componentKind}`] = {
-        ...data.error,
-      };
-    });
-  });
-
-  if (isEmptyAtAllDepths(cleanedResponse)) {
-    return (
-      <Typography variant="h6" style={{ textAlign: 'center', marginBlock: '1rem' }}>
-        No Errors Found
-      </Typography>
-    );
-  }
-  return <FormatStructuredData data={cleanedResponse} />;
+  return (
+    <FormatDryRunResponse
+      dryRunResponse={response}
+      numberOfComponentsInDesign={null}
+      onErrorClick={() => {}}
+    />
+  );
 };
 
 const TitleLink = ({ href, children, ...props }) => {

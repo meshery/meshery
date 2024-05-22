@@ -12,6 +12,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -107,7 +108,7 @@ func main() {
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
-	viper.SetDefault("PROVIDER", "")
+	viper.SetDefault(constants.ProviderENV, "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
@@ -266,6 +267,7 @@ func main() {
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
+	providerEnvVar := viper.GetString(constants.ProviderENV)
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
@@ -285,6 +287,7 @@ func main() {
 			GenericPersister:           dbHandler,
 			EventsPersister:            &models.EventsPersister{DB: dbHandler},
 			Log:                        log,
+			CookieDuration:             24 * time.Hour,
 		}
 
 		cp.Initialize()
@@ -292,6 +295,14 @@ func main() {
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
 		provs[cp.Name()] = cp
+	}
+
+	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
+	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
+	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
+	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
+	if !isProviderEnvVarValid {
+		providerEnvVar = ""
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
@@ -304,7 +315,7 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), &rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

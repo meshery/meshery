@@ -24,7 +24,6 @@
    "subCategory": "Uncategorized",
    "metadata": {
     "isAnnotation": false,
-    "subCategory": "Uncategorized",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -41,11 +40,10 @@
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
-   "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

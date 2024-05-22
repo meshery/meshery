@@ -16,6 +16,7 @@ import (
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
@@ -155,7 +156,7 @@ type Pattern struct {
 	// PatternID is the moniker use to uniquely identify any given pattern
 	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
-	Services  map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
+	Services  map[string]*Service `yaml:"services" json:"services"`
 }
 
 // Service represents the services defined within the appfile
@@ -525,12 +526,8 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
 	name, _ := metadata["name"].(string)
-	namespace, _ := metadata["namespace"].(string)
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-	if namespace == "" {
-		namespace = "default"
-	}
 	fmt.Printf("%+#v\n", manifest)
 	// rest will store a map of everything other than the above mentioned fields
 	rest := map[string]interface{}{}
@@ -588,7 +585,6 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		Name:        name,
 		Type:        comp.Component.Kind,
 		APIVersion:  comp.Component.Version,
-		Namespace:   namespace,
 		Model:       comp.Model.Name,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
@@ -601,7 +597,27 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		},
 	}
 
+	assignNamespaceForNamespacedScopedComp(&svc, metadata, comp)
 	return id, svc, nil
+}
+
+func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *modelv1beta1.ComponentDefinition) *Service {
+	if isNamespacedComponent(compDef) {
+		namespace, _ := mutils.Cast[string](metadata["namespace"])
+		if namespace == "" {
+			svc.Namespace = "default"
+		} else {
+			svc.Namespace = namespace
+		}
+	}
+	return svc
+}
+
+// Checks whether the component is namespaced scope or not.
+// While determining if an error occurs, the conversion process skips assigning a namespace value. If comp is originally namespaced scope, then k8s automatically assign a "default" namespace.
+func isNamespacedComponent(comp *modelv1beta1.ComponentDefinition) bool {
+	isNamespaced, _ := mutils.Cast[bool](comp.Metadata["isNamespaced"])
+	return isNamespaced
 }
 
 // getCytoscapeElementID returns the element id for a given service

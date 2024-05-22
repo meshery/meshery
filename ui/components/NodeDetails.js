@@ -161,7 +161,7 @@ function NodeDetails(props) {
 
   const options = {
     filter: false,
-    selectableRows: false,
+    selectableRows: 'none',
   };
 
   let server = chartData?.kubernetes?.server_version;

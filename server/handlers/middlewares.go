@@ -83,10 +83,14 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				http.Redirect(w, req, "/provider", http.StatusFound)
 				return
 			}
-			if providerH != "" && providerH != provider.Name() {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
+
+			// Because server verifies the value of the "PROVIDER" environemnt variable and doesn't allow unsupported provider value,
+			// the below situation cannot occur.
+			
+			// if providerH != "" && providerH != provider.Name() {
+			// 	w.WriteHeader(http.StatusUnauthorized)
+			// 	return
+			// }
 			// logrus.Debugf("provider %s", provider)
 			isValid := h.validateAuth(provider, req)
 			// logrus.Debugf("validate auth: %t", isValid)
@@ -145,18 +149,18 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 		// ensuring session is intact
-		err := provider.GetSession(req)
-		if err != nil {
-			err1 := provider.Logout(w, req)
-			if err1 != nil {
-				logrus.Errorf("Error performing logout: %v", err1.Error())
-				provider.HandleUnAuthenticated(w, req)
-				return
-			}
-			logrus.Errorf("Error: unable to get session: %v", err)
-			http.Error(w, "unable to get session", http.StatusUnauthorized)
-			return
-		}
+		// err := provider.GetSession(req)
+		// if err != nil {
+		// 	err1 := provider.Logout(w, req)
+		// 	if err1 != nil {
+		// 		logrus.Errorf("Error performing logout: %v", err1.Error())
+		// 		provider.HandleUnAuthenticated(w, req)
+		// 		return
+		// 	}
+		// 	logrus.Errorf("Error: unable to get session: %v", err)
+		// 	http.Error(w, "unable to get session", http.StatusUnauthorized)
+		// 	return
+		// }
 
 		user, err := provider.GetUserDetails(req)
 		// if user details are not available,
