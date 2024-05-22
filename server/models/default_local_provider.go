@@ -49,6 +49,7 @@ type DefaultLocalProvider struct {
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	OrganizationPersister           *OrganizationPersister
 	KeyPersister                    *KeyPersister
+	ConnectionPersister             *ConnectionPersister
 
 	GenericPersister *database.Handler
 	KubeClient       *mesherykube.Client
@@ -973,7 +974,7 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 }
 
 func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
-	connection := connections.Connection{
+	connection := &connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
 		Type:         conn.Type,
@@ -985,87 +986,30 @@ func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string,
 		UpdatedAt:    time.Now(),
 		CredentialID: *conn.CredentialID,
 	}
-	err := l.DB.Model(&connection).Where("id = ?", conn.ID).First(&connection).Error
-	if err == gorm.ErrRecordNotFound {
-		err = l.DB.Model(&connection).Create(connection).Error
-		if err != nil {
-			return nil, ErrDBCreate(err)
-		}
+	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
+	if err != nil {
+		return nil, err
 	}
-	return nil, ErrLocalProviderSupport
+	return connectionCreated, nil
 }
 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-
-	connectionsList := []*connections.Connection{}
-	finder := l.DB.Model(connectionsList).Where("user_id = ?", userID).Where("deleted_at IS NULL")
-
-	if len(status) != 0 {
-		finder = finder.Where("status IN (?)", status)
+	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind)
+	if err != nil {
+		return nil, err
 	}
-
-	if len(kind) != 0 {
-		finder = finder.Where("kind IN (?)", kind)
-	}
-
-	if filter != "" {
-		if filter != "" {
-			filterArr := strings.Split(filter, " ")
-			filterKey := filterArr[0]
-			filterVal := strings.Join(filterArr[1:], " ")
-
-			if filterKey == "deleted_at" {
-				// Handle deleted_at filter
-				if filterVal == "Deleted" {
-					finder = finder.Where("deleted_at IS NOT NULL")
-				} else {
-					finder = finder.Where("deleted_at IS NULL")
-				}
-			} else if filterKey == "type" || filterKey == "sub_type" {
-				finder = finder.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
-			}
-		}
-	}
-	finder = finder.Order(order)
-
-	var count int64
-	if err := finder.Count(&count).Error; err != nil {
-		return nil, ErrDBRead(err)
-	}
-
-	if page <= 0 {
-		page = 1
-	}
-
-	offset := (page - 1) * pageSize
-
-	if count > 0 {
-		if err := finder.Offset(offset).Limit(pageSize).Find(&connectionsList).Error; err != nil {
-			if err != gorm.ErrRecordNotFound {
-				return nil, ErrDBRead(err)
-			}
-		}
-	}
-
-	return &connections.ConnectionPage{
-		Connections: connectionsList,
-		Page:        page,
-		PageSize:    pageSize,
-		TotalCount:  int(count),
-	}, nil
+	return connectionsPage, nil
 }
 
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	result := connections.Connection{}
-	err := l.DB.Model(&result).Where("id = ?", connectionID).Where("kind = ?", kind).First(&result).Error
+	connection, err := l.ConnectionPersister.GetConnection(connectionID, kind)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, http.StatusNotFound, ErrResultNotFound(err)
+			return nil, http.StatusNotFound, err
 		}
-		return nil, http.StatusInternalServerError, ErrDBRead(err)
+		return nil, http.StatusInternalServerError, err
 	}
-	return &result, http.StatusOK, err
+	return connection, http.StatusOK, err
 }
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
