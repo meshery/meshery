@@ -1,3 +1,4 @@
+import { styled } from '@material-ui/core';
 import { Colors } from '../../../themes/app';
 
 const styles = (theme) => ({
@@ -120,20 +121,6 @@ const styles = (theme) => ({
     '&:hover': {
       background: theme.palette.secondary.mainBackground2,
     },
-  },
-
-  viewButton: {
-    width: '100%',
-    borderRadius: '4px',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: '10px',
-    color: theme.palette.secondary.penColorPrimary,
-    '&:hover': {
-      background: theme.palette.secondary.white,
-    },
-    padding: '15px 10px',
   },
 
   record: {
@@ -271,6 +258,28 @@ const styles = (theme) => ({
     },
     padding: 0,
   },
+});
+
+// TODO: replace above makestyles with below styled components in code
+export const BulkActionWrapper = styled(`div`)({
+  width: '100%',
+  padding: '0.8rem',
+  justifyContent: 'space-between',
+  marginTop: '0.18rem',
+  marginBottom: '1rem',
+  borderRadius: '.25rem',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
+export const Statistic = styled(`div`)({
+  display: 'flex',
+  justifyContent: 'center',
+  paddingX: '5px',
+  fontWeight: '400',
+  fontSize: '16px',
+  textAlign: 'center',
 });
 
 export default styles;

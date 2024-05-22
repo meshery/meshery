@@ -95,6 +95,10 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Platform = platform
 		}
 
+		if providerFlag != "" {
+			tempCntxt.Provider = providerFlag
+		}
+
 		if len(components) >= 1 {
 			tempCntxt.Components = components
 		}
@@ -449,6 +453,7 @@ func init() {
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&components, "components", "a", []string{}, "List of components")
 	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
+	createContextCmd.Flags().StringVar(&providerFlag, "provider", "", "Provider to use with the Meshery server")
 	deleteContextCmd.Flags().StringVarP(&newContext, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&currContext, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&allContext, "all", false, "Show configs for all of the context")

@@ -107,7 +107,7 @@ mesheryctl exp components search [query-text]
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Model.Name, component.Kind, component.APIVersion})
+				rows = append(rows, []string{component.Model.Name, component.Component.Kind, component.Component.Version})
 			}
 		}
 

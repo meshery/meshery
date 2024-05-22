@@ -5,6 +5,8 @@ import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export default function WorkloadChart({
   classes,
@@ -66,7 +68,14 @@ export default function WorkloadChart({
           alignItems: 'center',
         }}
       >
-        <Link href="/management/connections">
+        <Link
+          href="/management/connections"
+          style={{
+            pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+              ? 'none'
+              : 'auto',
+          }}
+        >
           <Typography variant="h6" gutterBottom className={classes.link}>
             Workloads
           </Typography>

@@ -39,6 +39,14 @@ mesheryctl system dashboard --port-forward
 </div>
 </pre> 
 
+Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system dashboard --port-forward -p 9081
+
+</div>
+</pre> 
+
 (optional) skip opening of MesheryUI in browser.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -52,6 +60,7 @@ mesheryctl system dashboard --skip-browser
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help           help for dashboard
+  -p, --port int       (optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod. (default 9081)
       --port-forward   (optional) Use port forwarding to access Meshery UI
       --skip-browser   (optional) skip opening of MesheryUI in browser.
 

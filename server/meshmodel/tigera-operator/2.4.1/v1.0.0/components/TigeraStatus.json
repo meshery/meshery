@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Tigera Status",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "tigera-operator",
+   "displayName": "Tigera Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Runtime",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz"
+   },
+   "model": {
+    "version": "2.4.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "tigera-operator",
+   "modelDisplayName": "Tigera Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "TigeraStatus",
+   "version": "operator.tigera.io/v1",
+   "schema": "{\n \"description\": \"TigeraStatus represents the most recently observed status for Calico or a Calico Enterprise functional area.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TigeraStatusSpec defines the desired state of TigeraStatus\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tigera Status\",\n \"type\": \"object\"\n}"
+  }
+ }

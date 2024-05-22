@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Middleware TCP",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "traefik",
+   "displayName": "traefik",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/aigisuk/helm-charts/releases/download/traefik-0.1.1/traefik-0.1.1.tgz"
+   },
+   "model": {
+    "version": "0.1.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "isNamespaced": true,
+   "status": "ignored"
+  },
+  "component": {
+   "kind": "MiddlewareTCP",
+   "version": "traefik.containo.us/v1alpha1",
+   "schema": "{\n \"description\": \"MiddlewareTCP is a specification for a MiddlewareTCP resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec holds the MiddlewareTCP configuration.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"TCPInFlightConn holds the TCP in flight connection configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"TCPIPWhiteList holds the TCP ip white list configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -34,6 +35,8 @@ var (
 	pageSize   = 25
 	pageNumber int
 	verbose    bool
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var listCmd = &cobra.Command{
@@ -62,6 +65,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		if len(args) > 0 {
 			searchString = strings.ReplaceAll(args[0], " ", "%20")
 		}
+
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			utils.Log.Error(ErrFetchFilter(err))
@@ -82,6 +86,8 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
+		var header []string
+		var footer []string
 
 		if verbose {
 			if provider == "None" {
@@ -92,29 +98,27 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 				}
-				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-				return nil
-			}
-
-			for _, v := range response.Filters {
-				FilterID := utils.TruncateID(v.ID.String())
-				var UserID string
-				if v.UserID != nil {
-					UserID = *v.UserID
-				} else {
-					UserID = "null"
+				header = []string{"FILTER ID", "NAME", "CREATED", "UPDATED"}
+				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""}
+			} else {
+				for _, v := range response.Filters {
+					FilterID := utils.TruncateID(v.ID.String())
+					var UserID string
+					if v.UserID != nil {
+						UserID = *v.UserID
+					} else {
+						UserID = "null"
+					}
+					FilterName := v.Name
+					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
+					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+					data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
 				}
-				FilterName := v.Name
-				CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+				header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-			return nil
-		}
 
-		// Check if meshery provider is set
-		if provider == "None" {
+		} else if provider == "None" {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				FilterID := utils.TruncateID(v.ID.String())
@@ -122,23 +126,40 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+			header = []string{"FILTER ID", "NAME", "CREATED", "UPDATED"}
+			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""}
+		} else {
+			for _, v := range response.Filters {
+				FilterID := utils.TruncateID(v.ID.String())
+				var UserID string
+				if v.UserID != nil {
+					UserID = utils.TruncateID(*v.UserID)
+				} else {
+					UserID = "null"
+				}
+				FilterName := v.Name
+				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+			}
+			header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
+		}
+
+		if cmd.Flag("count").Value.String() == "true" {
+			whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}
-		for _, v := range response.Filters {
-			FilterID := utils.TruncateID(v.ID.String())
-			var UserID string
-			if v.UserID != nil {
-				UserID = utils.TruncateID(*v.UserID)
-			} else {
-				UserID = "null"
-			}
-			FilterName := v.Name
-			CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-			data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+
+		if cmd.Flags().Changed("page") {
+			utils.PrintToTableWithFooter(header, data, footer)
+			return nil
 		}
-		utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
 		return nil
 	},
 }
