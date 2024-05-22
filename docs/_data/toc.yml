@@ -277,6 +277,8 @@
   links:
     - title: Error Code Reference
       url: reference/error-codes
+    - title: Permissions Reference
+      url: reference/permissions
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
       children:
