@@ -41,7 +41,55 @@ Learn to efficiently import, configure, and deploy Helm charts within Meshery Pl
 
 > **_NOTE:_** MeshMap is still in beta.
 
-#### Chossing Correct Dapr helm charts
-- Gen
+#### Choosing Correct Dapr Helm charts
+
+- Navigate to the Dapr Helm charts repository on GitHub or any other trusted source. Here is the one of the source from which you can pick [helm charts](https://github.com/jangocheng/dapr-helm-charts/tree/master).
+- Ensure you select the appropriate chart version compatible with your Kubernetes cluster and Dapr runtime.
+- Copy the repository URL for later use in Meshery.
+
+#### Converting GitHub Links to GitHub Raw Links as Mes
+
+When importing Helm Charts into MeshMap, it's essential to have GitHub raw links. Here's how you can convert regular GitHub links to GitHub raw links effortlessly:
+
+1. **Understand GitHub Raw Links Format**:
+   - GitHub raw links follow this format: `https://raw.githubusercontent.com/username/repository/branch/path/to/file.yaml`. They provide direct access to the raw 
+     content of files on GitHub.
+
+2. **Copy GitHub Link**:
+   - After selecting the Helm chart on GitHub, copy the URL link of the file you need.
+
+3. **Use Git-Rawify Tool**:
+   - Access the [Git-Rawify tool](https://git-rawify.vercel.app/#convert).
+   - Paste the copied GitHub link into the provided input field.
+
+4. **Convert to GitHub Raw Link**:
+   - The tool automatically converts the GitHub link to a GitHub raw link.
+   - Copy the generated GitHub raw link.
+
+By following these simple steps and utilizing the Git-Rawify tool, you can seamlessly convert GitHub links to GitHub raw links, ensuring compatibility with MeshMap and other platforms requiring raw links for file access.
+
+#### Importing DAPR Helm Chart to MeshMap
+- Now you can open Meshery playground
+- On the Right side ,Click on that Down arrow Symbol to import designs into meshery.
+- After Click that , name This design as DAPR Helm design.
+- At the dropdown in the left side select as helm chart
+- In the url section , paste the existing github raw url lin kwhich is of helm charts.
+- waiting for some time to load the helm into meshery.
+  
+
+#### Deploy/Undeploy DAPR helm chart into meshery 
+- After completing import of Dapr Helm Chart into Meshery
+- On that left click on validate , if no errors proceed to Deploy.
+- After deployment the helm chart is deployed into cluster.
+- you can always undeploy as u want .
+
+  
+
+  
+
+
+
+
+  
 
 
