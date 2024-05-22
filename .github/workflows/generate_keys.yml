@@ -28,6 +28,8 @@ jobs:
       run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
+    - name: Save keys.csv to docs/assets/excel
+      run: mv keys.csv docs/assets/excel/keys.csv
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
