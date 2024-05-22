@@ -20,10 +20,10 @@ td {
     <thead>
     <tr>
       <th style="text-align:left; padding:1rem;">Category</th>
-      <th style="text-align:left; padding:1rem;">Function</th>
-      <th style="text-align:left; padding:1rem;">Feature</th>
+      <th style="text-align:left; padding:1rem;">Key Name</th>
+      <th style="text-align:left; padding:1rem;">Description</th>
       <th style="text-align:left; padding:1rem;">Keychain ID</th>
-      <th style="text-align:left; padding:1rem;">Key ID</th>
+      <!-- <th style="text-align:left; padding:1rem;">Key ID</th> -->
     </tr>
   </thead>
   </table>
@@ -61,6 +61,7 @@ td {
           row.deleteCell(5);
           row.deleteCell(6);
           row.deleteCell(5);
+          row.deleteCell(4);
         });
         
         document.getElementById('excelTable').innerHTML += tableElement.innerHTML;
