@@ -44,11 +44,11 @@ Learn to efficiently import, configure, and deploy Helm charts within Meshery Pl
 #### Choosing Correct Dapr Helm charts
 
 - Navigate to the Dapr Helm charts repository on GitHub or any other trusted source. Here is the one of the source from which you can pick [helm charts](https://github.com/jangocheng/dapr-helm-charts/tree/master).
-- ![](./screenshots/H1.png)
+  ![](./screenshots/H1.png)
 - Ensure you select the appropriate chart version compatible with your Kubernetes cluster and Dapr runtime.
-- ![](./screenshots/H2.png)
+  ![](./screenshots/H2.png)
 - Copy the repository URL for later use in Meshery.
-- ![](./screenshots/H3.png)
+  ![](./screenshots/H3.png)
 
 #### Converting GitHub Links to GitHub Raw Links as Meshmery compatible
 
@@ -64,7 +64,7 @@ When importing Helm Charts into MeshMap, it's essential to have GitHub raw links
 3. **Use Git-Rawify Tool**:
    - Access the [Git-Rawify tool](https://git-rawify.vercel.app/#convert).
    - Paste the copied GitHub link into the provided input field.
-   - ![](./screenshots/H4.png)
+     ![](./screenshots/H4.png)
 
 4. **Convert to GitHub Raw Link**:
    - The tool automatically converts the GitHub link to a GitHub raw link.
@@ -75,18 +75,18 @@ By following these simple steps and utilizing the Git-Rawify tool, you can seaml
 #### Importing DAPR Helm Chart to MeshMap
 - Now you can open Meshery playground.
 - On the Right side ,Click on that Down arrow Symbol to import designs into meshery.
-- ![](./screenshots/H5.png)
+  ![](./screenshots/H5.png)
 - After Click that , name This design as DAPR Helm design.
-- ![](./screenshots/H6.png)
+  ![](./screenshots/H6.png)
 - At the dropdown in the left side select as helm chart
-- ![](./screenshots/H7.png)
+  ![](./screenshots/H7.png)
 - In the url section , paste the existing github raw url lin kwhich is of helm charts.
-- ![](./screenshots/H8.png)
+  ![](./screenshots/H8.png)
 - Click on Import to import the helm chart.
 - waiting for some time to load the helm into meshery.
-- ![](./screenshots/H9.png)
+  ![](./screenshots/H9.png)
 - Succesfully DAPR helm chart is imported into meshery .
-- ![](./screenshots/H10.png)
+  ![](./screenshots/H10.png)
   
 
 ### Deploy/Undeploy Dapr Helm Chart in Meshery
