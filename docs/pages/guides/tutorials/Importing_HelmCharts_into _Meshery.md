@@ -72,22 +72,37 @@ When importing Helm Charts into MeshMap, it's essential to have GitHub raw links
 
 By following these simple steps and utilizing the Git-Rawify tool, you can seamlessly convert GitHub links to GitHub raw links, ensuring compatibility with MeshMap and other platforms requiring raw links for file access.
 
-#### Importing DAPR Helm Chart to MeshMap
-- Now you can open Meshery playground.
-- On the Right side ,Click on that Down arrow Symbol to import designs into meshery.
-  ![](./screenshots/H5.png)
-- After Click that , name This design as DAPR Helm design.
-  ![](./screenshots/H6.png)
-- At the dropdown in the left side select as helm chart
-  ![](./screenshots/H7.png)
-- In the url section , paste the existing github raw url lin kwhich is of helm charts.
-  ![](./screenshots/H8.png)
-- Click on Import to import the helm chart.
-- waiting for some time to load the helm into meshery.
-  ![](./screenshots/H9.png)
-- Succesfully DAPR helm chart is imported into meshery .
-  ![](./screenshots/H10.png)
-  
+
+### Importing Dapr Helm Chart to MeshMap
+
+1. Open the Meshery playground.
+
+2. On the right side, click on the upward arrow symbol to import designs into Meshery.
+
+   ![Import](./screenshots/H5.png)
+
+3. After clicking on that, name this design as "Dapr Helm design".
+
+   ![Name Design](./screenshots/H6.png)
+
+4. In the dropdown on the left side, select "Helm Chart".
+
+   ![Dropdown Selection](./screenshots/H7.png)
+
+5. In the URL section, paste the existing GitHub raw URL link for the helm charts.
+
+   ![URL Section](./screenshots/H8.png)
+
+6. Click on "Import" to import the helm chart.
+
+7. Wait for some time for the helm to be loaded into Meshery.
+
+   ![Loading](./screenshots/H9.png)
+
+8. Successfully, the Dapr helm chart is imported into Meshery.
+
+   ![Success](./screenshots/H10.png)
+
 
 ### Deploy/Undeploy Dapr Helm Chart in Meshery
 1. Import the Dapr Helm Chart into Meshery.
