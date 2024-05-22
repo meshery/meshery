@@ -370,6 +370,8 @@ func setCookie(w http.ResponseWriter, name, value string, duration time.Duration
 func unsetCookie(w http.ResponseWriter, name string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:   name,
+		Path: "/",
+		HttpOnly: true,
 		MaxAge: -1,
 	})
 }
