@@ -349,6 +349,15 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	for prov := range supportedProviders {
+		if prov == provider {
+			return true
+		}
+	}
+	return false
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
