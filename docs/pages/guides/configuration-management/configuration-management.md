@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Configuring your Cloud Native Infrastructure and Applications
+title: Configuring your Cloud Native Infrastructure
 abstract: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management/working-with-designs
 type: guides
@@ -12,7 +12,7 @@ redirect_from:
   - /tasks/patterns.md
 ---
 
-As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
+As an cloud native management platform, Meshery has built-in support infastructure configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
 ## What is a Meshery Design?
 
