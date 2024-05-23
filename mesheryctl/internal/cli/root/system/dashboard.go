@@ -75,7 +75,6 @@ mesheryctl system dashboard --port-forward
 // Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
 mesheryctl system dashboard --port-forward -p 9081
 
-
 // (optional) skip opening of MesheryUI in browser.
 mesheryctl system dashboard --skip-browser`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -111,7 +110,9 @@ mesheryctl system dashboard --skip-browser`,
 		log.Debug("Fetching Meshery-UI endpoint")
 		switch currCtx.GetPlatform() {
 		case "docker":
-			log.Warn("The current flag is intended for use exclusively when Meshery is deployed on a Kubernetes platform.")
+			if runPortForward {
+				log.Warn("The current flag is intended for use exclusively when Meshery is deployed on a Kubernetes platform.")
+			}
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {
