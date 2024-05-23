@@ -200,7 +200,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			if model.Registrant == "artifacthub" {
-				time.Sleep(3 * time.Second)
+				time.Sleep(1 * time.Second)
 			}
 			pkg, err := generator.GetPackage()
 			if err != nil {
