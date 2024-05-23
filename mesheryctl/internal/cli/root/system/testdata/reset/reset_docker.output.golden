@@ -1,0 +1,10 @@
+Meshery resetting...
+
+Current Context: local2
+Channel: stable
+Version: latest
+Platform: docker
+
+Fetching default docker-compose file as per current-context: local2...
+...fetching Meshery Operator manifests for Kubernetes...
+...meshconfig (meshery.yaml) now reset to default settings.
