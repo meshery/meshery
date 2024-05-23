@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "core.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "backend",
-  "displayName": "Backend",
+  "name": "aerospike-kubernetes-operator",
+  "displayName": "Aerospike Kubernetes Operator",
   "description": "",
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
@@ -11,10 +11,10 @@
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "App Definition and Development",
    "metadata": null
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Database",
   "metadata": {
    "isAnnotation": false,
    "svgColor": "",
@@ -22,7 +22,7 @@
    "svgWhite": ""
   },
   "model": {
-   "version": "0.1.0"
+   "version": "3.3.0"
   },
   "components": null,
   "relationships": null
