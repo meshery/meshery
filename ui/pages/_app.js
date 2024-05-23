@@ -783,6 +783,7 @@ const mapStateToProps = (state) => ({
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
+  extensionType: state.get('extensionType'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
