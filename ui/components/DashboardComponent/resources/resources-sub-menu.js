@@ -16,10 +16,13 @@ const styles = (theme) => ({
     maxWidth: '100%',
     height: 'auto',
   },
-  tab: {
+  resourceSubmenuTab: {
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
+    [theme.breakpoints.up('lg')]: {
+      padding: '0 16px',
+    },
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -155,6 +158,7 @@ const ResourcesSubMenu = (props) => {
                     placement="top"
                   >
                     <Tab
+                      className={classes.resourceSubmenuTab}
                       key={index}
                       value={index}
                       label={
