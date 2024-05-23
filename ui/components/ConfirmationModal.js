@@ -227,7 +227,6 @@ function ConfirmationMsg(props) {
     k8scontext,
     title,
     validationBody,
-    updateProgress,
     setK8sContexts,
     componentCount,
     tab,
@@ -615,7 +614,7 @@ const mapDispatchToProps = (dispatch) => ({
   setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
-export default withStyles(styles)(ConfirmationMsg);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg));
 
 export const SelectDeploymentTarget_ = ({
   k8scontext,

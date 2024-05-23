@@ -17,12 +17,12 @@ import {
 } from '@material-ui/core';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import { setK8sContexts, toggleCatalogContent, updateProgress } from '../lib/store';
+import { toggleCatalogContent, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
@@ -63,8 +63,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { store } from '../store';
 
 const styles = (theme) => ({
   grid: {
@@ -231,20 +229,26 @@ function resetSelectedFilter() {
   return { show: false, filter: null };
 }
 
-function MesheryFilters(props) {
-  const { updateProgress, user, classes, selectedK8sContexts, catalogVisibility } = props;
-
+function MesheryFilters({
+  updateProgress,
+  user,
+  classes,
+  selectedK8sContexts,
+  catalogVisibility,
+  // toggleCatalogContent,
+}) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState(0);
+  const [pageSize, setPageSize] = useState();
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -288,12 +292,6 @@ function MesheryFilters(props) {
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
-  const {
-    data: importSchema,
-    isSuccess: isImportSchemaFetched,
-    isError: isImportSchemaErr,
-  } = useGetSchemaQuery({ schemaName: 'filter' });
-
   const ACTION_TYPES = {
     FETCH_FILTERS: {
       name: 'FETCH_FILTERS',
@@ -333,15 +331,22 @@ function MesheryFilters(props) {
     },
   };
 
-  if (isImportSchemaErr) {
-    handleError(ACTION_TYPES.SCHEMA_FETCH);
-  }
-
   /**
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
+    dataFetch(
+      '/api/schema/resource/filter',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
     dataFetch(
       '/api/schema/resource/publish',
       {
@@ -434,7 +439,7 @@ function MesheryFilters(props) {
           subtitle: `Are you sure that you want to unpublish "${filter?.name}"?`,
           options: ['Yes', 'No'],
           showInfoIcon: `Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want.
-
+      
           Remember: unpublished catalog items can still be available to other users if that item is set to public visibility.
 
           For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.
@@ -1380,7 +1385,7 @@ function MesheryFilters(props) {
                 setSelectedFilter={setSelectedFilter}
                 selectedFilter={selectedFilter}
                 pages={Math.ceil(count / pageSize)}
-                importSchema={isImportSchemaFetched ? importSchema : {}}
+                importSchema={importSchema}
                 setPage={setPage}
                 selectedPage={page}
                 publishModal={publishModal}
@@ -1388,7 +1393,6 @@ function MesheryFilters(props) {
                 publishSchema={publishSchema}
                 fetch={() => fetchFilters(page, pageSize, search, sortOrder, visibilityFilter)}
                 handleInfoModal={handleInfoModal}
-                {...props}
               />
             )}
             <ConfirmationMsg
@@ -1402,7 +1406,6 @@ function MesheryFilters(props) {
               title={modalOpen.name}
               componentCount={modalOpen.count}
               tab={modalOpen.deploy ? 2 : 1}
-              {...props}
             />
             {canPublishFilter &&
               publishModal.open &&
@@ -1492,18 +1495,9 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const MesheryFiltersProvider = (props) => {
-  return (
-    <Provider store={store}>
-      <MesheryFilters {...props} />
-    </Provider>
-  );
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -1511,11 +1505,8 @@ const mapStateToProps = (state) => {
     user: state.get('user')?.toObject(),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     catalogVisibility: state.get('catalogVisibility'),
-    k8scontext: state.get('k8sConfig'),
   };
 };
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryFiltersProvider),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryFilters));
