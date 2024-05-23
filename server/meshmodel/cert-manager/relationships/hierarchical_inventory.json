@@ -1,16 +1,16 @@
 {
   "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
+  "version": "*",
   "kind": "Hierarchical",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
   },
   "model": {
     "schemaVersion": "core.meshery.io/v1beta2",
-    "version": "v1.0.0",
+    "version": "*",
     "name": "cert-manager",
     "model": {
-      "version": "1.14"
+      "version": "*"
     },
     "displayName": "cert-manager",
     "category": {
