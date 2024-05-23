@@ -22,7 +22,7 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect, Provider } from 'react-redux';
+import { connect, Provider, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -64,6 +64,7 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
+import { useTheme } from '@material-ui/core/styles';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -97,6 +98,59 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
 export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
+
+const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
+  const theme = useTheme();
+
+  const extension = useSelector((state) => {
+    return state.get('extensionType');
+  });
+
+  if (extension == 'navigator') {
+    return null;
+  }
+
+  return (
+    <footer
+      className={
+        capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+          ? classes.playgFooter
+          : theme.palette.type === 'dark'
+          ? classes.footerDark
+          : classes.footer
+      }
+    >
+      <Typography
+        variant="body2"
+        align="center"
+        color="textSecondary"
+        component="p"
+        style={
+          capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color: '#000' } : {}
+        }
+      >
+        <span onClick={handleL5CommunityClick} className={classes.footerText}>
+          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
+            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
+          ) : (
+            <>
+              {' '}
+              Built with{' '}
+              <FavoriteIcon
+                style={{
+                  color:
+                    theme.palette.type === 'dark' ? theme.palette.secondary.focused : '#00b39f',
+                }}
+                className={classes.footerIcon}
+              />{' '}
+              by the Layer5 Community
+            </>
+          )}
+        </span>
+      </Typography>
+    </footer>
+  );
+};
 
 class MesheryApp extends App {
   constructor() {
@@ -678,7 +732,12 @@ class MesheryApp extends App {
                           />
                         )}
                       </NotificationCenterProvider>
-                      <main className={classes.mainContent}>
+                      <main
+                        className={classes.mainContent}
+                        style={{
+                          padding: this.props.extensionType === 'navigator' && '0px',
+                        }}
+                      >
                         <MuiPickersUtilsProvider utils={MomentUtils}>
                           <ErrorBoundary>
                             <Component
@@ -695,49 +754,11 @@ class MesheryApp extends App {
                         </MuiPickersUtilsProvider>
                       </main>
                     </SnackbarProvider>
-                    <footer
-                      className={
-                        this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                          ? classes.playgroundFooter
-                          : this.state.theme === 'dark'
-                          ? classes.footerDark
-                          : classes.footer
-                      }
-                    >
-                      <Typography
-                        variant="body2"
-                        align="center"
-                        color="textSecondary"
-                        component="p"
-                        style={
-                          this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                            ? { color: '#000' }
-                            : {}
-                        }
-                      >
-                        <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                          {this.props.capabilitiesRegistry?.restrictedAccess
-                            ?.isMesheryUiRestricted ? (
-                            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
-                          ) : (
-                            <>
-                              {' '}
-                              Built with{' '}
-                              <FavoriteIcon
-                                style={{
-                                  color:
-                                    this.state.theme === 'dark'
-                                      ? theme.palette.secondary.focused
-                                      : '#00b39f',
-                                }}
-                                className={classes.footerIcon}
-                              />{' '}
-                              by the Layer5 Community
-                            </>
-                          )}
-                        </span>
-                      </Typography>
-                    </footer>
+                    <Footer
+                      classes={classes}
+                      handleL5CommunityClick={this.handleL5CommunityClick}
+                      capabilitiesRegistry={this.props.capabilitiesRegistry}
+                    />
                   </div>
                 </div>
                 <PlaygroundMeshDeploy
