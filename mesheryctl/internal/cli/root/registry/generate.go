@@ -225,8 +225,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
-
+			utils.Log.Info(fmt.Sprintf("Extracted %d components for model [ %s ]", len(comps), model.ModelDisplayName))
 			for _, comp := range comps {
 				comp.Version = defVersion
 				if comp.Metadata == nil {
