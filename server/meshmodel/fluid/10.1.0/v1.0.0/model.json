@@ -16,7 +16,15 @@
   },
   "subCategory": "Scheduling \u0026 Orchestration",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
+   "primaryColor": "#134fa4",
+   "secondaryColor": "#2b61ad",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

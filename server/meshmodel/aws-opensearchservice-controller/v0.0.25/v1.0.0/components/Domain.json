@@ -23,7 +23,15 @@
    },
    "subCategory": "Logging",
    "metadata": {
+    "capabilities": "",
+    "defaultData": "",
     "isAnnotation": false,
+    "primaryColor": "#E7157B",
+    "secondaryColor": "",
+    "shape": "rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -37,16 +45,15 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#E7157B",
    "secondaryColor": "",
    "shape": "rectangle",
    "shapePolygonPoints": "",
+   "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
