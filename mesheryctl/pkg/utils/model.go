@@ -115,9 +115,12 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	Log.Info("Downloading CSV from: ", sheetURL)
 	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	_ = os.MkdirAll(dirPath, 0755)
+	err := os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		return nil, utils.ErrCreateDir(err, dirPath)
+	}
 	csvPath := filepath.Join(dirPath, "models.csv")
-	err := utils.DownloadFile(csvPath, sheetURL)
+	err = utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, utils.ErrReadingRemoteFile(err)
 	}
