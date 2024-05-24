@@ -89,8 +89,8 @@ func ErrPatternManifest() error {
 func ErrPatternSourceType() error {
 	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
 		[]string{"Source type for the design to import not specified"},
-		[]string{"Empty  source type
-		[]string{"Manifest source-type not provided"},
+		[]string{"Empty  source type detected
+		[]string{"Design source type not provided"},
 		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
