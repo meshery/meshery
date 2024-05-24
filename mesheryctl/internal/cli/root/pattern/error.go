@@ -88,10 +88,10 @@ func ErrPatternManifest() error {
 
 func ErrPatternSourceType() error {
 	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
-		[]string{"No source-type detected"},
-		[]string{"No manifest source-type detected"},
+		[]string{"Source type for the design to import not specified"},
+		[]string{"Empty  source type
 		[]string{"Manifest source-type not provided"},
-		[]string{"Provide the source-type to the pattern manifest. \n\n%v", errPatternMsg})
+		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
 func ErrOnboardPattern() error {
