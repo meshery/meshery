@@ -16,7 +16,15 @@
   },
   "subCategory": "Security \u0026 Compliance",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
+   "primaryColor": "#14191f",
+   "secondaryColor": "#14191f",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

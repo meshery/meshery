@@ -16,7 +16,15 @@
   },
   "subCategory": "Tracing",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
+   "primaryColor": "#67cfe3",
+   "secondaryColor": "#ACFFFF",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
