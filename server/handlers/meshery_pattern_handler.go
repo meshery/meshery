@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -697,145 +698,67 @@ func (h *Handler) handlePatternPOST(
 
 }
 
-func (h *Handler) HandleConversionToDesign(
-	rw http.ResponseWriter,
-	r *http.Request,
-	_ *models.Preference,
-	user *models.User,
+// Verifies and converts a pattern to design format if required.
+// A pattern is required to be converted to design format iff,
+// 1. pattern_file attribute is empty, and
+// 2. The "type" (sourcetype/original content) is not Design. [is one of compose/helmchart/manifests]
+
+func (h *Handler) VerifyAndConvertToDesign(
+	ctx context.Context,
+	mesheryPattern *models.MesheryPattern,
 	provider models.Provider,
-) {
-	defer func() {
-		_ = r.Body.Close()
-	}()
+) error {
 
-	userUUID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("pattern").WithAction("convert").ActedUpon(userUUID)
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(models.Design) && mesheryPattern.PatternFile == "" {
+		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	sourcetype := mux.Vars(r)["sourcetype"]
-	parsedBody := &MesheryPatternPOSTRequestBody{}
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-	}
-
-	token, _ := r.Context().Value(models.TokenCtxKey).(string)
-
-	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
-	if parsedBody.PatternData == nil {
-		err := ErrRequestBody(fmt.Errorf("pattern_data cannot be empty, provide a valid pattern id for conversion"))
-
-		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
-
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-	}
-
-	mesheryPattern.Name = parsedBody.PatternData.Name
-	mesheryPattern.ID = parsedBody.PatternData.ID
-
-	eventBuilder.ActedUpon(*mesheryPattern.ID)
-
-	if parsedBody.PatternData.Location == nil {
-		parsedBody.PatternData.Location = map[string]interface{}{
-			"host":   "",
-			"path":   "",
-			"type":   "local",
-			"branch": "",
+		sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
+		if err != nil {
+			return err
 		}
-	}
 
-	sourceContent, err := provider.GetDesignSourceContent(r, mesheryPattern.ID.String())
-	if err != nil {
-		event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		mesheryPattern.SourceContent = sourceContent
+		sourcetype := mesheryPattern.Type.String
 
-	mesheryPattern.SourceContent = sourceContent
+		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
+			var k8sres string
+			if sourcetype == string(models.DockerCompose) {
+				k8sres, err = kompose.Convert(sourceContent) // convert the docker compose file into kubernetes manifest
+				if err != nil {
+					err = ErrConvertingDockerComposeToDesign(err)
+					return err
+				}
 
-	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
-		var k8sres string
-		if sourcetype == string(models.DockerCompose) {
-			k8sres, err = kompose.Convert(sourceContent) // convert the docker compose file into kubernetes manifest
+			} else if sourcetype == string(models.K8sManifest) {
+				k8sres = string(sourceContent)
+			}
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
-				err = ErrConvertingDockerComposeToDesign(err)
-				event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-
-				h.log.Error(err)
-				http.Error(rw, err.Error(), http.StatusInternalServerError)
-				return
+				err = ErrConvertingK8sManifestToDesign(err)
+				return err
 			}
-			mesheryPattern.Type = sql.NullString{
-				String: string(models.DockerCompose),
-				Valid:  true,
+			response, err := yaml.Marshal(pattern)
+			if err != nil {
+				err = ErrMarshallingDesignIntoYAML(err)
+				return err
 			}
-		} else if sourcetype == string(models.K8sManifest) {
-			k8sres = string(sourceContent)
-			mesheryPattern.Type = sql.NullString{
-				String: string(models.K8sManifest),
-				Valid:  true,
-			}
+			mesheryPattern.PatternFile = string(response)
 		}
-		pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+
+		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
-			err = ErrConvertingK8sManifestToDesign(err)
-			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-
-			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			return
+			obj := "save"
+			saveErr := ErrApplicationFailure(err, obj)
+			return saveErr
 		}
-		response, err := yaml.Marshal(pattern)
-		if err != nil {
-			err = ErrMarshallingDesignIntoYAML(err)
-			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to convert design of type %s", sourcetype)).WithMetadata(map[string]interface{}{"err": err}).WithSeverity(events.Error).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
 
-			h.log.Error((err))
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+		contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
-			return
+		if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
+			return models.ErrUnmarshal(err, "pattern")
 		}
-		mesheryPattern.PatternFile = string(response)
 	}
-
-	resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
-	if err != nil {
-		obj := "save"
-		saveErr := ErrApplicationFailure(err, obj)
-		h.log.Error(saveErr)
-		http.Error(rw, saveErr.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
-
-	if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
-		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if len(contentMesheryPatternSlice) > 0 {
-		event := eventBuilder.WithDescription(fmt.Sprintf("Converted %s \"%s\" to Design format", sourcetype, contentMesheryPatternSlice[0].Name)).WithSeverity(events.Success).Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
-	}
-
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	return nil
 }
 
 func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
@@ -1210,6 +1133,16 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
+		return
+	}
+
+	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
+	if err != nil {
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -1620,15 +1553,33 @@ func (h *Handler) GetMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	userID := uuid.FromStringOrNil(user.ID)
 
 	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	pattern := &models.MesheryPattern{}
+	err = json.Unmarshal(resp, &pattern)
+	if err != nil {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+		err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
+	if err != nil {
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -1993,7 +1944,9 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	provider models.Provider,
 ) {
 	designID := mux.Vars(r)["id"]
-	resp, err := provider.GetDesignSourceContent(r, designID)
+	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetDesignSourceContent(token, designID)
 	if err != nil {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
