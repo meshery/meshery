@@ -234,8 +234,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
-				comp.Metadata["shape"] = model.Shape
 				comp.Model = *modelDef
+				assignDefaultsForCompDefs(&comp, modelDef)
 				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					utils.Log.Info(err)
@@ -258,6 +258,13 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	close(spreadsheeetChan)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
+}
+
+func assignDefaultsForCompDefs(componentDef *v1beta1.ComponentDefinition, modelDef *v1beta1.Model) {
+	componentDef.Metadata["status"] = modelDef.Status
+	for k, v := range modelDef.Metadata {
+		componentDef.Metadata[k] = v
+	}
 }
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.

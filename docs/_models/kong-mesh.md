@@ -206,6 +206,10 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+- name: mesh-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/color/mesh-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/white/mesh-service-white.svg
+  description: 
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",
