@@ -225,7 +225,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
+			utils.Log.Info("  extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 
 			for _, comp := range comps {
 				comp.Version = defVersion
@@ -394,22 +394,22 @@ func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath stri
 
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
 	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
-		utils.Log.Info(fmt.Sprintf("For model %s-%s, generated %d components.", key, val.version, val.totalComps))
+		utils.Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
 		totalAggregateComponents += val.totalComps
 		totalAggregateModel++
 	}
 
-	utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
 	generateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
 	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant-def", "", "path pointing to the registrant connection definition")
-	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credetial definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credential definition")
 
 	generateCmd.MarkFlagsRequiredTogether("registrant-def", "registrant-cred")
 
