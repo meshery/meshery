@@ -151,6 +151,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 
 	go func() {
 		Log.Info("Parsing Components...")
+
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			errorChan <- err

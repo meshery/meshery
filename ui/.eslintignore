@@ -7,4 +7,5 @@ package-lock.json
 nodemon.json
 lib/
 cypress/
+tests/samples/
 **/__generated__/**
