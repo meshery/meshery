@@ -116,7 +116,10 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.M
 			Version: version,
 		},
 	}
-	mcv.UpdateModelDefinition(&model)
+	err := mcv.UpdateModelDefinition(&model)
+	if err != nil {
+		utils.ErrUnmarshal(err)
+	}
 	return model
 }
 
