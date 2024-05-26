@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -7,16 +7,9 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/spf13/pflag"
 )
 
-func clearAllFlags() {
-	onboardCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-		_ = flag.Value.Set("")
-	})
-}
-
-func TestOnboardCmd(t *testing.T) {
+func TestOffboardCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -44,59 +37,20 @@ func TestOnboardCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Onboard pattern",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplePattern.golden"), "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "Offboard Application",
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/types",
-					Response:     "view.designTypes.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
-					Response:     "onboard.applicationSave.response.golden",
-					ResponseCode: 200,
-				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "apply.patternSave.response.golden",
+					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
-					Method:       "POST",
+					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.patterndeploy.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
-		},
-		{
-			Name:             "Onboard pattern with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "samplePattern.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/types",
-					Response:     "view.designTypes.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "apply.patternSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.patterndeploy.response.golden",
+					Response:     "offboard.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -107,9 +61,9 @@ func TestOnboardCmd(t *testing.T) {
 
 	// Run tests
 	for _, tt := range tests {
+		// View api response from golden files
 		t.Run(tt.Name, func(t *testing.T) {
 			for _, url := range tt.URLs {
-				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 
 				// mock response
@@ -125,10 +79,9 @@ func TestOnboardCmd(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-
-			PatternCmd.SetArgs(tt.Args)
-			PatternCmd.SetOutput(b)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(tt.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -154,7 +107,6 @@ func TestOnboardCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
-			clearAllFlags()
 		})
 	}
 

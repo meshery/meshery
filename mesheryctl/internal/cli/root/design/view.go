@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"encoding/json"
@@ -34,17 +34,17 @@ var (
 
 var linkDocPatternView = map[string]string{
 	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
-	"caption": "Usage of mesheryctl pattern view",
+	"caption": "Usage of mesheryctl design view",
 }
 
 var viewCmd = &cobra.Command{
-	Use:   "view pattern name",
-	Short: "Display pattern(s)",
-	Long:  `Displays the contents of a specific pattern based on name or id`,
+	Use:   "view design name",
+	Short: "Display design(s)",
+	Long:  `Displays the contents of a specific design based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
-// view a pattern
-mesheryctl pattern view [pattern-name | ID]
+// view a design
+mesheryctl design view [design-name | ID]
 	`,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -58,7 +58,7 @@ mesheryctl pattern view [pattern-name | ID]
 		// if pattern name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
+				return errors.New("-a cannot be used when [design-name|design-id] is specified")
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
@@ -71,7 +71,7 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				url += "/api/pattern?pagesize=10000"
 			} else {
-				return errors.New(utils.PatternViewError("Pattern name or ID is not specified. Use `-a` to view all patterns"))
+				return errors.New(utils.DesignViewError("Design name or ID is not specified. Use `-a` to view all designs"))
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
@@ -121,8 +121,8 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
-				utils.Log.Error(ErrPatternNotFound())
-				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID \n", pattern))
+				utils.Log.Error(ErrDesignNotFound())
+				utils.Log.Info(fmt.Sprintf("design with name: %s not found. Enter a valid design name or ID \n", pattern))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
@@ -146,6 +146,6 @@ mesheryctl pattern view [pattern-name | ID]
 }
 
 func init() {
-	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all patterns available")
+	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all designs available")
 	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bytes"
@@ -31,9 +31,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	name string
-)
+var name string
 
 var importCmd = &cobra.Command{
 	Use:   "import",
@@ -44,15 +42,14 @@ var importCmd = &cobra.Command{
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
-		If you are providing remote URL, it should be a direct URL to a downloadable file. 
+		If you are providing remote URL, it should be a direct URL to a downloadable file.
 		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
 	`,
 	Example: `
-// Import pattern manifest
-mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
+// Import design manifest
+mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
 			return ErrPatternManifest()
@@ -79,13 +76,12 @@ mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
-
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
 
-		fmt.Printf("pattern file imported successfully. \nID of the pattern: %s \n", utils.TruncateID(pattern.ID.String()))
+		fmt.Printf("design file imported successfully. \nID of the design: %s \n", utils.TruncateID(pattern.ID.String()))
 
 		return nil
 	},
@@ -128,7 +124,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		if err != nil {
 			return nil, err
 		}
-		utils.Log.Debug("pattern file saved")
+		utils.Log.Debug("design file saved")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
@@ -185,7 +181,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to pattern file")
+	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
-	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the pattern file")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
 }

@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestApplyCmd(t *testing.T) {
+func TestDeleteCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -37,35 +37,14 @@ func TestApplyCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Apply Patterns",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "samplePattern.golden")},
-			ExpectedResponse: "apply.output.golden",
+			Name:             "Delete Design",
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "apply.patternSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
+					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "apply.patternDeploy.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
-		},
-		{
-			Name:             "Apply Pattern with --skip-save",
-			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "samplePattern.golden"), "--skip-save"},
-			ExpectedResponse: "apply.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "apply.patternDeploy.response.golden",
+					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -93,11 +72,10 @@ func TestApplyCmd(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// setting up log to grab logs
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetOutput(b)
-			PatternCmd.SetArgs(tt.Args)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(tt.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -124,9 +102,8 @@ func TestApplyCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("Apply Pattern Test Passed")
+		t.Log("Delete Design test Passed")
 	}
-
 	// stop mock server
 	utils.StopMockery(t)
 }
