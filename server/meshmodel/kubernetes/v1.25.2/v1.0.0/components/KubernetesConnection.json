@@ -37,7 +37,7 @@
    "capabilities": "",
    "defaultData": "",
    "genealogy": "",
-   "isAnnotation": false,
+   "isAnnotation": true,
    "logoURL": "https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg",
    "model": "kubernetes",
    "modelDisplayName": "Kubernetes",
