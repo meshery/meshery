@@ -1,13 +1,15 @@
 ---
 layout: default
 title: Exploring Kubernetes Deployments with Meshery Playground
-abstract: Learn Kubernetes Deployments with Meshery Playground
+abstract: Learn Kubernetes Pods
 permalink: guides/tutorials/kubernetes-deployments
-redirect_from: guides/tutorials/kubernetes-deployments/
-type: guide
-category: tutorial
+model: kubernetes
+kind: deployments
+type: guides
+category: tutorials
 language: en
-abstract: "In this tutorial, we will explore Kubernetes Deployments using Meshery Playground, an interactive live cluster environment, to perform hands-on labs for deploying and managing applications."
+list: include
+abstract: "Explore Kubernetes Deployments with Service using Meshery in an interactive live environment, through a series of hands-on exercises."
 ---
 
 ## Introduction
