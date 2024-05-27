@@ -5,7 +5,6 @@ import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 import { makeStyles } from '@material-ui/styles';
 
 const BaseInput = (props) => {
@@ -88,15 +87,9 @@ const BaseInput = (props) => {
               <InputAdornment position="start">
                 {props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
-                    backgroundColor={ERROR_COLOR}
+                    bgColor={ERROR_COLOR}
                     flag={props?.formContext?.overrideFlag}
-                    title={
-                      <div>
-                        {props.rawErrors?.map((error, index) => (
-                          <div key={index}>{error}</div>
-                        ))}
-                      </div>
-                    }
+                    title={props.rawErrors?.join('\n')}
                     interactive={true}
                   >
                     <IconButton component="span" size="small">
@@ -111,9 +104,8 @@ const BaseInput = (props) => {
                 )}
                 {props.schema?.description && (
                   <CustomTextTooltip
-                    backgroundColor="#3C494F"
                     flag={props?.formContext?.overrideFlag}
-                    title={getHyperLinkDiv(props.schema?.description)}
+                    title={props.schema?.description}
                     interactive={true}
                   >
                     <IconButton component="span" size="small">
