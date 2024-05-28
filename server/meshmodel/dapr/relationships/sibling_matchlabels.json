@@ -28,6 +28,10 @@
           {
             "kind": "Resiliency",
             "model": "dapr"
+          },
+          {
+            "kind": "Subscription",
+            "model": "dapr"
           }
         ],
         "to": [
