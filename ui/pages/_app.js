@@ -331,7 +331,7 @@ class MesheryApp extends App {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].model.metadata.transitions,
+          transitions: res?.components[0].metadata.transitions,
           icon: res?.components[0].metadata.svgColor,
         };
       }
