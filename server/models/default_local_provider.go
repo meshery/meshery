@@ -265,7 +265,8 @@ func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error
 }
 
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
