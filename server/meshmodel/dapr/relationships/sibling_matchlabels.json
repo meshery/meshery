@@ -32,6 +32,10 @@
           {
             "kind": "Subscription",
             "model": "dapr"
+          },
+          {
+            "kind": "Configuration",
+            "model": "dapr"
           }
         ],
         "to": [
