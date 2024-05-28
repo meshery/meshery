@@ -57,6 +57,7 @@
     "@rjsf/utils": "^5.15.1",
     "@rjsf/validator-ajv8": "^5.8.1",
     "@uiw/react-md-editor": "^3.14.4",
+    "@xstate/react": "^4.1.1",
     "autoprefixer": "^10.4.14",
     "axios": "^1.6.2",
     "babel-plugin-istanbul": "^6.0.0",
@@ -113,7 +114,8 @@
     "styled-jsx": "^5.1.2",
     "tar": "^6.2.1",
     "universal-cookie": "^7.1.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xstate": "^5.13.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
