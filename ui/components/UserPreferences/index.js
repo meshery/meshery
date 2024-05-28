@@ -41,7 +41,6 @@ import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent';
 import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
@@ -662,11 +661,7 @@ const UserPreference = (props) => {
               label={<span className={props.classes.tabLabel}>General</span>}
             />
           </CustomTextTooltip>
-          <CustomTextTooltip
-            backgroundColor={CHARCOAL}
-            title="Choose Performance Test Defaults"
-            placement="top"
-          >
+          <CustomTextTooltip title="Choose Performance Test Defaults" placement="top">
             <Tab
               className={props.classes.tab}
               icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
