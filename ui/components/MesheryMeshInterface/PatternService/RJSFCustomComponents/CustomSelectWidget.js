@@ -90,7 +90,7 @@ export default function CustomSelectWidget({
                 <CustomTextTooltip
                   bgColor={ERROR_COLOR}
                   flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('\n')}
+                  title={rawErrors?.join('  ')}
                   interactive={true}
                 >
                   <IconButton component="span" size="small">

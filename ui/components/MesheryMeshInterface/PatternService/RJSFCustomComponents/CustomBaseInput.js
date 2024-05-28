@@ -89,7 +89,7 @@ const BaseInput = (props) => {
                   <CustomTextTooltip
                     bgColor={ERROR_COLOR}
                     flag={props?.formContext?.overrideFlag}
-                    title={props.rawErrors?.join('\n')}
+                    title={props.rawErrors?.join('  ')}
                     interactive={true}
                   >
                     <IconButton component="span" size="small">

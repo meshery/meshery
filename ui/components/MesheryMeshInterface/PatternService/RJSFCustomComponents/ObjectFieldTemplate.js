@@ -138,7 +138,7 @@ const ObjectFieldTemplate = ({
               </CustomTextTooltip>
             )}
             {rawErrors.length !== 0 && (
-              <CustomTextTooltip bgColor={ERROR_COLOR} title={rawErrors?.join('\n')}>
+              <CustomTextTooltip bgColor={ERROR_COLOR} title={rawErrors?.join('  ')}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"

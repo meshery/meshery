@@ -12,9 +12,8 @@ import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 import pluralize from 'pluralize';
-const styles = (theme) => ({
+const styles = () => ({
   typography: {
     fontSize: '0.8rem',
   },
@@ -198,7 +197,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               <CustomTextTooltip
                 bgColor={ERROR_COLOR}
                 interactive={true}
-                title={props.rawErrors?.join('\n')}
+                title={props.rawErrors?.join('  ')}
               >
                 <IconButton
                   component="span"
