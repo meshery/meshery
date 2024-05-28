@@ -1071,22 +1071,10 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 }
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *connections.Connection) (*connections.Connection, error) {
-	fmt.Println(" yash on update connection by state")
-	err := l.DB.Save(connection).Error
-	if err != nil {
-		return nil, ErrDBPut(err)
-	}
-
-	updatedConnection := connections.Connection{}
-	err = l.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
-	if err != nil {
-		return nil, ErrDBRead(err)
-	}
-	return connection, nil
+	return l.ConnectionPersister.UpdateConnectionByID(connection)
 }
 
 func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
-	fmt.Println("on update connection by state", connectionID)
 	updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusByID(connectionID, connectionStatus)
 	if err != nil {
 		fmt.Println("on update connection error", err)
@@ -1113,17 +1101,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *Con
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
 	connection := connections.Connection{ID: connectionID}
-	err := l.DB.Model(&connection).Find(&connection).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, ErrResultNotFound(err)
-		}
-	}
-	err = l.DB.Delete(connection).Error
-	if err != nil {
-		return nil, ErrDBDelete(err, l.fetchUserDetails().UserID)
-	}
-	return &connection, nil
+	return l.ConnectionPersister.DeleteConnection(&connection)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {

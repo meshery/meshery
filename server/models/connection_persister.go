@@ -98,6 +98,30 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
+func (cp *ConnectionPersister) DeleteConnection(connection *connections.Connection) (*connections.Connection, error) {
+	err := cp.DB.Model(&connection).Find(&connection).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+	}
+	err = cp.DB.Delete(connection).Error
+	if err != nil {
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserID)
+	}
+
+	return connection, err
+}
+
+func (cp *ConnectionPersister) fetchUserDetails() *User {
+	return &User{
+		UserID:    "meshery",
+		FirstName: "Meshery",
+		LastName:  "Meshery",
+		AvatarURL: "",
+	}
+}
+
 func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {
 	err := cp.DB.Model(&connections.Connection{}).Where("id = ?", connectionID).UpdateColumn("status", connectionStatus).Error
 	if err != nil {
@@ -111,6 +135,20 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID uuid.UUID
 	}
 
 	return &updatedConnection, nil
+}
+
+func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
+	err := cp.DB.Save(connection).Error
+	if err != nil {
+		return nil, ErrDBPut(err)
+	}
+
+	updatedConnection := connections.Connection{}
+	err = cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return connection, nil
 }
 
 // Get connection by ID
