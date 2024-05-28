@@ -14,6 +14,7 @@ import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import theme from '../../../../themes/app';
 import { CustomTextTooltip } from '../CustomTextTooltip';
+import { getHyperLinkDiv } from '../helper';
 import {
   ariaDescribedByIds,
   enumOptionsIndexForValue,
@@ -88,9 +89,15 @@ export default function CustomSelectWidget({
             <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
-                  bgColor={ERROR_COLOR}
+                  backgroundColor={ERROR_COLOR}
                   flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('\n')}
+                  title={
+                    <div>
+                      {rawErrors?.map((error, index) => (
+                        <div key={index}>{error}</div>
+                      ))}
+                    </div>
+                  }
                   interactive={true}
                 >
                   <IconButton component="span" size="small">
@@ -105,8 +112,9 @@ export default function CustomSelectWidget({
               )}
               {schema?.description && (
                 <CustomTextTooltip
+                  backgroundColor="#3C494F"
                   flag={formContext?.overrideFlag}
-                  title={schema?.description}
+                  title={getHyperLinkDiv(schema?.description)}
                   interactive={true}
                 >
                   <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
