@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"gorm.io/gorm"
@@ -39,22 +40,10 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		query = query.Where("kind IN (?)", kind)
 	}
 
-	if filter != "" {
-		filterArr := strings.Split(filter, " ")
-		filterKey := filterArr[0]
-		filterVal := strings.Join(filterArr[1:], " ")
+	dynamicKeys := []string{"type", "sub_type"}
 
-		if filterKey == "deleted_at" {
-			// Handle deleted_at filter
-			if filterVal == "Deleted" {
-				query = query.Where("deleted_at IS NOT NULL")
-			} else {
-				query = query.Where("deleted_at IS NULL")
-			}
-		} else if filterKey == "type" || filterKey == "sub_type" {
-			query = query.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
-		}
-	}
+	// Apply filters using the utility function
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
 
 	query = query.Order(order)
 	count := int64(0)

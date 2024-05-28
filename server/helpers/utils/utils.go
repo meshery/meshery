@@ -16,6 +16,7 @@ import (
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
+	"gorm.io/gorm"
 )
 
 const (
@@ -370,4 +371,33 @@ func (j *JSONMap) Scan(value interface{}) error {
 		return errors.New("type assertion to []byte failed")
 	}
 	return json.Unmarshal(bytes, j)
+}
+
+// ApplyFilters applies dynamic filters to the GORM query
+func ApplyFilters(query *gorm.DB, filter string, dynamicKeys []string) *gorm.DB {
+	if filter != "" {
+		filterArr := strings.Split(filter, " ")
+		filterKey := filterArr[0]
+		filterVal := strings.Join(filterArr[1:], " ")
+
+		switch filterKey {
+		case "deleted_at":
+			// Handle deleted_at filter
+			if filterVal == "Deleted" {
+				query = query.Where("deleted_at IS NOT NULL")
+			} else {
+				query = query.Where("deleted_at IS NULL")
+			}
+		default:
+			// Handle dynamic keys
+			for _, key := range dynamicKeys {
+				if filterKey == key {
+					query = query.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
+					break
+				}
+			}
+		}
+	}
+
+	return query
 }
