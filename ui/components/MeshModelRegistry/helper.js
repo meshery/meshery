@@ -26,7 +26,7 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
       return MODELS;
     } else if (isPropertyIncluded('evaluationQuery') || isPropertyIncluded('selector')) {
       return RELATIONSHIPS;
-    } else if (isPropertyIncluded('schema') || isPropertyIncluded('apiVersion')) {
+    } else if (isPropertyIncluded('component')) {
       return COMPONENTS;
     }
   };
@@ -65,14 +65,12 @@ export const groupRelationshipsByKind = (relationships) => {
  */
 export const removeDuplicateVersions = (data) => {
   const groupedModels = _.groupBy(data, 'name');
-
   const result = _.reduce(
     groupedModels,
     (acc, models, name) => {
-      const uniqueVersions = _.groupBy(models, 'version');
+      const uniqueVersions = _.groupBy(models, (modelDef) => modelDef.model.version);
       const arrayOfUniqueVersions = Object.values(uniqueVersions);
-
-      const existingModel = acc.find((m) => m.name === name);
+      const existingModelDef = acc.find((m) => m.name === name);
 
       const mergedData = arrayOfUniqueVersions.map((modelsWithSameVersion) => {
         let subVal = {
@@ -91,17 +89,17 @@ export const removeDuplicateVersions = (data) => {
         };
       });
 
-      if (existingModel) {
-        existingModel.version = _.union(
-          existingModel.version,
-          mergedData.map((model) => model.version),
+      if (existingModelDef) {
+        existingModelDef.model.version = _.union(
+          existingModelDef.model.version,
+          mergedData.map((model) => model.model.version),
         );
-        existingModel.versionBasedData = existingModel.versionBasedData.concat(mergedData);
+        existingModelDef.versionBasedData = existingModelDef.versionBasedData.concat(mergedData);
       } else {
-        const selectedModel = models[0];
+        const selectedModelDef = models[0];
         acc.push({
-          ...selectedModel,
-          version: mergedData.map((model) => model.version),
+          ...selectedModelDef,
+          version: mergedData.map((model) => model.model.version),
           versionBasedData: mergedData,
         });
       }

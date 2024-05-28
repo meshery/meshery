@@ -806,7 +806,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       search: !(user && user.user_id === 'meshery'),
       filterType: 'textField',
       expandableRows: true,
-      selectableRows: false,
+      selectableRows: 'none',
       rowsPerPage: pageSize,
       rowsPerPageOptions: [10, 20, 25],
       fixedHeader: true,

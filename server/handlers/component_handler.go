@@ -12,9 +12,10 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/types"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -55,13 +56,13 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
+	offset := page * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	offset := (page - 1) * limit
-	filter := &v1alpha1.ModelFilter{
+	filter := &regv1beta1.ModelFilter{
 		Category:    cat,
 		Version:     queryParams.Get("version"),
 		Limit:       limit,
@@ -74,7 +75,14 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	var modelDefs []v1beta1.Model
+	for _, model := range entities {
+		model, ok := model.(*v1beta1.Model)
+		if ok {
+			modelDefs = append(modelDefs, *model)
+		}
+	}
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -87,7 +95,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -135,13 +143,13 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Category:    cat,
 		Name:        model,
 		Version:     queryParams.Get("version"),
@@ -152,6 +160,14 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
+
+	var modelDefs []v1beta1.Model
+	for _, model := range entities {
+		model, ok := model.(*v1beta1.Model)
+		if ok {
+			modelDefs = append(modelDefs, *model)
+		}
+	}
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -164,7 +180,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -208,13 +224,13 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	filter := &v1alpha1.ModelFilter{
+	filter := &regv1beta1.ModelFilter{
 		Registrant:  queryParams.Get("registrant"),
 		Version:     v,
 		Limit:       limit,
@@ -232,8 +248,14 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	var modelDefs []v1beta1.Model
+	for _, model := range entities {
+		model, ok := model.(*v1beta1.Model)
+		if ok {
+			modelDefs = append(modelDefs, *model)
+		}
+	}
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -245,7 +267,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -294,12 +316,12 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Name:        name,
 		Version:     v,
 		Limit:       limit,
@@ -313,6 +335,14 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Relationships: queryParams.Get("relationships") == "true",
 	})
 
+	var modelDefs []v1beta1.Model
+	for _, model := range entities {
+		model, ok := model.(*v1beta1.Model)
+		if ok {
+			modelDefs = append(modelDefs, *model)
+		}
+	}
+
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -324,7 +354,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -361,11 +391,11 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
-	filter := &v1alpha1.CategoryFilter{
+	offset := (page) * limit
+	filter := &regv1beta1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
@@ -376,7 +406,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		filter.Name = r.URL.Query().Get("search")
 	}
 
-	categories, count := h.registryManager.GetCategories(h.dbHandler, filter)
+	categories, count, _, _ := h.registryManager.GetEntities(filter)
 
 	var pgSize int64
 
@@ -432,11 +462,11 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
-	categories, count := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
+	offset := (page) * limit
+	categories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
 		Greedy:  greedy,
@@ -512,12 +542,12 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
@@ -530,22 +560,12 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Sort:         queryParams.Get("sort"),
 		Annotations:  returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -553,7 +573,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -610,13 +630,13 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		ModelName:    queryParams.Get("model"),
 		CategoryName: cat,
@@ -629,22 +649,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         queryParams.Get("sort"),
 		Annotations:  returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -652,7 +661,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -708,13 +717,13 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		ModelName:   typ,
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -726,22 +735,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -749,7 +747,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -806,12 +804,12 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -824,22 +822,12 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Sort:        queryParams.Get("sort"),
 		Annotations: returnAnnotationComp,
 	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -847,7 +835,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -898,12 +886,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		ModelName:   typ,
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
@@ -918,23 +906,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	entities, count, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -942,7 +919,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -995,12 +972,12 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
 		Version:      v,
@@ -1016,23 +993,12 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	entities, count, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -1040,7 +1006,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -1091,12 +1057,12 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
 		Trim:         queryParams.Get("trim") == "true",
@@ -1111,23 +1077,12 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	entities, count, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
-		}
-	}
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -1135,7 +1090,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -1186,12 +1141,12 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 
 	pagestr := queryParams.Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
-	offset := (page - 1) * limit
+	offset := (page) * limit
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &v1alpha1.ComponentFilter{
+	filter := &regv1beta1.ComponentFilter{
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -1205,28 +1160,13 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.Greedy = true
 		filter.DisplayName = queryParams.Get("search")
 	}
-	entities, count, _ := h.registryManager.GetEntities(filter)
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range entities {
-		comp, ok := r.(v1alpha1.ComponentDefinition)
-		host := h.registryManager.GetRegistrant(r)
-		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comp.HostID = host.ID
-			comp.HostName = host.Hostname
-			comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-			comps = append(comps, comp)
-		}
-	}
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	comps := prettifyCompDefSchema(entities)
 
 	var pgSize int64
 
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -1234,7 +1174,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      *count,
+		Count:      count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -1261,16 +1201,16 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var c v1alpha1.ComponentDefinition
+	var c v1beta1.ComponentDefinition
 	switch cc.EntityType {
-	case types.ComponentDefinition:
+	case entity.ComponentDefinition:
 		err = json.Unmarshal(cc.Entity, &c)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		err = h.registryManager.RegisterEntity(cc.Host, c)
+		err = h.registryManager.RegisterEntity(cc.Host, &c)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -1313,12 +1253,12 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 
-	offset := (page - 1) * limit
-	filter := &v1alpha1.HostFilter{
+	offset := (page) * limit
+	filter := &v1beta1.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
 		Sort:    r.URL.Query().Get("sort"),
@@ -1402,4 +1342,20 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
+}
+
+func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefinition {
+	var comps []v1beta1.ComponentDefinition
+	for _, r := range entities {
+		comp, ok := r.(*v1beta1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
+			m = core.Format.Prettify(m, true)
+			b, _ := json.Marshal(m)
+			comp.Component.Schema = string(b)
+			comps = append(comps, *comp)
+		}
+	}
+	return comps
 }

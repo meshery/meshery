@@ -5,10 +5,11 @@ permalink: concepts/logical/registry
 type: concepts
 abstract: Meshery Registry is a database acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including models, components, relationships, and policies.
 language: en
+display-title: false
 list: include
 
 ---
-# The Meshery Registry: A Central Hub for Capabilities
+# Meshery Registry: A Central Hub for Capabilities
 
 The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including:
 

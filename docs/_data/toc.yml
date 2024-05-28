@@ -164,6 +164,8 @@
       children:
       - title: Exploring Kubernetes Pods
         url: guides/tutorials/kubernetes-pods
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
@@ -241,7 +243,7 @@
           url: project/contributing/build-and-release
           grandchildren:
           - title: "End-to-End Testing"
-            url: project/contributing/contributing-cypress
+            url: project/contributing/contributing-ui-tests
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
@@ -275,6 +277,8 @@
   links:
     - title: Error Code Reference
       url: reference/error-codes
+    - title: Permissions Reference
+      url: reference/permissions
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
       children:

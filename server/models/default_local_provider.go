@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -467,6 +468,10 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	return "", nil
 }
 
+func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) error {
+	return nil
+}
+
 // PublishMetrics - publishes metrics to the provider backend asyncronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
@@ -520,7 +525,7 @@ func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Reque
 func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		tokenName:          "",
+		TokenCookieName:          "",
 	}
 	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -632,7 +637,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -653,7 +658,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
@@ -668,7 +673,7 @@ func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *Meshe
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
@@ -690,7 +695,7 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(designID)
 	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }
@@ -1063,6 +1068,22 @@ func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid
 	return connection, http.StatusOK, err
 }
 
+func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+	return nil, http.StatusForbidden, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+	result := connections.Connection{}
+	err := l.DB.Model(&result).Where("id = ?", connectionID).First(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, ErrResultNotFound(err)
+		}
+		return nil, http.StatusInternalServerError, ErrDBRead(err)
+	}
+	return &result, http.StatusOK, err
+}
+
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
 	return nil, ErrLocalProviderSupport
 }
@@ -1241,9 +1262,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			Description: "This is default organization",
 			Owner:       uuid.Nil,
 		}
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
+		count, _ := l.OrganizationPersister.GetOrganizationsCount()
+		if count == 0 {
+			_, err := l.OrganizationPersister.SaveOrganization(org)
+			if err != nil {
+				log.Error(ErrGettingSeededComponents(err, "organization"))
+			}
 		}
 	}()
 }

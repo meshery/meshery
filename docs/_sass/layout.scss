@@ -77,14 +77,14 @@ ol {
     flex: 0 0 100%;
   }
   @media (max-width: 600px) {
-    padding: 28px 20px;
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
   }
   & .breadcrumb {
     list-style: none;
   }
 
   & #breadcrumbs {
-    font-size: 1.4rem;
+    font-size: .9rem;
     line-height: 1.15rem;
     & a {
       color: var(--color-grey-dark);

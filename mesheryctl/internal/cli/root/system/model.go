@@ -22,12 +22,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -151,61 +150,15 @@ mesheryctl exp model list --page 2
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of models and current page number
-				whiteBoardPrinter.Print("Total number of models: ", len(rows))
-				fmt.Println()
-				whiteBoardPrinter.Print("Page: ", startIndex/maxRowsPerPage+1)
-				fmt.Println()
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
+			err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
 			}
 		}
 
 		return nil
 	},
-}
-
-// min returns the smaller of x or y.
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
 }
 
 // represents the mesheryctl exp model view [model-name] subcommand.
@@ -285,7 +238,7 @@ mesheryctl exp model view [model-name]
 			return err
 		}
 
-		var selectedModel v1alpha1.Model
+		var selectedModel v1beta1.Model
 
 		if modelsResponse.Count == 0 {
 			fmt.Println("No model(s) found for the given name ", model)
@@ -349,7 +302,7 @@ mesheryctl exp model search [query-text]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
 		}
 		return nil
 	},
@@ -446,10 +399,16 @@ mesheryctl exp model view [model-name]
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))
 		}
@@ -478,8 +437,8 @@ func init() {
 }
 
 // selectModelPrompt lets user to select a model if models are more than one
-func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
-	modelArray := []v1alpha1.Model{}
+func selectModelPrompt(models []v1beta1.Model) v1beta1.Model {
+	modelArray := []v1beta1.Model{}
 	modelNames := []string{}
 
 	modelArray = append(modelArray, models...)
@@ -504,7 +463,7 @@ func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
 	}
 }
 
-func outputJson(model v1alpha1.Model) error {
+func outputJson(model v1beta1.Model) error {
 	if err = prettifyJson(model); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
@@ -518,9 +477,9 @@ func outputJson(model v1alpha1.Model) error {
 	return nil
 }
 
-// prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyJson(model v1alpha1.Model) error {
+func prettifyJson(model v1beta1.Model) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.

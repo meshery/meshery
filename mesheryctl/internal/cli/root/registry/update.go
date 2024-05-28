@@ -21,11 +21,11 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/sirupsen/logrus"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/spf13/cobra"
 )
 
@@ -163,7 +163,7 @@ func InvokeCompUpdate() error {
 					}
 
 					// A model can have components with multiple versions
-					versionPath := filepath.Join(modelPath, content.Name())
+					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
 					entries, _ := os.ReadDir(versionPath)
 					availableComponentsPerModelPerVersion += len(entries)
 
@@ -171,13 +171,13 @@ func InvokeCompUpdate() error {
 
 					for _, component := range components {
 						utils.Log.Info("Updating ", component.Component)
-						compPath := fmt.Sprintf("%s/%s.json", versionPath, component.Component)
+						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						componentDef := v1alpha1.ComponentDefinition{}
+						componentDef := v1beta1.ComponentDefinition{}
 						err = json.Unmarshal(componentByte, &componentDef)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
@@ -189,7 +189,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						err = mutils.WriteJSONToFile[v1alpha1.ComponentDefinition](compPath, componentDef)
+						err = mutils.WriteJSONToFile[v1beta1.ComponentDefinition](compPath, componentDef)
 						if err != nil {
 							utils.Log.Error(err)
 							continue

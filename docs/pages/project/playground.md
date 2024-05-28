@@ -5,6 +5,7 @@ permalink: installation/playground
 abstract: Details of the cloud native playground
 language: en
 type: installation
+category: project
 list: include
 ---
 

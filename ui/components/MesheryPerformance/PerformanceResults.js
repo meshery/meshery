@@ -690,7 +690,7 @@ function MesheryResults({
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,
-    selectableRows: true,
+    selectableRows: 'multiple',
     serverSide: true,
     count,
     rowsPerPage: pageSize,

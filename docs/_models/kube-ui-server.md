@@ -50,6 +50,10 @@ components:
   colorIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/color/project-quota-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/white/project-quota-white.svg
   description: 
+- name: service-monitor
+  colorIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/color/service-monitor-color.svg
+  whiteIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/white/service-monitor-white.svg
+  description: 
 featureList: [
   "WhoAmI service returns the user info of the user making the api call.",
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",
