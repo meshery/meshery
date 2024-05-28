@@ -57,22 +57,14 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	}
 
 	query = query.Order(order)
-
-	var count int64
-	err := query.Count(&count).Error
-	if err != nil {
-		return nil, err
-	}
+	count := int64(0)
 
 	connectionsFetched := []*connections.Connection{}
-	err = Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched).Error
-	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return nil, ErrDBRead(err)
-		}
-		return nil, err
-	}
 
+	query.Table("connections").Count(&count)
+
+	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
+	// query.Table("connections").Count(&count).Find(&connectionsFetched)
 	connectionsPage := &connections.ConnectionPage{
 		Page:        page,
 		PageSize:    pageSize,
@@ -90,16 +82,35 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 			return nil, ErrGenerateUUID(err)
 		}
 		connection.ID = id
-	} else {
-		existingConnection := connections.Connection{}
-		err := cp.DB.First(&existingConnection, "id = ?", connection.ID).Error
-		if err == nil {
-			return &existingConnection, nil
-		}
 	}
 
-	err := cp.DB.Save(connection).Error
-	return connection, ErrDBCreate(err)
+	err := cp.DB.Transaction(func(tx *gorm.DB) error {
+		existingConnection := connections.Connection{}
+
+		// Check if there is already an entry for this context
+		if err := tx.First(&existingConnection, "id = ?", connection.ID).Error; err == nil {
+			return err
+		}
+
+		return tx.Save(&connection).Error
+	})
+
+	return connection, err
+}
+
+func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {
+	err := cp.DB.Model(&connections.Connection{}).Where("id = ?", connectionID).UpdateColumn("status", connectionStatus).Error
+	if err != nil {
+		return nil, fmt.Errorf("error updating connection status: %v", err)
+	}
+
+	updatedConnection := connections.Connection{}
+	err = cp.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving updated connection: %v", err)
+	}
+
+	return &updatedConnection, nil
 }
 
 // Get connection by ID

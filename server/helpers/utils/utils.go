@@ -2,8 +2,10 @@ package utils
 
 import (
 	"crypto/md5"
+	"database/sql/driver"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -352,4 +354,20 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 	return
+}
+
+type JSONMap map[string]interface{}
+
+// Value converts the JSON map to a database value.
+func (j JSONMap) Value() (driver.Value, error) {
+	return json.Marshal(j)
+}
+
+// Scan converts the database value to a JSON map.
+func (j *JSONMap) Scan(value interface{}) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(bytes, j)
 }

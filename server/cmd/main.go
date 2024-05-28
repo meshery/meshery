@@ -21,6 +21,7 @@ import (
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -191,6 +192,7 @@ func main() {
 		models.K8sContext{},
 		models.Organization{},
 		models.Key{},
+		connections.Connection{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -211,6 +213,7 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,

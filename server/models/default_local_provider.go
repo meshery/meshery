@@ -191,7 +191,52 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 }
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (connections.Connection, error) {
-	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+
+	k8sServerID := *k8sContext.KubernetesServerID
+
+	var connID uuid.UUID
+	id, err := K8sContextGenerateID(k8sContext)
+	if err == nil {
+		connID, _ = uuid.FromString(id)
+	}
+
+	_metadata := map[string]string{
+		"id":                   k8sContext.ID,
+		"server":               k8sContext.Server,
+		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
+		"deployment_type":      k8sContext.DeploymentType,
+		"version":              k8sContext.Version,
+		"name":                 k8sContext.Name,
+		"kubernetes_server_id": k8sServerID.String(),
+	}
+	metadata := make(map[string]interface{}, len(_metadata))
+	for k, v := range _metadata {
+		metadata[k] = v
+	}
+
+	cred := map[string]interface{}{
+		"auth":    k8sContext.Auth,
+		"cluster": k8sContext.Cluster,
+	}
+
+	conn := &ConnectionPayload{
+		ID:      connID,
+		Kind:    "kubernetes",
+		Name:    k8sContext.Name,
+		Type:    "platform",
+		SubType: "orchestrator",
+		// Eventually the status would depend on other factors like, whether user administratively processed it or not
+		// Is clsuter reachable and other reasons.
+		Status:           connections.DISCOVERED,
+		MetaData:         metadata,
+		CredentialSecret: cred,
+	}
+	connectionCreated, err := l.SaveConnection(conn, "", true)
+	if err != nil {
+		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
+	}
+	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	return *connectionCreated, nil
 }
 
 func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
@@ -974,17 +1019,22 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 }
 
 func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+	id := uuid.Nil
+	if conn.ID != uuid.Nil {
+		id = conn.ID
+	}
 	connection := &connections.Connection{
-		ID:           conn.ID,
+		ID:           id,
 		Name:         conn.Name,
+		CredentialID: uuid.Nil,
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
 		Status:       conn.Status,
+		UserID:       &uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {
@@ -1021,6 +1071,7 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 }
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *connections.Connection) (*connections.Connection, error) {
+	fmt.Println(" yash on update connection by state")
 	err := l.DB.Save(connection).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
@@ -1035,16 +1086,13 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *con
 }
 
 func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
-	err := l.DB.Model(connections.Connection{}).UpdateColumn("status", connectionStatus).Error
+	fmt.Println("on update connection by state", connectionID)
+	updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusByID(connectionID, connectionStatus)
 	if err != nil {
-		return nil, http.StatusInternalServerError, ErrDBPut(err)
+		fmt.Println("on update connection error", err)
+		return nil, http.StatusInternalServerError, err
 	}
-	updatedConnection := connections.Connection{}
-	err = l.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
-	if err != nil {
-		return nil, http.StatusInternalServerError, ErrDBRead(err)
-	}
-	return &updatedConnection, http.StatusOK, nil
+	return updatedConnection, http.StatusOK, nil
 }
 
 func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *ConnectionPayload, _ string) (*connections.Connection, error) {
@@ -1222,6 +1270,9 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 }
 func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&connections.Connection{}); err != nil {
 		return err
 	}
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
