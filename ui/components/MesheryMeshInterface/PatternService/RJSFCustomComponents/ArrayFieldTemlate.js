@@ -183,7 +183,10 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             />
 
             {(props.uiSchema['ui:description'] || props.schema.description) && (
-              <CustomTextTooltip title={props.schema.description}>
+              <CustomTextTooltip
+                backgroundColor="#3C494F"
+                title={getHyperLinkDiv(props.schema.description)}
+              >
                 <IconButton disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon
                     width="14px"
@@ -196,9 +199,11 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             )}
             {props.rawErrors?.length > 0 && (
               <CustomTextTooltip
-                bgColor={ERROR_COLOR}
+                backgroundColor={ERROR_COLOR}
                 interactive={true}
-                title={props.rawErrors?.join('\n')}
+                title={props.rawErrors?.map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
               >
                 <IconButton
                   component="span"
