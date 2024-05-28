@@ -731,7 +731,6 @@ function Connections(props) {
         },
         customBodyRender: function CustomBody(value, tableMeta) {
           const nextStatusCol = getColumnValue(tableMeta.rowData, 'nextStatus', columns);
-          console.log('TEST line 734 : ', nextStatusCol);
           const originalNextStatus = nextStatusCol && nextStatusCol[value];
           let nextStatus = [];
           if (originalNextStatus !== undefined) {
