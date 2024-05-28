@@ -15,7 +15,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@material-ui/icons';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import Link from 'next/link';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
@@ -165,18 +164,9 @@ function Modal(props) {
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
 
-  const renderTooltipContent = () => (
-    <div>
-      <span>{showInfoIcon.text}</span>
-      {showInfoIcon.link && (
-        <Link href={showInfoIcon.link} passHref onClick={(e) => e.stopPropagation()}>
-          <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-            Learn more
-          </a>
-        </Link>
-      )}
-    </div>
-  );
+  const tooltipContent = `
+  ${showInfoIcon.text} ${showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''}
+  `;
 
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
@@ -269,12 +259,7 @@ function Modal(props) {
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
-            <CustomTextTooltip
-              backgroundColor="#3C494F"
-              placement="top"
-              interactive={true}
-              title={renderTooltipContent()}
-            >
+            <CustomTextTooltip placement="top" interactive={true} title={tooltipContent}>
               <IconButton className={classes.infoIcon} color="primary">
                 <InfoOutlinedIcon />
               </IconButton>
