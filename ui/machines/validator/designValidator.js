@@ -7,7 +7,7 @@ import {
   dataValidatorMachine,
   selectIsValidating,
   selectValidationResults,
-} from './dataValidator';
+} from '@layer5/sistent';
 import { useSelector } from '@xstate/react';
 import { processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
