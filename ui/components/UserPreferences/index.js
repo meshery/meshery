@@ -655,7 +655,7 @@ const UserPreference = (props) => {
           className={props.classes.tabs}
           centered
         >
-          <CustomTextTooltip backgroundColor={CHARCOAL} title="General preferences" placement="top">
+          <CustomTextTooltip title="General preferences" placement="top">
             <Tab
               className={props.classes.tab}
               icon={<SettingsCellIcon style={iconMedium} />}
@@ -675,11 +675,7 @@ const UserPreference = (props) => {
           </CustomTextTooltip>
           {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
           {userPrefs && providerType != 'local' && (
-            <CustomTextTooltip
-              backgroundColor={CHARCOAL}
-              title="Remote Provider preferences"
-              placement="top"
-            >
+            <CustomTextTooltip title="Remote Provider preferences" placement="top">
               <Tab
                 className={props.classes.tab}
                 icon={<SettingsRemoteIcon style={iconMedium} />}
@@ -803,13 +799,13 @@ const UserPreference = (props) => {
               className={props.classes.tabs}
               centered
             >
-              <CustomTextTooltip backgroundColor={CHARCOAL} title="Details" placement="top">
+              <CustomTextTooltip title="Details" placement="top">
                 <Tab
                   className={props.classes.tab}
                   label={<span className={props.classes.tabLabel}>Details</span>}
                 />
               </CustomTextTooltip>
-              <CustomTextTooltip backgroundColor={CHARCOAL} title="Plugins" placement="top">
+              <CustomTextTooltip title="Plugins" placement="top">
                 <Tab
                   className={props.classes.tab}
                   label={<span className={props.classes.tabLabel}>Plugins</span>}
