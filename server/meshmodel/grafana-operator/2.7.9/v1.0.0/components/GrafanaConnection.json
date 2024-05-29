@@ -38,7 +38,7 @@
    "capabilities": "{\"autoRegister\": true}",
    "defaultData": "",
    "genealogy": "",
-   "isAnnotation": true,
+   "isAnnotation": false,
    "isModelAnnotation": "FALSE",
    "isNamespaced": true,
    "logoURL": "",
