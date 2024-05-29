@@ -164,10 +164,6 @@ function Modal(props) {
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
 
-  const tooltipContent = `
-  ${showInfoIcon.text} ${showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''}
-  `;
-
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
@@ -259,7 +255,13 @@ function Modal(props) {
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
-            <CustomTextTooltip placement="top" interactive={true} title={tooltipContent}>
+            <CustomTextTooltip
+              placement="top"
+              interactive={true}
+              title={`${showInfoIcon.text} ${
+                showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''
+              }`}
+            >
               <IconButton className={classes.infoIcon} color="primary">
                 <InfoOutlinedIcon />
               </IconButton>
