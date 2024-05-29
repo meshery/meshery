@@ -1,4 +1,13 @@
 <style>
+  table {
+    width: 100%;
+    table-layout: fixed; 
+  }
+  thead th {
+    text-align: left;
+    padding: 1rem;
+    background-color: var(--color-primary-light);
+  }
   tbody {
     display: table-row-group;
     vertical-align: middle;
@@ -8,9 +17,14 @@
   td {
     padding: 1rem;
     border-top: 2px solid var(--color-primary-dark);
+    word-wrap: break-word; 
   }
   table tbody tr:nth-of-type(odd) {
     background-color: var(--color-primary-medium) !important;
+  }
+  #tablesContainer {
+    max-width: 1200px; 
+    margin: auto;
   }
 </style>
 <div id="tablesContainer"></div>
