@@ -21,7 +21,7 @@ const styles = (theme) => ({
     paddingLeft: 0,
     paddingRight: 0,
     [theme.breakpoints.up('lg')]: {
-      padding: '0 16px',
+      padding: '0 1rem',
     },
     '&.Mui-selected': {
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,

@@ -27,8 +27,8 @@ const styles = (theme) => ({
     paddingLeft: 0,
     paddingRight: 0,
     margin: 0,
-    [theme.breakpoints.down('md')]: {
-      width: 100,
+    [theme.breakpoints.down('sm')]: {
+      width: '6rem',
     },
     [theme.breakpoints.up('md')]: {
       width: '20%',

@@ -622,17 +622,19 @@ export const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    [theme.breakpoints.up('sm')]: {
-      width: `60%`,
-      overflowX: 'clip',
+    width: '60%',
+    //increases navigator size
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
     },
   },
   mainContent: {
     flex: 1,
     padding: '48px 36px 24px',
-    width: '100vw',
-    [theme.breakpoints.up('sm')]: {
-      width: `100%`,
+    width: '100%',
+    //stops squishing of child components
+    [theme.breakpoints.down('xs')]: {
+      width: '100vw',
     },
   },
   footer: {

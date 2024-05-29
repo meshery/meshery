@@ -163,7 +163,6 @@ const styles = (theme) => ({
   searchWrapper: {
     justifySelf: 'flex-end',
     marginLeft: 'auto',
-    paddingLeft: '1rem',
     display: 'flex',
     '@media (max-width: 965px)': {
       width: 'max-content',
@@ -1600,7 +1599,7 @@ function MesheryPatterns({
                         size="large"
                         // @ts-ignore
                         onClick={() => router.push('designs/configurator')}
-                        style={{ display: 'flex', marginRight: '2rem' }}
+                        style={{ display: 'flex', marginRight: '0.68rem' }}
                         disabled={
                           !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
                         }
@@ -1615,7 +1614,7 @@ function MesheryPatterns({
                         size="large"
                         // @ts-ignore
                         onClick={handleUploadImport}
-                        style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
+                        style={{ display: 'flex' }}
                         disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                       >
                         <PublishIcon className={classes.addIcon} />
@@ -1624,15 +1623,15 @@ function MesheryPatterns({
                     </div>
                   </div>
                 )}
-                {!selectedPattern.show && (
+                {/* {!selectedPattern.show && (
                   <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                    {/* <CatalogFilter
+                        <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    /> */}
+                    />
                   </div>
-                )}
+                )} */}
               </div>
             )}
             <div className={classes.searchWrapper} style={{ display: 'flex' }}>

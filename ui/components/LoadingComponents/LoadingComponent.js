@@ -17,7 +17,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 const animatedIconList = {
-  AnimatedMeshPattern: <AnimatedMeshPattern style={{ height: '100px', margin: '4px 0px 8px' }} />,
+  AnimatedMeshPattern: (
+    <AnimatedMeshPattern style={{ height: '100px', width: '100%', margin: '4px 0px 8px' }} />
+  ),
   AnimatedMeshSync: (
     <>
       <AnimatedMeshSync style={{ height: '75px' }} />
@@ -34,7 +36,9 @@ const animatedIconList = {
 };
 
 const animatedLightIconList = {
-  AnimatedMeshPattern: <AnimatedMeshPattern style={{ height: '100px', margin: '4px 0px 8px' }} />,
+  AnimatedMeshPattern: (
+    <AnimatedMeshPattern style={{ height: '100px', width: '100%', margin: '4px 0px 8px' }} />
+  ),
   AnimatedMeshSync: (
     <>
       <AnimatedMeshSync style={{ height: '75px' }} />
