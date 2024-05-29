@@ -28,6 +28,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
+import CheckIcon from '@/assets/icons/CheckIcon';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -38,6 +39,7 @@ function MesheryPatternCard_({
   created_at,
   pattern_file,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleDeploy,
@@ -171,9 +173,15 @@ function MesheryPatternCard_({
                 defaultActionClick={(e) => genericClickHandler(e, handleVerify)}
                 options={[
                   {
+                    label: 'Validate',
+                    icon: <CheckIcon className={classes.iconPatt} />,
+                    onClick: (e) => genericClickHandler(e, handleVerify),
+                    disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+                  },
+                  {
                     label: 'Dry Run',
                     icon: <DryRunIcon className={classes.iconPatt} />,
-                    onClick: (e) => genericClickHandler(e, handleVerify),
+                    onClick: (e) => genericClickHandler(e, handleDryRun),
                     disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
                   },
                   {
