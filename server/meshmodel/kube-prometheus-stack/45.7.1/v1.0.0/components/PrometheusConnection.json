@@ -38,7 +38,7 @@
    "capabilities": "{\"autoRegister\": true}",
    "defaultData": "",
    "genealogy": "",
-   "isAnnotation": true,
+   "isAnnotation": false,
    "isModelAnnotation": "FALSE",
    "isNamespaced": true,
    "logoURL": "https://github.com/cncf/artwork/blob/master/examples/graduated.md#prometheus-logos",
