@@ -12,7 +12,7 @@
     "model": {
       "version": "*"
     },
-    "displayName": "dapr",
+    "displayName": "Dapr",
     "category": {
       "name": "Serverless",
       "metadata": null
