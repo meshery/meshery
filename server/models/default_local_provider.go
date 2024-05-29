@@ -1057,7 +1057,11 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, pa
 	return connectionsPage, nil
 }
 
-func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+	return nil, http.StatusForbidden, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
 	connection, err := l.ConnectionPersister.GetConnection(connectionID, kind)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -1066,10 +1070,6 @@ func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid
 		return nil, http.StatusInternalServerError, err
 	}
 	return connection, http.StatusOK, err
-}
-
-func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
