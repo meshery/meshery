@@ -1,31 +1,34 @@
 <style>
-  table {
-    width: 100%;
-    table-layout: fixed; 
-  }
-  thead th {
-    text-align: left;
-    padding: 1rem;
-    background-color: var(--color-primary-light);
-  }
   tbody {
     display: table-row-group;
     vertical-align: middle;
     unicode-bidi: isolate;
     border-color: inherit;
-  }
-  td {
+}
+
+td {
     padding: 1rem;
     border-top: 2px solid var(--color-primary-dark);
-    word-wrap: break-word; 
-  }
-  table tbody tr:nth-of-type(odd) {
+}
+
+table tbody tr:nth-of-type(odd) {
     background-color: var(--color-primary-medium) !important;
+  }
+
+  @media screen and (min-width: 1366px) {
+    table {
+    width: 100%;
+    table-layout: fixed; 
+  }
+  td {
+    word-wrap: break-word; 
   }
   #tablesContainer {
     max-width: 1200px; 
     margin: auto;
   }
+}
+
 </style>
 <div id="tablesContainer"></div>
 
