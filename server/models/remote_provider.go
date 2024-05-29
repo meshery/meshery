@@ -340,6 +340,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	systemID := viper.GetString("INSTANCE_ID")
+	if userID == systemID {
+		return nil, nil
+	}
 	if !l.Capabilities.IsSupported(UsersProfile) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersProfile", l.ProviderName)
@@ -3387,7 +3391,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		TokenCookieName:          tokenString,
+		TokenCookieName:    tokenString,
 	}
 	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {

@@ -58,7 +58,6 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	if err != nil {
 		h.log.Warn(err)
 	}
-
 	filter.Limit = limit
 	filter.Offset = offset
 	filter.Order = order
@@ -66,12 +65,13 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
 
-	eventsResult, err := provider.GetAllEvents(filter, userID)
+	eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
 	if err != nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
 	eventsResult.Page = page
 	err = json.NewEncoder(w).Encode(eventsResult)
 	if err != nil {
@@ -87,8 +87,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-
-	eventTypes, err := provider.GetEventTypes(userID)
+	eventTypes, err := provider.GetEventTypes(userID, *h.SystemID)
 	if err != nil {
 		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
 		return

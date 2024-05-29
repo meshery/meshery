@@ -2,7 +2,13 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
@@ -76,4 +82,75 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	// 	return
 	// }
 	p.TokenHandler(w, r, fromMiddleWare)
+}
+
+// swagger:route GET /api/system/fileView
+// Handlers GET request for view file
+//
+// Redirects to a url to view file
+// responses:
+// 	200:
+
+// ViewHandler redirects to view the file
+func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+	fmt.Println(filePath)
+
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	var jsonData interface{}
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&jsonData); err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	responseWriter.Header().Set("Content-Type", "application/json")
+	encoder := json.NewEncoder(responseWriter)
+	if err := encoder.Encode(jsonData); err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route GET /api/system/fileDownload
+// Handlers GET request for download file
+//
+// Redirects to a url to download file
+// responses:
+// 	200:
+
+// DownloadHandler redirects to download the file
+func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Println(filePath)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	fileName := filepath.Base(filePath)
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+
+	_, err = io.Copy(responseWriter, file)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

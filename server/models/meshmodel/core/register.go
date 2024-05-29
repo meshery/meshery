@@ -11,6 +11,7 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
 	"github.com/layer5io/meshery/server/models"
@@ -56,12 +57,20 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	count := 0
 	for _, c := range man {
+		var isRegistranError bool
+		var isModelError bool
 		writeK8sMetadata(&c, reg)
-		err = reg.RegisterEntity(v1beta1.Host{
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
 			Hostname: "kubernetes",
 			Metadata: ctxID,
 		}, &c)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		return err
 	}
 	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
@@ -148,12 +157,18 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 				},
 			},
 		}
+		var isRegistranError bool
+		var isModelError bool
 		writeK8sMetadata(comp, &reg)
-		_ = reg.RegisterEntity(v1beta1.Host{
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
 			Hostname: v1beta1.Kubernetes{}.String(),
 			Metadata: contextID,
 		}, comp)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: "kubernetes"}, comp, err, isModelError, isRegistranError)
+
 	}
+	_ = helpers.WriteLogsToFiles()
 }
 
 type OpenAPIV3Response struct {

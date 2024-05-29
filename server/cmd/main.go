@@ -134,6 +134,20 @@ func main() {
 		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
 		os.Exit(1)
 	}
+	logDir := path.Join(home, ".meshery", "logs")
+	errDir = os.MkdirAll(logDir, 0755)
+	if errDir != nil {
+		logrus.Fatalf("Error creating user data directory: %v", err)
+	}
+
+	// Create or open the log file
+	logFilePath := path.Join(logDir, "registryLogs.txt")
+	logFile, err := os.Create(logFilePath)
+	if err != nil {
+		logrus.Fatalf("Could not create log file: %v", err)
+	}
+	defer logFile.Close()
+	viper.Set("REGISTRY_LOG_FILE", logFilePath)
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
