@@ -54,11 +54,9 @@ Use either Meshery UI or CLI to interact with the Registry. Meshery UI offers a 
 
 ### Model Generation
 
-The process of generating a Model (and its entities) is a multi-step process. The process begins with the sourcing of the model information from an authoratitive source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
+The process of generating a Model (and its entities) is a multi-step process and does not require use of Meshery Server. The process begins with the sourcing of the model information from an authoratitive source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
 
 #### Using Meshery CLI to Generate Models
-
-Meshery CLI supports Given a Google Sheet with a list of model names and source locations, generate models and components 
 
 Meshery CLI supports the generation of models from a Google Spreadsheet. The Google Spreadsheet should contain a list of model names and source locations from any supported Registrant (e.g. GitHub, Artifact Hub) repositories. The source locations can be a URL to a folder containing Kubernetes CRDs, or to a Helm Chart tar.gz, or an individual Kubernetes Manifest with custom resource definition.
 
@@ -73,19 +71,14 @@ Meshery [Adapters]({{ site.baseurl }}/concepts/architecture/adapters) are one ex
 #### Using Meshery CLI to Register a Model
 
 ```bash
-$ mesheryctl model import -f <path-to-model>
+mesheryctl model import -f <path-to-model>
 ```
 
 #### Using Meshery UI to Register a Model
 
 Visit the Settings --> Registry page and click the "Import" button to import a model.
 
-{% include alert.html type="tip" title="Dynamic and Static Models" content="Models can be either dynamic or static. Dynamic models are generated at runtime upon connecting to a supported platform, like a Kubernetes cluster or cloud provider. Static models are pre-defined and are included in each Meshery release." %}
-
 ### Ignoring an Entity
 
 You have control over whether a registered entity (model and all that the model contains) this can be an individual or team-level preference. Use the "Ignore" action to designate whether a given model is allowed to be used within a given Meshery Server deployment. Models that are ignored remain in the Meshery Registry but are not available for use within a given Meshery Server deployment.
 
-## Generating Models
-
-Generating a model does not require Meshery Server. The model can be generated from the source_uri. The source_uri is used as the flag by the pattern engine to assess whether additional support is needed. The Entity Source should have all the information that Meshery needs to generate and deploy the components.
