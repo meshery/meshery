@@ -29,7 +29,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	if page < 0 {
 		page = 0
 	}
-	offset = page - 1*limit
+	offset = page * limit
 
 	if sortOnCol == "" {
 		sortOnCol = "updated_at"

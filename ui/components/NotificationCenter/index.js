@@ -520,7 +520,7 @@ const NotificationCenterDrawer = () => {
 
   useEffect(() => {
     dispatch(
-      loadEvents(fetchEvents, 1, {
+      loadEvents(fetchEvents, 0, {
         status: STATUS.UNREAD,
       }),
     );
