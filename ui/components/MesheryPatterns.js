@@ -11,9 +11,9 @@ import {
   IconButton,
   NoSsr,
   TableCell,
-  Tooltip,
   Typography,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -47,7 +47,6 @@ import { useRouter } from 'next/router';
 import Modal from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import ReusableTooltip from './reusable-tooltip';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -214,9 +213,9 @@ const styles = (theme) => ({
 
 function TooltipIcon({ children, onClick, title, placement }) {
   return (
-    <Tooltip title={title} placement={placement} arrow interactive>
+    <CustomTooltip title={title} placement={placement} interactive>
       <IconButton onClick={onClick}>{children}</IconButton>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
@@ -250,16 +249,16 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           </Typography>
         </div>
         <div>
-          <ReusableTooltip
+          <CustomTooltip
             placement="top"
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
             {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-          </ReusableTooltip>
-          <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
+          </CustomTooltip>
+          <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
-          </ReusableTooltip>
+          </CustomTooltip>
         </div>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -281,7 +280,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <ReusableTooltip title="Update Pattern">
+        <CustomTooltip title="Update Pattern">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -298,8 +297,8 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <SaveIcon />
           </IconButton>
-        </ReusableTooltip>
-        <ReusableTooltip title="Delete Pattern">
+        </CustomTooltip>
+        <CustomTooltip title="Delete Pattern">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -316,7 +315,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <DeleteIcon />
           </IconButton>
-        </ReusableTooltip>
+        </CustomTooltip>
       </DialogActions>
     </Dialog>
   );
