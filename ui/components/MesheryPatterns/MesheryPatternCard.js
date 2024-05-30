@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Tooltip, Link } from '@material-ui/core';
+import { Avatar, Divider, Grid, IconButton, Typography, Link } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Save from '@material-ui/icons/Save';
 import Fullscreen from '@material-ui/icons/Fullscreen';
@@ -283,7 +284,7 @@ function MesheryPatternCard_({
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
-                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {
@@ -295,7 +296,7 @@ function MesheryPatternCard_({
                   >
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
               </div>
             </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
@@ -349,24 +350,24 @@ function MesheryPatternCard_({
             <Grid item xs={12}>
               <div className={classes.updateDeleteButtons}>
                 {/* Save button */}
-                <Tooltip title="Save" arrow interactive placement="bottom">
+                <CustomTooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
                     <Save color="primary" />
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
 
                 {/* Delete Button */}
-                <Tooltip title="Delete" arrow interactive placement="bottom">
+                <CustomTooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
                     disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
                     <DeleteIcon color="primary" />
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
               </div>
             </Grid>
           </Grid>
