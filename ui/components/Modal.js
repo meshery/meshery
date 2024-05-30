@@ -15,7 +15,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@material-ui/icons';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import Link from 'next/link';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
@@ -165,19 +164,6 @@ function Modal(props) {
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
 
-  const renderTooltipContent = () => (
-    <div>
-      <span>{showInfoIcon.text}</span>
-      {showInfoIcon.link && (
-        <Link href={showInfoIcon.link} passHref onClick={(e) => e.stopPropagation()}>
-          <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-            Learn more
-          </a>
-        </Link>
-      )}
-    </div>
-  );
-
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
@@ -269,18 +255,17 @@ function Modal(props) {
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <CustomTextTooltip
-                backgroundColor="#3C494F"
-                placement="top"
-                interactive={true}
-                title={renderTooltipContent()}
-              >
-                <IconButton className={classes.infoIcon} color="primary">
-                  <InfoOutlinedIcon />
-                </IconButton>
-              </CustomTextTooltip>
-            </div>
+            <CustomTextTooltip
+              placement="top"
+              interactive={true}
+              title={`${showInfoIcon.text} ${
+                showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''
+              }`}
+            >
+              <IconButton className={classes.infoIcon} color="primary">
+                <InfoOutlinedIcon />
+              </IconButton>
+            </CustomTextTooltip>
           )}
         </DialogActions>
         {snackbar && (

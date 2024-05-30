@@ -52,6 +52,9 @@ type RemoteProvider struct {
 
 	LoginCookieDuration time.Duration
 
+	// provider and token cookie expiry bound
+	CookieDuration time.Duration
+
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
 
@@ -178,8 +181,6 @@ func (l *RemoteProvider) Description() []string {
 	return l.ProviderDescription
 }
 
-const tokenName = "token"
-
 // GetProviderType - Returns ProviderType
 func (l *RemoteProvider) GetProviderType() ProviderType {
 	return l.ProviderType
@@ -269,7 +270,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	callbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 	mesheryVersion := viper.GetString("BUILD")
 
-	_, err := r.Cookie(tokenName)
+	_, err := r.Cookie(TokenCookieName)
 	if err != nil {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
@@ -573,10 +574,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
-		}
-		logrus.Errorf("error performing logout: %v", err)
+		err = ErrUnreachableRemoteProvider(err)
+		l.Log.Error(err)
 		return err
 	}
 
@@ -593,21 +592,16 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// And empties the token and session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
 		// gets the token from the request headers
-		ck, err := req.Cookie(tokenName)
+		ck, err := req.Cookie(TokenCookieName)
 		if err == nil {
 			err = l.revokeToken(ck.Value)
 		}
 		if err != nil {
 			logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
-			http.Redirect(w, req, "/user/login", http.StatusFound)
-			return nil
 		}
-		ck.MaxAge = -1
-		ck.Path = "/"
-		http.SetCookie(w, ck)
-		sessionCookie.MaxAge = -1
-		sessionCookie.Path = "/"
-		http.SetCookie(w, sessionCookie)
+		l.UnSetJWTCookie(w)
+
+		l.UnSetProviderSessionCookie(w)
 		return nil
 	}
 
@@ -621,13 +615,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
 	_, err := req.Cookie("meshery-provider")
 	if err == nil {
-		ck, err := req.Cookie(tokenName)
-		if err == nil {
-			ck.MaxAge = -1
-			ck.Path = "/"
-			http.SetCookie(w, ck)
-		}
-
+		// remove the cookie from the browser and redirect to inform about expired session.
+		l.UnSetJWTCookie(w)
 		http.Redirect(w, req, "/auth/login", http.StatusFound)
 		return
 	}
@@ -2709,7 +2698,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID string) ([]byte, error) {
+func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
@@ -2722,12 +2711,7 @@ func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID stri
 
 	logrus.Infof("attempting to fetch design source content from cloud for id: %s", designID)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
@@ -3313,25 +3297,13 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
-	tokenString := r.URL.Query().Get(tokenName)
+	tokenString := r.URL.Query().Get(TokenCookieName)
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
 
-	ck := &http.Cookie{
-		Name:     tokenName,
-		Value:    string(tokenString),
-		Path:     "/",
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-	}
-	http.SetCookie(w, ck)
+	l.SetJWTCookie(w, tokenString)
 	// sets the session cookie for Meshery Session
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_cookie",
-		Value:    sessionCookie,
-		Path:     "/",
-		HttpOnly: true,
-	})
+	l.SetProviderSessionCookie(w, sessionCookie)
 
 	// Get new capabilities
 	// Doing this here is important so that
@@ -3391,12 +3363,7 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 	newts := l.TokenStore[tokenString]
 	if newts != "" {
 		logrus.Debugf("set updated token: %v", newts)
-		http.SetCookie(w, &http.Cookie{
-			Name:     tokenName,
-			Value:    newts,
-			Path:     "/",
-			HttpOnly: true,
-		})
+		l.SetJWTCookie(w, newts)
 		return newts
 	}
 
@@ -3420,7 +3387,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		tokenName:          tokenString,
+		TokenCookieName:          tokenString,
 	}
 	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {

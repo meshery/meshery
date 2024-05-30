@@ -12,9 +12,8 @@ import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 import pluralize from 'pluralize';
-const styles = (theme) => ({
+const styles = () => ({
   typography: {
     fontSize: '0.8rem',
   },
@@ -183,10 +182,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             />
 
             {(props.uiSchema['ui:description'] || props.schema.description) && (
-              <CustomTextTooltip
-                backgroundColor="#3C494F"
-                title={getHyperLinkDiv(props.schema.description)}
-              >
+              <CustomTextTooltip title={props.schema.description}>
                 <IconButton disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon
                     width="14px"
@@ -199,11 +195,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             )}
             {props.rawErrors?.length > 0 && (
               <CustomTextTooltip
-                backgroundColor={ERROR_COLOR}
+                bgColor={ERROR_COLOR}
                 interactive={true}
-                title={props.rawErrors?.map((error, index) => (
-                  <div key={index}>{error}</div>
-                ))}
+                title={props.rawErrors?.join('  ')}
               >
                 <IconButton
                   component="span"

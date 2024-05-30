@@ -11,7 +11,7 @@ import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
-import { calculateGrid, getHyperLinkDiv } from '../helper';
+import { calculateGrid } from '../helper';
 
 const styles = (theme) => ({
   objectFieldGrid: {
@@ -121,7 +121,7 @@ const ObjectFieldTemplate = ({
               {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
             </Typography>
             {description && (
-              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
+              <CustomTextTooltip title={description}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -138,12 +138,7 @@ const ObjectFieldTemplate = ({
               </CustomTextTooltip>
             )}
             {rawErrors.length !== 0 && (
-              <CustomTextTooltip
-                backgroundColor={ERROR_COLOR}
-                title={rawErrors?.map((error, index) => (
-                  <div key={index}>{error}</div>
-                ))}
-              >
+              <CustomTextTooltip bgColor={ERROR_COLOR} title={rawErrors?.join('  ')}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"

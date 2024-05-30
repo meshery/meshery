@@ -43,7 +43,7 @@
    "isNamespaced": true,
    "primaryColor": "",
    "secondaryColor": "",
-   "shape": "",
+   "shape": "circle",
    "shapePolygonPoints": "",
    "status": "enabled",
    "styleOverrides": "",

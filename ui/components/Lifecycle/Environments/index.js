@@ -293,8 +293,8 @@ const Environments = ({ organization, classes }) => {
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
       options: ['DELETE', 'CANCEL'],
-      showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. 
-      
+      showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
+      Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
     });

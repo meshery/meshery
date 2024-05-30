@@ -78,7 +78,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 				act.Terminate(err)
 				return
 			}
-			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
 			if core.Format {
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}

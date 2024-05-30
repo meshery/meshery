@@ -22,6 +22,12 @@ do
     fi
 done
 
+for ns in $valid_namespaces;
+do
+    kubectl delete pods -n $ns \
+    --field-selector="status.phase!=Running,status.phase!=ContainerCreating"
+done
+
 # remove mutatingwebhookconfigurations
 for mwh in $(kubectl get mutatingwebhookconfigurations -o jsonpath="{.items[*].metadata.name}");
 do
