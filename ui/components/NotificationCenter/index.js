@@ -570,6 +570,7 @@ const NotificationCenterDrawer = () => {
           variant="persistent"
           open={open}
           ref={drawerRef}
+          BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
           classes={{
             paper: classes.notificationDrawer,
             paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
