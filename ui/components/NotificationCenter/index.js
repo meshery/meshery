@@ -33,7 +33,7 @@ import {
 import classNames from 'classnames';
 import Notification from './notification';
 import { store } from '../../store';
-import { useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
+import { DarkBackdrop, useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
 import {
   closeNotificationCenter,
   loadEvents,
@@ -563,6 +563,7 @@ const NotificationCenterDrawer = () => {
 
   return (
     <>
+      <DarkBackdrop open={isNotificationCenterOpen} />
       <ClickAwayListener onClickAway={clickwayHandler}>
         <Drawer
           anchor="right"
