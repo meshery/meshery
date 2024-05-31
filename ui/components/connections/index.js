@@ -78,8 +78,6 @@ import {
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
 import ErrorBoundary from '../ErrorBoundary';
-import { store } from '../../store';
-import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
@@ -88,6 +86,7 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
+import { withRouter } from 'next/router';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -1399,9 +1398,7 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
         FallbackComponent={() => null}
         onError={(e) => console.error('Error in Connection Management', e)}
       >
-        <Provider store={store}>
-          <ConnectionManagementPage {...props} />
-        </Provider>
+        <ConnectionManagementPage {...props} />
       </ErrorBoundary>
     </NoSsr>
   );
@@ -1409,5 +1406,8 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
 
 // @ts-ignore
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPageWithErrorBoundary),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(withRouter(ConnectionManagementPageWithErrorBoundary)),
 );
