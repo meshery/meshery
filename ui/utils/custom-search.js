@@ -99,7 +99,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
         style={{
           width: expanded ? searchWidth : '0',
           opacity: expanded ? 1 : 0,
-          transition: 'width 0.3s ease, opacity 0.3s ease',
+          transition: `width ${width < 900 ? 0 : 0.3}s ease, opacity 0.3s ease`,
         }}
       />
 

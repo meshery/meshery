@@ -146,6 +146,9 @@ const styles = (theme) => ({
   },
   addIcon: {
     paddingRight: '.35rem',
+    '@media (max-width: 1450px)': {
+      paddingRight: 0,
+    },
   },
   visibilityImg: {
     filter: theme.palette.secondary.img,
@@ -1587,7 +1590,7 @@ function MesheryPatterns({
             />
           )}
           <div className={StyleClass.toolWrapper}>
-            {width < 600 && isSearchExpanded ? null : (
+            {width < 900 && isSearchExpanded ? null : (
               <div style={{ display: 'flex' }}>
                 {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
                   <div className={classes.createButton}>
@@ -1596,10 +1599,10 @@ function MesheryPatterns({
                         aria-label="Add Pattern"
                         variant="contained"
                         color="primary"
-                        size="large"
+                        size={width < 600 ? 'small' : 'large'}
                         // @ts-ignore
                         onClick={() => router.push('designs/configurator')}
-                        style={{ display: 'flex', marginRight: '0.68rem' }}
+                        style={{ display: 'flex', marginRight: '0.68rem', minWidth: '3rem' }}
                         disabled={
                           !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
                         }
@@ -1611,10 +1614,10 @@ function MesheryPatterns({
                         aria-label="Add Pattern"
                         variant="contained"
                         color="primary"
-                        size="large"
+                        size={width < 600 ? 'small' : 'large'}
                         // @ts-ignore
                         onClick={handleUploadImport}
-                        style={{ display: 'flex' }}
+                        style={{ display: 'flex', marginRight: '0.68rem', minWidth: '3rem' }}
                         disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                       >
                         <PublishIcon className={classes.addIcon} />
