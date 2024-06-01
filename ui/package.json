@@ -126,7 +126,7 @@
         "@cypress/code-coverage": "^3.12.16",
         "@next/eslint-plugin-next": "^13.1.2",
         "@playwright/test": "^1.44.0",
-        "@storybook/addon-interactions": "^6.5.16",
+        "@storybook/addon-interactions": "^8.1.5",
         "@storybook/addon-styling": "^1.0.8",
         "@storybook/manager-webpack5": "^6.5.16",
         "@storybook/react": "^7.0.26",
