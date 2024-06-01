@@ -1,5 +1,15 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, styled } from '@material-ui/core';
 
+export const DarkBackdrop = styled('div')(({ open }) => ({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the opacity as needed
+  display: open ? 'block' : 'none', // Show only when anchored to mobile
+  zIndex: '1202', // Ensure it's behind the container
+}));
 export const useStyles = makeStyles((theme) => ({
   sidelist: {
     width: '45rem',
@@ -45,7 +55,8 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     gap: '0.5rem',
     justifyContent: 'space-between',
-    alignItems: 'start',
+    alignItems: 'center',
+    height: '5.65rem',
     flexWrap: 'wrap',
     background: theme.palette.secondary.headerColor,
   },

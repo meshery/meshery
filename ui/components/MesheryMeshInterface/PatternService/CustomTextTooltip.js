@@ -1,8 +1,7 @@
-import { withStyles } from '@material-ui/styles';
-import { Tooltip } from '@material-ui/core';
-import { ziCalc } from '../../../utils/zIndex';
 import { makeStyles } from '@material-ui/core/styles';
-import { Colors } from '@/themes/app';
+import { styled } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const useStyles = makeStyles((theme) => ({
   toolTip: {
@@ -36,22 +35,14 @@ export const RenderTooltipContent = ({ showPriortext, showAftertext, link }) => 
   );
 };
 
-export const CustomTextTooltip = ({ backgroundColor = Colors.charcoal, flag, ...props }) => {
-  const CustomTooltip = withStyles(() => ({
-    tooltip: {
-      backgroundColor: backgroundColor,
-      color: '#fff',
-      opacity: '100%',
-      fontSize: '0.75rem',
-      fontFamily: flag ? 'Qanelas Soft, sans-serif' : 'inherit',
-      borderRadius: '0.9375rem',
-      padding: '0.9rem',
-      zIndex: ziCalc(11),
-    },
-    popper: {
-      zIndex: `${ziCalc(5)} !important`,
-    },
-  }))(Tooltip);
+export const CustomTextTooltip = ({ flag, ...props }) => {
+  const StyledTooltip = styled(CustomTooltip)(() => ({
+    fontFamily: flag ? 'Qanelas Soft, sans-serif' : 'inherit',
+  }));
 
-  return <CustomTooltip {...props} />;
+  return (
+    <UsesSistent>
+      <StyledTooltip {...props} />
+    </UsesSistent>
+  );
 };

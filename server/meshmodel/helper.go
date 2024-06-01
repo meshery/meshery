@@ -189,14 +189,14 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		select {
 		case comp := <-erh.componentChan:
 			err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 			}
 		case rel := <-erh.relationshipChan:
 			err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+				Hostname: rel.Model.Registrant.Hostname,
 			}, &rel)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
