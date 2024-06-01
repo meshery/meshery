@@ -3,7 +3,7 @@ on:
   workflow_call:
   workflow_dispatch:
 jobs:
-    cncf-playground-rollout:
+    cncf-staging-playground-rollout:
         name: Update Meshery on CNCF staging playground
         if: github.repository == 'meshery/meshery'
         runs-on: ubuntu-latest 
@@ -16,5 +16,5 @@ jobs:
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 helm repo update meshery
-                helm upgrade meshery meshery/meshery -n meshery
-                helm upgrade meshery-operator  meshery/meshery-operator -n meshery
+                helm upgrade meshery meshery/meshery -n meshery --create-namespace
+                helm upgrade meshery-operator  meshery/meshery-operator -n meshery --create-namespace
