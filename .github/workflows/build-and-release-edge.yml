@@ -115,12 +115,7 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
   update-staging-playground:
-    name: Deploy CNCF Staging Playground
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
     needs:
       - docker-build-push
-    steps:
-      - name: Deploy CNCF Playground
-        uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
-        secrets: inherit
+    uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
+    secrets: inherit
