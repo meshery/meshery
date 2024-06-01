@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "AWS Chaos",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "example-chaos",
+   "displayName": "Example Chaos",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "subCategory": "Coordination \u0026 Service Discovery",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "14.6.301"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "AWSChaos",
+   "version": "chaos-mesh.org/v1alpha1",
+   "schema": "{\n \"description\": \"AWSChaos is the Schema for the awschaos API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AWSChaosSpec is the content of the specification for an AWSChaos\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"Action defines the specific aws chaos action. Supported action: ec2-stop / ec2-restart / detach-volume Default action: ec2-stop\",\n     \"enum\": [\n      \"ec2-stop\",\n      \"ec2-restart\",\n      \"detach-volume\"\n     ],\n     \"type\": \"string\"\n    },\n    \"awsRegion\": {\n     \"description\": \"AWSRegion defines the region of aws.\",\n     \"type\": \"string\"\n    },\n    \"deviceName\": {\n     \"description\": \"DeviceName indicates the name of the device. Needed in detach-volume.\",\n     \"type\": \"string\"\n    },\n    \"duration\": {\n     \"description\": \"Duration represents the duration of the chaos action.\",\n     \"type\": \"string\"\n    },\n    \"ec2Instance\": {\n     \"description\": \"Ec2Instance indicates the ID of the ec2 instance.\",\n     \"type\": \"string\"\n    },\n    \"endpoint\": {\n     \"description\": \"Endpoint indicates the endpoint of the aws server. Just used it in test now.\",\n     \"type\": \"string\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName defines the name of kubernetes secret.\",\n     \"type\": \"string\"\n    },\n    \"volumeID\": {\n     \"description\": \"EbsVolume indicates the ID of the EBS volume. Needed in detach-volume.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"action\",\n    \"awsRegion\",\n    \"ec2Instance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"AWS Chaos\",\n \"type\": \"object\"\n}"
+  }
+ }
