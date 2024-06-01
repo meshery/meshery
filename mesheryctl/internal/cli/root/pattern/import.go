@@ -44,7 +44,7 @@ var importCmd = &cobra.Command{
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
-		If you are providing remote URL, it should be a direct URL to a downloadable file. 
+		If you are providing remote URL, it should be a direct URL to a downloadable file.
 		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
 	`,
 	Example: `
@@ -56,6 +56,11 @@ mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
 			return ErrPatternManifest()
+		}
+
+		if sourceType == "" {
+			utils.Log.Debug("source-type not provided")
+			return ErrPatternSourceType()
 		}
 
 		return nil

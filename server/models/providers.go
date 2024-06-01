@@ -349,6 +349,15 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	for prov := range supportedProviders {
+		if prov == provider {
+			return true
+		}
+	}
+	return false
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
@@ -428,7 +437,7 @@ type Provider interface {
 	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
 	DeleteMesheryPatternResource(token, resourceID string) error
 	SaveMesheryPatternSourceContent(token string, applicationID string, sourceContent []byte) error
-	GetDesignSourceContent(req *http.Request, patternID string) ([]byte, error)
+	GetDesignSourceContent(token, patternID string) ([]byte, error)
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility []string) ([]byte, error)

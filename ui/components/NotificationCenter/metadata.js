@@ -5,16 +5,11 @@ import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../D
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { TextWithLinks } from '../DataFormatter';
-import { FormatDryRunResponse } from '../MesheryPatterns/DryRunDesign';
+import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
+import { formatDryRunResponse } from 'machines/validator/designValidator';
 
 const DryRunResponse = ({ response }) => {
-  return (
-    <FormatDryRunResponse
-      dryRunResponse={response}
-      numberOfComponentsInDesign={null}
-      onErrorClick={() => {}}
-    />
-  );
+  return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
 };
 
 const TitleLink = ({ href, children, ...props }) => {

@@ -5,7 +5,7 @@ const TAGS = {
   DESIGNS: 'designs',
 };
 
-const designs = api
+export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
   })
@@ -65,4 +65,4 @@ const designs = api
   });
 
 export const { useGetPatternsQuery, useDeployPatternMutation, useUndeployPatternMutation } =
-  designs;
+  designsApi;

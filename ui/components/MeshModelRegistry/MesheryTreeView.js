@@ -19,7 +19,6 @@ import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
-import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
 
 const ComponentTree = ({
   expanded,
@@ -546,11 +545,9 @@ const MesheryTreeView = ({
                 <CustomTextTooltip
                   placement="right"
                   interactive={true}
-                  title={getHyperLinkDiv(
-                    `View all duplicate entries of ${_.toLower(
-                      view,
-                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`,
-                  )}
+                  title={`View all duplicate entries of ${_.toLower(
+                    view,
+                  )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                 >
                   <IconButton color="primary">
                     <InfoOutlinedIcon height={20} width={20} />

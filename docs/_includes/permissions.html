@@ -1,0 +1,128 @@
+<style>
+  tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+td {
+    padding: 1rem;
+    border-top: 2px solid var(--color-primary-dark);
+}
+
+table tbody tr:nth-of-type(odd) {
+    background-color: var(--color-primary-medium) !important;
+  }
+
+  @media screen and (min-width: 1366px) {
+    table {
+    width: 100%;
+    table-layout: fixed; 
+  }
+  td {
+    word-wrap: break-word; 
+  }
+  #tablesContainer {
+    max-width: 1200px; 
+    margin: auto;
+  }
+}
+
+</style>
+<div id="tablesContainer"></div>
+
+  <script>
+    window.onload = function() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '../../assets/excel/keys.csv', true);
+      xhr.responseType = 'arraybuffer';
+    
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const data = new Uint8Array(xhr.response);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+          // Remove the first two rows
+          jsonData.shift();
+          jsonData.shift();
+          // Remove the columns
+          jsonData.forEach(row => {
+            row.splice(10, 1);
+            row.splice(9, 1);
+            row.splice(8, 1);
+            row.splice(7, 1);
+            row.splice(6, 1); 
+            row.splice(5, 1); 
+            row.splice(4, 1); 
+            row.splice(3, 1); 
+          });
+
+          // Group rows by category
+        const categories = {};
+        jsonData.forEach(row => {
+          const category = row[0].replace(/\s+/g, '');
+          if (!categories[category]) {
+            categories[category] = [];
+          }
+          categories[category].push(row);
+        });
+
+          
+          const headers = ["Category", "Key Name", "Description", "Keychain Name"];
+
+          // Generate tables
+          const container = document.getElementById('tablesContainer');
+          Object.keys(categories).forEach(category => {
+            const table = document.createElement('table');
+            table.border = '1';
+            table.style.marginBottom = '2rem';
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+              const th = document.createElement('th');
+              th.style.textAlign = 'left';
+              th.style.padding = '1rem';
+              th.textContent = header;
+              headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            categories[category].forEach(row => {
+              const tr = document.createElement('tr');
+              row.forEach((cell, index) => {
+                if (index < headers.length) {
+                  const td = document.createElement('td');
+                  td.style.padding = '1rem';
+                  td.textContent = cell;
+                  tr.appendChild(td);
+                }
+              });
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            const categoryHeader = document.createElement('h2');
+            categoryHeader.textContent = `${category} Permissions`;
+            container.appendChild(categoryHeader);
+            container.appendChild(table);
+          });
+        } else {
+          console.error('Failed to load Excel file! Status code: ' + xhr.status);
+        }
+      };
+    
+      xhr.onerror = function() {
+        console.error('Failed to load Excel file!');
+      };
+    
+      xhr.send();
+    };
+  </script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
