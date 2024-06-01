@@ -67,7 +67,7 @@
         "classnames": "^2.3.1",
         "codemirror": "^5.65.8",
         "color-string": "^1.5.5",
-        "cron-time-generator": "^1.3.2",
+        "cron-time-generator": "^2.0.3",
         "cross-env": "^7.0.3",
         "glob-parent": "^5.1.2",
         "graphql": "^16.8.1",
