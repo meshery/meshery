@@ -55,7 +55,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.17.0
+	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
 	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/vmihailenco/taskq/v3 v3.2.9
@@ -63,7 +63,7 @@ require (
 	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
 	gonum.org/v1/gonum v0.15.0
-	google.golang.org/api v0.152.0
+	google.golang.org/api v0.153.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v2 v2.4.0
