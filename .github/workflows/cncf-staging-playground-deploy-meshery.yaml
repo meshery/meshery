@@ -16,5 +16,5 @@ jobs:
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 helm repo update meshery
-                helm upgrade meshery meshery/meshery -n meshery --create-namespace
-                helm upgrade meshery-operator  meshery/meshery-operator -n meshery --create-namespace
+                helm upgrade meshery meshery/meshery -n meshery
+                helm upgrade meshery-operator  meshery/meshery-operator -n meshery
