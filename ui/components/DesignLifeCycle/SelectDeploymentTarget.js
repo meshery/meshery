@@ -2,18 +2,30 @@ import {
   useGetEnvironmentConnectionsQuery,
   useGetEnvironmentsQuery,
 } from '@/rtk-query/environments';
-import { Box, Checkbox, Stack, Typography, useTheme, styled } from '@layer5/sistent';
+import {
+  Box,
+  Checkbox,
+  Stack,
+  Typography,
+  useTheme,
+  styled,
+  EnvironmentIcon,
+} from '@layer5/sistent';
 import { Loading } from './common';
 import { K8sContextConnectionChip } from '../Header';
 import { createContext } from 'react';
 import { useContext } from 'react';
 import {
+  selectAllSelectedK8sConnections,
   selectIsEnvSelected,
   selectIsK8sConnectionSelected,
   toggleEnvSelection,
   toggleK8sConnection,
 } from '@/store/slices/globalEnvironmentContext';
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
+import Link from 'next/link';
+import { Button } from '@layer5/sistent';
+import { AddIcon } from '@layer5/sistent';
 
 export const DeploymentTargetContext = createContext({
   meshsyncControllerState: null,
@@ -80,9 +92,16 @@ const EnvironmentCard = ({ environment }) => {
     data?.connections?.filter((connection) => connection.kind == 'kubernetes') || [];
 
   const isEnvSelected = useSelectorRtk((state) => selectIsEnvSelected(state, environment.id));
-  const toggleEnv = () => dispatch(toggleEnvSelection(environment));
+  const selectedConnections = useSelectorRtk(selectAllSelectedK8sConnections);
+  const selectedConnectionsCount = selectedConnections.length;
 
-  console.log('theme --->', theme);
+  const toggleEnv = () =>
+    dispatch(
+      toggleEnvSelection(
+        environment,
+        connections.map((connection) => connection.id),
+      ),
+    );
 
   return (
     <StyledEnvironmentCard>
@@ -94,7 +113,7 @@ const EnvironmentCard = ({ environment }) => {
           </Typography>
         </Box>
         <Typography variant="textB2SemiBold" color={theme.palette.icon.default}>
-          ({connections.length})
+          ({selectedConnectionsCount}/{connections.length})
         </Typography>
       </StyledEnvironmentHeader>
       <Box p={2}>
@@ -105,6 +124,30 @@ const EnvironmentCard = ({ environment }) => {
         )}
       </Box>
     </StyledEnvironmentCard>
+  );
+};
+
+export const EnvironmentsEmptyState = ({ message }) => {
+  const theme = useTheme();
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+      <EnvironmentIcon height={100} width={100} />
+      <Typography color={theme.palette.text.neutral.default} variant="textB2SemiBold">
+        {message || 'No environments found'}
+      </Typography>
+
+      <Link href="/management/connections">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+        >
+          <AddIcon fill={theme.palette.background.constant.white} />
+          Add Environments
+        </Button>
+      </Link>
+    </Box>
   );
 };
 
@@ -119,12 +162,17 @@ export const SelectTargetEnvironments = () => {
   }
 
   if (isError) {
-    return <Typography variant="textH3Medium">Error fetching environments</Typography>;
+    return <Typography variant="textB1Regular">Error fetching environments</Typography>;
   }
 
   return (
     <Stack gap={2}>
       <Typography variant="textH3Medium">Identify Deployment Targets</Typography>
+
+      {environments.length === 0 && (
+        <EnvironmentsEmptyState message="No environments found. Add a new environment." />
+      )}
+
       <Stack spacing={2}>
         {environments.map((env) => (
           <EnvironmentCard key={env.id} environment={env} />

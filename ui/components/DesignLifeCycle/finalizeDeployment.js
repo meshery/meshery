@@ -11,7 +11,9 @@ const StyledSummaryItem = styled(Box)(({ theme }) => ({
 }));
 
 const StyledContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette?.background?.blur.light,
+  // backgroundColor: theme.palette?.background?.blur.light,
+  // paddingInline: theme.spacing(4),
+  // paddingBlock: theme.spacing(2),
 }));
 
 const StyledEnvironment = styled(Box)(({ theme }) => ({

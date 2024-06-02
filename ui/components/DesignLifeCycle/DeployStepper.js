@@ -26,6 +26,7 @@ import {
 import { useSelectorRtk } from '@/store/hooks';
 import { styled } from '@layer5/sistent';
 import { useTheme } from '@layer5/sistent';
+import { EnvironmentIcon } from '@layer5/sistent';
 export const ValidateContent = {
   btnText: 'Next',
   cancel: true,
@@ -140,17 +141,19 @@ export const UpdateDeploymentStepper = ({
     },
   );
 
+  const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
+  console.log('finalizedeployment', FinalizeBackgroundColor, theme);
+
   const deployStepper = useStepper({
     steps: [
       {
         component: (
-          <StepContent backgroundColor={theme.palette.background.constant.black}>
-            {' '}
+          <StepContent>
             <ValidateDesign
               handleClose={handleClose}
               validationMachine={validationMachine}
               design={design}
-            />{' '}
+            />
           </StepContent>
         ),
         icon: CheckIcon,
@@ -166,8 +169,7 @@ export const UpdateDeploymentStepper = ({
         ),
         helpText:
           'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
-        icon: DeploymentSelectorIcon,
-
+        icon: EnvironmentIcon,
         label: 'Select Environment',
       },
       {
@@ -192,25 +194,25 @@ export const UpdateDeploymentStepper = ({
       },
       {
         component: (
-          <StepContent>
+          <StepContent backgroundColor={FinalizeBackgroundColor}>
             <FinalizeDeployment design={design} deployment_type={deployment_type} />
           </StepContent>
         ),
         helpText:
           'Finalize the deployment process, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the finalization process',
         label: 'Finalize Deployment',
-        icon: DryRunIcon,
+        icon: DeploymentSelectorIcon,
       },
       {
         component: (
-          <StepContent backgroundColor="red">
+          <StepContent>
             <FinishDeploymentStep design={design} deployment_type={deployment_type} />{' '}
           </StepContent>
         ),
         helpText:
           'Finalize the deployment process, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the finalization process',
         label: 'Finsh',
-        icon: DryRunIcon,
+        icon: CheckIcon,
       },
     ],
   });

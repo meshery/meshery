@@ -11,10 +11,10 @@ export const globalEnvironmentContextSlice = createSlice({
 
   reducers: {
     selectEnv: (state, action) => {
-      const { environment } = action.payload;
+      const { environment, k8sConnectionsIds = [] } = action.payload;
       state.selectedEnvs[environment.id] = {
         ...environment,
-        selectedK8sConnections: [],
+        selectedK8sConnections: k8sConnectionsIds,
       };
     },
     unselectEnv: (state, action) => {
@@ -55,14 +55,15 @@ export const toggleK8sConnection = (envId, connectionId) => (dispatch, getState)
   }
 };
 
-export const toggleEnvSelection = (environment) => (dispatch, getState) => {
-  const isSelected = selectIsEnvSelected(getState(), environment.id);
-  if (isSelected) {
-    dispatch(unselectEnv({ envId: environment.id }));
-    return;
-  }
-  dispatch(selectEnv({ environment }));
-};
+export const toggleEnvSelection =
+  (environment, selectedK8sConnectionsIds) => (dispatch, getState) => {
+    const isSelected = selectIsEnvSelected(getState(), environment.id);
+    if (isSelected) {
+      dispatch(unselectEnv({ envId: environment.id }));
+      return;
+    }
+    dispatch(selectEnv({ environment, k8sConnectionsIds: selectedK8sConnectionsIds }));
+  };
 
 export default globalEnvironmentContextSlice.reducer;
 
