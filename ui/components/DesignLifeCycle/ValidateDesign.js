@@ -7,6 +7,7 @@ import {
   ListSubheader,
   Typography,
   Collapse,
+  Box,
   alpha,
   withStyles,
 } from '@material-ui/core';

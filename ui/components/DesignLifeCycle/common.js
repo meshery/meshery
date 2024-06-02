@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, CircularProgress, Typography } from '@layer5/sistent';
+import { Box, Checkbox, CircularProgress, Stack, Typography } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { processDesign } from '@/utils/utils';
 
@@ -46,6 +46,15 @@ export const Loading = ({ message }) => {
 
 export const getSvgWhiteForComponent = (component) => {
   return `/${component.metadata.svgWhite}`;
+};
+
+export const CheckBoxField = ({ label, checked, onChange }) => {
+  return (
+    <Stack spacing={2} direction="row" alignItems="center">
+      <Checkbox value={checked} onChange={onChange} />
+      <Typography variant="body2">{label}</Typography>
+    </Stack>
+  );
 };
 
 export { processDesign };
