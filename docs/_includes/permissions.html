@@ -29,9 +29,9 @@
     display: none;
   }
 
-  .odd-row {
+  tr:nth-child(4n+1), tr:nth-child(4n+2) {
     background-color: var(--color-primary-medium) !important;
-  }
+}
 </style>
 <div id="tablesContainer"></div>
 
@@ -148,9 +148,6 @@
           categoryHeader.textContent = `${category} Permissions`;
           container.appendChild(categoryHeader);
           container.appendChild(table);
-
-          // Apply odd-even coloring after adding all rows
-          applyRowColoring(tbody);
         });
       } else {
         console.error('Failed to load Excel file! Status code: ' + xhr.status);
@@ -164,23 +161,6 @@
     xhr.send();
   };
 
-  function applyRowColoring(tbody) {
-    const rows = Array.from(tbody.querySelectorAll('tr:not(.hidden-row)'));
-    rows.forEach((row, index) => {
-      const nextRow = row.nextElementSibling;
-      if (index % 2 === 0) {
-        row.classList.add('odd-row');
-        if (nextRow && nextRow.classList.contains('hidden-row')) {
-          nextRow.classList.add('odd-row');
-        }
-      } else {
-        row.classList.remove('odd-row');
-        if (nextRow && nextRow.classList.contains('hidden-row')) {
-          nextRow.classList.remove('odd-row');
-        }
-      }
-    });
-  }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
