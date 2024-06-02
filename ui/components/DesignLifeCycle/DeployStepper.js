@@ -9,29 +9,61 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   Box,
-  Stack,
-  Checkbox,
-  Typography,
 } from '@layer5/sistent';
-import { DEPLOYMENT_TYPE } from './common';
+import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
-import { SelectDeploymentTarget } from '../ConfirmationModal';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
-import { selectK8sContexts } from 'lib/store';
-import { useSelector } from 'react-redux';
-
+import { selectK8sContexts, useLegacySelector } from 'lib/store';
+import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
+import { FinalizeDeployment } from './finalizeDeployment';
+import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
+import {
+  useDryRunValidationResults,
+  useIsValidatingDryRun,
+} from 'machines/validator/designValidator';
+import { useSelectorRtk } from '@/store/hooks';
+import { styled } from '@layer5/sistent';
+import { useTheme } from '@layer5/sistent';
 export const ValidateContent = {
   btnText: 'Next',
   cancel: true,
 };
 
-const SelectTargetStep = () => {
+const StepWrapper = styled(Box)({
+  padding: 0,
+  overflowY: 'auto',
+});
+
+const StepContent = styled('div', {
+  // shouldForwardProp: (prop) => prop !== 'backgroundColor',
+})(({ theme, backgroundColor }) => ({
+  paddingInline: theme.spacing(4),
+  paddingBlock: theme.spacing(2),
+  backgroundColor: backgroundColor || theme.palette.background.constant.white,
+}));
+
+export const FinishDeploymentStep = () => {
   return (
     <Box>
-      <SelectDeploymentTarget />
+      <Loading message="Deploying Design" />
     </Box>
+  );
+};
+
+const SelectTargetStep = () => {
+  const organization = useLegacySelector((state) => state.get('organization'));
+  const connectionMetadataState = useLegacySelector((state) =>
+    state.get('connectionMetadataState'),
+  );
+  const meshsyncControllerState = useLegacySelector((state) => state.get('controllerState'));
+  return (
+    <DeploymentTargetContext.Provider
+      value={{ connectionMetadataState, meshsyncControllerState, organization }}
+    >
+      <SelectTargetEnvironments organization={organization} />
+    </DeploymentTargetContext.Provider>
   );
 };
 
@@ -44,26 +76,37 @@ const DryRunStep = ({
   selectedK8sContexts,
   design,
   validationMachine,
+  includeDependencies,
+  setIncludeDependencies,
 }) => {
   const bypassValidation = bypassDryRun || false;
   const toggleBypassValidation = () => setBypassDryRun(!bypassDryRun);
+  const toggleIncludeDependencies = () => setIncludeDependencies(!includeDependencies);
 
   return (
     <Box>
       <DryRunDesign
         handleClose={handleClose}
         selectedK8sContexts={selectedK8sContexts}
+        includeDependencies={includeDependencies}
         design={design}
         validationMachine={validationMachine}
         deployment_type={deployment_type}
       />
 
       {getTotalCountOfDeploymentErrors(dryRunErrors) > 0 && (
-        <Stack spacing={2} direction="row" alignItems="center">
-          <Checkbox value={bypassValidation} onChange={toggleBypassValidation} />
-          <Typography variant="body2">Bypass errors and initiate deployment</Typography>
-        </Stack>
+        <CheckBoxField
+          label="Bypass errors and initiate deployment"
+          checked={bypassValidation}
+          onChange={toggleBypassValidation}
+        />
       )}
+
+      <CheckBoxField
+        label="Include Dependencies"
+        checked={includeDependencies}
+        onChange={toggleIncludeDependencies}
+      />
     </Box>
   );
 };
@@ -77,9 +120,17 @@ export const UpdateDeploymentStepper = ({
   design,
   validationMachine,
 }) => {
-  const [dryRunErrors, setDryRunErrors] = useState([]);
+  const [includeDependencies, setIncludeDependencies] = useState(false);
   const [bypassDryRun, setBypassDryRun] = useState(false);
-  const k8sContext = useSelector(selectK8sContexts);
+
+  const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
+  const selectedEnvCount = Object.keys(selectedEnvironments).length;
+  const dryRunErrors = useDryRunValidationResults(validationMachine);
+  const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
+  const isDryRunning = useIsValidatingDryRun(validationMachine);
+  const theme = useTheme();
+
+  const k8sContext = useLegacySelector(selectK8sContexts);
   const selectedDeployableK8scontexts = useFilterK8sContexts(
     k8sContext,
     ({ context, operatorState }) => {
@@ -93,18 +144,26 @@ export const UpdateDeploymentStepper = ({
     steps: [
       {
         component: (
-          <ValidateDesign
-            handleClose={handleClose}
-            validationMachine={validationMachine}
-            design={design}
-          />
+          <StepContent backgroundColor={theme.palette.background.constant.black}>
+            {' '}
+            <ValidateDesign
+              handleClose={handleClose}
+              validationMachine={validationMachine}
+              design={design}
+            />{' '}
+          </StepContent>
         ),
         icon: CheckIcon,
         helpText: `Validate the design before deploying, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the validation process`,
         label: 'Validate Design',
       },
       {
-        component: <SelectTargetStep handleClose={handleClose} />,
+        component: (
+          <StepContent>
+            {' '}
+            <SelectTargetStep handleClose={handleClose} />{' '}
+          </StepContent>
+        ),
         helpText:
           'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
         icon: DeploymentSelectorIcon,
@@ -113,64 +172,96 @@ export const UpdateDeploymentStepper = ({
       },
       {
         component: (
-          <DryRunStep
-            selectedK8sContexts={selectedK8sContexts}
-            design={design}
-            validationMachine={validationMachine}
-            handleClose={handleClose}
-            deployment_type={deployment_type}
-            setBypassDryRun={setBypassDryRun}
-            setDryRunErrors={setDryRunErrors}
-            dryRunErrors={dryRunErrors}
-          />
+          <StepContent>
+            <DryRunStep
+              selectedK8sContexts={selectedK8sContexts}
+              design={design}
+              validationMachine={validationMachine}
+              handleClose={handleClose}
+              deployment_type={deployment_type}
+              includeDependencies={includeDependencies}
+              setIncludeDependencies={setIncludeDependencies}
+              setBypassDryRun={setBypassDryRun}
+            />
+          </StepContent>
         ),
         helpText:
           'Dry Run is a simulation of the deployment process, it helps to identify potential errors before the actual deployment , [learn more](https://docs.meshery.io/guides/infrastructure-management/overview ) about Dry Run.',
         label: 'Dry Run',
         icon: DryRunIcon,
       },
+      {
+        component: (
+          <StepContent>
+            <FinalizeDeployment design={design} deployment_type={deployment_type} />
+          </StepContent>
+        ),
+        helpText:
+          'Finalize the deployment process, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the finalization process',
+        label: 'Finalize Deployment',
+        icon: DryRunIcon,
+      },
+      {
+        component: (
+          <StepContent backgroundColor="red">
+            <FinishDeploymentStep design={design} deployment_type={deployment_type} />{' '}
+          </StepContent>
+        ),
+        helpText:
+          'Finalize the deployment process, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the finalization process',
+        label: 'Finsh',
+        icon: DryRunIcon,
+      },
     ],
   });
 
-  const actionFunction = (sharedData) => {
-    console.log('sharedData', sharedData);
-    handleClose?.();
+  const actionFunction = () => {
     handlePerformDeployment({
       design,
       selectedK8sContexts: selectedDeployableK8scontexts.map((context) => context.id),
     });
   };
 
-  const handleNext = () => {
-    console.log('deployStepper', deployStepper, deployStepper.canGoForward);
-    if (deployStepper.canGoForward) {
-      deployStepper.handleNext();
-    } else {
-      actionFunction(deployStepper.sharedData);
-    }
+  const transitionConfig = {
+    0: {
+      canGoNext: () => true,
+      nextButtonText: 'Next',
+      nextAction: () => deployStepper.handleNext(),
+    },
+    1: {
+      canGoNext: () => selectedEnvCount > 0,
+      nextButtonText: 'Next',
+      nextAction: () => deployStepper.handleNext(),
+    },
+    2: {
+      canGoNext: () => !isDryRunning & (totalDryRunErrors == 0 || bypassDryRun),
+      nextButtonText: 'Next',
+      nextAction: () => deployStepper.handleNext(),
+    },
+    3: {
+      canGoNext: () => true,
+      nextButtonText: 'Deploy',
+      nextAction: () => {
+        actionFunction();
+        deployStepper.handleNext();
+      },
+    },
+    4: {
+      canGoNext: () => true,
+      nextButtonText: 'Finish',
+      nextAction: handleClose,
+    },
   };
 
-  const checkCanGoNext = ({ activeStep }) => {
-    // transition map indicating if the next step (key) can be transitioned to
-    // start from 1 because 0 is the first step
-    const CanTransition = {
-      1: () => true,
-      2: () => selectedK8sContexts?.length > 0,
-      3: () => getTotalCountOfDeploymentErrors(dryRunErrors) == 0 || bypassDryRun,
-    };
-    return CanTransition[activeStep + 1](); // can transition to next step
-  };
-
-  const canGoNext = checkCanGoNext(deployStepper);
-
-  const nextButtonText = deployStepper.canGoForward ? 'Next' : deployment_type;
+  const canGoNext = transitionConfig[deployStepper.activeStep].canGoNext();
+  const nextButtonText = transitionConfig[deployStepper.activeStep].nextButtonText;
 
   return (
     <>
-      <ModalBody>
-        <Box style={{ width: '30rem' }}>
-          <CustomizedStepper {...deployStepper}>
-            <Box style={{ overflowY: 'auto' }}>{deployStepper.activeStepComponent}</Box>
+      <ModalBody style={{ padding: 0 }}>
+        <Box style={{ width: '80vw', maxWidth: '40rem' }}>
+          <CustomizedStepper {...deployStepper} ContentWrapper={StepWrapper}>
+            {deployStepper.activeStepComponent}
           </CustomizedStepper>
         </Box>
       </ModalBody>
@@ -185,7 +276,10 @@ export const UpdateDeploymentStepper = ({
           <ModalButtonSecondary onClick={deployStepper.goBack} disabled={!deployStepper.canGoBack}>
             Back
           </ModalButtonSecondary>
-          <ModalButtonPrimary disabled={!canGoNext} onClick={handleNext}>
+          <ModalButtonPrimary
+            disabled={!canGoNext}
+            onClick={transitionConfig[deployStepper.activeStep].nextAction}
+          >
             {nextButtonText}
           </ModalButtonPrimary>
         </Box>

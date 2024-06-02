@@ -21,6 +21,7 @@ import {
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { Box } from '@layer5/sistent';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -296,8 +297,14 @@ export const FormatDryRunResponse = withStyles(styles)(({
 });
 
 const DryRunComponent = (props) => {
-  const { design, validationMachine, currentComponentName, selectedK8sContexts, deployment_type } =
-    props;
+  const {
+    design,
+    validationMachine,
+    currentComponentName,
+    selectedK8sContexts,
+    deployment_type,
+    includeDependencies,
+  } = props;
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
@@ -312,9 +319,10 @@ const DryRunComponent = (props) => {
       dryRunCommand({
         design,
         k8sContexts: selectedK8sContexts,
+        includeDependencies,
       }),
     );
-  }, []);
+  }, [includeDependencies]);
 
   if (isLoading) {
     return <Loading message="Performing a dry run" />;
@@ -352,6 +360,7 @@ export const DryRunDesign = ({
   validationMachine,
   selectedK8sContexts,
   deployment_type,
+  includeDependencies,
 }) => {
   if (!design?.pattern_file) {
     return null;
@@ -360,6 +369,7 @@ export const DryRunDesign = ({
   return (
     <DryRunComponent
       design={design}
+      includeDependencies={includeDependencies}
       validationMachine={validationMachine}
       deployment_type={deployment_type}
       handleClose={handleClose}
