@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "*",
+  "kind": "Sibling",
+  "metadata": {
+    "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. In kube-prometheus-stack, ServiceMonitor and PodMonitor resources configure Prometheus to scrape metrics from Kubernetes services and Pods respectively."
+  },
+  "model": {
+    "schemaVersion": "core.meshery.io/v1alpha2",
+    "version": "*",
+    "name": "kube-prometheus-stack",
+    "model": {
+      "version": "*"
+    },
+    "displayName": "Kube-prometheus-stack",
+    "category": {
+      "name": "Observability and Analysis",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "MatchLabels",
+  "evaluationQuery": "sibling_matchlabels_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ServiceMonitor",
+            "model": "kube-prometheus-stack"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": "kubernetes"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "PodMonitor",
+            "model": "kube-prometheus-stack"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

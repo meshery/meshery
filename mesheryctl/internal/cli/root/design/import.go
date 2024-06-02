@@ -55,6 +55,11 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 			return ErrPatternManifest()
 		}
 
+		if sourceType == "" {
+			utils.Log.Debug("source-type not provided")
+			return ErrPatternSourceType()
+		}
+
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {

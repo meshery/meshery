@@ -32,6 +32,7 @@ const (
 	ErrDesignsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidDesignFileCode     = "mesheryctl-1038"
 	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
+	ErrPatternSourceTypeCode      = "mesheryctl-1121"
 )
 
 const (
@@ -91,6 +92,14 @@ func ErrOnboardPattern() error {
 		[]string{"Unable to onboard design due to empty path"},
 		[]string{"File path or design name not provided."},
 		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+}
+
+func ErrPatternSourceType() error {
+	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
+		[]string{"Source type for the design to import not specified"},
+		[]string{"Empty  source type detected"},
+		[]string{"Design source type not provided"},
+		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
 func ErrPatternFound() error {

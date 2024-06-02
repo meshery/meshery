@@ -146,7 +146,14 @@ func (h *Handler) PatternFileHandler(
 		"summary": response,
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
+	
+	if action == "deploy" {
+		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
+		description = fmt.Sprintf("%s. View deployed design %s", description, viewLink)
+	}
+
+	event := eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)

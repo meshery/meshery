@@ -105,13 +105,9 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	return target[TokenCookieName], nil
 }
 
-func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
-	token, err := l.DecodeTokenData(tokenString)
-	if err != nil {
-		return nil, ErrTokenDecode(err)
-	}
+func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
 	c := &http.Client{}
-	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token.AccessToken))
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {
