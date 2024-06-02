@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -25,10 +25,8 @@ import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
   SEVERITY,
   SEVERITY_STYLE,
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
   STATUS,
   STATUS_STYLE,
-  validateEvent,
 } from './constants';
 import classNames from 'classnames';
 import Notification from './notification';
@@ -38,7 +36,6 @@ import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
-  pushEvent,
   selectAreAllEventsChecked,
   selectCheckedEvents,
   selectEvents,
@@ -47,7 +44,6 @@ import {
   updateCheckAllEvents,
 } from '../../store/slices/events';
 import {
-  PROVIDER_TAGS,
   useDeleteEventsMutation,
   useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
@@ -55,95 +51,41 @@ import {
 } from '../../rtk-query/notificationCenter';
 import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
-import {
-  ErrorBoundary,
-  withErrorBoundary,
-  withSuppressedErrorBoundary,
-} from '../General/ErrorBoundary';
+import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
-import subscribeEvents from '../graphql/subscriptions/EventsSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { api as mesheryApi } from '../../rtk-query';
-
-const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
-  const { notify } = useNotification();
-  const dispatch = useDispatch();
-  const eventsSubscription = useCallback(
-    () =>
-      subscribeEvents((result) => {
-        if (!result.event) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        const [isValid, validatedEvent] = validateEvent({
-          ...result.event,
-          user_id: result.event.userID,
-          system_id: result.event.systemID,
-          updated_at: result.event.updatedAt,
-          created_at: result.event.createdAt,
-          deleted_at: result.event.deletedAt,
-          operation_id: result.event.operationID,
-        });
-        if (!isValid) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        try {
-          dispatch(pushEvent(validatedEvent));
-          dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
-          notify({
-            message: validatedEvent.description,
-            event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
-            id: validatedEvent.id,
-            showInNotificationCenter: true,
-          });
-        } catch (e) {
-          console.error('Error While Storing Event --Event-Subscription ', e);
-        }
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    const subscription = eventsSubscription();
-    return () => {
-      subscription.dispose();
-    };
-  }, []);
-
-  return null;
-});
-
-const EventsSubsciptionProvider = () => {
-  return (
-    <Provider store={store}>
-      <EventsSubsciptionProvider_ />
-    </Provider>
-  );
-};
+import { useActorRef } from '@xstate/react';
+import { operationsCenterActor } from 'machines/operationsCenter';
 
 const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
   setDrawerAnchor: () => {},
   toggleButtonRef: null,
+  operationsCenterActorRef: null,
 });
 
 export const NotificationCenterProvider = ({ children }) => {
   const [drawerAnchorEl, setDrawerAnchor] = useState(null);
   const toggleButtonRef = useRef(null);
-
+  const { notify } = useNotification();
+  const operationsCenterActorRef = useActorRef(operationsCenterActor, {
+    input: {
+      notify,
+    },
+  });
   return (
     <NotificationCenterContext.Provider
       value={{
         drawerAnchorEl,
         setDrawerAnchor,
         toggleButtonRef,
+        operationsCenterActorRef,
       }}
     >
-      <EventsSubsciptionProvider />
+      {/* <EventsSubsciptionProvider /> */}
       {children}
       <NotificationCenter />
     </NotificationCenterContext.Provider>
