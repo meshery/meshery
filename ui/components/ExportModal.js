@@ -17,7 +17,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DialogActions } from '@layer5/sistent';
-import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 import { Colors } from '@/themes/app';
 
 const styles = (theme) => ({
@@ -109,11 +108,6 @@ const ExportModal = (props) => {
     classes,
     ExtensibleButton,
   } = props;
-  const renderTooltipContent = () => {
-    return getHyperLinkDiv(
-      'MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)',
-    );
-  };
 
   const [closed, setClosed] = React.useState(false);
 
@@ -252,10 +246,9 @@ const ExportModal = (props) => {
       </DialogContent>
       <DialogActions className={classes.dialogAction}>
         <CustomTextTooltip
-          backgroundColor={Colors.charcoal}
           placement="top"
           interactive={true}
-          title={renderTooltipContent()}
+          title="MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)"
         >
           <IconButton className={classes.infoIconButton} color="primary">
             <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />

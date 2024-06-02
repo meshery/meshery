@@ -29,6 +29,7 @@ const (
 	ErrOffboardPatternCode        = "mesheryctl-1005"
 	ErrPatternFlagCode            = "mesheryctl-1006"
 	ErrPatternManifestCode        = "mesheryctl-1007"
+	ErrPatternSourceTypeCode      = "mesheryctl-1121"
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidPatternFileCode     = "mesheryctl-1038"
 	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
@@ -83,6 +84,14 @@ func ErrPatternManifest() error {
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
 		[]string{"Provide the path to the pattern manifest. \n\n%v", errPatternMsg})
+}
+
+func ErrPatternSourceType() error {
+	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
+		[]string{"Source type for the design to import not specified"},
+		[]string{"Empty  source type detected"},
+		[]string{"Design source type not provided"},
+		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
 func ErrOnboardPattern() error {

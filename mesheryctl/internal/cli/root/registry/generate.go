@@ -225,8 +225,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Extracted ", len(comps), "components for model [ %s ]", model.ModelDisplayName)
-
+			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
 				if comp.Metadata == nil {
@@ -235,8 +234,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
-				comp.Metadata["shape"] = model.Shape
 				comp.Model = *modelDef
+				assignDefaultsForCompDefs(&comp, modelDef)
 				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					utils.Log.Info(err)
@@ -259,6 +258,13 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	close(spreadsheeetChan)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
+}
+
+func assignDefaultsForCompDefs(componentDef *v1beta1.ComponentDefinition, modelDef *v1beta1.Model) {
+	componentDef.Metadata["status"] = modelDef.Status
+	for k, v := range modelDef.Metadata {
+		componentDef.Metadata[k] = v
+	}
 }
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
@@ -387,22 +393,22 @@ func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath stri
 
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
 	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
-		utils.Log.Info(fmt.Sprintf("For model %s-%s, generated %d components.", key, val.version, val.totalComps))
+		utils.Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
 		totalAggregateComponents += val.totalComps
 		totalAggregateModel++
 	}
 
-	utils.Log.Info(fmt.Sprintf("Generated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 
 	generateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
 	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant-def", "", "path pointing to the registrant connection definition")
-	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credetial definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credential definition")
 
 	generateCmd.MarkFlagsRequiredTogether("registrant-def", "registrant-cred")
 
