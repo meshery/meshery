@@ -131,6 +131,16 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#C9DBE3',
     // display: 'flex',
     // flexWrap: 'wrap',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '300px',
+      marginLeft: '25px',
+    },
+    [theme.breakpoints.between('sm', 'md')]: {
+      maxWidth: '450px',
+    },
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '100%',
+    },
   },
   box: {
     width: '100%',
@@ -142,11 +152,20 @@ const styles = (theme) => ({
   gridCapabilityHeader: {
     backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#7493A1',
   },
+  gridItem: {
+    backgroundColor: theme.palette.type === 'dark' ? '#3D4F57' : '#C9DBE3',
+    wordWrap: 'break-word',
+  },
+  gridItemEven: {
+    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#E7EFF3',
+    wordWrap: 'break-word',
+  },
   gridExtensionHeader: {
     backgroundColor: theme.palette.type === 'dark' ? '#293B43 ' : '#C9DBE3',
   },
   gridExtensionItem: {
     backgroundColor: theme.palette.type === 'dark' ? '#3D4F57 ' : '#E7EFF3',
+    wordWrap: 'break-word',
   },
   line: {
     border: '1px solid rgba(116,147,161, 0.3)',
@@ -155,10 +174,26 @@ const styles = (theme) => ({
   },
   root: {
     width: '100%',
-    paddingLeft: theme.spacing(15),
-    paddingRight: theme.spacing(15),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(10),
     paddingTop: theme.spacing(5),
+  },
+  responsiveTypography: {
+    [theme.breakpoints.down('md')]: {
+      marginLeft: '25px',
+    },
+  },
+  responsiveGridContainer: {
+    [theme.breakpoints.down('sm')]: {
+      spacing: 0,
+    },
+    [theme.breakpoints.between('sm', 'md')]: {
+      spacing: 2,
+    },
+    [theme.breakpoints.up('md')]: {
+      spacing: 4,
+    },
   },
 });
 
@@ -393,7 +428,9 @@ const UserPreference = (props) => {
     return (
       <NoSsr>
         <div className={props.classes.root}>
-          <Typography variant="h5">Provider Information</Typography>
+          <Typography variant="h5" className={props.classes.responsiveTypography}>
+            Provider Information
+          </Typography>
           <Grid container spacing={2}>
             {providerInfo &&
               Object.entries(providerInfo).map(
@@ -510,7 +547,7 @@ const UserPreference = (props) => {
             Capabilities
           </Typography>
 
-          <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Grid container spacing={0}>
             <Grid
               item
               xs={6}
@@ -538,6 +575,9 @@ const UserPreference = (props) => {
                     item
                     key={`${index}-${capability.feature}`}
                     xs={6}
+                    className={
+                      index % 2 === 0 ? props.classes.gridItemEven : props.classes.gridItem
+                    }
                     style={{
                       padding: '20px 20px',
                       backgroundColor:
@@ -567,6 +607,9 @@ const UserPreference = (props) => {
                           ? '#E7EFF3'
                           : '#C9DBE3',
                     }}
+                    className={
+                      index % 2 === 0 ? props.classes.gridItemEven : props.classes.gridItem
+                    }
                   >
                     <Typography variant="body1">{capability.endpoint}</Typography>
                   </Grid>
@@ -581,7 +624,11 @@ const UserPreference = (props) => {
             Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
               <div key={index} margin="20px 0px">
                 <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
-                <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
+                <Grid
+                  container
+                  spacing={2}
+                  style={{ margin: '10px 0 20px 0', paddingRight: '15px' }}
+                >
                   <Grid
                     item
                     xs={6}
@@ -618,7 +665,9 @@ const UserPreference = (props) => {
                       padding: '20px 20px',
                     }}
                   >
-                    <Typography variant="body1">{extension[0].component}</Typography>
+                    <Typography variant="body1" style={{ wordWrap: 'break-word' }}>
+                      {extension[0].component}
+                    </Typography>
                   </Grid>
                   <Grid
                     item
@@ -629,7 +678,9 @@ const UserPreference = (props) => {
                       padding: '20px 20px',
                     }}
                   >
-                    <Typography variant="body1">{convertToTitleCase(extension[0].type)}</Typography>
+                    <Typography variant="body1" style={{ wordWrap: 'break-word' }}>
+                      {convertToTitleCase(extension[0].type)}
+                    </Typography>
                   </Grid>
                 </Grid>
               </div>
