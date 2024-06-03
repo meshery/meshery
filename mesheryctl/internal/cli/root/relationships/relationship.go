@@ -30,6 +30,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+type MeshmodelRegistrantsAPIResponse struct {
+	Page          int                               `json:"page"`
+	PageSize      int                               `json:"page_size"`
+	Count         int64                             `json:"total_count"`
+	Relationships []v1alpha2.RelationshipDefinition `json:"relationships"`
+}
+
 var (
 	outFormatFlag        string
 	pageNumberFlag       int

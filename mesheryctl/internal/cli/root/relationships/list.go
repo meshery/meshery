@@ -22,9 +22,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -106,7 +103,7 @@ var listRelationshipsCmd = &cobra.Command{
 			return err
 		}
 
-		relationshipsResponse := &models.MeshmodelRelationshipsAPIResponse{}
+		relationshipsResponse := &MeshmodelRegistrantsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			utils.Log.Error(err)
@@ -116,10 +113,9 @@ var listRelationshipsCmd = &cobra.Command{
 		header := []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"}
 		var rows [][]string
 
-		for _, relationship := range relationshipsResponse.Relationships {
-			rel, _ := mutils.Cast[*v1alpha2.RelationshipDefinition](relationship)
+		for _, rel := range relationshipsResponse.Relationships {
 
-			if len(relationship.GetEntityDetail()) > 0 {
+			if len(rel.GetEntityDetail()) > 0 {
 				rows = append(rows, []string{rel.Kind, rel.Version, rel.Model.Name, rel.SubType, rel.EvaluationQuery})
 			}
 		}
