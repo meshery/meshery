@@ -138,7 +138,7 @@ export const EnvironmentsEmptyState = ({ message }) => {
         {message || 'No environments found'}
       </Typography>
 
-      <Link href="/management/connections">
+      <Link href="/management/environments">
         <Button
           type="submit"
           variant="contained"
