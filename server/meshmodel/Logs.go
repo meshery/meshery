@@ -15,7 +15,6 @@ import (
 func (erh *EntityRegistrationHelper) registryLog() {
 	log := erh.log
 	provider := erh.handlerConfig.Providers["None"]
-	filePath := viper.GetString("REGISTRY_LOG_FILE")
 
 	systemID := viper.GetString("INSTANCE_ID")
 
@@ -24,9 +23,10 @@ func (erh *EntityRegistrationHelper) registryLog() {
 	if err != nil {
 		log.Error(err)
 	}
-	eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
+
 	for _, host := range hosts {
 
+		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
 		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Hostname)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
@@ -46,19 +46,12 @@ func (erh *EntityRegistrationHelper) registryLog() {
 		successEvent := eventBuilder.Build()
 		_ = provider.PersistEvent(successEvent)
 
-		failedMsg, _ := helpers.FailedMsgCompute("", host.Hostname)
-		if failedMsg != "" {
-			log.Error(meshmodel.ErrRegisteringEntity(failedMsg, host.Hostname))
-			errorEventBuilder := events.NewEvent().FromUser(sysID).FromSystem(sysID).WithCategory("entity").WithAction("get_summary")
-			errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
-			errorEvent := errorEventBuilder.Build()
-			errorEventBuilder.WithMetadata(map[string]interface{}{
-				"LongDescription":      fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", host.Hostname, failedMsg),
-				"SuggestedRemediation": fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
-				"DownloadLink":         filePath,
-				"ViewLink":             filePath,
-			})
-			_ = provider.PersistEvent(errorEvent)
+		failLog, err := helpers.FailedEventCompute(host.Hostname, sysID, &provider)
+		if err != nil {
+			log.Error(err)
+		}
+		if failLog != "" {
+			log.Error(meshmodel.ErrRegisteringEntity(failLog, host.Hostname))
 		}
 
 	}

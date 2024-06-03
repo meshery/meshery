@@ -75,6 +75,11 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
 	}).Build()
+	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider)
+	if err != nil {
+		return err
+	}
+	//if want to log we can use the above function in future to log the error in terminal.
 
 	_ = (*provider).PersistEvent(event)
 	ec.Publish(userUUID, event)

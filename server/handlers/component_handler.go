@@ -1309,7 +1309,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // Update the ignore status of a model based on the provided parameters.
 //
 // responses:
-// 	200: NoContent
+// 	200: noContentWrapper
 
 // request body should be json
 // request body should be of struct containing ID and Status fields

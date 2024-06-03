@@ -191,21 +191,21 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	for {
 		select {
 		case comp := <-erh.componentChan:
-			err = erh.regManager.RegisterEntity(v1beta1.Host{
+			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
 				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 			}
 			helpers.HandleError(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp, err, isModelError, isRegistrantError)
 		case rel := <-erh.relationshipChan:
-			err = erh.regManager.RegisterEntity(v1beta1.Host{
+			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
 				Hostname: rel.Model.Registrant.Hostname,
 			}, &rel)
 			helpers.HandleError(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+				Hostname: rel.Model.Registrant.Hostname,
 			}, &rel, err, isModelError, isRegistrantError)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
