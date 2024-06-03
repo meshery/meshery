@@ -217,7 +217,7 @@ func (h *Handler) handleApplicationPOST(
 					Valid:  true,
 				}
 			}
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				conversionErr := ErrApplicationFailure(err, obj)
@@ -327,7 +327,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, "", false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				convertErr := ErrApplicationFailure(err, obj)
@@ -1013,7 +1013,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -1076,7 +1076,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.Regis
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}

@@ -59,6 +59,7 @@ type mesheryPatternPayload struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile []byte `json:"pattern_file"`
+	FileName    string `json:"file_name"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
@@ -258,6 +259,7 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		bytPattern := parsedBody.PatternData.PatternFile
+		fileName := parsedBody.PatternData.FileName
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -287,7 +289,7 @@ func (h *Handler) handlePatternPOST(
 					Valid:  true,
 				}
 			}
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, fileName, false, h.registryManager)
 			if err != nil {
 				h.log.Error(ErrConvertingK8sManifestToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -474,7 +476,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, "", false, h.registryManager)
 			if err != nil {
 				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -732,7 +734,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 			} else if sourcetype == string(models.K8sManifest) {
 				k8sres = string(sourceContent)
 			}
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, h.registryManager)
 			if err != nil {
 				err = ErrConvertingK8sManifestToDesign(err)
 				return err
@@ -833,7 +835,7 @@ func githubRepoDesignScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -895,7 +897,7 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}
