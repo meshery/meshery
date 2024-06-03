@@ -61,7 +61,6 @@ const StepContent = styled('div', {
 export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
   const theme = useTheme();
-  console.log('operationsCenterActorRef', operationsCenterActorRef);
 
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployEvent, setDeployEvent] = useState({});
