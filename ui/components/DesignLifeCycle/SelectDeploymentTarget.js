@@ -16,11 +16,11 @@ import { K8sContextConnectionChip } from '../Header';
 import { createContext } from 'react';
 import { useContext } from 'react';
 import {
-  selectAllSelectedK8sConnections,
   selectIsEnvSelected,
   selectIsK8sConnectionSelected,
   toggleEnvSelection,
   toggleK8sConnection,
+  selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
 import Link from 'next/link';
@@ -92,7 +92,9 @@ const EnvironmentCard = ({ environment }) => {
     data?.connections?.filter((connection) => connection.kind == 'kubernetes') || [];
 
   const isEnvSelected = useSelectorRtk((state) => selectIsEnvSelected(state, environment.id));
-  const selectedConnections = useSelectorRtk(selectAllSelectedK8sConnections);
+  const selectedConnections = useSelectorRtk((state) =>
+    selectSelectedK8sConnections(state, environment.id),
+  );
   const selectedConnectionsCount = selectedConnections.length;
 
   const toggleEnv = () =>

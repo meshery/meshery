@@ -9,6 +9,7 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   Box,
+  Typography,
 } from '@layer5/sistent';
 import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
@@ -27,6 +28,18 @@ import { useSelectorRtk } from '@/store/hooks';
 import { styled } from '@layer5/sistent';
 import { useTheme } from '@layer5/sistent';
 import { EnvironmentIcon } from '@layer5/sistent';
+import { useContext } from 'react';
+import { NotificationCenterContext } from '../NotificationCenter';
+import { useEffect } from 'react';
+import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
+import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
+import { SEVERITY_STYLE } from '../NotificationCenter/constants';
+import { Stack } from '@layer5/sistent';
+import { capitalize } from 'lodash';
+import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
+import _ from 'lodash';
+import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+
 export const ValidateContent = {
   btnText: 'Next',
   cancel: true,
@@ -45,11 +58,81 @@ const StepContent = styled('div', {
   backgroundColor: backgroundColor || theme.palette.background.constant.white,
 }));
 
-export const FinishDeploymentStep = () => {
+export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
+  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const theme = useTheme();
+  console.log('operationsCenterActorRef', operationsCenterActorRef);
+
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployEvent, setDeployEvent] = useState({});
+  const [deployError, setDeployError] = useState(null);
+
+  useEffect(() => {
+    try {
+      setIsDeploying(true);
+      perform_deployment();
+    } catch (error) {
+      setDeployError(error);
+      setIsDeploying(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const subscription = operationsCenterActorRef.on(
+      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      (event) => {
+        const serverEvent = event.data.event;
+        console.log('serverEvent', serverEvent);
+        if (serverEvent.action === deployment_type) {
+          setIsDeploying(false);
+          setDeployEvent(serverEvent);
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const progressMessage = `${capitalize(deployment_type)}ing  design`;
+
+  if (isDeploying) {
+    return <Loading message={progressMessage} />;
+  }
+
+  if (deployError) {
+    return (
+      <Typography variant="h5" color="error">
+        Error deploying design: {JSON.stringify(deployError)}
+      </Typography>
+    );
+  }
+
+  const eventStyle = SEVERITY_STYLE[deployEvent.severity] || {};
+  const details =
+    deployEvent.metadata?.summary?.messages ||
+    deployEvent?.metadata?.error ||
+    deployEvent?.metadata;
+  const hasDetails = !_.isEmpty(details);
+  console.log('deployEvent', eventStyle, deployEvent);
+
   return (
-    <Box>
-      <Loading message="Deploying Design" />
-    </Box>
+    <Stack spacing={2}>
+      <Typography variant="textB2SemiBold" color={theme.palette.text.secondary}>
+        {`${deployment_type}ment Summary`}
+      </Typography>
+      <TextWithLinks
+        text={deployEvent?.description || ''}
+        style={{ whiteSpace: 'pre-wrap', color: eventStyle.color }}
+      />
+      {hasDetails && (
+        <Box p={1} borderRadius={'0.5rem'} border={`2px solid ${eventStyle.color} `}>
+          {deployEvent?.severity !== 'error' && <FormatStructuredData data={details} />}
+          {deployEvent?.severity === 'error' && (
+            <ErrorMetadataFormatter metadata={deployEvent.metadata.error} event={deployEvent} />
+          )}
+        </Box>
+      )}
+    </Stack>
   );
 };
 
@@ -142,8 +225,12 @@ export const UpdateDeploymentStepper = ({
   );
 
   const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
-  console.log('finalizedeployment', FinalizeBackgroundColor, theme);
-
+  const actionFunction = () => {
+    handlePerformDeployment({
+      design,
+      selectedK8sContexts: selectedDeployableK8scontexts.map((context) => context.id),
+    });
+  };
   const deployStepper = useStepper({
     steps: [
       {
@@ -170,7 +257,7 @@ export const UpdateDeploymentStepper = ({
         helpText:
           'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
         icon: EnvironmentIcon,
-        label: 'Select Environment',
+        label: 'Identify Environments',
       },
       {
         component: (
@@ -184,6 +271,7 @@ export const UpdateDeploymentStepper = ({
               includeDependencies={includeDependencies}
               setIncludeDependencies={setIncludeDependencies}
               setBypassDryRun={setBypassDryRun}
+              dryRunErrors={dryRunErrors}
             />
           </StepContent>
         ),
@@ -206,23 +294,20 @@ export const UpdateDeploymentStepper = ({
       {
         component: (
           <StepContent>
-            <FinishDeploymentStep design={design} deployment_type={deployment_type} />{' '}
+            <FinishDeploymentStep
+              design={design}
+              deployment_type={deployment_type}
+              perform_deployment={actionFunction}
+            />{' '}
           </StepContent>
         ),
         helpText:
           'Finalize the deployment process, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the finalization process',
         label: 'Finsh',
-        icon: CheckIcon,
+        icon: FinishFlagIcon,
       },
     ],
   });
-
-  const actionFunction = () => {
-    handlePerformDeployment({
-      design,
-      selectedK8sContexts: selectedDeployableK8scontexts.map((context) => context.id),
-    });
-  };
 
   const transitionConfig = {
     0: {
@@ -242,9 +327,8 @@ export const UpdateDeploymentStepper = ({
     },
     3: {
       canGoNext: () => true,
-      nextButtonText: 'Deploy',
+      nextButtonText: capitalize(deployment_type),
       nextAction: () => {
-        actionFunction();
         deployStepper.handleNext();
       },
     },

@@ -8,12 +8,12 @@ import { store } from '../store';
 import { pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
 import { PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
-const EVENTS = {
+export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
 };
 const events = {
   eventReceivedFromServer: (event) => ({
-    type: EVENTS.EVENT_RECEIVED_FROM_SERVER,
+    type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
     data: {
       event,
     },
@@ -21,6 +21,7 @@ const events = {
 };
 
 const subscriptionActor = fromCallback(({ sendBack }) => {
+  console.log('Subscribing to events');
   const subscription = subscribeEvents((result) => {
     if (!result.event) {
       console.error('Invalid event received', result);
@@ -39,6 +40,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       console.error('Invalid event received', result);
       return;
     }
+    console.log('Event received from server:', validatedEvent);
     sendBack(events.eventReceivedFromServer(validatedEvent));
   });
 
@@ -62,7 +64,7 @@ export const operationsCenterActor = createMachine(
       },
       idle: {
         on: {
-          [EVENTS.EVENT_RECEIVED_FROM_SERVER]: {
+          [OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER]: {
             actions: ['storeInRedux', 'notifyUI', 'emitBack'],
           },
         },
@@ -78,6 +80,7 @@ export const operationsCenterActor = createMachine(
         store.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
       },
       notifyUI: ({ context, event }) => {
+        console.log('Notifying UI:', event.data.event);
         const validatedEvent = event.data.event;
         context.notify({
           message: validatedEvent.description,

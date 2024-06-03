@@ -10,12 +10,6 @@ const StyledSummaryItem = styled(Box)(({ theme }) => ({
   flexGrow: 1,
 }));
 
-const StyledContainer = styled(Box)(({ theme }) => ({
-  // backgroundColor: theme.palette?.background?.blur.light,
-  // paddingInline: theme.spacing(4),
-  // paddingBlock: theme.spacing(2),
-}));
-
 const StyledEnvironment = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -30,7 +24,7 @@ export const FinalizeDeployment = ({ design }) => {
   const theme = useTheme();
   const palette = theme.palette;
   return (
-    <StyledContainer>
+    <Box>
       <Typography variant="textB2SemiBold">Deployment Summary</Typography>
       <Box mt={2} display="flex" justifyContent="space-between" flexWrap={'wrap'} gap={2}>
         <StyledSummaryItem>
@@ -66,8 +60,8 @@ export const FinalizeDeployment = ({ design }) => {
       </Box>
       <Stack mt={3} gap={1}>
         <CheckBoxField label="Open in Visualizer" checked={false} onChange={() => {}} />
-        <CheckBoxField label="Schedule Deployment" checked={false} onChange={() => {}} />
+        <CheckBoxField label="Schedule Deployment" checked={false} onChange={() => {}} disabled />
       </Stack>
-    </StyledContainer>
+    </Box>
   );
 };

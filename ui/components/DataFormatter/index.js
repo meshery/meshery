@@ -175,7 +175,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
     }
   });
 
-  return <Typography {...typographyProps}>{elements}</Typography>;
+  return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
 export const KeyValue = ({ Key, Value }) => {
@@ -208,6 +208,7 @@ export const KeyValue = ({ Key, Value }) => {
             color: theme.palette.text.secondary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
+            whiteSpace: 'pre-line',
           }}
         />
       )}

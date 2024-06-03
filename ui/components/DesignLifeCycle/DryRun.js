@@ -21,7 +21,6 @@ import {
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { Box } from '@layer5/sistent';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -111,7 +110,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  console.log('currentComponentName', currentComponentName, componentName);
   const componentIcon = component
     ? `/${component?.traits?.meshmap?.['meshmodel-metadata'].svgWhite}`
     : null;
@@ -123,7 +121,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
   const currentComponentErrorRef = useRef(null);
 
   const onErrorTap = (error) => {
-    console.log('onTap', error, component);
     if (!validationMachine) {
       return;
     }
@@ -242,7 +239,6 @@ export const FormatDryRunResponse = withStyles(styles)(({
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
 
-  console.log('Format Dry Run Response', dryRunErrors, totalDryRunErrors, designJson);
   return (
     <List
       aria-labelledby="nested-list-subheader"
