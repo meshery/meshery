@@ -15,6 +15,4 @@ jobs:
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
-                helm repo update meshery
-                helm upgrade meshery meshery/meshery -n meshery
-                helm upgrade meshery-operator  meshery/meshery-operator -n meshery
+                mesheryctl system update
