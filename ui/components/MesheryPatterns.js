@@ -1512,15 +1512,19 @@ function MesheryPatterns({
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
     switch (uploadType) {
-      case 'File Upload':
+      case 'File Upload': {
+        const fileElement = document.getElementById('root_file');
+        const fileName = fileElement.files[0].name;
         requestBody = JSON.stringify({
           save: true,
           pattern_data: {
             name,
+            file_name: fileName.split('.')[0],
             pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
+      }
       case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
