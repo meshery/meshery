@@ -60,7 +60,10 @@ Generally, we don't have GitHub raw links readily available, so you can use the 
 
 ### Importing Dapr Helm Chart to Meshery playground
 
-1. Open the Meshery playground.
+1. Open the Meshery playground                                                                                                                                                                                    
+## Note 
+   Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
+
 2. On the right side, click on the upward arrow symbol to import designs into  Meshery
    ![Import](./screenshots/H5.png)
 
