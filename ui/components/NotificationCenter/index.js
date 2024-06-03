@@ -60,7 +60,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 
-const NotificationCenterContext = React.createContext({
+export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
   setDrawerAnchor: () => {},
   toggleButtonRef: null,
@@ -85,7 +85,6 @@ export const NotificationCenterProvider = ({ children }) => {
         operationsCenterActorRef,
       }}
     >
-      {/* <EventsSubsciptionProvider /> */}
       {children}
       <NotificationCenter />
     </NotificationCenterContext.Provider>

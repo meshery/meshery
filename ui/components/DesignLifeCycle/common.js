@@ -2,6 +2,9 @@ import React from 'react';
 import { Box, Checkbox, CircularProgress, Stack, Typography } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { processDesign } from '@/utils/utils';
+import { Tooltip } from '@layer5/sistent';
+import { InfoCircleIcon, useTheme } from '@layer5/sistent';
+import { IconButton } from '@layer5/sistent';
 
 export const DEPLOYMENT_TYPE = {
   DEPLOY: 'deploy',
@@ -48,11 +51,39 @@ export const getSvgWhiteForComponent = (component) => {
   return `/${component.metadata.svgWhite}`;
 };
 
-export const CheckBoxField = ({ label, checked, onChange }) => {
+export const CheckBoxField = ({
+  label,
+  checked,
+  onChange,
+  disabled = false,
+  helpText = 'Open in visualizer',
+}) => {
+  const theme = useTheme();
+  const color = disabled ? theme.palette.text.disabled : theme.palette.text.neutral.default;
+
   return (
-    <Stack spacing={2} direction="row" alignItems="center">
-      <Checkbox value={checked} onChange={onChange} />
-      <Typography variant="body2">{label}</Typography>
+    <Stack
+      spacing={2}
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      style={{
+        cursor: disabled && 'not-allowed',
+      }}
+    >
+      <Stack spacing={2} direction="row" alignItems="center">
+        <Checkbox value={checked} onChange={onChange} disabled={disabled} />
+        <Typography variant="body2" color={color}>
+          {label}
+        </Typography>
+      </Stack>
+      {helpText && (
+        <Tooltip title={helpText} placement="top">
+          <IconButton>
+            <InfoCircleIcon fill={color} />
+          </IconButton>
+        </Tooltip>
+      )}
     </Stack>
   );
 };
