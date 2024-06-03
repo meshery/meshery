@@ -58,43 +58,41 @@ Generally, we don't have GitHub raw links readily available, so you can use the 
 
 
 
-### Importing Dapr Helm Chart to MeshMap
+### Importing Dapr Helm Chart to Meshery playground
 
 1. Open the Meshery playground.
-## Note
-
-Importing Meshery designs can be done using several methods, including:
-
-- Importing through the Meshery UI configuration page.
-- Importing through the Meshery CLI.
-- Importing through the Meshmap(Which we are currently doing).
-
-For more detailed instructions, you can check out the Meshery documentation on importing designs: [Importing Designs](https://docs.meshery.io/guides/configuration-management/importing-designs).
-
-
-2. On the right side, click on the upward arrow symbol to import designs into Meshery.
-
+2. On the right side, click on the upward arrow symbol to import designs into  Meshery
    ![Import](./screenshots/H5.png)
 
-3. After clicking on that, name this design as "Dapr Helm design".
+   ## Note
+   Importing Meshery designs can be done using several methods, including:
+
+   - Importing through the Meshery UI configuration page.
+   - Importing through the Meshery CLI.
+   - Importing through the Meshmap(Which we are currently doing).
+   
+    For more detailed instructions, you can check out the Meshery documentation on importing designs: [Importing Designs](https://docs.meshery.io/guides/configuration-management/importing-designs).
+
+
+4. After clicking on that, name this design as "Dapr Helm design".
 
    ![Name Design](./screenshots/H6.png)
 
-4. In the dropdown on the left side, select "Helm Chart".
+5. In the dropdown on the left side, select "Helm Chart".
 
    ![Dropdown Selection](./screenshots/H7.png)
 
-5. In the URL section, paste the existing GitHub raw URL link for the helm charts.
+6. In the URL section, paste the existing GitHub raw URL link for the helm charts.
 
    ![URL Section](./screenshots/H8.png)
 
-6. Click on "Import" to import the helm chart.
+7. Click on "Import" to import the helm chart.
 
-7. Wait for some time for the helm to be loaded into Meshery.
+8. Wait for some time for the helm to be loaded into Meshery.
 
    ![Loading](./screenshots/H9.png)
 
-8. Successfully, the Dapr helm chart is imported into Meshery.
+9. Successfully, the Dapr helm chart is imported into Meshery.
 
    ![Success](./screenshots/H10.png)
 
