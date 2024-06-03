@@ -166,11 +166,11 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 	}
 	if failedMsg != "" {
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
-		errorEventBuilder := events.NewEvent().FromUser(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("kubernetes_components").WithAction("registration")
+		errorEventBuilder := events.NewEvent().FromUser(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"LongDescription":      fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", "Kubernetes", failedMsg),
+			"LongDescription":      fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", hostname, failedMsg),
 			"SuggestedRemediation": fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
 			"DownloadLink":         filePath,
 			"ViewLink":             filePath,
