@@ -191,8 +191,8 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	for {
 		select {
 		case comp := <-erh.componentChan:
-			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+			err = erh.regManager.RegisterEntity(v1beta1.Host{
+				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
@@ -201,8 +201,8 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 				Hostname: ArtifactHubComponentsHandler.String(),
 			}, &comp, err, isModelError, isRegistrantError)
 		case rel := <-erh.relationshipChan:
-			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+			err = erh.regManager.RegisterEntity(v1beta1.Host{
+				Hostname: rel.Model.Registrant.Hostname,
 			}, &rel)
 			helpers.HandleError(v1beta1.Host{
 				Hostname: ArtifactHubComponentsHandler.String(),
