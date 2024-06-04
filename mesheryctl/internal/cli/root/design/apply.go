@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bufio"
@@ -36,25 +36,25 @@ import (
 )
 
 var (
-	skipSave    bool // skip saving a pattern
+	skipSave    bool // skip saving a design
 	patternFile string
 )
 
 var linkDocPatternApply = map[string]string{
 	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
-	"caption": "Usage of mesheryctl pattern apply",
+	"caption": "Usage of mesheryctl design apply",
 }
 
 var applyCmd = &cobra.Command{
 	Use:   "apply",
-	Short: "Apply pattern file",
-	Long:  `Apply pattern file will trigger deploy of the pattern file`,
+	Short: "Apply design file",
+	Long:  `Apply design will trigger deploy of the design file`,
 	Example: `
-// apply a pattern file
-mesheryctl pattern apply -f [file | URL]
+// apply a design file
+mesheryctl design apply -f [file | URL]
 
-// deploy a saved pattern
-mesheryctl pattern apply [pattern-name]
+// deploy a saved design
+mesheryctl design apply [design-name]
 	`,
 	Annotations: linkDocPatternApply,
 	Args:        cobra.MinimumNArgs(0),
@@ -75,7 +75,7 @@ mesheryctl pattern apply [pattern-name]
 			patternName := strings.Join(args, "%20")
 
 			// search and fetch patterns with pattern-name
-			utils.Log.Debug("Fetching patterns")
+			utils.Log.Debug("Fetching designs")
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
@@ -93,7 +93,7 @@ mesheryctl pattern apply [pattern-name]
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PatternError("failed to read response body"))
+				return errors.Wrap(err, utils.DesignError("failed to read response body"))
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
@@ -103,7 +103,7 @@ mesheryctl pattern apply [pattern-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(ErrPatternNotFound())
+				utils.Log.Error(ErrDesignNotFound())
 				return nil
 			} else if len(response.Patterns) == 1 {
 				patternFile = response.Patterns[0].PatternFile
@@ -151,7 +151,7 @@ mesheryctl pattern apply [pattern-name]
 
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {
-						return errors.Wrap(err, utils.PatternError("failed to read response body"))
+						return errors.Wrap(err, utils.DesignError("failed to read response body"))
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {
@@ -255,7 +255,7 @@ mesheryctl pattern apply [pattern-name]
 			return nil
 		}
 
-		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
+		s := utils.CreateDefaultSpinner("Applying design "+pf.Name, "")
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
@@ -272,7 +272,7 @@ mesheryctl pattern apply [pattern-name]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("pattern successfully applied")
+			utils.Log.Info("design successfully applied")
 		}
 		utils.Log.Info(string(body))
 		return nil
@@ -286,7 +286,7 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
-		fmt.Printf("PatternFile:\n")
+		fmt.Printf("DesignFile:\n")
 		fmt.Printf(a.PatternFile)
 		fmt.Println("---------------------")
 	}
@@ -311,6 +311,6 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 }
 
 func init() {
-	applyCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
-	applyCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a pattern")
+	applyCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	applyCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
 }

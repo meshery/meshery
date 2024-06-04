@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"fmt"
@@ -28,39 +28,39 @@ var (
 	validSourceTypes     []string
 )
 
-// PatternCmd represents the root command for pattern commands
-var PatternCmd = &cobra.Command{
-	Use:   "pattern",
-	Short: "Cloud Native Patterns Management",
-	Long: `Manage cloud and cloud native infrastructure using predefined patterns.
+// DesignCmd represents the root command for design commands
+var DesignCmd = &cobra.Command{
+	Use:   "design",
+	Short: "Cloud Native Designs Management",
+	Long: `Manage cloud and cloud native infrastructure using predefined designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
-// Apply pattern file:
-mesheryctl pattern apply --file [path to pattern file | URL of the file]
+// Apply design file:
+mesheryctl design apply --file [path to design file | URL of the file]
 
-// Delete pattern file:
-mesheryctl pattern delete --file [path to pattern file]
+// Delete design file:
+mesheryctl design delete --file [path to design file]
 
-// View pattern file:
-mesheryctl pattern view [pattern name | ID]
+// View design file:
+mesheryctl design view [design name | ID]
 
-// List all patterns:
-mesheryctl pattern list
+// List all designs:
+mesheryctl design list
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},
 }
 
 func init() {
-	PatternCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
+	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd}
-	PatternCmd.AddCommand(availableSubcommands...)
+	DesignCmd.AddCommand(availableSubcommands...)
 }
