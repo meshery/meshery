@@ -3,10 +3,9 @@ layout: default
 title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
 abstract: Learn how to deploy WordPress and MySQL on Kubernetes using Meshery.
 permalink: guides/tutorials/wordpress-mysql-persistentvolume
-redirect_from: /guides/tutorials/deploy-wordpress-mysql/wordpress_mysql_persistentvolume.md
 model: Kubernetes
 kind: deployments
-type: guides 
+type: guides
 category: tutorials
 language: en
 list: include
@@ -54,7 +53,7 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
 2. Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_
 
-#### Import the Files to Meshery Playground 
+#### Import the Files to Meshery Playground
 
 1. In the left sidebar, click on the upward arrow symbol(import icon) to import the designs into Meshery.
 
@@ -75,13 +74,13 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
    When you click on the names of the designs on the `Designs` tab, you can see the visual representations of the various Kubernetes resources and their relationships on the canvas.
 
-  ![Imported designs on canvas](./screenshots/wp3.png)
+    ![Imported designs on canvas](./screenshots/wp3.png)
 
 4. Now, follow the same steps to import the `wordpress-deployment` file.
 
   ![wordpress-deployment](./screenshots/wp4.png)
 
-#### Merging the Designs 
+#### Merging the Designs
 
 Next, we will combine the WordPress and MySQL designs into a single design file. By merging these designs, we can manage and deploy both resources together.
 
@@ -89,18 +88,17 @@ To merge the MySQL deployment design with the WordPress deployment design:
 
 1. Click and drag the `mysql-deployment` design from the left panel and drop it onto the design canvas of the `wordpress-deployment`.
 
-  ![drag and drop design](./screenshots/wp5.png)
-
+    ![drag and drop design](./screenshots/wp5.png)
 
 2. This action will open a merge modal asking if you want to merge the design, Click on `Merge`.
 
-  ![merge modal](./screenshots/wp6.png)
+    ![merge modal](./screenshots/wp6.png)
 
 3. Click on `Save As` and enter `wordpress-mysql-deployment` as the new file name.
 
-  ![save design](./screenshots/wp7.png)
+    ![save design](./screenshots/wp7.png)
 
-#### Create and Configure Secret for MySQL Database 
+#### Create and Configure Secret for MySQL Database
 
 In this step, we need to create a Kubernetes secret component for the MySQL database. This is necessary because of this configuration in the environment variables section of the mysql-deployment yaml file.
 
@@ -117,19 +115,19 @@ Before you proceed, choose a password and convert it into base64 format. You can
 
 1. Click on the Kubernetes icon on the dock, search for `secret`, and click on it or drag it to the canvas.
 
-  ![Create secret component](./screenshots/wp8.png)
+    ![Create secret component](./screenshots/wp8.png)
 
 2. Click on the Secret component to open the configuration window.
 
-- Set the _name_ as `mysql-pass`
-- Set the _Type_ as `Opaque`.
-- Click **+** next to Data and add the secret as a key value pair `password:cGFzc3dvcmQ=`
+    - Set the _name_ as `mysql-pass`
+    - Set the _Type_ as `Opaque`.
+    - Click **+** next to Data and add the secret as a key value pair `password:cGFzc3dvcmQ=`
 
-![Configure secret](./screenshots/wp9.png)
+    ![Configure secret](./screenshots/wp9.png)
 
 3. Click outside the window to close the configuration tab.
 
-#### Create Persistent Volumes 
+#### Create Persistent Volumes
 
 MySQL and WordPress each require a [Persistent Volume(PV)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) to store their data.
 
@@ -139,71 +137,69 @@ Please note that using `hostPath` for Persistent Volumes is generally not recomm
 
 1. Click on the Kubernetes icon on the dock, search for `Persistent Volume`, and select it. We will create two PV's.
 
-![Create persistent volume](./screenshots/wp10.png)
+    ![Create persistent volume](./screenshots/wp10.png)
 
 2. Click on the wordpress PV to open the configuration window.
 
-- Change the "name" to `wp-pv`
-- Set the "StorageClassName" as `manual`
-- Click **+** next to "AccessMode" and enter `ReadWriteOnce`
+    - Change the "name" to `wp-pv`
+    - Set the "StorageClassName" as `manual`
+    - Click **+** next to "AccessMode" and enter `ReadWriteOnce`
 
-![Configure persistent volume](./screenshots/wp11.png)
+    ![Configure persistent volume](./screenshots/wp11.png)
 
-- Scroll down to "Capacity" and enter in the key pair `storage:20Gi`
+    - Scroll down to "Capacity" and enter in the key pair `storage:20Gi`
 
-![Persistent volume capacity](./screenshots/wp12.png)
+    ![Persistent volume capacity](./screenshots/wp12.png)
 
-- Scroll down to "Hostpath" and input `mnt/data/wp-pv` for the _path_ and `DirectoryOrCreate` for the _type_. 
+    - Scroll down to "Hostpath" and input `mnt/data/wp-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
 
-![Persistent volume hostpath](./screenshots/wp13.png)
+    ![Persistent volume hostpath](./screenshots/wp13.png)
 
 3. Repeat similar steps for the Mysql Persistent Volume
 
-- Click on the MySQL PV to open the configuration window.
-- Change the "name" to `mysql-pv`
-- Set the "StorageClassName" to `manual`
-- Click **+** next to "AccessMode" and set it to `ReadWriteOnce`
-- Scroll down to "Capacity", and enter the key pair `storage:20Gi`
-- Scroll down to "Hostpath" and input `mnt/data/mysql-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
+    - Click on the MySQL PV to open the configuration window.
+    - Change the "name" to `mysql-pv`
+    - Set the "StorageClassName" to `manual`
+    - Click **+** next to "AccessMode" and set it to `ReadWriteOnce`
+    - Scroll down to "Capacity", and enter the key pair `storage:20Gi`
+    - Scroll down to "Hostpath" and input `mnt/data/mysql-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
 
 4. Click on `wp-pv-claim` and `mysql-pv-claim` and set their "StorageClassName" as `manual`
 
-#### Add Labels 
+#### Add Labels
 
-To make it easier to filter and manage our resources during visualization, let's add labels to all of them. 
+To make it easier to filter and manage our resources during visualization, let's add labels to all of them.
 
  You can also choose to use the existing label, `app:wordpress`, but a new one, `dev:tutorial`, is recommended for this tutorial to prevent our resources from getting mixed up with others in the public playground cluster.
 
-1. Click on the label icon
-2. Click the **+** sign next to Labels. 
+1. Click on the label icon.
+2. Click the **+** sign next to Labels.
 3. Add the label `dev:tutorial`.
-4. Do this for **all** the resources on the canvas 
+4. Do this for **all** the resources on the canvas.
 
-![Add label](./screenshots/wp14.png)
+    ![Add label](./screenshots/wp14.png)
 
 5. Now click on `Save As` and save the design.
 
-#### Deploy the Resources 
+#### Deploy the Resources
 
 1. Click `Actions` in the top right corner and click on `Deploy`.
 
-![Actions dropdown menu](./screenshots/wp15.png)
+    ![Actions dropdown menu](./screenshots/wp15.png)
 
 2. The design will be validated to make sure there are no errors.
 
-![Validate design](./screenshots/wp16.png)
-
+    ![Validate design](./screenshots/wp16.png)
 
 3. Choose the Kubernetes cluster you want to deploy to.
 
-![Choose deployment Environment](./screenshots/wp17.png)
+    ![Choose deployment Environment](./screenshots/wp17.png)
 
-
-**_Note_**: The Meshery Playground is connected to live Kubernetes cluster(s) and allows users full control over these clusters but you can also have the option to add your own Kubernetes cluster to the Playground.
+    **_Note_**: The Meshery Playground is connected to live Kubernetes cluster(s) and allows users full control over these clusters but you can also have the option to add your own Kubernetes cluster to the Playground.
 
 4. Finally click `Deploy` to deploy the application to the cluster.
 
-![Deploy resources](./screenshots/wp18.png)
+    ![Deploy resources](./screenshots/wp18.png)
 
 #### Visualizing the Deployed Resources
 
@@ -212,26 +208,25 @@ To view the resources deployed we will use the Visualize section of the _MeshMap
 1. Move to the Visualize tab.
 2. Click the filter icon and choose the appropriate filters
 
-- For "Kinds" select `Deployment`, `Service`, `PersistentVolume`, `PersistentVolumeClaim` and `Secret`
-- For the "label" select `dev=tutorial`
+    - For "Kinds" select `Deployment`, `Service`, `PersistentVolume`, `PersistentVolumeClaim` and `Secret`
+    - For the "label" select `dev=tutorial`
 
-3. You can also use the icons on the right sidebar to filter the resources. 
+3. You can also use the icons on the right sidebar to filter the resources.
 
-After selecting your filters, you should see a view displaying only your relevant resources, as shown in the image below.
+    After selecting your filters, you should see a view displaying only your relevant resources, as shown in the image below.
 
-![Filter resources](./screenshots/wp19.png)
+    ![Filter resources](./screenshots/wp19.png)
 
-#### Resource Details 
+#### Resource Details
 
 You can click on any resource to view more details about it in the "Details" section on the right sidebar.
 
 ![Get more details](./screenshots/wp20.png)
 
-#### Deleting Resources 
+#### Deleting Resources
 
 To delete the resources, use the `Undeploy` option from the Action dropdown in the _Design_ tab.
 
-#### Conclusion 
+#### Conclusion
 
 Congratulations! You’ve successfully completed the tutorial on deploying a WordPress site and MySQL database with Persistent Volumes using Meshery Playground. This hands-on experience should have given you valuable insights into importing manifest files, visualizing resources, creating persistent volumes, and managing deployments in Meshery Playground.
-
