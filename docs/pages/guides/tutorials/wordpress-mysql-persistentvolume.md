@@ -1,18 +1,19 @@
 ---
 layout: default
-title: Deploying WordPress and MySQL with Persistent Volumes in Meshery
+title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
 abstract: Learn how to deploy WordPress and MySQL on Kubernetes using Meshery.
-permalink: guides/tutorials/deploy-wordpress-mysql/wordpress_mysql_persistentvolume.md
+permalink: guides/tutorials/wordpress-mysql-persistentvolume
+redirect_from: /guides/tutorials/deploy-wordpress-mysql/wordpress_mysql_persistentvolume.md
 model: Kubernetes
 kind: deployments
-type: guides
+type: guides 
 category: tutorials
 language: en
 list: include
 abstract: "Deploy a WordPress site and a MySQL database with Persistent Volumes using Meshery Playground in an interactive live cluster environment."
 ---
 
-## Deploying WordPress and MySql with Persistent Volumes in Meshery
+## Deploying WordPress and MySql with Persistent Volumes with Meshery
 
 ### Introduction
 
@@ -233,5 +234,4 @@ To delete the resources, use the `Undeploy` option from the Action dropdown in t
 #### Conclusion 
 
 Congratulations! You’ve successfully completed the tutorial on deploying a WordPress site and MySQL database with Persistent Volumes using Meshery Playground. This hands-on experience should have given you valuable insights into importing manifest files, visualizing resources, creating persistent volumes, and managing deployments in Meshery Playground.
-
 
