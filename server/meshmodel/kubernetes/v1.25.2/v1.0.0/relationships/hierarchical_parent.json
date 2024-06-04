@@ -35,7 +35,7 @@
                                     "namespace"
                                 ]
                             ],
-                            "description": "WASM filter configuration to be applied to Envoy Filter."
+                            "description": "Namespace configuration to be applied to all namespaced resources."
                         }
                     }
                 ],
@@ -50,7 +50,7 @@
                                     "name"
                                 ]
                             ],
-                            "description": "WASM filter configuration to be applied to Envoy Filter."
+                            "description": "Namespace configuration to be applied to all namespaced resources."
                         }
                     },
                     {
