@@ -1,3 +1,4 @@
+import { store } from '../store';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
@@ -67,3 +68,7 @@ export const designsApi = api
 
 export const { useGetPatternsQuery, useDeployPatternMutation, useUndeployPatternMutation } =
   designsApi;
+
+const yy = async () => {
+  const x = await store.dispatch(designsApi.endpoints['getPatterns'].initiate({}));
+};
