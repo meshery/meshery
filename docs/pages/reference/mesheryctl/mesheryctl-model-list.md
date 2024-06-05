@@ -1,8 +1,8 @@
 ---
 layout: default
-title: mesheryctl-exp-model
-permalink: reference/mesheryctl/exp/model
-redirect_from: reference/mesheryctl/exp/model/
+title: mesheryctl-model-list
+permalink: reference/mesheryctl/model/list
+redirect_from: reference/mesheryctl/model/list/
 type: reference
 display-title: "false"
 language: en
@@ -10,34 +10,41 @@ command: exp
 subcommand: model
 ---
 
-# mesheryctl exp model
+# mesheryctl model list
 
-View list of models and detail of models
+list registered models
 
 ## Synopsis
 
-View list of models and detailed information of a specific model
+list name of all registered models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model [flags]
+mesheryctl model list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view list of components
+View list of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
+mesheryctl model list
 
 </div>
 </pre> 
 
-To view a specific model
+View list of models with specified page number (25 models per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model view [model-name]
+mesheryctl model list --page 2
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+    
 
 </div>
 </pre> 
@@ -46,7 +53,9 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for model
+  -c, --count      (optional) Get the number of models in total
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 
 </div>
 </pre>
