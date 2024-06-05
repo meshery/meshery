@@ -7,6 +7,7 @@ import {
   ListSubheader,
   Typography,
   Collapse,
+  Box,
   alpha,
   withStyles,
 } from '@material-ui/core';
@@ -153,7 +154,7 @@ const ValidationResults_ = (props) => {
     }
   }, [currentComponentErrorRef]);
   return (
-    <div title="DesignValidationResults">
+    <Box title="DesignValidationResults" sx={{ overflowY: 'auto' }}>
       <List
         aria-labelledby="nested-list-subheader"
         subheader={
@@ -219,7 +220,7 @@ const ValidationResults_ = (props) => {
           </div>
         ))}
       </List>
-    </div>
+    </Box>
   );
 };
 

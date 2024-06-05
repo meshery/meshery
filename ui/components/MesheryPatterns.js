@@ -211,6 +211,13 @@ const styles = (theme) => ({
       width: '100%',
     },
   },
+  actionModalContainer: {
+    minWidth: '5rem',
+    width: '30rem',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
+  },
 });
 
 function TooltipIcon({ children, onClick, title, placement }) {
@@ -705,18 +712,20 @@ function MesheryPatterns({
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
-        <DeployStepper
-          handleClose={designLifecycleModal.closeModal}
-          validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
-          handleDeploy={handleDeploy}
-          deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-          selectedK8sContexts={selectedK8sContexts}
-        />
+        <Box className={classes.actionModalContainer}>
+          <DeployStepper
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            handleDeploy={handleDeploy}
+            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
+          />
+        </Box>
       ),
     });
   };
@@ -726,18 +735,20 @@ function MesheryPatterns({
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
-        <UnDeployStepper
-          handleClose={designLifecycleModal.closeModal}
-          validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
-          handleUndeploy={handleUndeploy}
-          deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
-          selectedK8sContexts={selectedK8sContexts}
-        />
+        <Box className={classes.actionModalContainer}>
+          <UnDeployStepper
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            handleUndeploy={handleUndeploy}
+            deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
+          />
+        </Box>
       ),
     });
   };
@@ -747,19 +758,21 @@ function MesheryPatterns({
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
-        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
-          <DryRunDesign
-            handleClose={designLifecycleModal.closeModal}
-            validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
-            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-            selectedK8sContexts={selectedK8sContexts}
-          />
-        </ModalBody>
+        <Box className={classes.actionModalContainer}>
+          <ModalBody>
+            <DryRunDesign
+              handleClose={designLifecycleModal.closeModal}
+              validationMachine={designValidationActorRef}
+              design={{
+                name,
+                pattern_file,
+                id: pattern_id,
+              }}
+              deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </ModalBody>
+        </Box>
       ),
     });
   };
@@ -769,19 +782,21 @@ function MesheryPatterns({
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
-        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
-          <ValidateDesign
-            handleClose={designLifecycleModal.closeModal}
-            validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
-            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-            selectedK8sContexts={selectedK8sContexts}
-          />
-        </ModalBody>
+        <Box className={classes.actionModalContainer}>
+          <ModalBody>
+            <ValidateDesign
+              handleClose={designLifecycleModal.closeModal}
+              validationMachine={designValidationActorRef}
+              design={{
+                name,
+                pattern_file,
+                id: pattern_id,
+              }}
+              deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </ModalBody>
+        </Box>
       ),
     });
   };

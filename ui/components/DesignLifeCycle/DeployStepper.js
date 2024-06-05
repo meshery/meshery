@@ -168,11 +168,9 @@ export const UpdateDeploymentStepper = ({
   return (
     <>
       <ModalBody>
-        <Box style={{ width: '30rem' }}>
-          <CustomizedStepper {...deployStepper}>
-            <Box style={{ overflowY: 'auto' }}>{deployStepper.activeStepComponent}</Box>
-          </CustomizedStepper>
-        </Box>
+        <CustomizedStepper {...deployStepper}>
+          <Box style={{ overflowY: 'auto' }}>{deployStepper.activeStepComponent}</Box>
+        </CustomizedStepper>
       </ModalBody>
       <ModalFooter
         variant="filled"
