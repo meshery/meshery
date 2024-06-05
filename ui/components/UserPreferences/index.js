@@ -13,13 +13,13 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
-  Tooltip,
   IconButton,
   Card,
   CardContent,
   CardHeader,
   Box,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../../lib/data-fetch';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
@@ -40,9 +40,6 @@ import { getTheme, setTheme } from '../../utils/theme';
 import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
-import SpacesPreferences from './spaces-preferences';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent';
 import { useWindowDimensions } from '@/utils/dimension';
 
 const styles = (theme) => ({
@@ -465,14 +462,14 @@ const UserPreference = (props) => {
                           {provider}
                         </Typography>
 
-                        <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                        <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
                           <IconButton
                             onClick={() => copyToClipboard(provider)}
                             style={{ padding: '0.25rem', float: 'right' }}
                           >
                             <CopyIcon />
                           </IconButton>
-                        </Tooltip>
+                        </CustomTooltip>
                       </Box>
                     </CardContent>
                   </Card>
@@ -656,44 +653,35 @@ const UserPreference = (props) => {
           className={props.classes.tabs}
           centered
         >
-          <CustomTextTooltip backgroundColor={CHARCOAL} title="General preferences" placement="top">
+          <CustomTooltip title="General preferences" placement="top">
             <Tab
               className={props.classes.tab}
               icon={<SettingsCellIcon style={iconMedium} />}
               label={<span className={props.classes.tabLabel}>General</span>}
             />
-          </CustomTextTooltip>
-          <CustomTextTooltip
-            backgroundColor={CHARCOAL}
-            title="Choose Performance Test Defaults"
-            placement="top"
-          >
+          </CustomTooltip>
+          <CustomTooltip title="Choose Performance Test Defaults" placement="top">
             <Tab
               className={props.classes.tab}
               icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
               label={<span className={props.classes.tabLabel}>Performance</span>}
             />
-          </CustomTextTooltip>
+          </CustomTooltip>
           {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
           {userPrefs && providerType != 'local' && (
-            <CustomTextTooltip
-              backgroundColor={CHARCOAL}
-              title="Remote Provider preferences"
-              placement="top"
-            >
+            <CustomTooltip title="Remote Provider preferences" placement="top">
               <Tab
                 className={props.classes.tab}
                 icon={<SettingsRemoteIcon style={iconMedium} />}
                 label={<span className={props.classes.tabLabel}>Remote Provider</span>}
               />
-            </CustomTextTooltip>
+            </CustomTooltip>
           )}
         </Tabs>
       </Paper>
       <Paper className={props.classes.statsWrapper}>
         {tabVal === 0 && (
           <>
-            <SpacesPreferences />
             <div className={props.classes.formContainer}>
               <FormControl component="fieldset" className={props.classes.formGrp}>
                 <FormLabel component="legend" className={props.classes.formLegend}>
@@ -805,18 +793,18 @@ const UserPreference = (props) => {
               className={props.classes.tabs}
               centered
             >
-              <CustomTextTooltip backgroundColor={CHARCOAL} title="Details" placement="top">
+              <CustomTooltip title="Details" placement="top">
                 <Tab
                   className={props.classes.tab}
                   label={<span className={props.classes.tabLabel}>Details</span>}
                 />
-              </CustomTextTooltip>
-              <CustomTextTooltip backgroundColor={CHARCOAL} title="Plugins" placement="top">
+              </CustomTooltip>
+              <CustomTooltip title="Plugins" placement="top">
                 <Tab
                   className={props.classes.tab}
                   label={<span className={props.classes.tabLabel}>Plugins</span>}
                 />
-              </CustomTextTooltip>
+              </CustomTooltip>
             </Tabs>
             <Paper className={props.classes.statsWrapper}>
               {value === 0 && <RemoteProviderInfoTab />}

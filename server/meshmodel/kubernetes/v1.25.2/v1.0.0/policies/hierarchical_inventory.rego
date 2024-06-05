@@ -1,6 +1,8 @@
 package meshmodel_policy
 
 import data.common.contains
+import data.common.is_relationship_feasible
+import data.common.has_key
 import data.common.extract_components
 import data.common.get_array_pos
 import data.common.get_path
@@ -10,10 +12,9 @@ import future.keywords.in
 
 hierarchical_inventory_relationship[updated_comps] {
 	relationship := data.relationships[_]
-	relationship.subType in {"Inventory"}
+	relationship.subType in {"Inventory", "Parent"}
 		
 	selector_set := relationship.selectors[_]
-
 	from_selectors := {kind: selectors |
 		selectors := selector_set.allow.from[_]
 		kind := selectors.kind
@@ -31,11 +32,9 @@ hierarchical_inventory_relationship[updated_comps] {
 		service := input.services[_]
 	}
 
-	filtered_services := object.remove(services_map, object.keys(allowed_parent_comps))
-
 	updated_comps = {id: updated_comp |
 		some i, j
-		service := filtered_services[i]
+		service := services_map[i]
 		allowed_component := allowed_parent_comps[j]
 
 		allowed_component.traits.meshmap["meshmodel-metadata"].parentId == i
@@ -48,18 +47,23 @@ hierarchical_inventory_relationship[updated_comps] {
 }
 
 apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
-	from_selectors[i].kind == mutator.type
-	mutator_paths := from_selectors[i].patch.mutatorRef
+	some i, j
 
-	to_selectors[j].kind == mutated.type
-	mutated_paths := to_selectors[j].patch.mutatedRef
+	is_relationship_feasible(from_selectors[i], mutator.type)
+	
+	is_relationship_feasible(to_selectors[j], mutated.type)
+
+	mutatorObj := identifyMutator(from_selectors[i], to_selectors[j], mutator, mutated)
+	
+	mutatedObj := identifyMutated(from_selectors[i], to_selectors[j], mutator, mutated)
+
 
 	patches := [patch |
-		some i
-		mutator_path := get_path(mutator_paths[i], mutator)
-		update_value := object.get(mutator, mutator_path, "")
+	some i
+		mutator_path := get_path(mutatorObj.path[i], mutatorObj.mutator)
+		update_value := object.get(mutatorObj.mutator, mutatorObj.path[i], "")
 		update_value != null
-		mutated_path := get_path(mutated_paths[i], mutated)
+		mutated_path := get_path(mutatedObj.path[i], mutatedObj.mutated)
 
 		patch := {
 			"op": "add",
@@ -67,6 +71,42 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
 			"value": update_value,
 		}
 	]
-	resultantPatchesToApply := ensureParentPathsExist(patches, mutated)
-	mutated_design = json.patch(mutated, resultantPatchesToApply)
+	resultantPatchesToApply := ensureParentPathsExist(patches, mutatedObj.mutated)
+	mutated_design = json.patch(mutatedObj.mutated, resultantPatchesToApply)
+}
+
+identifyMutator(from_selector, to_selector, mutator, mutated) := mutatorObj {
+	has_key(to_selector.patch, "mutatorRef")
+	mutatorObj = {
+		"mutator": mutated,
+		"path": to_selector.patch.mutatorRef
+	}
+
+}
+
+identifyMutator(from_selector, to_selector, mutator, mutated) := mutatorObj {
+	has_key(from_selector.patch, "mutatorRef")
+	mutatorObj = {
+		"mutator": mutator,
+		"path": from_selector.patch.mutatorRef
+	}
+
+}
+
+identifyMutated(from_selector, to_selector, mutator, mutated) := mutatedObj {
+	has_key(from_selector.patch, "mutatedRef")
+	mutatedObj = {
+		"mutated": mutator,
+		"path": from_selector.patch.mutatedRef
+	}
+
+}
+
+identifyMutated(from_selector, to_selector, mutator, mutated) := mutatedObj {
+	has_key(to_selector.patch, "mutatedRef")
+	mutatedObj = {
+		"mutated": mutated,
+		"path": to_selector.patch.mutatedRef
+	}
+
 }

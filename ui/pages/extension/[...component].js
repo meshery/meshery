@@ -65,6 +65,7 @@ class RemoteExtension extends React.Component {
   }
 
   componentWillUnmount() {
+    this.props.updateExtensionType({ extensionType: null });
     this.setState({
       componentTitle: '',
       isLoading: true,

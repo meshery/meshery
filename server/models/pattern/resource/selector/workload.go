@@ -36,8 +36,9 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 			}
 		}
 	}
-	if !found {
-		return *comp, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
+	if !found || comp == nil {
+		component := v1beta1.ComponentDefinition{}
+		return component, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
 	}
 	return *comp, nil
 }
