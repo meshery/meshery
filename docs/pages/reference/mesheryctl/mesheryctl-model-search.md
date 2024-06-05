@@ -1,8 +1,8 @@
 ---
 layout: default
-title: mesheryctl-exp-model-list
-permalink: reference/mesheryctl/exp/model/list
-redirect_from: reference/mesheryctl/exp/model/list/
+title: mesheryctl-model-search
+permalink: reference/mesheryctl/model/search
+redirect_from: reference/mesheryctl/model/search/
 type: reference
 display-title: "false"
 language: en
@@ -10,41 +10,26 @@ command: exp
 subcommand: model
 ---
 
-# mesheryctl exp model list
+# mesheryctl model search
 
-list registered models
+search models
 
 ## Synopsis
 
-list name of all registered models
+search a models by search string
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list [flags]
+mesheryctl model search [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View list of models
+View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-View list of models with specified page number (25 models per page)
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model list --page 2
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
+mesheryctl model search [query-text]
 
 </div>
 </pre> 
@@ -53,9 +38,7 @@ mesheryctl exp model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of models in total
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
+  -h, --help   help for search
 
 </div>
 </pre>
