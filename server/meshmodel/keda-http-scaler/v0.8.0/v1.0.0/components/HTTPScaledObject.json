@@ -15,7 +15,7 @@
    "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
-    "hostname": "github"
+    "hostname": "artifacthub"
    },
    "category": {
     "name": "Serverless",
@@ -23,6 +23,7 @@
    },
    "subCategory": "Installable Platform",
    "metadata": {
+    "source_uri": "https://kedacore.github.io/charts/keda-add-ons-http-0.8.0.tgz",
     "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
