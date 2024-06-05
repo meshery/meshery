@@ -631,6 +631,9 @@ export const styles = (theme) => ({
   mainContent: {
     flex: 1,
     padding: '48px 36px 24px',
+    [theme.breakpoints.down('md')]: {
+      padding: '1.5rem 1rem 1.5rem',
+    },
     width: '100%',
     //stops squishing of child components
     [theme.breakpoints.down('xs')]: {

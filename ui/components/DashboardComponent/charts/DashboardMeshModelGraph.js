@@ -180,11 +180,11 @@ function MeshModelCategories({ classes }) {
 const MeshModelGraph = ({ classes }) => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} lg={6}>
         <MeshModelCategories classes={classes} />
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} lg={6}>
         <MeshModelContructs classes={classes} />
       </Grid>
     </Grid>

@@ -141,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '0.2rem',
     backgroundColor: theme.palette.secondary.tabCard,
     [theme.breakpoints.down('sm')]: {
-      padding: '0.1rem',
+      padding: '1rem',
       flexDirection: 'column',
       margin: '0rem 0.2rem',
       width: '10rem',
