@@ -81,7 +81,7 @@ export default function DesignConfigurator() {
         </IconButton>
       </TooltipButton>
       <AppBarComponent position="static" elevation={0}>
-        <Toolbar>
+        <Toolbar style={{ flexWrap: 'wrap' }}>
           <div style={{ flexGrow: 1 }}>
             {/* Category Selector */}
             <FormControl>
