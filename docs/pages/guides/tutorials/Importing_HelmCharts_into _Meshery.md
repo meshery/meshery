@@ -1,6 +1,6 @@
 ---
 layout: tutorials
-title: Understanding How to Import Helm Charts into Meshery
+title: Importing Helm Charts into Meshery
 abstract: In this tutorial, we will explore how to import  Helm charts using Meshery. Helm charts simplify the deployment and management of Kubernetes applications.
 permalink: guides/tutorials/Importing_HelmCharts_into_Meshery/
 redirect_from: guides/tutorial/Importing_HelmCharts_into _Meshery/
