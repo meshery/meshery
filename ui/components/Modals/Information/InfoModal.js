@@ -274,7 +274,8 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
                 <Grid
                   item
-                  xs={dataName === APPLICATION_PLURAL ? 12 : 6}
+                  xs={12}
+                  sm={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
                   <Typography gutterBottom variant="subtitle1" className={classes.text}>
