@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -51,6 +51,7 @@ const User = (props) => {
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
+  const timeoutRef = useRef(null);
   const router = useRouter();
 
   const {
@@ -76,11 +77,14 @@ const User = (props) => {
   };
 
   const handleOpen = (event) => {
+    clearTimeout(timeoutRef.current);
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    timeoutRef.current = setTimeout(() => {
+      setAnchorEl(null);
+    }, 100);
   };
 
   const handleLogout = () => {
@@ -173,11 +177,17 @@ const User = (props) => {
 
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   const open = Boolean(anchorEl);
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button" onMouseOver={handleOpen}>
+        <div data-test="profile-button" onMouseOver={handleOpen} onMouseLeave={handleClose}>
           <IconButton
             color={color}
             className={iconButtonClassName}
@@ -193,52 +203,54 @@ const User = (props) => {
             />
           </IconButton>
         </div>
-        <Popper
-          open={open}
-          anchorEl={anchorEl}
-          transition
-          style={{ zIndex: 10000 }}
-          placement="top-end"
-          onClose={handleClose}
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              id="menu-list-grow"
-              style={{
-                transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
-              }}
-            >
-              <Paper className={classes.popover}>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList>
-                    {account && account.length ? renderAccountExtension(account) : null}
-                    {!account?.length && (
+        <div onMouseOver={() => clearTimeout(timeoutRef.current)} onMouseLeave={handleClose}>
+          <Popper
+            open={open}
+            anchorEl={anchorEl}
+            transition
+            style={{ zIndex: 10000 }}
+            placement="top-end"
+            onClose={handleClose}
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{
+                  transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
+                }}
+              >
+                <Paper className={classes.popover}>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList>
+                      {account && account.length ? renderAccountExtension(account) : null}
+                      {!account?.length && (
+                        <MenuItem
+                          disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
+                          onClick={handleGetToken}
+                        >
+                          Get Token
+                        </MenuItem>
+                      )}
                       <MenuItem
-                        disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
-                        onClick={handleGetToken}
+                        onClick={handlePreference}
+                        // disabled={
+                        //   !CAN(
+                        //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
+                        //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
+                        //   )
+                        // }
                       >
-                        Get Token
+                        Preferences
                       </MenuItem>
-                    )}
-                    <MenuItem
-                      onClick={handlePreference}
-                      // disabled={
-                      //   !CAN(
-                      //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
-                      //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
-                      //   )
-                      // }
-                    >
-                      Preferences
-                    </MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
+        </div>
       </NoSsr>
     </div>
   );
