@@ -49,10 +49,9 @@ See [Importing Applications]({{site.baseurl}}guides/configuration-management/imp
 </details>
 
 <h3>Auto-Deployment of CRDs and Operators</h3>
-Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. When a deployment request is made for a HelmChart without the upgrade flag, Meshery does not check for the existence of the HelmChart and always tries to install it. In cases where the chart/release already exists, the installation fails (from the Helm side), and Meshery errors out. Currently, by default, Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts).
-<br>
-Additionally, the control for installing dependencies lies with the user through an exposed checkbox option within Meshery. This allows users to choose whether to install the dependencies or not during the deployment process. The default behavior is to attempt installation without verifying the existence of a release, ensuring that the deployment proceeds without unnecessary checks. (_Support for OCI registries is expected in the near future._)
+Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. When a deployment request is made for a Helm Chart without the upgrade flag, Meshery does not check for the existence of the Helm Chart and always tries to install it. In cases where the chart/release already exists, the installation fails (from the Helm side), and Meshery errors out. Currently, by default, Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts).
 
+Meshery gives users control over installing dependencies through a simple checkbox option. Users can decide whether to install dependencies during deployment. By default, Meshery tries to install dependencies without checking for an existing release, making deployment quicker. (Support for OCI registries is coming soon.)
 {% include alert.html title="Upcoming Features" type="info" content="<p>Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility. Support for OCI registries is expected in the near future.</p>
 <p>1. <b>Custom Models and Components:</b>
   Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility.</p>
@@ -64,7 +63,7 @@ Additionally, the control for installing dependencies lies with the user through
 
 **Q: How does Meshery determine where to get the chart for provisioning components?**
 
-**A:** Meshery determines the chart's source based on the registrant used. In the<a href ="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/"> Meshery Integration Sheet</a>, there is a sourceurl column where the location of the chart is captured. This information is transmitted to the model and component definitions, which ultimately get referenced during the provisioning process.
+**A:** Meshery determines the source based on the metadata of models and components. This metadata includes the actual location of the components, whether it's a Helm chart, Kubernetes manifests, or any other format. Depending on the type of source (Helm chart or Kubernetes manifest), Meshery deploys the components accordingly.
 
 **Q: How does Meshery know what Operator to provision when provisioning components from a given Model?**
 
