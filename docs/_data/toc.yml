@@ -169,10 +169,10 @@
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
-      url: guides/upgrade
+      url: installation/upgrades
       children:
         - title: Meshery CLI
-          url: guides/upgrade#upgrading-meshery-cli
+          url: installation/upgrades#upgrading-meshery-cli
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -277,7 +277,7 @@
   links:
     - title: Error Code Reference
       url: reference/error-codes
-    - title: Permissions Reference
+    - title: Permissions Keys Reference
       url: reference/permissions
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
