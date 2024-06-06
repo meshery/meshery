@@ -841,7 +841,19 @@ registry:
         spreadsheet_id:
           name: --spreadsheet-id
           description: id of the spreadsheet to download
-          
+model:
+  name: model
+  description: 
+  usage: mesheryctl model [command] [flags]
+  flags:
+    help:
+      name: --help, -h
+      description: help for model
+      usage: mesheryctl model --help
+      example: mesheryctl model --help
+  subcommands:
+    list:
+      name: list          
 exp:
   name: exp
   description: Experimental features
