@@ -55,6 +55,22 @@
               ],
               "description": "The VirtualServer and VirtualServerRoute resources are load balancing configurations recommended as an alternative to the Ingress resource. The Policy resource allows you to configure features like access control and rate-limiting, which you can add to your VirtualServer and VirtualServerRoute resources."
             }
+          },
+          {
+            "kind": "VirtualServerRoute",
+            "model": "nginx-ingress",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "spec",
+                  "policies",
+                  "name"
+                ]
+              ],
+              "description": "The VirtualServerRoute resource defines a route for a VirtualServer and it can consist of one or multiple subroutes. The Policy resource allows you to configure features like access control and rate-limiting, which you can add to your VirtualServer and VirtualServerRoute resources."
+            }
           }
         ]
       }
