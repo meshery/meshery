@@ -2,10 +2,10 @@
 layout: default
 title: Upgrading Meshery and all of its components
 abstract: How to Meshery and all of its components
-permalink: guides/upgrade
+permalink: installation/upgrades
 display-title: "false"
 type: guides
-category: operating
+category: installation
 language: en
 abstract: How to upgrade Meshery and all of its components
 ---
