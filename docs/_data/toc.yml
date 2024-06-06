@@ -127,7 +127,7 @@
     - title: Managing Events with Notification Center
       url: guides/events-management
     - title: GitOps with Meshery
-      url: guides/gitops-with-meshery
+      url: guides/infrastructure-management/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:

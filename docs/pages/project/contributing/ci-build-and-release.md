@@ -215,7 +215,7 @@ Meshery and its components follow the commonly used, semantic versioning for its
 
 ### Component Versioning
 
-Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
+Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guides/installation/upgrades) for more information.
 
 GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3).
 
